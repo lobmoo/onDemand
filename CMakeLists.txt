@@ -14,24 +14,35 @@
 
 cmake_minimum_required(VERSION 3.16)
 
-project(demo  LANGUAGES  CXX)
+project(test_exec  LANGUAGES  CXX)
+
+set(LIBRARY_OUTPUT_NAME  test)
+
+# 指定安装路径的变量，可以在 CMake 命令行中覆盖
+set(INSTALL_LIB_DIR "${CMAKE_INSTALL_PREFIX}/lib")
+set(INSTALL_BIN_DIR "${CMAKE_INSTALL_PREFIX}/bin")
+set(INSTALL_INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include")
 
 # 查找目录下的所有源文件
 # 假设您希望在查找源文件时排除 CMakeFiles 目录
-file(GLOB DDS_SHM_HELLOWORLD_EXAMPLE_SOURCES_CXX "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cc")
+file(GLOB SOURCES_CC_FOR_SRC "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cc")
 #list(FILTER DDS_SHM_HELLOWORLD_EXAMPLE_SOURCES_CXX EXCLUDE REGEX "CMakeFiles/.*")
 
-file(GLOB DDS_SHM_HELLOWORLD_EXAMPLE_SOURCES_CPP "${CMAKE_CURRENT_SOURCE_DIR}/*.cc")
+file(GLOB SOURCES_CC_FOR_MAIN "${CMAKE_CURRENT_SOURCE_DIR}/*.cc")
 #list(FILTER DDS_SHM_HELLOWORLD_EXAMPLE_SOURCES_CPP EXCLUDE REGEX "CMakeFiles/.*")
 
-message(STATUS "Collected CXX sources: ${DDS_SHM_HELLOWORLD_EXAMPLE_SOURCES_CXX}")
-message(STATUS "Collected CPP sources: ${DDS_SHM_HELLOWORLD_EXAMPLE_SOURCES_CPP}")
+message(STATUS "Collected CXX sources: ${SOURCES_CC_FOR_SRC}")
+message(STATUS "Collected CPP sources: ${SOURCES_CC_FOR_MAIN}")
 
 # 合并所有查找到的文件列表
-set(ALL_SOURCES ${DDS_SHM_HELLOWORLD_EXAMPLE_SOURCES_CXX} ${DDS_SHM_HELLOWORLD_EXAMPLE_SOURCES_CPP})
+set(ALL_SOURCES ${SOURCES_CC_FOR_SRC} ${SOURCES_CC_FOR_MAIN})
 # 复制源文件列表用于不同的目标
 set(MAIN_SOURCES ${ALL_SOURCES})
 
+
+option(BUILD_SHARED_LIBS "Build using shared libraries" OFF)
+# 创建库，类型取决于 BUILD_SHARED_LIBS
+add_library(${LIBRARY_OUTPUT_NAME}   ${SOURCES_CC_FOR_SRC})
 
 # 添加可执行文件目标
 add_executable(${PROJECT_NAME} ${MAIN_SOURCES})
@@ -73,3 +84,18 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 )
 
 target_compile_options(${PROJECT_NAME}  PRIVATE -Wall -Wextra -g  -std=c++17)
+
+
+# 安装静态库到 lib 目录
+install(TARGETS ${LIBRARY_OUTPUT_NAME}
+        ARCHIVE DESTINATION ${INSTALL_LIB_DIR}
+        LIBRARY DESTINATION ${INSTALL_LIB_DIR})  # 动态库和可执行文件也可以放在 bin
+
+# 安装可执行文件到 bin 目录
+install(TARGETS ${PROJECT_NAME}
+        RUNTIME DESTINATION ${INSTALL_BIN_DIR})
+
+# 安装头文件到 include 目录
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/src/
+        DESTINATION ${INSTALL_INCLUDE_DIR}
+        FILES_MATCHING PATTERN "*.h")
