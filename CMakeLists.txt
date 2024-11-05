@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.12)
 
-project(box)
+project(demo)
 
 
 # 设置C++标准
