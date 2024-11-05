@@ -1,50 +1,76 @@
-cmake_minimum_required(VERSION 3.12)
+# Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
-project(demo)
+cmake_minimum_required(VERSION 3.16)
 
-
-# 设置C++标准
-set(CMAKE_CXX_STANDARD   17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-#set(CMAKE_C_COMPILER aarch64-linux-gnu-gcc)
-#set(CMAKE_CXX_COMPILER aarch64-linux-gnu-g++)
-
-
-# 添加包含目录
-# include_directories命令用于添加头文件的搜索路径
-include_directories(
-        ./include
-    )
-
- #命令用于指定库文件的搜索路径
-#link_directories(../lib)
-
+project(demo  LANGUAGES  CXX)
 
 # 查找目录下的所有源文件
-# 并将名称保存到 DIR_SRCS 变量
-aux_source_directory(${CMAKE_SOURCE_DIR}  DIR_SRCS)
-aux_source_directory(./src  DIR_SRCS)
+# 假设您希望在查找源文件时排除 CMakeFiles 目录
+file(GLOB DDS_SHM_HELLOWORLD_EXAMPLE_SOURCES_CXX "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cc")
+#list(FILTER DDS_SHM_HELLOWORLD_EXAMPLE_SOURCES_CXX EXCLUDE REGEX "CMakeFiles/.*")
 
-#可以自己枚举
-#set(DIR_SRCS
-#    main.cc
-#)
+file(GLOB DDS_SHM_HELLOWORLD_EXAMPLE_SOURCES_CPP "${CMAKE_CURRENT_SOURCE_DIR}/*.cc")
+#list(FILTER DDS_SHM_HELLOWORLD_EXAMPLE_SOURCES_CPP EXCLUDE REGEX "CMakeFiles/.*")
 
-#指定文件生成路径 目前是当前cmakelist文件所在根目录
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
+message(STATUS "Collected CXX sources: ${DDS_SHM_HELLOWORLD_EXAMPLE_SOURCES_CXX}")
+message(STATUS "Collected CPP sources: ${DDS_SHM_HELLOWORLD_EXAMPLE_SOURCES_CPP}")
+
+# 合并所有查找到的文件列表
+set(ALL_SOURCES ${DDS_SHM_HELLOWORLD_EXAMPLE_SOURCES_CXX} ${DDS_SHM_HELLOWORLD_EXAMPLE_SOURCES_CPP})
+# 复制源文件列表用于不同的目标
+set(MAIN_SOURCES ${ALL_SOURCES})
+
 
 # 添加可执行文件目标
-add_executable(${PROJECT_NAME} ${DIR_SRCS})
-
-# 添加依赖的库
-target_link_libraries(${PROJECT_NAME}
-            pthread
-       )
-
-# 添加编译选项
-# target_compile_options命令用于添加编译选项
-# target_compile_options(YourExecutableName PRIVATE -Wall -Wextra)
+add_executable(${PROJECT_NAME} ${MAIN_SOURCES})
+#指定可执行文件生成路径 目前是当前cmakelist文件所在根目录
+set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
 
 
+#头文件
+set(OBJ_CPP_INCLUDE "")
+set(OBJ_CPP_INCLUDE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
 
+
+#list(APPEND OBJ_CPP_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/glog/include)
+
+
+target_include_directories(${PROJECT_NAME} PRIVATE  ${OBJ_CPP_INCLUDE})
+
+
+# # FSAT DDS
+# find_library(FASTRTPS_LIBRARY NAMES fastrtps PATHS ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/fast_dds/lib)
+# find_library(FOONATHAN_MEMORY_LIBRARY NAMES foonathan_memory-0.7.3 PATHS ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/fast_dds/lib)
+# find_library(FASTCDR_LIBRARY NAMES fastcdr PATHS ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/fast_dds/lib)
+# # 检查每个库是否都找到了
+# if(FASTRTPS_LIBRARY AND FOONATHAN_MEMORY_LIBRARY AND FASTCDR_LIBRARY)
+#     list(APPEND OBJ_CPP_LIBS ${FASTRTPS_LIBRARY} ${FOONATHAN_MEMORY_LIBRARY} ${FASTCDR_LIBRARY})
+#     message(STATUS "Found all FAST DDS libraries")
+# else()
+#     message(FATAL_ERROR "Could not find all required FAST DDS libraries")
+# endif()
+
+
+
+target_link_libraries(${PROJECT_NAME} PRIVATE 
+    pthread 
+    rt
+    # ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/tinyxml2/lib/libtinyxml2.a    
+)
+
+target_compile_options(${PROJECT_NAME}  PRIVATE -Wall -Wextra -g  -std=c++17)
