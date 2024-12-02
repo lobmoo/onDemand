@@ -54,6 +54,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMA
 set(OBJ_CPP_INCLUDE "")
 set(OBJ_CPP_INCLUDE
     ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/BS_thread_pool/include
 )
 
 
@@ -80,7 +81,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE  ${OBJ_CPP_INCLUDE})
 target_link_libraries(${PROJECT_NAME} PRIVATE 
     pthread 
     rt
-    # ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/tinyxml2/lib/libtinyxml2.a    
+    #${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/tinyxml2/lib/libtinyxml2.a    
 )
 
 target_compile_options(${PROJECT_NAME}  PRIVATE -Wall -Wextra -g  -std=c++17)
