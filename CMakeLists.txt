@@ -40,9 +40,10 @@ set(ALL_SOURCES ${SOURCES_CC_FOR_SRC} ${SOURCES_CC_FOR_MAIN})
 set(MAIN_SOURCES ${ALL_SOURCES})
 
 
-option(BUILD_SHARED_LIBS "Build using shared libraries" OFF)
-# 创建库，类型取决于 BUILD_SHARED_LIBS
-add_library(${LIBRARY_OUTPUT_NAME}   ${SOURCES_CC_FOR_SRC})
+# option(BUILD_SHARED_LIBS "Build using shared libraries" OFF)
+# # 创建库，类型取决于 BUILD_SHARED_LIBS
+# add_library(${LIBRARY_OUTPUT_NAME}   ${SOURCES_CC_FOR_SRC})
+
 
 # 添加可执行文件目标
 add_executable(${PROJECT_NAME} ${MAIN_SOURCES})
