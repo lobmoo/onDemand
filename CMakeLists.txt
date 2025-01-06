@@ -40,10 +40,12 @@ set(ALL_SOURCES ${SOURCES_CC_FOR_SRC} ${SOURCES_CC_FOR_MAIN})
 set(MAIN_SOURCES ${ALL_SOURCES})
 
 
-# option(BUILD_SHARED_LIBS "Build using shared libraries" OFF)
-# # 创建库，类型取决于 BUILD_SHARED_LIBS
-# add_library(${LIBRARY_OUTPUT_NAME}   ${SOURCES_CC_FOR_SRC})
+option(BUILD_SHARED_LIBS "Build using shared libraries" OFF)
+# 创建库，类型取决于 BUILD_SHARED_LIBS
 
+if(BUILD_LIBRARY)
+add_library(${LIBRARY_OUTPUT_NAME}   ${SOURCES_CC_FOR_SRC})
+endif()
 
 # 添加可执行文件目标
 add_executable(${PROJECT_NAME} ${MAIN_SOURCES})
@@ -90,11 +92,12 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 
 target_compile_options(${PROJECT_NAME}  PRIVATE -Wall -Wextra -g  -std=c++17)
 
-
+if(BUILD_LIBRARY)
 # 安装静态库到 lib 目录
 install(TARGETS ${LIBRARY_OUTPUT_NAME}
         ARCHIVE DESTINATION ${INSTALL_LIB_DIR}
         LIBRARY DESTINATION ${INSTALL_LIB_DIR})  # 动态库和可执行文件也可以放在 bin
+endif()
 
 # 安装可执行文件到 bin 目录
 install(TARGETS ${PROJECT_NAME}
