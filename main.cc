@@ -1,32 +1,24 @@
-#include "BS_thread_pool.hpp" // BS::thread_pool
+#include "BS_thread_pool.hpp" // BS::synced_stream, BS::thread_pool
 #include <chrono>             // std::chrono
-#include <iostream>           // std::cout
 #include <thread>             // std::this_thread
-#include <cstring>
+
+BS::synced_stream sync_out;
+BS::thread_pool pool(16);
 
 
-
-typedef struct
+void monitor_tasks()
 {
-    uint16_t uType;
-    uint32_t result;
-    char *pData;
-} DataPackge;
-
+    sync_out.println(pool.get_tasks_total(), " tasks total, ", pool.get_tasks_running(), " tasks running, ", pool.get_tasks_queued(), " tasks queued.");
+}
 
 int main()
 {
-    char *pData = new char[1024];
-    DataPackge b{};
-    b.uType = 1;
-    b.result = 2;
-    char *p = "1234567";
-    b.pData = p;
-    memcpy(pData, &b, sizeof(DataPackge));
-
-
-    DataPackge a{};
-    a = *(DataPackge *)pData;
-    printf("uType:%d,result:%d,pData:%s\n", a.uType, a.result, a.pData);
-
+    for (int i = 0; i < 100; ++i)
+    {
+        pool.detach_task([i] {
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            sync_out.println("Task ", i, " done.");
+        });
+        monitor_tasks();
+    }
 }
