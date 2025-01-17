@@ -1,24 +1,44 @@
-#include "BS_thread_pool.hpp" // BS::synced_stream, BS::thread_pool
-#include <chrono>             // std::chrono
-#include <thread>             // std::this_thread
+#include <boost/signals2.hpp>
+#include <boost/thread.hpp>
+#include <iostream>
+#include <queue>
+#include <thread>
 
-BS::synced_stream sync_out;
-BS::thread_pool pool(16);
+class MessageProducer {
+public:
+    boost::signals2::signal<void(const std::string&)> newMessage;
 
-
-void monitor_tasks()
-{
-    sync_out.println(pool.get_tasks_total(), " tasks total, ", pool.get_tasks_running(), " tasks running, ", pool.get_tasks_queued(), " tasks queued.");
-}
-
-int main()
-{
-    for (int i = 0; i < 100; ++i)
-    {
-        pool.detach_task([i] {
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            sync_out.println("Task ", i, " done.");
-        });
-        monitor_tasks();
+    void produceMessage(const std::string& msg) {
+        std::cout << "Producing message: " << msg << std::endl;
+        newMessage(msg);  // 触发信号
     }
+};
+
+class MessageConsumer {
+public:
+    void consumeMessage(const std::string& msg) {
+        std::cout << "Consuming message: " << msg << std::endl;
+    }
+
+    void consumeMessageAsync(const std::string& msg) {
+        // 让消息消费过程异步执行
+        std::thread([this, msg] { consumeMessage(msg); }).detach();  // 异步执行槽函数
+    }
+};
+
+int main() {
+    MessageProducer producer;
+    MessageConsumer consumer;
+
+    // 将消费者的异步槽函数连接到信号
+    producer.newMessage.connect(boost::bind(&MessageConsumer::consumeMessageAsync, &consumer, _1));
+
+    // 模拟生产者产生消息
+    producer.produceMessage("Hello, Boost Signals!");
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+
+    producer.produceMessage("Another message");
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+
+    return 0;
 }
