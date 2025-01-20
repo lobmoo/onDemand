@@ -25,14 +25,16 @@ set(INSTALL_INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include")
 
 # 查找目录下的所有源文件
 # 假设您希望在查找源文件时排除 CMakeFiles 目录
-file(GLOB SOURCES_CC_FOR_SRC "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cc")
+file(GLOB SOURCES_CC_FOR_SRC "${CMAKE_SOURCE_DIR}/src/log/*.cc")
+# file(GLOB SOURCES_CC_FOR_SRC "${CMAKE_SOURCE_DIR}/src/*.cc")
 #list(FILTER DDS_SHM_HELLOWORLD_EXAMPLE_SOURCES_CXX EXCLUDE REGEX "CMakeFiles/.*")
 
-file(GLOB SOURCES_CC_FOR_MAIN "${CMAKE_CURRENT_SOURCE_DIR}/*.cc")
+file(GLOB SOURCES_CC_FOR_MAIN "${CMAKE_SOURCE_DIR}/src/*.cc")
 #list(FILTER DDS_SHM_HELLOWORLD_EXAMPLE_SOURCES_CPP EXCLUDE REGEX "CMakeFiles/.*")
 
 message(STATUS "Collected CXX sources: ${SOURCES_CC_FOR_SRC}")
 message(STATUS "Collected CPP sources: ${SOURCES_CC_FOR_MAIN}")
+message(STATUS "CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX}")
 
 # 合并所有查找到的文件列表
 set(ALL_SOURCES ${SOURCES_CC_FOR_SRC} ${SOURCES_CC_FOR_MAIN})
@@ -56,22 +58,22 @@ set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMA
 #头文件
 set(OBJ_CPP_INCLUDE "")
 set(OBJ_CPP_INCLUDE
-    ${CMAKE_CURRENT_SOURCE_DIR}/src
-    ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/BS_thread_pool/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/boost/include
+    ${CMAKE_SOURCE_DIR}/src/log
+    ${CMAKE_SOURCE_DIR}/thirdparty/BS_thread_pool/include
+    ${CMAKE_SOURCE_DIR}/thirdparty/boost/include
 )
 
 
-#list(APPEND OBJ_CPP_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/glog/include)
+#list(APPEND OBJ_CPP_INCLUDE ${CMAKE_SOURCE_DIR}/thirdparty/glog/include)
 
 
 target_include_directories(${PROJECT_NAME} PRIVATE  ${OBJ_CPP_INCLUDE})
 
 
 # # FSAT DDS
-# find_library(FASTRTPS_LIBRARY NAMES fastrtps PATHS ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/fast_dds/lib)
-# find_library(FOONATHAN_MEMORY_LIBRARY NAMES foonathan_memory-0.7.3 PATHS ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/fast_dds/lib)
-# find_library(FASTCDR_LIBRARY NAMES fastcdr PATHS ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/fast_dds/lib)
+# find_library(FASTRTPS_LIBRARY NAMES fastrtps PATHS ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib)
+# find_library(FOONATHAN_MEMORY_LIBRARY NAMES foonathan_memory-0.7.3 PATHS ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib)
+# find_library(FASTCDR_LIBRARY NAMES fastcdr PATHS ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib)
 # # 检查每个库是否都找到了
 # if(FASTRTPS_LIBRARY AND FOONATHAN_MEMORY_LIBRARY AND FASTCDR_LIBRARY)
 #     list(APPEND OBJ_CPP_LIBS ${FASTRTPS_LIBRARY} ${FOONATHAN_MEMORY_LIBRARY} ${FASTCDR_LIBRARY})
@@ -83,9 +85,11 @@ target_include_directories(${PROJECT_NAME} PRIVATE  ${OBJ_CPP_INCLUDE})
 
 
 target_link_libraries(${PROJECT_NAME} PRIVATE 
-    ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/boost/lib/libboost_system.a
-    ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/boost/lib/libboost_thread.a
-    ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/boost/lib/libboost_filesystem.a
+    ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_log.a 
+    ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_log_setup.a
+    ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_system.a
+    ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_thread.a
+    ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_filesystem.a
     pthread 
     rt
 )
@@ -104,6 +108,6 @@ install(TARGETS ${PROJECT_NAME}
         RUNTIME DESTINATION ${INSTALL_BIN_DIR})
 
 # 安装头文件到 include 目录
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/src/
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/src/
         DESTINATION ${INSTALL_INCLUDE_DIR}
         FILES_MATCHING PATTERN "*.h")
