@@ -35,16 +35,18 @@ public:
 
 };
 
-#define LOG_TRACE(logEvent)  BOOST_LOG_FUNCTION(); BOOST_LOG_SEV(Logger::Instance()._logger, boost::log::trivial::trace) << logEvent;
 
-#define LOG_DEBUG(logEvent)  BOOST_LOG_FUNCTION(); BOOST_LOG_SEV(Logger::Instance()._logger, boost::log::trivial::debug) << logEvent;
+#define LOG_EXTRA_INFO \
+    boost::log::attribute_cast<boost::log::attributes::mutable_constant<std::string>>( \
+        boost::log::core::get()->get_global_attributes()["File"]).set(__FILE__);     \
+    boost::log::attribute_cast<boost::log::attributes::mutable_constant<int>>( \
+        boost::log::core::get()->get_global_attributes()["Line"]).set(__LINE__);
 
-#define LOG_INFO(logEvent)   BOOST_LOG_FUNCTION(); BOOST_LOG_SEV(Logger::Instance()._logger, boost::log::trivial::info) << logEvent;
+#define LOG_TRACE(logEvent)   BOOST_LOG_FUNCTION(); LOG_EXTRA_INFO; BOOST_LOG_SEV(Logger::Instance()._logger, boost::log::trivial::trace) <<    logEvent;
+#define LOG_DEBUG(logEvent)   BOOST_LOG_FUNCTION(); LOG_EXTRA_INFO; BOOST_LOG_SEV(Logger::Instance()._logger, boost::log::trivial::debug) <<    logEvent;
+#define LOG_INFO(logEvent)    BOOST_LOG_FUNCTION(); LOG_EXTRA_INFO; BOOST_LOG_SEV(Logger::Instance()._logger, boost::log::trivial::info)  <<    logEvent;
+#define LOG_WARN(logEvent)    BOOST_LOG_FUNCTION(); LOG_EXTRA_INFO; BOOST_LOG_SEV(Logger::Instance()._logger, boost::log::trivial::warning) <<  logEvent;
+#define LOG_ERROR(logEvent)   BOOST_LOG_FUNCTION(); LOG_EXTRA_INFO; BOOST_LOG_SEV(Logger::Instance()._logger, boost::log::trivial::error) <<    logEvent;
+#define LOG_FATAL(logEvent)   BOOST_LOG_FUNCTION(); LOG_EXTRA_INFO; BOOST_LOG_SEV(Logger::Instance()._logger, boost::log::trivial::fatal)  <<   logEvent;
 
-#define LOG_WARN(logEvent)   BOOST_LOG_FUNCTION(); BOOST_LOG_SEV(Logger::Instance()._logger, boost::log::trivial::warning) << logEvent;
-
-#define LOG_ERROR(logEvent)  BOOST_LOG_FUNCTION(); BOOST_LOG_SEV(Logger::Instance()._logger, boost::log::trivial::error) << logEvent;
-
-#define LOG_FATAL(logEvent)  BOOST_LOG_FUNCTION(); BOOST_LOG_SEV(Logger::Instance()._logger, boost::log::trivial::fatal) << logEvent;
-
-#endif //IDAS_LOGGER_H
+#endif 

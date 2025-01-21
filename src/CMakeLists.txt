@@ -94,7 +94,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     rt
 )
 
-target_compile_options(${PROJECT_NAME}  PRIVATE -Wall -Wextra -g  -std=c++17)
+target_compile_options(${PROJECT_NAME}  PRIVATE  -g  -std=c++17)
 
 if(BUILD_LIBRARY)
 # 安装静态库到 lib 目录

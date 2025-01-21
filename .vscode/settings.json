@@ -1,6 +1,9 @@
 {
     "files.associations": {
         "*.log": "log",
+        "*.toml": "yaml",
+        "*.cpp": "cpp",
+        "*.dsfngvs": "json",
         "__nullptr": "cpp",
         "any": "cpp",
         "exception": "cpp",
@@ -80,6 +83,15 @@
         "cfenv": "cpp",
         "regex": "cpp",
         "__hash_table": "cpp",
-        "__node_handle": "cpp"
+        "__node_handle": "cpp",
+        "*.ipp": "cpp",
+        "strstream": "cpp",
+        "csetjmp": "cpp",
+        "csignal": "cpp",
+        "rope": "cpp",
+        "slist": "cpp",
+        "scoped_allocator": "cpp",
+        "typeindex": "cpp",
+        "valarray": "cpp"
     }
 }
