@@ -68,9 +68,13 @@ void Logger::setfileSink(std::string fileName, int maxFileSize, int maxBackupInd
     boost::shared_ptr<file_sink> fileSink(new file_sink(
     boost::log::keywords::file_name = fileName,                      
     boost::log::keywords::target_file_name = "%Y%m%d_%H%M%S_%N.log",   
-    boost::log::keywords::time_based_rotation = boost::log::sinks::file::rotation_at_time_point(16, 0, 0),  //期货交易当日结束，夜盘算第二天
-    boost::log::keywords::rotation_size = maxFileSize * 1024 * 1024,                         // rotation size, in characters
+    boost::log::keywords::time_based_rotation = boost::log::sinks::file::rotation_at_time_point(16, 0, 0),  
+    boost::log::keywords::rotation_size = maxFileSize * 1024 * 1024,                        
     boost::log::keywords::open_mode = std::ios::out | std::ios::app));
+    fileSink->set_formatter(formatter);
+    fileSink->locked_backend()->scan_for_files();
+    fileSink->locked_backend()->auto_flush(true);
+    boost::log::core::get()->add_sink(fileSink);
 }
 
 
@@ -83,6 +87,7 @@ bool Logger::Init(std::string fileName, int type, int level, int maxFileSize,
     case both:
     {
         setconsoleSink();
+        setfileSink(fileName, maxFileSize, maxBackupIndex);
     }
     break;
     case console:
@@ -92,7 +97,7 @@ bool Logger::Init(std::string fileName, int type, int level, int maxFileSize,
     break;
     case file:
     {
-        //setfileSink(fileName, maxFileSize, maxBackupIndex);
+        setfileSink(fileName, maxFileSize, maxBackupIndex);
     }
     break;
     default:
