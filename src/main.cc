@@ -3,8 +3,7 @@
 
 int main()
 {   
-    Logger lg;
-    lg.Init("log/test.log", 0, 0, 1, 100);
+    Logger::Instance().Init("log/test.log", 0, 0, 1, 100);
     while (1)
     {
         LOG_TRACE("test info");

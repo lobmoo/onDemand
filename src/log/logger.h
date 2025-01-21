@@ -14,7 +14,6 @@
 
 class Logger {
 public:
-    typedef boost::log::sinks::synchronous_sink<boost::log::sinks::text_file_backend> file_sink;
     enum LoggerType {
         both = 0,
         console,
@@ -22,17 +21,19 @@ public:
        
     };
 
-
-    Logger() {}
-
     ~Logger() {}
-
     static Logger& Instance();
-
+    boost::log::sources::severity_logger<boost::log::trivial::severity_level> _logger;
     bool Init(std::string fileName, int type, int level, int maxFileSize, int maxBackupIndex);
 
-    boost::log::sources::severity_logger<boost::log::trivial::severity_level> _logger;
 
+    
+
+private:
+    Logger() {}
+    Logger(const Logger&) = delete;
+    Logger& operator=(const Logger&) = delete;
+    typedef boost::log::sinks::synchronous_sink<boost::log::sinks::text_file_backend> file_sink;
 };
 
 
