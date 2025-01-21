@@ -63,14 +63,14 @@ bool Logger::Init(std::string fileName, int type, int level, int maxFileSize,
     case both:
     {
         auto consoleSink = boost::log::add_console_log();
-        consoleSink->set_formatter(formatter);
+        consoleSink->set_formatter(color_formatter);
         boost::log::core::get()->add_sink(consoleSink);
     }
     break;
     case console:
     {
         auto consoleSink = boost::log::add_console_log();
-        consoleSink->set_formatter(formatter);
+        consoleSink->set_formatter(color_formatter);
         boost::log::core::get()->add_sink(consoleSink);
     }
     break;
