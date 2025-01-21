@@ -54,6 +54,26 @@ boost::log::formatter color_formatter =
     << " "
     << boost::log::expressions::smessage;
 
+
+void Logger::setconsoleSink()
+{
+    auto consoleSink = boost::log::add_console_log();
+    consoleSink->set_formatter(color_formatter);
+    boost::log::core::get()->add_sink(consoleSink);
+}
+
+
+void Logger::setfileSink(std::string fileName, int maxFileSize, int maxBackupIndex)
+{
+    boost::shared_ptr<file_sink> fileSink(new file_sink(
+    boost::log::keywords::file_name = fileName,                      
+    boost::log::keywords::target_file_name = "%Y%m%d_%H%M%S_%N.log",   
+    boost::log::keywords::time_based_rotation = boost::log::sinks::file::rotation_at_time_point(16, 0, 0),  //期货交易当日结束，夜盘算第二天
+    boost::log::keywords::rotation_size = maxFileSize * 1024 * 1024,                         // rotation size, in characters
+    boost::log::keywords::open_mode = std::ios::out | std::ios::app));
+}
+
+
 bool Logger::Init(std::string fileName, int type, int level, int maxFileSize,
                   int maxBackupIndex)
 {
@@ -62,20 +82,17 @@ bool Logger::Init(std::string fileName, int type, int level, int maxFileSize,
     {
     case both:
     {
-        auto consoleSink = boost::log::add_console_log();
-        consoleSink->set_formatter(color_formatter);
-        boost::log::core::get()->add_sink(consoleSink);
+        setconsoleSink();
     }
     break;
     case console:
     {
-        auto consoleSink = boost::log::add_console_log();
-        consoleSink->set_formatter(color_formatter);
-        boost::log::core::get()->add_sink(consoleSink);
+        //setconsoleSink();
     }
     break;
     case file:
     {
+        //setfileSink(fileName, maxFileSize, maxBackupIndex);
     }
     break;
     default:
@@ -84,11 +101,7 @@ bool Logger::Init(std::string fileName, int type, int level, int maxFileSize,
     break;
     }
     boost::log::add_common_attributes();
-    boost::log::core::get()->add_global_attribute(
-        "Scope", boost::log::attributes::named_scope());
     boost::log::core::get()->set_filter(boost::log::trivial::severity >= level);
-
-    boost::log::add_common_attributes();
     boost::log::core::get()->add_global_attribute("File", boost::log::attributes::mutable_constant<std::string>(""));
     boost::log::core::get()->add_global_attribute("Line", boost::log::attributes::mutable_constant<int>(0));
     return true;
