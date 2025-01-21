@@ -1,8 +1,8 @@
-#include"logger.h"
+#include "logger.h"
 #include <unistd.h>
 
 int main()
-{   
+{
     Logger::Instance().Init("log/test.log", 0, 0, 1, 100);
     while (1)
     {
@@ -13,11 +13,7 @@ int main()
         LOG_ERROR("test info");
         LOG_FATAL("test info");
         usleep(1000);
-        
     }
-    
-   
 
     return 0;
 }
-
