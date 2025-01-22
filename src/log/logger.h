@@ -42,9 +42,6 @@ private:
 private:
 inline void setconsoleSink();
 inline void setfileSink(std::string fileName, int maxFileSize, int maxBackupIndex);
-
-std::string ProcessName;
-std::string FileName;
 };
 
 #define LOG_EXTRA_INFO                                                                 \

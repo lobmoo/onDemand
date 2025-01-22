@@ -63,9 +63,12 @@ void Logger::setconsoleSink()
 
 void Logger::setfileSink(std::string fileName, int maxFileSize, int maxBackupIndex)
 { 
+    boost::log::attributes::current_process_name process_name_attr;
+    std::string pRocessName = process_name_attr.get();
+    std::string filePattern = pRocessName + "_%Y%m%d_%H%M%S_%N.log";
     boost::shared_ptr<file_sink> fileSink(new file_sink(
         boost::log::keywords::file_name = fileName,
-        boost::log::keywords::target_file_name = "ProcessName" + "%Y%m%d_%H%M%S_%N.log",
+        boost::log::keywords::target_file_name = filePattern,
         boost::log::keywords::time_based_rotation = boost::log::sinks::file::rotation_at_time_point(16, 0, 0),
         boost::log::keywords::rotation_size = maxFileSize * 1024 * 1024,
         boost::log::keywords::open_mode = std::ios::out | std::ios::app));
@@ -114,10 +117,4 @@ bool Logger::Init(std::string fileName, int type, int level, int maxFileSize,
     boost::log::core::get()->add_global_attribute("File", boost::log::attributes::mutable_constant<std::string>(""));
     boost::log::core::get()->add_global_attribute("Line", boost::log::attributes::mutable_constant<int>(0));
     return true;
-}
-
-
-void Logger::setProcessName(std::string name)
-{
-    ProcessName = name;
 }
