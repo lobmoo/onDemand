@@ -76,14 +76,26 @@ void Logger::setfileSink(std::string fileName, int maxFileSize, int maxBackupInd
 bool Logger::Init(std::string fileName, int type, int level, int maxFileSize, int maxBackupIndex, bool isAsync) {
   switch (type) {
     case both: {
-      setconsoleSink();
-      setfileSink(fileName, maxFileSize, maxBackupIndex);
+      if (isAsync) {
+        // async
+      } else {
+        setconsoleSink();
+        setfileSink(fileName, maxFileSize, maxBackupIndex);
+      }
     } break;
     case console: {
-      setconsoleSink();
+      if (isAsync) {
+        // async
+      } else {
+        setconsoleSink();
+      }
     } break;
     case file: {
-      setfileSink(fileName, maxFileSize, maxBackupIndex);
+      if (isAsync) {
+        // async
+      } else {
+        setfileSink(fileName, maxFileSize, maxBackupIndex);
+      }
     } break;
     default: {
     } break;

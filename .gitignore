@@ -6,3 +6,4 @@ Makefile
 test_exec
 log
 logs
+!src/log
