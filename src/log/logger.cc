@@ -56,33 +56,33 @@ boost::log::formatter color_formatter =
 
 void Logger::setconsoleSink()
 {
-    auto consoleSink = boost::log::add_console_log();
-    consoleSink->set_formatter(color_formatter);
-    boost::log::core::get()->add_sink(consoleSink);
+    consoleSink_ = boost::log::add_console_log();
+    consoleSink_->set_formatter(color_formatter);
+    boost::log::core::get()->add_sink(consoleSink_);
 }
 
 void Logger::setfileSink(std::string fileName, int maxFileSize, int maxBackupIndex)
-{ 
+{
     boost::log::attributes::current_process_name process_name_attr;
     std::string pRocessName = process_name_attr.get();
     std::string filePattern = pRocessName + "_%Y%m%d_%H%M%S_%N.log";
-    boost::shared_ptr<file_sink> fileSink(new file_sink(
+    fileSink_ = boost::make_shared<file_sink>(
         boost::log::keywords::file_name = fileName,
         boost::log::keywords::target_file_name = filePattern,
         boost::log::keywords::time_based_rotation = boost::log::sinks::file::rotation_at_time_point(16, 0, 0),
         boost::log::keywords::rotation_size = maxFileSize * 1024 * 1024,
-        boost::log::keywords::open_mode = std::ios::out | std::ios::app));
-    fileSink->locked_backend()->set_file_collector(boost::log::sinks::file::make_collector(
+        boost::log::keywords::open_mode = std::ios::out | std::ios::app);
+    fileSink_->locked_backend()->set_file_collector(boost::log::sinks::file::make_collector(
         boost::log::keywords::target = "logs",
         boost::log::keywords::max_size = maxFileSize * maxBackupIndex * 1024 * 1024,
         boost::log::keywords::min_free_space = 10 * 1024 * 1024,
         boost::log::keywords::max_files = 512));
 
-    fileSink->set_formatter(formatter);
-    fileSink->locked_backend()->scan_for_files();
-    fileSink->locked_backend()->auto_flush(true);
+    fileSink_->set_formatter(formatter);
+    fileSink_->locked_backend()->scan_for_files();
+    fileSink_->locked_backend()->auto_flush(true);
 
-    boost::log::core::get()->add_sink(fileSink);
+    boost::log::core::get()->add_sink(fileSink_);
 }
 
 bool Logger::Init(std::string fileName, int type, int level, int maxFileSize,
@@ -118,3 +118,58 @@ bool Logger::Init(std::string fileName, int type, int level, int maxFileSize,
     boost::log::core::get()->add_global_attribute("Line", boost::log::attributes::mutable_constant<int>(0));
     return true;
 }
+
+void Logger::setConsoleLogLevel(const std::string &level)
+{
+    if (level == "trace")
+    {
+        consoleSink_->set_filter(boost::log::trivial::severity >= boost::log::trivial::trace);
+    }
+    else if (level == "debug")
+    {
+        consoleSink_->set_filter(boost::log::trivial::severity >= boost::log::trivial::debug);
+    }
+    else if (level == "info")
+    {
+        consoleSink_->set_filter(boost::log::trivial::severity >= boost::log::trivial::info);
+    }
+    else if (level == "warning")
+    {
+        consoleSink_->set_filter(boost::log::trivial::severity >= boost::log::trivial::warning);
+    }
+    else if (level == "error")
+    {
+        consoleSink_->set_filter(boost::log::trivial::severity >= boost::log::trivial::error);
+    }
+    else if (level == "fatal")
+    {
+        consoleSink_->set_filter(boost::log::trivial::severity >= boost::log::trivial::fatal);
+    }
+    else
+    {
+        std::cerr << "Unknown log level: " << level << std::endl;
+    }
+}
+
+
+
+void Logger::setFileLogLevel(const std::string& level) {
+        if (!fileSink_) {
+            throw std::runtime_error("File sink is not initialized");
+        }
+        if (level == "trace") {
+            fileSink_->set_filter(boost::log::trivial::severity >= boost::log::trivial::trace);
+        } else if (level == "debug") {
+            fileSink_->set_filter(boost::log::trivial::severity >= boost::log::trivial::debug);
+        } else if (level == "info") {
+            fileSink_->set_filter(boost::log::trivial::severity >= boost::log::trivial::info);
+        } else if (level == "warning") {
+            fileSink_->set_filter(boost::log::trivial::severity >= boost::log::trivial::warning);
+        } else if (level == "error") {
+            fileSink_->set_filter(boost::log::trivial::severity >= boost::log::trivial::error);
+        } else if (level == "fatal") {
+            fileSink_->set_filter(boost::log::trivial::severity >= boost::log::trivial::fatal);
+        } else {
+            throw std::invalid_argument("Unknown log level: " + level);
+        }
+    }

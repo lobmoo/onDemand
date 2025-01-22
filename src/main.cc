@@ -3,8 +3,11 @@
 
 int main()
 {
-    Logger::Instance().Init("log/app.log", 0, 0, 1, 1);
+    auto &prt = Logger::Instance();
+    prt.Init("log/app.log", 0, 0, 1, 1);
     int a = 100;
+    prt.setConsoleLogLevel("fatal");
+    prt.setFileLogLevel("warning");
     while (1)
     {
         LOG_TRACE << "This is a trace message";
