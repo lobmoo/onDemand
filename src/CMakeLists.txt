@@ -41,12 +41,20 @@ set(ALL_SOURCES ${SOURCES_CC_FOR_SRC} ${SOURCES_CC_FOR_MAIN})
 # 复制源文件列表用于不同的目标
 set(MAIN_SOURCES ${ALL_SOURCES})
 
+#头文件
+set(OBJ_CPP_INCLUDE "")
+set(OBJ_CPP_INCLUDE
+    ${CMAKE_SOURCE_DIR}/src/log
+    ${CMAKE_SOURCE_DIR}/thirdparty/BS_thread_pool/include
+    ${CMAKE_SOURCE_DIR}/thirdparty/boost/include
+)
 
 option(BUILD_SHARED_LIBS "Build using shared libraries" OFF)
 # 创建库，类型取决于 BUILD_SHARED_LIBS
 
 if(BUILD_LIBRARY)
 add_library(${LIBRARY_OUTPUT_NAME}   ${SOURCES_CC_FOR_SRC})
+target_include_directories(${LIBRARY_OUTPUT_NAME} PRIVATE   ${OBJ_CPP_INCLUDE})
 endif()
 
 # 添加可执行文件目标
@@ -55,13 +63,7 @@ add_executable(${PROJECT_NAME} ${MAIN_SOURCES})
 set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
 
 
-#头文件
-set(OBJ_CPP_INCLUDE "")
-set(OBJ_CPP_INCLUDE
-    ${CMAKE_SOURCE_DIR}/src/log
-    ${CMAKE_SOURCE_DIR}/thirdparty/BS_thread_pool/include
-    ${CMAKE_SOURCE_DIR}/thirdparty/boost/include
-)
+
 
 
 #list(APPEND OBJ_CPP_INCLUDE ${CMAKE_SOURCE_DIR}/thirdparty/glog/include)
