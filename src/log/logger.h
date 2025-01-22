@@ -27,6 +27,8 @@ public:
     static Logger &Instance();
     boost::log::sources::severity_logger<boost::log::trivial::severity_level> _logger;
     bool Init(std::string fileName, int type, int level, int maxFileSize, int maxBackupIndex);
+    void setProcessName(std::string name);
+    void setFileName(std::string name);
 
 private:
     Logger() {}
@@ -35,13 +37,14 @@ private:
     typedef boost::log::sinks::synchronous_sink<boost::log::sinks::text_file_backend> file_sink;
     typedef boost::log::sinks::asynchronous_sink<boost::log::sinks::text_file_backend> async_file_sink;
     typedef boost::log::sinks::asynchronous_sink<boost::log::sinks::text_ostream_backend> async_console_sink;
+    
 
 private:
-
 inline void setconsoleSink();
-
 inline void setfileSink(std::string fileName, int maxFileSize, int maxBackupIndex);
 
+std::string ProcessName;
+std::string FileName;
 };
 
 #define LOG_EXTRA_INFO                                                                 \

@@ -54,7 +54,6 @@ boost::log::formatter color_formatter =
     << " "
     << boost::log::expressions::smessage;
 
-
 void Logger::setconsoleSink()
 {
     auto consoleSink = boost::log::add_console_log();
@@ -62,21 +61,26 @@ void Logger::setconsoleSink()
     boost::log::core::get()->add_sink(consoleSink);
 }
 
-
 void Logger::setfileSink(std::string fileName, int maxFileSize, int maxBackupIndex)
-{
+{ 
     boost::shared_ptr<file_sink> fileSink(new file_sink(
-    boost::log::keywords::file_name = fileName,                      
-    boost::log::keywords::target_file_name = "%Y%m%d_%H%M%S_%N.log",   
-    boost::log::keywords::time_based_rotation = boost::log::sinks::file::rotation_at_time_point(16, 0, 0),  
-    boost::log::keywords::rotation_size = maxFileSize * 1024 * 1024,                        
-    boost::log::keywords::open_mode = std::ios::out | std::ios::app));
+        boost::log::keywords::file_name = fileName,
+        boost::log::keywords::target_file_name = "ProcessName" + "%Y%m%d_%H%M%S_%N.log",
+        boost::log::keywords::time_based_rotation = boost::log::sinks::file::rotation_at_time_point(16, 0, 0),
+        boost::log::keywords::rotation_size = maxFileSize * 1024 * 1024,
+        boost::log::keywords::open_mode = std::ios::out | std::ios::app));
+    fileSink->locked_backend()->set_file_collector(boost::log::sinks::file::make_collector(
+        boost::log::keywords::target = "logs",
+        boost::log::keywords::max_size = maxFileSize * maxBackupIndex * 1024 * 1024,
+        boost::log::keywords::min_free_space = 10 * 1024 * 1024,
+        boost::log::keywords::max_files = 512));
+
     fileSink->set_formatter(formatter);
     fileSink->locked_backend()->scan_for_files();
     fileSink->locked_backend()->auto_flush(true);
+
     boost::log::core::get()->add_sink(fileSink);
 }
-
 
 bool Logger::Init(std::string fileName, int type, int level, int maxFileSize,
                   int maxBackupIndex)
@@ -92,7 +96,7 @@ bool Logger::Init(std::string fileName, int type, int level, int maxFileSize,
     break;
     case console:
     {
-        //setconsoleSink();
+        // setconsoleSink();
     }
     break;
     case file:
@@ -110,4 +114,10 @@ bool Logger::Init(std::string fileName, int type, int level, int maxFileSize,
     boost::log::core::get()->add_global_attribute("File", boost::log::attributes::mutable_constant<std::string>(""));
     boost::log::core::get()->add_global_attribute("Line", boost::log::attributes::mutable_constant<int>(0));
     return true;
+}
+
+
+void Logger::setProcessName(std::string name)
+{
+    ProcessName = name;
 }
