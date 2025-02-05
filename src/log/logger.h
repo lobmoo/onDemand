@@ -52,4 +52,7 @@ class Logger {
 #define LOG_WARNING Logger::LogStream(Logger::warning, __FILE__, __LINE__)
 #define LOG_ERROR Logger::LogStream(Logger::error, __FILE__, __LINE__)
 #define LOG_FATAL Logger::LogStream(Logger::fatal, __FILE__, __LINE__)
+
+
+#define LOG(LEVEL) Logger::LogStream(Logger::severity_level::LEVEL, __FILE__, __LINE__)
 #endif  // LOGGER_H
