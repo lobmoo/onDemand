@@ -88,7 +88,7 @@ void Logger::LoggerImpl::setfileSink(std::string fileName, int maxFileSize, int 
   logging::core::get()->add_sink(fileSink_);
 }
 
-void Logger::LoggerImpl::setConsoleLogLevel(const std::string &level) {
+void Logger::LoggerImpl::setConsoleLogLevel(const std::string& level) {
   if (consoleSink_) {
     if (level == "trace") {
       consoleSink_->set_filter(logging::trivial::severity >= logging::trivial::trace);
@@ -108,7 +108,7 @@ void Logger::LoggerImpl::setConsoleLogLevel(const std::string &level) {
   }
 }
 
-void Logger::LoggerImpl::setFileLogLevel(const std::string &level) {
+void Logger::LoggerImpl::setFileLogLevel(const std::string& level) {
   if (!fileSink_) {
     throw std::runtime_error("File sink is not initialized");
   }
@@ -129,38 +129,14 @@ void Logger::LoggerImpl::setFileLogLevel(const std::string &level) {
   }
 }
 
-void Logger::LoggerImpl::logTrace(const std::string& msg) {
-    BOOST_LOG_FUNCTION();
-    LOG_EXTRA_INFO;
-    BOOST_LOG_SEV(_logger, boost::log::trivial::trace) << msg;
-}
+void Logger::LoggerImpl::log(Logger::severity_level level, const std::string& msg, const char* file, int line) {
+  boost::log::attribute_cast<boost::log::attributes::mutable_constant<std::string>>(
+      boost::log::core::get()->get_global_attributes()["File"])
+      .set(file);
+  boost::log::attribute_cast<boost::log::attributes::mutable_constant<int>>(
+      boost::log::core::get()->get_global_attributes()["Line"])
+      .set(line);
 
-void Logger::LoggerImpl::logDebug(const std::string& msg) {
-    BOOST_LOG_FUNCTION();
-    LOG_EXTRA_INFO;
-    BOOST_LOG_SEV(_logger, boost::log::trivial::debug) << msg;
-}
-
-void Logger::LoggerImpl::logInfo(const std::string& msg) {
-    BOOST_LOG_FUNCTION();
-    LOG_EXTRA_INFO;
-    BOOST_LOG_SEV(_logger, boost::log::trivial::info) << msg;
-}
-
-void Logger::LoggerImpl::logWarning(const std::string& msg) {
-    BOOST_LOG_FUNCTION();
-    LOG_EXTRA_INFO;
-    BOOST_LOG_SEV(_logger, boost::log::trivial::warning) << msg;
-}
-
-void Logger::LoggerImpl::logError(const std::string& msg) {
-    BOOST_LOG_FUNCTION();
-    LOG_EXTRA_INFO;
-    BOOST_LOG_SEV(_logger, boost::log::trivial::error) << msg;
-}
-
-void Logger::LoggerImpl::logFatal(const std::string& msg) {
-    BOOST_LOG_FUNCTION();
-    LOG_EXTRA_INFO;
-    BOOST_LOG_SEV(_logger, boost::log::trivial::fatal) << msg;
+  // ¼ÇÂ¼ÈÕÖ¾
+  BOOST_LOG_SEV(_logger, static_cast<boost::log::trivial::severity_level>(level)) << msg;
 }

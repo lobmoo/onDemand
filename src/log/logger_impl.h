@@ -52,14 +52,7 @@ class Logger::LoggerImpl {
   bool Init(std::string fileName, int type, int level, int maxFileSize, int maxBackupIndex, bool isAsync);
   void setConsoleLogLevel(const std::string& level);
   void setFileLogLevel(const std::string& level);
-
- public:
-  void logTrace(const std::string& msg);
-  void logDebug(const std::string& msg);
-  void logInfo(const std::string& msg);
-  void logWarning(const std::string& msg);
-  void logError(const std::string& msg);
-  void logFatal(const std::string& msg);
+  void log(Logger::severity_level level, const std::string& msg, const char* file, int line);
 
  private:
   void setconsoleSink();

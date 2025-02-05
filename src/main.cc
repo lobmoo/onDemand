@@ -1,5 +1,7 @@
-#include <iostream>
 #include <unistd.h>
+
+#include <iostream>
+
 #include "logger.h"
 
 int main() {
@@ -10,25 +12,15 @@ int main() {
   }
 
   // 设置控制台和文件的日志级别
-//   Logger::Instance().setConsoleLogLevel("info");
-//   Logger::Instance().setFileLogLevel("info");
+  //   Logger::Instance().setConsoleLogLevel("info");
+  //   Logger::Instance().setFileLogLevel("info");
 
-  while (1)
-  {
-    LOG_TRACE("This is a trace message");
-    LOG_DEBUG( "This is a debug message");
-    LOG_INFO ("This is an info message");
-    LOG_WARNING ("This is a warning message");
-    LOG_ERROR( "This is an error message");
-    LOG_FATAL( "This is a fatal message");
-    // LOG_DEBUG << "This is a debug message";
-    //  LOG_INFO << "This is an info message";
-    //  LOG_WARN << "This is a warning message";
-    //  LOG_ERROR << "This is an error message";
-    //  LOG_FATAL << "This is a fatal message";
+  while (1) {
+    LOG_DEBUG << "This is a debug message" << 42;
+    LOG_INFO << "This is an info message" << 12.5;
+    LOG_WARNING << "This is a warning message" << 'c';
+    LOG_ERROR << "This is an error message";
+    LOG_FATAL << "This is a fatal message";
     usleep(1000);
   }
-  
-  
 }
-
