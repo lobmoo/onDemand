@@ -22,6 +22,4 @@ void Logger::setConsoleLogLevel(const std::string& level) { pImpl->setConsoleLog
 
 void Logger::setFileLogLevel(const std::string& level) { pImpl->setFileLogLevel(level); }
 
-Logger::LogStream::~LogStream() {
-  Logger::Instance().logInternal(level_, stream_.str(), file_, line_);
-}
+Logger::LogStream::~LogStream() { Logger::Instance().logInternal(level_, stream_.str(), file_, line_); }

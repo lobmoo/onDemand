@@ -64,6 +64,7 @@ bool Logger::LoggerImpl::Init(
 void Logger::LoggerImpl::setconsoleSink() {
   consoleSink_ = boost::log::add_console_log();
   consoleSink_->set_formatter(color_formatter);
+  consoleSink_->locked_backend()->auto_flush(true);
   boost::log::core::get()->add_sink(consoleSink_);
 }
 

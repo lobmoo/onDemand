@@ -26,7 +26,7 @@ int main() {
     Logger::Instance().setConsoleLogLevel("info");
     Logger::Instance().setFileLogLevel("info");
 
-    const int numThreads = 20;
+    const int numThreads = 10;
     const int numMessages = 1000;
 
     std::vector<std::thread> threads;
