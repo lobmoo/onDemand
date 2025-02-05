@@ -55,9 +55,6 @@ bool Logger::LoggerImpl::Init(
 
   logging::add_common_attributes();
   logging::core::get()->set_filter(logging::trivial::severity >= level);
-  logging::core::get()->add_global_attribute("File", logging::attributes::mutable_constant<std::string>(""));
-  logging::core::get()->add_global_attribute("Line", logging::attributes::mutable_constant<int>(0));
-
   return true;
 }
 
@@ -131,13 +128,6 @@ void Logger::LoggerImpl::setFileLogLevel(const std::string& level) {
 }
 
 void Logger::LoggerImpl::log(Logger::severity_level level, const std::string& msg, const char* file, int line) {
-  boost::log::attribute_cast<boost::log::attributes::mutable_constant<std::string>>(
-      boost::log::core::get()->get_global_attributes()["File"])
-      .set(file);
-  boost::log::attribute_cast<boost::log::attributes::mutable_constant<int>>(
-      boost::log::core::get()->get_global_attributes()["Line"])
-      .set(line);
-
-  // ¼ÇÂ¼ÈÕÖ¾
-  BOOST_LOG_SEV(_logger, static_cast<boost::log::trivial::severity_level>(level)) << msg;
+  BOOST_LOG_SEV(_logger, static_cast<boost::log::trivial::severity_level>(level))
+      << logging::add_value("File", file) << logging::add_value("Line", line) << msg;
 }
