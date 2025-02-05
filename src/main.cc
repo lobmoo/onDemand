@@ -23,8 +23,8 @@ int main() {
     }
 
     // 设置控制台和文件的日志级别
-    Logger::Instance().setConsoleLogLevel("info");
-    Logger::Instance().setFileLogLevel("info");
+    Logger::Instance().setConsoleLogLevel(Logger::info);
+    Logger::Instance().setFileLogLevel(Logger::info);
 
     const int numThreads = 20;
     const int numMessages = 1000;

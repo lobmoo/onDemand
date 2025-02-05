@@ -34,8 +34,8 @@ class Logger {
   static Logger& Instance();
 
   bool Init(const std::string& fileName, int type, int level, int maxFileSize, int maxBackupIndex, bool isAsync);
-  void setConsoleLogLevel(const std::string& level);
-  void setFileLogLevel(const std::string& level);
+  void setConsoleLogLevel(const Logger::severity_level level);
+  void setFileLogLevel(const Logger::severity_level level);
 
  private:
   class LoggerImpl;
@@ -47,13 +47,14 @@ class Logger {
   friend class LogStream;
 };
 
+
+
 #define LOG_TRACE Logger::LogStream(Logger::trace, __FILE__, __LINE__)
 #define LOG_DEBUG Logger::LogStream(Logger::debug, __FILE__, __LINE__)
 #define LOG_INFO Logger::LogStream(Logger::info, __FILE__, __LINE__)
 #define LOG_WARNING Logger::LogStream(Logger::warning, __FILE__, __LINE__)
 #define LOG_ERROR Logger::LogStream(Logger::error, __FILE__, __LINE__)
 #define LOG_FATAL Logger::LogStream(Logger::fatal, __FILE__, __LINE__)
-
 
 #define LOG(LEVEL) Logger::LogStream(Logger::severity_level::LEVEL, __FILE__, __LINE__)
 #endif  // LOGGER_H

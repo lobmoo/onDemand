@@ -23,37 +23,68 @@ set(INSTALL_LIB_DIR "${CMAKE_INSTALL_PREFIX}/lib")
 set(INSTALL_BIN_DIR "${CMAKE_INSTALL_PREFIX}/bin")
 set(INSTALL_INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include")
 
-# 查找目录下的所有源文件
-# 假设您希望在查找源文件时排除 CMakeFiles 目录
-file(GLOB SOURCES_CC_FOR_SRC "${CMAKE_SOURCE_DIR}/src/log/*.cc")
-# file(GLOB SOURCES_CC_FOR_SRC "${CMAKE_SOURCE_DIR}/src/*.cc")
-#list(FILTER DDS_SHM_HELLOWORLD_EXAMPLE_SOURCES_CXX EXCLUDE REGEX "CMakeFiles/.*")
 
-file(GLOB SOURCES_CC_FOR_MAIN "${CMAKE_SOURCE_DIR}/src/*.cc")
-#list(FILTER DDS_SHM_HELLOWORLD_EXAMPLE_SOURCES_CPP EXCLUDE REGEX "CMakeFiles/.*")
-
-message(STATUS "Collected CXX sources: ${SOURCES_CC_FOR_SRC}")
-message(STATUS "Collected CPP sources: ${SOURCES_CC_FOR_MAIN}")
-message(STATUS "CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX}")
-
-# 合并所有查找到的文件列表
-set(ALL_SOURCES ${SOURCES_CC_FOR_SRC} ${SOURCES_CC_FOR_MAIN})
-# 复制源文件列表用于不同的目标
-set(MAIN_SOURCES ${ALL_SOURCES})
 
 #头文件
-set(OBJ_CPP_INCLUDE "")
 set(OBJ_CPP_INCLUDE
     ${CMAKE_SOURCE_DIR}/src/log
     ${CMAKE_SOURCE_DIR}/thirdparty/BS_thread_pool/include
     ${CMAKE_SOURCE_DIR}/thirdparty/boost/include
 )
 
-option(BUILD_SHARED_LIBS "Build using shared libraries" OFF)
+set(SOURCES_CC_FOR_LOG
+    "${CMAKE_CURRENT_SOURCE_DIR}/log/logger.cc"
+    "${CMAKE_CURRENT_SOURCE_DIR}/log/logger_impl.cc"
+)
+
+# 查找目录下的所有源文件
+# 假设您希望在查找源文件时排除 CMakeFiles 目录
+file(GLOB SOURCES_CC_FOR_MAIN "${CMAKE_CURRENT_SOURCE_DIR}/*.cc")
+#list(FILTER DDS_SHM_HELLOWORLD_EXAMPLE_SOURCES_CPP EXCLUDE REGEX "CMakeFiles/.*")
+
+message(STATUS "Collected CXX sources: ${SOURCES_CC_FOR_LOG}")
+message(STATUS "Collected CPP sources: ${SOURCES_CC_FOR_MAIN}")
+message(STATUS "CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX}")
+
+# 合并所有查找到的文件列表
+set(ALL_SOURCES ${SOURCES_CC_FOR_LOG} ${SOURCES_CC_FOR_MAIN})
+# 复制源文件列表用于不同的目标
+set(MAIN_SOURCES ${ALL_SOURCES})
+
+
+
+# 添加测试选项
+option(BUILD_TESTING "Build the testing targets" ON)
+
+if(BUILD_TESTING)
+    # 添加测试源文件
+    set(SOURCES_CC_FOR_TEST
+        "${CMAKE_CURRENT_SOURCE_DIR}/log/logger_test.cc"
+    )
+    # 添加测试可执行文件
+    add_executable(logger_test ${SOURCES_CC_FOR_LOG} ${SOURCES_CC_FOR_TEST})
+    set_target_properties(logger_test PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/test") 
+    target_include_directories(logger_test PRIVATE   ${OBJ_CPP_INCLUDE})
+    # 链接测试所需的库
+    target_link_libraries(logger_test
+        PRIVATE
+        gtest
+        gtest_main
+        ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_log.a 
+        ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_log_setup.a
+        ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_system.a
+        ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_thread.a
+        ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_filesystem.a
+        pthread 
+        rt
+    )
+endif()
+
+option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
 # 创建库，类型取决于 BUILD_SHARED_LIBS
 
 if(BUILD_LIBRARY)
-add_library(${LIBRARY_OUTPUT_NAME}   ${SOURCES_CC_FOR_SRC})
+add_library(${LIBRARY_OUTPUT_NAME}   ${SOURCES_CC_FOR_LOG})
 target_include_directories(${LIBRARY_OUTPUT_NAME} PRIVATE   ${OBJ_CPP_INCLUDE})
 endif()
 
@@ -62,29 +93,7 @@ add_executable(${PROJECT_NAME} ${MAIN_SOURCES})
 #指定可执行文件生成路径 目前是当前cmakelist文件所在根目录
 set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
 
-
-
-
-
-#list(APPEND OBJ_CPP_INCLUDE ${CMAKE_SOURCE_DIR}/thirdparty/glog/include)
-
-
 target_include_directories(${PROJECT_NAME} PRIVATE  ${OBJ_CPP_INCLUDE})
-
-
-# # FSAT DDS
-# find_library(FASTRTPS_LIBRARY NAMES fastrtps PATHS ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib)
-# find_library(FOONATHAN_MEMORY_LIBRARY NAMES foonathan_memory-0.7.3 PATHS ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib)
-# find_library(FASTCDR_LIBRARY NAMES fastcdr PATHS ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib)
-# # 检查每个库是否都找到了
-# if(FASTRTPS_LIBRARY AND FOONATHAN_MEMORY_LIBRARY AND FASTCDR_LIBRARY)
-#     list(APPEND OBJ_CPP_LIBS ${FASTRTPS_LIBRARY} ${FOONATHAN_MEMORY_LIBRARY} ${FASTCDR_LIBRARY})
-#     message(STATUS "Found all FAST DDS libraries")
-# else()
-#     message(FATAL_ERROR "Could not find all required FAST DDS libraries")
-# endif()
-
-
 
 target_link_libraries(${PROJECT_NAME} PRIVATE 
     ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_log.a 

@@ -7,10 +7,10 @@
 #include <boost/log/sources/severity_logger.hpp>
 #include <boost/log/support/date_time.hpp>
 #include <boost/log/trivial.hpp>
+#include <boost/log/utility/manipulators/add_value.hpp>
 #include <boost/log/utility/setup/common_attributes.hpp>
 #include <boost/log/utility/setup/console.hpp>
 #include <boost/log/utility/setup/file.hpp>
-#include <boost/log/utility/manipulators/add_value.hpp>
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
@@ -51,8 +51,8 @@ class Logger::LoggerImpl {
   ~LoggerImpl();
 
   bool Init(std::string fileName, int type, int level, int maxFileSize, int maxBackupIndex, bool isAsync);
-  void setConsoleLogLevel(const std::string& level);
-  void setFileLogLevel(const std::string& level);
+  void setConsoleLogLevel(Logger::severity_level level);
+  void setFileLogLevel(Logger::severity_level level);
   void log(Logger::severity_level level, const std::string& msg, const char* file, int line);
 
  private:

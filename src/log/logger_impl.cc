@@ -86,44 +86,61 @@ void Logger::LoggerImpl::setfileSink(std::string fileName, int maxFileSize, int 
   logging::core::get()->add_sink(fileSink_);
 }
 
-void Logger::LoggerImpl::setConsoleLogLevel(const std::string& level) {
+void Logger::LoggerImpl::setConsoleLogLevel(Logger::severity_level level) {
   if (consoleSink_) {
-    if (level == "trace") {
-      consoleSink_->set_filter(logging::trivial::severity >= logging::trivial::trace);
-    } else if (level == "debug") {
-      consoleSink_->set_filter(logging::trivial::severity >= logging::trivial::debug);
-    } else if (level == "info") {
-      consoleSink_->set_filter(logging::trivial::severity >= logging::trivial::info);
-    } else if (level == "warning") {
-      consoleSink_->set_filter(logging::trivial::severity >= logging::trivial::warning);
-    } else if (level == "error") {
-      consoleSink_->set_filter(logging::trivial::severity >= logging::trivial::error);
-    } else if (level == "fatal") {
-      consoleSink_->set_filter(logging::trivial::severity >= logging::trivial::fatal);
-    } else {
-      std::cerr << "Unknown log level: " << level << std::endl;
+    switch (level) {
+      case Logger::trace:
+        consoleSink_->set_filter(logging::trivial::severity >= logging::trivial::trace);
+        break;
+      case Logger::debug:
+        consoleSink_->set_filter(logging::trivial::severity >= logging::trivial::debug);
+        break;
+      case Logger::info:
+        consoleSink_->set_filter(logging::trivial::severity >= logging::trivial::info);
+        break;
+      case Logger::warning:
+        consoleSink_->set_filter(logging::trivial::severity >= logging::trivial::warning);
+        break;
+      case Logger::error:
+        consoleSink_->set_filter(logging::trivial::severity >= logging::trivial::error);
+        break;
+      case Logger::fatal:
+        consoleSink_->set_filter(logging::trivial::severity >= logging::trivial::fatal);
+        break;
+      default:
+        consoleSink_->set_filter(logging::trivial::severity >= logging::trivial::trace);
+        std::cerr << "Unknown log level: " << level << std::endl;
+        break;
     }
   }
 }
 
-void Logger::LoggerImpl::setFileLogLevel(const std::string& level) {
+void Logger::LoggerImpl::setFileLogLevel(Logger::severity_level level) {
   if (!fileSink_) {
     throw std::runtime_error("File sink is not initialized");
   }
-  if (level == "trace") {
-    fileSink_->set_filter(logging::trivial::severity >= logging::trivial::trace);
-  } else if (level == "debug") {
-    fileSink_->set_filter(logging::trivial::severity >= logging::trivial::debug);
-  } else if (level == "info") {
-    fileSink_->set_filter(logging::trivial::severity >= logging::trivial::info);
-  } else if (level == "warning") {
-    fileSink_->set_filter(logging::trivial::severity >= logging::trivial::warning);
-  } else if (level == "error") {
-    fileSink_->set_filter(logging::trivial::severity >= logging::trivial::error);
-  } else if (level == "fatal") {
-    fileSink_->set_filter(logging::trivial::severity >= logging::trivial::fatal);
-  } else {
-    throw std::invalid_argument("Unknown log level: " + level);
+
+  switch (level) {
+    case Logger::trace:
+      fileSink_->set_filter(logging::trivial::severity >= logging::trivial::trace);
+      break;
+    case Logger::debug:
+      fileSink_->set_filter(logging::trivial::severity >= logging::trivial::debug);
+      break;
+    case Logger::info:
+      fileSink_->set_filter(logging::trivial::severity >= logging::trivial::info);
+      break;
+    case Logger::warning:
+      fileSink_->set_filter(logging::trivial::severity >= logging::trivial::warning);
+      break;
+    case Logger::error:
+      fileSink_->set_filter(logging::trivial::severity >= logging::trivial::error);
+      break;
+    case Logger::fatal:
+      fileSink_->set_filter(logging::trivial::severity >= logging::trivial::fatal);
+      break;
+    default:
+      throw std::invalid_argument("Unknown log level");
   }
 }
 
