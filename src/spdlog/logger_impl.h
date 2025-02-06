@@ -1,14 +1,14 @@
 #ifndef LOGGER_IMPL_H
 #define LOGGER_IMPL_H
 
+#include <spdlog/async.h>
+#include <spdlog/sinks/rotating_file_sink.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/spdlog.h>
+
 #include <memory>
 #include <string>
 #include <vector>
-#include <spdlog/spdlog.h>
-#include <spdlog/sinks/stdout_color_sinks.h>
-#include <spdlog/sinks/rotating_file_sink.h>
-#include <spdlog/async.h>
-
 
 #include "logger.h"
 
@@ -25,6 +25,8 @@ class Logger::LoggerImpl {
  private:
   std::vector<spdlog::sink_ptr> sinks;
   std::shared_ptr<spdlog::logger> logger = nullptr;
+  std::string getLogNameInfo();
+
  public:
 };
 

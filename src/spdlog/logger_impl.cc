@@ -1,6 +1,6 @@
 #include "logger_impl.h"
 
-#include <filesystem>
+#include <iomanip>
 #include <memory>
 #include <sstream>
 
@@ -9,21 +9,14 @@ Logger::LoggerImpl::~LoggerImpl() {}
 
 bool Logger::LoggerImpl::Init(
     std::string fileName, int type, int level, int maxFileSize, int maxBackupIndex, bool isAsync) {
-  // namespace fs = std::filesystem;
-  // fs::path log_path(fileName);
-  // fs::path log_dir = log_path.parent_path();
-  // if (!fs::exists(log_path)) {
-  //   fs::create_directories(log_dir);
-  // }
-  constexpr std::size_t log_buffer_size = 32 * 1024;  // 32kb
+  constexpr std::size_t log_buffer_size = 32 * 1024;
   std::size_t max_file_size = 1024 * 1024 * maxFileSize;
   spdlog::init_thread_pool(log_buffer_size, std::thread::hardware_concurrency());
-
+  std::string logName =  fileName + "_" + getLogNameInfo();
   switch (type) {
     case Logger::both: {
       auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
-      auto file_sink =
-          std::make_shared<spdlog::sinks::rotating_file_sink_mt>(fileName, max_file_size, maxBackupIndex);
+      auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(logName, max_file_size, maxBackupIndex);
       sinks.push_back(file_sink);
       sinks.push_back(console_sink);
     } break;
@@ -41,6 +34,7 @@ bool Logger::LoggerImpl::Init(
     }
     logger = std::make_shared<spdlog::logger>("Logger", sinks.begin(), sinks.end());
     logger->set_level(static_cast<spdlog::level::level_enum>(level));
+    logger->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%l%$] [%t] [%s:%# %!] %v");
     spdlog::register_logger(logger);
     spdlog::set_default_logger(logger);
   }
@@ -51,6 +45,27 @@ void Logger::LoggerImpl::log(Logger::severity_level level, const std::string& ms
   if (logger) {
     logger->log(spdlog::source_loc{file, line, SPDLOG_FUNCTION}, static_cast<spdlog::level::level_enum>(level), msg);
   }
+}
+
+std::string Logger::LoggerImpl::getLogNameInfo() {
+  pid_t pid = getpid();
+
+  auto now = std::chrono::system_clock::now();
+  auto time = std::chrono::system_clock::to_time_t(now);
+  std::tm tm = *std::localtime(&time);
+
+  std::ostringstream oss;
+  oss << std::put_time(&tm, "%Y-%m-%d_%H-%M-%S");
+
+  char process_name[256];
+  if (readlink("/proc/self/exe", process_name, sizeof(process_name) - 1) != -1) {
+    process_name[sizeof(process_name) - 1] = '\0';
+  } else {
+    std::strncpy(process_name, "unknown", sizeof(process_name));
+  }
+  std::ostringstream file_name;
+  file_name << process_name << "_" << oss.str() << "_pid" << pid << ".log";
+  return file_name.str();
 }
 
 void Logger::LoggerImpl::setConsoleLogLevel(Logger::severity_level level) {
