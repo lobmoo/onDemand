@@ -1,64 +1,112 @@
 #include "logger_impl.h"
-#include <iostream>
-#include <ctime>
-#include "logger.h"
 
-LoggerImpl::LoggerImpl() : logLevel_(DEBUG) {}
+#include <filesystem>
+#include <memory>
+#include <sstream>
 
-LoggerImpl::~LoggerImpl() {
-    if (logFile_.is_open()) {
-        logFile_.close();
+Logger::LoggerImpl::LoggerImpl() {}
+Logger::LoggerImpl::~LoggerImpl() {}
+
+bool Logger::LoggerImpl::Init(
+    std::string fileName, int type, int level, int maxFileSize, int maxBackupIndex, bool isAsync) {
+  // namespace fs = std::filesystem;
+  // fs::path log_path(fileName);
+  // fs::path log_dir = log_path.parent_path();
+  // if (!fs::exists(log_path)) {
+  //   fs::create_directories(log_dir);
+  // }
+  constexpr std::size_t log_buffer_size = 32 * 1024;  // 32kb
+  std::size_t max_file_size = 1024 * 1024 * maxFileSize;
+  spdlog::init_thread_pool(log_buffer_size, std::thread::hardware_concurrency());
+
+  switch (type) {
+    case Logger::both: {
+      auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+      auto file_sink =
+          std::make_shared<spdlog::sinks::rotating_file_sink_mt>(fileName, max_file_size, maxBackupIndex);
+      sinks.push_back(file_sink);
+      sinks.push_back(console_sink);
+    } break;
+    case Logger::console: {
+    } break;
+    case Logger::file: {
+    } break;
+    default:
+      break;
+  }
+  if (isAsync) {
+  } else {
+    if (sinks.empty()) {
+      return false;
     }
+    logger = std::make_shared<spdlog::logger>("Logger", sinks.begin(), sinks.end());
+    logger->set_level(static_cast<spdlog::level::level_enum>(level));
+    spdlog::register_logger(logger);
+    spdlog::set_default_logger(logger);
+  }
+  return true;
 }
 
-void LoggerImpl::setLevel(int level) {
-    logLevel_ = level;
+void Logger::LoggerImpl::log(Logger::severity_level level, const std::string& msg, const char* file, int line) {
+  if (logger) {
+    logger->log(spdlog::source_loc{file, line, SPDLOG_FUNCTION}, static_cast<spdlog::level::level_enum>(level), msg);
+  }
 }
 
-void LoggerImpl::setOutputFile(const std::string& filename) {
-    std::lock_guard<std::mutex> lock(mutex_);
-    if (logFile_.is_open()) {
-        logFile_.close();
-    }
-    logFile_.open(filename, std::ios::out | std::ios::app);
+void Logger::LoggerImpl::setConsoleLogLevel(Logger::severity_level level) {
+  // if (consoleSink_) {
+  //   switch (level) {
+  //     case Logger::trace:
+  //       consoleSink_->set_filter(logging::trivial::severity >= logging::trivial::trace);
+  //       break;
+  //     case Logger::debug:
+  //       consoleSink_->set_filter(logging::trivial::severity >= logging::trivial::debug);
+  //       break;
+  //     case Logger::info:
+  //       consoleSink_->set_filter(logging::trivial::severity >= logging::trivial::info);
+  //       break;
+  //     case Logger::warning:
+  //       consoleSink_->set_filter(logging::trivial::severity >= logging::trivial::warning);
+  //       break;
+  //     case Logger::error:
+  //       consoleSink_->set_filter(logging::trivial::severity >= logging::trivial::error);
+  //       break;
+  //     case Logger::fatal:
+  //       consoleSink_->set_filter(logging::trivial::severity >= logging::trivial::fatal);
+  //       break;
+  //     default:
+  //       consoleSink_->set_filter(logging::trivial::severity >= logging::trivial::trace);
+  //       std::cerr << "Unknown log level: " << level << std::endl;
+  //       break;
+  //   }
+  // }
 }
 
-void LoggerImpl::flush() {
-    std::lock_guard<std::mutex> lock(mutex_);
-    if (logFile_.is_open()) {
-        logFile_.flush();
-    }
-}
+void Logger::LoggerImpl::setFileLogLevel(Logger::severity_level level) {
+  // if (!fileSink_) {
+  //   throw std::runtime_error("File sink is not initialized");
+  // }
 
-void LoggerImpl::log(const std::string& level, const std::string& msg) {
-    std::lock_guard<std::mutex> lock(mutex_);
-    
-    // 生成时间戳
-    std::time_t now = std::time(nullptr);
-    char buf[20];
-    std::strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", std::localtime(&now));
-
-    std::string logMsg = std::string("[") + buf + "] [" + level + "] " + msg + "\n";
-
-    if (logFile_.is_open()) {
-        logFile_ << logMsg;
-    } else {
-        std::cout << logMsg;
-    }
-}
-
-void LoggerImpl::debug(const std::string& msg) {
-    if (logLevel_ <= DEBUG) log("DEBUG", msg);
-}
-
-void LoggerImpl::info(const std::string& msg) {
-    if (logLevel_ <= INFO) log("INFO", msg);
-}
-
-void LoggerImpl::warn(const std::string& msg) {
-    if (logLevel_ <= WARN) log("WARN", msg);
-}
-
-void LoggerImpl::error(const std::string& msg) {
-    if (logLevel_ <= ERROR) log("ERROR", msg);
+  // switch (level) {
+  //   case Logger::trace:
+  //     fileSink_->set_filter(logging::trivial::severity >= logging::trivial::trace);
+  //     break;
+  //   case Logger::debug:
+  //     fileSink_->set_filter(logging::trivial::severity >= logging::trivial::debug);
+  //     break;
+  //   case Logger::info:
+  //     fileSink_->set_filter(logging::trivial::severity >= logging::trivial::info);
+  //     break;
+  //   case Logger::warning:
+  //     fileSink_->set_filter(logging::trivial::severity >= logging::trivial::warning);
+  //     break;
+  //   case Logger::error:
+  //     fileSink_->set_filter(logging::trivial::severity >= logging::trivial::error);
+  //     break;
+  //   case Logger::fatal:
+  //     fileSink_->set_filter(logging::trivial::severity >= logging::trivial::fatal);
+  //     break;
+  //   default:
+  //     throw std::invalid_argument("Unknown log level");
+  // }
 }

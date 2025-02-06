@@ -42,8 +42,20 @@
 //     return 0;
 // }
 
-int main()
-{
+#include <unistd.h>
 
-    return 0;
+#include <iostream>
+#include <thread>
+#include <vector>
+
+#include "logger.h"
+
+int main(int argc, char** argv) {
+  if (!Logger::Instance().Init("log/myapp.log", Logger::both, 0, 5, 3, false)) {
+    std::cerr << "Failed to initialize logger" << std::endl;
+    return 1;
+  }
+  LOG(info) << "This is an info message";
+  LOG(error) << "Error occurred: " << 236;
+  return 0;
 }

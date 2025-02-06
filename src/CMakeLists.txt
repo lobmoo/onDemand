@@ -60,38 +60,38 @@ set(MAIN_SOURCES ${ALL_SOURCES})
 
 
 # 添加测试选项
-option(BUILD_TESTING "Build the testing targets" OFF)
+option(BUILD_TESTING "Build the testing targets" ON)
 
 if(BUILD_TESTING)
     # 添加测试源文件
-    set(SOURCES_CC_FOR_TEST
-        "${CMAKE_CURRENT_SOURCE_DIR}/log/logger_test.cc"
-    )
+#     set(SOURCES_CC_FOR_TEST
+#         "${CMAKE_CURRENT_SOURCE_DIR}/log/logger_test.cc"
+#     )
     set(SOURCES_SPDLOG
         "${CMAKE_CURRENT_SOURCE_DIR}/spdlog/spdlog_test.cc"
     )    
 
     # 添加测试可执行文件
-    add_executable(logger_test ${SOURCES_CC_FOR_LOG} ${SOURCES_CC_FOR_TEST})
+#     add_executable(logger_test ${SOURCES_CC_FOR_LOG} ${SOURCES_CC_FOR_TEST})
     add_executable(spdlog_test ${SOURCES_SPDLOG})
-    set_target_properties(logger_test PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/test") 
+#     set_target_properties(logger_test PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/test") 
     set_target_properties(spdlog_test PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/test") 
-    target_include_directories(logger_test PRIVATE   ${OBJ_CPP_INCLUDE})
+#     target_include_directories(logger_test PRIVATE   ${OBJ_CPP_INCLUDE})
     target_include_directories(spdlog_test PRIVATE   ${OBJ_CPP_INCLUDE})
     # 链接测试所需的库
-    target_link_libraries(logger_test
-        PRIVATE
-        gtest
-        gtest_main
-        ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_log.a 
-        ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_log_setup.a
-        ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_system.a
-        ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_thread.a
-        ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_filesystem.a
-        ${CMAKE_SOURCE_DIR}/thirdparty/spdlog/lib/libspdlog.a
-        pthread 
-        rt
-    )
+#     target_link_libraries(logger_test
+#         PRIVATE
+#         gtest
+#         gtest_main
+#         ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_log.a 
+#         ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_log_setup.a
+#         ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_system.a
+#         ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_thread.a
+#         ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_filesystem.a
+#         ${CMAKE_SOURCE_DIR}/thirdparty/spdlog/lib/libspdlog.a
+#         pthread 
+#         rt
+#     )
     target_link_libraries(spdlog_test
     PRIVATE
     gtest
@@ -124,6 +124,8 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_thread.a
     ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_filesystem.a
     ${CMAKE_SOURCE_DIR}/thirdparty/spdlog/lib/libspdlog.a
+    gtest
+    gtest_main
     pthread 
     rt
 )

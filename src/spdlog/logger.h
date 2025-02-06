@@ -2,54 +2,47 @@
 #define LOGGER_H
 
 #include <memory>
-#include <string>
+#include <mutex>
 #include <sstream>
-
-class LoggerImpl;  // 前向声明
+#include <string>
 
 class Logger {
-public:
-    static Logger& getInstance(); // 单例模式
+ public:
+  enum severity_level { trace, debug, info, warning, error, fatal };
+  enum LoggerType { both = 0, console, file };
 
-    void debug(const std::string& msg);
-    void info(const std::string& msg);
-    void warn(const std::string& msg);
-    void error(const std::string& msg);
+ public:
+  ~Logger();
+  static Logger& Instance();
+  bool Init(const std::string& fileName, int type, int level, int maxFileSize, int maxBackupIndex, bool isAsync);
+  void Log(severity_level level, const std::string& msg, const char* file, int line);
+  void setConsoleLogLevel(const Logger::severity_level level);
+  void setFileLogLevel(const Logger::severity_level level);
 
-    void setLevel(int level);
-    void setOutputFile(const std::string& filename);
-    void flush();
-
-private:
-    Logger();  // 私有构造
-    ~Logger();
-
-    Logger(const Logger&) = delete;
-    Logger& operator=(const Logger&) = delete;
-
-    std::unique_ptr<LoggerImpl> pimpl_;
+ private:
+  class LoggerImpl;
+  std::unique_ptr<LoggerImpl> pImpl;
+  Logger();
+  Logger(const Logger&) = delete;
+  Logger& operator=(const Logger&) = delete;
 };
 
-// 定义日志级别
-enum LogLevel { DEBUG, INFO, WARN, ERROR };
+class LogStream {
+ public:
+  LogStream(Logger& logger, Logger::severity_level level, const char* file, int line)
+      : logger_(logger), level_(level), file_(file), line_(line) {}
+  ~LogStream() { logger_.Log(level_, stream_.str(), file_, line_); }
 
-// 定义日志宏
-#define LOG(level) LoggerStream(level, __FILE__, __LINE__)
+  std::ostringstream& stream() { return stream_; }
 
-class LoggerStream {
-public:
-    LoggerStream(LogLevel level, const char* file, int line);
-    ~LoggerStream();
-
-    template <typename T>
-    LoggerStream& operator<<(const T& msg) {
-        stream_ << msg;
-        return *this;
-    }
-
-private:
-    std::ostringstream stream_;
-    LogLevel level_;
+ private:
+  Logger& logger_;
+  Logger::severity_level level_;
+  const char* file_;
+  int line_;
+  std::ostringstream stream_;
 };
+
+#define LOG(level) LogStream(Logger::Instance(), Logger::level, __FILE__, __LINE__).stream()
 
 #endif  // LOGGER_H
