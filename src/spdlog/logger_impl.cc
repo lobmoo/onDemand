@@ -11,7 +11,6 @@ bool Logger::LoggerImpl::Init(
     std::string fileName, int type, int level, int maxFileSize, int maxBackupIndex, bool isAsync) {
   constexpr std::size_t log_buffer_size = 32 * 1024;
   std::size_t max_file_size = 1024 * 1024 * maxFileSize;
-  std::string logName = getLogNameInfo(fileName);
   std::vector<spdlog::sink_ptr> sinks;
 
   spdlog::level::level_enum console_level = GetLogLevelFromEnv("LOG_CONSOLE_LEVEL", spdlog::level::info);
@@ -20,7 +19,7 @@ bool Logger::LoggerImpl::Init(
   switch (type) {
     case Logger::both: {
       auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
-      auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(fileName, max_file_size, maxBackupIndex);
+      auto file_sink = std::make_shared<spdlog::sinks::custom_rotating_file_sink_mt>(fileName, max_file_size, maxBackupIndex);
       /*按天数轮转记录器  todo*/
       // auto file_sink = std::make_shared<spdlog::sinks::daily_file_sink_mt>(fileName, 23, 59);
       console_sink->set_level(console_level);
@@ -34,7 +33,7 @@ bool Logger::LoggerImpl::Init(
       sinks.push_back(console_sink);
     } break;
     case Logger::file: {
-      auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(fileName, max_file_size, maxBackupIndex);
+      auto file_sink = std::make_shared<spdlog::sinks::custom_rotating_file_sink_mt>(fileName, max_file_size, maxBackupIndex);
       file_sink->set_level(file_level);
       sinks.push_back(file_sink);
     } break;
@@ -79,24 +78,4 @@ spdlog::level::level_enum Logger::LoggerImpl::GetLogLevelFromEnv(
   return spdlog::level::from_str(level_str);
 }
 
-std::string Logger::LoggerImpl::getLogNameInfo(const std::string& fileName) {
-  pid_t pid = getpid();
 
-  auto now = std::chrono::system_clock::now();
-  auto time = std::chrono::system_clock::to_time_t(now);
-  std::tm tm = *std::localtime(&time);
-
-  std::ostringstream oss;
-  oss << std::put_time(&tm, "%Y-%m-%d_%H-%M-%S");
-
-  char process_name[256];
-  if (readlink("/proc/self/exe", process_name, sizeof(process_name) - 1) != -1) {
-    process_name[sizeof(process_name) - 1] = '\0';
-  } else {
-    std::strncpy(process_name, "unknown", sizeof(process_name));
-  }
-
-  std::ostringstream file_name;
-  file_name << fileName << "_" << process_name << "_" << oss.str() << "_pid" << pid << ".log";
-  return file_name.str();
-}

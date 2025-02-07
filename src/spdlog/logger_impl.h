@@ -12,7 +12,7 @@
 #include <vector>
 
 #include "logger.h"
-
+#include "custom_rotating_file_sink.h"
 class Logger::LoggerImpl {
  public:
   LoggerImpl();

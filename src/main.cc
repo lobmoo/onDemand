@@ -66,7 +66,7 @@ int main(int argc, char** argv) {
     LOG(error) << "Thread " << threadId << " - Error message " << i;
     LOG(critical) << "Thread " << threadId << " - fatal message " << i;
     i++;
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
   }
 
   return 0;
