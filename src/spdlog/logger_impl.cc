@@ -21,10 +21,16 @@ bool Logger::LoggerImpl::Init(
       sinks.push_back(console_sink);
     } break;
     case Logger::console: {
+      auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+      sinks.push_back(console_sink);
     } break;
     case Logger::file: {
+      auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(fileName, max_file_size, maxBackupIndex);
+      sinks.push_back(file_sink);
     } break;
     default:
+      auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+      sinks.push_back(console_sink);
       break;
   }
   if (isAsync) {
@@ -41,13 +47,14 @@ bool Logger::LoggerImpl::Init(
   return true;
 }
 
-void Logger::LoggerImpl::log(Logger::severity_level level, const std::string& msg, const char* file, int line, const char* func) {
+void Logger::LoggerImpl::log(
+    Logger::severity_level level, const std::string& msg, const char* file, int line, const char* func) {
   if (logger) {
     logger->log(spdlog::source_loc{file, line, func}, static_cast<spdlog::level::level_enum>(level), msg);
   }
 }
 
-std::string Logger::LoggerImpl::getLogNameInfo(const std::string &fileName) {
+std::string Logger::LoggerImpl::getLogNameInfo(const std::string& fileName) {
   pid_t pid = getpid();
 
   auto now = std::chrono::system_clock::now();
