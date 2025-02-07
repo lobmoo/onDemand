@@ -50,21 +50,12 @@
 
 #include "logger.h"
 
-void func1()
-{
-    LOG(trace) << "Thread " << " - Trace message " ;
-    LOG(debug) << "Thread " << " - Debug message " ;
-    LOG(info) << "Thread " << " - Info message " ;
-    LOG(error) << "Thread " << " - Error message " ;
-}
-
-
 int main(int argc, char** argv) {
-  if (!Logger::Instance().Init("log/myapp.log", Logger::file, 0, 1, 3, false)) {
+  if (!Logger::Instance().Init("log/myapp.log", Logger::both, 0, 1, 3, true)) {
     std::cerr << "Failed to initialize logger" << std::endl;
     return 1;
   }
-  func1();
+
   while (1) {
     int i = 0;
     int threadId = 256;
@@ -75,7 +66,7 @@ int main(int argc, char** argv) {
     LOG(error) << "Thread " << threadId << " - Error message " << i;
     LOG(fatal) << "Thread " << threadId << " - fatal message " << i;
     i++;
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
   }
 
   return 0;

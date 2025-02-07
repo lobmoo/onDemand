@@ -23,7 +23,6 @@ class Logger::LoggerImpl {
   void log(Logger::severity_level level, const std::string& msg, const char* file, int line, const char* func);
 
  private:
-  std::vector<spdlog::sink_ptr> sinks;
   std::shared_ptr<spdlog::logger> logger = nullptr;
   std::string getLogNameInfo(const std::string &fileName);
 

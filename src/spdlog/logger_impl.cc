@@ -1,6 +1,7 @@
 #include "logger_impl.h"
 
 #include <iomanip>
+#include <iostream>
 #include <memory>
 #include <sstream>
 
@@ -11,8 +12,8 @@ bool Logger::LoggerImpl::Init(
     std::string fileName, int type, int level, int maxFileSize, int maxBackupIndex, bool isAsync) {
   constexpr std::size_t log_buffer_size = 32 * 1024;
   std::size_t max_file_size = 1024 * 1024 * maxFileSize;
-  spdlog::init_thread_pool(log_buffer_size, std::thread::hardware_concurrency());
   std::string logName = getLogNameInfo(fileName);
+  std::vector<spdlog::sink_ptr> sinks;
   switch (type) {
     case Logger::both: {
       auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
@@ -33,17 +34,20 @@ bool Logger::LoggerImpl::Init(
       sinks.push_back(console_sink);
       break;
   }
-  if (isAsync) {
-  } else {
-    if (sinks.empty()) {
-      return false;
-    }
-    logger = std::make_shared<spdlog::logger>("Logger", sinks.begin(), sinks.end());
-    logger->set_level(static_cast<spdlog::level::level_enum>(level));
-    logger->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%l%$] [%t] [%s:%# %!] %v");
-    spdlog::register_logger(logger);
-    spdlog::set_default_logger(logger);
+  if (sinks.empty()) {
+    return false;
   }
+  if (isAsync) {
+    spdlog::init_thread_pool(log_buffer_size, std::thread::hardware_concurrency());
+    logger = std::make_shared<spdlog::async_logger>(
+        "Logger", sinks.begin(), sinks.end(), spdlog::thread_pool(), spdlog::async_overflow_policy::block);
+  } else {
+    logger = std::make_shared<spdlog::logger>("Logger", sinks.begin(), sinks.end());
+  }
+  logger->set_level(static_cast<spdlog::level::level_enum>(level));
+  logger->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%l%$] [%t] [%s:%# %!] %v");
+  spdlog::register_logger(logger);
+  spdlog::set_default_logger(logger);
   return true;
 }
 
