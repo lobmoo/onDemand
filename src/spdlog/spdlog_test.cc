@@ -12,11 +12,7 @@ class LoggerTest : public ::testing::Test {
  protected:
   void SetUp() override {
     // 初始化日志系统
-    using namespace wlog;
-    if (!logger::get().init("logs/test.log")) {
-        return 1;
-    }
-    logger::get().set_level(spdlog::level::trace);
+    Logger::Instance().Init("log/myapp.log", Logger::both, 0, 1, 3, true); 
   }
 
   // void TearDown() override {
@@ -32,7 +28,7 @@ TEST_F(LoggerTest, PerformanceTest) {
   auto start = std::chrono::high_resolution_clock::now();
 
   for (int i = 0; i < logCount; ++i) {
-    STREAM_DEBUG << "Performance test log message " << i;
+    LOG(info) << "Performance test log message " << i;
   }
 
   auto end = std::chrono::high_resolution_clock::now();

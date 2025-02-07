@@ -1,7 +1,6 @@
 #include "logger_impl.h"
 
 #include <iomanip>
-#include <iostream>
 #include <memory>
 #include <sstream>
 

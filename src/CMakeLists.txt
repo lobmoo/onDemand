@@ -73,7 +73,7 @@ if(BUILD_TESTING)
 
     # 添加测试可执行文件
 #     add_executable(logger_test ${SOURCES_CC_FOR_LOG} ${SOURCES_CC_FOR_TEST})
-    add_executable(spdlog_test ${SOURCES_SPDLOG})
+    add_executable(spdlog_test ${SOURCES_SPDLOG} ${SOURCES_CC_FOR_SPD_LOG})
 #     set_target_properties(logger_test PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/test") 
     set_target_properties(spdlog_test PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/test") 
 #     target_include_directories(logger_test PRIVATE   ${OBJ_CPP_INCLUDE})
@@ -124,8 +124,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_thread.a
     ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_filesystem.a
     ${CMAKE_SOURCE_DIR}/thirdparty/spdlog/lib/libspdlog.a
-    gtest
-    gtest_main
     pthread 
     rt
 )
