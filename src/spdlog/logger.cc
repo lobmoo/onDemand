@@ -14,8 +14,8 @@ bool Logger::Init(const std::string& fileName, int type, int level, int maxFileS
   return pImpl->Init(fileName, type, level, maxFileSize, maxBackupIndex, isAsync);
 }
 
-void Logger::Log(severity_level level, const std::string& msg, const char* file, int line) {
-  pImpl->log(level, msg, file, line);
+void Logger::Log(severity_level level, const std::string& msg, const char* file, int line, const char* func) {
+  pImpl->log(level, msg, file, line, func);
 }
 
 void Logger::setConsoleLogLevel(const Logger::severity_level level) { pImpl->setConsoleLogLevel(level); }

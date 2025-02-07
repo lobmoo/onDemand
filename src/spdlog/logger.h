@@ -15,7 +15,7 @@ class Logger {
   ~Logger();
   static Logger& Instance();
   bool Init(const std::string& fileName, int type, int level, int maxFileSize, int maxBackupIndex, bool isAsync);
-  void Log(severity_level level, const std::string& msg, const char* file, int line);
+  void Log(severity_level level, const std::string& msg, const char* file, int line, const char* func); 
   void setConsoleLogLevel(const Logger::severity_level level);
   void setFileLogLevel(const Logger::severity_level level);
 
@@ -29,9 +29,9 @@ class Logger {
 
 class LogStream {
  public:
-  LogStream(Logger& logger, Logger::severity_level level, const char* file, int line)
-      : logger_(logger), level_(level), file_(file), line_(line) {}
-  ~LogStream() { logger_.Log(level_, stream_.str(), file_, line_); }
+  LogStream(Logger& logger, Logger::severity_level level, const char* file, int line, const char* func)
+      : logger_(logger), level_(level), file_(file), line_(line), func_(func) {}
+  ~LogStream() { logger_.Log(level_, stream_.str(), file_, line_, func_); }
 
   std::ostringstream& stream() { return stream_; }
 
@@ -39,10 +39,11 @@ class LogStream {
   Logger& logger_;
   Logger::severity_level level_;
   const char* file_;
+  const char *func_;
   int line_;
   std::ostringstream stream_;
 };
 
-#define LOG(level) LogStream(Logger::Instance(), Logger::level, __FILE__, __LINE__).stream()
+#define LOG(level) LogStream(Logger::Instance(), Logger::level, __FILE__, __LINE__, __FUNCTION__).stream()
 
 #endif  // LOGGER_H
