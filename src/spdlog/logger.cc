@@ -18,6 +18,3 @@ void Logger::Log(severity_level level, const std::string& msg, const char* file,
   pImpl->log(level, msg, file, line, func);
 }
 
-void Logger::setConsoleLogLevel(const Logger::severity_level level) { pImpl->setConsoleLogLevel(level); }
-
-void Logger::setFileLogLevel(const Logger::severity_level level) { pImpl->setFileLogLevel(level); }

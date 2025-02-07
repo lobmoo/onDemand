@@ -16,8 +16,6 @@ class Logger {
   static Logger& Instance();
   bool Init(const std::string& fileName, int type, int level, int maxFileSize, int maxBackupIndex, bool isAsync = false);
   void Log(severity_level level, const std::string& msg, const char* file, int line, const char* func); 
-  void setConsoleLogLevel(const Logger::severity_level level);
-  void setFileLogLevel(const Logger::severity_level level);
 
  private:
   class LoggerImpl;
