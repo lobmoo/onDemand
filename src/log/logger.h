@@ -8,7 +8,7 @@
 
 class Logger {
  public:
-  enum severity_level { trace, debug, info, warning, error, fatal };
+  enum severity_level { trace, debug, info, warning, error, critical };
   enum LoggerType { both = 0, console, file };
 
   class LogStream {

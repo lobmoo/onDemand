@@ -25,6 +25,7 @@ class Logger::LoggerImpl {
  private:
   std::shared_ptr<spdlog::logger> logger = nullptr;
   std::string getLogNameInfo(const std::string &fileName);
+  spdlog::level::level_enum GetLogLevelFromEnv(const std::string& env_var, spdlog::level::level_enum default_level);
 
  public:
 };

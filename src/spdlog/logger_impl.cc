@@ -13,23 +13,32 @@ bool Logger::LoggerImpl::Init(
   std::size_t max_file_size = 1024 * 1024 * maxFileSize;
   std::string logName = getLogNameInfo(fileName);
   std::vector<spdlog::sink_ptr> sinks;
+
+  spdlog::level::level_enum console_level = GetLogLevelFromEnv("LOG_CONSOLE_LEVEL", spdlog::level::info);
+  spdlog::level::level_enum file_level = GetLogLevelFromEnv("LOG_FILE_LEVEL", spdlog::level::info);
+
   switch (type) {
     case Logger::both: {
       auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
       auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(fileName, max_file_size, maxBackupIndex);
+      console_sink->set_level(console_level);
+      file_sink->set_level(file_level);
       sinks.push_back(file_sink);
       sinks.push_back(console_sink);
     } break;
     case Logger::console: {
       auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+      console_sink->set_level(console_level);
       sinks.push_back(console_sink);
     } break;
     case Logger::file: {
       auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(fileName, max_file_size, maxBackupIndex);
+      file_sink->set_level(file_level);
       sinks.push_back(file_sink);
     } break;
     default:
       auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+      console_sink->set_level(console_level);
       sinks.push_back(console_sink);
       break;
   }
@@ -45,6 +54,7 @@ bool Logger::LoggerImpl::Init(
   }
   logger->set_level(static_cast<spdlog::level::level_enum>(level));
   logger->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%l%$] [%t] [%s:%# %!] %v");
+  logger->flush_on(spdlog::level::err);
   spdlog::register_logger(logger);
   spdlog::set_default_logger(logger);
   return true;
@@ -55,6 +65,15 @@ void Logger::LoggerImpl::log(
   if (logger) {
     logger->log(spdlog::source_loc{file, line, func}, static_cast<spdlog::level::level_enum>(level), msg);
   }
+}
+
+spdlog::level::level_enum Logger::LoggerImpl::GetLogLevelFromEnv(const std::string& env_var, spdlog::level::level_enum default_level) {
+  const char* env_value = std::getenv(env_var.c_str());
+  if (!env_value) {
+    return default_level;
+  }
+  std::string level_str(env_value);
+  return spdlog::level::from_str(level_str);
 }
 
 std::string Logger::LoggerImpl::getLogNameInfo(const std::string& fileName) {
