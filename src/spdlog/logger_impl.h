@@ -2,6 +2,7 @@
 #define LOGGER_IMPL_H
 
 #include <spdlog/async.h>
+#include <spdlog/sinks/daily_file_sink.h>
 #include <spdlog/sinks/rotating_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/spdlog.h>
@@ -22,7 +23,7 @@ class Logger::LoggerImpl {
 
  private:
   std::shared_ptr<spdlog::logger> logger = nullptr;
-  std::string getLogNameInfo(const std::string &fileName);
+  std::string getLogNameInfo(const std::string& fileName);
   spdlog::level::level_enum GetLogLevelFromEnv(const std::string& env_var, spdlog::level::level_enum default_level);
 
  public:

@@ -21,6 +21,8 @@ bool Logger::LoggerImpl::Init(
     case Logger::both: {
       auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
       auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(fileName, max_file_size, maxBackupIndex);
+      /*按天数轮转记录器  todo*/
+      // auto file_sink = std::make_shared<spdlog::sinks::daily_file_sink_mt>(fileName, 23, 59);
       console_sink->set_level(console_level);
       file_sink->set_level(file_level);
       sinks.push_back(file_sink);
@@ -67,7 +69,8 @@ void Logger::LoggerImpl::log(
   }
 }
 
-spdlog::level::level_enum Logger::LoggerImpl::GetLogLevelFromEnv(const std::string& env_var, spdlog::level::level_enum default_level) {
+spdlog::level::level_enum Logger::LoggerImpl::GetLogLevelFromEnv(
+    const std::string& env_var, spdlog::level::level_enum default_level) {
   const char* env_value = std::getenv(env_var.c_str());
   if (!env_value) {
     return default_level;
@@ -97,5 +100,3 @@ std::string Logger::LoggerImpl::getLogNameInfo(const std::string& fileName) {
   file_name << fileName << "_" << process_name << "_" << oss.str() << "_pid" << pid << ".log";
   return file_name.str();
 }
-
-
