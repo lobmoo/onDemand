@@ -38,7 +38,7 @@ bool Logger::LoggerImpl::Init(
     return false;
   }
   if (isAsync) {
-    spdlog::init_thread_pool(log_buffer_size, std::thread::hardware_concurrency());
+    spdlog::init_thread_pool(log_buffer_size, std::thread::hardware_concurrency() / 4);
     logger = std::make_shared<spdlog::async_logger>(
         "Logger", sinks.begin(), sinks.end(), spdlog::thread_pool(), spdlog::async_overflow_policy::block);
   } else {
