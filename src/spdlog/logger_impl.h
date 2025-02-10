@@ -11,8 +11,8 @@
 #include <string>
 #include <vector>
 
-#include "logger.h"
 #include "custom_rotating_file_sink.h"
+#include "logger.h"
 class Logger::LoggerImpl {
  public:
   LoggerImpl();
@@ -20,6 +20,7 @@ class Logger::LoggerImpl {
 
   bool Init(std::string fileName, int type, int level, int maxFileSize, int maxBackupIndex, bool isAsync);
   void log(Logger::severity_level level, const std::string& msg, const char* file, int line, const char* func);
+  void Uinit();
 
  private:
   std::shared_ptr<spdlog::logger> logger = nullptr;
