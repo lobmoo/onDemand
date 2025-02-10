@@ -56,8 +56,6 @@ set(ALL_SOURCES ${SOURCES_CC_FOR_LOG} ${SOURCES_CC_FOR_MAIN})
 # 复制源文件列表用于不同的目标
 set(MAIN_SOURCES ${ALL_SOURCES})
 
-
-
 # 添加测试选项
 option(BUILD_TESTING "Build the testing targets" ON)
 
