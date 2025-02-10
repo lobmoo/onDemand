@@ -5,5 +5,6 @@ CMakeCache.txt
 Makefile
 test_exec
 log
+test
 logs
 !src/log
