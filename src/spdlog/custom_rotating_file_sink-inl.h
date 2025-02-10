@@ -15,6 +15,9 @@
 #include <mutex>
 #include <string>
 #include <tuple>
+#include <vector>
+#include <algorithm>
+#include <filesystem>
 
 namespace spdlog {
 namespace sinks {
@@ -34,7 +37,7 @@ SPDLOG_INLINE custom_rotating_file_sink<Mutex>::custom_rotating_file_sink(
   if (max_files > 200000) {
     throw_spdlog_ex("rotating sink constructor: max_files arg cannot exceed 200000");
   }
-  file_helper_.open(calc_filename(base_filename_, 0));
+  file_helper_.open(base_filename_);
   current_size_ = file_helper_.size();  // expensive. called only once
   if (rotate_on_open && current_size_ > 0) {
     rotate_();
@@ -47,7 +50,6 @@ inline std::string get_process_name() {
   char process_path[MAX_PATH];
   if (GetModuleFileNameA(NULL, process_path, MAX_PATH)) {
     std::string fullPath(process_path);
-    // 查找最后一个 '\' 或 '/'
     size_t pos = fullPath.find_last_of("\\/");
     if (pos != std::string::npos)
       return fullPath.substr(pos + 1);
@@ -76,31 +78,8 @@ inline std::string get_timestamp() {
   auto in_time_t = std::chrono::system_clock::to_time_t(now);
 
   std::stringstream ss;
-  ss << std::put_time(std::localtime(&in_time_t), SPDLOG_FILENAME_T("%Y%m%d_%H%M%S"));
+  ss << std::put_time(std::localtime(&in_time_t), "%Y%m%d_%H%M%S");
   return ss.str();
-}
-
-// 分离文件路径和文件名
-inline std::pair<filename_t, filename_t> split_path(const filename_t &path) {
-  auto pos = path.find_last_of(SPDLOG_FILENAME_T("/\\"));
-  if (pos == filename_t::npos) {
-    return {SPDLOG_FILENAME_T(""), path};
-  }
-  return {path.substr(0, pos), path.substr(pos + 1)};
-}
-
-// calc filename according to index and file extension if exists.
-// e.g. calc_filename("logs/mylog.txt, 3) => "logs/mylog.3.txt".
-template <typename Mutex>
-SPDLOG_INLINE filename_t
-custom_rotating_file_sink<Mutex>::calc_filename(const filename_t &filename, std::size_t index) {
-  if (index == 0u) {
-    return filename;
-  }
-
-  filename_t basename, ext;
-  std::tie(basename, ext) = details::file_helper::split_by_extension(filename);
-  return fmt_lib::format(SPDLOG_FMT_STRING(SPDLOG_FILENAME_T("{}.{:03d}{}")), basename, index, ext);
 }
 
 template <typename Mutex>
@@ -121,9 +100,6 @@ SPDLOG_INLINE void custom_rotating_file_sink<Mutex>::sink_it_(const details::log
   base_sink<Mutex>::formatter_->format(msg, formatted);
   auto new_size = current_size_ + formatted.size();
 
-  // rotate if the new estimated file size exceeds max size.
-  // rotate only if the real size > 0 to better deal with full disk (see issue #2261).
-  // we only check the real size when new_size > max_size_ because it is relatively expensive.
   if (new_size > max_size_) {
     file_helper_.flush();
     if (file_helper_.size() > 0) {
@@ -146,36 +122,75 @@ SPDLOG_INLINE void custom_rotating_file_sink<Mutex>::rotate_() {
   using details::os::path_exists;
 
   file_helper_.close();
-  for (auto i = max_files_; i > 0; --i) {
-    filename_t src = calc_filename(base_filename_, i - 1);
-    if (!path_exists(src)) {
-      continue;
-    }
-    filename_t target = calc_filename(base_filename_, i);
 
-    if (!rename_file_(src, target)) {
-      // if failed try again after a small delay.
-      // this is a workaround to a windows issue, where very high rotation
-      // rates can cause the rename to fail with permission denied (because of antivirus?).
-      details::os::sleep_for_millis(100);
-      if (!rename_file_(src, target)) {
-        file_helper_.reopen(true);  // truncate the log file anyway to prevent it to grow beyond its limit!
-        current_size_ = 0;
-        throw_spdlog_ex(
-            "rotating_file_sink: failed renaming " + filename_to_str(src) + " to " + filename_to_str(target), errno);
+  // Generate new filename with process name and timestamp
+  std::string process_name = get_process_name();
+  std::string timestamp = get_timestamp();
+
+  // Convert to filename_t with proper encoding
+  filename_t process_name_t, timestamp_t;
+#ifdef _WIN32
+  process_name_t = details::os::utf8_to_wstr(process_name);
+  timestamp_t = details::os::utf8_to_wstr(timestamp);
+#else
+  process_name_t = process_name;
+  timestamp_t = timestamp;
+#endif
+
+  // Split base filename into directory and filename parts
+  std::filesystem::path base_path(base_filename_);
+  filename_t dir = base_path.parent_path().native();
+  filename_t new_filename;
+
+  if (dir.empty()) {
+    new_filename = fmt_lib::format(SPDLOG_FILENAME_T("{}_{}.log"), process_name_t, timestamp_t);
+  } else {
+    new_filename = std::filesystem::path(dir) / fmt_lib::format(SPDLOG_FILENAME_T("{}_{}.log"), process_name_t, timestamp_t);
+  }
+
+  // Rename current file to new filename
+  if (!rename_file_(base_filename_, new_filename)) {
+    file_helper_.reopen(true);
+    current_size_ = 0;
+    throw_spdlog_ex("Failed to rotate file: " + filename_to_str(base_filename_) + " to " + filename_to_str(new_filename));
+  }
+
+  // Collect and delete old files
+  std::vector<std::filesystem::path> files;
+  try {
+    std::filesystem::path dir_path(dir.empty() ? std::filesystem::current_path() : std::filesystem::path(dir));
+    filename_t prefix = fmt_lib::format(SPDLOG_FILENAME_T("{}_"), process_name_t);
+
+    for (const auto& entry : std::filesystem::directory_iterator(dir_path)) {
+      filename_t filename = entry.path().filename().native();
+      if (filename.find(prefix) == 0 && filename.rfind(SPDLOG_FILENAME_T(".log")) == filename.length() - 4) {
+        files.push_back(entry.path());
       }
     }
+
+    // Sort files by creation time (oldest first)
+    std::sort(files.begin(), files.end(), [](const std::filesystem::path& a, const std::filesystem::path& b) {
+      return std::filesystem::last_write_time(a) < std::filesystem::last_write_time(b);
+    });
+
+    // Delete oldest files if exceeding max_files
+    while (files.size() > max_files_) {
+      std::filesystem::remove(files.front());
+      files.erase(files.begin());
+    }
+
+  } catch (const std::exception& ex) {
+    SPDLOG_THROW(spdlog_ex("Error during file rotation: " + std::string(ex.what())));
   }
-  file_helper_.reopen(true);
+
+  // Reopen main log file
+  file_helper_.open(base_filename_);
+  current_size_ = 0;
 }
 
-// delete the target if exists, and rename the src file  to target
-// return true on success, false otherwise.
 template <typename Mutex>
 SPDLOG_INLINE bool custom_rotating_file_sink<Mutex>::rename_file_(
     const filename_t &src_filename, const filename_t &target_filename) {
-  // try to delete the target file in case it already exists.
-  (void)details::os::remove(target_filename);
   return details::os::rename(src_filename, target_filename) == 0;
 }
 

@@ -17,6 +17,9 @@ cmake_minimum_required(VERSION 3.16)
 project(test_exec  LANGUAGES  CXX)
 
 set(LIBRARY_OUTPUT_NAME  test)
+set(CMAKE_CXX_STANDARD 17) 
+# set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_COMPILER g++)
 
 # 指定安装路径的变量，可以在 CMake 命令行中覆盖
 set(INSTALL_LIB_DIR "${CMAKE_INSTALL_PREFIX}/lib")
@@ -128,7 +131,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     rt
 )
 
-target_compile_options(${PROJECT_NAME}  PRIVATE  -g  -std=c++17)
+target_compile_options(${PROJECT_NAME}  PRIVATE  -g )
 
 if(BUILD_LIBRARY)
 # 安装静态库到 lib 目录
