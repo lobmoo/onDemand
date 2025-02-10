@@ -1,4 +1,0 @@
-[2025-02-06 16:02:48.675] [Logger] [info] [main.cc:58] This is an info message
-[2025-02-06 16:02:48.675] [Logger] [error] [main.cc:59] Error occurred: 236
-[2025-02-06 16:02:50.394] [Logger] [info] [main.cc:58] This is an info message
-[2025-02-06 16:02:50.394] [Logger] [error] [main.cc:59] Error occurred: 236
