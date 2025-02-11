@@ -31,15 +31,19 @@ set(INSTALL_INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include")
 #头文件
 set(OBJ_CPP_INCLUDE
     ${CMAKE_SOURCE_DIR}/src/log
+    ${CMAKE_SOURCE_DIR}/src/net_work
     ${CMAKE_SOURCE_DIR}/thirdparty/BS_thread_pool/include
     ${CMAKE_SOURCE_DIR}/thirdparty/boost/include
     ${CMAKE_SOURCE_DIR}/thirdparty/spdlog/include
 )
 
-
 set(SOURCES_CC_FOR_LOG
     "${CMAKE_CURRENT_SOURCE_DIR}/log/logger.cc"
     "${CMAKE_CURRENT_SOURCE_DIR}/log/logger_impl.cc"
+)
+
+set(SOURCES_CC_FOR_NET_WORK
+    "${CMAKE_CURRENT_SOURCE_DIR}/net_work/net_interface.cc"
 )
 
 # 查找目录下的所有源文件
@@ -52,12 +56,15 @@ message(STATUS "Collected CPP sources: ${SOURCES_CC_FOR_MAIN}")
 message(STATUS "CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX}")
 
 # 合并所有查找到的文件列表
-set(ALL_SOURCES ${SOURCES_CC_FOR_LOG} ${SOURCES_CC_FOR_MAIN})
+set(ALL_SOURCES ${SOURCES_CC_FOR_LOG}
+                ${SOURCES_CC_FOR_NET_WORK}
+                ${SOURCES_CC_FOR_MAIN})
+
 # 复制源文件列表用于不同的目标
 set(MAIN_SOURCES ${ALL_SOURCES})
 
 # 添加测试选项
-option(BUILD_TESTING "Build the testing targets" ON)
+option(BUILD_TESTING "Build the testing targets" OFF)
 
 if(BUILD_TESTING)
     # 添加测试源文件

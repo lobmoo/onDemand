@@ -1,13 +1,7 @@
-#pragma once 
+#pragma once
 
-class AppNetInterface
-{
-private:
-    /* data */
+class AppNetInterface {
 public:
-    AppNetInterface(/* args */);
+    AppNetInterface();
     ~AppNetInterface();
 };
-
-
-
