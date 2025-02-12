@@ -8,3 +8,5 @@ log
 test
 logs
 !src/log
+src/log/include
+src/log/lib
