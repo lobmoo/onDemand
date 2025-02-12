@@ -15,6 +15,7 @@
 cmake_minimum_required(VERSION 3.16)
 
 project(DEMO  LANGUAGES  CXX)
+add_subdirectory(src/log)
 add_subdirectory(src)
 
 

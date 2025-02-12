@@ -30,17 +30,13 @@ set(INSTALL_INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include")
 
 #头文件
 set(OBJ_CPP_INCLUDE
-    ${CMAKE_SOURCE_DIR}/src/log
+    ${CMAKE_SOURCE_DIR}/src/log/include
     ${CMAKE_SOURCE_DIR}/src/net_work
     ${CMAKE_SOURCE_DIR}/thirdparty/BS_thread_pool/include
     ${CMAKE_SOURCE_DIR}/thirdparty/boost/include
     ${CMAKE_SOURCE_DIR}/thirdparty/spdlog/include
 )
 
-set(SOURCES_CC_FOR_LOG
-    "${CMAKE_CURRENT_SOURCE_DIR}/log/logger.cc"
-    "${CMAKE_CURRENT_SOURCE_DIR}/log/logger_impl.cc"
-)
 
 set(SOURCES_CC_FOR_NET_WORK
     "${CMAKE_CURRENT_SOURCE_DIR}/net_work/net_interface.cc"
@@ -51,39 +47,20 @@ set(SOURCES_CC_FOR_NET_WORK
 file(GLOB SOURCES_CC_FOR_MAIN "${CMAKE_CURRENT_SOURCE_DIR}/*.cc")
 #list(FILTER DDS_SHM_HELLOWORLD_EXAMPLE_SOURCES_CPP EXCLUDE REGEX "CMakeFiles/.*")
 
-message(STATUS "Collected CXX sources: ${SOURCES_CC_FOR_LOG}")
 message(STATUS "Collected CPP sources: ${SOURCES_CC_FOR_MAIN}")
 message(STATUS "CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX}")
 
 # 合并所有查找到的文件列表
-set(ALL_SOURCES ${SOURCES_CC_FOR_LOG}
-                ${SOURCES_CC_FOR_NET_WORK}
+set(MAIN_SOURCES ${SOURCES_CC_FOR_NET_WORK}
                 ${SOURCES_CC_FOR_MAIN})
 
-# 复制源文件列表用于不同的目标
-set(MAIN_SOURCES ${ALL_SOURCES})
 
 # 添加测试选项
 option(BUILD_TESTING "Build the testing targets" OFF)
 
 if(BUILD_TESTING)
     # 添加测试源文件
-    set(SOURCES_SPDLOG
-        "${CMAKE_CURRENT_SOURCE_DIR}/log/spdlog_test.cc"
-    )    
-
-    # 添加测试可执行文件
-    add_executable(spdlog_test ${SOURCES_SPDLOG} ${SOURCES_CC_FOR_LOG})
-    set_target_properties(spdlog_test PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/test") 
-    target_include_directories(spdlog_test PRIVATE   ${OBJ_CPP_INCLUDE})
-    target_link_libraries(spdlog_test
-    PRIVATE
-    gtest
-    gtest_main
-    ${CMAKE_SOURCE_DIR}/thirdparty/spdlog/lib/libspdlog.a
-    pthread 
-    rt
-)
+ 
 endif()
 
 option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
@@ -102,12 +79,10 @@ set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMA
 target_include_directories(${PROJECT_NAME} PRIVATE  ${OBJ_CPP_INCLUDE})
 
 target_link_libraries(${PROJECT_NAME} PRIVATE 
-    ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_log.a 
-    ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_log_setup.a
     ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_system.a
     ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_thread.a
     ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_filesystem.a
-    ${CMAKE_SOURCE_DIR}/thirdparty/spdlog/lib/libspdlog.a
+    ${CMAKE_SOURCE_DIR}/src/log/lib/liblog.a
     pthread 
     rt
 )
