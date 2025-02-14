@@ -44,12 +44,12 @@ message(STATUS "CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX}")
 
 
 # 添加测试选项
-option(BUILD_TESTING "Build the testing targets" OFF)
+option(BUILD_TESTING "Build the testing targets" ON)
 
 if(BUILD_TESTING)
     # 添加测试源文件
     set(SOURCES_SPDLOG
-        "${CMAKE_CURRENT_SOURCE_DIR}/log/spdlog_test.cc"
+        "${CMAKE_CURRENT_SOURCE_DIR}/spdlog_test.cc"
     )    
     # 添加测试可执行文件
     add_executable(spdlog_test ${SOURCES_SPDLOG} ${SOURCES_CC_FOR_LOG})

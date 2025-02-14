@@ -76,6 +76,94 @@ TEST(LoggerSingletonTest, SingleInstance) {
 }
 
 
+const int logCount = 10;  // 1万条日志
+const int threadCount = 4;   // 4个线程
+
+// **单线程 LOG_TIME 宏测试**
+TEST_F(LoggerTest, SingleThreadPerformanceTest_LOG_TIME) {
+  auto start = std::chrono::high_resolution_clock::now();
+
+  for (int i = 0; i < logCount; ++i) {
+    LOG_TIME(info, 100) << "Performance test log message with LOG_TIME " << i;
+  }
+
+  auto end = std::chrono::high_resolution_clock::now();
+  auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+
+  std::cout << "[LOG_TIME] Single-thread logging " << logCount << " messages took " << duration << " ms" << std::endl;
+  EXPECT_LT(duration, 5000);
+}
+
+TEST_F(LoggerTest, SingleThreadPerformanceTest_LOG) {
+  auto start = std::chrono::high_resolution_clock::now();
+
+  for (int i = 0; i < logCount; ++i) {
+    LOG(info) << "Performance test log message with LOG_TIME " << i;
+  }
+
+  auto end = std::chrono::high_resolution_clock::now();
+  auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+
+  std::cout << "[LOG] Single-thread logging " << logCount << " messages took " << duration << " ms" << std::endl;
+  EXPECT_LT(duration, 5000);
+}
+
+
+
+// **多线程性能测试**
+void logWorker(int id) {
+  for (int i = 0; i < logCount / threadCount; ++i) {
+    LOG(info) << "Thread " << id << " log message " << i;
+  }
+}
+
+TEST_F(LoggerTest, MultiThreadPerformanceTest) {
+  auto start = std::chrono::high_resolution_clock::now();
+  std::vector<std::thread> threads;
+
+  for (int i = 0; i < threadCount; ++i) {
+    threads.emplace_back(logWorker, i);
+  }
+
+  for (auto& t : threads) {
+    t.join();
+  }
+
+  auto end = std::chrono::high_resolution_clock::now();
+  auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+
+  std::cout << "[LOG] Multi-thread logging took " << duration << " ms" << std::endl;
+  EXPECT_LT(duration, 5000);
+}
+
+// **多线程 LOG_TIME 宏测试**
+void logWorker_LOG_TIME(int id) {
+  for (int i = 0; i < logCount / threadCount; ++i) {
+    LOG_TIME(info, 100) << "Thread " << id << " log message " << i;
+  }
+}
+
+TEST_F(LoggerTest, MultiThreadPerformanceTest_LOG_TIME) {
+  auto start = std::chrono::high_resolution_clock::now();
+  std::vector<std::thread> threads;
+
+  for (int i = 0; i < threadCount; ++i) {
+    threads.emplace_back(logWorker_LOG_TIME, i);
+  }
+
+  for (auto& t : threads) {
+    t.join();
+  }
+
+  auto end = std::chrono::high_resolution_clock::now();
+  auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+
+  std::cout << "[LOG_TIME] Multi-thread logging took " << duration << " ms" << std::endl;
+  EXPECT_LT(duration, 5000);
+}
+
+
+
 int main(int argc, char** argv) {
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();

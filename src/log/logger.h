@@ -45,8 +45,6 @@ class LogStream {
   std::ostringstream stream_;
 };
 
-#define LOG(level) LogStream(Logger::Instance(), Logger::level, __FILE__, __LINE__, __FUNCTION__).stream()
-
 class LogRateLimiter {
  public:
   static bool shouldLog(const std::string& key, int interval_ms) {
@@ -63,6 +61,7 @@ class LogRateLimiter {
   }
 };
 
+#define LOG(level) LogStream(Logger::Instance(), Logger::level, __FILE__, __LINE__, __FUNCTION__).stream()
 #define LOG_TIME(level, interval_ms) \
   if (LogRateLimiter::shouldLog(std::string(__FILE__) + ":" + std::to_string(__LINE__), interval_ms)) LOG(level)
 
