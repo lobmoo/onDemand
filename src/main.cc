@@ -14,7 +14,7 @@ void logTask() {
 }
 
 int main() {
-    Logger::Instance().Init("log/myapp.log", Logger::both, 0, 1, 3); 
+    Logger::Instance().Init("log/myapp.log", Logger::both, Logger::info, 1, 3); 
     std::vector<std::thread> threads;
     
 

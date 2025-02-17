@@ -12,7 +12,7 @@ class LoggerTest : public ::testing::Test {
  protected:
   void SetUp() override {
     // 初始化日志系统
-    Logger::Instance().Init("log/myapp.log", Logger::both, 0, 1, 3); 
+    Logger::Instance().Init("log/myapp.log", Logger::both, Logger::trace, 1, 3); 
   }
 
   void TearDown() override {

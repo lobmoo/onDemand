@@ -15,7 +15,7 @@ void Logger::Uinit()
    return pImpl->Uinit();
 }
 
-bool Logger::Init(const std::string& fileName, int type, int level, int maxFileSize, int maxBackupIndex, bool isAsync) {
+bool Logger::Init(const std::string& fileName, LoggerType type, severity_level level, int maxFileSize, int maxBackupIndex, bool isAsync) {
   return pImpl->Init(fileName, type, level, maxFileSize, maxBackupIndex, isAsync);
 }
 
