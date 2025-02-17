@@ -14,7 +14,6 @@ class Logger {
 
  public:
   ~Logger();
-  static Logger& Instance();
 
   /**
    * @brief 初始化日志系统
@@ -31,15 +30,22 @@ class Logger {
   bool Init(
       const std::string& fileName, LoggerType type, severity_level level, int maxFileSize, int maxBackupIndex,
       bool isAsync = false);
-  void Log(severity_level level, const std::string& msg, const char* file, int line, const char* func);
+
+  /**
+   * @brief 注销日志实例
+   */
   void Uinit();
 
+  static Logger& Instance();
+
  private:
+  void Log(severity_level level, const std::string& msg, const char* file, int line, const char* func);
   class LoggerImpl;
   std::unique_ptr<LoggerImpl> pImpl;
   Logger();
   Logger(const Logger&) = delete;
   Logger& operator=(const Logger&) = delete;
+  friend class LogStream; 
 };
 
 class LogStream {
@@ -57,6 +63,7 @@ class LogStream {
   const char* func_;
   int line_;
   std::ostringstream stream_;
+
 };
 
 class LogRateLimiter {
