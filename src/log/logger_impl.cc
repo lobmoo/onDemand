@@ -58,6 +58,8 @@ bool Logger::LoggerImpl::Init(
   logger->set_level(static_cast<spdlog::level::level_enum>(level));
   logger->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%l%$] [%t] [%s:%# %!] %v");
   logger->flush_on(spdlog::level::err);
+  /*TODO：控制刷入文件的频率*/
+ // spdlog::flush_every(std::chrono::seconds(5));
   spdlog::register_logger(logger);
   spdlog::set_default_logger(logger);
   return true;
