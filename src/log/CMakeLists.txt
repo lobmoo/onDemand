@@ -42,10 +42,6 @@ message(STATUS "Collected CXX sources: ${SOURCES_CC_FOR_LOG}")
 message(STATUS "Collected CXX include directories: ${OBJ_CPP_INCLUDE}")
 message(STATUS "CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX}")
 
-
-# 添加测试选项
-option(BUILD_TESTING "Build the testing targets" ON)
-
 if(BUILD_TESTING)
     # 添加测试源文件
     set(SOURCES_SPDLOG

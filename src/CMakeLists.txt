@@ -32,15 +32,20 @@ set(INSTALL_INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include")
 set(OBJ_CPP_INCLUDE
     ${CMAKE_SOURCE_DIR}/src/log/include
     ${CMAKE_SOURCE_DIR}/src/net_work
+    ${CMAKE_SOURCE_DIR}/src/config
     ${CMAKE_SOURCE_DIR}/thirdparty/BS_thread_pool/include
     ${CMAKE_SOURCE_DIR}/thirdparty/boost/include
-    ${CMAKE_SOURCE_DIR}/thirdparty/spdlog/include
+    ${CMAKE_SOURCE_DIR}/thirdparty/nlohmann/include
 )
 
 
 set(SOURCES_CC_FOR_NET_WORK
     "${CMAKE_CURRENT_SOURCE_DIR}/net_work/net_interface.cc"
 )
+set(SOURCES_CC_FOR_CONFIG
+    "${CMAKE_CURRENT_SOURCE_DIR}/config/config.cc"
+)
+
 
 # 查找目录下的所有源文件
 # 假设您希望在查找源文件时排除 CMakeFiles 目录
@@ -52,16 +57,28 @@ message(STATUS "CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX}")
 
 # 合并所有查找到的文件列表
 set(MAIN_SOURCES ${SOURCES_CC_FOR_NET_WORK}
-                ${SOURCES_CC_FOR_MAIN})
+                ${SOURCES_CC_FOR_MAIN}
+                ${SOURCES_CC_FOR_CONFIG})
 
 
 # 添加测试选项
-option(BUILD_TESTING "Build the testing targets" OFF)
+option(BUILD_TESTING "Build the testing targets"  ON)
 
-if(BUILD_TESTING)
-    # 添加测试源文件
- 
+if(BUILD_TESTING)   
+    set(SOURCES_CONFIG_TEST
+        "${CMAKE_SOURCE_DIR}/src/config/config_test.cc"
+    )    
+    # 添加测试可执行文件
+    add_executable(config_test ${SOURCES_CC_FOR_CONFIG} ${SOURCES_CONFIG_TEST} )
+    set_target_properties(config_test PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/test") 
+    target_include_directories(config_test PRIVATE   ${OBJ_CPP_INCLUDE})
+    target_link_libraries(config_test
+    PRIVATE
+    gtest
+    gtest_main
+    pthread)
 endif()
+
 
 option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
 # 创建库，类型取决于 BUILD_SHARED_LIBS
