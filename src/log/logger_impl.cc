@@ -67,6 +67,7 @@ bool Logger::LoggerImpl::Init(
 
 void Logger::LoggerImpl::Uinit() {
   if (logger) {
+    logger->flush();
     spdlog::drop("Logger");
     logger.reset();
   }
