@@ -4,7 +4,7 @@
 #include <memory>
 #include <sstream>
 
-Logger::LoggerImpl::LoggerImpl() {}
+Logger::LoggerImpl::LoggerImpl():flushEvery_(0), flushOnLevel_(spdlog::level::err) {}
 Logger::LoggerImpl::~LoggerImpl() {}
 
 bool Logger::LoggerImpl::Init(
@@ -57,9 +57,13 @@ bool Logger::LoggerImpl::Init(
   }
   logger->set_level(static_cast<spdlog::level::level_enum>(level));
   logger->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%l%$] [%t] [%s:%# %!] %v");
-  logger->flush_on(spdlog::level::err);
-  /*TODO：控制刷入文件的频率*/
- // spdlog::flush_every(std::chrono::seconds(5));
+  logger->flush_on(flushOnLevel_);
+  
+  if(flushEvery_ > 0)
+  {
+    spdlog::flush_every(std::chrono::seconds(flushEvery_));
+  }
+  
   spdlog::register_logger(logger);
   spdlog::set_default_logger(logger);
   return true;
@@ -89,4 +93,17 @@ spdlog::level::level_enum Logger::LoggerImpl::GetLogLevelFromEnv(
   }
   std::string level_str(env_value);
   return spdlog::level::from_str(level_str);
+}
+
+void Logger::LoggerImpl::setFlushEvery(uint32_t flushEvery)
+{
+  if(flushEvery > 0)
+  {
+    flushEvery_ = flushEvery;
+  }
+}
+
+void Logger::LoggerImpl::setFlushOnLevel(Logger::severity_level flushOnLevel)
+{
+  flushOnLevel_ = static_cast<spdlog::level::level_enum>(flushOnLevel);
 }

@@ -36,6 +36,18 @@ class Logger {
    */
   void Uinit();
 
+  /**
+   * @brief Set the Flush Every object  设置日志刷入文件的频率，单位：秒 默认0 则按默认机制刷入
+   * @param  flushEvery       间隔时间
+   */
+  void setFlushEvery(uint32_t flushEvery);
+
+  /**
+   * @brief Set the Flush On Level object  设置日志立即刷入文件的级别 默认为error以上立即刷入 
+   * @param  flushOnLevel     级别
+   */
+  void setFlushOnLevel(Logger::severity_level flushOnLevel);  
+
   static Logger& Instance();
 
  private:

@@ -23,3 +23,13 @@ void Logger::Log(severity_level level, const std::string& msg, const char* file,
   pImpl->log(level, msg, file, line, func);
 }
 
+
+void Logger::setFlushEvery(uint32_t flushEvery)
+{
+    pImpl->setFlushEvery(flushEvery);
+}
+
+void Logger::setFlushOnLevel(Logger::severity_level flushOnLevel)
+{
+    pImpl->setFlushOnLevel(flushOnLevel);
+}

@@ -21,13 +21,17 @@ class Logger::LoggerImpl {
   bool Init(std::string fileName, int type, int level, int maxFileSize, int maxBackupIndex, bool isAsync);
   void log(Logger::severity_level level, const std::string& msg, const char* file, int line, const char* func);
   void Uinit();
+  void setFlushEvery(uint32_t flushEvery);
+  void setFlushOnLevel(Logger::severity_level flushOnLevel);
 
  private:
   std::shared_ptr<spdlog::logger> logger = nullptr;
-  std::string getLogNameInfo(const std::string& fileName);
+  uint32_t flushEvery_;
+  spdlog::level::level_enum flushOnLevel_;
+
+ private:
   spdlog::level::level_enum GetLogLevelFromEnv(const std::string& env_var, spdlog::level::level_enum default_level);
 
- public:
 };
 
 #endif  // LOGGER_IMPL_H
