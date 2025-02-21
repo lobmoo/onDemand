@@ -6,11 +6,13 @@
 #include <mutex>
 #include <string>
 
-// 配置数据结构体
+/*配置结构*/
+
 struct ConfigData {
   std::string server_ip = "127.0.0.1";  
   int timeout = 30;                     
 };
+
 
 class Config {
  public:
