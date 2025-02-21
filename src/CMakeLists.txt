@@ -36,6 +36,7 @@ set(OBJ_CPP_INCLUDE
     ${CMAKE_SOURCE_DIR}/thirdparty/BS_thread_pool/include
     ${CMAKE_SOURCE_DIR}/thirdparty/boost/include
     ${CMAKE_SOURCE_DIR}/thirdparty/nlohmann/include
+    ${CMAKE_SOURCE_DIR}/thirdparty/yaml-cpp/include
 )
 
 
@@ -62,7 +63,7 @@ set(MAIN_SOURCES ${SOURCES_CC_FOR_NET_WORK}
 
 
 # 添加测试选项
-option(BUILD_TESTING "Build the testing targets"  ON)
+option(BUILD_TESTING "Build the testing targets"  OFF)
 
 if(BUILD_TESTING)   
     set(SOURCES_CONFIG_TEST
@@ -99,6 +100,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_system.a
     ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_thread.a
     ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_filesystem.a
+    ${CMAKE_SOURCE_DIR}/thirdparty/yaml-cpp/lib/libyaml-cpp.a
     ${CMAKE_SOURCE_DIR}/src/log/lib/liblog.a
     pthread 
     rt
