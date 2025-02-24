@@ -55,7 +55,7 @@ bool Logger::LoggerImpl::Init(
   } else {
     logger = std::make_shared<spdlog::logger>("Logger", sinks.begin(), sinks.end());
   }
-  logger->set_level(static_cast<spdlog::level::level_enum>(level));
+  logger->set_level(static_cast<spdlog::level::level_enum>(spdlog::level::trace));
   logger->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%l%$] [%t] [%s:%# %!] %v");
   logger->flush_on(flushOnLevel_);
   
