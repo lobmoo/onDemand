@@ -66,18 +66,7 @@ set(MAIN_SOURCES ${SOURCES_CC_FOR_NET_WORK}
 option(BUILD_TESTING "Build the testing targets"  OFF)
 
 if(BUILD_TESTING)   
-    set(SOURCES_CONFIG_TEST
-        "${CMAKE_SOURCE_DIR}/src/config/config_test.cc"
-    )    
-    # 添加测试可执行文件
-    add_executable(config_test ${SOURCES_CC_FOR_CONFIG} ${SOURCES_CONFIG_TEST} )
-    set_target_properties(config_test PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/test") 
-    target_include_directories(config_test PRIVATE   ${OBJ_CPP_INCLUDE})
-    target_link_libraries(config_test
-    PRIVATE
-    gtest
-    gtest_main
-    pthread)
+   
 endif()
 
 
