@@ -29,7 +29,7 @@ bool DDSParticipantManager::initDomainParticipant(const std::string             
 eprosima::fastdds::dds::TopicDataType *DDSParticipantManager::getTopicDataType(std::string topicName)
 {
     if (m_topicTypes.find(topicName) == m_topicTypes.end()) {
-        LOG(ERROR) << "Cann't found topic: " << topicName;
+        LOG(error) << "Cann't found topic: " << topicName;
         return nullptr;
     }
     return m_topicTypes.at(topicName)();

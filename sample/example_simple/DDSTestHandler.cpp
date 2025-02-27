@@ -11,7 +11,6 @@
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <functional>
-#include <glog/logging.h>
 #include <unordered_map>
 #include <utility>
 

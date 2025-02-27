@@ -7,6 +7,7 @@
 #include "HelloWorldOne.hpp"
 #include <thread>
 
+#include "log/logger.h"
 using namespace std;
 
 void run_dds_data_writer();
@@ -14,6 +15,7 @@ void run_dds_data_reader();
 
 int main(int argc, char *argv[])
 {
+    Logger::Instance().Init("log/myapp.log", Logger::console, Logger::info, 60, 5);
     if (argc < 2) {
         std::cerr << "Usage: " << argv[0] << " sub/pub" << std::endl;
         return -1;
@@ -31,7 +33,7 @@ int main(int argc, char *argv[])
 
 void processHelloWorldOne(const std::string &topic_name, std::shared_ptr<HelloWorldOne> data)
 {
-    std::cout << "recv message [" << topic_name << "]: " << data->index() << std::endl;
+    LOG(info) << "recv message [" << topic_name << "]: " << data->index();
 }
 
 void run_dds_data_writer()
@@ -54,7 +56,7 @@ void run_dds_data_writer()
         message.index(++index);
         message.points(std::vector<uint8_t>(100));
         if (dataWriter->writeMessage(message)) {
-            std::cout << "send message: " << message.index() << std::endl;
+            LOG(info) << "send message: " << message.index();
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }

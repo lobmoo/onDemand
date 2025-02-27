@@ -8,9 +8,8 @@
 #include <fastdds/dds/core/detail/DDSReturnCode.hpp>
 
 
+#include <log/logger.h>
 
-#define GLOG_USE_GLOG_EXPORT
-#include <glog/logging.h>
 
 template <typename T>
 class DDSDataReaderListener
@@ -26,16 +25,16 @@ class DDSDataReaderListener
         reader->get_topicdescription();
 
     if (info.current_count_change == 1) {
-      LOG(INFO) << "subscription " << topic->get_name() << " matched";
+      LOG(info) << "subscription " << topic->get_name() << " matched";
     } else if (info.current_count_change == -1) {
-      LOG(INFO) << "subscription " << topic->get_name() << " unmatched";
+      LOG(info) << "subscription " << topic->get_name() << " unmatched";
     }
   }
 
   void on_liveliness_changed(
       eprosima::fastdds::dds::DataReader *reader,
       const eprosima::fastdds::dds::LivelinessChangedStatus &status) {
-    LOG(INFO) << "on_liveliness_changed: " << status.alive_count;
+    LOG(info) << "on_liveliness_changed: " << status.alive_count;
   }
 
   void on_data_available(eprosima::fastdds::dds::DataReader *reader) {
@@ -47,7 +46,7 @@ class DDSDataReaderListener
         info.valid_data) {
       m_callback(reader->get_topicdescription()->get_name(), message);
     } else {
-      LOG(ERROR) << "take_next_sample error";
+      LOG(error) << "take_next_sample error";
     }
   }
 

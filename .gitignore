@@ -10,3 +10,4 @@ logs
 !src/log
 src/log/include
 src/log/lib
+example_simple

@@ -39,7 +39,7 @@ bool DDSDomainParticipant::registerTopic(std::string topicName, eprosima::fastdd
 
         eprosima::fastdds::dds::ReturnCode_t errCode = typeSupport.register_type(m_participant);
     if (errCode !=  eprosima::fastdds::dds::RETCODE_OK) {
-        LOG(ERROR) << "register_type failed";
+        LOG(error) << "register_type failed";
         return false;
     }
 
@@ -59,7 +59,7 @@ bool DDSDomainParticipant::unregisterTopic(std::string topicName)
     if (topic) {
         eprosima::fastdds::dds::ReturnCode_t  errCode = m_participant->delete_topic(topic);
         if (errCode != eprosima::fastdds::dds::RETCODE_OK) {
-            LOG(ERROR) << "delete_topic " << topic->get_name() << " error, errcode: " << errCode;
+            LOG(error) << "delete_topic " << topic->get_name() << " error, errcode: " << errCode;
             return false;
         }
     }
