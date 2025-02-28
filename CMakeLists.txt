@@ -23,7 +23,7 @@ option(COMPILE_SAMPLE "Build example" ON)
 
 if(COMPILE_SAMPLE)
     add_subdirectory(sample/example_simple)
-    add_dependencies(example_simple log)
+    add_dependencies(example_exec log)
 endif()
 
 
