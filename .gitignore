@@ -4,10 +4,9 @@ cmake_install.cmake
 CMakeCache.txt
 Makefile
 test_exec
-log
+
 test
-logs
-!src/log
-src/log/include
-src/log/lib
+!common/log
+common/log/include
+common/log/lib
 example_simple
