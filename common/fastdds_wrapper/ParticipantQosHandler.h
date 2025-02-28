@@ -1,12 +1,3 @@
-// =====================================================================================
-//  Copyright (C) 2024 by Jiaxing Shao. All rights reserved
-//
-//  文 件 名:  ParticipantQosHandler.h
-//  作    者:  Jiaxing Shao, 980853650@qq.com
-//  创建时间:  2024-11-22 16:19:30
-//  描    述:
-// =====================================================================================
-
 #ifndef PARTICIPANT_QOS_HANDLER_H
 #define PARTICIPANT_QOS_HANDLER_H
 

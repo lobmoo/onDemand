@@ -4,8 +4,6 @@
 #include "fastdds_wrapper/DDSTopicDataWriter.hpp"
 #include "HelloWorldOne.hpp"
 #include "HelloWorldOnePubSubTypes.hpp"
-#include "HelloWorldTwo.hpp"
-#include "HelloWorldTwoPubSubTypes.hpp"
 #include "fastdds_wrapper/ParticipantQosHandler.h"
 #include <chrono>
 #include <fastdds/dds/topic/TopicDataType.hpp>
@@ -23,9 +21,9 @@ DDSTestHandler::DDSTestHandler(int domainId) : DDSParticipantManager(domainId)
     addTopicDataTypeCreator(DDS_TOPIC_HELLO_WORLD_ONE, []() {
         return new HelloWorldOnePubSubType();
     });
-    addTopicDataTypeCreator(DDS_TOPIC_HELLO_WORLD_TWO, []() {
-        return new HelloWorldTwoPubSubType();
-    });
+    // addTopicDataTypeCreator(DDS_TOPIC_HELLO_WORLD_TWO, []() {
+    //     return new HelloWorldTwoPubSubType();
+    // });
 }
 
 DDSTestHandler::~DDSTestHandler()
