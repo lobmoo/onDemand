@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(node_example_exec  LANGUAGES CXX)
+project(example_exec  LANGUAGES CXX)
 
 # 查找目录下的所有源文件
 # 假设您希望在查找源文件时排除 CMakeFiles 目录

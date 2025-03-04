@@ -16,17 +16,11 @@ void run_dds_data_reader();
 int main(int argc, char *argv[])
 {
     Logger::Instance().Init("log/myapp.log", Logger::console, Logger::info, 60, 5);
-    if (argc < 2) {
-        std::cerr << "Usage: " << argv[0] << " sub/pub" << std::endl;
-        return -1;
-    }
-
-    if (strcmp(argv[1], "sub") == 0) {
-        run_dds_data_reader();
-    } else if (strcmp(argv[1], "pub") == 0) {
-        run_dds_data_writer();
-    } else {
-        std::cerr << "unknown command: " << argv[1] << std::endl;
+    std::thread writer_thread(run_dds_data_writer);
+    writer_thread.detach();
+    std::thread reader_thread(run_dds_data_reader);
+    reader_thread.detach();
+    while (std::cin.get() != 'q') {
     }
     return 0;
 }
