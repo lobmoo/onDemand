@@ -35,7 +35,7 @@ class DataNode : public DDSParticipantManager {
   // ´´½¨ DataWriter
   template <typename T>
   DDSTopicDataWriter<T> *createDataWriter(const std::string topicName) {
-    addTopicDataTypeCreator("wwk", [this]() { return dataType_.get(); });
+    addTopicDataTypeCreator(topicName, [this]() { return dataType_.get(); });
     return DDSParticipantManager::createDataWriter<T>(topicName);
   }
 
