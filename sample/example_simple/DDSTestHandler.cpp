@@ -21,9 +21,6 @@ DDSTestHandler::DDSTestHandler(int domainId) : DDSParticipantManager(domainId)
     addTopicDataTypeCreator(DDS_TOPIC_HELLO_WORLD_ONE, []() {
         return new HelloWorldOnePubSubType();
     });
-    // addTopicDataTypeCreator(DDS_TOPIC_HELLO_WORLD_TWO, []() {
-    //     return new HelloWorldTwoPubSubType();
-    // });
 }
 
 DDSTestHandler::~DDSTestHandler()

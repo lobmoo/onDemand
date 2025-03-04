@@ -3,7 +3,8 @@
 #include <memory>
 
 #include "DDSConstants.h"
-#include "DDSTestHandler.h"
+#include "fastdds_wrapper/DataNode.h"
+#include "HelloWorldOnePubSubTypes.hpp"
 #include "HelloWorldOne.hpp"
 #include <thread>
 
@@ -20,6 +21,7 @@ int main(int argc, char *argv[])
     writer_thread.detach();
     std::thread reader_thread(run_dds_data_reader);
     reader_thread.detach();
+ 
     while (std::cin.get() != 'q') {
     }
     return 0;
@@ -30,21 +32,15 @@ void processHelloWorldOne(const std::string &topic_name, std::shared_ptr<HelloWo
     LOG(info) << "recv message [" << topic_name << "]: " << data->index();
 }
 
+
+
 void run_dds_data_writer()
 {
-    DDSTestHandler handler(170);
-    handler.initDomainParticipant("test_writer", 10002, {"127.0.0.1:10001"});
-    DDSTopicDataWriter<HelloWorldOne> *dataWriter = handler.createDataWriter<HelloWorldOne>(DDS_TOPIC_HELLO_WORLD_ONE);
-
+    auto type = std::make_shared<HelloWorldOnePubSubType>(); 
+    DataNode node(170, "test_writer", type);
+    auto dataWriter =  node.createDataWriter<HelloWorldOne>("wwk");
     bool runFlag = true;
     int  index = 0;
-
-    std::thread([&]() {
-        while (std::cin.get() != '\n') {
-        }
-        runFlag = false;
-    }).detach();
-
     while (runFlag) {
         HelloWorldOne message;
         message.index(++index);
@@ -57,12 +53,9 @@ void run_dds_data_writer()
 }
 
 void run_dds_data_reader()
-{
-    DDSTestHandler handler(170);
-    handler.initDomainParticipant("test_reader", 10001, {"127.0.0.1:10002"});
-    DDSTopicDataReader<HelloWorldOne> *dataReader =
-        handler.createDataReader<HelloWorldOne>(DDS_TOPIC_HELLO_WORLD_ONE, processHelloWorldOne);
-
-    while (std::cin.get() != '\n') {
-    }
+{   
+    auto type = std::make_shared<HelloWorldOnePubSubType>(); 
+    DataNode node(170, "test_writer", type);
+    auto dataReader =  node.createDataReader<HelloWorldOne>("wwk", processHelloWorldOne);
 }
+

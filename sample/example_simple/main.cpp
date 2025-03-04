@@ -69,6 +69,6 @@ void run_dds_data_reader()
     DDSTopicDataReader<HelloWorldOne> *dataReader =
         handler.createDataReader<HelloWorldOne>(DDS_TOPIC_HELLO_WORLD_ONE, processHelloWorldOne);
 
-    while (std::cin.get() != '\n') {
+    while (std::cin.get() != 'q') {
     }
 }

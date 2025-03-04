@@ -18,7 +18,7 @@ using namespace eprosima::fastdds::rtps;
 
 DDSTestHandler::DDSTestHandler(int domainId) : DDSParticipantManager(domainId)
 {
-    addTopicDataTypeCreator(DDS_TOPIC_HELLO_WORLD_ONE, []() {
+    addTopicDataTypeCreator("wwk", []() {
         return new HelloWorldOnePubSubType();
     });
     // addTopicDataTypeCreator(DDS_TOPIC_HELLO_WORLD_TWO, []() {
