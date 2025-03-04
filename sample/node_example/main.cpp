@@ -1,0 +1,74 @@
+#include <cstring>
+#include <iostream>
+#include <memory>
+
+#include "DDSConstants.h"
+#include "DDSTestHandler.h"
+#include "HelloWorldOne.hpp"
+#include <thread>
+
+#include "log/logger.h"
+using namespace std;
+
+void run_dds_data_writer();
+void run_dds_data_reader();
+
+int main(int argc, char *argv[])
+{
+    Logger::Instance().Init("log/myapp.log", Logger::console, Logger::info, 60, 5);
+    if (argc < 2) {
+        std::cerr << "Usage: " << argv[0] << " sub/pub" << std::endl;
+        return -1;
+    }
+
+    if (strcmp(argv[1], "sub") == 0) {
+        run_dds_data_reader();
+    } else if (strcmp(argv[1], "pub") == 0) {
+        run_dds_data_writer();
+    } else {
+        std::cerr << "unknown command: " << argv[1] << std::endl;
+    }
+    return 0;
+}
+
+void processHelloWorldOne(const std::string &topic_name, std::shared_ptr<HelloWorldOne> data)
+{
+    LOG(info) << "recv message [" << topic_name << "]: " << data->index();
+}
+
+void run_dds_data_writer()
+{
+    DDSTestHandler handler(170);
+    handler.initDomainParticipant("test_writer", 10002, {"127.0.0.1:10001"});
+    DDSTopicDataWriter<HelloWorldOne> *dataWriter = handler.createDataWriter<HelloWorldOne>(DDS_TOPIC_HELLO_WORLD_ONE);
+
+    bool runFlag = true;
+    int  index = 0;
+
+    std::thread([&]() {
+        while (std::cin.get() != '\n') {
+        }
+        runFlag = false;
+    }).detach();
+
+    while (runFlag) {
+        HelloWorldOne message;
+        message.index(++index);
+        message.points(std::vector<uint8_t>(100));
+        if (dataWriter->writeMessage(message)) {
+            LOG(info) << "send message: " << message.index();
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+}
+
+void run_dds_data_reader()
+{
+    DDSTestHandler handler(170);
+    handler.initDomainParticipant("test_reader", 10001, {"127.0.0.1:10002"});
+    DDSTopicDataReader<HelloWorldOne> *dataReader =
+        handler.createDataReader<HelloWorldOne>(DDS_TOPIC_HELLO_WORLD_ONE, processHelloWorldOne);
+
+    while (std::cin.get() != '\n') {
+    }
+}
