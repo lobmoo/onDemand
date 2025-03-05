@@ -8,6 +8,8 @@
 #include "DDSTopicDataReader.hpp"
 #include "DDSTopicDataWriter.hpp"
 
+#include "log/logger.h"
+
 class DataNode : public DDSParticipantManager {
  public:
   DataNode(int domainId, const std::string &participant_name) : DDSParticipantManager(domainId) {
@@ -42,7 +44,7 @@ class DataNode : public DDSParticipantManager {
   DDSTopicDataWriter<T> *createDataWriter(const std::string topicName) {
     auto it = topicTypeFactory_.find(topicName);
     if (it == topicTypeFactory_.end()) {
-      std::cerr << "Error: Topic type for '" << topicName << "' not registered!" << std::endl;
+      LOG(error) << "Error: Topic type for '" << topicName << "' not registered!";
       return nullptr;
     }
 
@@ -57,7 +59,7 @@ class DataNode : public DDSParticipantManager {
       const std::string topicName, std::function<void(const std::string &, std::shared_ptr<T>)> callback) {
     auto it = topicTypeFactory_.find(topicName);
     if (it == topicTypeFactory_.end()) {
-      std::cerr << "Error: Topic type for '" << topicName << "' not registered!" << std::endl;
+      LOG(error) << "Error: Topic type for '" << topicName << "' not registered!";
       return nullptr;
     }
 
