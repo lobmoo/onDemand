@@ -19,6 +19,7 @@ class DataNode : public DDSParticipantManager {
   ~DataNode() override {}
 
  private:
+  mutable std::mutex topicMutex_;
   std::unordered_map<std::string, std::function<eprosima::fastdds::dds::TopicDataType *()>> topicTypeFactory_;
 
  protected:
@@ -36,12 +37,14 @@ class DataNode : public DDSParticipantManager {
  public:
   template <typename T>
   void registerTopicType(const std::string &topicName) {
+    std::lock_guard<std::mutex> lock(topicMutex_);
     topicTypeFactory_[topicName] = []() { return new T(); };
   }
 
   // ´´½¨ DataWriter
   template <typename T>
   DDSTopicDataWriter<T> *createDataWriter(const std::string topicName) {
+    std::lock_guard<std::mutex> lock(topicMutex_);
     auto it = topicTypeFactory_.find(topicName);
     if (it == topicTypeFactory_.end()) {
       LOG(error) << "Error: Topic type for '" << topicName << "' not registered!";
@@ -57,6 +60,7 @@ class DataNode : public DDSParticipantManager {
   template <typename T>
   DDSTopicDataReader<T> *createDataReader(
       const std::string topicName, std::function<void(const std::string &, std::shared_ptr<T>)> callback) {
+    std::lock_guard<std::mutex> lock(topicMutex_);
     auto it = topicTypeFactory_.find(topicName);
     if (it == topicTypeFactory_.end()) {
       LOG(error) << "Error: Topic type for '" << topicName << "' not registered!";
