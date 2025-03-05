@@ -2,6 +2,7 @@
 #define PARTICIPANT_QOS_HANDLER_H
 
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
+#include <fastdds/dds/domain/qos/DomainParticipantExtendedQos.hpp>
 
 class ParticipantQosHandler
 {
@@ -50,7 +51,8 @@ public:
     void addUDPV6Transport(uint32_t buffer_size = 1024 * 1024 * 16);
 
 private:
-    eprosima::fastdds::dds::DomainParticipantQos m_participantQos;
+    //eprosima::fastdds::dds::DomainParticipantQos m_participantQos;
+    eprosima::fastdds::dds::DomainParticipantExtendedQos m_participantQos;
 };
 
 #endif
