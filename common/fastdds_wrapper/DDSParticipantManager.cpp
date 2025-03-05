@@ -16,7 +16,7 @@ bool DDSParticipantManager::initDomainParticipant(const std::string             
                                                   const std::vector<std::string> &peer_locators)
 {
     if (!m_participant) {
-        eprosima::fastdds::dds::DomainParticipantQos participantQos =
+        eprosima::fastdds::dds::DomainParticipantExtendedQos participantQos =
             createParticipantQos(participant_name, listen_port, peer_locators).getQos();
         m_participant = std::make_shared<DDSDomainParticipant>(m_domainId, participantQos);
 

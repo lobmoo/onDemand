@@ -8,7 +8,7 @@
 
 using namespace eprosima::fastdds::dds;
 
-DDSDomainParticipant::DDSDomainParticipant(int domainId, const eprosima::fastdds::dds::DomainParticipantQos &participantQos)
+DDSDomainParticipant::DDSDomainParticipant(int domainId, const eprosima::fastdds::dds::DomainParticipantExtendedQos &participantQos)
 {
     m_participant = DomainParticipantFactory::get_instance()->create_participant(domainId, participantQos);
     if (m_participant) {

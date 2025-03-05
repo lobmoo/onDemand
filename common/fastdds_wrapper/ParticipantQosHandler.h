@@ -11,7 +11,7 @@ public:
     ~ParticipantQosHandler();
 
 public:
-    eprosima::fastdds::dds::DomainParticipantQos &getQos();
+    eprosima::fastdds::dds::DomainParticipantExtendedQos &getQos();
 
 public:
     /**

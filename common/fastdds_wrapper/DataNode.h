@@ -30,7 +30,7 @@ class DataNode : public DDSParticipantManager {
 
     handler.addSHMTransport(1024 * 1024 * 16);
     handler.addUDPV4Transport(1024 * 1024 * 16);
-
+  
     return handler;
   }
 

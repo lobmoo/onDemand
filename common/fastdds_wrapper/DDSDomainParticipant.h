@@ -8,7 +8,7 @@
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
-
+#include <fastdds/dds/domain/qos/DomainParticipantExtendedQos.hpp>
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <mutex>
 #include <unordered_map>
@@ -16,7 +16,7 @@
 class DDSDomainParticipant
 {
 public:
-    DDSDomainParticipant(int domainId, const eprosima::fastdds::dds::DomainParticipantQos &participantQos);
+    DDSDomainParticipant(int domainId, const eprosima::fastdds::dds::DomainParticipantExtendedQos &participantQos);
     virtual ~DDSDomainParticipant();
 
 public:
