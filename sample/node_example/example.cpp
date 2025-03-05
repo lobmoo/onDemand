@@ -2,8 +2,8 @@
 #include <iostream>
 #include <memory>
 
-#include "DDSConstants.h"
-#include "DDSTestHandler.h"
+#include "fastdds_wrapper/DataNode.h"
+#include "HelloWorldOnePubSubTypes.hpp"
 #include "HelloWorldOne.hpp"
 #include <thread>
 
@@ -13,7 +13,6 @@ using namespace std;
 void run_dds_data_writer();
 void run_dds_data_reader();
 
-
 int main(int argc, char *argv[])
 {
     Logger::Instance().Init("log/myapp.log", Logger::console, Logger::info, 60, 5);
@@ -22,7 +21,7 @@ int main(int argc, char *argv[])
     std::thread reader_thread(run_dds_data_reader);
     reader_thread.detach();
  
-    while (std::cin.get() != 'q') {
+    while (std::cin.get() != '\n') {
     }
     return 0;
 }
@@ -32,21 +31,17 @@ void processHelloWorldOne(const std::string &topic_name, std::shared_ptr<HelloWo
     LOG(info) << "recv message [" << topic_name << "]: " << data->index();
 }
 
+
+
 void run_dds_data_writer()
 {
-    DDSTestHandler handler(170);
-    handler.initDomainParticipant("test_writer", 10002, {"127.0.0.1:10001"});
-    DDSTopicDataWriter<HelloWorldOne> *dataWriter = handler.createDataWriter<HelloWorldOne>(DDS_TOPIC_HELLO_WORLD_ONE);
-
+    
+    DataNode node(170, "test_writer");
+    node.registerTopicType<HelloWorldOnePubSubType>("wwk");
+    node.registerTopicType<HelloWorldOnePubSubType>("w");
+    auto dataWriter =  node.createDataWriter<HelloWorldOne>("wwk");
     bool runFlag = true;
     int  index = 0;
-
-    std::thread([&]() {
-        while (std::cin.get() != '\n') {
-        }
-        runFlag = false;
-    }).detach();
-
     while (runFlag) {
         HelloWorldOne message;
         message.index(++index);
@@ -59,12 +54,9 @@ void run_dds_data_writer()
 }
 
 void run_dds_data_reader()
-{
-    DDSTestHandler handler(170);
-    handler.initDomainParticipant("test_writer", 10001, {"127.0.0.1:10002"});
-    DDSTopicDataReader<HelloWorldOne> *dataReader =
-        handler.createDataReader<HelloWorldOne>(DDS_TOPIC_HELLO_WORLD_ONE, processHelloWorldOne);
-
-    while (std::cin.get() != 'q') {
-    }
+{   
+    DataNode node(170, "test_reader");
+    node.registerTopicType<HelloWorldOnePubSubType>("wwk");
+    auto dataReader =  node.createDataReader<HelloWorldOne>("wwk", processHelloWorldOne);   
 }
+

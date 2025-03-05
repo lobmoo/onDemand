@@ -4,25 +4,24 @@ project(node_example_exec  LANGUAGES CXX)
 
 # 查找目录下的所有源文件
 # 假设您希望在查找源文件时排除 CMakeFiles 目录
-file(GLOB_RECURSE DDS_SHM_HELLOWORLD_EXAMPLE_SOURCES_CXX "${CMAKE_CURRENT_SOURCE_DIR}/*.cxx")
-file(GLOB_RECURSE DDS_SHM_HELLOWORLD_EXAMPLE_SOURCES_CPP "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
+file(GLOB DDS_SHM_HELLOWORLD_EXAMPLE_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/HelloWorldOne/source/*.cxx"
+                                                     "${CMAKE_CURRENT_SOURCE_DIR}/HelloWorldOne/source/*.cpp"
+                                                     "${CMAKE_CURRENT_SOURCE_DIR}/HelloWorldOne/source/*.ipp"
+                                                     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
 
-file(GLOB_RECURSE DDS_INTERFACE_SOURCES_CPP "${CMAKE_CURRENT_SOURCE_DIR}/../../common/fastdds_wrapper/*.cpp")
+file(GLOB DDS_INTERFACE_SOURCES_CPP "${CMAKE_CURRENT_SOURCE_DIR}/../../common/fastdds_wrapper/*.cpp")
 
 
-
-
-message(STATUS "Collected CXX sources: ${DDS_SHM_HELLOWORLD_EXAMPLE_SOURCES_CXX}")
-message(STATUS "Collected CPP sources: ${DDS_SHM_HELLOWORLD_EXAMPLE_SOURCES_CPP}")
+message(STATUS "Collected CXX sources: ${DDS_SHM_HELLOWORLD_EXAMPLE_SOURCES}")
+message(STATUS "Collected CPP sources: ${DDS_INTERFACE_SOURCES_CPP}")
 
 # 添加可执行文件目标
-add_executable(${PROJECT_NAME} ${DDS_SHM_HELLOWORLD_EXAMPLE_SOURCES_CXX} ${DDS_SHM_HELLOWORLD_EXAMPLE_SOURCES_CPP} ${DDS_INTERFACE_SOURCES_CPP})
-#指定可执行文件生成路径 目前是当前cmakelist文件所在根目录
+add_executable(${PROJECT_NAME} ${DDS_SHM_HELLOWORLD_EXAMPLE_SOURCES}  ${DDS_INTERFACE_SOURCES_CPP})
 set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
 
 #头文件
 set(OBJ_CPP_INCLUDE
-    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/HelloWorldOne/source
     ${CMAKE_CURRENT_SOURCE_DIR}/../../common
     ${CMAKE_CURRENT_SOURCE_DIR}/../../thirdparty/fast_dds/include
 )
