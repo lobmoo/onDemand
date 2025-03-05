@@ -10,14 +10,14 @@
 
 class DataNode : public DDSParticipantManager {
  public:
-  DataNode(int domainId, const std::string &participant_name, std::shared_ptr<eprosima::fastdds::dds::TopicDataType> dataType) : DDSParticipantManager(domainId), dataType_(dataType) {
+  DataNode(int domainId, const std::string &participant_name, eprosima::fastdds::dds::TopicDataType *dataType) : DDSParticipantManager(domainId), dataType_(dataType) {
     initDomainParticipant(participant_name);
   }
 
   ~DataNode() override {}
 
   private:
-    std::shared_ptr<eprosima::fastdds::dds::TopicDataType> dataType_;
+    eprosima::fastdds::dds::TopicDataType *dataType_;
 
  protected:
   ParticipantQosHandler createParticipantQos(
@@ -35,7 +35,7 @@ class DataNode : public DDSParticipantManager {
   // ´´½¨ DataWriter
   template <typename T>
   DDSTopicDataWriter<T> *createDataWriter(const std::string topicName) {
-    addTopicDataTypeCreator(topicName, [this]() { return dataType_.get(); });
+    addTopicDataTypeCreator(topicName, [this]() { return dataType_; });
     return DDSParticipantManager::createDataWriter<T>(topicName);
   }
 
@@ -43,7 +43,7 @@ class DataNode : public DDSParticipantManager {
   template <typename T>
   DDSTopicDataReader<T> *createDataReader(
       const std::string topicName, std::function<void(const std::string &, std::shared_ptr<T>)> callback) {
-    addTopicDataTypeCreator(topicName, [this]() { return dataType_.get(); });
+    addTopicDataTypeCreator(topicName, [this]() { return dataType_; });
     return DDSParticipantManager::createDataReader<T>(topicName, callback);
   }
 };
