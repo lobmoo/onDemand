@@ -10,14 +10,14 @@
 
 class DataNode : public DDSParticipantManager {
  public:
-  DataNode(int domainId, const std::string &participant_name, eprosima::fastdds::dds::TopicDataType *dataType) : DDSParticipantManager(domainId), dataType_(dataType) {
+  DataNode(int domainId, const std::string &participant_name) : DDSParticipantManager(domainId) {
     initDomainParticipant(participant_name);
   }
 
   ~DataNode() override {}
 
-  private:
-    eprosima::fastdds::dds::TopicDataType *dataType_;
+ private:
+  std::unordered_map<std::string, std::function<eprosima::fastdds::dds::TopicDataType *()>> topicTypeFactory_;
 
  protected:
   ParticipantQosHandler createParticipantQos(
@@ -32,10 +32,22 @@ class DataNode : public DDSParticipantManager {
   }
 
  public:
+  template <typename T>
+  void registerTopicType(const std::string &topicName) {
+    topicTypeFactory_[topicName] = []() { return new T(); };
+  }
+
   // ´´½¨ DataWriter
   template <typename T>
   DDSTopicDataWriter<T> *createDataWriter(const std::string topicName) {
-    addTopicDataTypeCreator(topicName, [this]() { return dataType_; });
+    auto it = topicTypeFactory_.find(topicName);
+    if (it == topicTypeFactory_.end()) {
+      std::cerr << "Error: Topic type for '" << topicName << "' not registered!" << std::endl;
+      return nullptr;
+    }
+
+    eprosima::fastdds::dds::TopicDataType *dataType = it->second();
+    addTopicDataTypeCreator(topicName, [dataType]() { return dataType; });
     return DDSParticipantManager::createDataWriter<T>(topicName);
   }
 
@@ -43,7 +55,14 @@ class DataNode : public DDSParticipantManager {
   template <typename T>
   DDSTopicDataReader<T> *createDataReader(
       const std::string topicName, std::function<void(const std::string &, std::shared_ptr<T>)> callback) {
-    addTopicDataTypeCreator(topicName, [this]() { return dataType_; });
+    auto it = topicTypeFactory_.find(topicName);
+    if (it == topicTypeFactory_.end()) {
+      std::cerr << "Error: Topic type for '" << topicName << "' not registered!" << std::endl;
+      return nullptr;
+    }
+
+    eprosima::fastdds::dds::TopicDataType *dataType = it->second();
+    addTopicDataTypeCreator(topicName, [dataType]() { return dataType; });
     return DDSParticipantManager::createDataReader<T>(topicName, callback);
   }
 };

@@ -36,8 +36,9 @@ void processHelloWorldOne(const std::string &topic_name, std::shared_ptr<HelloWo
 
 void run_dds_data_writer()
 {
-    eprosima::fastdds::dds::TopicDataType *type = new HelloWorldOnePubSubType(); 
-    DataNode node(170, "test_writer", type);
+    
+    DataNode node(170, "test_writer");
+    node.registerTopicType<HelloWorldOnePubSubType>("wwk");
     auto dataWriter =  node.createDataWriter<HelloWorldOne>("wwk");
     bool runFlag = true;
     int  index = 0;
@@ -54,8 +55,8 @@ void run_dds_data_writer()
 
 void run_dds_data_reader()
 {   
-    eprosima::fastdds::dds::TopicDataType *type = new HelloWorldOnePubSubType(); 
-    DataNode node(170, "test_reader", type);
+    DataNode node(170, "test_reader");
+    node.registerTopicType<HelloWorldOnePubSubType>("wwk");
     auto dataReader =  node.createDataReader<HelloWorldOne>("wwk", processHelloWorldOne);   
 }
 
