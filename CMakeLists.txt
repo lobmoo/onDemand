@@ -24,9 +24,7 @@ add_subdirectory(core)
 add_dependencies(test_exec log)
 
 if(COMPILE_SAMPLE)
-    add_subdirectory(sample/example_simple)
     add_subdirectory(sample/node_example)
-    add_dependencies(example_exec log)
     add_dependencies(node_example_exec log)
 endif()
 
