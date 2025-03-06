@@ -4,6 +4,7 @@
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
+#include <fastdds/dds/topic/TypeSupport.hpp>
 #include <mutex>
 
 using namespace eprosima::fastdds::dds;
@@ -43,7 +44,7 @@ bool DDSDomainParticipant::registerTopic(std::string topicName, eprosima::fastdd
         return false;
     }
 
-    Topic *topic = m_participant->create_topic(topicName, typeSupport->get_name(), topicQos);
+    Topic *topic = m_participant->create_topic(topicName, typeSupport.get_type_name(), topicQos);
     if (topic != nullptr)
         m_mapTopics.insert(std::pair<std::string, Topic *>(topicName, topic));
     return true;
