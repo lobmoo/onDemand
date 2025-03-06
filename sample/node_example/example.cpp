@@ -37,8 +37,8 @@ void run_dds_data_writer()
 {
     
     DataNode node(170, "test_writer");
-    node.registerTopicType<HelloWorldOnePubSubType>("wwk");
-    auto dataWriter =  node.createDataWriter<HelloWorldOne>("wwk");
+    node.registerTopicType<HelloWorldOnePubSubType>("1234");
+    auto dataWriter =  node.createDataWriter<HelloWorldOne>("1234");
     bool runFlag = true;
     int  index = 0;
     while (runFlag) {
@@ -55,7 +55,7 @@ void run_dds_data_writer()
 void run_dds_data_reader()
 {   
     DataNode node(170, "test_reader");
-    node.registerTopicType<HelloWorldOnePubSubType>("wwk");
-    auto dataReader =  node.createDataReader<HelloWorldOne>("wwk", processHelloWorldOne);   
+    node.registerTopicType<HelloWorldOnePubSubType>("1234");
+    auto dataReader =  node.createDataReader<HelloWorldOne>("1234", processHelloWorldOne);   
 }
 
