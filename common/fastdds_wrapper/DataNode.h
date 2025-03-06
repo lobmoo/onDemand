@@ -7,7 +7,6 @@
 #include "DDSParticipantManager.h"
 #include "DDSTopicDataReader.hpp"
 #include "DDSTopicDataWriter.hpp"
-
 #include "log/logger.h"
 
 class DataNode : public DDSParticipantManager {
@@ -29,8 +28,8 @@ class DataNode : public DDSParticipantManager {
     ParticipantQosHandler handler(participant_name);
 
     handler.addSHMTransport(1024 * 1024 * 16);
-    handler.addUDPV4Transport(1024 * 1024 * 16);
-  
+    // handler.addUDPV4Transport(1024 * 1024 * 16);
+
     return handler;
   }
 
@@ -44,15 +43,18 @@ class DataNode : public DDSParticipantManager {
   // ´´½¨ DataWriter
   template <typename T>
   DDSTopicDataWriter<T> *createDataWriter(const std::string topicName) {
-    std::lock_guard<std::mutex> lock(topicMutex_);
-    auto it = topicTypeFactory_.find(topicName);
-    if (it == topicTypeFactory_.end()) {
-      LOG(error) << "Error: Topic type for '" << topicName << "' not registered!";
-      return nullptr;
-    }
+    {
+      std::lock_guard<std::mutex> lock(topicMutex_);
+      auto it = topicTypeFactory_.find(topicName);
+      if (it == topicTypeFactory_.end()) {
+        LOG(error) << "Error: Topic type for '" << topicName << "' not registered!";
+        return nullptr;
+      }
 
-    eprosima::fastdds::dds::TopicDataType *dataType = it->second();
-    addTopicDataTypeCreator(topicName, [dataType]() { return dataType; });
+      eprosima::fastdds::dds::TopicDataType *dataType = it->second();
+      addTopicDataTypeCreator(topicName, [dataType]() { return dataType; });
+    }
+   
     return DDSParticipantManager::createDataWriter<T>(topicName);
   }
 
@@ -60,15 +62,18 @@ class DataNode : public DDSParticipantManager {
   template <typename T>
   DDSTopicDataReader<T> *createDataReader(
       const std::string topicName, std::function<void(const std::string &, std::shared_ptr<T>)> callback) {
-    std::lock_guard<std::mutex> lock(topicMutex_);
-    auto it = topicTypeFactory_.find(topicName);
-    if (it == topicTypeFactory_.end()) {
-      LOG(error) << "Error: Topic type for '" << topicName << "' not registered!";
-      return nullptr;
-    }
+    {
+      std::lock_guard<std::mutex> lock(topicMutex_);
+      auto it = topicTypeFactory_.find(topicName);
+      if (it == topicTypeFactory_.end()) {
+        LOG(error) << "Error: Topic type for '" << topicName << "' not registered!";
+        return nullptr;
+      }
 
-    eprosima::fastdds::dds::TopicDataType *dataType = it->second();
-    addTopicDataTypeCreator(topicName, [dataType]() { return dataType; });
+      eprosima::fastdds::dds::TopicDataType *dataType = it->second();
+      addTopicDataTypeCreator(topicName, [dataType]() { return dataType; });
+    }
+    
     return DDSParticipantManager::createDataReader<T>(topicName, callback);
   }
 };

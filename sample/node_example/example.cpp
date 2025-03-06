@@ -38,7 +38,6 @@ void run_dds_data_writer()
     
     DataNode node(170, "test_writer");
     node.registerTopicType<HelloWorldOnePubSubType>("wwk");
-    node.registerTopicType<HelloWorldOnePubSubType>("w");
     auto dataWriter =  node.createDataWriter<HelloWorldOne>("wwk");
     bool runFlag = true;
     int  index = 0;
