@@ -37,7 +37,9 @@ class DataNode : public DDSParticipantManager {
   template <typename T>
   void registerTopicType(const std::string &topicName) {
     std::lock_guard<std::mutex> lock(topicMutex_);
-    topicTypeFactory_[topicName] = []() { return new T(); };
+    if (topicTypeFactory_.find(topicName) == topicTypeFactory_.end()) {
+      topicTypeFactory_[topicName] = []() { return new T(); };
+    }
   }
 
   // ´´½¨ DataWriter
