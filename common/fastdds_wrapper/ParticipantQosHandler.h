@@ -50,6 +50,14 @@ public:
      */
     void addUDPV6Transport(uint32_t buffer_size = 1024 * 1024 * 16);
 
+    /**
+     * @brief Set the Participant Qos Properties object
+     * @param  name             
+     * @param  value            
+     * @param  propagate        
+     */
+    void setParticipantQosProperties(std::string name, std::string value, bool propagate);
+
 private:
     //eprosima::fastdds::dds::DomainParticipantQos m_participantQos;
     eprosima::fastdds::dds::DomainParticipantExtendedQos m_participantQos;

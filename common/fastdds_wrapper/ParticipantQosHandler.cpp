@@ -14,23 +14,29 @@ using namespace eprosima::fastdds::rtps;
 
 ParticipantQosHandler::ParticipantQosHandler(std::string participant_name)
 {
-   // m_participantQos = PARTICIPANT_QOS_DEFAULT;
-    m_participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::SIMPLE;
-    m_participantQos.wire_protocol().builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = true;
-    m_participantQos.wire_protocol().builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
-    m_participantQos.wire_protocol().builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
-    // 控制发现消息的广播频率
-    eprosima::fastdds::dds::Time_t duration = eprosima::fastdds::dds::Duration_t(3, 0);
-    m_participantQos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod = duration;
-    // 提示远端认为此 RTPSParticipant 应该存活的时间
-    m_participantQos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastdds::dds::c_TimeInfinite;
-    m_participantQos.name(participant_name);
-    // 设置为 false 可禁用默认的 UDPv4 传输方式, 默认为true
-    m_participantQos.transport().use_builtin_transports = false;
+    m_participantQos = PARTICIPANT_QOS_DEFAULT;
+    // m_participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::SIMPLE;
+    // m_participantQos.wire_protocol().builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = true;
+    // m_participantQos.wire_protocol().builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
+    // m_participantQos.wire_protocol().builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
+    // // 控制发现消息的广播频率
+    // eprosima::fastdds::dds::Time_t duration = eprosima::fastdds::dds::Duration_t(3, 0);
+    // m_participantQos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod = duration;
+    // // 提示远端认为此 RTPSParticipant 应该存活的时间
+    // m_participantQos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastdds::dds::c_TimeInfinite;
+    // m_participantQos.name(participant_name);
+    // // 设置为 false 可禁用默认的 UDPv4 传输方式, 默认为true
+    // m_participantQos.transport().use_builtin_transports = false;
 }
 
 ParticipantQosHandler::~ParticipantQosHandler()
 {
+}
+
+
+void ParticipantQosHandler::setParticipantQosProperties(std::string name, std::string value, bool propagate)
+{
+    m_participantQos.properties().properties().emplace_back(name, value, propagate);
 }
 
 DomainParticipantExtendedQos &ParticipantQosHandler::getQos()
@@ -67,9 +73,6 @@ void ParticipantQosHandler::addTCPV4Transport(uint16_t listen_port, const std::v
     m_participantQos.transport().user_transports.push_back(tcp_transport);
 }
 
-void ParticipantQosHandler::addTCPV6Transport()
-{
-}
 
 void ParticipantQosHandler::addUDPV4Transport(uint32_t buffer_size, const std::vector<std::string> &ipaddrs)
 {
@@ -86,6 +89,7 @@ void ParticipantQosHandler::addUDPV4Transport(uint32_t buffer_size, const std::v
     }
     m_participantQos.transport().user_transports.push_back(udp_transport);
 }
+
 
 void ParticipantQosHandler::addUDPV6Transport(uint32_t buffer_size)
 {

@@ -10,8 +10,11 @@
 #include "log/logger.h"
 
 class DataNode : public DDSParticipantManager {
+  using ParticipantQosConfigurator = std::function<ParticipantQosHandler()>;
+
  public:
-  DataNode(int domainId, const std::string &participant_name) : DDSParticipantManager(domainId) {
+  DataNode(int domainId, const std::string &participant_name, ParticipantQosConfigurator qos_configurator = nullptr)
+      : DDSParticipantManager(domainId), qos_configurator_(qos_configurator) {
     initDomainParticipant(participant_name);
   }
 
@@ -20,17 +23,18 @@ class DataNode : public DDSParticipantManager {
  private:
   mutable std::mutex topicMutex_;
   std::unordered_map<std::string, std::function<eprosima::fastdds::dds::TopicDataType *()>> topicTypeFactory_;
+  ParticipantQosConfigurator qos_configurator_;
 
  protected:
   ParticipantQosHandler createParticipantQos(
       const std::string &participant_name, uint16_t listen_port,
       const std::vector<std::string> &peer_locators) override {
-    ParticipantQosHandler handler(participant_name);
-
-     handler.addSHMTransport(1024 * 1024 * 16);
-     handler.addUDPV4Transport(1024 * 1024 * 16);
-
-    return handler;
+    if (nullptr != qos_configurator_) {
+      return qos_configurator_();
+    } else {
+      ParticipantQosHandler handler(participant_name);
+      return handler;
+    }
   }
 
  public:
@@ -56,7 +60,7 @@ class DataNode : public DDSParticipantManager {
       eprosima::fastdds::dds::TopicDataType *dataType = it->second();
       addTopicDataTypeCreator(topicName, [dataType]() { return dataType; });
     }
-   
+
     return DDSParticipantManager::createDataWriter<T>(topicName);
   }
 
@@ -75,7 +79,7 @@ class DataNode : public DDSParticipantManager {
       eprosima::fastdds::dds::TopicDataType *dataType = it->second();
       addTopicDataTypeCreator(topicName, [dataType]() { return dataType; });
     }
-    
+
     return DDSParticipantManager::createDataReader<T>(topicName, callback);
   }
 };
