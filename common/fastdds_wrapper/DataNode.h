@@ -27,7 +27,7 @@ class DataNode : public DDSParticipantManager {
       const std::vector<std::string> &peer_locators) override {
     ParticipantQosHandler handler(participant_name);
 
-     //handler.addSHMTransport(1024 * 1024 * 16);
+     handler.addSHMTransport(1024 * 1024 * 16);
      handler.addUDPV4Transport(1024 * 1024 * 16);
 
     return handler;

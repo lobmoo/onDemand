@@ -35,7 +35,6 @@ void processHelloWorldOne(const std::string &topic_name, std::shared_ptr<HelloWo
 
 void run_dds_data_writer()
 {
-    
     DataNode node(170, "test_writer");
     node.registerTopicType<HelloWorldOnePubSubType>("1234");
     auto dataWriter =  node.createDataWriter<HelloWorldOne>("1234");
