@@ -98,18 +98,24 @@ void processHelloWorldOne(const std::string &topic_name, std::shared_ptr<HelloWo
 ParticipantQosHandler qos_configurator()
 {
     ParticipantQosHandler handler("test_writer");
-   // handler.addUDPV4Transport(32 * 1024 * 1024);
+    handler.addUDPV4Transport(32 * 1024 * 1024);
     handler.addSHMTransport(32 * 1024 * 1024);
+    handler.setParticipantQosProperties("dsfcversion", "v1.0.0", true);
     return handler;
 }
 
 void run_dds_data_writer()
 {
-  
-
+    auto ptr = [](){
+        ParticipantQosHandler handler("test_writer");
+        handler.addUDPV4Transport(32 * 1024 * 1024);
+        handler.addSHMTransport(32 * 1024 * 1024);
+        handler.setParticipantQosProperties("dsfcversion", "v1.0.0", true);
+        return handler;
+    };
+    
     DataNode node(170, "test_writer", qos_configurator);
     node.registerTopicType<HelloWorldOnePubSubType>("wwk");
-    node.registerTopicType<HelloWorldOnePubSubType>("w");
     auto dataWriter =  node.createDataWriter<HelloWorldOne>("wwk");
     bool runFlag = true;
     int  index = 0;
