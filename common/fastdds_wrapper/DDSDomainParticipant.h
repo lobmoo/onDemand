@@ -52,7 +52,7 @@ DDSTopicDataWriter<T> *DDSDomainParticipant::createDataWriter(std::string topicN
     if (m_mapTopics.find(topicName) == m_mapTopics.end())
         return nullptr;
     eprosima::fastdds::dds::DataWriterQos  temp_dataWriterQos = dataWriterQos;
-    m_publisher->get_datawriter_qos_from_profile("configuration_datawriter_profile" ,temp_dataWriterQos)
+    m_publisher->get_datawriter_qos_from_profile("configuration_datawriter_profile" ,temp_dataWriterQos);
     return new DDSTopicDataWriter<T>(m_publisher, m_mapTopics.at(topicName), temp_dataWriterQos);
 }
 
@@ -66,7 +66,7 @@ DDSTopicDataReader<T> *DDSDomainParticipant::createDataReader(std::string       
         return nullptr;
 
     eprosima::fastdds::dds::DataReaderQos  temp_dataReaderQos = dataReaderQos;
-    m_subscriber->get_datareader_qos_from_profile("configuration_datareader_profile" ,temp_dataReaderQos)
+    m_subscriber->get_datareader_qos_from_profile("configuration_datareader_profile" ,temp_dataReaderQos);
     return new DDSTopicDataReader<T>(m_subscriber, m_mapTopics.at(topicName), callback, temp_dataReaderQos);
 }
 
