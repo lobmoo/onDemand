@@ -47,7 +47,6 @@ DDSTopicDataWriter<T> *DDSParticipantManager::createDataWriter(std::string topic
 {
     if (!m_participant->registerTopic(topicName, getTopicDataType(topicName)))
         return nullptr;
-
     return m_participant->createDataWriter<T>(topicName);
 }
 

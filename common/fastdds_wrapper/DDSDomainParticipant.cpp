@@ -76,7 +76,9 @@ bool DDSDomainParticipant::registerTopic(std::string topicName, eprosima::fastdd
         return false;
     }
 
-    Topic *topic = m_participant->create_topic(topicName, typeSupport.get_type_name(), topicQos);
+    TopicQos  temp_topicQos = topicQos;
+    m_participant->get_topic_qos_from_profile("configuration_topic_profile", temp_topicQos);
+    Topic *topic = m_participant->create_topic(topicName, typeSupport.get_type_name(), temp_topicQos);
     if (topic != nullptr)
         m_mapTopics.insert(std::pair<std::string, Topic *>(topicName, topic));
     return true;

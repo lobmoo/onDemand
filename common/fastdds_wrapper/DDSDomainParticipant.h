@@ -51,8 +51,9 @@ DDSTopicDataWriter<T> *DDSDomainParticipant::createDataWriter(std::string topicN
     std::lock_guard<std::mutex> guard(m_topicLock);
     if (m_mapTopics.find(topicName) == m_mapTopics.end())
         return nullptr;
-
-    return new DDSTopicDataWriter<T>(m_publisher, m_mapTopics.at(topicName), dataWriterQos);
+    eprosima::fastdds::dds::DataWriterQos  temp_dataWriterQos = dataWriterQos;
+    m_publisher->get_datawriter_qos_from_profile("configuration_datawriter_profile" ,temp_dataWriterQos)
+    return new DDSTopicDataWriter<T>(m_publisher, m_mapTopics.at(topicName), temp_dataWriterQos);
 }
 
 template <typename T>
@@ -64,7 +65,9 @@ DDSTopicDataReader<T> *DDSDomainParticipant::createDataReader(std::string       
     if (m_mapTopics.find(topicName) == m_mapTopics.end())
         return nullptr;
 
-    return new DDSTopicDataReader<T>(m_subscriber, m_mapTopics.at(topicName), callback, dataReaderQos);
+    eprosima::fastdds::dds::DataReaderQos  temp_dataReaderQos = dataReaderQos;
+    m_subscriber->get_datareader_qos_from_profile("configuration_datareader_profile" ,temp_dataReaderQos)
+    return new DDSTopicDataReader<T>(m_subscriber, m_mapTopics.at(topicName), callback, temp_dataReaderQos);
 }
 
 #endif
