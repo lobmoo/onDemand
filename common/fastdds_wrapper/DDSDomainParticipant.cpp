@@ -1,4 +1,5 @@
 #include "DDSDomainParticipant.h"
+
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
@@ -9,95 +10,85 @@
 
 using namespace eprosima::fastdds::dds;
 
-DDSDomainParticipant::DDSDomainParticipant(int domainId, const eprosima::fastdds::dds::DomainParticipantExtendedQos &participantQos)
-{
+DDSDomainParticipant::DDSDomainParticipant(
+    int domainId, const eprosima::fastdds::dds::DomainParticipantExtendedQos &participantQos) {
+  m_participant = DomainParticipantFactory::get_instance()->create_participant(domainId, participantQos);
+  if (m_participant) {
+    eprosima::fastdds::dds::SubscriberQos subscriberQos(SUBSCRIBER_QOS_DEFAULT);
+    m_subscriber = m_participant->create_subscriber(subscriberQos, nullptr);
+
+    eprosima::fastdds::dds::PublisherQos publisherQos(PUBLISHER_QOS_DEFAULT);
+    m_publisher = m_participant->create_publisher(publisherQos, nullptr);
+  }
+}
+
+DDSDomainParticipant::DDSDomainParticipant(int domainId, std::string XmlConfig) {
+  if (XmlConfig.empty()) {
+    LOG(warning) << "XmlConfig is empty, use default config";
+    eprosima::fastdds::dds::DomainParticipantQos participantQos = PARTICIPANT_QOS_DEFAULT;
     m_participant = DomainParticipantFactory::get_instance()->create_participant(domainId, participantQos);
     if (m_participant) {
-        eprosima::fastdds::dds::SubscriberQos subscriberQos(SUBSCRIBER_QOS_DEFAULT);
-        m_subscriber = m_participant->create_subscriber(subscriberQos, nullptr);
+      eprosima::fastdds::dds::SubscriberQos subscriberQos(SUBSCRIBER_QOS_DEFAULT);
+      m_subscriber = m_participant->create_subscriber(subscriberQos, nullptr);
 
-        eprosima::fastdds::dds::PublisherQos publisherQos(PUBLISHER_QOS_DEFAULT);
-        m_publisher = m_participant->create_publisher(publisherQos, nullptr);
+      eprosima::fastdds::dds::PublisherQos publisherQos(PUBLISHER_QOS_DEFAULT);
+      m_publisher = m_participant->create_publisher(publisherQos, nullptr);
     }
-}
-
-DDSDomainParticipant::DDSDomainParticipant(int domainId, std::string XmlConfig)
-{
-    if(XmlConfig.empty())
-    {
-        eprosima::fastdds::dds::DomainParticipantQos participantQos = PARTICIPANT_QOS_DEFAULT;
-        m_participant = DomainParticipantFactory::get_instance()->create_participant(domainId, participantQos);
-        if (m_participant) {
-            eprosima::fastdds::dds::SubscriberQos subscriberQos(SUBSCRIBER_QOS_DEFAULT);
-            m_subscriber = m_participant->create_subscriber(subscriberQos, nullptr);
-    
-            eprosima::fastdds::dds::PublisherQos publisherQos(PUBLISHER_QOS_DEFAULT);
-            m_publisher = m_participant->create_publisher(publisherQos, nullptr);
-        }
-    }
-    else
-        {
-            DomainParticipantFactory::get_instance()->load_XML_profiles_file(XmlConfig);
-            m_participant = DomainParticipantFactory::get_instance()->create_participant_with_profile("configuration_participant_profile");
-            if (m_participant) {
-
-                SubscriberQos sub_qos = SUBSCRIBER_QOS_DEFAULT;
-                m_participant->get_subscriber_qos_from_profile("configuration_subscriber_profile", sub_qos);
-                m_subscriber = m_participant->create_subscriber(sub_qos, nullptr);
-        
-                PublisherQos pub_qos = PUBLISHER_QOS_DEFAULT;
-                m_participant->get_publisher_qos_from_profile("configuration_publisher_profile", pub_qos);
-                m_publisher = m_participant->create_publisher(pub_qos, nullptr);
-            }
-        }   
-}
-
-
-DDSDomainParticipant::~DDSDomainParticipant()
-{
+  } else {
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file(XmlConfig);
+    m_participant =
+        DomainParticipantFactory::get_instance()->create_participant_with_profile("configuration_participant_profile");
     if (m_participant) {
-        DomainParticipantFactory::get_instance()->delete_participant(m_participant);
+      SubscriberQos sub_qos = SUBSCRIBER_QOS_DEFAULT;
+      m_participant->get_subscriber_qos_from_profile("configuration_subscriber_profile", sub_qos);
+      m_subscriber = m_participant->create_subscriber(sub_qos, nullptr);
+
+      PublisherQos pub_qos = PUBLISHER_QOS_DEFAULT;
+      m_participant->get_publisher_qos_from_profile("configuration_publisher_profile", pub_qos);
+      m_publisher = m_participant->create_publisher(pub_qos, nullptr);
     }
+  }
 }
 
-bool DDSDomainParticipant::registerTopic(std::string topicName, eprosima::fastdds::dds::TopicDataType *dataType, const TopicQos &topicQos)
-{
-    if (!dataType)
-        return false;
-
-    TypeSupport                 typeSupport(dataType);
-    std::lock_guard<std::mutex> guard(m_topicLock);
-    if (m_mapTopics.find(topicName) != m_mapTopics.end())
-        return true;
-
-        eprosima::fastdds::dds::ReturnCode_t errCode = typeSupport.register_type(m_participant);
-    if (errCode !=  eprosima::fastdds::dds::RETCODE_OK) {
-        LOG(error) << "register_type failed";
-        return false;
-    }
-
-    TopicQos  temp_topicQos = topicQos;
-    m_participant->get_topic_qos_from_profile("configuration_topic_profile", temp_topicQos);
-    Topic *topic = m_participant->create_topic(topicName, typeSupport.get_type_name(), temp_topicQos);
-    if (topic != nullptr)
-        m_mapTopics.insert(std::pair<std::string, Topic *>(topicName, topic));
-    return true;
+DDSDomainParticipant::~DDSDomainParticipant() {
+  if (m_participant) {
+    DomainParticipantFactory::get_instance()->delete_participant(m_participant);
+  }
 }
 
-bool DDSDomainParticipant::unregisterTopic(std::string topicName)
-{
-    std::lock_guard<std::mutex> guard(m_topicLock);
-    if (m_mapTopics.find(topicName) == m_mapTopics.end())
-        return true;
+bool DDSDomainParticipant::registerTopic(
+    std::string topicName, eprosima::fastdds::dds::TopicDataType *dataType, const TopicQos &topicQos) {
+  if (!dataType) return false;
 
-    Topic *topic = m_mapTopics.at(topicName);
-    if (topic) {
-        eprosima::fastdds::dds::ReturnCode_t  errCode = m_participant->delete_topic(topic);
-        if (errCode != eprosima::fastdds::dds::RETCODE_OK) {
-            LOG(error) << "delete_topic " << topic->get_name() << " error, errcode: " << errCode;
-            return false;
-        }
+  TypeSupport typeSupport(dataType);
+  std::lock_guard<std::mutex> guard(m_topicLock);
+  if (m_mapTopics.find(topicName) != m_mapTopics.end()) return true;
+
+  eprosima::fastdds::dds::ReturnCode_t errCode = typeSupport.register_type(m_participant);
+  if (errCode != eprosima::fastdds::dds::RETCODE_OK) {
+    LOG(error) << "register_type failed";
+    return false;
+  }
+
+  TopicQos temp_topicQos = topicQos;
+  m_participant->get_topic_qos_from_profile("configuration_topic_profile", temp_topicQos);
+  Topic *topic = m_participant->create_topic(topicName, typeSupport.get_type_name(), temp_topicQos);
+  if (topic != nullptr) m_mapTopics.insert(std::pair<std::string, Topic *>(topicName, topic));
+  return true;
+}
+
+bool DDSDomainParticipant::unregisterTopic(std::string topicName) {
+  std::lock_guard<std::mutex> guard(m_topicLock);
+  if (m_mapTopics.find(topicName) == m_mapTopics.end()) return true;
+
+  Topic *topic = m_mapTopics.at(topicName);
+  if (topic) {
+    eprosima::fastdds::dds::ReturnCode_t errCode = m_participant->delete_topic(topic);
+    if (errCode != eprosima::fastdds::dds::RETCODE_OK) {
+      LOG(error) << "delete_topic " << topic->get_name() << " error, errcode: " << errCode;
+      return false;
     }
-    m_mapTopics.erase(topicName);
-    return true;
+  }
+  m_mapTopics.erase(topicName);
+  return true;
 }

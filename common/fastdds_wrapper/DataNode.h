@@ -18,6 +18,11 @@ class DataNode : public DDSParticipantManager {
     initDomainParticipant(participant_name);
   }
 
+  DataNode(const std::string &qosXmlConfig)
+      : DDSParticipantManager(0){
+        initDomainParticipantForXml(qosXmlConfig);
+  }
+
   ~DataNode() override {}
 
  private:
@@ -40,7 +45,7 @@ class DataNode : public DDSParticipantManager {
  public:
   template <typename T>
   void registerTopicType(const std::string &topicName) {
-      addTopicDataTypeCreator(topicName, []() { return new T(); });
+    addTopicDataTypeCreator(topicName, []() { return new T(); });
   }
 
   // ´´½¨ DataWriter
