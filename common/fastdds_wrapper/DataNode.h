@@ -13,15 +13,22 @@ class DataNode : public DDSParticipantManager {
   using ParticipantQosConfigurator = std::function<ParticipantQosHandler()>;
 
  public:
+ /**
+  * @brief 创建数据通信节点
+  * @param  domainId         domainId
+  * @param  participant_name  participant_name
+  * @param  qos_configurator participant QOS 回调
+  */
   DataNode(int domainId, const std::string &participant_name, ParticipantQosConfigurator qos_configurator = nullptr)
       : DDSParticipantManager(domainId), qos_configurator_(qos_configurator) {
     initDomainParticipant(participant_name);
   }
 
-  DataNode(const std::string &qosXmlConfig)
-      : DDSParticipantManager(0){
-        initDomainParticipantForXml(qosXmlConfig);
-  }
+  /**
+   * @brief 依照配置文件创建数据通信节点
+   * @param  qosXmlConfig     配置文件路径
+   */
+  DataNode(const std::string &qosXmlConfig) : DDSParticipantManager(0) { initDomainParticipantForXml(qosXmlConfig); }
 
   ~DataNode() override {}
 
@@ -48,13 +55,22 @@ class DataNode : public DDSParticipantManager {
     addTopicDataTypeCreator(topicName, []() { return new T(); });
   }
 
-  // 创建 DataWriter
+  /**
+   * @brief  创建数据写入者
+   * @param  topicName        topicName
+   * @return DDSTopicDataWriter<T>* 
+   */
   template <typename T>
   DDSTopicDataWriter<T> *createDataWriter(const std::string topicName) {
     return DDSParticipantManager::createDataWriter<T>(topicName);
   }
 
-  // 创建 DataReader
+   /**
+    * @brief 创建数据读取者
+    * @param  topicName        topicName
+    * @param  callback         callback 数据接收回调
+    * @return DDSTopicDataReader<T>* 
+    */
   template <typename T>
   DDSTopicDataReader<T> *createDataReader(
       const std::string topicName, std::function<void(const std::string &, std::shared_ptr<T>)> callback) {
