@@ -17,6 +17,7 @@ class DDSDomainParticipant
 {
 public:
     DDSDomainParticipant(int domainId, const eprosima::fastdds::dds::DomainParticipantExtendedQos &participantQos);
+    DDSDomainParticipant(int domainId, std::string XmlConfig);
     virtual ~DDSDomainParticipant();
 
 public:

@@ -21,6 +21,38 @@ DDSDomainParticipant::DDSDomainParticipant(int domainId, const eprosima::fastdds
     }
 }
 
+DDSDomainParticipant::DDSDomainParticipant(int domainId, std::string XmlConfig)
+{
+    if(XmlConfig.empty())
+    {
+        eprosima::fastdds::dds::DomainParticipantQos participantQos = PARTICIPANT_QOS_DEFAULT;
+        m_participant = DomainParticipantFactory::get_instance()->create_participant(domainId, participantQos);
+        if (m_participant) {
+            eprosima::fastdds::dds::SubscriberQos subscriberQos(SUBSCRIBER_QOS_DEFAULT);
+            m_subscriber = m_participant->create_subscriber(subscriberQos, nullptr);
+    
+            eprosima::fastdds::dds::PublisherQos publisherQos(PUBLISHER_QOS_DEFAULT);
+            m_publisher = m_participant->create_publisher(publisherQos, nullptr);
+        }
+    }
+    else
+        {
+            DomainParticipantFactory::get_instance()->load_XML_profiles_file(XmlConfig);
+            m_participant = DomainParticipantFactory::get_instance()->create_participant_with_profile("configuration_participant_profile");
+            if (m_participant) {
+
+                SubscriberQos sub_qos = SUBSCRIBER_QOS_DEFAULT;
+                m_participant->get_subscriber_qos_from_profile("configuration_subscriber_profile", sub_qos);
+                m_subscriber = m_participant->create_subscriber(sub_qos, nullptr);
+        
+                PublisherQos pub_qos = PUBLISHER_QOS_DEFAULT;
+                m_participant->get_publisher_qos_from_profile("configuration_publisher_profile", pub_qos);
+                m_publisher = m_participant->create_publisher(pub_qos, nullptr);
+            }
+        }   
+}
+
+
 DDSDomainParticipant::~DDSDomainParticipant()
 {
     if (m_participant) {
