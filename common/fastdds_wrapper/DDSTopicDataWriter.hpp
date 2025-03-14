@@ -42,7 +42,7 @@ DDSTopicDataWriter<T>::~DDSTopicDataWriter()
 template <typename T>
 bool DDSTopicDataWriter<T>::writeMessage(const T &message)
 {
-    return m_dataWriter->write((void *)&message);
+    return  m_dataWriter->write((void *)&message) == eprosima::fastdds::dds::RETCODE_OK ? true : false;
 }
 
 #endif
