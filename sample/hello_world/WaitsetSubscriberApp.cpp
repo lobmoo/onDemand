@@ -32,11 +32,45 @@
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 
+
+#include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantListener.hpp>
+#include <fastdds/dds/topic/TopicDescription.hpp>
+
 #include "Application.hpp"
 #include "CLIParser.hpp"
 #include "HelloWorldPubSubTypes.hpp"
 
 using namespace eprosima::fastdds::dds;
+
+
+class DDSParticipantListener : public eprosima::fastdds::dds::DomainParticipantListener {
+    public:
+     // 当一个新的参与者被发现时调用
+     virtual void on_participant_discovery(
+         DomainParticipant* participant, eprosima::fastdds::rtps::ParticipantDiscoveryStatus reason,
+         const ParticipantBuiltinTopicData& info, bool& should_be_ignored) override {
+       std::cout << "on_participant_discovery" << std::endl;
+       should_be_ignored = false;
+     }
+   
+     // 当数据读取者被发现时调用
+     virtual void on_data_reader_discovery(
+         eprosima::fastdds::dds::DomainParticipant* participant, eprosima::fastdds::rtps::ReaderDiscoveryStatus reason,
+         const eprosima::fastdds::dds::SubscriptionBuiltinTopicData& info, bool& should_be_ignored) override {
+       std::cout << "on_data_reader_discovery" << std::endl;
+       should_be_ignored = false;
+     }
+   
+     // 另一个 on_data_writer_discovery 的重载版本
+     virtual void on_data_writer_discovery(
+         eprosima::fastdds::dds::DomainParticipant* participant, eprosima::fastdds::rtps::WriterDiscoveryStatus reason,
+         const eprosima::fastdds::dds::PublicationBuiltinTopicData& info, bool& should_be_ignored) override {
+       std::cout << "on_data_writer_discovery" << std::endl;
+       should_be_ignored = false;
+     }
+   };
+   
 
 namespace eprosima {
 namespace fastdds {
@@ -55,9 +89,10 @@ WaitsetSubscriberApp::WaitsetSubscriberApp(
     , received_samples_(0)
     , stop_(false)
 {
+    DDSParticipantListener *listener = new DDSParticipantListener();
     // Create the participant
     auto factory = DomainParticipantFactory::get_instance();
-    participant_ = factory->create_participant_with_default_profile(nullptr, StatusMask::none());
+    participant_ = factory->create_participant_with_default_profile(listener, StatusMask::all());
     if (participant_ == nullptr)
     {
         throw std::runtime_error("Participant initialization failed");

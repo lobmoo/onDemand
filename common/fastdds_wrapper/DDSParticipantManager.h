@@ -14,19 +14,19 @@ class DDSParticipantManager {
 
  public:
   DDSParticipantManager(int domainId);
+  DDSParticipantManager();
   virtual ~DDSParticipantManager();
 
  protected:
   eprosima::fastdds::dds::TopicDataType *getTopicDataType(std::string topicName);
   void addTopicDataTypeCreator(std::string topicName, TopicDataTypeCreator creator);
   virtual ParticipantQosHandler createParticipantQos(
-      const std::string &participant_name, uint16_t listen_port, const std::vector<std::string> &peer_locators) = 0;
+      const std::string &participant_name) = 0;
 
  public:
   bool initDomainParticipant(
-      const std::string &participant_name, uint16_t listen_port = 0,
-      const std::vector<std::string> &peer_locators = {});
-  bool initDomainParticipantForXml(const std::string &xmlConfig);
+      const std::string &participant_name, DomainParticipantListener* listener);
+  bool initDomainParticipantForXml(const std::string &xmlConfig, DomainParticipantListener* listener);
 
       template <typename T>
       DDSTopicDataWriter<T> *createDataWriter(std::string topicName);

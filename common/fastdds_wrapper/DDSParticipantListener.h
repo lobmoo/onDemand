@@ -17,6 +17,7 @@ class DDSParticipantListener : public eprosima::fastdds::dds::DomainParticipantL
       DomainParticipant* participant, eprosima::fastdds::rtps::ParticipantDiscoveryStatus reason,
       const ParticipantBuiltinTopicData& info, bool& should_be_ignored) override {
     LOG(info) << "on_participant_discovery";
+    should_be_ignored = false;
   }
 
   // 当数据读取者被发现时调用
@@ -24,6 +25,7 @@ class DDSParticipantListener : public eprosima::fastdds::dds::DomainParticipantL
       eprosima::fastdds::dds::DomainParticipant* participant, eprosima::fastdds::rtps::ReaderDiscoveryStatus reason,
       const eprosima::fastdds::dds::SubscriptionBuiltinTopicData& info, bool& should_be_ignored) override {
     LOG(info) << "on_data_reader_discovery";
+    should_be_ignored = false;
   }
 
   // 另一个 on_data_writer_discovery 的重载版本
@@ -31,6 +33,7 @@ class DDSParticipantListener : public eprosima::fastdds::dds::DomainParticipantL
       eprosima::fastdds::dds::DomainParticipant* participant, eprosima::fastdds::rtps::WriterDiscoveryStatus reason,
       const eprosima::fastdds::dds::PublicationBuiltinTopicData& info, bool& should_be_ignored) override {
     LOG(info) << "on_data_writer_discovery";
+    should_be_ignored = false;
   }
 };
 

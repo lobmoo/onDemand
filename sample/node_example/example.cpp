@@ -6,6 +6,7 @@
 #include "HelloWorldOne.hpp"
 #include "HelloWorldOnePubSubTypes.hpp"
 #include "fastdds_wrapper/DataNode.h"
+#include "fastdds_wrapper/DDSParticipantListener.h"
 #include "log/logger.h"
 using namespace std;
 
@@ -13,7 +14,7 @@ void run_dds_data_writer();
 void run_dds_data_reader();
 
 ParticipantQosHandler qos_configurator() {
-  ParticipantQosHandler handler("test_writer");
+  ParticipantQosHandler handler("test");
   handler.addUDPV4Transport(32 * 1024 * 1024);
   handler.addSHMTransport(32 * 1024 * 1024);
   handler.setParticipantQosProperties("dsfcversion", "v1.0.0", true);
@@ -47,12 +48,18 @@ void test_multi_sub_pub(int argc, char *argv[]) {
   } else {
     std::cerr << "unknown command: " << argv[1] << std::endl;
   }
+  while (std::cin.get() != '\n') {
+  }
   return;
 }
 
+
+
 void test_singal_node_sub_pub() {
- //DataNode node(170, "test_writer", qos_configurator);
-  DataNode node("/home/wwk/workspaces/test_demo/sample/node_example/qosConfig.xml");
+
+  DDSParticipantListener listener;
+  DataNode node(170, "test_writer", qos_configurator, &listener);
+  //DataNode node("/home/wwk/workspaces/test_demo/sample/node_example/qosConfig.xml");
   node.registerTopicType<HelloWorldOnePubSubType>("wwk");
   auto dataWriter = node.createDataWriter<HelloWorldOne>("wwk");
   auto dataReader = node.createDataReader<HelloWorldOne>("wwk", processHelloWorldOne);
@@ -82,12 +89,14 @@ void test_singal_node_sub_pub() {
 int main(int argc, char *argv[]) {
   Logger::Instance().Init("log/myapp.log", Logger::console, Logger::info, 60, 5);
   //test_singale_sub_pub();
-  // test_multi_sub_pub(argc, argv);
-  test_singal_node_sub_pub();
+  test_multi_sub_pub(argc, argv);
+  //test_singal_node_sub_pub();
 }
 
 void run_dds_data_writer() {
-  DataNode node(170, "test_writer", qos_configurator);
+  DDSParticipantListener *listener = new DDSParticipantListener();
+  DataNode node(170, "test_writer", NULL, listener);
+  //DataNode node(170, "test_writer");
   node.registerTopicType<HelloWorldOnePubSubType>("wwk");
   auto dataWriter = node.createDataWriter<HelloWorldOne>("wwk");
   bool runFlag = true;
@@ -110,7 +119,9 @@ void run_dds_data_writer() {
 }
 
 void run_dds_data_reader() {
-  DataNode node(170, "test_reader");
+  DDSParticipantListener *listener = new DDSParticipantListener();
+  DataNode node(170, "test_reader", NULL, listener);
+ // DataNode node(170, "test_reader");
   node.registerTopicType<HelloWorldOnePubSubType>("wwk");
   auto dataReader = node.createDataReader<HelloWorldOne>("wwk", processHelloWorldOne);
   while (std::cin.get() != '\n') {

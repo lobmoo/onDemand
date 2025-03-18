@@ -4,11 +4,13 @@
 
 #include "DDSTopicDataReader.hpp"
 #include "DDSTopicDataWriter.hpp"
+#include "DDSParticipantListener.h"
 
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantExtendedQos.hpp>
+
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <mutex>
 #include <unordered_map>
@@ -16,8 +18,8 @@
 class DDSDomainParticipant
 {
 public:
-    DDSDomainParticipant(int domainId, const eprosima::fastdds::dds::DomainParticipantExtendedQos &participantQos);
-    DDSDomainParticipant(int domainId, std::string XmlConfig);
+    DDSDomainParticipant(int domainId, const eprosima::fastdds::dds::DomainParticipantExtendedQos &participantQos, DomainParticipantListener* listener);
+    DDSDomainParticipant(std::string XmlConfig, DomainParticipantListener* listener);
     virtual ~DDSDomainParticipant();
 
 public:

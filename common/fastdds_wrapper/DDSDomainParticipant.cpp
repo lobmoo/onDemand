@@ -11,8 +11,8 @@
 using namespace eprosima::fastdds::dds;
 
 DDSDomainParticipant::DDSDomainParticipant(
-    int domainId, const eprosima::fastdds::dds::DomainParticipantExtendedQos &participantQos) {
-  m_participant = DomainParticipantFactory::get_instance()->create_participant(domainId, participantQos);
+    int domainId, const eprosima::fastdds::dds::DomainParticipantExtendedQos &participantQos,  DomainParticipantListener* listener) {
+  m_participant = DomainParticipantFactory::get_instance()->create_participant(domainId, participantQos, listener);
   if (m_participant) {
     eprosima::fastdds::dds::SubscriberQos subscriberQos(SUBSCRIBER_QOS_DEFAULT);
     m_subscriber = m_participant->create_subscriber(subscriberQos, nullptr);
@@ -22,11 +22,11 @@ DDSDomainParticipant::DDSDomainParticipant(
   }
 }
 
-DDSDomainParticipant::DDSDomainParticipant(int domainId, std::string XmlConfig) {
+DDSDomainParticipant::DDSDomainParticipant(std::string XmlConfig, DomainParticipantListener* listener) {
   if (XmlConfig.empty()) {
     LOG(warning) << "XmlConfig is empty, use default config";
     eprosima::fastdds::dds::DomainParticipantQos participantQos = PARTICIPANT_QOS_DEFAULT;
-    m_participant = DomainParticipantFactory::get_instance()->create_participant(domainId, participantQos);
+    m_participant = DomainParticipantFactory::get_instance()->create_participant(0, participantQos, listener);
     if (m_participant) {
       eprosima::fastdds::dds::SubscriberQos subscriberQos(SUBSCRIBER_QOS_DEFAULT);
       m_subscriber = m_participant->create_subscriber(subscriberQos, nullptr);
@@ -37,7 +37,7 @@ DDSDomainParticipant::DDSDomainParticipant(int domainId, std::string XmlConfig) 
   } else {
     DomainParticipantFactory::get_instance()->load_XML_profiles_file(XmlConfig);
     m_participant =
-        DomainParticipantFactory::get_instance()->create_participant_with_profile("configuration_participant_profile");
+        DomainParticipantFactory::get_instance()->create_participant_with_profile("configuration_participant_profile", listener);
     if (m_participant) {
       SubscriberQos sub_qos = SUBSCRIBER_QOS_DEFAULT;
       m_participant->get_subscriber_qos_from_profile("configuration_subscriber_profile", sub_qos);

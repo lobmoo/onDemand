@@ -6,24 +6,26 @@
 #include "ParticipantQosHandler.h"
 
 DDSParticipantManager::DDSParticipantManager(int domainId) : m_domainId(domainId) {}
+DDSParticipantManager::DDSParticipantManager() {}
 
 DDSParticipantManager::~DDSParticipantManager() {}
 
 bool DDSParticipantManager::initDomainParticipant(
-    const std::string &participant_name, uint16_t listen_port, const std::vector<std::string> &peer_locators) {
+    const std::string &participant_name, DomainParticipantListener* listener) {
   if (!m_participant) {
     eprosima::fastdds::dds::DomainParticipantExtendedQos participantQos =
-        createParticipantQos(participant_name, listen_port, peer_locators).getQos();
-    m_participant = std::make_shared<DDSDomainParticipant>(m_domainId, participantQos);
+        createParticipantQos(participant_name).getQos();
+    m_participant = std::make_shared<DDSDomainParticipant>(m_domainId, participantQos, listener);
 
     if (!m_participant) return false;
   }
   return true;
 }
 
-bool DDSParticipantManager::initDomainParticipantForXml(const std::string &xmlConfig) {
+
+bool DDSParticipantManager::initDomainParticipantForXml(const std::string &xmlConfig, DomainParticipantListener* listener) {
   if (!m_participant) {
-    m_participant = std::make_shared<DDSDomainParticipant>(0, xmlConfig);
+    m_participant = std::make_shared<DDSDomainParticipant>(xmlConfig, listener);
     if (!m_participant) return false;
   }
   return true;
