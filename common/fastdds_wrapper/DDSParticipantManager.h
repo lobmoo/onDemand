@@ -28,12 +28,13 @@ class DDSParticipantManager {
       const std::vector<std::string> &peer_locators = {});
   bool initDomainParticipantForXml(const std::string &xmlConfig);
 
-      template <typename T>
-      DDSTopicDataWriter<T> *createDataWriter(std::string topicName);
+  template <typename T>
+  DDSTopicDataWriter<T> *createDataWriter(std::string topicName, eprosima::fastdds::dds::DataWriterQos dataWriterQos);
 
   template <typename T>
   DDSTopicDataReader<T> *createDataReader(
-      std::string topicName, std::function<void(const std::string &, std::shared_ptr<T>)> callback);
+      std::string topicName, std::function<void(const std::string &, std::shared_ptr<T>)> callback,
+      const eprosima::fastdds::dds::DataReaderQos &dataReaderQos);
 
  private:
   int m_domainId;
@@ -44,17 +45,19 @@ class DDSParticipantManager {
 };
 
 template <typename T>
-DDSTopicDataWriter<T> *DDSParticipantManager::createDataWriter(std::string topicName) {
+DDSTopicDataWriter<T> *DDSParticipantManager::createDataWriter(
+    std::string topicName, eprosima::fastdds::dds::DataWriterQos dataWriterQos) {
   if (!m_participant->registerTopic(topicName, getTopicDataType(topicName))) return nullptr;
-  return m_participant->createDataWriter<T>(topicName);
+  return m_participant->createDataWriter<T>(topicName, dataWriterQos);
 }
 
 template <typename T>
 DDSTopicDataReader<T> *DDSParticipantManager::createDataReader(
-    std::string topicName, std::function<void(const std::string &, std::shared_ptr<T>)> callback) {
+    std::string topicName, std::function<void(const std::string &, std::shared_ptr<T>)> callback,
+    const eprosima::fastdds::dds::DataReaderQos &dataReaderQos) {
   if (!m_participant->registerTopic(topicName, getTopicDataType(topicName))) return nullptr;
 
-  return m_participant->createDataReader(topicName, callback);
+  return m_participant->createDataReader(topicName, callback, dataReaderQos);
 }
 
 #endif

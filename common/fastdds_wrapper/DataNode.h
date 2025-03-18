@@ -61,8 +61,8 @@ class DataNode : public DDSParticipantManager {
    * @return DDSTopicDataWriter<T>* 
    */
   template <typename T>
-  DDSTopicDataWriter<T> *createDataWriter(const std::string topicName) {
-    return DDSParticipantManager::createDataWriter<T>(topicName);
+  DDSTopicDataWriter<T> *createDataWriter(const std::string topicName, eprosima::fastdds::dds::DataWriterQos dataWriterQos = eprosima::fastdds::dds::DATAWRITER_QOS_DEFAULT) {
+    return DDSParticipantManager::createDataWriter<T>(topicName, dataWriterQos);
   }
 
    /**
@@ -73,8 +73,8 @@ class DataNode : public DDSParticipantManager {
     */
   template <typename T>
   DDSTopicDataReader<T> *createDataReader(
-      const std::string topicName, std::function<void(const std::string &, std::shared_ptr<T>)> callback) {
-    return DDSParticipantManager::createDataReader<T>(topicName, callback);
+      const std::string topicName, std::function<void(const std::string &, std::shared_ptr<T>)> callback, const eprosima::fastdds::dds::DataReaderQos &dataReaderQos = eprosima::fastdds::dds::DATAREADER_QOS_DEFAULT) {
+    return DDSParticipantManager::createDataReader<T>(topicName, callback, dataReaderQos);
   }
 };
 
