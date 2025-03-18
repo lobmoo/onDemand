@@ -25,13 +25,13 @@ public:
 public:
     template <typename T>
     DDSTopicDataWriter<T> *createDataWriter(
-        std::string topicName, eprosima::fastdds::dds::DataWriterQos dataWriterQos = eprosima::fastdds::dds::DATAWRITER_QOS_DEFAULT);
+        std::string topicName, eprosima::fastdds::dds::DataWriterQos dataWriterQos);
 
     template <typename T>
     DDSTopicDataReader<T> *createDataReader(
         std::string                                                  topicName,
         std::function<void(const std::string &, std::shared_ptr<T>)> callback,
-        const eprosima::fastdds::dds::DataReaderQos                 &dataReaderQos = eprosima::fastdds::dds::DATAREADER_QOS_DEFAULT);
+        const eprosima::fastdds::dds::DataReaderQos                 &dataReaderQos);
 
     bool registerTopic(std::string                             topicName,
                        eprosima::fastdds::dds::TopicDataType  *dataType,
