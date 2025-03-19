@@ -30,7 +30,7 @@ DDSDomainParticipant::DDSDomainParticipant(std::string XmlConfig, DomainParticip
   if (XmlConfig.empty()) {
     LOG(warning) << "XmlConfig is empty, use default config";
     eprosima::fastdds::dds::DomainParticipantQos participantQos = PARTICIPANT_QOS_DEFAULT;
-    m_participant = DomainParticipantFactory::get_instance()->create_participant(0, participantQos, listener);
+    m_participant = DomainParticipantFactory::get_instance()->create_participant(0, participantQos, listener, StatusMask::none());
     if (m_participant) {
       eprosima::fastdds::dds::SubscriberQos subscriberQos(SUBSCRIBER_QOS_DEFAULT);
       m_subscriber = m_participant->create_subscriber(subscriberQos, nullptr);
@@ -41,7 +41,7 @@ DDSDomainParticipant::DDSDomainParticipant(std::string XmlConfig, DomainParticip
   } else {
     DomainParticipantFactory::get_instance()->load_XML_profiles_file(XmlConfig);
     m_participant = DomainParticipantFactory::get_instance()->create_participant_with_profile(
-        "configuration_participant_profile", listener);
+        "configuration_participant_profile", listener, StatusMask::none());
     if (m_participant) {
       SubscriberQos sub_qos = SUBSCRIBER_QOS_DEFAULT;
       m_participant->get_subscriber_qos_from_profile("configuration_subscriber_profile", sub_qos);

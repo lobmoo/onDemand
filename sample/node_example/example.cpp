@@ -58,8 +58,8 @@ void test_multi_sub_pub(int argc, char *argv[]) {
 void test_singal_node_sub_pub() {
 
   DDSParticipantListener listener;
-  DataNode node(170, "test_writer", qos_configurator, &listener);
-  //DataNode node("/home/wwk/workspaces/test_demo/sample/node_example/qosConfig.xml");
+  // DataNode node(170, "test_writer", qos_configurator, &listener);
+  DataNode node("/home/wwk/workspaces/test_demo/sample/node_example/qosConfig.xml", &listener);
   node.registerTopicType<HelloWorldOnePubSubType>("wwk");
   auto dataWriter = node.createDataWriter<HelloWorldOne>("wwk");
   auto dataReader = node.createDataReader<HelloWorldOne>("wwk", processHelloWorldOne);
@@ -95,7 +95,8 @@ int main(int argc, char *argv[]) {
 
 void run_dds_data_writer() {
   DDSParticipantListener *listener = new DDSParticipantListener();
-  DataNode node(170, "test_writer", NULL, listener);
+  DataNode node("/home/wwk/workspaces/test_demo/sample/node_example/qosConfig.xml", listener);
+  //DataNode node(170, "test_writer", NULL, listener);
   //DataNode node(170, "test_writer");
   node.registerTopicType<HelloWorldOnePubSubType>("wwk");
   auto dataWriter = node.createDataWriter<HelloWorldOne>("wwk");
@@ -120,7 +121,8 @@ void run_dds_data_writer() {
 
 void run_dds_data_reader() {
   DDSParticipantListener *listener = new DDSParticipantListener();
-  DataNode node(170, "test_reader", NULL, listener);
+  DataNode node("/home/wwk/workspaces/test_demo/sample/node_example/qosConfig.xml", listener);
+  //DataNode node(170, "test_reader", NULL, listener);
  // DataNode node(170, "test_reader");
   node.registerTopicType<HelloWorldOnePubSubType>("wwk");
   auto dataReader = node.createDataReader<HelloWorldOne>("wwk", processHelloWorldOne);
