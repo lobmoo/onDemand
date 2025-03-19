@@ -11,6 +11,7 @@
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantExtendedQos.hpp>
 
+
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <mutex>
 #include <unordered_map>
@@ -54,7 +55,11 @@ DDSTopicDataWriter<T> *DDSDomainParticipant::createDataWriter(std::string topicN
     if (m_mapTopics.find(topicName) == m_mapTopics.end())
         return nullptr;
     eprosima::fastdds::dds::DataWriterQos  temp_dataWriterQos = dataWriterQos;
-    m_publisher->get_datawriter_qos_from_profile("configuration_datawriter_profile" ,temp_dataWriterQos);
+    eprosima::fastdds::dds::ReturnCode_t ret = m_publisher->get_datawriter_qos_from_profile("datawriter_profile" ,temp_dataWriterQos);
+    if (ret != eprosima::fastdds::dds::RETCODE_OK)
+    {
+        LOG(error) << "get_datawriter_qos_from_profile failed code : " << ret;
+    }
     return new DDSTopicDataWriter<T>(m_publisher, m_mapTopics.at(topicName), temp_dataWriterQos);
 }
 
