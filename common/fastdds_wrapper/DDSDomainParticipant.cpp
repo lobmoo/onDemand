@@ -12,7 +12,7 @@ using namespace eprosima::fastdds::dds;
 
 DDSDomainParticipant::DDSDomainParticipant(
     int domainId, const eprosima::fastdds::dds::DomainParticipantExtendedQos &participantQos,  DomainParticipantListener* listener) {
-  m_participant = DomainParticipantFactory::get_instance()->create_participant(domainId, participantQos, listener);
+  m_participant = DomainParticipantFactory::get_instance()->create_participant(domainId, participantQos, listener, StatusMask::none());
   if (m_participant) {
     eprosima::fastdds::dds::SubscriberQos subscriberQos(SUBSCRIBER_QOS_DEFAULT);
     m_subscriber = m_participant->create_subscriber(subscriberQos, nullptr);
