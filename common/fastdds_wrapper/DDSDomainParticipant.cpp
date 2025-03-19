@@ -11,8 +11,12 @@
 using namespace eprosima::fastdds::dds;
 
 DDSDomainParticipant::DDSDomainParticipant(
-    int domainId, const eprosima::fastdds::dds::DomainParticipantExtendedQos &participantQos,  DomainParticipantListener* listener) {
-  m_participant = DomainParticipantFactory::get_instance()->create_participant(domainId, participantQos, listener, StatusMask::none());
+    int domainId, const eprosima::fastdds::dds::DomainParticipantExtendedQos &participantQos,
+    DomainParticipantListener *listener) {
+  // 这里一定要注意，participant  设置listener之后，StatusMask必须要是none  具体可见
+  // https://github.com/eProsima/Fast-DDS/issues/1902
+  m_participant = DomainParticipantFactory::get_instance()->create_participant(
+      domainId, participantQos, listener, StatusMask::none());
   if (m_participant) {
     eprosima::fastdds::dds::SubscriberQos subscriberQos(SUBSCRIBER_QOS_DEFAULT);
     m_subscriber = m_participant->create_subscriber(subscriberQos, nullptr);
@@ -22,7 +26,7 @@ DDSDomainParticipant::DDSDomainParticipant(
   }
 }
 
-DDSDomainParticipant::DDSDomainParticipant(std::string XmlConfig, DomainParticipantListener* listener) {
+DDSDomainParticipant::DDSDomainParticipant(std::string XmlConfig, DomainParticipantListener *listener) {
   if (XmlConfig.empty()) {
     LOG(warning) << "XmlConfig is empty, use default config";
     eprosima::fastdds::dds::DomainParticipantQos participantQos = PARTICIPANT_QOS_DEFAULT;
@@ -36,8 +40,8 @@ DDSDomainParticipant::DDSDomainParticipant(std::string XmlConfig, DomainParticip
     }
   } else {
     DomainParticipantFactory::get_instance()->load_XML_profiles_file(XmlConfig);
-    m_participant =
-        DomainParticipantFactory::get_instance()->create_participant_with_profile("configuration_participant_profile", listener);
+    m_participant = DomainParticipantFactory::get_instance()->create_participant_with_profile(
+        "configuration_participant_profile", listener);
     if (m_participant) {
       SubscriberQos sub_qos = SUBSCRIBER_QOS_DEFAULT;
       m_participant->get_subscriber_qos_from_profile("configuration_subscriber_profile", sub_qos);
