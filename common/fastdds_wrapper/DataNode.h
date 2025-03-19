@@ -30,7 +30,7 @@ class DataNode : public DDSParticipantManager {
    * @brief 依照配置文件创建数据通信节点
    * @param  qosXmlConfig     配置文件路径
    */
-  DataNode(const std::string &qosXmlConfig, DomainParticipantListener *listener = nullptr): DDSParticipantManager() {
+  DataNode(const std::string &qosXmlConfig, DomainParticipantListener *listener = nullptr) : DDSParticipantManager() {
     initDomainParticipantForXml(qosXmlConfig, listener);
   }
 
@@ -53,31 +53,47 @@ class DataNode : public DDSParticipantManager {
 
  public:
   template <typename T>
+  DDSTopicDataWriter<T> *createDataWriter(
+      const std::string topicName,
+      eprosima::fastdds::dds::DataWriterQos dataWriterQos = eprosima::fastdds::dds::DATAWRITER_QOS_DEFAULT);
+
+  template <typename T>
+  DDSTopicDataReader<T> *createDataReader(
+      const std::string topicName, std::function<void(const std::string &, std::shared_ptr<T>)> callback,
+      const eprosima::fastdds::dds::DataReaderQos &dataReaderQos = eprosima::fastdds::dds::DATAREADER_QOS_DEFAULT);
+
+  template <typename T>
   void registerTopicType(const std::string &topicName) {
     addTopicDataTypeCreator(topicName, []() { return new T(); });
   }
-
-  /**
-   * @brief  创建数据写入者
-   * @param  topicName        topicName
-   * @return DDSTopicDataWriter<T>*
-   */
-  template <typename T>
-  DDSTopicDataWriter<T> *createDataWriter(const std::string topicName, eprosima::fastdds::dds::DataWriterQos dataWriterQos = eprosima::fastdds::dds::DATAWRITER_QOS_DEFAULT) {
-    return DDSParticipantManager::createDataWriter<T>(topicName, dataWriterQos);
-  }
-
-  /**
-   * @brief 创建数据读取者
-   * @param  topicName        topicName
-   * @param  callback         callback 数据接收回调
-   * @return DDSTopicDataReader<T>*
-   */
-  template <typename T>
-  DDSTopicDataReader<T> *createDataReader(
-      const std::string topicName, std::function<void(const std::string &, std::shared_ptr<T>)> callback, const eprosima::fastdds::dds::DataReaderQos &dataReaderQos = eprosima::fastdds::dds::DATAREADER_QOS_DEFAULT) {
-    return DDSParticipantManager::createDataReader<T>(topicName, callback, dataReaderQos);
-  }
 };
 
+/**
+ * @brief  创建数据写入者
+ * @param  topicName        topicName
+ * @return DDSTopicDataWriter<T>*
+ */
+template <typename T>
+DDSTopicDataWriter<T> *DataNode::createDataWriter(
+    const std::string topicName,
+    eprosima::fastdds::dds::DataWriterQos dataWriterQos) {
+  return DDSParticipantManager::createDataWriter<T>(topicName, dataWriterQos);
+}
+
+/**
+ * @brief 创建数据读取者
+ * @param  topicName        topicName
+ * @param  callback         callback 数据接收回调
+ * @return DDSTopicDataReader<T>*
+ */
+template <typename T>
+DDSTopicDataReader<T> *DataNode::createDataReader(
+    const std::string topicName, std::function<void(const std::string &, std::shared_ptr<T>)> callback,
+    const eprosima::fastdds::dds::DataReaderQos &dataReaderQos) {
+  return DDSParticipantManager::createDataReader<T>(topicName, callback, dataReaderQos);
+}
+
 #endif
+
+
+
