@@ -5,8 +5,8 @@
 #include "DDSDomainParticipant.h"
 #include "ParticipantQosHandler.h"
 
-DDSParticipantManager::DDSParticipantManager(int domainId) : m_domainId(domainId) {}
-DDSParticipantManager::DDSParticipantManager() {}
+DDSParticipantManager::DDSParticipantManager(int domainId) : m_domainId(domainId), m_isXmlConfig_(false) {}
+DDSParticipantManager::DDSParticipantManager():m_isXmlConfig_(false) {}
 
 DDSParticipantManager::~DDSParticipantManager() {}
 
@@ -25,6 +25,7 @@ bool DDSParticipantManager::initDomainParticipant(
 
 bool DDSParticipantManager::initDomainParticipantForXml(const std::string &xmlConfig, DomainParticipantListener* listener) {
   if (!m_participant) {
+    m_isXmlConfig_ = true;
     m_participant = std::make_shared<DDSDomainParticipant>(xmlConfig, listener);
     if (!m_participant) return false;
   }

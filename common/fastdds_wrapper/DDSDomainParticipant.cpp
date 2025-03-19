@@ -93,3 +93,30 @@ bool DDSDomainParticipant::unregisterTopic(std::string topicName) {
   m_mapTopics.erase(topicName);
   return true;
 }
+
+
+bool DDSDomainParticipant::get_topic_qos_from_profile(const std::string &profile_name, TopicQos &topicQos) {
+  if (m_participant) {
+    return m_participant->get_topic_qos_from_profile(profile_name, topicQos) == eprosima::fastdds::dds::RETCODE_OK ? true
+                                                                                                              : false;
+  }
+  return false;
+}
+
+bool DDSDomainParticipant::get_datareader_qos_from_profile(const std::string &profile_name, DataReaderQos &dataReaderQos) {
+  if (m_subscriber) {
+    return m_subscriber->get_datareader_qos_from_profile(profile_name, dataReaderQos) == eprosima::fastdds::dds::RETCODE_OK
+               ? true
+               : false;
+  }
+  return false;
+}
+
+bool DDSDomainParticipant::get_datawriter_qos_from_profile(const std::string &profile_name, DataWriterQos &dataWriterQos) {
+  if (m_publisher) {
+    return m_publisher->get_datawriter_qos_from_profile(profile_name, dataWriterQos) == eprosima::fastdds::dds::RETCODE_OK
+               ? true
+               : false;
+  }
+  return false;
+}

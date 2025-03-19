@@ -20,16 +20,15 @@ class DDSParticipantManager {
  protected:
   eprosima::fastdds::dds::TopicDataType *getTopicDataType(std::string topicName);
   void addTopicDataTypeCreator(std::string topicName, TopicDataTypeCreator creator);
-  virtual ParticipantQosHandler createParticipantQos(
-      const std::string &participant_name) = 0;
+  virtual ParticipantQosHandler createParticipantQos(const std::string &participant_name) = 0;
 
  public:
-  bool initDomainParticipant(
-      const std::string &participant_name, DomainParticipantListener* listener);
-  bool initDomainParticipantForXml(const std::string &xmlConfig, DomainParticipantListener* listener);
+  bool initDomainParticipant(const std::string &participant_name, DomainParticipantListener *listener);
+  bool initDomainParticipantForXml(const std::string &xmlConfig, DomainParticipantListener *listener);
 
   template <typename T>
-  DDSTopicDataWriter<T> *createDataWriter(std::string topicName, eprosima::fastdds::dds::DataWriterQos dataWriterQos);
+  DDSTopicDataWriter<T> *createDataWriter(
+      std::string topicName, const eprosima::fastdds::dds::DataWriterQos dataWriterQos);
 
   template <typename T>
   DDSTopicDataReader<T> *createDataReader(
@@ -39,6 +38,8 @@ class DDSParticipantManager {
  private:
   int m_domainId;
   std::shared_ptr<DDSDomainParticipant> m_participant;
+  std::atomic<bool> m_isXmlConfig_;
+  eprosima::fastdds::dds::TopicQos topicQos_;
 
  private:
   std::unordered_map<std::string, std::function<eprosima::fastdds::dds::TopicDataType *()>> m_topicTypes;
@@ -46,8 +47,22 @@ class DDSParticipantManager {
 
 template <typename T>
 DDSTopicDataWriter<T> *DDSParticipantManager::createDataWriter(
-    std::string topicName, eprosima::fastdds::dds::DataWriterQos dataWriterQos) {
-  if (!m_participant->registerTopic(topicName, getTopicDataType(topicName))) return nullptr;
+    std::string topicName, const eprosima::fastdds::dds::DataWriterQos dataWriterQos) {
+  /*配置文件的话，从配置读取*/
+  if (m_isXmlConfig_) {
+    if (!m_participant->get_topic_qos_from_profile("configuration_topic_profile", topicQos_)) {
+      LOG(error) << "get topic qos from profile error, using default topic qos";
+    }
+    eprosima::fastdds::dds::DataWriterQos config_dataWriterQos = dataWriterQos;
+    eprosima::fastdds::dds::ReturnCode_t ret =
+        m_participant->get_datawriter_qos_from_profile("datawriter_profile", config_dataWriterQos);
+    if (ret != eprosima::fastdds::dds::RETCODE_OK) {
+      LOG(error) << "get datawriter qos from profile error, using default datawriter qos";
+    }
+    if (!m_participant->registerTopic(topicName, getTopicDataType(topicName), topicQos_)) return nullptr;
+    return m_participant->createDataWriter<T>(topicName, config_dataWriterQos);
+  }
+  if (!m_participant->registerTopic(topicName, getTopicDataType(topicName), topicQos_)) return nullptr;
   return m_participant->createDataWriter<T>(topicName, dataWriterQos);
 }
 
@@ -55,8 +70,21 @@ template <typename T>
 DDSTopicDataReader<T> *DDSParticipantManager::createDataReader(
     std::string topicName, std::function<void(const std::string &, std::shared_ptr<T>)> callback,
     const eprosima::fastdds::dds::DataReaderQos &dataReaderQos) {
-  if (!m_participant->registerTopic(topicName, getTopicDataType(topicName))) return nullptr;
+  if (m_isXmlConfig_) {
+    if (!m_participant->get_topic_qos_from_profile("configuration_topic_profile", topicQos_)) {
+      LOG(error) << "get topic qos from profile error, using default topic qos";
+    }
+    eprosima::fastdds::dds::DataReaderQos config_dataReaderQos = dataReaderQos;
+    eprosima::fastdds::dds::ReturnCode_t ret =
+        m_participant->get_datareader_qos_from_profile("configuration_datareader_profile", config_dataReaderQos);
+    if (ret != eprosima::fastdds::dds::RETCODE_OK) {
+      LOG(error) << "get datareader qos from profile error, using default datareader qos";
+    }
 
+    if (!m_participant->registerTopic(topicName, getTopicDataType(topicName), topicQos_)) return nullptr;
+    return m_participant->createDataReader(topicName, callback, config_dataReaderQos);
+  }
+  if (!m_participant->registerTopic(topicName, getTopicDataType(topicName), topicQos_)) return nullptr;
   return m_participant->createDataReader(topicName, callback, dataReaderQos);
 }
 
