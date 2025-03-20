@@ -9,7 +9,12 @@
 namespace request_reply {
 using namespace eprosima::fastdds::dds;
 
-DDSRequestReplyServer::DDSRequestReplyServer() {}
+DDSRequestReplyServer::DDSRequestReplyServer() {
+  reply_thread_ = std::thread(&DDSRequestReplyServer::reply_routine, this);
+  create_participant();
+  create_request_entities("CalculatorRequest");
+  create_reply_entities("CalculatorReply");
+}
 
 DDSRequestReplyServer::~DDSRequestReplyServer() {}
 

@@ -4,12 +4,17 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/rtps/common/WriteParams.hpp>
 
+
 #include "log/logger.h"
 
 namespace request_reply {
 using namespace eprosima::fastdds::dds;
 
-DDSRequestReplyClient::DDSRequestReplyClient() {}
+DDSRequestReplyClient::DDSRequestReplyClient() {
+  create_participant();
+  create_request_entities("CalculatorRequest");
+  create_reply_entities("CalculatorReply");
+}
 
 DDSRequestReplyClient::~DDSRequestReplyClient() {}
 
