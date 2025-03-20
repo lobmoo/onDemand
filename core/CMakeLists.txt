@@ -31,8 +31,8 @@ set(INSTALL_INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include")
 #头文件
 set(OBJ_CPP_INCLUDE
     ${CMAKE_SOURCE_DIR}/common
-    ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/include
     ${CMAKE_SOURCE_DIR}/core
+    ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/include 
 )
 
 
@@ -41,19 +41,28 @@ set(OBJ_CPP_INCLUDE
 # )
 
 
+file(GLOB SOURCES_CC_FOR_API 
+"${CMAKE_SOURCE_DIR}/common/fastdds_wrapper/*.cpp"
+"${CMAKE_CURRENT_SOURCE_DIR}/request_reply_api/*.cpp")
+                                        
+file(GLOB SOURCES_CC_FOR_XTYPE
+"${CMAKE_CURRENT_SOURCE_DIR}/request_reply_api/RequestReplyTypes/*.cxx"
+"${CMAKE_CURRENT_SOURCE_DIR}/request_reply_api/RequestReplyTypes/*.cpp"
+"${CMAKE_CURRENT_SOURCE_DIR}/request_reply_api/RequestReplyTypes/*.ipp")      
+
 file(GLOB SOURCES_CC_FOR_MAIN "${CMAKE_CURRENT_SOURCE_DIR}/*.cc")
 
-message(STATUS "Collected CPP sources: ${SOURCES_CC_FOR_MAIN}")
+message(STATUS "Collected CPP sources: ${SOURCES_CC_FOR_API}")
 message(STATUS "CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX}")
 
 # 合并所有查找到的文件列表
-set(MAIN_SOURCES ${SOURCES_CC_FOR_MAIN})
+set(MAIN_SOURCES ${SOURCES_CC_FOR_MAIN} ${SOURCES_CC_FOR_API} ${SOURCES_CC_FOR_XTYPE})
 
 
 option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
 
 if(BUILD_LIBRARY)
-add_library(${LIBRARY_OUTPUT_NAME}   ${SOURCES_CC_FOR_LOG})
+add_library(${LIBRARY_OUTPUT_NAME}   ${SOURCES_CC_FOR_API})
 target_include_directories(${LIBRARY_OUTPUT_NAME} PRIVATE   ${OBJ_CPP_INCLUDE})
 endif()
 
@@ -61,8 +70,8 @@ endif()
 add_executable(${PROJECT_NAME} ${MAIN_SOURCES})
 #指定可执行文件生成路径 目前是当前cmakelist文件所在根目录
 set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
-
 target_include_directories(${PROJECT_NAME} PRIVATE  ${OBJ_CPP_INCLUDE})
+
 
 find_library(FASTRTPS_LIBRARY NAMES fastdds PATHS ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib)
 find_library(FOONATHAN_MEMORY_LIBRARY NAMES foonathan_memory-0.7.3 PATHS ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib)

@@ -13,7 +13,7 @@ class DDSRequestReplyNode {
   ~DDSRequestReplyNode();
   bool DDSClient();
   bool DDSServive();
-  void processCalculatorRequestType(const std::string &topic_name, std::shared_ptr<CalculatorRequestType> data);
+
 
 };
 #endif
