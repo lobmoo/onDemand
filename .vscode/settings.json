@@ -92,6 +92,8 @@
         "slist": "cpp",
         "scoped_allocator": "cpp",
         "typeindex": "cpp",
-        "valarray": "cpp"
+        "valarray": "cpp",
+        "*.cppbackup": "cpp",
+        "*.hbackup": "cpp"
     }
 }

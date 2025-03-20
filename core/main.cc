@@ -3,7 +3,7 @@
 #include <iostream>
 #include <thread>
 #include <vector>
-#include "request_reply_api/DDSRequestReply.h"
+#include "request_reply_api/DDSRequestReplyServer.h"
 #include "log/logger.h"
 
 void logWorker(int id) {
