@@ -14,6 +14,8 @@ class DDSRequestReplyNode {
   bool DDSClient();
   bool DDSServive();
 
+  private:
+  
 
 };
 #endif

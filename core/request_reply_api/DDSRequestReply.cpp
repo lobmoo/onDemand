@@ -11,7 +11,11 @@ DDSRequestReplyNode::DDSRequestReplyNode() {}
 
 DDSRequestReplyNode::~DDSRequestReplyNode() {}
 
-void processCalculatorRequestType(const std::string &topic_name, std::shared_ptr<CalculatorRequestType> data) {
+void processDataCallBackServer(const std::string &topic_name, std::shared_ptr<CalculatorRequestType> data) {
+  LOG(info) << "recv message [" << topic_name << "]: " << data->client_id();
+}
+
+void processDataCallBackClient(const std::string &topic_name, std::shared_ptr<CalculatorRequestType> data) {
   LOG(info) << "recv message [" << topic_name << "]: " << data->client_id();
 }
 
@@ -20,8 +24,15 @@ bool DDSRequestReplyNode::DDSClient() {
   node.registerTopicType<CalculatorRequestTypePubSubType>("request");
   node.registerTopicType<CalculatorRequestTypePubSubType>("reply");
   auto dataWriter = node.createDataWriter<CalculatorRequestType>("request");
-  auto dataReader = node.createDataReader<CalculatorRequestType>("reply", processCalculatorRequestType);
+  auto dataReader = node.createDataReader<CalculatorRequestType>("reply", processDataCallBackServer);
   return true;
 }
 
-bool DDSRequestReplyNode::DDSServive() { return true; }
+bool DDSRequestReplyNode::DDSServive() {
+  DataNode node(1, "DSF_CMD_CTRL");
+  node.registerTopicType<CalculatorRequestTypePubSubType>("request");
+  node.registerTopicType<CalculatorRequestTypePubSubType>("reply");
+  auto dataWriter = node.createDataWriter<CalculatorRequestType>("reply");
+  auto dataReader = node.createDataReader<CalculatorRequestType>("request", processDataCallBackClient);
+  return true;
+}
