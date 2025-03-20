@@ -17,6 +17,7 @@ public:
 
 public:
     bool writeMessage(const T &message);
+    bool clear_history(size_t* removed);
 
 private:
     DDSDataWriterListener               m_writerListener;
@@ -45,4 +46,9 @@ bool DDSTopicDataWriter<T>::writeMessage(const T &message)
     return  m_dataWriter->write((void *)&message) == eprosima::fastdds::dds::RETCODE_OK ? true : false;
 }
 
+template <typename T>
+bool DDSTopicDataWriter<T>::clear_history(size_t* removed)
+{
+    return m_dataWriter->clear_history(removed) == eprosima::fastdds::dds::RETCODE_OK ? true : false;
+}
 #endif
