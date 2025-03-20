@@ -31,10 +31,8 @@ set(INSTALL_INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include")
 #头文件
 set(OBJ_CPP_INCLUDE
     ${CMAKE_SOURCE_DIR}/common
-    ${CMAKE_SOURCE_DIR}/thirdparty/BS_thread_pool/include
-    ${CMAKE_SOURCE_DIR}/thirdparty/boost/include
-    ${CMAKE_SOURCE_DIR}/thirdparty/nlohmann/include
-    ${CMAKE_SOURCE_DIR}/thirdparty/yaml-cpp/include
+    ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/include
+    ${CMAKE_SOURCE_DIR}/core
 )
 
 
@@ -66,12 +64,27 @@ set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMA
 
 target_include_directories(${PROJECT_NAME} PRIVATE  ${OBJ_CPP_INCLUDE})
 
+find_library(FASTRTPS_LIBRARY NAMES fastdds PATHS ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib)
+find_library(FOONATHAN_MEMORY_LIBRARY NAMES foonathan_memory-0.7.3 PATHS ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib)
+find_library(FASTCDR_LIBRARY NAMES fastcdr PATHS ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib)
+
+# 检查每个库是否都找到了
+if(FASTRTPS_LIBRARY AND FOONATHAN_MEMORY_LIBRARY AND FASTCDR_LIBRARY)
+    list(APPEND OBJ_CPP_LIBS ${FASTRTPS_LIBRARY} ${FOONATHAN_MEMORY_LIBRARY} ${FASTCDR_LIBRARY})
+    message(STATUS "Found all FAST DDS libraries")
+else()
+    message(FATAL_ERROR "Could not find all required FAST DDS libraries")
+endif()
+
+
+
 target_link_libraries(${PROJECT_NAME} PRIVATE 
     ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_system.a
     ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_thread.a
-    ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_filesystem.a
+    ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_filesystem.a 
     ${CMAKE_SOURCE_DIR}/thirdparty/yaml-cpp/lib/libyaml-cpp.a
     ${CMAKE_SOURCE_DIR}/common/log/lib/liblog.a
+    ${OBJ_CPP_LIBS}
     pthread 
     rt
 )
