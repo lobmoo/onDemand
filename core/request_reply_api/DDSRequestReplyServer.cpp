@@ -9,19 +9,11 @@
 namespace request_reply {
 using namespace eprosima::fastdds::dds;
 
-DDSRequestReplyServerNode::DDSRequestReplyServerNode() {}
+DDSRequestReplyServer::DDSRequestReplyServer() {}
 
-DDSRequestReplyServerNode::~DDSRequestReplyServerNode() {}
+DDSRequestReplyServer::~DDSRequestReplyServer() {}
 
-void processDataCallBackServer(const std::string& topic_name, std::shared_ptr<CalculatorRequestType> data) {
-  LOG(info) << "recv message [" << topic_name << "]: " << data->client_id();
-}
-
-void processDataCallBackClient(const std::string& topic_name, std::shared_ptr<CalculatorRequestType> data) {
-  LOG(info) << "recv message [" << topic_name << "]: " << data->client_id();
-}
-
-bool DDSRequestReplyServerNode::create_participant() {
+bool DDSRequestReplyServer::create_participant() {
   auto factory = DomainParticipantFactory::get_instance();
   if (nullptr == factory) {
     throw std::runtime_error("Failed to get participant factory instance");
@@ -44,7 +36,7 @@ bool DDSRequestReplyServerNode::create_participant() {
   return true;
 }
 
-void DDSRequestReplyServerNode::create_request_entities(const std::string& service_name) {
+void DDSRequestReplyServer::create_request_entities(const std::string& service_name) {
   RequestTopic_ = create_topic<CalculatorReplyTypePubSubType>(service_name, m_participant_, RequestType_);
 
   SubscriberQos sub_qos = SUBSCRIBER_QOS_DEFAULT;
@@ -66,7 +58,7 @@ void DDSRequestReplyServerNode::create_request_entities(const std::string& servi
   }
 }
 
-void DDSRequestReplyServerNode::create_reply_entities(const std::string& service_name) {
+void DDSRequestReplyServer::create_reply_entities(const std::string& service_name) {
   Replytopic_ = create_topic<CalculatorReplyTypePubSubType>(service_name, m_participant_, ReplyType_);
 
   PublisherQos pub_qos = PUBLISHER_QOS_DEFAULT;
@@ -95,9 +87,9 @@ void DDSRequestReplyServerNode::create_reply_entities(const std::string& service
   }
 }
 
-bool DDSRequestReplyServerNode::is_stopped() { return stop_.load(); }
+bool DDSRequestReplyServer::is_stopped() { return stop_.load(); }
 
-void DDSRequestReplyServerNode::reply_routine() {
+void DDSRequestReplyServer::reply_routine() {
   while (!is_stopped()) {
     std::unique_lock<std::mutex> lock(mtx_);
 
@@ -152,7 +144,7 @@ void DDSRequestReplyServerNode::reply_routine() {
   }
 }
 
-bool DDSRequestReplyServerNode::calculate(const CalculatorRequestType& request, std::int32_t& result) {
+bool DDSRequestReplyServer::calculate(const CalculatorRequestType& request, std::int32_t& result) {
   bool success = true;
 
   switch (request.operation()) {
@@ -187,7 +179,7 @@ bool DDSRequestReplyServerNode::calculate(const CalculatorRequestType& request, 
   return success;
 }
 
-void DDSRequestReplyServerNode::on_participant_discovery(
+void DDSRequestReplyServer::on_participant_discovery(
     DomainParticipant* participant, eprosima::fastdds::rtps::ParticipantDiscoveryStatus reason,
     const ParticipantBuiltinTopicData& info, bool& should_be_ignored) {
   std::lock_guard<std::mutex> lock(mtx_);
@@ -213,7 +205,7 @@ void DDSRequestReplyServerNode::on_participant_discovery(
   }
 }
 
-void DDSRequestReplyServerNode::on_publication_matched(DataWriter* writer, const PublicationMatchedStatus& info) {
+void DDSRequestReplyServer::on_publication_matched(DataWriter* writer, const PublicationMatchedStatus& info) {
   std::lock_guard<std::mutex> lock(mtx_);
   eprosima::fastdds::rtps::GuidPrefix_t client_guid_prefix =
       eprosima::fastdds::rtps::iHandle2GUID(info.last_subscription_handle).guidPrefix;
@@ -236,7 +228,7 @@ void DDSRequestReplyServerNode::on_publication_matched(DataWriter* writer, const
   }
 };
 
-void DDSRequestReplyServerNode::on_subscription_matched(DataReader* reader, const SubscriptionMatchedStatus& info) {
+void DDSRequestReplyServer::on_subscription_matched(DataReader* reader, const SubscriptionMatchedStatus& info) {
   std::lock_guard<std::mutex> lock(mtx_);
 
   eprosima::fastdds::rtps::GuidPrefix_t client_guid_prefix =
@@ -260,7 +252,7 @@ void DDSRequestReplyServerNode::on_subscription_matched(DataReader* reader, cons
   }
 };
 
-void DDSRequestReplyServerNode::on_data_available(DataReader* reader) {
+void DDSRequestReplyServer::on_data_available(DataReader* reader) {
   SampleInfo info;
   auto request = std::make_shared<CalculatorRequestType>();
 

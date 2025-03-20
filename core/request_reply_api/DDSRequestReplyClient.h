@@ -1,5 +1,5 @@
-#ifndef REQUESTER_H
-#define REQUESTER_H
+#ifndef DDSREQUESTREPLYCLIENT_H
+#define DDSREQUESTREPLYCLIENT_H
 
 #include <atomic>
 #include <condition_variable>
@@ -13,6 +13,7 @@
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/rtps/common/SampleIdentity.hpp>
 #include <memory>
 #include <mutex>
 #include <queue>
@@ -252,20 +253,20 @@ class RemoteClientMatchedStatus {
   static const size_t reply_reader_position = 1;
 };
 
-class DDSRequestReplyServerNode : public DomainParticipantListener {
+class DDSRequestReplyClient : public DomainParticipantListener {
  public:
-  DDSRequestReplyServerNode();
-  ~DDSRequestReplyServerNode();
+  DDSRequestReplyClient();
+  ~DDSRequestReplyClient();
   bool DDSServive();
 
  private:
   bool create_participant();
   void create_request_entities(const std::string& service_name);
   void create_reply_entities(const std::string& service_name);
+  bool send_requests();
+  bool send_request(const CalculatorRequestType& request);
   bool is_stopped();
-  void reply_routine();
-  bool calculate(const CalculatorRequestType& request,
-    std::int32_t& result);
+  void wait_for_replies();
 
  private:
   RemoteClientMatchedStatus client_matched_status_;
@@ -275,10 +276,7 @@ class DDSRequestReplyServerNode : public DomainParticipantListener {
   Publisher* m_publisher_;
 
   DataReader* ReplyReader_;
-  DataReader* RequestReader_;
-
-  DataWriter* ReplyWriter_;
-  DataWriter** RequestWriter_;
+  DataWriter* RequestWriter_;
 
   TypeSupport RequestType_;
   TypeSupport ReplyType_;
@@ -289,6 +287,12 @@ class DDSRequestReplyServerNode : public DomainParticipantListener {
   std::mutex mtx_;
   std::atomic<bool> stop_;
   std::condition_variable cv_;
+  ContentFilteredTopic* reply_cf_topic_;
+  std::string reply_topic_filter_expression_;
+  std::vector<std::string> reply_topic_filter_parameters_;
+  std::pair<std::int16_t, std::int16_t> request_input_;
+  RemoteServerMatchedStatus server_matched_status_;
+  std::map<eprosima::fastdds::rtps::SampleIdentity, bool> requests_status_;
 
   struct Request {
     SampleInfo info;
@@ -298,17 +302,6 @@ class DDSRequestReplyServerNode : public DomainParticipantListener {
   std::queue<Request> requests_;
 
   std::thread reply_thread_;
-
- protected:
-  void on_participant_discovery(
-      DomainParticipant* participant, eprosima::fastdds::rtps::ParticipantDiscoveryStatus status,
-      const ParticipantBuiltinTopicData& info, bool& should_be_ignored) override;
-
-  void on_publication_matched(DataWriter* writer, const PublicationMatchedStatus& info) override;
-
-  void on_subscription_matched(DataReader* reader, const SubscriptionMatchedStatus& info) override;
-
-  void on_data_available(DataReader* reader) override;
 };
 }  // namespace request_reply
 

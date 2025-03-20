@@ -1,5 +1,5 @@
-#ifndef REQUESTER_H
-#define REQUESTER_H
+#ifndef DDSREQUESTREPLYSERVER_H
+#define DDSREQUESTREPLYSERVER_H
 
 #include <atomic>
 #include <condition_variable>
@@ -252,10 +252,10 @@ class RemoteClientMatchedStatus {
   static const size_t reply_reader_position = 1;
 };
 
-class DDSRequestReplyServerNode : public DomainParticipantListener {
+class DDSRequestReplyServer : public DomainParticipantListener {
  public:
-  DDSRequestReplyServerNode();
-  ~DDSRequestReplyServerNode();
+  DDSRequestReplyServer();
+  ~DDSRequestReplyServer();
   bool DDSServive();
 
  private:
@@ -274,11 +274,10 @@ class DDSRequestReplyServerNode : public DomainParticipantListener {
   Subscriber* m_subscriber_;
   Publisher* m_publisher_;
 
-  DataReader* ReplyReader_;
-  DataReader* RequestReader_;
 
+  DataReader* RequestReader_;
   DataWriter* ReplyWriter_;
-  DataWriter** RequestWriter_;
+
 
   TypeSupport RequestType_;
   TypeSupport ReplyType_;
