@@ -50,20 +50,29 @@ class RemoteServerMatchedStatus {
   static const size_t reply_writer_position = 1;
 };
 
-
 class DDSRequestReplyClient : public DomainParticipantListener {
  public:
   DDSRequestReplyClient();
   ~DDSRequestReplyClient();
-  bool DDSServive();
-  bool send_requests();
 
+  void on_participant_discovery(
+      DomainParticipant* participant, eprosima::fastdds::rtps::ParticipantDiscoveryStatus status, const ParticipantBuiltinTopicData& info,
+      bool& should_be_ignored) override;
+
+  void on_publication_matched(DataWriter* writer, const PublicationMatchedStatus& info) override;
+
+  void on_subscription_matched(DataReader* reader, const SubscriptionMatchedStatus& info) override;
+
+  void on_data_available(DataReader* reader) override;
+
+  void stop();
  private:
   bool create_participant();
   void create_request_entities(const std::string& service_name);
   void create_reply_entities(const std::string& service_name);
   bool send_request(const CalculatorRequestType& request);
   bool is_stopped();
+  bool send_requests();
   void wait_for_replies();
 
  private:

@@ -9,14 +9,43 @@
 namespace request_reply {
 using namespace eprosima::fastdds::dds;
 
-DDSRequestReplyServer::DDSRequestReplyServer() {
+DDSRequestReplyServer::DDSRequestReplyServer()
+    : m_participant_(nullptr),
+      RequestType_(nullptr),
+      ReplyType_(nullptr),
+      m_subscriber_(nullptr),
+      RequestReader_(nullptr),
+      RequestTopic_(nullptr),
+      Replytopic_(nullptr),
+      m_publisher_(nullptr),
+      ReplyWriter_(nullptr),
+      stop_(false) {
   reply_thread_ = std::thread(&DDSRequestReplyServer::reply_routine, this);
   create_participant();
   create_request_entities("CalculatorRequest");
   create_reply_entities("CalculatorReply");
 }
 
-DDSRequestReplyServer::~DDSRequestReplyServer() {}
+DDSRequestReplyServer::~DDSRequestReplyServer() {
+  if (reply_thread_.joinable())
+  {
+      reply_thread_.join();
+  }
+
+  if (nullptr != m_participant_)
+  { 
+    m_participant_->delete_contained_entities();
+    DomainParticipantFactory::get_instance()->delete_participant(m_participant_);
+  }
+
+  while (requests_.size() > 0)
+  {
+      requests_.pop();
+  }
+  client_matched_status_.clear();
+}
+
+
 
 bool DDSRequestReplyServer::create_participant() {
   auto factory = DomainParticipantFactory::get_instance();
@@ -263,10 +292,11 @@ void DDSRequestReplyServer::on_data_available(DataReader* reader) {
 
   while ((!is_stopped()) && (RETCODE_OK == reader->take_next_sample(request.get(), &info))) {
     if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data) {
-      eprosima::fastdds::rtps::GuidPrefix_t client_guid_prefix = eprosima::fastdds::rtps::iHandle2GUID(info.publication_handle).guidPrefix;
+      eprosima::fastdds::rtps::GuidPrefix_t client_guid_prefix =
+          eprosima::fastdds::rtps::iHandle2GUID(info.publication_handle).guidPrefix;
       eprosima::fastdds::rtps::SequenceNumber_t request_id = info.sample_identity.sequence_number();
 
-      LOG(info) <<  "ServerApp Request with ID '" << request_id << "' received from client " << client_guid_prefix;
+      LOG(info) << "ServerApp Request with ID '" << request_id << "' received from client " << client_guid_prefix;
       {
         std::lock_guard<std::mutex> lock(mtx_);
         requests_.push({info, request});

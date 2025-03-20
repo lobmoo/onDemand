@@ -4,19 +4,36 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/rtps/common/WriteParams.hpp>
 
-
 #include "log/logger.h"
 
 namespace request_reply {
 using namespace eprosima::fastdds::dds;
 
-DDSRequestReplyClient::DDSRequestReplyClient() {
+DDSRequestReplyClient::DDSRequestReplyClient()
+    : m_participant_(nullptr),
+      RequestType_(nullptr),
+      ReplyType_(nullptr),
+      m_subscriber_(nullptr),
+      ReplyReader_(nullptr),
+      RequestTopic_(nullptr),
+      Replytopic_(nullptr),
+      m_publisher_(nullptr),
+      RequestWriter_(nullptr),
+      stop_(false) {
   create_participant();
   create_request_entities("CalculatorRequest");
   create_reply_entities("CalculatorReply");
 }
 
-DDSRequestReplyClient::~DDSRequestReplyClient() {}
+DDSRequestReplyClient::~DDSRequestReplyClient() {
+  if (nullptr != m_participant_) {
+    m_participant_->delete_contained_entities();
+    DomainParticipantFactory::get_shared_instance()->delete_participant(m_participant_);
+  }
+
+  server_matched_status_.clear();
+  reply_topic_filter_parameters_.clear();
+}
 
 bool DDSRequestReplyClient::create_participant() {
   auto factory = DomainParticipantFactory::get_instance();
@@ -98,8 +115,8 @@ bool DDSRequestReplyClient::send_requests() {
   CalculatorRequestType request;
 
   request.client_id(TypeConverter::to_string(m_participant_->guid().guidPrefix));
-  request.x(request_input_.first);
-  request.y(request_input_.second);
+  request.x(10);
+  request.y(10);
 
   request.operation(CalculatorOperationType::ADDITION);
   bool ret = send_request(request);
@@ -143,4 +160,132 @@ void DDSRequestReplyClient::wait_for_replies() {
   cv_.wait(lock, [&]() { return is_stopped(); });
 }
 
+void DDSRequestReplyClient::on_participant_discovery(
+    DomainParticipant* /* participant */, eprosima::fastdds::rtps::ParticipantDiscoveryStatus status,
+    const ParticipantBuiltinTopicData& info, bool& should_be_ignored) {
+  std::lock_guard<std::mutex> lock(mtx_);
+
+  should_be_ignored = false;
+
+  eprosima::fastdds::rtps::GuidPrefix_t remote_participant_guid_prefix = info.guid.guidPrefix;
+  std::string status_str = TypeConverter::to_string(status);
+
+  if (info.user_data.data_vec().size() != 1) {
+    should_be_ignored = true;
+    LOG(info) << "ClientApp Ignoring participant with invalid user data " << remote_participant_guid_prefix;
+  }
+
+  if (!should_be_ignored) {
+    EntityKind entity_kind = static_cast<EntityKind>(info.user_data.data_vec()[0]);
+    if (EntityKind::SERVER != entity_kind) {
+      should_be_ignored = true;
+      LOG(debug) << "ClientApp Ignoring status_str" << static_cast<uint8_t>(entity_kind) << ": "
+                 << remote_participant_guid_prefix;
+    }
+  }
+
+  if (!should_be_ignored) {
+    if (status == eprosima::fastdds::rtps::ParticipantDiscoveryStatus::DISCOVERED_PARTICIPANT) {
+      LOG(debug) << "ClientApp server_str" << "server" << ": " << remote_participant_guid_prefix;
+    } else if (
+        status == eprosima::fastdds::rtps::ParticipantDiscoveryStatus::REMOVED_PARTICIPANT ||
+        status == eprosima::fastdds::rtps::ParticipantDiscoveryStatus::DROPPED_PARTICIPANT) {
+      LOG(debug) << "ClientApp server_str" << "server" << ": " << remote_participant_guid_prefix;
+    }
+  }
+}
+
+void DDSRequestReplyClient::on_publication_matched(DataWriter* /* writer */, const PublicationMatchedStatus& info) {
+  std::lock_guard<std::mutex> lock(mtx_);
+
+  eprosima::fastdds::rtps::GuidPrefix_t server_guid_prefix =
+      eprosima::fastdds::rtps::iHandle2GUID(info.last_subscription_handle).guidPrefix;
+
+  if (info.current_count_change == 1) {
+    LOG(debug) << "ClientApp Remote request reader matched.";
+
+    server_matched_status_.match_request_reader(server_guid_prefix, true);
+  } else if (info.current_count_change == -1) {
+    LOG(debug) << "ClientApp Remote request reader unmatched.";
+    server_matched_status_.match_request_reader(server_guid_prefix, false);
+  } else {
+    LOG(error) << "ClientApp info.current_count_change is not a valid value for SubscriptionMatchedStatus current "
+                  "count change";
+  }
+  cv_.notify_all();
+}
+
+void DDSRequestReplyClient::on_subscription_matched(DataReader* /* reader */, const SubscriptionMatchedStatus& info) {
+  std::lock_guard<std::mutex> lock(mtx_);
+
+  eprosima::fastdds::rtps::GuidPrefix_t server_guid_prefix =
+      eprosima::fastdds::rtps::iHandle2GUID(info.last_publication_handle).guidPrefix;
+
+  if (info.current_count_change == 1) {
+    LOG(debug) << "ClientApp", "Remote reply writer matched.";
+
+    server_matched_status_.match_reply_writer(server_guid_prefix, true);
+  } else if (info.current_count_change == -1) {
+    LOG(debug) << "ClientApp", "Remote reply writer unmatched.";
+    server_matched_status_.match_reply_writer(server_guid_prefix, false);
+  } else {
+    LOG(error) << "ClientApp info.current_count_change is not a valid value for SubscriptionMatchedStatus current "
+                  "count change";
+  }
+  cv_.notify_all();
+}
+
+void DDSRequestReplyClient::on_data_available(DataReader* reader) {
+  SampleInfo info;
+  CalculatorReplyType reply;
+
+  while ((!is_stopped()) && (RETCODE_OK == reader->take_next_sample(&reply, &info))) {
+    if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data) {
+      std::lock_guard<std::mutex> lock(mtx_);
+
+      eprosima::fastdds::rtps::GuidPrefix_t server_guid_prefix =
+          eprosima::fastdds::rtps::iHandle2GUID(info.publication_handle).guidPrefix;
+
+      auto request_status = requests_status_.find(info.related_sample_identity);
+
+      if (requests_status_.end() != request_status) {
+        if (!request_status->second) {
+          request_status->second = true;
+          LOG(info) << "ClientApp Reply received from server " << server_guid_prefix << " to request with ID '"
+                    << request_status->first.sequence_number() << "' with result: '" << reply.result() << "'";
+        } else {
+          LOG(debug) << "ClientApp Duplicate reply received from server " << server_guid_prefix
+                     << " to request with ID '" << request_status->first.sequence_number() << "' with result: '"
+                     << reply.result() << "'";
+          continue;
+        }
+      } else {
+        LOG(error) << "ClientApp  Reply received from server " << server_guid_prefix << " with unknown request ID '"
+                   << info.related_sample_identity.sequence_number() << "'";
+        continue;
+      }
+
+      // Check if all responses have been received
+      if (requests_status_.size() == 4) {
+        bool all_responses_received = true;
+
+        for (auto status : requests_status_) {
+          all_responses_received &= status.second;
+        }
+
+        if (all_responses_received) {
+          stop();
+          break;
+        }
+      }
+    }
+  }
+}
+
+
+void DDSRequestReplyClient::stop()
+{
+    stop_.store(true);
+    cv_.notify_all();
+}
 }  // namespace request_reply

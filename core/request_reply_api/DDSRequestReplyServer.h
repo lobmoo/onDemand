@@ -2,7 +2,6 @@
 #define DDSREQUESTREPLYSERVER_H
 
 #include "DDSRequestReplyCommon.h"
-
 #include "log/logger.h"
 namespace request_reply {
 
@@ -67,7 +66,6 @@ class DDSRequestReplyServer : public DomainParticipantListener {
  public:
   DDSRequestReplyServer();
   ~DDSRequestReplyServer();
-  bool DDSServive();
 
  private:
   bool create_participant();
@@ -75,38 +73,28 @@ class DDSRequestReplyServer : public DomainParticipantListener {
   void create_reply_entities(const std::string& service_name);
   bool is_stopped();
   void reply_routine();
-  bool calculate(const CalculatorRequestType& request,
-    std::int32_t& result);
+  bool calculate(const CalculatorRequestType& request, std::int32_t& result);
 
  private:
-  RemoteClientMatchedStatus client_matched_status_;
-
   DomainParticipant* m_participant_;
   Subscriber* m_subscriber_;
   Publisher* m_publisher_;
-
-
   DataReader* RequestReader_;
   DataWriter* ReplyWriter_;
-
-
   TypeSupport RequestType_;
   TypeSupport ReplyType_;
-
   Topic* Replytopic_;
   Topic* RequestTopic_;
-
   std::mutex mtx_;
   std::atomic<bool> stop_;
   std::condition_variable cv_;
+  RemoteClientMatchedStatus client_matched_status_;
 
   struct Request {
     SampleInfo info;
     std::shared_ptr<CalculatorRequestType> request;
   };
-
   std::queue<Request> requests_;
-
   std::thread reply_thread_;
 
  protected:
@@ -120,6 +108,6 @@ class DDSRequestReplyServer : public DomainParticipantListener {
 
   void on_data_available(DataReader* reader) override;
 };
-  // namespace request_reply
-}
+// namespace request_reply
+}  // namespace request_reply
 #endif
