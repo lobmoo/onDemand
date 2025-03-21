@@ -91,6 +91,7 @@ struct TypeConverter {
 };
 
 enum class EntityKind : std::uint8_t { SERVER, CLIENT, UNDEFINED };
+
 template <typename TypeSupportClass>
 Topic* create_topic(const std::string& topic_name, DomainParticipant* participant, TypeSupport& type) {
   assert(nullptr != participant);

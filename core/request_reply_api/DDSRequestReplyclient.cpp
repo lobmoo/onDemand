@@ -38,6 +38,7 @@ DDSRequestReplyClient::DDSRequestReplyClient()
   create_participant();
   create_request_entities(SERVER_NAME);
   create_reply_entities(SERVER_NAME);
+  LOG(info) << "ClientApp Client initialized with ID: " << m_participant_->guid().guidPrefix;
 }
 
 DDSRequestReplyClient::~DDSRequestReplyClient() {
@@ -74,7 +75,7 @@ bool DDSRequestReplyClient::create_participant() {
 }
 
 void DDSRequestReplyClient::create_request_entities(const std::string& service_name) {
-  RequestTopic_ = create_topic<CalculatorReplyTypePubSubType>("rq/" + service_name, m_participant_, RequestType_);
+  RequestTopic_ = create_topic<CalculatorRequestTypePubSubType>("rq/" + service_name, m_participant_, RequestType_);
 
   PublisherQos pub_qos = PUBLISHER_QOS_DEFAULT;
   if (RETCODE_OK != m_participant_->get_default_publisher_qos(pub_qos)) {

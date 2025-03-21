@@ -71,7 +71,7 @@ bool DDSRequestReplyServer::create_participant() {
 }
 
 void DDSRequestReplyServer::create_request_entities(const std::string& service_name) {
-  RequestTopic_ = create_topic<CalculatorReplyTypePubSubType>("rq/"+ service_name, m_participant_, RequestType_);
+  RequestTopic_ = create_topic<CalculatorRequestTypePubSubType>("rq/"+ service_name, m_participant_, RequestType_);
 
   SubscriberQos sub_qos = SUBSCRIBER_QOS_DEFAULT;
   if (RETCODE_OK != m_participant_->get_default_subscriber_qos(sub_qos)) {
@@ -151,14 +151,14 @@ void DDSRequestReplyServer::reply_routine() {
 
       std::int32_t result;
 
-      // if (!calculate(*request.request, result)) {
-      //   LOG(error) << "ServerApp Failed to calculate result for request from client " << client_guid_prefix;
-      //   continue;
-      // }
+      if (!calculate(*request.request, result)) {
+        LOG(error) << "ServerApp Failed to calculate result for request from client " << client_guid_prefix;
+        continue;
+      }
 
       CalculatorReplyType reply;
       reply.client_id(request.request->client_id());
-      reply.result(100);
+      reply.result(result);
 
 
       eprosima::fastdds::rtps::WriteParams write_params;
