@@ -403,7 +403,6 @@ void ClientApp::create_reply_entities(
         throw std::runtime_error("Failed to create CFT");
     }
 
-    // Create the subscriber
     SubscriberQos sub_qos = SUBSCRIBER_QOS_DEFAULT;
 
     if (RETCODE_OK != participant_->get_default_subscriber_qos(sub_qos))

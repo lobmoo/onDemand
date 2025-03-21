@@ -22,8 +22,8 @@ DDSRequestReplyServer::DDSRequestReplyServer()
       stop_(false) {
   reply_thread_ = std::thread(&DDSRequestReplyServer::reply_routine, this);
   create_participant();
-  create_request_entities("calculator_service");
-  create_reply_entities("calculator_service");
+  create_request_entities(SERVER_NAME);
+  create_reply_entities(SERVER_NAME);
 }
 
 DDSRequestReplyServer::~DDSRequestReplyServer() {

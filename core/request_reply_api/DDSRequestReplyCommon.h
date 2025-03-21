@@ -22,6 +22,10 @@
 #include "RequestReplyTypes/Calculator.hpp"
 #include "RequestReplyTypes/CalculatorPubSubTypes.hpp"
 
+
+#define SERVER_NAME  "calculator_service"
+
+
 using namespace eprosima::fastdds::dds;
 namespace request_reply {
 

@@ -6,7 +6,6 @@
 
 #include "log/logger.h"
 
-
 /*   , participant_(nullptr)
     , request_type_(nullptr)
     , request_topic_(nullptr)
@@ -24,7 +23,7 @@ using namespace eprosima::fastdds::dds;
 
 DDSRequestReplyClient::DDSRequestReplyClient()
     : m_participant_(nullptr),
-      request_input_({10,10}),
+      request_input_({10, 10}),
       RequestType_(nullptr),
       ReplyType_(nullptr),
       m_subscriber_(nullptr),
@@ -32,12 +31,13 @@ DDSRequestReplyClient::DDSRequestReplyClient()
       RequestTopic_(nullptr),
       Replytopic_(nullptr),
       m_publisher_(nullptr),
+      reply_cf_topic_(nullptr),
       RequestWriter_(nullptr),
       reply_topic_filter_expression_(""),
       stop_(false) {
   create_participant();
-  create_request_entities("calculator_service");
-  create_reply_entities("calculator_service");
+  create_request_entities(SERVER_NAME);
+  create_reply_entities(SERVER_NAME);
 }
 
 DDSRequestReplyClient::~DDSRequestReplyClient() {
@@ -76,18 +76,21 @@ bool DDSRequestReplyClient::create_participant() {
 void DDSRequestReplyClient::create_request_entities(const std::string& service_name) {
   RequestTopic_ = create_topic<CalculatorReplyTypePubSubType>("rq/" + service_name, m_participant_, RequestType_);
 
-  SubscriberQos sub_qos = SUBSCRIBER_QOS_DEFAULT;
-  if (RETCODE_OK != m_participant_->get_default_subscriber_qos(sub_qos)) {
-    throw std::runtime_error("Failed to get default subscriber qos");
+  PublisherQos pub_qos = PUBLISHER_QOS_DEFAULT;
+  if (RETCODE_OK != m_participant_->get_default_publisher_qos(pub_qos)) {
+    throw std::runtime_error("Failed to get default publisher qos");
   }
 
-  PublisherQos pub_qos = PUBLISHER_QOS_DEFAULT;
   m_publisher_ = m_participant_->create_publisher(pub_qos, nullptr, StatusMask::none());
   if (nullptr == m_publisher_) {
     throw std::runtime_error("Publisher initialization failed");
   }
 
   DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
+  if (RETCODE_OK != m_publisher_->get_default_datawriter_qos(writer_qos)) {
+    throw std::runtime_error("Failed to get default datawriter qos");
+  }
+
   RequestWriter_ = m_publisher_->create_datawriter(RequestTopic_, writer_qos, nullptr, StatusMask::none());
   if (nullptr == RequestWriter_) {
     throw std::runtime_error("Request reader initialization failed");
@@ -109,7 +112,6 @@ void DDSRequestReplyClient::create_reply_entities(const std::string& service_nam
   if (RETCODE_OK != m_participant_->get_default_subscriber_qos(sub_qos)) {
     throw std::runtime_error("Failed to get default subscriber qos");
   }
-
   m_subscriber_ = m_participant_->create_subscriber(sub_qos, nullptr, StatusMask::none());
   if (nullptr == m_subscriber_) {
     throw std::runtime_error("Publisher initialization failed");
@@ -155,11 +157,10 @@ bool DDSRequestReplyClient::send_requests() {
 }
 
 bool DDSRequestReplyClient::send_request(const CalculatorRequestType& request) {
-
   std::lock_guard<std::mutex> lock(mtx_);
 
   eprosima::fastdds::rtps::WriteParams wparams;
-  
+
   ReturnCode_t ret = RequestWriter_->write(&request, wparams);
 
   requests_status_[wparams.sample_identity()] = false;
@@ -229,6 +230,7 @@ void DDSRequestReplyClient::on_publication_matched(DataWriter* /* writer */, con
     LOG(error) << "ClientApp info.current_count_change is not a valid value for SubscriptionMatchedStatus current "
                   "count change";
   }
+  LOG(warning) << "+++++++++++++++++++++++";
   cv_.notify_all();
 }
 
@@ -239,16 +241,16 @@ void DDSRequestReplyClient::on_subscription_matched(DataReader* /* reader */, co
       eprosima::fastdds::rtps::iHandle2GUID(info.last_publication_handle).guidPrefix;
 
   if (info.current_count_change == 1) {
-    LOG(debug) << "ClientApp", "Remote reply writer matched.";
-
+    LOG(debug) << "ClientApp Remote reply writer matched.";
     server_matched_status_.match_reply_writer(server_guid_prefix, true);
   } else if (info.current_count_change == -1) {
-    LOG(debug) << "ClientApp", "Remote reply writer unmatched.";
+    LOG(debug) << "ClientApp Remote reply writer unmatched.";
     server_matched_status_.match_reply_writer(server_guid_prefix, false);
   } else {
     LOG(error) << "ClientApp info.current_count_change is not a valid value for SubscriptionMatchedStatus current "
                   "count change";
   }
+  LOG(warning) << "+++++++++++++++++++++++";
   cv_.notify_all();
 }
 
@@ -304,40 +306,28 @@ void DDSRequestReplyClient::stop() {
   cv_.notify_all();
 }
 
+void DDSRequestReplyClient::run() {
+  LOG(debug) << "ClientApp Waiting for a server to be available";
+  {
+    std::unique_lock<std::mutex> lock(mtx_);
+    cv_.wait(lock, [&]() { return server_matched_status_.is_any_server_matched() || is_stopped(); });
+  }
 
-void DDSRequestReplyClient::run()
-{
-    LOG(debug) << "ClientApp Waiting for a server to be available";
-    {
-        std::unique_lock<std::mutex> lock(mtx_);
-        cv_.wait(lock, [&]()
-                {
-                    return server_matched_status_.is_any_server_matched() || is_stopped();
-                });
+  if (!is_stopped()) {
+    LOG(debug) << "ClientApp One server is available. Waiting for some time to ensure matching on the server side";
+
+    // TODO(eduponz): This wait should be conditioned to upcoming fully-matched API on the endpoints
+    std::unique_lock<std::mutex> lock(mtx_);
+    cv_.wait_for(lock, std::chrono::seconds(1), [&]() { return is_stopped(); });
+  }
+
+  if (!is_stopped()) {
+    if (!send_requests()) {
+      throw std::runtime_error("Failed to send request");
     }
 
-    if (!is_stopped())
-    {
-        LOG(debug) << "ClientApp One server is available. Waiting for some time to ensure matching on the server side";
-
-        // TODO(eduponz): This wait should be conditioned to upcoming fully-matched API on the endpoints
-        std::unique_lock<std::mutex> lock(mtx_);
-        cv_.wait_for(lock, std::chrono::seconds(1), [&]()
-                {
-                    return is_stopped();
-                });
-    }
-
-    if (!is_stopped())
-    {
-        if (!send_requests())
-        {
-            throw std::runtime_error("Failed to send request");
-        }
-
-        wait_for_replies();
-    }
+    wait_for_replies();
+  }
 }
-
 
 }  // namespace request_reply
