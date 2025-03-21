@@ -151,17 +151,16 @@ void DDSRequestReplyServer::reply_routine() {
 
       std::int32_t result;
 
-      if (!calculate(*request.request, result)) {
-        LOG(error) << "ServerApp Failed to calculate result for request from client " << client_guid_prefix;
-        continue;
-      }
+      // if (!calculate(*request.request, result)) {
+      //   LOG(error) << "ServerApp Failed to calculate result for request from client " << client_guid_prefix;
+      //   continue;
+      // }
 
-      // Prepare the reply
       CalculatorReplyType reply;
       reply.client_id(request.request->client_id());
-      reply.result(result);
+      reply.result(100);
 
-      // Prepare the WriteParams to link the reply to the request
+
       eprosima::fastdds::rtps::WriteParams write_params;
       eprosima::fastdds::rtps::SequenceNumber_t request_id = request.info.sample_identity.sequence_number();
       write_params.related_sample_identity().writer_guid(request.info.sample_identity.writer_guid());
@@ -172,7 +171,7 @@ void DDSRequestReplyServer::reply_routine() {
                    << client_guid_prefix;
         requests_.push(request);
       } else {
-        LOG(error) << "ServerApp Reply to request with ID '" << request_id << "' sent to client " << client_guid_prefix;
+        LOG(info) << "ServerApp Reply to request with ID '" << request_id << "' sent to client " << client_guid_prefix;
       }
     }
   }
@@ -180,8 +179,6 @@ void DDSRequestReplyServer::reply_routine() {
 
 bool DDSRequestReplyServer::calculate(const CalculatorRequestType& request, std::int32_t& result) {
   bool success = true;
-
-  LOG(warning) << "ServerApp Processing request: " << TypeConverter::to_string(request);
   switch (request.operation()) {
     case CalculatorOperationType::ADDITION: {
       result = request.x() + request.y();
@@ -297,6 +294,7 @@ void DDSRequestReplyServer::on_data_available(DataReader* reader) {
           eprosima::fastdds::rtps::iHandle2GUID(info.publication_handle).guidPrefix;
       eprosima::fastdds::rtps::SequenceNumber_t request_id = info.sample_identity.sequence_number();
 
+      LOG(warning) << "+++++++++++++++:: " << request.get()->x() << "+++++++:" << request.get()->y();
       LOG(info) << "ServerApp Request with ID '" << request_id << "' received from client " << client_guid_prefix;
       {
 

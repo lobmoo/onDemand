@@ -25,9 +25,11 @@
 #include <string>
 #include <thread>
 
-#include "app_utils.hpp"
 #include "Application.hpp"
 #include "CLIParser.hpp"
+#include "app_utils.hpp"
+#include "ServerApp.hpp"
+#include "ClientApp.hpp"
 
 using eprosima::fastdds::dds::Log;
 
@@ -35,57 +37,31 @@ using namespace eprosima::fastdds::examples::request_reply;
 
 std::function<void(int)> stop_app_handler;
 
-void signal_handler(
-        int signum)
-{
-    stop_app_handler(signum);
-}
+void signal_handler(int signum) { stop_app_handler(signum); }
 
-int main(
-        int argc,
-        char** argv)
-{
-    auto ret = EXIT_SUCCESS;
-    const std::string service_name = "calculator_service";
-    CLIParser::config config = CLIParser::parse_cli_options(argc, argv);
+int main(int argc, char** argv) {
+  auto ret = EXIT_SUCCESS;
+  const std::string service_name = "calculator_service";
 
-    std::string app_name = CLIParser::parse_entity_kind(config.entity);
-    std::shared_ptr<Application> app;
+  if (argc < 2) {
+    std::cerr << "Usage: " << argv[0] << " svr/cli" << std::endl;
+    return -1;
+  }
+  if (strcmp(argv[1], "svr") == 0) {
+    auto  entity = std::make_shared<ServerApp>(service_name);
+  } else if (strcmp(argv[1], "cli") == 0) {
+    CLIParser::config config;
+    //config.entity = CLIParser::EntityKind::CLIENT;
+    config.x = 10;
+    config.y = 10;
+    auto entity = std::make_shared<ClientApp>(config, service_name);
+    entity->run();
+  } else {
+    std::cerr << "unknown command: " << argv[1] << std::endl;
+  }
+  while (std::cin.get() != '\n') {
+  }
+ 
 
-    try
-    {
-        app = Application::make_app(config, service_name);
-    }
-    catch (const std::runtime_error& e)
-    {
-        request_reply_error("main", e.what());
-        ret = EXIT_FAILURE;
-    }
-
-    if (EXIT_FAILURE != ret)
-    {
-        std::thread thread(&Application::run, app);
-
-        stop_app_handler = [&](int signum)
-                {
-                    request_reply_info("main",
-                            CLIParser::parse_signal(signum) << " received, stopping " << app_name << " execution.");
-
-                    app->stop();
-                };
-
-        signal(SIGINT, signal_handler);
-        signal(SIGTERM, signal_handler);
-    #ifndef _WIN32
-        signal(SIGQUIT, signal_handler);
-        signal(SIGHUP, signal_handler);
-    #endif // _WIN32
-
-        request_reply_info("main",
-                app_name << " running. Please press Ctrl+C to stop the " << app_name << " at any time.");
-
-        thread.join();
-    }
-
-    return ret;
+  return ret;
 }

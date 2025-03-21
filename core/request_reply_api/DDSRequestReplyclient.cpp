@@ -6,11 +6,25 @@
 
 #include "log/logger.h"
 
+
+/*   , participant_(nullptr)
+    , request_type_(nullptr)
+    , request_topic_(nullptr)
+    , publisher_(nullptr)
+    , request_writer_(nullptr)
+    , reply_type_(nullptr)
+    , reply_topic_(nullptr)
+    , reply_cf_topic_(nullptr)
+    , reply_topic_filter_expression_("")
+    , subscriber_(nullptr)
+    , reply_reader_(nullptr)
+    , stop_(false)*/
 namespace request_reply {
 using namespace eprosima::fastdds::dds;
 
 DDSRequestReplyClient::DDSRequestReplyClient()
     : m_participant_(nullptr),
+      request_input_({10,10}),
       RequestType_(nullptr),
       ReplyType_(nullptr),
       m_subscriber_(nullptr),
@@ -19,6 +33,7 @@ DDSRequestReplyClient::DDSRequestReplyClient()
       Replytopic_(nullptr),
       m_publisher_(nullptr),
       RequestWriter_(nullptr),
+      reply_topic_filter_expression_(""),
       stop_(false) {
   create_participant();
   create_request_entities("calculator_service");
@@ -115,8 +130,8 @@ bool DDSRequestReplyClient::send_requests() {
   CalculatorRequestType request;
 
   request.client_id(TypeConverter::to_string(m_participant_->guid().guidPrefix));
-  request.x(10);
-  request.y(10);
+  request.x(request_input_.first);
+  request.y(request_input_.second);
 
   request.operation(CalculatorOperationType::ADDITION);
   bool ret = send_request(request);
@@ -140,11 +155,11 @@ bool DDSRequestReplyClient::send_requests() {
 }
 
 bool DDSRequestReplyClient::send_request(const CalculatorRequestType& request) {
+
   std::lock_guard<std::mutex> lock(mtx_);
 
   eprosima::fastdds::rtps::WriteParams wparams;
-
-  LOG(warning) << "ClientApp Processing request: " << TypeConverter::to_string(request);
+  
   ReturnCode_t ret = RequestWriter_->write(&request, wparams);
 
   requests_status_[wparams.sample_identity()] = false;

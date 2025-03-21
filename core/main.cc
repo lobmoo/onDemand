@@ -11,7 +11,7 @@
 
 
 int main(int argc, char *argv[]) {
-  Logger::Instance().setFlushOnLevel(Logger::info);
+  Logger::Instance().setFlushOnLevel(Logger::trace);
   Logger::Instance().Init("log/myapp.log", Logger::both, Logger::trace, 60, 5);
 
   if (argc < 2) {
