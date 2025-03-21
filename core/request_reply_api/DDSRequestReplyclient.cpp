@@ -21,8 +21,8 @@ DDSRequestReplyClient::DDSRequestReplyClient()
       RequestWriter_(nullptr),
       stop_(false) {
   create_participant();
-  create_request_entities("CalculatorRequest");
-  create_reply_entities("CalculatorReply");
+  create_request_entities("calculator_service");
+  create_reply_entities("calculator_service");
 }
 
 DDSRequestReplyClient::~DDSRequestReplyClient() {
@@ -59,7 +59,7 @@ bool DDSRequestReplyClient::create_participant() {
 }
 
 void DDSRequestReplyClient::create_request_entities(const std::string& service_name) {
-  RequestTopic_ = create_topic<CalculatorReplyTypePubSubType>(service_name, m_participant_, RequestType_);
+  RequestTopic_ = create_topic<CalculatorReplyTypePubSubType>("rq/" + service_name, m_participant_, RequestType_);
 
   SubscriberQos sub_qos = SUBSCRIBER_QOS_DEFAULT;
   if (RETCODE_OK != m_participant_->get_default_subscriber_qos(sub_qos)) {
@@ -80,11 +80,11 @@ void DDSRequestReplyClient::create_request_entities(const std::string& service_n
 }
 
 void DDSRequestReplyClient::create_reply_entities(const std::string& service_name) {
-  Replytopic_ = create_topic<CalculatorReplyTypePubSubType>(service_name, m_participant_, ReplyType_);
+  Replytopic_ = create_topic<CalculatorReplyTypePubSubType>("rr/" + service_name, m_participant_, ReplyType_);
 
   reply_topic_filter_expression_ = "client_id = '" + TypeConverter::to_string(m_participant_->guid().guidPrefix) + "'";
   reply_cf_topic_ = m_participant_->create_contentfilteredtopic(
-      service_name + "_cft", Replytopic_, reply_topic_filter_expression_, reply_topic_filter_parameters_);
+      "rr/" + service_name + "_cft", Replytopic_, reply_topic_filter_expression_, reply_topic_filter_parameters_);
   if (nullptr == reply_cf_topic_) {
     throw std::runtime_error("Failed to create CFT");
   }
@@ -143,6 +143,8 @@ bool DDSRequestReplyClient::send_request(const CalculatorRequestType& request) {
   std::lock_guard<std::mutex> lock(mtx_);
 
   eprosima::fastdds::rtps::WriteParams wparams;
+
+  LOG(warning) << "ClientApp Processing request: " << TypeConverter::to_string(request);
   ReturnCode_t ret = RequestWriter_->write(&request, wparams);
 
   requests_status_[wparams.sample_identity()] = false;
@@ -282,10 +284,45 @@ void DDSRequestReplyClient::on_data_available(DataReader* reader) {
   }
 }
 
-
-void DDSRequestReplyClient::stop()
-{
-    stop_.store(true);
-    cv_.notify_all();
+void DDSRequestReplyClient::stop() {
+  stop_.store(true);
+  cv_.notify_all();
 }
+
+
+void DDSRequestReplyClient::run()
+{
+    LOG(debug) << "ClientApp Waiting for a server to be available";
+    {
+        std::unique_lock<std::mutex> lock(mtx_);
+        cv_.wait(lock, [&]()
+                {
+                    return server_matched_status_.is_any_server_matched() || is_stopped();
+                });
+    }
+
+    if (!is_stopped())
+    {
+        LOG(debug) << "ClientApp One server is available. Waiting for some time to ensure matching on the server side";
+
+        // TODO(eduponz): This wait should be conditioned to upcoming fully-matched API on the endpoints
+        std::unique_lock<std::mutex> lock(mtx_);
+        cv_.wait_for(lock, std::chrono::seconds(1), [&]()
+                {
+                    return is_stopped();
+                });
+    }
+
+    if (!is_stopped())
+    {
+        if (!send_requests())
+        {
+            throw std::runtime_error("Failed to send request");
+        }
+
+        wait_for_replies();
+    }
+}
+
+
 }  // namespace request_reply

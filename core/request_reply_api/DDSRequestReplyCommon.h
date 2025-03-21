@@ -58,7 +58,7 @@ struct TypeConverter {
     client_id << guid_prefix;
     return client_id.str();
   }
-
+            
   static std::string to_string(const eprosima::fastdds::rtps::ParticipantDiscoveryStatus& info) {
     std::string info_str = "Unknown";
 

@@ -22,6 +22,8 @@ int main(int argc, char *argv[]) {
     auto ptr = std::make_shared<request_reply::DDSRequestReplyServer>();  
   } else if (strcmp(argv[1], "cli") == 0) {
     auto ptr2 = std::make_shared<request_reply::DDSRequestReplyClient>();
+    ptr2->run();
+    
   } else {
     std::cerr << "unknown command: " << argv[1] << std::endl;
   }

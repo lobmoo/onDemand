@@ -22,8 +22,8 @@ DDSRequestReplyServer::DDSRequestReplyServer()
       stop_(false) {
   reply_thread_ = std::thread(&DDSRequestReplyServer::reply_routine, this);
   create_participant();
-  create_request_entities("CalculatorRequest");
-  create_reply_entities("CalculatorReply");
+  create_request_entities("calculator_service");
+  create_reply_entities("calculator_service");
 }
 
 DDSRequestReplyServer::~DDSRequestReplyServer() {
@@ -71,7 +71,7 @@ bool DDSRequestReplyServer::create_participant() {
 }
 
 void DDSRequestReplyServer::create_request_entities(const std::string& service_name) {
-  RequestTopic_ = create_topic<CalculatorReplyTypePubSubType>(service_name, m_participant_, RequestType_);
+  RequestTopic_ = create_topic<CalculatorReplyTypePubSubType>("rq/"+ service_name, m_participant_, RequestType_);
 
   SubscriberQos sub_qos = SUBSCRIBER_QOS_DEFAULT;
   if (RETCODE_OK != m_participant_->get_default_subscriber_qos(sub_qos)) {
@@ -93,7 +93,7 @@ void DDSRequestReplyServer::create_request_entities(const std::string& service_n
 }
 
 void DDSRequestReplyServer::create_reply_entities(const std::string& service_name) {
-  Replytopic_ = create_topic<CalculatorReplyTypePubSubType>(service_name, m_participant_, ReplyType_);
+  Replytopic_ = create_topic<CalculatorReplyTypePubSubType>("rr/" + service_name, m_participant_, ReplyType_);
 
   PublisherQos pub_qos = PUBLISHER_QOS_DEFAULT;
 
@@ -133,6 +133,7 @@ void DDSRequestReplyServer::reply_routine() {
       Request request = requests_.front();
       requests_.pop();
 
+     
       eprosima::fastdds::rtps::GuidPrefix_t client_guid_prefix =
           eprosima::fastdds::rtps::iHandle2GUID(request.info.publication_handle).guidPrefix;
       LOG(info) << "ServerApp Processing request from client " << client_guid_prefix;
@@ -167,7 +168,6 @@ void DDSRequestReplyServer::reply_routine() {
       write_params.related_sample_identity().sequence_number(request_id);
 
       if (RETCODE_OK != ReplyWriter_->write(&reply, write_params)) {
-        // In case of failure, save the request for a later retry
         LOG(error) << "ServerApp Failed to send reply to request with ID '" << request_id << "' to client "
                    << client_guid_prefix;
         requests_.push(request);
@@ -181,6 +181,7 @@ void DDSRequestReplyServer::reply_routine() {
 bool DDSRequestReplyServer::calculate(const CalculatorRequestType& request, std::int32_t& result) {
   bool success = true;
 
+  LOG(warning) << "ServerApp Processing request: " << TypeConverter::to_string(request);
   switch (request.operation()) {
     case CalculatorOperationType::ADDITION: {
       result = request.x() + request.y();
@@ -196,7 +197,7 @@ bool DDSRequestReplyServer::calculate(const CalculatorRequestType& request, std:
     }
     case CalculatorOperationType::DIVISION: {
       if (0 == request.y()) {
-        LOG(error) << "Division by zero request received";
+        LOG(error) << "Division by zero request received: " << request.y();
         success = false;
       } else {
         result = request.x() / request.y();
@@ -298,6 +299,8 @@ void DDSRequestReplyServer::on_data_available(DataReader* reader) {
 
       LOG(info) << "ServerApp Request with ID '" << request_id << "' received from client " << client_guid_prefix;
       {
+
+        LOG(warning) << "ServerApp Processing request: " << TypeConverter::to_string(*request);
         std::lock_guard<std::mutex> lock(mtx_);
         requests_.push({info, request});
         cv_.notify_all();

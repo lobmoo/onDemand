@@ -64,6 +64,7 @@ class DDSRequestReplyClient : public DomainParticipantListener {
   void on_subscription_matched(DataReader* reader, const SubscriptionMatchedStatus& info) override;
 
   void on_data_available(DataReader* reader) override;
+  void  run(); 
 
   void stop();
  private:
