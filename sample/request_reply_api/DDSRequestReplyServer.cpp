@@ -294,11 +294,9 @@ void DDSRequestReplyServer::on_data_available(DataReader* reader) {
           eprosima::fastdds::rtps::iHandle2GUID(info.publication_handle).guidPrefix;
       eprosima::fastdds::rtps::SequenceNumber_t request_id = info.sample_identity.sequence_number();
 
-      LOG(warning) << "+++++++++++++++:: " << request.get()->x() << "+++++++:" << request.get()->y();
       LOG(info) << "ServerApp Request with ID '" << request_id << "' received from client " << client_guid_prefix;
       {
 
-        LOG(warning) << "ServerApp Processing request: " << TypeConverter::to_string(*request);
         std::lock_guard<std::mutex> lock(mtx_);
         requests_.push({info, request});
         cv_.notify_all();
