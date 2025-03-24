@@ -52,21 +52,11 @@ class RemoteServerMatchedStatus {
 
 class DDSRequestReplyClient : public DomainParticipantListener {
  public:
-  DDSRequestReplyClient();
+  DDSRequestReplyClient(const std::string &service_name = SERVER_NAME);
   ~DDSRequestReplyClient();
-
-  void on_participant_discovery(
-      DomainParticipant* participant, eprosima::fastdds::rtps::ParticipantDiscoveryStatus status, const ParticipantBuiltinTopicData& info,
-      bool& should_be_ignored) override;
-
-  void on_publication_matched(DataWriter* writer, const PublicationMatchedStatus& info) override;
-
-  void on_subscription_matched(DataReader* reader, const SubscriptionMatchedStatus& info) override;
-
-  void on_data_available(DataReader* reader) override;
-  void  run(); 
-
+  void run();
   void stop();
+
  private:
   bool create_participant();
   void create_request_entities(const std::string& service_name);
@@ -75,6 +65,17 @@ class DDSRequestReplyClient : public DomainParticipantListener {
   bool is_stopped();
   bool send_requests();
   void wait_for_replies();
+
+ protected:
+  void on_participant_discovery(
+      DomainParticipant* participant, eprosima::fastdds::rtps::ParticipantDiscoveryStatus status,
+      const ParticipantBuiltinTopicData& info, bool& should_be_ignored) override;
+
+  void on_publication_matched(DataWriter* writer, const PublicationMatchedStatus& info) override;
+
+  void on_subscription_matched(DataReader* reader, const SubscriptionMatchedStatus& info) override;
+
+  void on_data_available(DataReader* reader) override;
 
  private:
   DomainParticipant* m_participant_;

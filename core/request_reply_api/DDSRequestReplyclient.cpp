@@ -6,22 +6,10 @@
 
 #include "log/logger.h"
 
-/*   , participant_(nullptr)
-    , request_type_(nullptr)
-    , request_topic_(nullptr)
-    , publisher_(nullptr)
-    , request_writer_(nullptr)
-    , reply_type_(nullptr)
-    , reply_topic_(nullptr)
-    , reply_cf_topic_(nullptr)
-    , reply_topic_filter_expression_("")
-    , subscriber_(nullptr)
-    , reply_reader_(nullptr)
-    , stop_(false)*/
 namespace request_reply {
 using namespace eprosima::fastdds::dds;
 
-DDSRequestReplyClient::DDSRequestReplyClient()
+DDSRequestReplyClient::DDSRequestReplyClient(const std::string &service_name)
     : m_participant_(nullptr),
       request_input_({10, 10}),
       RequestType_(nullptr),
@@ -36,8 +24,8 @@ DDSRequestReplyClient::DDSRequestReplyClient()
       reply_topic_filter_expression_(""),
       stop_(false) {
   create_participant();
-  create_request_entities(SERVER_NAME);
-  create_reply_entities(SERVER_NAME);
+  create_request_entities(service_name);
+  create_reply_entities(service_name);
   LOG(info) << "ClientApp Client initialized with ID: " << m_participant_->guid().guidPrefix;
 }
 

@@ -64,7 +64,7 @@ class RemoteClientMatchedStatus {
 
 class DDSRequestReplyServer : public DomainParticipantListener {
  public:
-  DDSRequestReplyServer();
+  DDSRequestReplyServer(const std::string &service_name  = SERVER_NAME);
   ~DDSRequestReplyServer();
 
  private:
