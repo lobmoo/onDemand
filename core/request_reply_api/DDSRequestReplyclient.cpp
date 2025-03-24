@@ -9,7 +9,7 @@
 namespace request_reply {
 using namespace eprosima::fastdds::dds;
 
-DDSRequestReplyClient::DDSRequestReplyClient(const std::string &service_name)
+DDSRequestReplyClient::DDSRequestReplyClient(const std::string& service_name)
     : m_participant_(nullptr),
       request_input_({10, 10}),
       RequestType_(nullptr),
@@ -111,7 +111,7 @@ void DDSRequestReplyClient::create_reply_entities(const std::string& service_nam
     throw std::runtime_error("Failed to get default datareader qos");
   }
 
-  ReplyReader_ = m_subscriber_->create_datareader(reply_cf_topic_, reader_qos, nullptr, StatusMask::none());
+  ReplyReader_ = m_subscriber_->create_datareader(Replytopic_, reader_qos, nullptr, StatusMask::none());
   if (nullptr == ReplyReader_) {
     throw std::runtime_error("Reply writer initialization failed");
   }
@@ -317,4 +317,31 @@ void DDSRequestReplyClient::run() {
   }
 }
 
+bool DDSRequestReplyClient::send_request_for_wait(const CalculatorRequestType& request) {
+  ReturnCode_t ret = RETCODE_ERROR;
+  {
+    std::unique_lock<std::mutex> lock(mtx_);
+    cv_.wait(lock, [&]() { return server_matched_status_.is_any_server_matched() || is_stopped(); });
+  }
+
+  if (!is_stopped()) {
+    LOG(debug) << "ClientApp One server is available. Waiting for some time to ensure matching on the server side";
+    std::unique_lock<std::mutex> lock(mtx_);
+    cv_.wait_for(lock, std::chrono::seconds(1), [&]() { return is_stopped(); });
+  }
+  {
+    std::lock_guard<std::mutex> lock(mtx_);
+
+    eprosima::fastdds::rtps::WriteParams wparams;
+    
+    ReturnCode_t ret = RequestWriter_->write(&request, wparams);
+
+    requests_status_[wparams.sample_identity()] = false;
+
+    LOG(info) << "ClientApp Request sent with ID '" << wparams.sample_identity().sequence_number() << "': '"
+              << TypeConverter::to_string(request) << "'";
+  }
+  wait_for_replies();
+  return (RETCODE_OK == ret ? true : false);
+}
 }  // namespace request_reply

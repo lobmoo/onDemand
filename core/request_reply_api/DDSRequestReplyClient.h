@@ -54,6 +54,7 @@ class DDSRequestReplyClient : public DomainParticipantListener {
  public:
   DDSRequestReplyClient(const std::string &service_name = SERVER_NAME);
   ~DDSRequestReplyClient();
+  bool send_request_for_wait(const CalculatorRequestType& request); 
   void run();
   void stop();
 

@@ -139,12 +139,12 @@ void DDSRequestReplyServer::reply_routine() {
       LOG(info) << "ServerApp Processing request from client " << client_guid_prefix;
 
       if (!client_matched_status_.is_fully_unmatched(client_guid_prefix)) {
-        LOG(info) << "ServerApp Ignoring request from already gone client " << client_guid_prefix;
+        LOG(warning) << "ServerApp Ignoring request from already gone client " << client_guid_prefix;
         continue;
       }
 
       if (!client_matched_status_.is_matched(client_guid_prefix)) {
-        LOG(debug) << "ServerApp Client " << client_guid_prefix << " not fully matched, saving request for later";
+        LOG(warning) << "ServerApp Client " << client_guid_prefix << " not fully matched, saving request for later";
         requests_.push(request);
         continue;
       }
@@ -160,18 +160,19 @@ void DDSRequestReplyServer::reply_routine() {
       reply.client_id(request.request->client_id());
       reply.result(result);
 
-
+      LOG(warning) << "++++++++++++++++: " << request.request->client_id();
       eprosima::fastdds::rtps::WriteParams write_params;
       eprosima::fastdds::rtps::SequenceNumber_t request_id = request.info.sample_identity.sequence_number();
       write_params.related_sample_identity().writer_guid(request.info.sample_identity.writer_guid());
       write_params.related_sample_identity().sequence_number(request_id);
 
-      if (RETCODE_OK != ReplyWriter_->write(&reply, write_params)) {
+      ReturnCode_t ret = RETCODE_OK;
+      if (ret != ReplyWriter_->write(&reply, write_params)) {
         LOG(error) << "ServerApp Failed to send reply to request with ID '" << request_id << "' to client "
                    << client_guid_prefix;
         requests_.push(request);
       } else {
-        LOG(info) << "ServerApp Reply to request with ID '" << request_id << "' sent to client " << client_guid_prefix;
+        LOG(info) << "ServerApp Reply to request with ID '" << request_id << "' sent to client " << client_guid_prefix << "ret: " << ret;
       }
     }
   }
