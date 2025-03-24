@@ -219,7 +219,6 @@ void DDSRequestReplyClient::on_publication_matched(DataWriter* /* writer */, con
     LOG(error) << "ClientApp info.current_count_change is not a valid value for SubscriptionMatchedStatus current "
                   "count change";
   }
-  LOG(warning) << "+++++++++++++++++++++++";
   cv_.notify_all();
 }
 
@@ -239,7 +238,6 @@ void DDSRequestReplyClient::on_subscription_matched(DataReader* /* reader */, co
     LOG(error) << "ClientApp info.current_count_change is not a valid value for SubscriptionMatchedStatus current "
                   "count change";
   }
-  LOG(warning) << "+++++++++++++++++++++++";
   cv_.notify_all();
 }
 
