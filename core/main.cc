@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
     return -1;
   }
   if (strcmp(argv[1], "svr") == 0) {
-    auto ptr = std::make_shared<request_reply::DDSRequestReplyServer>();  
+    auto ptr = std::make_shared<request_reply::DDSRequestReplyServer<CalculatorRequestTypePubSubType, CalculatorReplyTypePubSubType, CalculatorRequestType, CalculatorReplyType>>(SERVER_NAME);  
   } else if (strcmp(argv[1], "cli") == 0) {
     auto ptr2 = std::make_shared<request_reply::DDSRequestReplyClient<CalculatorRequestTypePubSubType, CalculatorReplyTypePubSubType, CalculatorRequestType, CalculatorReplyType>>(SERVER_NAME, reply_callback);
     CalculatorRequestType request;
