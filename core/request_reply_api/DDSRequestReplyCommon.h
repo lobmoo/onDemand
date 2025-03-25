@@ -2,9 +2,11 @@
 #define DDSREQUESTREPLYCOMMON_H
 
 #include <atomic>
+#include <chrono>
 #include <condition_variable>
 #include <cstdint>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
@@ -13,6 +15,7 @@
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/rtps/common/WriteParams.hpp>
 #include <memory>
 #include <mutex>
 #include <queue>
@@ -22,9 +25,7 @@
 #include "RequestReplyTypes/Calculator.hpp"
 #include "RequestReplyTypes/CalculatorPubSubTypes.hpp"
 
-
-#define SERVER_NAME  "calculator_service"
-
+#define SERVER_NAME "calculator_service"
 
 using namespace eprosima::fastdds::dds;
 namespace request_reply {
@@ -62,7 +63,7 @@ struct TypeConverter {
     client_id << guid_prefix;
     return client_id.str();
   }
-            
+
   static std::string to_string(const eprosima::fastdds::rtps::ParticipantDiscoveryStatus& info) {
     std::string info_str = "Unknown";
 

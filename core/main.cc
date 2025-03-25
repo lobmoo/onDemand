@@ -25,13 +25,11 @@ int main(int argc, char *argv[]) {
   if (strcmp(argv[1], "svr") == 0) {
     auto ptr = std::make_shared<request_reply::DDSRequestReplyServer>();  
   } else if (strcmp(argv[1], "cli") == 0) {
-    auto ptr2 = std::make_shared<request_reply::DDSRequestReplyClient>(SERVER_NAME, reply_callback);
-   // ptr2->run();
+    auto ptr2 = std::make_shared<request_reply::DDSRequestReplyClient<CalculatorRequestTypePubSubType, CalculatorReplyTypePubSubType, CalculatorRequestType, CalculatorReplyType>>(SERVER_NAME, reply_callback);
     CalculatorRequestType request;
     request.client_id();
     request.x(100);
     request.y(100);
-
     request.operation(CalculatorOperationType::ADDITION);
     if(ptr2->send_request_for_wait(request))
     {
