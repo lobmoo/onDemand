@@ -123,7 +123,7 @@ class DDSRequestReplyServer : public DomainParticipantListener {
   }
 
   void create_request_entities(const std::string& service_name) {
-    RequestTopic_ = create_topic<CalculatorRequestTypePubSubType>("rq/" + service_name, m_participant_, RequestType_);
+    RequestTopic_ = create_topic<RequestSubPubType>("rq/" + service_name, m_participant_, RequestType_);
 
     SubscriberQos sub_qos = SUBSCRIBER_QOS_DEFAULT;
     if (RETCODE_OK != m_participant_->get_default_subscriber_qos(sub_qos)) {
@@ -145,7 +145,7 @@ class DDSRequestReplyServer : public DomainParticipantListener {
   }
 
   void create_reply_entities(const std::string& service_name) {
-    Replytopic_ = create_topic<CalculatorReplyTypePubSubType>("rr/" + service_name, m_participant_, ReplyType_);
+    Replytopic_ = create_topic<ReplySubPubType>("rr/" + service_name, m_participant_, ReplyType_);
 
     PublisherQos pub_qos = PUBLISHER_QOS_DEFAULT;
 
@@ -207,7 +207,7 @@ class DDSRequestReplyServer : public DomainParticipantListener {
           continue;
         }
 
-        CalculatorReplyType reply;
+        ReplyType reply;
         reply.client_id(request.request->client_id());
         reply.result(result);
 
@@ -230,7 +230,7 @@ class DDSRequestReplyServer : public DomainParticipantListener {
     }
   }
 
-  bool calculate(const CalculatorRequestType& request, std::int32_t& result) {
+  bool calculate(const RequestType& request, std::int32_t& result) {
     bool success = true;
     switch (request.operation()) {
       case CalculatorOperationType::ADDITION: {
