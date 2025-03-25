@@ -7,6 +7,10 @@
 #include "request_reply_api/DDSRequestReplyClient.h"
 #include "log/logger.h"
 
+int reply_callback(const CalculatorReplyType& reply, const SampleInfo& info) {
+  LOG(info) << "+++++++++++++++++++++++Custom callback: Reply received with result '" << reply.result() << "'";
+  return 0;
+};
 
 
 
@@ -21,7 +25,7 @@ int main(int argc, char *argv[]) {
   if (strcmp(argv[1], "svr") == 0) {
     auto ptr = std::make_shared<request_reply::DDSRequestReplyServer>();  
   } else if (strcmp(argv[1], "cli") == 0) {
-    auto ptr2 = std::make_shared<request_reply::DDSRequestReplyClient>();
+    auto ptr2 = std::make_shared<request_reply::DDSRequestReplyClient>(SERVER_NAME, reply_callback);
    // ptr2->run();
     CalculatorRequestType request;
     request.client_id();

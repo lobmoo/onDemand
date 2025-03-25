@@ -52,19 +52,20 @@ class RemoteServerMatchedStatus {
 
 class DDSRequestReplyClient : public DomainParticipantListener {
  public:
-  DDSRequestReplyClient(const std::string &service_name = SERVER_NAME);
+  DDSRequestReplyClient(const std::string& service_name = SERVER_NAME);
+
+
+  DDSRequestReplyClient(const std::string& service_name, std::function<void(const CalculatorReplyType& reply, const SampleInfo& info)> callback);
+  
   ~DDSRequestReplyClient();
-  bool send_request_for_wait(const CalculatorRequestType& request); 
-  void run();
-  void stop();
+  bool send_request_for_wait(const CalculatorRequestType& request);
 
  private:
   bool create_participant();
   void create_request_entities(const std::string& service_name);
   void create_reply_entities(const std::string& service_name);
-  bool send_request(const CalculatorRequestType& request);
   bool is_stopped();
-  bool send_requests();
+  void stop();
   void wait_for_replies();
 
  protected:
@@ -108,7 +109,7 @@ class DDSRequestReplyClient : public DomainParticipantListener {
   };
 
   std::queue<Request> requests_;
-
+  std::function<void(const CalculatorReplyType& reply, const SampleInfo& info)> reply_callback_;
   std::thread reply_thread_;
 };
 }  // namespace request_reply

@@ -29,6 +29,29 @@ DDSRequestReplyClient::DDSRequestReplyClient(const std::string& service_name)
   LOG(info) << "ClientApp Client initialized with ID: " << m_participant_->guid().guidPrefix;
 }
 
+DDSRequestReplyClient::DDSRequestReplyClient(
+    const std::string& service_name,
+    std::function<void(const CalculatorReplyType& reply, const SampleInfo& info)> callback)
+    : m_participant_(nullptr),
+      request_input_({10, 10}),
+      RequestType_(nullptr),
+      ReplyType_(nullptr),
+      m_subscriber_(nullptr),
+      ReplyReader_(nullptr),
+      RequestTopic_(nullptr),
+      Replytopic_(nullptr),
+      m_publisher_(nullptr),
+      reply_cf_topic_(nullptr),
+      RequestWriter_(nullptr),
+      reply_callback_(callback),
+      reply_topic_filter_expression_(""),
+      stop_(false) {
+  create_participant();
+  create_request_entities(service_name);
+  create_reply_entities(service_name);
+  LOG(info) << "ClientApp Client initialized with ID: " << m_participant_->guid().guidPrefix;
+}
+
 DDSRequestReplyClient::~DDSRequestReplyClient() {
   if (nullptr != m_participant_) {
     m_participant_->delete_contained_entities();
@@ -115,49 +138,6 @@ void DDSRequestReplyClient::create_reply_entities(const std::string& service_nam
   if (nullptr == ReplyReader_) {
     throw std::runtime_error("Reply writer initialization failed");
   }
-}
-
-bool DDSRequestReplyClient::send_requests() {
-  CalculatorRequestType request;
-
-  request.client_id(TypeConverter::to_string(m_participant_->guid().guidPrefix));
-  request.x(request_input_.first);
-  request.y(request_input_.second);
-
-  request.operation(CalculatorOperationType::ADDITION);
-  bool ret = send_request(request);
-
-  if (ret) {
-    request.operation(CalculatorOperationType::SUBTRACTION);
-    ret = send_request(request);
-  }
-
-  if (ret) {
-    request.operation(CalculatorOperationType::MULTIPLICATION);
-    ret = send_request(request);
-  }
-
-  if (ret) {
-    request.operation(CalculatorOperationType::DIVISION);
-    ret = send_request(request);
-  }
-
-  return ret;
-}
-
-bool DDSRequestReplyClient::send_request(const CalculatorRequestType& request) {
-  std::lock_guard<std::mutex> lock(mtx_);
-
-  eprosima::fastdds::rtps::WriteParams wparams;
-
-  ReturnCode_t ret = RequestWriter_->write(&request, wparams);
-
-  requests_status_[wparams.sample_identity()] = false;
-
-  LOG(info) << "ClientApp Request sent with ID '" << wparams.sample_identity().sequence_number() << "': '"
-            << TypeConverter::to_string(request) << "'";
-
-  return (RETCODE_OK == ret);
 }
 
 bool DDSRequestReplyClient::is_stopped() { return stop_.load(); }
@@ -259,6 +239,9 @@ void DDSRequestReplyClient::on_data_available(DataReader* reader) {
           request_status->second = true;
           LOG(info) << "ClientApp Reply received from server " << server_guid_prefix << " to request with ID '"
                     << request_status->first.sequence_number() << "' with result: '" << reply.result() << "'";
+          if (reply_callback_) {
+            reply_callback_(reply, info);
+          }
         } else {
           LOG(debug) << "ClientApp Duplicate reply received from server " << server_guid_prefix
                      << " to request with ID '" << request_status->first.sequence_number() << "' with result: '"
@@ -272,7 +255,7 @@ void DDSRequestReplyClient::on_data_available(DataReader* reader) {
       }
 
       // Check if all responses have been received
-      if (requests_status_.size() == 4) {
+      if (requests_status_.size() == 1) {
         bool all_responses_received = true;
 
         for (auto status : requests_status_) {
@@ -293,29 +276,29 @@ void DDSRequestReplyClient::stop() {
   cv_.notify_all();
 }
 
-void DDSRequestReplyClient::run() {
-  LOG(debug) << "ClientApp Waiting for a server to be available";
-  {
-    std::unique_lock<std::mutex> lock(mtx_);
-    cv_.wait(lock, [&]() { return server_matched_status_.is_any_server_matched() || is_stopped(); });
-  }
+// void DDSRequestReplyClient::run() {
+//   LOG(debug) << "ClientApp Waiting for a server to be available";
+//   {
+//     std::unique_lock<std::mutex> lock(mtx_);
+//     cv_.wait(lock, [&]() { return server_matched_status_.is_any_server_matched() || is_stopped(); });
+//   }
 
-  if (!is_stopped()) {
-    LOG(debug) << "ClientApp One server is available. Waiting for some time to ensure matching on the server side";
+//   if (!is_stopped()) {
+//     LOG(debug) << "ClientApp One server is available. Waiting for some time to ensure matching on the server side";
 
-    // TODO(eduponz): This wait should be conditioned to upcoming fully-matched API on the endpoints
-    std::unique_lock<std::mutex> lock(mtx_);
-    cv_.wait_for(lock, std::chrono::seconds(1), [&]() { return is_stopped(); });
-  }
+//     // TODO(eduponz): This wait should be conditioned to upcoming fully-matched API on the endpoints
+//     std::unique_lock<std::mutex> lock(mtx_);
+//     cv_.wait_for(lock, std::chrono::seconds(1), [&]() { return is_stopped(); });
+//   }
 
-  if (!is_stopped()) {
-    if (!send_requests()) {
-      throw std::runtime_error("Failed to send request");
-    }
+//   if (!is_stopped()) {
+//     if (!send_requests()) {
+//       throw std::runtime_error("Failed to send request");
+//     }
 
-    wait_for_replies();
-  }
-}
+//     wait_for_replies();
+//   }
+// }
 
 bool DDSRequestReplyClient::send_request_for_wait(const CalculatorRequestType& request) {
   ReturnCode_t ret = RETCODE_ERROR;
@@ -333,7 +316,7 @@ bool DDSRequestReplyClient::send_request_for_wait(const CalculatorRequestType& r
     std::lock_guard<std::mutex> lock(mtx_);
 
     eprosima::fastdds::rtps::WriteParams wparams;
-    
+
     ReturnCode_t ret = RequestWriter_->write(&request, wparams);
 
     requests_status_[wparams.sample_identity()] = false;
