@@ -8,10 +8,18 @@
 #include "request_reply_api/DDSRequestReplyClient.h"
 #include "request_reply_api/DDSRequestReplyServer.h"
 
-int reply_callback(const CalculatorReplyType& reply, const SampleInfo& info) {
+void reply_callback(const CalculatorReplyType& reply, const SampleInfo& info) {
   LOG(info) << "+++++++++++++++++++++++Custom callback: Reply received with result '" << reply.result() << "'";
-  return 0;
 };
+
+void request_callback(const CalculatorRequestType& request, CalculatorReplyType& reply) {
+  int result = 0;
+  result = request.x() + request.y();
+  reply.client_id("x");
+  reply.result(result);
+  LOG(info) << "+++++++++++++++++++++++request_callback";
+};
+
 
 int main(int argc, char* argv[]) {
   Logger::Instance().setFlushOnLevel(Logger::trace);
@@ -24,7 +32,7 @@ int main(int argc, char* argv[]) {
   if (strcmp(argv[1], "svr") == 0) {
     auto ptr = std::make_shared<request_reply::DDSRequestReplyServer<
         CalculatorRequestTypePubSubType, CalculatorReplyTypePubSubType, CalculatorRequestType, CalculatorReplyType>>(
-        SERVER_NAME);
+        SERVER_NAME, request_callback);
   } else if (strcmp(argv[1], "cli") == 0) {
     auto ptr2 = std::make_shared<request_reply::DDSRequestReplyClient<
         CalculatorRequestTypePubSubType, CalculatorReplyTypePubSubType, CalculatorRequestType, CalculatorReplyType>>(
@@ -44,6 +52,5 @@ int main(int argc, char* argv[]) {
   }
   while (std::cin.get() != '\n') {
   }
-
   return 0;
 }

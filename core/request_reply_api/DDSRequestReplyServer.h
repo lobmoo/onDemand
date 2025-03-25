@@ -62,10 +62,11 @@ class RemoteClientMatchedStatus {
   static const size_t reply_reader_position = 1;
 };
 
-template <typename RequestSubPubType, typename ReplySubPubType, typename RequestType, typename ReplyType>
+template <typename T_RequestSubPubType, typename T_ReplySubPubType, typename T_RequestType, typename T_ReplyType>
 class DDSRequestReplyServer : public DomainParticipantListener {
  public:
-  DDSRequestReplyServer(const std::string& service_name)
+  DDSRequestReplyServer(
+      const std::string& service_name, std::function<void(const T_RequestType& request, T_ReplyType& reply)> callback)
       : m_participant_(nullptr),
         RequestType_(nullptr),
         ReplyType_(nullptr),
@@ -75,6 +76,7 @@ class DDSRequestReplyServer : public DomainParticipantListener {
         Replytopic_(nullptr),
         m_publisher_(nullptr),
         ReplyWriter_(nullptr),
+        request_callback_(callback),
         stop_(false) {
     reply_thread_ = std::thread(&DDSRequestReplyServer::reply_routine, this);
     create_participant();
@@ -123,7 +125,7 @@ class DDSRequestReplyServer : public DomainParticipantListener {
   }
 
   void create_request_entities(const std::string& service_name) {
-    RequestTopic_ = create_topic<RequestSubPubType>("rq/" + service_name, m_participant_, RequestType_);
+    RequestTopic_ = create_topic<T_RequestSubPubType>("rq/" + service_name, m_participant_, RequestType_);
 
     SubscriberQos sub_qos = SUBSCRIBER_QOS_DEFAULT;
     if (RETCODE_OK != m_participant_->get_default_subscriber_qos(sub_qos)) {
@@ -145,7 +147,7 @@ class DDSRequestReplyServer : public DomainParticipantListener {
   }
 
   void create_reply_entities(const std::string& service_name) {
-    Replytopic_ = create_topic<ReplySubPubType>("rr/" + service_name, m_participant_, ReplyType_);
+    Replytopic_ = create_topic<T_ReplySubPubType>("rr/" + service_name, m_participant_, ReplyType_);
 
     PublisherQos pub_qos = PUBLISHER_QOS_DEFAULT;
 
@@ -200,18 +202,10 @@ class DDSRequestReplyServer : public DomainParticipantListener {
           continue;
         }
 
-        std::int32_t result;
-
-        if (!calculate(*request.request, result)) {
-          LOG(error) << "ServerApp Failed to calculate result for request from client " << client_guid_prefix;
-          continue;
+        T_ReplyType reply;
+        if (request_callback_) {
+          request_callback_(*request.request, reply);
         }
-
-        ReplyType reply;
-        reply.client_id(request.request->client_id());
-        reply.result(result);
-
-        LOG(warning) << "++++++++++++++++: " << request.request->client_id();
         eprosima::fastdds::rtps::WriteParams write_params;
         eprosima::fastdds::rtps::SequenceNumber_t request_id = request.info.sample_identity.sequence_number();
         write_params.related_sample_identity().writer_guid(request.info.sample_identity.writer_guid());
@@ -230,40 +224,6 @@ class DDSRequestReplyServer : public DomainParticipantListener {
     }
   }
 
-  bool calculate(const RequestType& request, std::int32_t& result) {
-    bool success = true;
-    switch (request.operation()) {
-      case CalculatorOperationType::ADDITION: {
-        result = request.x() + request.y();
-        break;
-      }
-      case CalculatorOperationType::SUBTRACTION: {
-        result = request.x() - request.y();
-        break;
-      }
-      case CalculatorOperationType::MULTIPLICATION: {
-        result = request.x() * request.y();
-        break;
-      }
-      case CalculatorOperationType::DIVISION: {
-        if (0 == request.y()) {
-          LOG(error) << "Division by zero request received: " << request.y();
-          success = false;
-        } else {
-          result = request.x() / request.y();
-        }
-        break;
-      }
-      default: {
-        LOG(error) << "ServerApp", "Unknown operation received";
-        success = false;
-        break;
-      }
-    }
-
-    return success;
-  }
-
  private:
   DomainParticipant* m_participant_;
   Subscriber* m_subscriber_;
@@ -278,7 +238,7 @@ class DDSRequestReplyServer : public DomainParticipantListener {
   std::atomic<bool> stop_;
   std::condition_variable cv_;
   RemoteClientMatchedStatus client_matched_status_;
-
+  std::function<void(const T_RequestType& request, T_ReplyType& reply)> request_callback_;
   struct Request {
     SampleInfo info;
     std::shared_ptr<CalculatorRequestType> request;
@@ -362,14 +322,13 @@ class DDSRequestReplyServer : public DomainParticipantListener {
 
   void on_data_available(DataReader* reader) override {
     SampleInfo info;
-    auto request = std::make_shared<CalculatorRequestType>();
+    auto request = std::make_shared<T_RequestType>();
 
     while ((!is_stopped()) && (RETCODE_OK == reader->take_next_sample(request.get(), &info))) {
       if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data) {
         eprosima::fastdds::rtps::GuidPrefix_t client_guid_prefix =
             eprosima::fastdds::rtps::iHandle2GUID(info.publication_handle).guidPrefix;
         eprosima::fastdds::rtps::SequenceNumber_t request_id = info.sample_identity.sequence_number();
-
         LOG(info) << "ServerApp Request with ID '" << request_id << "' received from client " << client_guid_prefix;
         {
           std::lock_guard<std::mutex> lock(mtx_);

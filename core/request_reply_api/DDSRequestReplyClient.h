@@ -50,11 +50,11 @@ class RemoteServerMatchedStatus {
   static const size_t reply_writer_position = 1;
 };
 
-template <typename RequestSubPubType, typename ReplySubPubType, typename RequestType, typename ReplyType>
+template <typename T_RequestSubPubType, typename T_ReplySubPubType, typename T_RequestType, typename T_ReplyType>
 class DDSRequestReplyClient : public DomainParticipantListener {
  public:
   DDSRequestReplyClient(
-      const std::string& service_name, std::function<void(const ReplyType& reply, const SampleInfo& info)> callback)
+      const std::string& service_name, std::function<void(const T_ReplyType& reply, const SampleInfo& info)> callback)
       : m_participant_(nullptr),
         request_input_({10, 10}),
         RequestType_(nullptr),
@@ -86,7 +86,7 @@ class DDSRequestReplyClient : public DomainParticipantListener {
       reply_topic_filter_parameters_.clear();
     }
 
-    bool send_request_for_wait(const RequestType& request) {
+    bool send_request_for_wait(const T_RequestType& request) {
       ReturnCode_t ret = RETCODE_ERROR;
       {
         std::unique_lock<std::mutex> lock(mtx_);
@@ -139,7 +139,7 @@ class DDSRequestReplyClient : public DomainParticipantListener {
     }
 
     void create_request_entities(const std::string& service_name) {
-      RequestTopic_ = create_topic<RequestSubPubType>("rq/" + service_name, m_participant_, RequestType_);
+      RequestTopic_ = create_topic<T_RequestSubPubType>("rq/" + service_name, m_participant_, RequestType_);
 
       PublisherQos pub_qos = PUBLISHER_QOS_DEFAULT;
       if (RETCODE_OK != m_participant_->get_default_publisher_qos(pub_qos)) {
@@ -163,7 +163,7 @@ class DDSRequestReplyClient : public DomainParticipantListener {
     }
 
     void create_reply_entities(const std::string& service_name) {
-      Replytopic_ = create_topic<ReplySubPubType>("rr/" + service_name, m_participant_, ReplyType_);
+      Replytopic_ = create_topic<T_ReplySubPubType>("rr/" + service_name, m_participant_, ReplyType_);
 
       reply_topic_filter_expression_ =
           "client_id = '" + TypeConverter::to_string(m_participant_->guid().guidPrefix) + "'";
@@ -283,7 +283,7 @@ class DDSRequestReplyClient : public DomainParticipantListener {
 
     void on_data_available(DataReader * reader) override {
       SampleInfo info;
-      ReplyType reply;
+      T_ReplyType reply;
 
       while ((!is_stopped()) && (RETCODE_OK == reader->take_next_sample(&reply, &info))) {
         if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data) {
@@ -353,7 +353,7 @@ class DDSRequestReplyClient : public DomainParticipantListener {
     };
 
     std::queue<Request> requests_;
-    std::function<void(const ReplyType& reply, const SampleInfo& info)> reply_callback_;
+    std::function<void(const T_ReplyType& reply, const SampleInfo& info)> reply_callback_;
     std::thread reply_thread_;
   };
 }// namespace request_reply
