@@ -32,6 +32,7 @@ set(INSTALL_INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include")
 set(OBJ_CPP_INCLUDE
     ${CMAKE_SOURCE_DIR}/common
     ${CMAKE_SOURCE_DIR}/core
+    ${CMAKE_SOURCE_DIR}/core/request_reply_api
     ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/include 
 )
 

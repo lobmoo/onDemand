@@ -8,6 +8,9 @@
 #include "request_reply_api/DDSRequestReplyClient.h"
 #include "request_reply_api/DDSRequestReplyServer.h"
 
+#include "RequestReplyTypes/Calculator.hpp"
+#include "RequestReplyTypes/CalculatorPubSubTypes.hpp"
+
 void reply_callback(const CalculatorReplyType& reply, const SampleInfo& info) {
   LOG(info) << "+++++++++++++++++++++++Custom callback: Reply received with result '" << reply.result() << "'";
 };

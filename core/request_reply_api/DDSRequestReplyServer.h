@@ -241,7 +241,7 @@ class DDSRequestReplyServer : public DomainParticipantListener {
   std::function<void(const T_RequestType& request, T_ReplyType& reply)> request_callback_;
   struct Request {
     SampleInfo info;
-    std::shared_ptr<CalculatorRequestType> request;
+    std::shared_ptr<T_RequestType> request;
   };
   std::queue<Request> requests_;
   std::thread reply_thread_;

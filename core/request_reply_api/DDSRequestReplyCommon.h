@@ -22,8 +22,7 @@
 #include <string>
 #include <thread>
 
-#include "RequestReplyTypes/Calculator.hpp"
-#include "RequestReplyTypes/CalculatorPubSubTypes.hpp"
+
 
 #define SERVER_NAME "calculator_service"
 
@@ -31,33 +30,7 @@ using namespace eprosima::fastdds::dds;
 namespace request_reply {
 
 struct TypeConverter {
-  static std::string to_string(const CalculatorRequestType& request) {
-    std::ostringstream request_ss;
-    request_ss << request.x() << " " << to_string(request.operation()) << " " << request.y();
-    return request_ss.str();
-  }
-
-  static std::string to_string(const CalculatorOperationType& operation) {
-    std::string operation_str = "Unknown";
-    switch (operation) {
-      case CalculatorOperationType::ADDITION:
-        operation_str = "+";
-        break;
-      case CalculatorOperationType::SUBTRACTION:
-        operation_str = "-";
-        break;
-      case CalculatorOperationType::MULTIPLICATION:
-        operation_str = "*";
-        break;
-      case CalculatorOperationType::DIVISION:
-        operation_str = "/";
-        break;
-      default:
-        break;
-    }
-    return operation_str;
-  }
-
+ 
   static std::string to_string(const eprosima::fastdds::rtps::GuidPrefix_t& guid_prefix) {
     std::ostringstream client_id;
     client_id << guid_prefix;

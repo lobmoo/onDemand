@@ -107,8 +107,6 @@ class DDSRequestReplyClient : public DomainParticipantListener {
 
         requests_status_[wparams.sample_identity()] = false;
 
-        LOG(info) << "ClientApp Request sent with ID '" << wparams.sample_identity().sequence_number() << "': '"
-                  << TypeConverter::to_string(request) << "'";
       }
       wait_for_replies();
       return (RETCODE_OK == ret ? true : false);
@@ -349,7 +347,7 @@ class DDSRequestReplyClient : public DomainParticipantListener {
 
     struct Request {
       SampleInfo info;
-      std::shared_ptr<CalculatorRequestType> request;
+      std::shared_ptr<T_RequestType> request;
     };
 
     std::queue<Request> requests_;
