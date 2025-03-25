@@ -254,19 +254,15 @@ void DDSRequestReplyClient::on_data_available(DataReader* reader) {
         continue;
       }
 
-      // Check if all responses have been received
-      if (requests_status_.size() == 1) {
         bool all_responses_received = true;
-
-        for (auto status : requests_status_) {
+        for (auto& status : requests_status_) {
           all_responses_received &= status.second;
         }
-
+  
         if (all_responses_received) {
           stop();
           break;
-        }
-      }
+        }     
     }
   }
 }
