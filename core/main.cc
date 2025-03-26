@@ -15,6 +15,7 @@ void reply_callback(const CalculatorReplyType& reply, const SampleInfo& info) {
   LOG(info) << "+++++++++++++++++++++++Custom callback: Reply received with result '" << reply.result() << "'";
 };
 
+
 void request_callback(const CalculatorRequestType& request, CalculatorReplyType& reply) {
   int result = 0;
   result = request.x() + request.y();
