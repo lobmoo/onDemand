@@ -40,17 +40,17 @@ int main(int argc, char* argv[]) {
   } else if (strcmp(argv[1], "cli") == 0) {
     auto ptr2 = std::make_shared<request_reply::DDSRequestReplyClient<
         CalculatorRequestTypePubSubType, CalculatorReplyTypePubSubType, CalculatorRequestType, CalculatorReplyType>>(
-        SERVER_NAME, reply_callback);
+        SERVER_NAME);
+    CalculatorReplyType Reply;  
     CalculatorRequestType request;
     request.client_id();
     request.x(100);
     request.y(100);
     request.operation(CalculatorOperationType::ADDITION);
-    if (ptr2->send_request_for_wait(request)) {
+    if (ptr2->send_request_for_wait(request, Reply, 3000)) {
       std::cout << "send request success" << std::endl;
-      return 0;
+      LOG(info) << "Reply received with result '" << Reply.result() << "'";
     }
-
   } else {
     std::cerr << "unknown command: " << argv[1] << std::endl;
   }
