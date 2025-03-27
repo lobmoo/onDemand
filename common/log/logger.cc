@@ -48,3 +48,30 @@ void Logger::setFlushOnLevel(Logger::severity_level flushOnLevel)
 {
     pImpl->setFlushOnLevel(flushOnLevel);
 }
+
+void Logger::setLogLevel(Logger::severity_level level)
+{
+    pImpl->setLogLevel(level);
+}
+
+void Logger::setLogPattern(const std::string& pattern)
+{
+    pImpl->setLogPattern(pattern);
+}
+
+void Logger::setLogConsoleLevel(Logger::severity_level level)
+{
+    pImpl->setLogConsoleLevel(level);
+}
+
+void Logger::setLogFileLevel(Logger::severity_level level)
+{
+    pImpl->setLogFileLevel(level);
+}
+
+void Logger::setLogBufferSize(size_t size)
+{
+    pImpl->setLogBufferSize(size);
+}
+
+

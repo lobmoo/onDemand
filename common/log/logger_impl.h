@@ -41,10 +41,18 @@ public:
     void Uinit();
     void setFlushEvery(uint32_t flushEvery);
     void setFlushOnLevel(Logger::severity_level flushOnLevel);
+    void setLogLevel(Logger::severity_level level);
+    void setLogPattern(const std::string &pattern);
+    void setLogConsoleLevel(Logger::severity_level level);
+    void setLogFileLevel(Logger::severity_level level);
+    void setLogBufferSize(size_t size);
 
 private:
-    std::shared_ptr<spdlog::logger> logger = nullptr;
+    std::shared_ptr<spdlog::logger> logger_ = nullptr;
+    std::shared_ptr<spdlog::sinks::stdout_color_sink_mt> console_sink_ = nullptr;
+    std::shared_ptr<spdlog::sinks::custom_rotating_file_sink_mt> file_sink_ = nullptr;
     uint32_t flushEvery_;
+    size_t logBufferSize_;
     spdlog::level::level_enum flushOnLevel_;
 
 private:

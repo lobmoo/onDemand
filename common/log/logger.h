@@ -64,6 +64,16 @@ public:
    */
     void setFlushOnLevel(Logger::severity_level flushOnLevel);
 
+    void setLogLevel(Logger::severity_level level);
+
+    void setLogPattern(const std::string &pattern);
+
+    void setLogConsoleLevel(Logger::severity_level level);
+
+    void setLogFileLevel(Logger::severity_level level);
+
+    void setLogBufferSize(size_t size);
+
     static Logger &Instance();
 
 private:
