@@ -56,7 +56,8 @@ public:
      * @param buffer_size
      * @param ipaddrs IP列表
      */
-    void addUDPV4Transport(uint32_t buffer_size = 1024 * 1024 * 16, const std::vector<std::string> &ipaddrs = {});
+    void addUDPV4Transport(uint32_t buffer_size = 1024 * 1024 * 16,
+                           const std::vector<std::string> &ipaddrs = {});
 
     /**
      * @brief 添加 UDPv6 策略

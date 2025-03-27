@@ -28,56 +28,67 @@
 #include "DDSTopicDataReader.hpp"
 #include "DDSTopicDataWriter.hpp"
 
-class DDSDomainParticipant {
- public:
-  DDSDomainParticipant(
-      int domainId, const eprosima::fastdds::dds::DomainParticipantExtendedQos &participantQos,
-      DomainParticipantListener *listener);
-  DDSDomainParticipant(std::string XmlConfig, DomainParticipantListener *listener);
-  virtual ~DDSDomainParticipant();
+class DDSDomainParticipant
+{
+public:
+    DDSDomainParticipant(int domainId,
+                         const eprosima::fastdds::dds::DomainParticipantExtendedQos &participantQos,
+                         DomainParticipantListener *listener);
+    DDSDomainParticipant(std::string XmlConfig, DomainParticipantListener *listener);
+    virtual ~DDSDomainParticipant();
 
- public:
-  template <typename T>
-  DDSTopicDataWriter<T> *createDataWriter(std::string topicName, eprosima::fastdds::dds::DataWriterQos dataWriterQos);
+public:
+    template <typename T>
+    DDSTopicDataWriter<T> *createDataWriter(std::string topicName,
+                                            eprosima::fastdds::dds::DataWriterQos dataWriterQos);
 
-  template <typename T>
-  DDSTopicDataReader<T> *createDataReader(
-      std::string topicName, std::function<void(const std::string &, std::shared_ptr<T>)> callback,
-      const eprosima::fastdds::dds::DataReaderQos &dataReaderQos);
+    template <typename T>
+    DDSTopicDataReader<T> *
+    createDataReader(std::string topicName,
+                     std::function<void(const std::string &, std::shared_ptr<T>)> callback,
+                     const eprosima::fastdds::dds::DataReaderQos &dataReaderQos);
 
-  bool registerTopic(
-      std::string topicName, eprosima::fastdds::dds::TopicDataType *dataType,
-      const eprosima::fastdds::dds::TopicQos &topicQos = eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
+    bool registerTopic(std::string topicName, eprosima::fastdds::dds::TopicDataType *dataType,
+                       const eprosima::fastdds::dds::TopicQos &topicQos =
+                           eprosima::fastdds::dds::TOPIC_QOS_DEFAULT);
 
-  bool unregisterTopic(std::string topicName);
+    bool unregisterTopic(std::string topicName);
 
-  bool get_topic_qos_from_profile(const std::string &profile_name, TopicQos &topicQos);
-  bool get_datareader_qos_from_profile(const std::string &profile_name, DataReaderQos &dataReaderQos); 
-  bool get_datawriter_qos_from_profile(const std::string &profile_name, DataWriterQos &dataWriterQos);
+    bool get_topic_qos_from_profile(const std::string &profile_name, TopicQos &topicQos);
+    bool get_datareader_qos_from_profile(const std::string &profile_name,
+                                         DataReaderQos &dataReaderQos);
+    bool get_datawriter_qos_from_profile(const std::string &profile_name,
+                                         DataWriterQos &dataWriterQos);
 
- private:
-  eprosima::fastdds::dds::DomainParticipant *m_participant;
-  eprosima::fastdds::dds::Subscriber *m_subscriber;
-  eprosima::fastdds::dds::Publisher *m_publisher;
-  std::unordered_map<std::string, eprosima::fastdds::dds::Topic *> m_mapTopics;
-  std::mutex m_topicLock;
+private:
+    eprosima::fastdds::dds::DomainParticipant *m_participant;
+    eprosima::fastdds::dds::Subscriber *m_subscriber;
+    eprosima::fastdds::dds::Publisher *m_publisher;
+    std::unordered_map<std::string, eprosima::fastdds::dds::Topic *> m_mapTopics;
+    std::mutex m_topicLock;
 };
 
 template <typename T>
-DDSTopicDataWriter<T> *DDSDomainParticipant::createDataWriter(
-    std::string topicName, eprosima::fastdds::dds::DataWriterQos dataWriterQos) {
-  std::lock_guard<std::mutex> guard(m_topicLock);
-  if (m_mapTopics.find(topicName) == m_mapTopics.end()) return nullptr;
-  return new DDSTopicDataWriter<T>(m_publisher, m_mapTopics.at(topicName), dataWriterQos);
+DDSTopicDataWriter<T> *
+DDSDomainParticipant::createDataWriter(std::string topicName,
+                                       eprosima::fastdds::dds::DataWriterQos dataWriterQos)
+{
+    std::lock_guard<std::mutex> guard(m_topicLock);
+    if (m_mapTopics.find(topicName) == m_mapTopics.end())
+        return nullptr;
+    return new DDSTopicDataWriter<T>(m_publisher, m_mapTopics.at(topicName), dataWriterQos);
 }
 
 template <typename T>
 DDSTopicDataReader<T> *DDSDomainParticipant::createDataReader(
     std::string topicName, std::function<void(const std::string &, std::shared_ptr<T>)> callback,
-    const eprosima::fastdds::dds::DataReaderQos &dataReaderQos) {
-  std::lock_guard<std::mutex> guard(m_topicLock);
-  if (m_mapTopics.find(topicName) == m_mapTopics.end()) return nullptr;
-  return new DDSTopicDataReader<T>(m_subscriber, m_mapTopics.at(topicName), callback, dataReaderQos);
+    const eprosima::fastdds::dds::DataReaderQos &dataReaderQos)
+{
+    std::lock_guard<std::mutex> guard(m_topicLock);
+    if (m_mapTopics.find(topicName) == m_mapTopics.end())
+        return nullptr;
+    return new DDSTopicDataReader<T>(m_subscriber, m_mapTopics.at(topicName), callback,
+                                     dataReaderQos);
 }
 
 #endif

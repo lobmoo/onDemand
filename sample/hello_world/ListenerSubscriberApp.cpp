@@ -36,134 +36,117 @@
 
 using namespace eprosima::fastdds::dds;
 
-namespace eprosima {
-namespace fastdds {
-namespace examples {
-namespace hello_world {
-
-ListenerSubscriberApp::ListenerSubscriberApp(
-        const CLIParser::subscriber_config& config,
-        const std::string& topic_name)
-    : participant_(nullptr)
-    , subscriber_(nullptr)
-    , topic_(nullptr)
-    , reader_(nullptr)
-    , type_(new HelloWorldPubSubType())
-    , samples_(config.samples)
-    , received_samples_(0)
-    , stop_(false)
+namespace eprosima
 {
-    // Create the participant
-    auto factory = DomainParticipantFactory::get_instance();
-    participant_ = factory->create_participant_with_default_profile(nullptr, StatusMask::none());
-    if (participant_ == nullptr)
-    {
-        throw std::runtime_error("Participant initialization failed");
-    }
-
-    // Register the type
-    type_.register_type(participant_);
-
-    // Create the subscriber
-    SubscriberQos sub_qos = SUBSCRIBER_QOS_DEFAULT;
-    participant_->get_default_subscriber_qos(sub_qos);
-    subscriber_ = participant_->create_subscriber(sub_qos, nullptr, StatusMask::none());
-    if (subscriber_ == nullptr)
-    {
-        throw std::runtime_error("Subscriber initialization failed");
-    }
-
-    // Create the topic
-    TopicQos topic_qos = TOPIC_QOS_DEFAULT;
-    participant_->get_default_topic_qos(topic_qos);
-    topic_ = participant_->create_topic(topic_name, type_.get_type_name(), topic_qos);
-    if (topic_ == nullptr)
-    {
-        throw std::runtime_error("Topic initialization failed");
-    }
-
-    // Create the reader
-    DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
-    subscriber_->get_default_datareader_qos(reader_qos);
-    reader_ = subscriber_->create_datareader(topic_, reader_qos, this, StatusMask::all());
-    if (reader_ == nullptr)
-    {
-        throw std::runtime_error("DataReader initialization failed");
-    }
-}
-
-ListenerSubscriberApp::~ListenerSubscriberApp()
+namespace fastdds
 {
-    if (nullptr != participant_)
+    namespace examples
     {
-        // Delete DDS entities contained within the DomainParticipant
-        participant_->delete_contained_entities();
-
-        // Delete DomainParticipant
-        DomainParticipantFactory::get_instance()->delete_participant(participant_);
-    }
-}
-
-void ListenerSubscriberApp::on_subscription_matched(
-        DataReader* /*reader*/,
-        const SubscriptionMatchedStatus& info)
-{
-    if (info.current_count_change == 1)
-    {
-        std::cout << "Subscriber matched." << std::endl;
-    }
-    else if (info.current_count_change == -1)
-    {
-        std::cout << "Subscriber unmatched." << std::endl;
-    }
-    else
-    {
-        std::cout << info.current_count_change
-                  << " is not a valid value for SubscriptionMatchedStatus current count change" << std::endl;
-    }
-}
-
-void ListenerSubscriberApp::on_data_available(
-        DataReader* reader)
-{
-    SampleInfo info;
-    while ((!is_stopped()) && (RETCODE_OK == reader->take_next_sample(&hello_, &info)))
-    {
-        if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data)
+        namespace hello_world
         {
-            received_samples_++;
-            // Print Hello world message data
-            std::cout << "Message: '" << hello_.message() << "' with index: '" << hello_.index()
-                      << "' RECEIVED" << std::endl;
-            if (samples_ > 0 && (received_samples_ >= samples_))
+
+            ListenerSubscriberApp::ListenerSubscriberApp(const CLIParser::subscriber_config &config,
+                                                         const std::string &topic_name)
+                : participant_(nullptr), subscriber_(nullptr), topic_(nullptr), reader_(nullptr),
+                  type_(new HelloWorldPubSubType()), samples_(config.samples), received_samples_(0),
+                  stop_(false)
             {
-                stop();
+                // Create the participant
+                auto factory = DomainParticipantFactory::get_instance();
+                participant_ =
+                    factory->create_participant_with_default_profile(nullptr, StatusMask::none());
+                if (participant_ == nullptr) {
+                    throw std::runtime_error("Participant initialization failed");
+                }
+
+                // Register the type
+                type_.register_type(participant_);
+
+                // Create the subscriber
+                SubscriberQos sub_qos = SUBSCRIBER_QOS_DEFAULT;
+                participant_->get_default_subscriber_qos(sub_qos);
+                subscriber_ = participant_->create_subscriber(sub_qos, nullptr, StatusMask::none());
+                if (subscriber_ == nullptr) {
+                    throw std::runtime_error("Subscriber initialization failed");
+                }
+
+                // Create the topic
+                TopicQos topic_qos = TOPIC_QOS_DEFAULT;
+                participant_->get_default_topic_qos(topic_qos);
+                topic_ = participant_->create_topic(topic_name, type_.get_type_name(), topic_qos);
+                if (topic_ == nullptr) {
+                    throw std::runtime_error("Topic initialization failed");
+                }
+
+                // Create the reader
+                DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
+                subscriber_->get_default_datareader_qos(reader_qos);
+                reader_ =
+                    subscriber_->create_datareader(topic_, reader_qos, this, StatusMask::all());
+                if (reader_ == nullptr) {
+                    throw std::runtime_error("DataReader initialization failed");
+                }
             }
-        }
-    }
-}
 
-void ListenerSubscriberApp::run()
-{
-    std::unique_lock<std::mutex> lck(terminate_cv_mtx_);
-    terminate_cv_.wait(lck, [&]
+            ListenerSubscriberApp::~ListenerSubscriberApp()
             {
-                return is_stopped();
-            });
-}
+                if (nullptr != participant_) {
+                    // Delete DDS entities contained within the DomainParticipant
+                    participant_->delete_contained_entities();
 
-bool ListenerSubscriberApp::is_stopped()
-{
-    return stop_.load();
-}
+                    // Delete DomainParticipant
+                    DomainParticipantFactory::get_instance()->delete_participant(participant_);
+                }
+            }
 
-void ListenerSubscriberApp::stop()
-{
-    stop_.store(true);
-    terminate_cv_.notify_all();
-}
+            void
+            ListenerSubscriberApp::on_subscription_matched(DataReader * /*reader*/,
+                                                           const SubscriptionMatchedStatus &info)
+            {
+                if (info.current_count_change == 1) {
+                    std::cout << "Subscriber matched." << std::endl;
+                } else if (info.current_count_change == -1) {
+                    std::cout << "Subscriber unmatched." << std::endl;
+                } else {
+                    std::cout << info.current_count_change
+                              << " is not a valid value for SubscriptionMatchedStatus current "
+                                 "count change"
+                              << std::endl;
+                }
+            }
 
-} // namespace hello_world
-} // namespace examples
+            void ListenerSubscriberApp::on_data_available(DataReader *reader)
+            {
+                SampleInfo info;
+                while ((!is_stopped())
+                       && (RETCODE_OK == reader->take_next_sample(&hello_, &info))) {
+                    if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data) {
+                        received_samples_++;
+                        // Print Hello world message data
+                        std::cout << "Message: '" << hello_.message() << "' with index: '"
+                                  << hello_.index() << "' RECEIVED" << std::endl;
+                        if (samples_ > 0 && (received_samples_ >= samples_)) {
+                            stop();
+                        }
+                    }
+                }
+            }
+
+            void ListenerSubscriberApp::run()
+            {
+                std::unique_lock<std::mutex> lck(terminate_cv_mtx_);
+                terminate_cv_.wait(lck, [&] { return is_stopped(); });
+            }
+
+            bool ListenerSubscriberApp::is_stopped() { return stop_.load(); }
+
+            void ListenerSubscriberApp::stop()
+            {
+                stop_.store(true);
+                terminate_cv_.notify_all();
+            }
+
+        } // namespace hello_world
+    }     // namespace examples
 } // namespace fastdds
 } // namespace eprosima

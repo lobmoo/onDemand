@@ -21,11 +21,8 @@
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.hpp>
 
-
-
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
-
 
 ParticipantQosHandler::ParticipantQosHandler(std::string participant_name)
 {
@@ -48,8 +45,8 @@ ParticipantQosHandler::~ParticipantQosHandler()
 {
 }
 
-
-void ParticipantQosHandler::setParticipantQosProperties(std::string name, std::string value, bool propagate)
+void ParticipantQosHandler::setParticipantQosProperties(std::string name, std::string value,
+                                                        bool propagate)
 {
     m_participantQos.properties().properties().emplace_back(name, value, propagate);
 }
@@ -66,7 +63,8 @@ void ParticipantQosHandler::addSHMTransport(uint32_t segment_size)
     m_participantQos.transport().user_transports.push_back(shm_transport);
 }
 
-void ParticipantQosHandler::addTCPV4Transport(uint16_t listen_port, const std::vector<std::string> &peer_locators)
+void ParticipantQosHandler::addTCPV4Transport(uint16_t listen_port,
+                                              const std::vector<std::string> &peer_locators)
 {
     auto tcp_transport = std::make_shared<TCPv4TransportDescriptor>();
     if (listen_port != 0) {
@@ -82,14 +80,15 @@ void ParticipantQosHandler::addTCPV4Transport(uint16_t listen_port, const std::v
             initial_peer_locator.kind = LOCATOR_KIND_TCPv4;
             IPLocator::setIPv4(initial_peer_locator, ipv4);
             initial_peer_locator.port = std::atoi(port.c_str());
-            m_participantQos.wire_protocol().builtin.initialPeersList.push_back(initial_peer_locator);
+            m_participantQos.wire_protocol().builtin.initialPeersList.push_back(
+                initial_peer_locator);
         }
     }
     m_participantQos.transport().user_transports.push_back(tcp_transport);
 }
 
-
-void ParticipantQosHandler::addUDPV4Transport(uint32_t buffer_size, const std::vector<std::string> &ipaddrs)
+void ParticipantQosHandler::addUDPV4Transport(uint32_t buffer_size,
+                                              const std::vector<std::string> &ipaddrs)
 {
     auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
 
@@ -104,7 +103,6 @@ void ParticipantQosHandler::addUDPV4Transport(uint32_t buffer_size, const std::v
     }
     m_participantQos.transport().user_transports.push_back(udp_transport);
 }
-
 
 void ParticipantQosHandler::addUDPV6Transport(uint32_t buffer_size)
 {

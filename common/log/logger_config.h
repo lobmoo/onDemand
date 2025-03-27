@@ -19,30 +19,33 @@
 
 #include <string>
 
-class LoggerConfig {
- private:
-  LoggerConfig(/* args */);
-  struct LoggerConfigData {
-    std::string log_file_name;
-    int log_type;
-    int log_level;
-    int max_file_size;
-    int max_backup_index;
-    bool is_async;
-  };
+class LoggerConfig
+{
+private:
+    LoggerConfig(/* args */);
+    struct LoggerConfigData {
+        std::string log_file_name;
+        int log_type;
+        int log_level;
+        int max_file_size;
+        int max_backup_index;
+        bool is_async;
+    };
 
- public:
-  LoggerConfig *Instance() {
-    static LoggerConfig config;
-    return &config;
-  }
+public:
+    LoggerConfig *Instance()
+    {
+        static LoggerConfig config;
+        return &config;
+    }
 
-  ~LoggerConfig();
+    ~LoggerConfig();
 
-  public:
-  
+public:
 };
 
-LoggerConfig::~LoggerConfig() {}
+LoggerConfig::~LoggerConfig()
+{
+}
 
-#endif  // LOGGER_CONFIG_H
+#endif // LOGGER_CONFIG_H

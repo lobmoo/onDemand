@@ -37,31 +37,34 @@ using namespace eprosima::fastdds::examples::request_reply;
 
 std::function<void(int)> stop_app_handler;
 
-void signal_handler(int signum) { stop_app_handler(signum); }
+void signal_handler(int signum)
+{
+    stop_app_handler(signum);
+}
 
-int main(int argc, char** argv) {
-  auto ret = EXIT_SUCCESS;
-  const std::string service_name = "calculator_service";
+int main(int argc, char **argv)
+{
+    auto ret = EXIT_SUCCESS;
+    const std::string service_name = "calculator_service";
 
-  if (argc < 2) {
-    std::cerr << "Usage: " << argv[0] << " svr/cli" << std::endl;
-    return -1;
-  }
-  if (strcmp(argv[1], "svr") == 0) {
-    auto  entity = std::make_shared<ServerApp>(service_name);
-  } else if (strcmp(argv[1], "cli") == 0) {
-    CLIParser::config config;
-    //config.entity = CLIParser::EntityKind::CLIENT;
-    config.x = 10;
-    config.y = 10;
-    auto entity = std::make_shared<ClientApp>(config, service_name);
-    entity->run();
-  } else {
-    std::cerr << "unknown command: " << argv[1] << std::endl;
-  }
-  while (std::cin.get() != '\n') {
-  }
- 
+    if (argc < 2) {
+        std::cerr << "Usage: " << argv[0] << " svr/cli" << std::endl;
+        return -1;
+    }
+    if (strcmp(argv[1], "svr") == 0) {
+        auto entity = std::make_shared<ServerApp>(service_name);
+    } else if (strcmp(argv[1], "cli") == 0) {
+        CLIParser::config config;
+        //config.entity = CLIParser::EntityKind::CLIENT;
+        config.x = 10;
+        config.y = 10;
+        auto entity = std::make_shared<ClientApp>(config, service_name);
+        entity->run();
+    } else {
+        std::cerr << "unknown command: " << argv[1] << std::endl;
+    }
+    while (std::cin.get() != '\n') {
+    }
 
-  return ret;
+    return ret;
 }

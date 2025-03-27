@@ -25,31 +25,39 @@
 
 using namespace eprosima::fastdds::dds;
 
-class DDSParticipantListener : public eprosima::fastdds::dds::DomainParticipantListener {
- public:
-  // 当一个新的参与者被发现时调用
-  virtual void on_participant_discovery(
-      DomainParticipant* participant, eprosima::fastdds::rtps::ParticipantDiscoveryStatus reason,
-      const ParticipantBuiltinTopicData& info, bool& should_be_ignored) override {
-    LOG(info) << "on_participant_discovery";
-    should_be_ignored = false;
-  }
+class DDSParticipantListener : public eprosima::fastdds::dds::DomainParticipantListener
+{
+public:
+    // 当一个新的参与者被发现时调用
+    virtual void on_participant_discovery(
+        DomainParticipant *participant, eprosima::fastdds::rtps::ParticipantDiscoveryStatus reason,
+        const ParticipantBuiltinTopicData &info, bool &should_be_ignored) override
+    {
+        LOG(info) << "on_participant_discovery";
+        should_be_ignored = false;
+    }
 
-  // 当数据读取者被发现时调用
-  virtual void on_data_reader_discovery(
-      eprosima::fastdds::dds::DomainParticipant* participant, eprosima::fastdds::rtps::ReaderDiscoveryStatus reason,
-      const eprosima::fastdds::dds::SubscriptionBuiltinTopicData& info, bool& should_be_ignored) override {
-    LOG(info) << "on_data_reader_discovery";
-    should_be_ignored = false;
-  }
+    // 当数据读取者被发现时调用
+    virtual void
+    on_data_reader_discovery(eprosima::fastdds::dds::DomainParticipant *participant,
+                             eprosima::fastdds::rtps::ReaderDiscoveryStatus reason,
+                             const eprosima::fastdds::dds::SubscriptionBuiltinTopicData &info,
+                             bool &should_be_ignored) override
+    {
+        LOG(info) << "on_data_reader_discovery";
+        should_be_ignored = false;
+    }
 
-  // 另一个 on_data_writer_discovery 的重载版本
-  virtual void on_data_writer_discovery(
-      eprosima::fastdds::dds::DomainParticipant* participant, eprosima::fastdds::rtps::WriterDiscoveryStatus reason,
-      const eprosima::fastdds::dds::PublicationBuiltinTopicData& info, bool& should_be_ignored) override {
-    LOG(info) << "on_data_writer_discovery";
-    should_be_ignored = false;
-  }
+    // 另一个 on_data_writer_discovery 的重载版本
+    virtual void
+    on_data_writer_discovery(eprosima::fastdds::dds::DomainParticipant *participant,
+                             eprosima::fastdds::rtps::WriterDiscoveryStatus reason,
+                             const eprosima::fastdds::dds::PublicationBuiltinTopicData &info,
+                             bool &should_be_ignored) override
+    {
+        LOG(info) << "on_data_writer_discovery";
+        should_be_ignored = false;
+    }
 };
 
-#endif  // DDS_PARTICIPANT_LISTENER_H
+#endif // DDS_PARTICIPANT_LISTENER_H

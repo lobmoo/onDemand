@@ -23,15 +23,16 @@
 #include <string>
 #include <unordered_map>
 
-class Logger {
- public:
-  enum severity_level { trace, debug, info, warning, error, critical };
-  enum LoggerType { both = 0, console, file };
+class Logger
+{
+public:
+    enum severity_level { trace, debug, info, warning, error, critical };
+    enum LoggerType { both = 0, console, file };
 
- public:
-  ~Logger();
+public:
+    ~Logger();
 
-  /**
+    /**
    * @brief 初始化日志系统
    *
    * @param fileName        日志文件名，支持绝对路径和相对路径
@@ -43,75 +44,85 @@ class Logger {
    * @return true          初始化成功
    * @return false         初始化失败
    */
-  bool Init(
-      const std::string& fileName, LoggerType type, severity_level level, int maxFileSize, int maxBackupIndex,
-      bool isAsync = false);
+    bool Init(const std::string &fileName, LoggerType type, severity_level level, int maxFileSize,
+              int maxBackupIndex, bool isAsync = false);
 
-  /**
+    /**
    * @brief 注销日志实例
    */
-  void Uinit();
+    void Uinit();
 
-  /**
+    /**
    * @brief Set the Flush Every object  设置日志刷入文件的频率，单位：秒 默认0 则按默认机制刷入
    * @param  flushEvery       间隔时间
    */
-  void setFlushEvery(uint32_t flushEvery);
+    void setFlushEvery(uint32_t flushEvery);
 
-  /**
+    /**
    * @brief Set the Flush On Level object  设置日志立即刷入文件的级别 默认为error以上立即刷入 
    * @param  flushOnLevel     级别
    */
-  void setFlushOnLevel(Logger::severity_level flushOnLevel);  
+    void setFlushOnLevel(Logger::severity_level flushOnLevel);
 
-  static Logger& Instance();
+    static Logger &Instance();
 
- private:
-  void Log(severity_level level, const std::string& msg, const char* file, int line, const char* func);
-  class LoggerImpl;
-  std::unique_ptr<LoggerImpl> pImpl;
-  Logger();
-  Logger(const Logger&) = delete;
-  Logger& operator=(const Logger&) = delete;
-  friend class LogStream; 
+private:
+    void Log(severity_level level, const std::string &msg, const char *file, int line,
+             const char *func);
+    class LoggerImpl;
+    std::unique_ptr<LoggerImpl> pImpl;
+    Logger();
+    Logger(const Logger &) = delete;
+    Logger &operator=(const Logger &) = delete;
+    friend class LogStream;
 };
 
-class LogStream {
- public:
-  LogStream(Logger& logger, Logger::severity_level level, const char* file, int line, const char* func)
-      : logger_(logger), level_(level), file_(file), line_(line), func_(func) {}
-  ~LogStream() { logger_.Log(level_, stream_.str(), file_, line_, func_); }
-
-  std::ostringstream& stream() { return stream_; }
-
- private:
-  Logger& logger_;
-  Logger::severity_level level_;
-  const char* file_;
-  const char* func_;
-  int line_;
-  std::ostringstream stream_;
-
-};
-
-class LogRateLimiter {
- public:
-  static bool shouldLog(const std::string& key, int interval_ms) {
-    using namespace std::chrono;
-    thread_local static std::unordered_map<std::string, steady_clock::time_point> last_log_times;
-
-    auto now = steady_clock::now();
-    auto it = last_log_times.find(key);
-    if (it == last_log_times.end() || duration_cast<milliseconds>(now - it->second).count() >= interval_ms) {
-      last_log_times[key] = now;
-      return true;
+class LogStream
+{
+public:
+    LogStream(Logger &logger, Logger::severity_level level, const char *file, int line,
+              const char *func)
+        : logger_(logger), level_(level), file_(file), line_(line), func_(func)
+    {
     }
-    return false;
-  }
+    ~LogStream() { logger_.Log(level_, stream_.str(), file_, line_, func_); }
+
+    std::ostringstream &stream() { return stream_; }
+
+private:
+    Logger &logger_;
+    Logger::severity_level level_;
+    const char *file_;
+    const char *func_;
+    int line_;
+    std::ostringstream stream_;
 };
 
-#define LOG(level) LogStream(Logger::Instance(), Logger::level, __FILE__, __LINE__, __FUNCTION__).stream()
-#define LOG_TIME(level, interval_ms) \
-  if (LogRateLimiter::shouldLog(std::string(__FILE__) + ":" + std::to_string(__LINE__), interval_ms)) LOG(level)
+class LogRateLimiter
+{
+public:
+    static bool shouldLog(const std::string &key, int interval_ms)
+    {
+        using namespace std::chrono;
+        thread_local static std::unordered_map<std::string, steady_clock::time_point>
+            last_log_times;
 
-#endif  // LOGGER_H
+        auto now = steady_clock::now();
+        auto it = last_log_times.find(key);
+        if (it == last_log_times.end()
+            || duration_cast<milliseconds>(now - it->second).count() >= interval_ms) {
+            last_log_times[key] = now;
+            return true;
+        }
+        return false;
+    }
+};
+
+#define LOG(level)                                                                                 \
+    LogStream(Logger::Instance(), Logger::level, __FILE__, __LINE__, __FUNCTION__).stream()
+#define LOG_TIME(level, interval_ms)                                                               \
+    if (LogRateLimiter::shouldLog(std::string(__FILE__) + ":" + std::to_string(__LINE__),          \
+                                  interval_ms))                                                    \
+    LOG(level)
+
+#endif // LOGGER_H
