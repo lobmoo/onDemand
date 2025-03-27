@@ -97,6 +97,7 @@ class DDSRequestReplyServer : public DomainParticipantListener {
     create_participant();
     create_request_entities(service_name);
     create_reply_entities(service_name);
+    LOG(info) << "ServerApp Server initialized with ID: " << m_participant_->guid().guidPrefix;
   }
 
   ~DDSRequestReplyServer() {
