@@ -1,19 +1,19 @@
 {
-	"version": "2.0.0",
-	"tasks": [
-		{
-			"type": "shell",
-			"label": "complie",
-			"command": "cd ${workspaceFolder}  && cmake .  && make -j",
-			"targets": [
-				"all"
-			],
-			"group": {
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "complie",
+            "command": "cd ${workspaceFolder}  && cmake .  && make -j",
+            "targets": [
+                "all"
+            ],
+            "group": {
                 "kind": "build",
                 "isDefault": true
             },
-			"problemMatcher": [],
-			"detail": ""
-		}
-	]
+            "problemMatcher": [],
+            "detail": ""
+        }
+    ]
 }
