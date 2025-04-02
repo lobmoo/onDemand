@@ -11,9 +11,6 @@
 using namespace tinyxml2;
 
 struct ConfigData {
-
-    
-    
 };
 
 class xmlConfig
@@ -34,7 +31,7 @@ private:
 
     std::unique_ptr<ConfigData> data = nullptr;
     std::mutex mutex_;
-    std::map<std::string ,std::function<void(ConfigData&, const XMLElement*)>> parseCallbacksMap_;
+    std::map<std::string, std::function<void(ConfigData &, const XMLElement *)>> parseCallbacksMap_;
 };
 
 #endif // CONFIG_H
