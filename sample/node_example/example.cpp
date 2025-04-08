@@ -12,6 +12,8 @@ using namespace std;
 
 void run_dds_data_writer();
 void run_dds_data_reader();
+void run_dds_data_Multireader();
+void run_dds_data_Multiwriter();
 
 ParticipantQosHandler qos_configurator()
 {
@@ -46,9 +48,11 @@ void test_multi_sub_pub(int argc, char *argv[])
         return;
     }
     if (strcmp(argv[1], "sub") == 0) {
-        run_dds_data_reader();
+        run_dds_data_Multireader();
+        //run_dds_data_reader();
     } else if (strcmp(argv[1], "pub") == 0) {
-        run_dds_data_writer();
+       run_dds_data_Multiwriter();
+        //run_dds_data_writer();
     } else {
         std::cerr << "unknown command: " << argv[1] << std::endl;
     }
@@ -100,9 +104,9 @@ int main(int argc, char *argv[])
 void run_dds_data_writer()
 {
     DDSParticipantListener *listener = new DDSParticipantListener();
-    DataNode node("/home/wwk/workspaces/test_demo/sample/node_example/qosConfig.xml", listener);
+    //DataNode node("/home/wwk/workspaces/test_demo/sample/node_example/qosConfig.xml", listener);
     //DataNode node(170, "test_writer", NULL, listener);
-    //DataNode node(170, "test_writer");
+    DataNode node(170, "test_writer");
     node.registerTopicType<HelloWorldOnePubSubType>("wwk");
     auto dataWriter = node.createDataWriter<HelloWorldOne>("wwk");
     bool runFlag = true;
@@ -127,11 +131,104 @@ void run_dds_data_writer()
 void run_dds_data_reader()
 {
     DDSParticipantListener *listener = new DDSParticipantListener();
-    DataNode node("/home/wwk/workspaces/test_demo/sample/node_example/qosConfig.xml", listener);
+    //DataNode node("/home/wwk/workspaces/test_demo/sample/node_example/qosConfig.xml", listener);
     //DataNode node(170, "test_reader", NULL, listener);
-    // DataNode node(170, "test_reader");
+    DataNode node(170, "test_reader");
     node.registerTopicType<HelloWorldOnePubSubType>("wwk");
     auto dataReader = node.createDataReader<HelloWorldOne>("wwk", processHelloWorldOne);
     while (std::cin.get() != '\n') {
+    }
+}
+
+
+
+
+void run_dds_data_Multiwriter()
+{
+    uint32_t cnt = 0;
+    int index = 0;
+
+    // 初始化节点
+    DataNode node(1, "sender_node");
+
+    // 注册多个主题
+    //std::vector<std::string> topics = {"Topic_1", "Topic_2", "Topic_3"};
+    std::vector<std::string> topics = {"Topic_1"};
+    for (const auto& topic : topics) {
+        node.registerTopicType<HelloWorldOnePubSubType>(topic);
+    }
+
+    // 创建多个数据写入器
+    std::unordered_map<std::string, DDSTopicDataWriter<HelloWorldOne> *> dataWriters;
+
+    for (const auto& topic : topics) {
+        dataWriters[topic] = node.createDataWriter<HelloWorldOne>(topic);
+    }
+
+    while (cnt < 100)
+    { 
+        for (const auto& topic : topics) {
+            HelloWorldOne message;
+            auto now = std::chrono::system_clock::now();
+            auto value = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
+            auto epoch = value.time_since_epoch();
+            auto timestamp = std::chrono::duration_cast<std::chrono::milliseconds>(epoch).count();
+
+            message.index(++index);
+            message.points(std::vector<uint8_t>(100));
+
+            // 发送消息
+            if (dataWriters[topic]->writeMessage(message)) {
+                LOG(info) << "send message to [" << topic << "]: " << message.index();
+            }
+        }
+
+        cnt++;
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    }
+}
+
+
+void run_dds_data_Multireader()
+{
+    // 存储每个主题的延迟
+    std::unordered_map<std::string, std::vector<uint64_t>> topicDelays;
+
+    // 初始化节点
+    DataNode node(1, "receiver_node");
+
+    // 注册多个主题
+    //std::vector<std::string> topics = {"Topic_1", "Topic_2", "Topic_3"};
+    std::vector<std::string> topics = {"Topic_1"};
+    for (const auto& topic : topics) {
+        node.registerTopicType<HelloWorldOnePubSubType>(topic);
+        // 创建数据读取器
+        node.createDataReader<HelloWorldOne>(topic, [](const std::string &topic_name, std::shared_ptr<HelloWorldOne> data) {
+            LOG(info) << "recv message from [" << topic_name << "]: " << data->index();
+        });
+    }
+
+    while (1)
+    {
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
+    
+    // 等待一段时间以接收所有消息
+    std::this_thread::sleep_for(std::chrono::seconds(5));
+
+    // 计算每个主题的平均延迟
+    for (const auto& [topic, delays] : topicDelays)
+    {
+        uint64_t sum = 0;
+        for (auto delay : delays)
+        {
+            sum += delay;
+        }
+
+        if (!delays.empty()) {
+            LOG(info) << "Average delay for topic [" << topic << "]: " << sum / delays.size();
+        } else {
+            LOG(warning) << "No messages received for topic [" << topic << "].";
+        }
     }
 }
