@@ -236,7 +236,7 @@ TEST(SHMTest, moreTopicTest_1k)
     auto dataWriter2 = node.createDataWriter<Message_512>("Message_512_2");
     auto dataWriter3 = node.createDataWriter<Message_512>("Message_512_3");
 
-    auto dataReader = node.createDataReader<Message_512>("Message_512", [&delays](const std::string &topic_name, std::shared_ptr<Message_512> data) {
+    auto dataReader = node.createDataReader<Message_512>("Message_512_1", [&delays](const std::string &topic_name, std::shared_ptr<Message_512> data) {
         auto now = std::chrono::system_clock::now();
         auto value = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
         auto epoch = value.time_since_epoch();
