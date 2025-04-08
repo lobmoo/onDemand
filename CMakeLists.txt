@@ -25,9 +25,11 @@ add_dependencies(test_exec log)
 
 if(COMPILE_SAMPLE)
     add_subdirectory(sample/node_example)
+    add_subdirectory(sample/node_test)
     add_subdirectory(sample/hello_world)
     add_subdirectory(sample/request_reply)
     add_dependencies(node_example_exec log)
+    add_dependencies(node_test_exec log)
 endif()
 
 

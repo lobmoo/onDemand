@@ -1,12 +1,28 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(node_example_exec  LANGUAGES CXX)
+project(node_test_exec  LANGUAGES CXX)
 
 # 查找目录下的所有源文件
 # 假设您希望在查找源文件时排除 CMakeFiles 目录
-file(GLOB DDS_SHM_HELLOWORLD_EXAMPLE_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/HelloWorldOne/source/*.cxx"
-                                                     "${CMAKE_CURRENT_SOURCE_DIR}/HelloWorldOne/source/*.cpp"
-                                                     "${CMAKE_CURRENT_SOURCE_DIR}/HelloWorldOne/source/*.ipp"
+file(GLOB DDS_SHM_HELLOWORLD_EXAMPLE_SOURCES         "${CMAKE_CURRENT_SOURCE_DIR}/TestMessage_1k/*.cxx"
+                                                     "${CMAKE_CURRENT_SOURCE_DIR}/TestMessage_1k/*.cpp"
+                                                     "${CMAKE_CURRENT_SOURCE_DIR}/TestMessage_1k/*.ipp"
+
+                                                     "${CMAKE_CURRENT_SOURCE_DIR}/TestMessage_100k/*.cxx"
+                                                     "${CMAKE_CURRENT_SOURCE_DIR}/TestMessage_100k/*.cpp"
+                                                     "${CMAKE_CURRENT_SOURCE_DIR}/TestMessage_100k/*.ipp"
+
+                                                     "${CMAKE_CURRENT_SOURCE_DIR}/TestMessage_1M/*.cxx"
+                                                     "${CMAKE_CURRENT_SOURCE_DIR}/TestMessage_1M/*.cpp"
+                                                     "${CMAKE_CURRENT_SOURCE_DIR}/TestMessage_1M/*.ipp"
+
+                                                     "${CMAKE_CURRENT_SOURCE_DIR}/TestMessage_5M/*.cxx"
+                                                     "${CMAKE_CURRENT_SOURCE_DIR}/TestMessage_5M/*.cpp"
+                                                     "${CMAKE_CURRENT_SOURCE_DIR}/TestMessage_5M/*.ipp"
+
+                                                     "${CMAKE_CURRENT_SOURCE_DIR}/TestMessage_100M/*.cxx"
+                                                     "${CMAKE_CURRENT_SOURCE_DIR}/TestMessage_100M/*.cpp"
+                                                     "${CMAKE_CURRENT_SOURCE_DIR}/TestMessage_100M/*.ipp"
                                                      "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
 
 file(GLOB DDS_INTERFACE_SOURCES_CPP "${CMAKE_CURRENT_SOURCE_DIR}/../../common/fastdds_wrapper/*.cpp")
@@ -21,7 +37,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMA
 
 #头文件
 set(OBJ_CPP_INCLUDE
-    ${CMAKE_CURRENT_SOURCE_DIR}/HelloWorldOne/source
+    ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/../../common
     ${CMAKE_CURRENT_SOURCE_DIR}/../../thirdparty/fast_dds/include
 )
@@ -45,7 +61,7 @@ else()
 endif()
 
 # link_directories(${LIBRARY_PATH})
-target_link_libraries(${PROJECT_NAME} PRIVATE ${OBJ_CPP_LIBS} pthread  ${CMAKE_SOURCE_DIR}/common/log/lib/liblog.a)
+target_link_libraries(${PROJECT_NAME} PRIVATE ${OBJ_CPP_LIBS} pthread  ${CMAKE_SOURCE_DIR}/common/log/lib/liblog.a gtest)
 
 
 # option(USE_SYSTEM_RPATH "Use system RPATH for installed libraries and executables" ON)
