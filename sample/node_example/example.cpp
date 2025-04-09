@@ -147,13 +147,13 @@ void run_dds_data_Multiwriter()
 {
     uint32_t cnt = 0;
     int index = 0;
+    bool runFlag = true;
 
     // 初始化节点
     DataNode node(1, "sender_node");
 
     // 注册多个主题
-    //std::vector<std::string> topics = {"Topic_1", "Topic_2", "Topic_3"};
-    std::vector<std::string> topics = {"Topic_1"};
+    std::vector<std::string> topics = {"Topic_1", "Topic_2", "Topic_3"};
     for (const auto& topic : topics) {
         node.registerTopicType<HelloWorldOnePubSubType>(topic);
     }
@@ -165,7 +165,13 @@ void run_dds_data_Multiwriter()
         dataWriters[topic] = node.createDataWriter<HelloWorldOne>(topic);
     }
 
-    while (cnt < 100)
+    std::thread([&]() {
+        while (std::cin.get() != '\n') {
+        }
+        runFlag = false;
+    }).detach();
+
+    while (cnt < 100 && runFlag)
     { 
         for (const auto& topic : topics) {
             HelloWorldOne message;
@@ -198,8 +204,7 @@ void run_dds_data_Multireader()
     DataNode node(1, "receiver_node");
 
     // 注册多个主题
-    //std::vector<std::string> topics = {"Topic_1", "Topic_2", "Topic_3"};
-    std::vector<std::string> topics = {"Topic_1"};
+    std::vector<std::string> topics = {"Topic_1", "Topic_2", "Topic_3"};
     for (const auto& topic : topics) {
         node.registerTopicType<HelloWorldOnePubSubType>(topic);
         // 创建数据读取器
@@ -208,27 +213,7 @@ void run_dds_data_Multireader()
         });
     }
 
-    while (1)
-    {
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+    while (std::cin.get() != '\n') {
     }
     
-    // 等待一段时间以接收所有消息
-    std::this_thread::sleep_for(std::chrono::seconds(5));
-
-    // 计算每个主题的平均延迟
-    for (const auto& [topic, delays] : topicDelays)
-    {
-        uint64_t sum = 0;
-        for (auto delay : delays)
-        {
-            sum += delay;
-        }
-
-        if (!delays.empty()) {
-            LOG(info) << "Average delay for topic [" << topic << "]: " << sum / delays.size();
-        } else {
-            LOG(warning) << "No messages received for topic [" << topic << "].";
-        }
-    }
 }
