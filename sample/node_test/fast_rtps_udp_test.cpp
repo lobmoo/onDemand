@@ -282,7 +282,7 @@ TEST(UDPTest, MultiTopicReceiverTest1k)
 
 TEST(UDPTest, MultiTopicSenderTest5M)
 {
-    sleep(3);
+    sleep(5);
     uint32_t cnt = 0;
     int index = 0;
 
@@ -336,10 +336,8 @@ TEST(UDPTest, MultiTopicReceiverTest5M)
 {
     // 存储每个主题的延迟
     std::unordered_map<std::string, std::vector<uint64_t>> topicDelays;
-
     // 初始化节点
     DataNode node(0, "receiver_node");
-
     // 注册多个主题
     std::vector<std::string> topics = {"Topic_1", "Topic_2", "Topic_3"};
     node.registerTopicType<Message_2621440PubSubType>(topics[0]);
