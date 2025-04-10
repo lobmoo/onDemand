@@ -24,6 +24,8 @@
 #include "log/logger.h"
 using namespace std;
 
+
+std::mutex delays_mutex;
 class UDPTestFixture : public ::testing::Test
 {
 protected:
@@ -50,8 +52,10 @@ protected:
                     std::chrono::duration_cast<std::chrono::milliseconds>(epoch).count();
 
                 int64_t delay_time = timestamp - data->timestamp();
-                delays_512.push_back(delay_time);
-
+                {
+                    std::lock_guard<std::mutex> lock(delays_mutex);
+                    delays_512.push_back(delay_time);
+                }
                 LOG(info) << "recv message [" << topic_name << "]: " << data->id()
                           << " recv message delay time: " << delay_time;
             });
@@ -67,8 +71,10 @@ protected:
                     std::chrono::duration_cast<std::chrono::milliseconds>(epoch).count();
 
                 int64_t delay_time = timestamp - data->timestamp();
-                delays_512.push_back(delay_time);
-
+                {
+                    std::lock_guard<std::mutex> lock(delays_mutex);
+                    delays_2621440.push_back(delay_time);
+                }
                 LOG(info) << "recv message [" << topic_name << "]: " << data->id()
                           << " recv message delay time: " << delay_time;
             });
@@ -93,9 +99,9 @@ protected:
     std::vector<uint64_t> delays_2621440;
 };
 
-
 double calculateAverageDelay(const std::vector<uint64_t> &delays)
 {
+    std::lock_guard<std::mutex> lock(delays_mutex);
     if (delays.empty()) {
         return 0.0;
     }
