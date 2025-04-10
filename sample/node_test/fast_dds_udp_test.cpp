@@ -24,7 +24,7 @@
 #include "log/logger.h"
 using namespace std;
 
-std::mutex delays_mutex;
+static std::mutex delays_mutex;
 class UDPTestFixture : public ::testing::Test
 {
 protected:
@@ -129,7 +129,7 @@ protected:
     std::unordered_map<int32_t, std::vector<uint64_t>> delays_2621440;
 };
 
-void calculateAverageDelay(const std::unordered_map<int32_t, std::vector<uint64_t>> &delays,
+static void calculateAverageDelay(const std::unordered_map<int32_t, std::vector<uint64_t>> &delays,
                            std::string tag)
 {
     std::lock_guard<std::mutex> lock(delays_mutex);
@@ -152,7 +152,7 @@ void calculateAverageDelay(const std::unordered_map<int32_t, std::vector<uint64_
     return;
 }
 
-int32_t get_hostname()
+static int32_t get_hostname()
 {
     char hostname[1024];
     if (gethostname(hostname, sizeof(hostname)) == 0) {
