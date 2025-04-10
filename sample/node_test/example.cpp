@@ -14,6 +14,7 @@ const std::string RECV_FILTER = "UDPTest.MultiTopicReceiverTest5M";
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     Logger::Instance().Init("log/myapp.log", Logger::console, Logger::info, 60, 5);
+    sleep(3);
     // std::string mode = argv[1];
     // if (mode == "send") {
     //     ::testing::GTEST_FLAG(filter) = SEND_FILTER;
