@@ -25,11 +25,25 @@
 using namespace std;
 
 static std::mutex delays_mutex;
+
+static int32_t get_hostname()
+{
+    char hostname[1024];
+    if (gethostname(hostname, sizeof(hostname)) == 0) {
+        std::hash<std::string> hasher;
+        size_t hash_value = hasher(hostname);
+        return static_cast<int32_t>(hash_value);
+    } else {
+        return -1; // 错误处理
+    }
+}
+
 class UDPTestFixture : public ::testing::Test
 {
 protected:
     void SetUp() override
     {
+        LOG(info) << "Average Test !!!  HostId : " << get_hostname();
         senderNode = std::make_unique<DataNode>(0, "sender_node");
         receiverNode = std::make_unique<DataNode>(0, "receiver_node");
 
@@ -153,7 +167,7 @@ protected:
 
     DDSTopicDataWriter<Message_2621440> *dataWriter_2621440;
     DDSTopicDataReader<Message_2621440> *dataReader_2621440;
-    
+
     std::unordered_map<int32_t, std::vector<uint64_t>> delays_512;
     std::unordered_map<int32_t, std::vector<uint64_t>> delays_51200;
     std::unordered_map<int32_t, std::vector<uint64_t>> delays_524288;
@@ -183,17 +197,7 @@ static void calculateAverageDelay(const std::unordered_map<int32_t, std::vector<
     return;
 }
 
-static int32_t get_hostname()
-{
-    char hostname[1024];
-    if (gethostname(hostname, sizeof(hostname)) == 0) {
-        std::hash<std::string> hasher;
-        size_t hash_value = hasher(hostname);
-        return static_cast<int32_t>(hash_value);
-    } else {
-        return -1; // 错误处理
-    }
-}
+
 
 TEST_F(UDPTestFixture, SenderReceiverTest1k)
 {
