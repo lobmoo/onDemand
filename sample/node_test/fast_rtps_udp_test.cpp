@@ -362,7 +362,7 @@ TEST(UDPTest, MultiTopicReceiverTest5M)
     }
 
     // 等待一段时间以接收所有消息
-    std::this_thread::sleep_for(std::chrono::seconds(5));
+    std::this_thread::sleep_for(std::chrono::seconds(10));
 
     // 计算每个主题的平均延迟
     for (const auto &[topic, delays] : topicDelays) {

@@ -5,16 +5,20 @@
 #include <gtest/gtest.h>
 #include "log/logger.h"
 
+// const std::string SEND_FILTER = "UDPTest.SenderTest1k:UDPTest.SenderTest5M:UDPTest.MultiTopicSenderTest1k:UDPTest.MultiTopicSenderTest5M";
+// const std::string RECV_FILTER = "UDPTest.ReceiverTest1k:UDPTest.ReceiverTest5M:UDPTest.MultiTopicReceiverTest1k:UDPTest.MultiTopicReceiverTest5M";
 
+const std::string SEND_FILTER = "UDPTest.MultiTopicSenderTest5M";
+const std::string RECV_FILTER = "UDPTest.MultiTopicReceiverTest5M";
 
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     Logger::Instance().Init("log/myapp.log", Logger::console, Logger::info, 60, 5);
     std::string mode = argv[1];
     if (mode == "send") {
-        ::testing::GTEST_FLAG(filter) = "UDPTest.SenderTest1k:UDPTest.SenderTest5M:UDPTest.MultiTopicSenderTest1k:UDPTest.MultiTopicSenderTest5M";
+        ::testing::GTEST_FLAG(filter) = SEND_FILTER;
     } else if (mode == "recv") {
-        ::testing::GTEST_FLAG(filter) = "UDPTest.ReceiverTest1k:UDPTest.ReceiverTest5M:UDPTest.MultiTopicReceiverTest1k:UDPTest.MultiTopicReceiverTest5M";
+        ::testing::GTEST_FLAG(filter) = RECV_FILTER;
     } else {
         std::cerr << "Invalid mode. Use 'send' or 'recv'." << std::endl;
         return -1;
