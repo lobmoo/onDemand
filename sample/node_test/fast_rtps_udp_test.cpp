@@ -106,6 +106,7 @@ TEST(UDPTest, ReceiverTest1k)
 
 TEST(UDPTest, MultiTopicSenderTest1k)
 {
+    sleep(3);
     uint32_t cnt = 0;
     int index = 0;
 
