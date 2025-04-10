@@ -58,7 +58,7 @@ protected:
 
         for (auto topic_name : topic_names) {
             auto dataReader_512 = receiverNode->createDataReader<Message_512>(
-                "Message_512",
+                topic_name,
                 [this](const std::string &topic_name, std::shared_ptr<Message_512> data) {
                     auto now = std::chrono::system_clock::now();
                     auto value = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
@@ -76,7 +76,7 @@ protected:
                                << "data:" << data->data()[0];
                 });
             auto dataReader_51200 = receiverNode->createDataReader<Message_51200>(
-                "Message_51200",
+                topic_name,
                 [this](const std::string &topic_name, std::shared_ptr<Message_51200> data) {
                     auto now = std::chrono::system_clock::now();
                     auto value = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
@@ -96,7 +96,7 @@ protected:
                 });
 
             auto dataReader_2621440 = receiverNode->createDataReader<Message_2621440>(
-                "Message_2621440",
+                topic_name,
                 [this](const std::string &topic_name, std::shared_ptr<Message_2621440> data) {
                     auto now = std::chrono::system_clock::now();
                     auto value = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
