@@ -144,12 +144,16 @@ protected:
 
     DDSTopicDataWriter<Message_512> *dataWriter_512;
     DDSTopicDataReader<Message_512> *dataReader_512;
+
     DDSTopicDataWriter<Message_51200> *dataWriter_51200;
     DDSTopicDataReader<Message_51200> *dataReader_51200;
+
     DDSTopicDataWriter<Message_524288> *dataWriter_524288;
     DDSTopicDataReader<Message_524288> *dataReader_524288;
+
     DDSTopicDataWriter<Message_2621440> *dataWriter_2621440;
     DDSTopicDataReader<Message_2621440> *dataReader_2621440;
+    
     std::unordered_map<int32_t, std::vector<uint64_t>> delays_512;
     std::unordered_map<int32_t, std::vector<uint64_t>> delays_51200;
     std::unordered_map<int32_t, std::vector<uint64_t>> delays_524288;
