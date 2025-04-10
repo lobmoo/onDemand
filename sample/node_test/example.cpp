@@ -14,15 +14,15 @@ const std::string RECV_FILTER = "UDPTest.MultiTopicReceiverTest5M";
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     Logger::Instance().Init("log/myapp.log", Logger::console, Logger::info, 60, 5);
-    std::string mode = argv[1];
-    if (mode == "send") {
-        ::testing::GTEST_FLAG(filter) = SEND_FILTER;
-    } else if (mode == "recv") {
-        ::testing::GTEST_FLAG(filter) = RECV_FILTER;
-    } else {
-        std::cerr << "Invalid mode. Use 'send' or 'recv'." << std::endl;
-        return -1;
-    }
+    // std::string mode = argv[1];
+    // if (mode == "send") {
+    //     ::testing::GTEST_FLAG(filter) = SEND_FILTER;
+    // } else if (mode == "recv") {
+    //     ::testing::GTEST_FLAG(filter) = RECV_FILTER;
+    // } else {
+    //     std::cerr << "Invalid mode. Use 'send' or 'recv'." << std::endl;
+    //     return -1;
+    // }
     return RUN_ALL_TESTS();
 }
 
