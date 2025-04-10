@@ -36,8 +36,11 @@ protected:
         senderNode->registerTopicType<Message_512PubSubType>("Message_512");
         receiverNode->registerTopicType<Message_512PubSubType>("Message_512");
 
-        senderNode->registerTopicType<Message_512PubSubType>("Message_51200");
-        receiverNode->registerTopicType<Message_512PubSubType>("Message_51200");
+        senderNode->registerTopicType<Message_51200PubSubType>("Message_51200");
+        receiverNode->registerTopicType<Message_51200PubSubType>("Message_51200");
+
+        senderNode->registerTopicType<Message_524288PubSubType>("Message_524288");
+        receiverNode->registerTopicType<Message_524288PubSubType>("Message_524288");
 
         senderNode->registerTopicType<Message_2621440PubSubType>("Message_2621440");
         receiverNode->registerTopicType<Message_2621440PubSubType>("Message_2621440");
@@ -84,6 +87,27 @@ protected:
                            << "data:" << data->data()[0];
             });
 
+        dataWriter_524288 = senderNode->createDataWriter<Message_524288>("Message_524288");
+        dataReader_524288 = receiverNode->createDataReader<Message_524288>(
+            "Message_524288",
+            [this](const std::string &topic_name, std::shared_ptr<Message_524288> data) {
+                auto now = std::chrono::system_clock::now();
+                auto value = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
+                auto epoch = value.time_since_epoch();
+                auto timestamp =
+                    std::chrono::duration_cast<std::chrono::milliseconds>(epoch).count();
+
+                int64_t delay_time = timestamp - data->timestamp();
+                {
+                    std::lock_guard<std::mutex> lock(delays_mutex);
+                    delays_524288[data->id()].push_back(delay_time);
+                }
+
+                LOG(debug) << "recv message [" << topic_name << "]: " << data->id()
+                           << " recv message delay time: " << delay_time
+                           << "data:" << data->data()[0];
+            });
+
         dataWriter_2621440 = senderNode->createDataWriter<Message_2621440>("Message_2621440");
         dataReader_2621440 = receiverNode->createDataReader<Message_2621440>(
             "Message_2621440",
@@ -122,15 +146,18 @@ protected:
     DDSTopicDataReader<Message_512> *dataReader_512;
     DDSTopicDataWriter<Message_51200> *dataWriter_51200;
     DDSTopicDataReader<Message_51200> *dataReader_51200;
+    DDSTopicDataWriter<Message_524288> *dataWriter_524288;
+    DDSTopicDataReader<Message_524288> *dataReader_524288;
     DDSTopicDataWriter<Message_2621440> *dataWriter_2621440;
     DDSTopicDataReader<Message_2621440> *dataReader_2621440;
     std::unordered_map<int32_t, std::vector<uint64_t>> delays_512;
     std::unordered_map<int32_t, std::vector<uint64_t>> delays_51200;
+    std::unordered_map<int32_t, std::vector<uint64_t>> delays_524288;
     std::unordered_map<int32_t, std::vector<uint64_t>> delays_2621440;
 };
 
 static void calculateAverageDelay(const std::unordered_map<int32_t, std::vector<uint64_t>> &delays,
-                           std::string tag)
+                                  std::string tag)
 {
     std::lock_guard<std::mutex> lock(delays_mutex);
     if (delays.empty()) {
@@ -192,7 +219,6 @@ TEST_F(UDPTestFixture, SenderReceiverTest1k)
     calculateAverageDelay(delays_512, "1k");
 }
 
-
 TEST_F(UDPTestFixture, SenderReceiverTest100k)
 {
     uint32_t cnt = 0;
@@ -221,6 +247,33 @@ TEST_F(UDPTestFixture, SenderReceiverTest100k)
     calculateAverageDelay(delays_51200, "100k");
 }
 
+TEST_F(UDPTestFixture, SenderReceiverTest1M)
+{
+    uint32_t cnt = 0;
+    int index = 0;
+
+    while (cnt < 10) {
+        Message_524288 message;
+        auto now = std::chrono::system_clock::now();
+        auto value = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
+        auto epoch = value.time_since_epoch();
+        auto timestamp = std::chrono::duration_cast<std::chrono::milliseconds>(epoch).count();
+        message.timestamp(timestamp);
+        message.id(get_hostname());
+        std::unique_ptr<std::array<int16_t, 524288>> data =
+            std::make_unique<std::array<int16_t, 524288>>();
+        for (size_t i = 0; i < data->size(); ++i) {
+            (*data)[i] = static_cast<int16_t>(cnt); // Ê¾ÀýÊý¾Ý
+        }
+        message.data(*data);
+        if (dataWriter_524288->writeMessage(message)) {
+            LOG(debug) << "send message: " << message.id();
+        }
+        cnt++;
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+    calculateAverageDelay(delays_524288, "1M");
+}
 
 TEST_F(UDPTestFixture, SenderReceiverTest5M)
 {
@@ -249,5 +302,3 @@ TEST_F(UDPTestFixture, SenderReceiverTest5M)
     }
     calculateAverageDelay(delays_2621440, "5M");
 }
-
-
