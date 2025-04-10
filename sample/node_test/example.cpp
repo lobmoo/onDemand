@@ -12,9 +12,9 @@ int main(int argc, char **argv) {
     Logger::Instance().Init("log/myapp.log", Logger::console, Logger::info, 60, 5);
     std::string mode = argv[1];
     if (mode == "send") {
-        ::testing::GTEST_FLAG(filter) = "UDPTest.SenderTest1k:UDPTest.MultiTopicSenderTest1k";
+        ::testing::GTEST_FLAG(filter) = "UDPTest.SenderTest1k:UDPTest.SenderTest5M:UDPTest.MultiTopicSenderTest1k:UDPTest.MultiTopicSenderTest5M";
     } else if (mode == "recv") {
-        ::testing::GTEST_FLAG(filter) = "UDPTest.ReceiverTest1k:UDPTest.MultiTopicReceiverTest1k";
+        ::testing::GTEST_FLAG(filter) = "UDPTest.ReceiverTest1k:UDPTest.ReceiverTest5M:UDPTest.MultiTopicReceiverTest1k:UDPTest.MultiTopicReceiverTest5M";
     } else {
         std::cerr << "Invalid mode. Use 'send' or 'recv'." << std::endl;
         return -1;
