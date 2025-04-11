@@ -24,6 +24,19 @@
 #include "log/logger.h"
 using namespace std;
 
+
+static int32_t get_hostname()
+{
+    char hostname[1024];
+    if (gethostname(hostname, sizeof(hostname)) == 0) {
+        std::hash<std::string> hasher;
+        size_t hash_value = hasher(hostname);
+        return static_cast<int32_t>(hash_value);
+    } else {
+        return -1; // 错误处理
+    }
+}
+
 static std::mutex delays_mutex;
 class UDPTestFixtureMult : public ::testing::Test
 {
@@ -155,8 +168,8 @@ static void calculateAverageDelay(const std::unordered_map<int32_t, std::vector<
             sum += delay_time;
         }
         if (!delay.empty()) {
-            LOG(info) << "Average delay for message [" << tag << "][" << id
-                      << "]: " << static_cast<double>(sum) / delay.size();
+            LOG(info) << "HOST ID: " << get_hostname() << "  Average delay for message [" << tag << "][" << id
+            << "]: " << static_cast<double>(sum) / delay.size();
 
         } else {
             LOG(warning) << "No messages received for message [" << id << "].";
@@ -165,17 +178,7 @@ static void calculateAverageDelay(const std::unordered_map<int32_t, std::vector<
     return;
 }
 
-static int32_t get_hostname()
-{
-    char hostname[1024];
-    if (gethostname(hostname, sizeof(hostname)) == 0) {
-        std::hash<std::string> hasher;
-        size_t hash_value = hasher(hostname);
-        return static_cast<int32_t>(hash_value);
-    } else {
-        return -1; // 错误处理
-    }
-}
+
 
 TEST_F(UDPTestFixtureMult, MultiSenderReceiverTest1k)
 {
