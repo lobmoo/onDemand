@@ -156,15 +156,16 @@ protected:
                     auto timestamp =
                         std::chrono::duration_cast<std::chrono::milliseconds>(epoch).count();
 
+                  
                     int64_t delay_time = timestamp - data->timestamp();
                     {
-                        std::lock_guard<std::mutex> lock(delays_mutex_512);
-                        auto &delays = delays_512[data->id()]; // 确保访问的是已存在的元素
-                        delays.push_back(delay_time);          // 添加延迟数据
+                        // std::lock_guard<std::mutex> lock(delays_mutex_512);
+                        // auto &delays = delays_512[data->id()]; // 确保访问的是已存在的元素
+                        // delays.push_back(delay_time);          // 添加延迟数据
                     }
                     LOG(debug) << "recv message [" << topic_name << "]: " << data->id()
-                               << " recv message delay time: " << delay_time
-                               << "data:" << data->data()[0];
+                    << " recv message delay time: " << delay_time
+                    << "data:" << data->data()[0];
                 });
             // auto dataReader_51200 = receiverNode->createDataReader<Message_51200>(
             //     topic_name,
@@ -299,7 +300,7 @@ TEST_F(UDPTestFixtureMult, MultiSenderReceiverTest1k)
 
         for (auto &[topic_name, dataWriter] : dataWriter_512) {
             if (dataWriter->writeMessage(message)) {
-                LOG(debug) << "send message: [" << topic_name<< "]" << message.id();
+                LOG(debug) << "send message: [" << topic_name << "]" << message.id();
             }
         }
         cnt++;
