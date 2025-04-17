@@ -52,11 +52,13 @@ class UDPTestFixtureMult : public ::testing::Test
 {
 
 private:
-std::vector<std::string> topic_names = {"topic1"};
-    // "topic1",   "topic2",   "topic3",   "topic4",   "topic5",   "topic6",   "topic7",
-    // "topic8",   "topic9",   "topic10",  "topic11",  "topic12",  "topic13",  "topic14",
-    // "topic15",  "topic16",  "topic17",  "topic18",  "topic19",  "topic20",  "topic21",
-    // "topic22",  "topic23",  "topic24",  "topic25",  "topic26",  "topic27",  "topic28",
+std::vector<std::string> topic_names = {
+    "topic1",   "topic2",   "topic3",   "topic4",   "topic5",   "topic6",   "topic7",
+    "topic8",   "topic9",   "topic10",  "topic11",  "topic12",  "topic13",  "topic14",
+    "topic15",  "topic16",  "topic17",  "topic18",  "topic19",  "topic20"};
+      
+    //"topic21",
+    //"topic22",  "topic23",  "topic24",  "topic25",  "topic26",  "topic27",  "topic28",
     // "topic29",  "topic30",  "topic31",  "topic32",  "topic33",  "topic34",  "topic35",
     // "topic36",  "topic37",  "topic38",  "topic39",  "topic40",  "topic41",  "topic42",
     // "topic43",  "topic44",  "topic45",  "topic46",  "topic47",  "topic48",  "topic49",
