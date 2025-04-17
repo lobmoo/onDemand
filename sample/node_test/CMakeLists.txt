@@ -23,6 +23,10 @@ file(GLOB DDS_SHM_HELLOWORLD_EXAMPLE_SOURCES         "${CMAKE_CURRENT_SOURCE_DIR
                                                      "${CMAKE_CURRENT_SOURCE_DIR}/TestMessage_8M/*.cxx"
                                                      "${CMAKE_CURRENT_SOURCE_DIR}/TestMessage_8M/*.cpp"
                                                      "${CMAKE_CURRENT_SOURCE_DIR}/TestMessage_8M/*.ipp"
+
+                                                     "${CMAKE_CURRENT_SOURCE_DIR}/TestMessage_6M/*.cxx"
+                                                     "${CMAKE_CURRENT_SOURCE_DIR}/TestMessage_6M/*.cpp"
+                                                     "${CMAKE_CURRENT_SOURCE_DIR}/TestMessage_6M/*.ipp"
                                                      "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
 
 file(GLOB DDS_INTERFACE_SOURCES_CPP "${CMAKE_CURRENT_SOURCE_DIR}/../../common/fastdds_wrapper/*.cpp")

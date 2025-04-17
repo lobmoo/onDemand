@@ -8,6 +8,8 @@
 // const std::string SEND_FILTER = "UDPTest.SenderTest1k:UDPTest.SenderTest5M:UDPTest.MultiTopicSenderTest1k:UDPTest.MultiTopicSenderTest5M";
 // const std::string RECV_FILTER = "UDPTest.ReceiverTest1k:UDPTest.ReceiverTest5M:UDPTest.MultiTopicReceiverTest1k:UDPTest.MultiTopicReceiverTest5M";
 
+volatile int32_t g_testType = 0;
+
 const std::string SEND_FILTER = "UDPTest.MultiTopicSenderTest5M";
 const std::string RECV_FILTER = "UDPTest.MultiTopicReceiverTest5M";
 
@@ -18,26 +20,36 @@ int main(int argc, char **argv) {
     std::string mode = argv[1];
     if (mode == "1k") {
         ::testing::GTEST_FLAG(filter) = "UDPTestFixtureMult.MultiSenderReceiverTest1k";
+        g_testType = 1;
     }
     else if(mode == "100k")
     {
         ::testing::GTEST_FLAG(filter) = "UDPTestFixtureMult.MultiSenderReceiverTest100k";
+        g_testType = 2;
     }
     else if(mode == "1M")
     {
         ::testing::GTEST_FLAG(filter) = "UDPTestFixtureMult.MultiSenderReceiverTest1M";
+        g_testType = 3;
     }
     else if(mode == "5M")
     {
         ::testing::GTEST_FLAG(filter) = "UDPTestFixtureMult.MultiSenderReceiverTest5M";
+        g_testType = 4;    
     }
     else if(mode == "8M")
     {
         ::testing::GTEST_FLAG(filter) = "UDPTestFixtureMult.MultiSenderReceiverTest8M";
+        g_testType = 5;
+    }
+    else if(mode == "6M")
+    {
+        ::testing::GTEST_FLAG(filter) = "UDPTestFixtureMult.MultiSenderReceiverTest6M";
+        g_testType = 6;
     }
     else
     {
-        std::cerr << "Invalid mode. Use '1k', '100k', '1M', or '5M'." << std::endl;
+        std::cerr << "Invalid mode. Use '1k', '100k', '1M',  '5M', '8M'." << std::endl;
         return 0;
     }
     return RUN_ALL_TESTS();
