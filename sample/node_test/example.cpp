@@ -36,7 +36,7 @@ int main(int argc, char **argv) {
         std::cerr << "Invalid mode. Use '1k', '100k', '1M', or '5M'." << std::endl;
         return 0;
     }
-    return 0;
+    return RUN_ALL_TESTS();
 }
 
 
