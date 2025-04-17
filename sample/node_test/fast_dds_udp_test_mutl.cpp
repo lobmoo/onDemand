@@ -127,6 +127,11 @@ protected:
     {
 
         delays_512 = std::make_shared<std::unordered_map<int32_t, std::vector<uint64_t>>>();
+        delays_51200 = std::make_shared<std::unordered_map<int32_t, std::vector<uint64_t>>>();
+        delays_524288 = std::make_shared<std::unordered_map<int32_t, std::vector<uint64_t>>>();
+        delays_2621440 = std::make_shared<std::unordered_map<int32_t, std::vector<uint64_t>>>();
+
+        
         senderNode = std::make_unique<DataNode>(0, "sender_node");
         receiverNode = std::make_unique<DataNode>(0, "receiver_node");
         for (auto topic_name : topic_names) {
@@ -171,68 +176,68 @@ protected:
                     << " recv message delay time: " << delay_time
                     << "data:" << data->data()[0];
                 });
-            // auto dataReader_51200 = receiverNode->createDataReader<Message_51200>(
-            //     topic_name,
-            //     [this](const std::string &topic_name, std::shared_ptr<Message_51200> data) {
-            //         auto now = std::chrono::system_clock::now();
-            //         auto value = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
-            //         auto epoch = value.time_since_epoch();
-            //         auto timestamp =
-            //             std::chrono::duration_cast<std::chrono::milliseconds>(epoch).count();
+            auto dataReader_51200 = receiverNode->createDataReader<Message_51200>(
+                topic_name,
+                [delays_51200 = delays_51200](const std::string &topic_name, std::shared_ptr<Message_51200> data) {
+                    auto now = std::chrono::system_clock::now();
+                    auto value = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
+                    auto epoch = value.time_since_epoch();
+                    auto timestamp =
+                        std::chrono::duration_cast<std::chrono::milliseconds>(epoch).count();
 
-            //         int64_t delay_time = timestamp - data->timestamp();
-            //         {
-            //             std::lock_guard<std::mutex> lock(delays_mutex_51200);
-            //             auto &delays = delays_51200[data->id()]; // 确保访问的是已存在的元素
-            //             delays.push_back(delay_time);            // 添加延迟数据
-            //         }
+                    int64_t delay_time = timestamp - data->timestamp();
+                    {
+                        std::lock_guard<std::mutex> lock(delays_mutex_51200);
+                        auto &delays = (*delays_51200)[data->id()]; // 确保访问的是已存在的元素
+                        delays.push_back(delay_time);            // 添加延迟数据
+                    }
 
-            //         LOG(debug) << "recv message [" << topic_name << "]: " << data->id()
-            //                    << " recv message delay time: " << delay_time
-            //                    << "data:" << data->data()[0];
-            //     });
+                    LOG(debug) << "recv message [" << topic_name << "]: " << data->id()
+                               << " recv message delay time: " << delay_time
+                               << "data:" << data->data()[0];
+                });
 
-            // auto dataReader_524288 = receiverNode->createDataReader<Message_524288>(
-            //     topic_name,
-            //     [this](const std::string &topic_name, std::shared_ptr<Message_524288> data) {
-            //         auto now = std::chrono::system_clock::now();
-            //         auto value = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
-            //         auto epoch = value.time_since_epoch();
-            //         auto timestamp =
-            //             std::chrono::duration_cast<std::chrono::milliseconds>(epoch).count();
+            auto dataReader_524288 = receiverNode->createDataReader<Message_524288>(
+                topic_name,
+                [delays_524288 = delays_524288](const std::string &topic_name, std::shared_ptr<Message_524288> data) {
+                    auto now = std::chrono::system_clock::now();
+                    auto value = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
+                    auto epoch = value.time_since_epoch();
+                    auto timestamp =
+                        std::chrono::duration_cast<std::chrono::milliseconds>(epoch).count();
 
-            //         int64_t delay_time = timestamp - data->timestamp();
-            //         {
-            //             std::lock_guard<std::mutex> lock(delays_mutex_524288);
-            //             auto &delays = delays_524288[data->id()]; // 确保访问的是已存在的元素
-            //             delays.push_back(delay_time);             // 添加延迟数据
-            //         }
+                    int64_t delay_time = timestamp - data->timestamp();
+                    {
+                        std::lock_guard<std::mutex> lock(delays_mutex_524288);
+                        auto &delays = (*delays_524288)[data->id()]; // 确保访问的是已存在的元素
+                        delays.push_back(delay_time);             // 添加延迟数据
+                    }
 
-            //         LOG(debug) << "recv message [" << topic_name << "]: " << data->id()
-            //                    << " recv message delay time: " << delay_time
-            //                    << "data:" << data->data()[0];
-            //     });
+                    LOG(debug) << "recv message [" << topic_name << "]: " << data->id()
+                               << " recv message delay time: " << delay_time
+                               << "data:" << data->data()[0];
+                });
 
-            // auto dataReader_2621440 = receiverNode->createDataReader<Message_2621440>(
-            //     topic_name,
-            //     [this](const std::string &topic_name, std::shared_ptr<Message_2621440> data) {
-            //         auto now = std::chrono::system_clock::now();
-            //         auto value = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
-            //         auto epoch = value.time_since_epoch();
-            //         auto timestamp =
-            //             std::chrono::duration_cast<std::chrono::milliseconds>(epoch).count();
+            auto dataReader_2621440 = receiverNode->createDataReader<Message_2621440>(
+                topic_name,
+                [delays_2621440 = delays_2621440](const std::string &topic_name, std::shared_ptr<Message_2621440> data) {
+                    auto now = std::chrono::system_clock::now();
+                    auto value = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
+                    auto epoch = value.time_since_epoch();
+                    auto timestamp =
+                        std::chrono::duration_cast<std::chrono::milliseconds>(epoch).count();
 
-            //         int64_t delay_time = timestamp - data->timestamp();
-            //         {
-            //             std::lock_guard<std::mutex> lock(delays_mutex_2621440);
-            //             auto &delays = delays_2621440[data->id()]; // 确保访问的是已存在的元素
-            //             delays.push_back(delay_time);              // 添加延迟数据
-            //         }
+                    int64_t delay_time = timestamp - data->timestamp();
+                    {
+                        std::lock_guard<std::mutex> lock(delays_mutex_2621440);
+                        auto &delays = (*delays_2621440)[data->id()]; // 确保访问的是已存在的元素
+                        delays.push_back(delay_time);              // 添加延迟数据
+                    }
 
-            //         LOG(debug) << "recv message [" << topic_name << "]: " << data->id()
-            //                    << " recv message delay time: " << delay_time
-            //                    << "data:" << data->data()[0];
-            //     });
+                    LOG(debug) << "recv message [" << topic_name << "]: " << data->id()
+                               << " recv message delay time: " << delay_time
+                               << "data:" << data->data()[0];
+                });
         }
     }
 
@@ -254,9 +259,9 @@ protected:
     std::unordered_map<std::string, DDSTopicDataWriter<Message_2621440> *> dataWriter_2621440;
 
     std::shared_ptr<std::unordered_map<int32_t, std::vector<uint64_t>>> delays_512;
-    std::unordered_map<int32_t, std::vector<uint64_t>> delays_51200;
-    std::unordered_map<int32_t, std::vector<uint64_t>> delays_524288;
-    std::unordered_map<int32_t, std::vector<uint64_t>> delays_2621440;
+    std::shared_ptr<std::unordered_map<int32_t, std::vector<uint64_t>>> delays_51200;
+    std::shared_ptr<std::unordered_map<int32_t, std::vector<uint64_t>>> delays_524288;
+    std::shared_ptr<std::unordered_map<int32_t, std::vector<uint64_t>>> delays_2621440;
 };
 
 static void calculateAverageDelay(std::mutex &mutex_,
