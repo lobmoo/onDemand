@@ -40,6 +40,8 @@ static std::mutex delays_mutex_512;
 static std::mutex delays_mutex_51200;
 static std::mutex delays_mutex_524288;
 static std::mutex delays_mutex_2621440;
+
+
 class UDPTestFixtureMult : public ::testing::Test
 {
 
@@ -159,9 +161,9 @@ protected:
                   
                     int64_t delay_time = timestamp - data->timestamp();
                     {
-                        // std::lock_guard<std::mutex> lock(delays_mutex_512);
-                        // auto &delays = delays_512[data->id()]; // 确保访问的是已存在的元素
-                        // delays.push_back(delay_time);          // 添加延迟数据
+                        std::lock_guard<std::mutex> lock(delays_mutex_512);
+                        auto &delays = (*delays_512)[data->id()]; // 确保访问的是已存在的元素
+                        delays.push_back(delay_time);          // 添加延迟数据
                     }
                     LOG(debug) << "recv message [" << topic_name << "]: " << data->id()
                     << " recv message delay time: " << delay_time
@@ -249,21 +251,21 @@ protected:
     std::unordered_map<std::string, DDSTopicDataWriter<Message_524288> *> dataWriter_524288;
     std::unordered_map<std::string, DDSTopicDataWriter<Message_2621440> *> dataWriter_2621440;
 
-    std::unordered_map<int32_t, std::vector<uint64_t>> delays_512;
+    std::shared_ptr<std::unordered_map<int32_t, std::vector<uint64_t>>> delays_512;
     std::unordered_map<int32_t, std::vector<uint64_t>> delays_51200;
     std::unordered_map<int32_t, std::vector<uint64_t>> delays_524288;
     std::unordered_map<int32_t, std::vector<uint64_t>> delays_2621440;
 };
 
 static void calculateAverageDelay(std::mutex &mutex_,
-                                  const std::unordered_map<int32_t, std::vector<uint64_t>> &delays,
+                                  const std::shared_ptr<std::unordered_map<int32_t, std::vector<uint64_t>>> delays,
                                   std::string tag)
 {
     std::lock_guard<std::mutex> lock(mutex_);
-    if (delays.empty()) {
+    if (delays->empty()) {
         return;
     }
-    for (const auto &[id, delay] : delays) {
+    for (const auto &[id, delay] : *delays) {
         uint64_t sum = 0;
         for (auto delay_time : delay) {
             sum += delay_time;
