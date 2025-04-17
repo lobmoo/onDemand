@@ -153,7 +153,7 @@ protected:
         for (auto topic_name : topic_names) {
             auto dataReader_512 = receiverNode->createDataReader<Message_512>(
                 topic_name,
-                [this](const std::string &topic_name, std::shared_ptr<Message_512> data) {
+                [delays_512 = delays_512](const std::string &topic_name, std::shared_ptr<Message_512> data) {
                     auto now = std::chrono::system_clock::now();
                     auto value = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
                     auto epoch = value.time_since_epoch();
