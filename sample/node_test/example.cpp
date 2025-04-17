@@ -31,6 +31,10 @@ int main(int argc, char **argv) {
     {
         ::testing::GTEST_FLAG(filter) = "UDPTestFixtureMult.MultiSenderReceiverTest5M";
     }
+    else if(mode == "8M")
+    {
+        ::testing::GTEST_FLAG(filter) = "UDPTestFixtureMult.MultiSenderReceiverTest8M";
+    }
     else
     {
         std::cerr << "Invalid mode. Use '1k', '100k', '1M', or '5M'." << std::endl;
