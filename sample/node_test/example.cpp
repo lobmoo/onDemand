@@ -16,13 +16,20 @@ int main(int argc, char **argv) {
     Logger::Instance().Init("log/myapp.log", Logger::console, Logger::info, 60, 5);
     sleep(3);
     std::string mode = argv[1];
-    if (mode == "sig") {
-        ::testing::GTEST_FLAG(filter) = "UDPTestFixture.*";
-    } else if (mode == "mut") {
-        ::testing::GTEST_FLAG(filter) = "UDPTestFixtureMult.*";
-    } else {
-        std::cerr << "Invalid mode. Use 'send' or 'recv'." << std::endl;
-        return -1;
+    if (mode == "1k") {
+        ::testing::GTEST_FLAG(filter) = "UDPTestFixtureMult.MultiSenderReceiverTest1k";
+    }
+    else if(mode == "100k")
+    {
+        ::testing::GTEST_FLAG(filter) = "UDPTestFixtureMult.MultiSenderReceiverTest100k";
+    }
+    else if(mode == "1M")
+    {
+        ::testing::GTEST_FLAG(filter) = "UDPTestFixtureMult.MultiSenderReceiverTest1M";
+    }
+    else if(mode == "5M")
+    {
+        ::testing::GTEST_FLAG(filter) = "UDPTestFixtureMult.MultiSenderReceiverTest5M";
     }
     return RUN_ALL_TESTS();
 }
