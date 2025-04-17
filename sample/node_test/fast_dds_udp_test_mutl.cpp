@@ -125,6 +125,8 @@ private:
 protected:
     void SetUp() override
     {
+
+        delays_512 = std::make_shared<std::unordered_map<int32_t, std::vector<uint64_t>>>();
         senderNode = std::make_unique<DataNode>(0, "sender_node");
         receiverNode = std::make_unique<DataNode>(0, "receiver_node");
         for (auto topic_name : topic_names) {
