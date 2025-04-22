@@ -158,3 +158,25 @@ bool DDSDomainParticipant::get_datawriter_qos_from_profile(const std::string &pr
     }
     return false;
 }
+
+bool DDSDomainParticipant::get_default_datawriter_qos(DataWriterQos &writer_qos)
+{
+    if (m_publisher) {
+        return m_publisher->get_default_datawriter_qos(writer_qos)
+                       == eprosima::fastdds::dds::RETCODE_OK
+                   ? true
+                   : false;
+    }
+    return false;
+}
+
+bool  DDSDomainParticipant::get_default_datareader_qos(DataReaderQos &reader_qos)
+{
+    if (m_subscriber) {
+        return m_subscriber->get_default_datareader_qos(reader_qos)
+                       == eprosima::fastdds::dds::RETCODE_OK
+                   ? true
+                   : false;
+    }
+    return false;
+}

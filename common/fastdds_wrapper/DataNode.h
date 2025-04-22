@@ -74,16 +74,15 @@ protected:
 
 public:
     template <typename T>
-    DDSTopicDataWriter<T> *createDataWriter(const std::string topicName,
-                                            eprosima::fastdds::dds::DataWriterQos dataWriterQos =
-                                                eprosima::fastdds::dds::DATAWRITER_QOS_DEFAULT);
+    DDSTopicDataWriter<T> *
+    createDataWriter(const std::string topicName,
+                     eprosima::fastdds::dds::DataWriterQos *dataWriterQos = nullptr);
 
     template <typename T>
     DDSTopicDataReader<T> *
     createDataReader(const std::string topicName,
                      std::function<void(const std::string &, std::shared_ptr<T>)> callback,
-                     const eprosima::fastdds::dds::DataReaderQos &dataReaderQos =
-                         eprosima::fastdds::dds::DATAREADER_QOS_DEFAULT);
+                     const eprosima::fastdds::dds::DataReaderQos *dataReaderQos = nullptr);
 
     template <typename T>
     void registerTopicType(const std::string &topicName)
@@ -100,7 +99,7 @@ public:
 template <typename T>
 DDSTopicDataWriter<T> *
 DataNode::createDataWriter(const std::string topicName,
-                           eprosima::fastdds::dds::DataWriterQos dataWriterQos)
+                           eprosima::fastdds::dds::DataWriterQos *dataWriterQos)
 {
     return DDSParticipantManager::createDataWriter<T>(topicName, dataWriterQos);
 }
@@ -115,7 +114,7 @@ template <typename T>
 DDSTopicDataReader<T> *
 DataNode::createDataReader(const std::string topicName,
                            std::function<void(const std::string &, std::shared_ptr<T>)> callback,
-                           const eprosima::fastdds::dds::DataReaderQos &dataReaderQos)
+                           const eprosima::fastdds::dds::DataReaderQos *dataReaderQos)
 {
     return DDSParticipantManager::createDataReader<T>(topicName, callback, dataReaderQos);
 }

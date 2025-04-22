@@ -59,6 +59,12 @@ public:
                                          DataReaderQos &dataReaderQos);
     bool get_datawriter_qos_from_profile(const std::string &profile_name,
                                          DataWriterQos &dataWriterQos);
+    bool get_default_datawriter_qos(DataWriterQos &writer_qos);
+    bool get_default_datareader_qos(DataReaderQos &reader_qos);
+    bool get_default_topic_qos(TopicQos &topic_qos);
+    bool get_default_participant_qos(DomainParticipantQos &participant_qos);
+    bool get_default_subscriber_qos(SubscriberQos &subscriber_qos);
+    bool get_default_publisher_qos(PublisherQos &publisher_qos);
 
 private:
     eprosima::fastdds::dds::DomainParticipant *m_participant;

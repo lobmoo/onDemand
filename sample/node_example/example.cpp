@@ -48,11 +48,11 @@ void test_multi_sub_pub(int argc, char *argv[])
         return;
     }
     if (strcmp(argv[1], "sub") == 0) {
-        run_dds_data_Multireader();
-        //run_dds_data_reader();
+        //run_dds_data_Multireader();
+        run_dds_data_reader();
     } else if (strcmp(argv[1], "pub") == 0) {
-       run_dds_data_Multiwriter();
-        //run_dds_data_writer();
+       //run_dds_data_Multiwriter();
+        run_dds_data_writer();
     } else {
         std::cerr << "unknown command: " << argv[1] << std::endl;
     }
@@ -104,11 +104,14 @@ int main(int argc, char *argv[])
 void run_dds_data_writer()
 {
     DDSParticipantListener *listener = new DDSParticipantListener();
-    //DataNode node("/home/wwk/workspaces/test_demo/sample/node_example/qosConfig.xml", listener);
+    DataNode node("/home/wwk/workspaces/test_demo/sample/node_example/qosConfig.xml", listener);
     //DataNode node(170, "test_writer", NULL, listener);
-    DataNode node(170, "test_writer");
+    //DataNode node(0, "test_writer");
     node.registerTopicType<HelloWorldOnePubSubType>("wwk");
-    auto dataWriter = node.createDataWriter<HelloWorldOne>("wwk");
+
+    eprosima::fastdds::dds::DataWriterQos dataWriterQos;
+    dataWriterQos = eprosima::fastdds::dds::DATAWRITER_QOS_DEFAULT;
+    auto dataWriter = node.createDataWriter<HelloWorldOne>("wwk", &dataWriterQos);
     bool runFlag = true;
     int index = 0;
     std::thread([&]() {
@@ -124,16 +127,16 @@ void run_dds_data_writer()
         if (dataWriter->writeMessage(message)) {
             LOG(info) << "send message: " << message.index();
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }
 }
 
 void run_dds_data_reader()
 {
     DDSParticipantListener *listener = new DDSParticipantListener();
-    //DataNode node("/home/wwk/workspaces/test_demo/sample/node_example/qosConfig.xml", listener);
+    DataNode node("/home/wwk/workspaces/test_demo/sample/node_example/qosConfig.xml", listener);
     //DataNode node(170, "test_reader", NULL, listener);
-    DataNode node(170, "test_reader");
+    //DataNode node(0, "test_reader");
     node.registerTopicType<HelloWorldOnePubSubType>("wwk");
     auto dataReader = node.createDataReader<HelloWorldOne>("wwk", processHelloWorldOne);
     while (std::cin.get() != '\n') {
@@ -150,7 +153,7 @@ void run_dds_data_Multiwriter()
     bool runFlag = true;
 
     // 初始化节点
-    DataNode node(1, "sender_node");
+    DataNode node(0, "sender_node");
 
     // 注册多个主题
     std::vector<std::string> topics = {"Topic_1", "Topic_2", "Topic_3"};
