@@ -81,14 +81,13 @@ DDSParticipantManager::createDataWriter(std::string topicName,
             LOG(error) << "get topic qos from profile error, using default topic qos";
         }
         eprosima::fastdds::dds::DataWriterQos config_dataWriterQos;
-        if(!m_participant->get_default_datawriter_qos(config_dataWriterQos))
-        {
+        if (!m_participant->get_default_datawriter_qos(config_dataWriterQos)) {
             LOG(error) << "get default datawriter qos error, using default datawriter qos";
             config_dataWriterQos = eprosima::fastdds::dds::DATAWRITER_QOS_DEFAULT;
         }
-        if (dataWriterQos)
-        {
-            LOG(error) << "datawriter qos not equal to default datawriter qos, using default datawriter qos";
+        if (dataWriterQos) {
+            LOG(error) << "datawriter qos not equal to default datawriter qos, using default "
+                          "datawriter qos";
             config_dataWriterQos = *dataWriterQos;
         }
         // if (!m_participant->get_datawriter_qos_from_profile(CONFIGURATION_DATAWRITER_PROFILE,
@@ -115,14 +114,13 @@ DDSTopicDataReader<T> *DDSParticipantManager::createDataReader(
         }
         eprosima::fastdds::dds::DataReaderQos config_dataReaderQos;
 
-        if(!m_participant->get_default_datareader_qos(config_dataReaderQos))
-        {
+        if (!m_participant->get_default_datareader_qos(config_dataReaderQos)) {
             LOG(error) << "get default datareader qos error, using default datareader qos";
             config_dataReaderQos = eprosima::fastdds::dds::DATAREADER_QOS_DEFAULT;
         }
-        if (dataReaderQos)
-        {
-            LOG(error) << "datareader qos not equal to default datareader qos, using default datareader qos";
+        if (dataReaderQos) {
+            LOG(error) << "datareader qos not equal to default datareader qos, using default "
+                          "datareader qos";
             config_dataReaderQos = *dataReaderQos;
         }
         // if (!m_participant->get_datareader_qos_from_profile(CONFIGURATION_DATAREADER_PROFILE,

@@ -27,24 +27,22 @@ class DDSTopicDataReader
     typedef std::function<void(const std::string &, std::shared_ptr<T>)> OnMessageCallback;
 
 public:
-    DDSTopicDataReader(eprosima::fastdds::dds::Subscriber          *subscriber,
-                       eprosima::fastdds::dds::Topic               *topic,
-                       OnMessageCallback                            callback,
+    DDSTopicDataReader(eprosima::fastdds::dds::Subscriber *subscriber,
+                       eprosima::fastdds::dds::Topic *topic, OnMessageCallback callback,
                        const eprosima::fastdds::dds::DataReaderQos &dataReaderQos);
     ~DDSTopicDataReader();
 
 private:
-    DDSDataReaderListener<T>            m_readerListener;
+    DDSDataReaderListener<T> m_readerListener;
     eprosima::fastdds::dds::DataReader *m_dataReader;
     eprosima::fastdds::dds::Subscriber *m_subscriber;
 };
 
 template <typename T>
-DDSTopicDataReader<T>::DDSTopicDataReader(eprosima::fastdds::dds::Subscriber          *subscriber,
-                                          eprosima::fastdds::dds::Topic               *topic,
-                                          OnMessageCallback                            callback,
-                                          const eprosima::fastdds::dds::DataReaderQos &dataReaderQos) :
-    m_subscriber(subscriber)
+DDSTopicDataReader<T>::DDSTopicDataReader(
+    eprosima::fastdds::dds::Subscriber *subscriber, eprosima::fastdds::dds::Topic *topic,
+    OnMessageCallback callback, const eprosima::fastdds::dds::DataReaderQos &dataReaderQos)
+    : m_subscriber(subscriber)
 {
     m_readerListener.m_callback = callback;
     m_dataReader = subscriber->create_datareader(topic, dataReaderQos, &m_readerListener);

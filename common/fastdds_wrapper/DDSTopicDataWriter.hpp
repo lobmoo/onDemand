@@ -25,26 +25,26 @@ template <typename T>
 class DDSTopicDataWriter
 {
 public:
-    DDSTopicDataWriter(eprosima::fastdds::dds::Publisher           *publisher,
-                       eprosima::fastdds::dds::Topic               *topic,
+    DDSTopicDataWriter(eprosima::fastdds::dds::Publisher *publisher,
+                       eprosima::fastdds::dds::Topic *topic,
                        const eprosima::fastdds::dds::DataWriterQos &dataWriterQos);
     ~DDSTopicDataWriter();
 
 public:
     bool writeMessage(const T &message);
-    bool clear_history(size_t* removed);
+    bool clear_history(size_t *removed);
 
 private:
-    DDSDataWriterListener               m_writerListener;
+    DDSDataWriterListener m_writerListener;
     eprosima::fastdds::dds::DataWriter *m_dataWriter;
-    eprosima::fastdds::dds::Publisher  *m_publisher;
+    eprosima::fastdds::dds::Publisher *m_publisher;
 };
 
 template <typename T>
-DDSTopicDataWriter<T>::DDSTopicDataWriter(eprosima::fastdds::dds::Publisher           *publisher,
-                                          eprosima::fastdds::dds::Topic               *topic,
-                                          const eprosima::fastdds::dds::DataWriterQos &dataWriterQos) :
-    m_publisher(publisher)
+DDSTopicDataWriter<T>::DDSTopicDataWriter(
+    eprosima::fastdds::dds::Publisher *publisher, eprosima::fastdds::dds::Topic *topic,
+    const eprosima::fastdds::dds::DataWriterQos &dataWriterQos)
+    : m_publisher(publisher)
 {
     m_dataWriter = publisher->create_datawriter(topic, dataWriterQos, &m_writerListener);
 }
@@ -58,12 +58,14 @@ DDSTopicDataWriter<T>::~DDSTopicDataWriter()
 template <typename T>
 bool DDSTopicDataWriter<T>::writeMessage(const T &message)
 {
-    return  m_dataWriter->write((void *)&message) == eprosima::fastdds::dds::RETCODE_OK ? true : false;
+    return m_dataWriter->write((void *)&message) == eprosima::fastdds::dds::RETCODE_OK ? true
+                                                                                       : false;
 }
 
 template <typename T>
-bool DDSTopicDataWriter<T>::clear_history(size_t* removed)
+bool DDSTopicDataWriter<T>::clear_history(size_t *removed)
 {
-    return m_dataWriter->clear_history(removed) == eprosima::fastdds::dds::RETCODE_OK ? true : false;
+    return m_dataWriter->clear_history(removed) == eprosima::fastdds::dds::RETCODE_OK ? true
+                                                                                      : false;
 }
 #endif

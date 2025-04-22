@@ -170,7 +170,7 @@ bool DDSDomainParticipant::get_default_datawriter_qos(DataWriterQos &writer_qos)
     return false;
 }
 
-bool  DDSDomainParticipant::get_default_datareader_qos(DataReaderQos &reader_qos)
+bool DDSDomainParticipant::get_default_datareader_qos(DataReaderQos &reader_qos)
 {
     if (m_subscriber) {
         return m_subscriber->get_default_datareader_qos(reader_qos)
