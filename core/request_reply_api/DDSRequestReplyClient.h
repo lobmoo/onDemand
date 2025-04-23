@@ -104,7 +104,7 @@ public:
 
     bool
     send_request(const T_RequestType &request,
-                 std::function<void(const T_ReplyType &reply, const SampleInfo &info)> callback)
+                 std::function<bool(const T_ReplyType &reply, const SampleInfo &info)> callback)
     {
         reply_callback_ = callback;
         ReturnCode_t ret = RETCODE_ERROR;
@@ -377,7 +377,7 @@ protected:
     {
         SampleInfo info;
         T_ReplyType reply;
-
+        bool recvStop = false;
         while ((!is_stopped()) && (RETCODE_OK == reader->take_next_sample(&reply, &info))) {
             if ((info.instance_state == ALIVE_INSTANCE_STATE) && info.valid_data) {
                 std::lock_guard<std::mutex> lock(mtx_);
@@ -387,38 +387,54 @@ protected:
 
                 auto request_status = requests_status_.find(info.related_sample_identity);
 
-                if (requests_status_.end() != request_status) {
-                    if (!request_status->second) {
-                        request_status->second = true;
-                        LOG(info) << "ClientApp Reply received from server " << server_guid_prefix
-                                  << " to request with ID '"
-                                  << request_status->first.sequence_number();
-                        if (reply_callback_) {
-                            reply_callback_(reply, info);
-                        }
-                        reply_ = reply;
-                    } else {
-                        LOG(debug) << "ClientApp Duplicate reply received from server "
-                                   << server_guid_prefix << " to request with ID '"
-                                   << request_status->first.sequence_number();
-                        continue;
-                    }
-                } else {
-                    LOG(error) << "ClientApp  Reply received from server " << server_guid_prefix
-                               << " with unknown request ID '"
-                               << info.related_sample_identity.sequence_number() << "'";
-                    continue;
+                for(auto &ptr : requests_status_) {
+                    LOG(critical) << "ClientApp request status: " << ptr.first.sequence_number() << " "
+                               << ptr.second << "info.related_sample_identity : " << info.related_sample_identity;
                 }
-
-                bool all_responses_received = true;
-                for (auto &status : requests_status_) {
-                    all_responses_received &= status.second;
+                
+                if (reply_callback_) {
+                    recvStop = reply_callback_(reply, info);
                 }
+                reply_ = reply;
 
-                if (all_responses_received) {
+                if(recvStop) {
                     stop();
                     break;
                 }
+
+                // if (requests_status_.end() != request_status) {
+                //     if (!request_status->second) {
+                //         request_status->second = true;
+                //         LOG(info) << "ClientApp Reply received from server " << server_guid_prefix
+                //                   << " to request with ID '"
+                //                   << request_status->first.sequence_number();
+                //         if (reply_callback_) {
+                //             reply_callback_(reply, info);
+                //         }
+                //         reply_ = reply;
+                //     } else {
+                //         LOG(debug) << "ClientApp Duplicate reply received from server "
+                //                    << server_guid_prefix << " to request with ID '"
+                //                    << request_status->first.sequence_number();
+                //         continue;
+                //     }
+                // } else {
+                //     LOG(error) << "ClientApp  Reply received from server " << server_guid_prefix
+                //                << " with unknown request ID '"
+                //                << info.related_sample_identity.sequence_number() << "'";
+                //     continue;
+                // }
+
+                // bool all_responses_received = true;
+                // for (auto &status : requests_status_) {
+                //     all_responses_received &= status.second;
+                // }
+
+                // if (all_responses_received) {
+                //     //LOG(info) << "ClientApp All responses received. Stopping client.";
+                //     //stop();
+                //    // break;
+                // }
             }
         }
     }
@@ -450,7 +466,7 @@ private:
 
     T_ReplyType reply_;
     std::queue<Request> requests_;
-    std::function<void(const T_ReplyType &reply, const SampleInfo &info)> reply_callback_;
+    std::function<bool(const T_ReplyType &reply, const SampleInfo &info)> reply_callback_;
     std::thread reply_thread_;
 };
 } // namespace request_reply

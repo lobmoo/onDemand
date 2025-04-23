@@ -108,6 +108,7 @@ public:
 
     ~DDSRequestReplyServer()
     {
+        stop();
         if (reply_thread_.joinable()) {
             reply_thread_.join();
         }
@@ -207,6 +208,12 @@ private:
     }
 
     bool is_stopped() { return stop_.load(); }
+
+    void stop()
+    {
+        stop_.store(true);
+        cv_.notify_all();
+    }
 
     void reply_routine()
     {
