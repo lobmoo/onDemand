@@ -89,8 +89,6 @@ DDSParticipantManager::createDataWriter(std::string topicName,
             config_dataWriterQos = eprosima::fastdds::dds::DATAWRITER_QOS_DEFAULT;
         }
         if (dataWriterQos) {
-            LOG(error) << "datawriter qos not equal to default datawriter qos, using default "
-                          "datawriter qos";
             config_dataWriterQos = *dataWriterQos;
         }
         // if (!m_participant->get_datawriter_qos_from_profile(CONFIGURATION_DATAWRITER_PROFILE,
@@ -127,8 +125,6 @@ DDSTopicDataReader<T> *DDSParticipantManager::createDataReader(
             config_dataReaderQos = eprosima::fastdds::dds::DATAREADER_QOS_DEFAULT;
         }
         if (dataReaderQos) {
-            LOG(error) << "datareader qos not equal to default datareader qos, using default "
-                          "datareader qos";
             config_dataReaderQos = *dataReaderQos;
         }
         // if (!m_participant->get_datareader_qos_from_profile(CONFIGURATION_DATAREADER_PROFILE,

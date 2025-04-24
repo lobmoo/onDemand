@@ -1,47 +1,82 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<profiles xmlns="http://www.eprosima.com" >
+<profiles xmlns="http://www.eprosima.com">
     <participant profile_name="defaul_participant_profile" is_default_profile="true">
         <domainId>0</domainId>
         <rtps>
-            <name>defaul_participant</name>
+            <name>DSF Node</name>
+            <!-- 内置传输 -->
+            <userTransports>
+                <transport_id>SHMEM</transport_id>
+                <transport_id>UDPv4</transport_id>
+            </userTransports>
+            <!-- 发布者/订阅者发现配置 -->
+            <discovery_config>
+                <ignore_default_domain_announcements>false</ignore_default_domain_announcements>
+                <participant_liveliness_lease_duration>
+                    <sec>100</sec>
+                    <nanosec>0</nanosec>
+                </participant_liveliness_lease_duration>
+                <participant_liveliness_assert_period>
+                    <sec>10</sec>
+                    <nanosec>0</nanosec>
+                </participant_liveliness_assert_period>
+                <!-- 其余 discovery 参数同理… -->
+            </discovery_config>
         </rtps>
+        <qos>
+            <resourceLimitsQos>
+                <max_samples>5000</max_samples>
+                <max_instances>10</max_instances>
+                <max_samples_per_instance>400</max_samples_per_instance>
+                <allocated_samples>100</allocated_samples>
+                <extra_samples>1</extra_samples>
+            </resourceLimitsQos>
+            <property>
+                <value>
+                    <element>
+                        <name>dds.transport.UDPv4.builtin.recv_socket_buffer_size</name>
+                        <value>1048576</value>
+                    </element>
+                </value>
+            </property>
+        </qos>
     </participant>
 
     <topic profile_name="defaul_topic_profile" is_default_profile="true">
-    <historyQos>
-        <kind>KEEP_LAST</kind>
-        <depth>20</depth>
-    </historyQos>
-    <resourceLimitsQos>
-        <max_samples>5</max_samples>
-        <max_instances>2</max_instances>
-        <max_samples_per_instance>1</max_samples_per_instance>
-        <allocated_samples>20</allocated_samples>
-        <extra_samples>10</extra_samples>
-    </resourceLimitsQos>
+        <historyQos>
+            <kind>KEEP_LAST</kind>
+            <depth>20</depth>
+        </historyQos>
+        <resourceLimitsQos>
+            <max_samples>5</max_samples>
+            <max_instances>2</max_instances>
+            <max_samples_per_instance>1</max_samples_per_instance>
+            <allocated_samples>20</allocated_samples>
+            <extra_samples>10</extra_samples>
+        </resourceLimitsQos>
     </topic>
 
     <publisher profile_name="defaul_publisher_profile" is_default_profile="true">
-            <qos>
-                <reliability>
-                    <kind>RELIABLE</kind>
-                </reliability>
-                <durability>
-                    <kind>TRANSIENT_LOCAL</kind>
-                </durability>
-            </qos>
+        <qos>
+            <reliability>
+                <kind>RELIABLE</kind>
+            </reliability>
+            <durability>
+                <kind>TRANSIENT_LOCAL</kind>
+            </durability>
+        </qos>
     </publisher>
 
-      
+
     <subscriber profile_name="defaul_subscriber_profile" is_default_profile="true">
-            <qos>
-                <reliability>
-                    <kind>RELIABLE</kind>
-                </reliability>
-                <durability>
-                    <kind>TRANSIENT_LOCAL</kind>
-                </durability>
-            </qos>
+        <qos>
+            <reliability>
+                <kind>RELIABLE</kind>
+            </reliability>
+            <durability>
+                <kind>TRANSIENT_LOCAL</kind>
+            </durability>
+        </qos>
     </subscriber>
 
     <data_writer profile_name="defaul_datawriter_profile" is_default_profile="true">
@@ -63,7 +98,7 @@
                 <max_instances>1</max_instances>
                 <max_samples_per_instance>100</max_samples_per_instance>
             </resourceLimitsQos>
-    </topic>
+        </topic>
     </data_writer>
 
     <data_reader profile_name="defaul_datareader_profile" is_default_profile="true">

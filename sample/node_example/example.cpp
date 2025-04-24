@@ -109,9 +109,9 @@ void run_dds_data_writer()
     //DataNode node(0, "test_writer");
     node.registerTopicType<HelloWorldOnePubSubType>("wwk");
 
-    eprosima::fastdds::dds::DataWriterQos dataWriterQos;
-    dataWriterQos = eprosima::fastdds::dds::DATAWRITER_QOS_DEFAULT;
-    auto dataWriter = node.createDataWriter<HelloWorldOne>("wwk", &dataWriterQos);
+    // eprosima::fastdds::dds::DataWriterQos dataWriterQos;
+    // dataWriterQos = eprosima::fastdds::dds::DATAWRITER_QOS_DEFAULT;
+    auto dataWriter = node.createDataWriter<HelloWorldOne>("wwk");
     bool runFlag = true;
     int index = 0;
     std::thread([&]() {
