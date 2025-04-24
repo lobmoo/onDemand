@@ -58,18 +58,24 @@ DDSDomainParticipant::DDSDomainParticipant(std::string XmlConfig,
             m_publisher = m_participant->create_publisher(publisherQos, nullptr);
         }
     } else {
-        DomainParticipantFactory::get_instance()->load_XML_profiles_file(XmlConfig);
-        m_participant = DomainParticipantFactory::get_instance()->create_participant_with_profile(
-            "configuration_participant_profile", listener, StatusMask::none());
+        // DomainParticipantFactory::get_instance()->load_XML_profiles_file(XmlConfig);
+        // m_participant = DomainParticipantFactory::get_instance()->create_participant_with_profile(
+        //     "configuration_participant_profile", listener, StatusMask::none());
+        eprosima::fastdds::dds::DomainParticipantQos participantQos = PARTICIPANT_QOS_DEFAULT;
+        DomainParticipantFactory::get_instance()->get_default_participant_qos(participantQos);
+        m_participant = DomainParticipantFactory::get_instance()->create_participant(
+            0, participantQos, listener, StatusMask::none());
         if (m_participant) {
             SubscriberQos sub_qos = SUBSCRIBER_QOS_DEFAULT;
-            m_participant->get_subscriber_qos_from_profile("configuration_subscriber_profile",
-                                                           sub_qos);
+            m_participant->get_default_subscriber_qos(sub_qos);
+            // m_participant->get_subscriber_qos_from_profile("defaule_subscriber_profile",
+            //                                                sub_qos);
             m_subscriber = m_participant->create_subscriber(sub_qos, nullptr);
 
             PublisherQos pub_qos = PUBLISHER_QOS_DEFAULT;
-            m_participant->get_publisher_qos_from_profile("configuration_publisher_profile",
-                                                          pub_qos);
+            m_participant->get_default_publisher_qos(pub_qos);
+            // m_participant->get_publisher_qos_from_profile("configuration_publisher_profile",
+            //                                               pub_qos);
             m_publisher = m_participant->create_publisher(pub_qos, nullptr);
         }
     }
@@ -174,6 +180,49 @@ bool DDSDomainParticipant::get_default_datareader_qos(DataReaderQos &reader_qos)
 {
     if (m_subscriber) {
         return m_subscriber->get_default_datareader_qos(reader_qos)
+                       == eprosima::fastdds::dds::RETCODE_OK
+                   ? true
+                   : false;
+    }
+    return false;
+}
+
+bool DDSDomainParticipant::get_default_topic_qos(TopicQos &topic_qos)
+{
+    if (m_participant) {
+        return m_participant->get_default_topic_qos(topic_qos) == eprosima::fastdds::dds::RETCODE_OK
+                   ? true
+                   : false;
+    }
+    return false;
+}
+
+
+// bool DDSDomainParticipant::get_default_participant_qos(DomainParticipantQos &participant_qos)
+// {
+//     if (m_participant) {
+//         return m_participant->get_default_participant_qos(participant_qos)
+//                        == eprosima::fastdds::dds::RETCODE_OK
+//                    ? true
+//                    : false;
+//     }
+//     return false;
+// }
+
+bool DDSDomainParticipant::get_default_subscriber_qos(SubscriberQos &subscriber_qos)
+{
+    if (m_participant) {
+        return m_participant->get_default_subscriber_qos(subscriber_qos)
+                       == eprosima::fastdds::dds::RETCODE_OK
+                   ? true
+                   : false;
+    }
+    return false;
+}
+bool DDSDomainParticipant::get_default_publisher_qos(PublisherQos &publisher_qos)
+{
+    if (m_participant) {
+        return m_participant->get_default_publisher_qos(publisher_qos)
                        == eprosima::fastdds::dds::RETCODE_OK
                    ? true
                    : false;

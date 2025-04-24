@@ -24,9 +24,6 @@
 #include "DDSTopicDataWriter.hpp"
 #include "ParticipantQosHandler.h"
 
-#define CONFIGURATION_TOPIC_PROFILE "configuration_topic_profile"
-#define CONFIGURATION_DATAWRITER_PROFILE "configuration_datawriter_profile"
-#define CONFIGURATION_DATAREADER_PROFILE "configuration_datareader_profile"
 
 class DDSParticipantManager
 {
@@ -77,9 +74,15 @@ DDSParticipantManager::createDataWriter(std::string topicName,
 {
     /*配置文件的话，从配置读取*/
     if (m_isXmlConfig_) {
-        if (!m_participant->get_topic_qos_from_profile(CONFIGURATION_TOPIC_PROFILE, topicQos_)) {
-            LOG(error) << "get topic qos from profile error, using default topic qos";
+
+        if(!m_participant->get_default_topic_qos(topicQos_))
+        {
+            LOG(error) << "get default topic qos error, using default topic qos";
+            topicQos_ = eprosima::fastdds::dds::TOPIC_QOS_DEFAULT;
         }
+        // if (!m_participant->get_topic_qos_from_profile(CONFIGURATION_TOPIC_PROFILE, topicQos_)) {
+        //     LOG(error) << "get topic qos from profile error, using default topic qos";
+        // }
         eprosima::fastdds::dds::DataWriterQos config_dataWriterQos;
         if (!m_participant->get_default_datawriter_qos(config_dataWriterQos)) {
             LOG(error) << "get default datawriter qos error, using default datawriter qos";
@@ -109,9 +112,14 @@ DDSTopicDataReader<T> *DDSParticipantManager::createDataReader(
     const eprosima::fastdds::dds::DataReaderQos *dataReaderQos)
 {
     if (m_isXmlConfig_) {
-        if (!m_participant->get_topic_qos_from_profile(CONFIGURATION_TOPIC_PROFILE, topicQos_)) {
-            LOG(error) << "get topic qos from profile error, using default topic qos";
+        if(!m_participant->get_default_topic_qos(topicQos_))
+        {
+            LOG(error) << "get default topic qos error, using default topic qos";
+            topicQos_ = eprosima::fastdds::dds::TOPIC_QOS_DEFAULT;
         }
+        // if (!m_participant->get_topic_qos_from_profile(CONFIGURATION_TOPIC_PROFILE, topicQos_)) {
+        //     LOG(error) << "get topic qos from profile error, using default topic qos";
+        // }
         eprosima::fastdds::dds::DataReaderQos config_dataReaderQos;
 
         if (!m_participant->get_default_datareader_qos(config_dataReaderQos)) {

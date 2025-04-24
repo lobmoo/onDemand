@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <profiles xmlns="http://www.eprosima.com" >
-    <participant profile_name="configuration_participant_profile" is_default_profile="true">
+    <participant profile_name="defaul_participant_profile" is_default_profile="true">
         <domainId>0</domainId>
         <rtps>
-            <name>configuration_participant</name>
+            <name>defaul_participant</name>
         </rtps>
     </participant>
 
-    <topic profile_name="configuration_topic_profile">
+    <topic profile_name="defaul_topic_profile" is_default_profile="true">
     <historyQos>
         <kind>KEEP_LAST</kind>
         <depth>20</depth>
@@ -21,7 +21,7 @@
     </resourceLimitsQos>
     </topic>
 
-    <publisher profile_name="configuration_publisher_profile">
+    <publisher profile_name="defaul_publisher_profile" is_default_profile="true">
             <qos>
                 <reliability>
                     <kind>RELIABLE</kind>
@@ -33,7 +33,7 @@
     </publisher>
 
       
-    <subscriber profile_name="configuration_subscriber_profile">
+    <subscriber profile_name="defaul_subscriber_profile" is_default_profile="true">
             <qos>
                 <reliability>
                     <kind>RELIABLE</kind>
@@ -44,7 +44,7 @@
             </qos>
     </subscriber>
 
-    <data_writer profile_name="configuration_datawriter_profile" is_default_profile="true">
+    <data_writer profile_name="defaul_datawriter_profile" is_default_profile="true">
         <qos>
             <durability>
                 <kind>TRANSIENT_LOCAL</kind>
@@ -66,7 +66,7 @@
     </topic>
     </data_writer>
 
-    <data_reader profile_name="configuration_datareader_profile" is_default_profile="true">
+    <data_reader profile_name="defaul_datareader_profile" is_default_profile="true">
         <qos>
             <durability>
                 <kind>TRANSIENT_LOCAL</kind>
