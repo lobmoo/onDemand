@@ -58,7 +58,7 @@ DDSDomainParticipant::DDSDomainParticipant(std::string XmlConfig,
             m_publisher = m_participant->create_publisher(publisherQos, nullptr);
         }
     } else {
-        // DomainParticipantFactory::get_instance()->load_XML_profiles_file(XmlConfig);
+        DomainParticipantFactory::get_instance()->load_XML_profiles_file(XmlConfig);
         // m_participant = DomainParticipantFactory::get_instance()->create_participant_with_profile(
         //     "configuration_participant_profile", listener, StatusMask::none());
         eprosima::fastdds::dds::DomainParticipantQos participantQos = PARTICIPANT_QOS_DEFAULT;
