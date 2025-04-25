@@ -72,9 +72,6 @@ DDSTopicDataWriter<T> *
 DDSParticipantManager::createDataWriter(std::string topicName,
                                         const eprosima::fastdds::dds::DataWriterQos *dataWriterQos)
 {
-    /*配置文件的话，从配置读取*/
-    if (m_isXmlConfig_) {
-
         if(!m_participant->get_default_topic_qos(topicQos_))
         {
             LOG(error) << "get default topic qos error, using default topic qos";
@@ -98,10 +95,8 @@ DDSParticipantManager::createDataWriter(std::string topicName,
         if (!m_participant->registerTopic(topicName, getTopicDataType(topicName), topicQos_))
             return nullptr;
         return m_participant->createDataWriter<T>(topicName, config_dataWriterQos);
-    }
-    if (!m_participant->registerTopic(topicName, getTopicDataType(topicName), topicQos_))
-        return nullptr;
-    return m_participant->createDataWriter<T>(topicName, *dataWriterQos);
+    
+    
 }
 
 template <typename T>
@@ -109,35 +104,24 @@ DDSTopicDataReader<T> *DDSParticipantManager::createDataReader(
     std::string topicName, std::function<void(const std::string &, std::shared_ptr<T>)> callback,
     const eprosima::fastdds::dds::DataReaderQos *dataReaderQos)
 {
-    if (m_isXmlConfig_) {
-        if(!m_participant->get_default_topic_qos(topicQos_))
-        {
-            LOG(error) << "get default topic qos error, using default topic qos";
-            topicQos_ = eprosima::fastdds::dds::TOPIC_QOS_DEFAULT;
-        }
-        // if (!m_participant->get_topic_qos_from_profile(CONFIGURATION_TOPIC_PROFILE, topicQos_)) {
-        //     LOG(error) << "get topic qos from profile error, using default topic qos";
-        // }
-        eprosima::fastdds::dds::DataReaderQos config_dataReaderQos;
-
-        if (!m_participant->get_default_datareader_qos(config_dataReaderQos)) {
-            LOG(error) << "get default datareader qos error, using default datareader qos";
-            config_dataReaderQos = eprosima::fastdds::dds::DATAREADER_QOS_DEFAULT;
-        }
-        if (dataReaderQos) {
-            config_dataReaderQos = *dataReaderQos;
-        }
-        // if (!m_participant->get_datareader_qos_from_profile(CONFIGURATION_DATAREADER_PROFILE,
-        //                                                     config_dataReaderQos)) {
-        //     LOG(error) << "get datareader qos from profile error, using default datareader qos";
-        // }
-        if (!m_participant->registerTopic(topicName, getTopicDataType(topicName), topicQos_))
-            return nullptr;
-        return m_participant->createDataReader(topicName, callback, config_dataReaderQos);
+    if(!m_participant->get_default_topic_qos(topicQos_))
+    {
+        LOG(error) << "get default topic qos error, using default topic qos";
+        topicQos_ = eprosima::fastdds::dds::TOPIC_QOS_DEFAULT;
     }
+    eprosima::fastdds::dds::DataReaderQos config_dataReaderQos;
+
+    if (!m_participant->get_default_datareader_qos(config_dataReaderQos)) {
+        LOG(error) << "get default datareader qos error, using default datareader qos";
+        config_dataReaderQos = eprosima::fastdds::dds::DATAREADER_QOS_DEFAULT;
+    }
+    if (dataReaderQos) {
+        config_dataReaderQos = *dataReaderQos;
+    }
+    
     if (!m_participant->registerTopic(topicName, getTopicDataType(topicName), topicQos_))
         return nullptr;
-    return m_participant->createDataReader(topicName, callback, *dataReaderQos);
+    return m_participant->createDataReader(topicName, callback, config_dataReaderQos);
 }
 
 #endif
