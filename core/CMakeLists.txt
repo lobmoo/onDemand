@@ -44,12 +44,9 @@ set(OBJ_CPP_INCLUDE
 
 file(GLOB SOURCES_CC_FOR_API 
 "${CMAKE_SOURCE_DIR}/common/fastdds_wrapper/*.cpp"
-"${CMAKE_CURRENT_SOURCE_DIR}/request_reply_api/*.cpp")
+"${CMAKE_CURRENT_SOURCE_DIR}/fastdds_replyrequest_wrapper/*.cpp")
                                         
-file(GLOB SOURCES_CC_FOR_XTYPE
-"${CMAKE_CURRENT_SOURCE_DIR}/request_reply_api/RequestReplyTypes/*.cxx"
-"${CMAKE_CURRENT_SOURCE_DIR}/request_reply_api/RequestReplyTypes/*.cpp"
-"${CMAKE_CURRENT_SOURCE_DIR}/request_reply_api/RequestReplyTypes/*.ipp")      
+   
 
 file(GLOB SOURCES_CC_FOR_MAIN "${CMAKE_CURRENT_SOURCE_DIR}/*.cc")
 

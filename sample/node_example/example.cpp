@@ -144,8 +144,6 @@ void run_dds_data_reader()
 }
 
 
-
-
 void run_dds_data_Multiwriter()
 {
     uint32_t cnt = 0;
