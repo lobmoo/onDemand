@@ -19,17 +19,17 @@ int main(int argc, char **argv) {
     sleep(3);
     std::string mode = argv[1];
     if (mode == "1k") {
-        ::testing::GTEST_FLAG(filter) = "";
+        ::testing::GTEST_FLAG(filter) = "UDPTestRequestReply.UDPTestRequestReplyClientTest1k";
         g_testType = 1;
     }
     else if(mode == "100k")
     {
-        ::testing::GTEST_FLAG(filter) = "";
+        ::testing::GTEST_FLAG(filter) = "UDPTestRequestReply.UDPTestRequestReplyClientTest100k";
         g_testType = 2;
     }
     else if(mode == "1M")
     {
-        ::testing::GTEST_FLAG(filter) = "";
+        ::testing::GTEST_FLAG(filter) = "UDPTestRequestReply.UDPTestRequestReplyClientTest1M";
         g_testType = 3;
     }
     else
