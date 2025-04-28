@@ -33,9 +33,9 @@ bool Logger::LoggerImpl::Init(std::string fileName, int type, int level, int max
     std::vector<spdlog::sink_ptr> sinks;
 
     spdlog::level::level_enum console_level =
-        GetLogLevelFromEnv("LOG_CONSOLE_LEVEL", spdlog::level::trace);
+        GetLogLevelFromEnv("LOG_CONSOLE_LEVEL", static_cast<spdlog::level::level_enum>(level));
     spdlog::level::level_enum file_level =
-        GetLogLevelFromEnv("LOG_FILE_LEVEL", spdlog::level::trace);
+        GetLogLevelFromEnv("LOG_FILE_LEVEL", static_cast<spdlog::level::level_enum>(level));
 
     switch (type) {
         case Logger::both: {
@@ -78,7 +78,7 @@ bool Logger::LoggerImpl::Init(std::string fileName, int type, int level, int max
     } else {
         logger_ = std::make_shared<spdlog::logger>("Logger", sinks.begin(), sinks.end());
     }
-    logger_->set_level(static_cast<spdlog::level::level_enum>(spdlog::level::trace));
+    logger_->set_level(spdlog::level::trace);
     logger_->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%l%$] [%t] [%s:%# %!] %v");
     logger_->flush_on(flushOnLevel_);
 
