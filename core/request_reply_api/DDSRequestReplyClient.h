@@ -119,7 +119,7 @@ public:
             LOG(debug) << "ClientApp One server is available. Waiting for some time to ensure "
                           "matching on the server side";
             std::unique_lock<std::mutex> lock(mtx_);
-            cv_.wait_for(lock, std::chrono::seconds(1), [&]() { return is_stopped(); });
+            cv_.wait_for(lock, std::chrono::milliseconds(10), [&]() { return is_stopped(); });
         }
         {
             std::lock_guard<std::mutex> lock(mtx_);
@@ -145,7 +145,7 @@ public:
             LOG(debug) << "ClientApp One server is available. Waiting for some time to ensure "
                           "matching on the server side";
             std::unique_lock<std::mutex> lock(mtx_);
-            cv_.wait_for(lock, std::chrono::seconds(1), [&]() { return is_stopped(); });
+            cv_.wait_for(lock, std::chrono::milliseconds(10), [&]() { return is_stopped(); });
         }
         {
             std::lock_guard<std::mutex> lock(mtx_);
@@ -386,11 +386,6 @@ protected:
                     eprosima::fastdds::rtps::iHandle2GUID(info.publication_handle).guidPrefix;
 
                 auto request_status = requests_status_.find(info.related_sample_identity);
-
-                for(auto &ptr : requests_status_) {
-                    LOG(critical) << "ClientApp request status: " << ptr.first.sequence_number() << " "
-                               << ptr.second << "info.related_sample_identity : " << info.related_sample_identity;
-                }
                 
                 if (reply_callback_) {
                     recvStop = reply_callback_(reply, info);

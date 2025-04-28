@@ -24,10 +24,10 @@
 
 #include "Calculator.hpp"
 
-constexpr uint32_t CalculatorRequestType_max_cdr_typesize {272UL};
+constexpr uint32_t CalculatorRequestType_max_cdr_typesize {280UL};
 constexpr uint32_t CalculatorRequestType_max_key_cdr_typesize {260UL};
 
-constexpr uint32_t CalculatorReplyType_max_cdr_typesize {268UL};
+constexpr uint32_t CalculatorReplyType_max_cdr_typesize {280UL};
 constexpr uint32_t CalculatorReplyType_max_key_cdr_typesize {260UL};
 
 

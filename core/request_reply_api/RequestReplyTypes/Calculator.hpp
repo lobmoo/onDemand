@@ -99,6 +99,8 @@ public:
 
                     m_y = x.m_y;
 
+                    m_timestamp = x.m_timestamp;
+
     }
 
     /*!
@@ -112,6 +114,7 @@ public:
         m_operation = x.m_operation;
         m_x = x.m_x;
         m_y = x.m_y;
+        m_timestamp = x.m_timestamp;
     }
 
     /*!
@@ -130,6 +133,8 @@ public:
 
                     m_y = x.m_y;
 
+                    m_timestamp = x.m_timestamp;
+
         return *this;
     }
 
@@ -145,6 +150,7 @@ public:
         m_operation = x.m_operation;
         m_x = x.m_x;
         m_y = x.m_y;
+        m_timestamp = x.m_timestamp;
         return *this;
     }
 
@@ -158,7 +164,8 @@ public:
         return (m_client_id == x.m_client_id &&
            m_operation == x.m_operation &&
            m_x == x.m_x &&
-           m_y == x.m_y);
+           m_y == x.m_y &&
+           m_timestamp == x.m_timestamp);
     }
 
     /*!
@@ -297,6 +304,35 @@ public:
     }
 
 
+    /*!
+     * @brief This function sets a value in member timestamp
+     * @param _timestamp New value for member timestamp
+     */
+    eProsima_user_DllExport void timestamp(
+            int64_t _timestamp)
+    {
+        m_timestamp = _timestamp;
+    }
+
+    /*!
+     * @brief This function returns the value of member timestamp
+     * @return Value of member timestamp
+     */
+    eProsima_user_DllExport int64_t timestamp() const
+    {
+        return m_timestamp;
+    }
+
+    /*!
+     * @brief This function returns a reference to member timestamp
+     * @return Reference to member timestamp
+     */
+    eProsima_user_DllExport int64_t& timestamp()
+    {
+        return m_timestamp;
+    }
+
+
 
 private:
 
@@ -304,6 +340,7 @@ private:
     CalculatorOperationType m_operation{CalculatorOperationType::ADDITION};
     int16_t m_x{0};
     int16_t m_y{0};
+    int64_t m_timestamp{0};
 
 };
 /*!
@@ -339,6 +376,8 @@ public:
 
                     m_result = x.m_result;
 
+                    m_timestamp = x.m_timestamp;
+
     }
 
     /*!
@@ -350,6 +389,7 @@ public:
     {
         m_client_id = std::move(x.m_client_id);
         m_result = x.m_result;
+        m_timestamp = x.m_timestamp;
     }
 
     /*!
@@ -364,6 +404,8 @@ public:
 
                     m_result = x.m_result;
 
+                    m_timestamp = x.m_timestamp;
+
         return *this;
     }
 
@@ -377,6 +419,7 @@ public:
 
         m_client_id = std::move(x.m_client_id);
         m_result = x.m_result;
+        m_timestamp = x.m_timestamp;
         return *this;
     }
 
@@ -388,7 +431,8 @@ public:
             const CalculatorReplyType& x) const
     {
         return (m_client_id == x.m_client_id &&
-           m_result == x.m_result);
+           m_result == x.m_result &&
+           m_timestamp == x.m_timestamp);
     }
 
     /*!
@@ -469,11 +513,41 @@ public:
     }
 
 
+    /*!
+     * @brief This function sets a value in member timestamp
+     * @param _timestamp New value for member timestamp
+     */
+    eProsima_user_DllExport void timestamp(
+            int64_t _timestamp)
+    {
+        m_timestamp = _timestamp;
+    }
+
+    /*!
+     * @brief This function returns the value of member timestamp
+     * @return Value of member timestamp
+     */
+    eProsima_user_DllExport int64_t timestamp() const
+    {
+        return m_timestamp;
+    }
+
+    /*!
+     * @brief This function returns a reference to member timestamp
+     * @return Reference to member timestamp
+     */
+    eProsima_user_DllExport int64_t& timestamp()
+    {
+        return m_timestamp;
+    }
+
+
 
 private:
 
     std::string m_client_id;
     int32_t m_result{0};
+    int64_t m_timestamp{0};
 
 };
 

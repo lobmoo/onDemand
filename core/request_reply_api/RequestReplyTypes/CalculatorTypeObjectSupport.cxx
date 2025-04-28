@@ -278,6 +278,36 @@ void register_CalculatorRequestType_type_identifier(
             CompleteStructMember member_y = TypeObjectUtils::build_complete_struct_member(common_y, detail_y);
             TypeObjectUtils::add_complete_struct_member(member_seq_CalculatorRequestType, member_y);
         }
+        {
+            TypeIdentifierPair type_ids_timestamp;
+            ReturnCode_t return_code_timestamp {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_timestamp =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int64_t", type_ids_timestamp);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_timestamp)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "timestamp Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_timestamp = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_timestamp = 0x00000004;
+            bool common_timestamp_ec {false};
+            CommonStructMember common_timestamp {TypeObjectUtils::build_common_struct_member(member_id_timestamp, member_flags_timestamp, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_timestamp, common_timestamp_ec))};
+            if (!common_timestamp_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure timestamp member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_timestamp = "timestamp";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_timestamp;
+            ann_custom_CalculatorRequestType.reset();
+            CompleteMemberDetail detail_timestamp = TypeObjectUtils::build_complete_member_detail(name_timestamp, member_ann_builtin_timestamp, ann_custom_CalculatorRequestType);
+            CompleteStructMember member_timestamp = TypeObjectUtils::build_complete_struct_member(common_timestamp, detail_timestamp);
+            TypeObjectUtils::add_complete_struct_member(member_seq_CalculatorRequestType, member_timestamp);
+        }
         CompleteStructType struct_type_CalculatorRequestType = TypeObjectUtils::build_complete_struct_type(struct_flags_CalculatorRequestType, header_CalculatorRequestType, member_seq_CalculatorRequestType);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
                 TypeObjectUtils::build_and_register_struct_type_object(struct_type_CalculatorRequestType, type_name_CalculatorRequestType.to_string(), type_ids_CalculatorRequestType))
@@ -394,6 +424,36 @@ void register_CalculatorReplyType_type_identifier(
             CompleteMemberDetail detail_result = TypeObjectUtils::build_complete_member_detail(name_result, member_ann_builtin_result, ann_custom_CalculatorReplyType);
             CompleteStructMember member_result = TypeObjectUtils::build_complete_struct_member(common_result, detail_result);
             TypeObjectUtils::add_complete_struct_member(member_seq_CalculatorReplyType, member_result);
+        }
+        {
+            TypeIdentifierPair type_ids_timestamp;
+            ReturnCode_t return_code_timestamp {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_timestamp =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int64_t", type_ids_timestamp);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_timestamp)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "timestamp Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_timestamp = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_timestamp = 0x00000002;
+            bool common_timestamp_ec {false};
+            CommonStructMember common_timestamp {TypeObjectUtils::build_common_struct_member(member_id_timestamp, member_flags_timestamp, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_timestamp, common_timestamp_ec))};
+            if (!common_timestamp_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure timestamp member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_timestamp = "timestamp";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_timestamp;
+            ann_custom_CalculatorReplyType.reset();
+            CompleteMemberDetail detail_timestamp = TypeObjectUtils::build_complete_member_detail(name_timestamp, member_ann_builtin_timestamp, ann_custom_CalculatorReplyType);
+            CompleteStructMember member_timestamp = TypeObjectUtils::build_complete_struct_member(common_timestamp, detail_timestamp);
+            TypeObjectUtils::add_complete_struct_member(member_seq_CalculatorReplyType, member_timestamp);
         }
         CompleteStructType struct_type_CalculatorReplyType = TypeObjectUtils::build_complete_struct_type(struct_flags_CalculatorReplyType, header_CalculatorReplyType, member_seq_CalculatorReplyType);
         if (eprosima::fastdds::dds::RETCODE_BAD_PARAMETER ==
