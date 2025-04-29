@@ -119,7 +119,7 @@ public:
             LOG(debug) << "ClientApp One server is available. Waiting for some time to ensure "
                           "matching on the server side";
             std::unique_lock<std::mutex> lock(mtx_);
-            cv_.wait_for(lock, std::chrono::milliseconds(1), [&]() { return is_stopped(); });
+            cv_.wait_for(lock, std::chrono::microseconds(10), [&]() { return is_stopped(); });
         }
         
         {
@@ -146,7 +146,7 @@ public:
             LOG(debug) << "ClientApp One server is available. Waiting for some time to ensure "
                           "matching on the server side";
             std::unique_lock<std::mutex> lock(mtx_);
-            cv_.wait_for(lock, std::chrono::milliseconds(10), [&]() { return is_stopped(); });
+            cv_.wait_for(lock, std::chrono::microseconds(10), [&]() { return is_stopped(); });
         }
         {
             std::lock_guard<std::mutex> lock(mtx_);
