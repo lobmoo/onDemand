@@ -20,11 +20,8 @@ void Config::loadConfig(const std::string& filename) {
       data = std::make_unique<ConfigData>(); 
     }
 
-    if (config["server1"]["ip"]) 
-        data->server_ip = config["server1"]["ip"].as<std::string>();
-
-    if (config["server1"]["timeout"]) 
-        data->timeout = config["server1"]["timeout"].as<int>();
+    if (config[""]) 
+        
 }
 
 

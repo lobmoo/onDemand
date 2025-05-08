@@ -30,6 +30,7 @@ set(INSTALL_INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include")
 set(OBJ_CPP_INCLUDE
     ${CMAKE_CURRENT_SOURCE_DIR}/
     ${CMAKE_CURRENT_SOURCE_DIR}/../../thirdparty/spdlog/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../thirdparty/yaml-cpp/include
 )
 
 set(SOURCES_CC_FOR_LOG

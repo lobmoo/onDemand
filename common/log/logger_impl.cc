@@ -18,12 +18,21 @@
 #include <iomanip>
 #include <memory>
 #include <sstream>
+#include <yaml-cpp/yaml.h>
 
 Logger::LoggerImpl::LoggerImpl() : flushEvery_(0), flushOnLevel_(spdlog::level::err)
 {
 }
 Logger::LoggerImpl::~LoggerImpl()
 {
+}
+
+bool Logger::LoggerImpl::Init(const std::string logConfigFilePath)
+{
+    YAML::Node config = YAML::LoadFile(logConfigFilePath);
+
+    
+
 }
 
 bool Logger::LoggerImpl::Init(std::string fileName, int type, int level, int maxFileSize,
@@ -73,8 +82,8 @@ bool Logger::LoggerImpl::Init(std::string fileName, int type, int level, int max
     if (isAsync) {
         spdlog::init_thread_pool(logBufferSize_, std::thread::hardware_concurrency() / 4);
         logger_ = std::make_shared<spdlog::async_logger>("Logger", sinks.begin(), sinks.end(),
-                                                        spdlog::thread_pool(),
-                                                        spdlog::async_overflow_policy::block);
+                                                         spdlog::thread_pool(),
+                                                         spdlog::async_overflow_policy::block);
     } else {
         logger_ = std::make_shared<spdlog::logger>("Logger", sinks.begin(), sinks.end());
     }
@@ -106,7 +115,7 @@ void Logger::LoggerImpl::log(Logger::severity_level level, const std::string &ms
 {
     if (logger_) {
         logger_->log(spdlog::source_loc{file, line, func},
-                    static_cast<spdlog::level::level_enum>(level), msg);
+                     static_cast<spdlog::level::level_enum>(level), msg);
     }
 }
 
@@ -164,5 +173,5 @@ void Logger::LoggerImpl::setLogFileLevel(Logger::severity_level level)
 
 void Logger::LoggerImpl::setLogBufferSize(size_t size)
 {
-    logBufferSize_ = size;  
+    logBufferSize_ = size;
 }

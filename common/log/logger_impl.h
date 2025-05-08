@@ -30,12 +30,28 @@
 #include "logger.h"
 class Logger::LoggerImpl
 {
+    struct LoggerConfig {
+        std::string fileName;        /*日志文件生成路径*/
+        int type;                    /*日志类型*/
+        int level;                   /*日志等级*/
+        int maxFileSize;             /*日志文件大小*/
+        int maxBackupIndex;          /*日志文件备份个数*/
+        bool isAsync;                /*是否异步*/
+        int flushEvery;              /*异步日志刷新频率 刷入文件的频率*/
+        std::string flushOnLevel;    /*日志立即刷入文件的等级*/
+        std::string LogConsoleLevel; /*控制台日志等级*/
+        std::string LogFileLevel;    /*文件日志等级*/
+        std::string LogPattern;      /*日志格式*/
+    };
+
 public:
     LoggerImpl();
     ~LoggerImpl();
 
     bool Init(std::string fileName, int type, int level, int maxFileSize, int maxBackupIndex,
               bool isAsync);
+    bool Init(const std::string logConfigFilePath);
+
     void log(Logger::severity_level level, const std::string &msg, const char *file, int line,
              const char *func);
     void Uinit();
