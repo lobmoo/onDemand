@@ -27,6 +27,8 @@ using namespace eprosima::fastdds::rtps;
 ParticipantQosHandler::ParticipantQosHandler(std::string participant_name)
 {
     m_participantQos = PARTICIPANT_QOS_DEFAULT;
+    std::cout << "---------------------" << participant_name << std::endl;
+    m_participantQos.name(participant_name);
     // m_participantQos.wire_protocol().builtin.discovery_config.discoveryProtocol = DiscoveryProtocol::SIMPLE;
     // m_participantQos.wire_protocol().builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol = true;
     // m_participantQos.wire_protocol().builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;

@@ -59,12 +59,11 @@ DDSDomainParticipant::DDSDomainParticipant(std::string XmlConfig,
         }
     } else {
         DomainParticipantFactory::get_instance()->load_XML_profiles_file(XmlConfig);
-        // m_participant = DomainParticipantFactory::get_instance()->create_participant_with_profile(
-        //     "configuration_participant_profile", listener, StatusMask::none());
-        eprosima::fastdds::dds::DomainParticipantQos participantQos = PARTICIPANT_QOS_DEFAULT;
-        DomainParticipantFactory::get_instance()->get_default_participant_qos(participantQos);
-        m_participant = DomainParticipantFactory::get_instance()->create_participant(
-            0, participantQos, listener, StatusMask::none());
+        m_participant = DomainParticipantFactory::get_instance()->create_participant_with_default_profile(listener, StatusMask::none());
+        // eprosima::fastdds::dds::DomainParticipantQos participantQos;
+        // DomainParticipantFactory::get_instance()->get_default_participant_qos(participantQos);
+        // m_participant = DomainParticipantFactory::get_instance()->create_participant(
+        //     0, participantQos, listener, StatusMask::none());
         if (m_participant) {
             SubscriberQos sub_qos = SUBSCRIBER_QOS_DEFAULT;
             m_participant->get_default_subscriber_qos(sub_qos);

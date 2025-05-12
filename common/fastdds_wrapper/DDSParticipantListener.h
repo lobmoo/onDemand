@@ -34,6 +34,9 @@ public:
         const ParticipantBuiltinTopicData &info, bool &should_be_ignored) override
     {
         LOG(info) << "on_participant_discovery";
+        LOG(info) << "info.participant_name: " << info.participant_name;
+        LOG(info) << "info.domain_id: " << info.domain_id;
+
         should_be_ignored = false;
     }
 

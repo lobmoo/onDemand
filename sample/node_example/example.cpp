@@ -104,9 +104,9 @@ int main(int argc, char *argv[])
 void run_dds_data_writer()
 {
     DDSParticipantListener *listener = new DDSParticipantListener();
-    DataNode node("/home/wwk/workspaces/test_demo/sample/node_example/qosConfig.xml", listener);
+    DataNode node("/home/wwk/workspaces/TEMP/test_demo/sample/node_example/qosConfig.xml", listener);
     //DataNode node(170, "test_writer", NULL, listener);
-   // DataNode node(0, "test_writer");
+    //DataNode node(0, "test_writer");
     node.registerTopicType<HelloWorldOnePubSubType>("wwk");
 
     // eprosima::fastdds::dds::DataWriterQos dataWriterQos;
@@ -134,7 +134,8 @@ void run_dds_data_writer()
 void run_dds_data_reader()
 {
     DDSParticipantListener *listener = new DDSParticipantListener();
-    DataNode node("/home/wwk/workspaces/test_demo/sample/node_example/qosConfig.xml", listener);
+    DataNode node("/home/wwk/workspaces/TEMP/test_demo/sample/node_example/qosConfig.xml", listener);
+    
     //DataNode node(170, "test_reader", NULL, listener);
     //DataNode node(0, "test_reader");
     node.registerTopicType<HelloWorldOnePubSubType>("wwk");
