@@ -30,7 +30,7 @@ set(INSTALL_INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include")
 set(OBJ_CPP_INCLUDE
     ${CMAKE_CURRENT_SOURCE_DIR}/
     ${CMAKE_CURRENT_SOURCE_DIR}/../../thirdparty/spdlog/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../thirdparty/yaml-cpp/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../thirdparty/nlohmann/include
 )
 
 set(SOURCES_CC_FOR_LOG
@@ -55,7 +55,14 @@ target_include_directories(${LIBRARY_OUTPUT_NAME} PRIVATE   ${OBJ_CPP_INCLUDE})
 set_target_properties(${LIBRARY_OUTPUT_NAME} PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lib
     LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lib)
-    
+  
+target_link_libraries(${LIBRARY_OUTPUT_NAME}  PRIVATE 
+   
+)
+   
+
+
+
 # 头文件拷贝到 include 目录
 file(GLOB LOG_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/logger.h")
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include)

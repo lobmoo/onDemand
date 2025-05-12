@@ -21,27 +21,68 @@
 #include <spdlog/sinks/rotating_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/spdlog.h>
+#include <json.hpp>
 
 #include <memory>
 #include <string>
 #include <vector>
+#include <fstream>
 
 #include "custom_rotating_file_sink.h"
 #include "logger.h"
+
+using json = nlohmann::json;
 class Logger::LoggerImpl
 {
     struct LoggerConfig {
-        std::string fileName;        /*日志文件生成路径*/
-        int type;                    /*日志类型*/
-        int level;                   /*日志等级*/
-        int maxFileSize;             /*日志文件大小*/
-        int maxBackupIndex;          /*日志文件备份个数*/
-        bool isAsync;                /*是否异步*/
-        int flushEvery;              /*异步日志刷新频率 刷入文件的频率*/
-        std::string flushOnLevel;    /*日志立即刷入文件的等级*/
-        std::string LogConsoleLevel; /*控制台日志等级*/
-        std::string LogFileLevel;    /*文件日志等级*/
-        std::string LogPattern;      /*日志格式*/
+        explicit LoggerConfig(const std::string &jsonPath)
+            : fileName("./"), type("console"), level("info"), maxFileSize(60), maxBackupIndex(5),
+              isAsync(false), flushEvery(1), flushOnLevel("error"), LogConsoleLevel("info"),
+              LogFileLevel("info"), LogPattern("[%Y-%m-%d %H:%M:%S.%e] [%^%l%$] [%t] [%s:%# %!] %v")
+        {
+            std::ifstream inFile(jsonPath);
+            if (!inFile.is_open()) {
+                spdlog::warn("Failed to open config file: {}, using default config", jsonPath);
+                return; // 文件打不开 → 用默认值
+            }
+
+            json j;
+            json loggerConfig;
+
+            try {
+                inFile >> j;
+                loggerConfig = j.value("LoggerConfig", json::object());
+
+                fileName = loggerConfig.value("FileName", fileName);
+                type = loggerConfig.value("LogType", type);
+                level = loggerConfig.value("LogLevel", level);
+                maxFileSize = loggerConfig.value("MaxFileSize", maxFileSize);
+                maxBackupIndex = loggerConfig.value("MaxBackupIndex", maxBackupIndex);
+                isAsync = loggerConfig.value("IsAsync", isAsync);
+                flushEvery = loggerConfig.value("FlushEvery", flushEvery);
+                flushOnLevel = loggerConfig.value("FlushOnLevel", flushOnLevel);
+                LogConsoleLevel = loggerConfig.value("ConsoleLogLevel", LogConsoleLevel);
+                LogFileLevel = loggerConfig.value("FileLogLevel", LogFileLevel);
+                LogPattern = loggerConfig.value("LogPattern", LogPattern);
+
+            } catch (const json::exception &e) {
+                spdlog::warn("Failed to parse JSON config: {}, using default config", e.what());
+                // 不要 throw，程序继续运行
+                return;
+            }
+        }
+
+        std::string fileName;
+        std::string type;
+        std::string level;
+        int maxFileSize;
+        int maxBackupIndex;
+        bool isAsync;
+        int flushEvery;
+        std::string flushOnLevel;
+        std::string LogConsoleLevel;
+        std::string LogFileLevel;
+        std::string LogPattern;
     };
 
 public:

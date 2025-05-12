@@ -1,0 +1,15 @@
+{
+  "LoggerConfig": {
+    "FileName": "logs/dsfc.log",
+    "LogType": "both",
+    "LogLevel": "info",
+    "MaxFileSize": 60,
+    "MaxBackupIndex": 10,
+    "IsAsync": false,
+    "FlushEvery": 0,
+    "FlushOnLevel": "error",
+    "ConsoleLogLevel": "trace",
+    "FileLogLevel": "info",
+    "LogPattern": "[%Y-%m-%d %H:%M:%S.%e] [%^%l%$] [%t] [%s:%# %!] %v"
+  }
+}

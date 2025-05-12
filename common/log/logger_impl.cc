@@ -18,7 +18,7 @@
 #include <iomanip>
 #include <memory>
 #include <sstream>
-#include <yaml-cpp/yaml.h>
+
 
 Logger::LoggerImpl::LoggerImpl() : flushEvery_(0), flushOnLevel_(spdlog::level::err)
 {
@@ -29,10 +29,23 @@ Logger::LoggerImpl::~LoggerImpl()
 
 bool Logger::LoggerImpl::Init(const std::string logConfigFilePath)
 {
-    YAML::Node config = YAML::LoadFile(logConfigFilePath);
-
     
+    LoggerConfig  Config();
 
+    // int type = loggerConfig.getType(loggerConfig.type);
+    // int level = loggerConfig.getLevel(loggerConfig.level);
+    // if (!Init(loggerConfig.fileName, type, level, loggerConfig.maxFileSize,
+    //           loggerConfig.maxBackupIndex, loggerConfig.isAsync)) {
+    //     return false;
+    // }
+
+    // setLogLevel(loggerConfig.getLevel(loggerConfig.level));
+    // setFlushEvery(loggerConfig.flushEvery);
+    // setFlushOnLevel(loggerConfig.getLevel(loggerConfig.flushOnLevel));
+    // setLogConsoleLevel(loggerConfig.getLevel(loggerConfig.LogConsoleLevel));
+    // setLogFileLevel(loggerConfig.getLevel(loggerConfig.LogFileLevel));
+    // setLogPattern(loggerConfig.LogPattern);
+    return true;
 }
 
 bool Logger::LoggerImpl::Init(std::string fileName, int type, int level, int maxFileSize,
