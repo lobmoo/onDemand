@@ -54,6 +54,6 @@ set(CMAKE_INSTALL_RPATH "${CMAKE_CURRENT_SOURCE_DIR}/../../thirdparty/fast_dds/l
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 # endif()
 
-# target_compile_options(${PROJECT_NAME}  PRIVATE -Wall -Wextra)
+target_compile_options(${PROJECT_NAME}  PRIVATE -g)
 
 
