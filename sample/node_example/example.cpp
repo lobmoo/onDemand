@@ -118,14 +118,12 @@ void run_dds_data_reader()
 {
     DDSParticipantListener *listener = new DDSParticipantListener();
     //DataNode node("/home/wwk/workspaces/test_demo/sample/node_example/qosConfig.xml", listener);
-     LOG(info) << "start sub";
+   
      //DataNode node(0, "test_reader", qos_configurator);
-     LOG(info) << "start sub";
+   
     DataNode node(100, "test_reader");
     node.registerTopicType<HelloWorldOnePubSubType>("wwk");
-     LOG(info) << "start sub";
     auto dataReader = node.createDataReader<HelloWorldOne>("wwk", processHelloWorldOne);
-     LOG(info) << "start sub";
     while (std::cin.get() != '\n') {
     }
 }
