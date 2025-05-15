@@ -4,7 +4,7 @@
         {
             "type": "shell",
             "label": "complie",
-            "command": "mkdir -p build-exec  && cd ${workspaceFolder}/build-exec && make clean && cmake ..  && make -j",
+            "command": "mkdir -p build-exec  && cd ${workspaceFolder}/build-exec && cmake ..  && make -j",
             "targets": [
                 "all"
             ],
