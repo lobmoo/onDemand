@@ -27,6 +27,7 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <atomic>
 
 #include "custom_rotating_file_sink.h"
 #include "logger.h"
@@ -37,12 +38,19 @@ class Logger::LoggerImpl
     struct LoggerConfig {
         explicit LoggerConfig(const std::string &jsonPath)
             : fileName("./"), type("console"), level("info"), maxFileSize(60), maxBackupIndex(5),
-              isAsync(false), flushEvery(1), flushOnLevel("error"), LogConsoleLevel("info"),
-              LogFileLevel("info"), LogPattern("[%Y-%m-%d %H:%M:%S.%e] [%^%l%$] [%t] [%s:%# %!] %v")
+              isAsync(false), flushOnLevel("error"), LogConsoleLevel("info"), LogFileLevel("info"),
+              LogPattern("[%Y-%m-%d %H:%M:%S.%e] [%^%l%$] [%t] [%s:%# %!] %v"), isValid(true)
         {
+            auto WARNINGMESSAGE =
+                [](const std::string &message){
+                    spdlog::warn("\n{}\n[WARNING] {}\n{}\n", std::string(80, '!'), message,
+                                 std::string(80, '!'));
+                    };
+
             std::ifstream inFile(jsonPath);
             if (!inFile.is_open()) {
-                spdlog::warn("Failed to open config file: {}, using default config", jsonPath);
+                WARNINGMESSAGE("Failed to open config file: " + jsonPath + ", using default config");
+                isValid = false;
                 return; // 文件打不开 → 用默认值
             }
 
@@ -59,7 +67,6 @@ class Logger::LoggerImpl
                 maxFileSize = loggerConfig.value("MaxFileSize", maxFileSize);
                 maxBackupIndex = loggerConfig.value("MaxBackupIndex", maxBackupIndex);
                 isAsync = loggerConfig.value("IsAsync", isAsync);
-                flushEvery = loggerConfig.value("FlushEvery", flushEvery);
                 flushOnLevel = loggerConfig.value("FlushOnLevel", flushOnLevel);
                 LogConsoleLevel = loggerConfig.value("ConsoleLogLevel", LogConsoleLevel);
                 LogFileLevel = loggerConfig.value("FileLogLevel", LogFileLevel);
@@ -67,22 +74,64 @@ class Logger::LoggerImpl
 
             } catch (const json::exception &e) {
                 spdlog::warn("Failed to parse JSON config: {}, using default config", e.what());
-                // 不要 throw，程序继续运行
+                isValid = false;
                 return;
             }
         }
 
+        LoggerType getType() const
+        {
+            if (type == "console") {
+                return Logger::console;
+            } else if (type == "file") {
+                return Logger::file;
+            } else if (type == "both") {
+                return Logger::both;
+            } else {
+                return Logger::console; // 默认值
+            }
+        }
+        severity_level getLevel(const std::string &levelStr) const
+        {
+            if (levelStr == "trace") {
+                return Logger::trace;
+            } else if (levelStr == "debug") {
+                return Logger::debug;
+            } else if (levelStr == "info") {
+                return Logger::info;
+            } else if (levelStr == "warning") {
+                return Logger::warning;
+            } else if (levelStr == "error") {
+                return Logger::error;
+            } else if (levelStr == "critical") {
+                return Logger::critical;
+            } else {
+                return Logger::info; // 默认值
+            }
+        }
+        severity_level getLogLevel() const { return getLevel(level); }
+        severity_level getFlushOnLevel() const { return getLevel(flushOnLevel); }
+        severity_level getConsoleLogLevel() const { return getLevel(LogConsoleLevel); }
+        severity_level getFileLogLevel() const { return getLevel(LogFileLevel); }
+        std::string getLogPattern() const { return LogPattern; }
+        std::string getFileName() const { return fileName; }
+        bool getIsAsync() const { return isAsync; }
+        uint32_t getMaxFileSize() const { return maxFileSize; }
+        uint32_t getMaxBackupIndex() const { return maxBackupIndex; }
+        bool getIsValid() const { return isAsync; }
+
+    private:
         std::string fileName;
         std::string type;
         std::string level;
         uint32_t maxFileSize;
         uint32_t maxBackupIndex;
         bool isAsync;
-        uint32_t flushEvery;
         std::string flushOnLevel;
         std::string LogConsoleLevel;
         std::string LogFileLevel;
         std::string LogPattern;
+        bool isValid;
     };
 
 public:
@@ -96,6 +145,7 @@ public:
     void log(Logger::severity_level level, const std::string &msg, const char *file, uint32_t line,
              const char *func);
     void Uinit();
+
     void setFlushEvery(uint32_t flushEvery);
     void setFlushOnLevel(Logger::severity_level flushOnLevel);
     void setLogLevel(Logger::severity_level level);
@@ -111,10 +161,15 @@ private:
     uint32_t flushEvery_;
     size_t logBufferSize_;
     spdlog::level::level_enum flushOnLevel_;
+    std::atomic<bool> isRunning_;
+    std::string logConfigFilePath_;
 
 private:
     spdlog::level::level_enum GetLogLevelFromEnv(const std::string &env_var,
                                                  spdlog::level::level_enum default_level);
+    void LoggerConfigChecker();
+    void stop();
+    void LogApplyConfig(const LoggerConfig &config);
 };
 
 #endif // LOGGER_IMPL_H

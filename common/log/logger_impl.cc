@@ -19,32 +19,67 @@
 #include <memory>
 #include <sstream>
 
-Logger::LoggerImpl::LoggerImpl() : flushEvery_(0), flushOnLevel_(spdlog::level::err)
+Logger::LoggerImpl::LoggerImpl()
+    : flushEvery_(0), flushOnLevel_(spdlog::level::err), isRunning_(true)
 {
 }
 Logger::LoggerImpl::~LoggerImpl()
 {
 }
 
+void Logger::LoggerImpl::LoggerConfigChecker()
+{
+    while (isRunning_) {
+        LoggerConfig Config(logConfigFilePath_);
+        if(Config.getIsValid())
+        {
+            LogApplyConfig(Config);
+        }
+        else
+        {
+           break; //这里没想好怎么处理，暂时就这样吧
+        }
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
+}
+
+
+void Logger::LoggerImpl::LogApplyConfig(const LoggerConfig &config)
+{
+    setFlushOnLevel(config.getFlushOnLevel());
+    setLogConsoleLevel(config.getConsoleLogLevel());
+    setLogFileLevel(config.getFileLogLevel());
+}
+
+
 bool Logger::LoggerImpl::Init(const std::string logConfigFilePath)
 {
 
+    logConfigFilePath_ = logConfigFilePath;
     LoggerConfig Config(logConfigFilePath);
+    LoggerType type = Config.getType();
+    severity_level level = Config.getLogLevel();
+    std::string fileName = Config.getFileName();
+    uint32_t maxFileSize = Config.getMaxFileSize();
+    uint32_t maxBackupIndex = Config.getMaxBackupIndex();
+    bool isAsync = Config.getIsAsync();
 
-    // int type = loggerConfig.getType(loggerConfig.type);
-    // int level = loggerConfig.getLevel(loggerConfig.level);
-    // if (!Init(loggerConfig.fileName, type, level, loggerConfig.maxFileSize,
-    //           loggerConfig.maxBackupIndex, loggerConfig.isAsync)) {
-    //     return false;
-    // }
+    if (!Init(fileName, type, level, maxFileSize, maxBackupIndex, isAsync)) {
+        return false;
+    }
+    setFlushOnLevel(Config.getFlushOnLevel());
+    setLogConsoleLevel(Config.getConsoleLogLevel());
+    setLogFileLevel(Config.getFileLogLevel());
+    setLogPattern(Config.getLogPattern());
 
-    // setLogLevel(loggerConfig.getLevel(loggerConfig.level));
-    // setFlushEvery(loggerConfig.flushEvery);
-    // setFlushOnLevel(loggerConfig.getLevel(loggerConfig.flushOnLevel));
-    // setLogConsoleLevel(loggerConfig.getLevel(loggerConfig.LogConsoleLevel));
-    // setLogFileLevel(loggerConfig.getLevel(loggerConfig.LogFileLevel));
-    // setLogPattern(loggerConfig.LogPattern);
+    /*启动监测线程*/
+    std::thread([this]() { LoggerConfigChecker(); }).detach();
     return true;
+}
+
+void Logger::LoggerImpl::stop()
+{
+    isRunning_ = false;
 }
 
 bool Logger::LoggerImpl::Init(std::string fileName, LoggerType type, severity_level level,
@@ -114,6 +149,7 @@ bool Logger::LoggerImpl::Init(std::string fileName, LoggerType type, severity_le
 
 void Logger::LoggerImpl::Uinit()
 {
+    stop();
     if (logger_) {
         logger_->flush();
         spdlog::drop("Logger");

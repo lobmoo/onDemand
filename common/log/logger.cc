@@ -35,6 +35,12 @@ void Logger::Uinit()
     return pImpl->Uinit();
 }
 
+bool Logger::Init(const std::string &logConfigFilePath)
+{
+    return pImpl->Init(logConfigFilePath);
+}
+
+
 bool Logger::Init(const std::string &fileName, LoggerType type, severity_level level,
                   uint32_t maxFileSize, uint32_t maxBackupIndex, bool isAsync)
 {

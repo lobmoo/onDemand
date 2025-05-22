@@ -46,6 +46,13 @@ public:
    */
     bool Init(const std::string &fileName, LoggerType type, severity_level level,
               uint32_t maxFileSize, uint32_t maxBackupIndex, bool isAsync = false);
+    /**
+     * @brief 按照配置文件生成，路劲无效会按照默认运行 不会写文件
+     * @param  logConfigFilePathMyParamDoc
+     * @return true 
+     * @return false 
+     */
+    bool Init(const std::string &logConfigFilePath);
 
     /**
    * @brief 注销日志实例
