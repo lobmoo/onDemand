@@ -75,10 +75,10 @@ class Logger::LoggerImpl
         std::string fileName;
         std::string type;
         std::string level;
-        int maxFileSize;
-        int maxBackupIndex;
+        uint32_t maxFileSize;
+        uint32_t maxBackupIndex;
         bool isAsync;
-        int flushEvery;
+        uint32_t flushEvery;
         std::string flushOnLevel;
         std::string LogConsoleLevel;
         std::string LogFileLevel;
@@ -89,11 +89,11 @@ public:
     LoggerImpl();
     ~LoggerImpl();
 
-    bool Init(std::string fileName, int type, int level, int maxFileSize, int maxBackupIndex,
+    bool Init(std::string fileName, LoggerType type, severity_level level, uint32_t maxFileSize, uint32_t maxBackupIndex,
               bool isAsync);
     bool Init(const std::string logConfigFilePath);
 
-    void log(Logger::severity_level level, const std::string &msg, const char *file, int line,
+    void log(Logger::severity_level level, const std::string &msg, const char *file, uint32_t line,
              const char *func);
     void Uinit();
     void setFlushEvery(uint32_t flushEvery);

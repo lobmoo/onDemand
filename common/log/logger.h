@@ -44,8 +44,8 @@ public:
    * @return true          初始化成功
    * @return false         初始化失败
    */
-    bool Init(const std::string &fileName, LoggerType type, severity_level level, int maxFileSize,
-              int maxBackupIndex, bool isAsync = false);
+    bool Init(const std::string &fileName, LoggerType type, severity_level level, uint32_t maxFileSize,
+              uint32_t maxBackupIndex, bool isAsync = false);
 
     /**
    * @brief 注销日志实例
@@ -77,7 +77,7 @@ public:
     static Logger &Instance();
 
 private:
-    void Log(severity_level level, const std::string &msg, const char *file, int line,
+    void Log(severity_level level, const std::string &msg, const char *file, uint32_t line,
              const char *func);
     class LoggerImpl;
     std::unique_ptr<LoggerImpl> pImpl;
@@ -90,7 +90,7 @@ private:
 class LogStream
 {
 public:
-    LogStream(Logger &logger, Logger::severity_level level, const char *file, int line,
+    LogStream(Logger &logger, Logger::severity_level level, const char *file, uint32_t line,
               const char *func)
         : logger_(logger), level_(level), file_(file), line_(line), func_(func)
     {
@@ -104,14 +104,14 @@ private:
     Logger::severity_level level_;
     const char *file_;
     const char *func_;
-    int line_;
+    uint32_t line_;
     std::ostringstream stream_;
 };
 
 class LogRateLimiter
 {
 public:
-    static bool shouldLog(const std::string &key, int interval_ms)
+    static bool shouldLog(const std::string &key, uint32_t interval_ms)
     {
         using namespace std::chrono;
         thread_local static std::unordered_map<std::string, steady_clock::time_point>

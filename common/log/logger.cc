@@ -30,11 +30,11 @@ void Logger::Uinit()
    return pImpl->Uinit();
 }
 
-bool Logger::Init(const std::string& fileName, LoggerType type, severity_level level, int maxFileSize, int maxBackupIndex, bool isAsync) {
+bool Logger::Init(const std::string& fileName, LoggerType type, severity_level level, uint32_t maxFileSize, uint32_t maxBackupIndex, bool isAsync) {
   return pImpl->Init(fileName, type, level, maxFileSize, maxBackupIndex, isAsync);
 }
 
-void Logger::Log(severity_level level, const std::string& msg, const char* file, int line, const char* func) {
+void Logger::Log(severity_level level, const std::string& msg, const char* file, uint32_t line, const char* func) {
   pImpl->log(level, msg, file, line, func);
 }
 

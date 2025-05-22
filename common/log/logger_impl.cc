@@ -19,7 +19,6 @@
 #include <memory>
 #include <sstream>
 
-
 Logger::LoggerImpl::LoggerImpl() : flushEvery_(0), flushOnLevel_(spdlog::level::err)
 {
 }
@@ -29,8 +28,8 @@ Logger::LoggerImpl::~LoggerImpl()
 
 bool Logger::LoggerImpl::Init(const std::string logConfigFilePath)
 {
-    
-    LoggerConfig  Config();
+
+    LoggerConfig Config(logConfigFilePath);
 
     // int type = loggerConfig.getType(loggerConfig.type);
     // int level = loggerConfig.getLevel(loggerConfig.level);
@@ -48,8 +47,8 @@ bool Logger::LoggerImpl::Init(const std::string logConfigFilePath)
     return true;
 }
 
-bool Logger::LoggerImpl::Init(std::string fileName, int type, int level, int maxFileSize,
-                              int maxBackupIndex, bool isAsync)
+bool Logger::LoggerImpl::Init(std::string fileName, LoggerType type, severity_level level,
+                              uint32_t maxFileSize, uint32_t maxBackupIndex, bool isAsync)
 {
     std::size_t max_file_size = 1024 * 1024 * maxFileSize;
     std::vector<spdlog::sink_ptr> sinks;
@@ -124,10 +123,10 @@ void Logger::LoggerImpl::Uinit()
 }
 
 void Logger::LoggerImpl::log(Logger::severity_level level, const std::string &msg, const char *file,
-                             int line, const char *func)
+                             uint32_t line, const char *func)
 {
     if (logger_) {
-        logger_->log(spdlog::source_loc{file, line, func},
+        logger_->log(spdlog::source_loc{file, static_cast<int>(line), func},
                      static_cast<spdlog::level::level_enum>(level), msg);
     }
 }
