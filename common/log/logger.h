@@ -44,8 +44,8 @@ public:
    * @return true          初始化成功
    * @return false         初始化失败
    */
-    bool Init(const std::string &fileName, LoggerType type, severity_level level, uint32_t maxFileSize,
-              uint32_t maxBackupIndex, bool isAsync = false);
+    bool Init(const std::string &fileName, LoggerType type, severity_level level,
+              uint32_t maxFileSize, uint32_t maxBackupIndex, bool isAsync = false);
 
     /**
    * @brief 注销日志实例

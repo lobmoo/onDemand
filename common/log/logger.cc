@@ -17,27 +17,35 @@
 
 #include "logger_impl.h"
 
-Logger::Logger() : pImpl(std::make_unique<LoggerImpl>()) {}
-Logger::~Logger() {}
+Logger::Logger() : pImpl(std::make_unique<LoggerImpl>())
+{
+}
+Logger::~Logger()
+{
+}
 
-Logger& Logger::Instance() {
-  static Logger log;
-  return log;
+Logger &Logger::Instance()
+{
+    static Logger log;
+    return log;
 }
 
 void Logger::Uinit()
 {
-   return pImpl->Uinit();
+    return pImpl->Uinit();
 }
 
-bool Logger::Init(const std::string& fileName, LoggerType type, severity_level level, uint32_t maxFileSize, uint32_t maxBackupIndex, bool isAsync) {
-  return pImpl->Init(fileName, type, level, maxFileSize, maxBackupIndex, isAsync);
+bool Logger::Init(const std::string &fileName, LoggerType type, severity_level level,
+                  uint32_t maxFileSize, uint32_t maxBackupIndex, bool isAsync)
+{
+    return pImpl->Init(fileName, type, level, maxFileSize, maxBackupIndex, isAsync);
 }
 
-void Logger::Log(severity_level level, const std::string& msg, const char* file, uint32_t line, const char* func) {
-  pImpl->log(level, msg, file, line, func);
+void Logger::Log(severity_level level, const std::string &msg, const char *file, uint32_t line,
+                 const char *func)
+{
+    pImpl->log(level, msg, file, line, func);
 }
-
 
 void Logger::setFlushEvery(uint32_t flushEvery)
 {
@@ -54,7 +62,7 @@ void Logger::setLogLevel(Logger::severity_level level)
     pImpl->setLogLevel(level);
 }
 
-void Logger::setLogPattern(const std::string& pattern)
+void Logger::setLogPattern(const std::string &pattern)
 {
     pImpl->setLogPattern(pattern);
 }
@@ -73,5 +81,3 @@ void Logger::setLogBufferSize(size_t size)
 {
     pImpl->setLogBufferSize(size);
 }
-
-

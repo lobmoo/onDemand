@@ -89,8 +89,8 @@ public:
     LoggerImpl();
     ~LoggerImpl();
 
-    bool Init(std::string fileName, LoggerType type, severity_level level, uint32_t maxFileSize, uint32_t maxBackupIndex,
-              bool isAsync);
+    bool Init(std::string fileName, LoggerType type, severity_level level, uint32_t maxFileSize,
+              uint32_t maxBackupIndex, bool isAsync);
     bool Init(const std::string logConfigFilePath);
 
     void log(Logger::severity_level level, const std::string &msg, const char *file, uint32_t line,
