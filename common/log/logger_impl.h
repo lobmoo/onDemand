@@ -37,7 +37,7 @@ class Logger::LoggerImpl
 {
     struct LoggerConfig {
         explicit LoggerConfig(const std::string &jsonPath)
-            : fileName("./"), type("console"), level("info"), maxFileSize(60), maxBackupIndex(5),
+            : fileName("./"), type("console"), level("trace"), maxFileSize(60), maxBackupIndex(5),
               isAsync(false), flushOnLevel("error"), LogConsoleLevel("info"), LogFileLevel("info"),
               LogPattern("[%Y-%m-%d %H:%M:%S.%e] [%^%l%$] [%t] [%s:%# %!] %v"), isValid(true)
         {
