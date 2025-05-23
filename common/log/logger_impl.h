@@ -118,7 +118,7 @@ class Logger::LoggerImpl
         bool getIsAsync() const { return isAsync; }
         uint32_t getMaxFileSize() const { return maxFileSize; }
         uint32_t getMaxBackupIndex() const { return maxBackupIndex; }
-        bool getIsValid() const { return isAsync; }
+        bool getIsValid() const { return isValid; }
 
     private:
         std::string fileName;

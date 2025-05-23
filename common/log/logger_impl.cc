@@ -18,6 +18,9 @@
 #include <iomanip>
 #include <memory>
 #include <sstream>
+#include <filesystem>
+
+namespace fs = std::filesystem;
 
 Logger::LoggerImpl::LoggerImpl()
     : flushEvery_(0), flushOnLevel_(spdlog::level::err), isRunning_(true)
@@ -29,20 +32,40 @@ Logger::LoggerImpl::~LoggerImpl()
 
 void Logger::LoggerImpl::LoggerConfigChecker()
 {
+    fs::file_time_type lastWriteTime;
     while (isRunning_) {
-        LoggerConfig Config(logConfigFilePath_);
-        if(Config.getIsValid())
-        {
-            LogApplyConfig(Config);
-        }
-        else
-        {
-           break; //这里没想好怎么处理，暂时就这样吧
+        try {
+            fs::file_time_type currentWriteTime = fs::last_write_time(logConfigFilePath_);
+            if (currentWriteTime != lastWriteTime) {
+                lastWriteTime = currentWriteTime;
+                LoggerConfig config(logConfigFilePath_);
+                if (config.getIsValid()) {
+                    LogApplyConfig(config);
+                } else {
+                    break; //这里没想好怎么处理，暂时就这样吧
+                }
+            }
+        } catch (const fs::filesystem_error &) {
         }
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 }
 
+// void Logger::LoggerImpl::LoggerConfigChecker()
+// {
+//     while (isRunning_) {
+//         LoggerConfig Config(logConfigFilePath_);
+//         if(Config.getIsValid())
+//         {
+//             LogApplyConfig(Config);
+//         }
+//         else
+//         {
+//            break; //这里没想好怎么处理，暂时就这样吧
+//         }
+//         std::this_thread::sleep_for(std::chrono::seconds(1));
+//     }
+// }
 
 void Logger::LoggerImpl::LogApplyConfig(const LoggerConfig &config)
 {
@@ -50,7 +73,6 @@ void Logger::LoggerImpl::LogApplyConfig(const LoggerConfig &config)
     setLogConsoleLevel(config.getConsoleLogLevel());
     setLogFileLevel(config.getFileLogLevel());
 }
-
 
 bool Logger::LoggerImpl::Init(const std::string logConfigFilePath)
 {
