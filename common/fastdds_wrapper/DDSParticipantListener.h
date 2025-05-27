@@ -33,10 +33,7 @@ public:
         DomainParticipant *participant, eprosima::fastdds::rtps::ParticipantDiscoveryStatus reason,
         const ParticipantBuiltinTopicData &info, bool &should_be_ignored) override
     {
-        LOG(info) << "on_participant_discovery";
         LOG(info) << "info.participant_name: " << info.participant_name;
-        LOG(info) << "info.domain_id: " << info.domain_id;
-
         should_be_ignored = false;
     }
 
@@ -47,7 +44,8 @@ public:
                              const eprosima::fastdds::dds::SubscriptionBuiltinTopicData &info,
                              bool &should_be_ignored) override
     {
-        LOG(info) << "on_data_reader_discovery";
+        LOG(info) << "on_data_reader_discovery, topic_name: "
+                  << info.topic_name << ", type_name: " << info.type_name;
         should_be_ignored = false;
     }
 
@@ -58,7 +56,8 @@ public:
                              const eprosima::fastdds::dds::PublicationBuiltinTopicData &info,
                              bool &should_be_ignored) override
     {
-        LOG(info) << "on_data_writer_discovery";
+        LOG(info) << "on_data_writer_discovery , topic_name: "
+                  << info.topic_name << ", type_name: " << info.type_name;
         should_be_ignored = false;
     }
 };
