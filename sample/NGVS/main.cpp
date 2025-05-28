@@ -1,15 +1,47 @@
-#include<string>
+#include "log/logger.h"
+#include "NgvsSerialize.h"
+#include "ModelParser.h"
+#include "iostream"
+#include <fstream>
+
+std::string readXmlFile(const std::string &filePath)
+{
+    std::ifstream file(filePath);
+    if (!file.is_open()) {
+        LOG(error) << "err: open file fail " << filePath;
+        return "";
+    }
+    std::string content;
+    std::string line;
+    while (std::getline(file, line)) {
+        content += line + "\n";
+    }
+    return content;
+}
 
 
-int main(int argc, char *argv[]) {
-    // This is a placeholder for the main function.
-    // The actual implementation would depend on the specific requirements of the application.
-    
-    // For example, you might want to initialize logging, parse command line arguments,
-    // or start a server or client depending on the application context.
-    
-   
 
-    // Return success
+int main(int argc, char *argv[])
+{
+    Logger::Instance().Init(""); 
+    std::string xmlContent = readXmlFile("/home/wwk/workspaces/test_demo/sample/NGVS/model.xml");
+    dsf::ngvs::ModelParser *parser = new dsf::ngvs::ModelParser();
+    std::map<std::string, dsf::ngvs::ModelDefine> modelDefines;
+    std::string error_message;
+    dsf::ngvs::error_code_t ret = parser->parseSchema(modelDefines, xmlContent, error_message);
+    if (ret != dsf::ngvs::MODEL_PARSER_OK)
+        LOG(error) << "error_message: " << error_message;
+    for (auto &entry : modelDefines) {
+        LOG(info) << "++++++++++++++++++++++++++++++++++++++++";
+        std::string modelName = entry.first;
+        dsf::ngvs::ModelDefine modelDefine = entry.second;
+        LOG(info) << "Model Name: " << modelName << ", Model Version: " << modelDefine.modelVersion
+                  << ", Schema: " << modelDefine.schema;
+        for (auto &entry2 : modelDefine.mapKeyType) {
+            LOG(warning) << "key: " << entry2.first << ", value: " << entry2.second;
+        }
+    }
+    while (std::cin.get() != '\n') {
+    }
     return 0;
 }

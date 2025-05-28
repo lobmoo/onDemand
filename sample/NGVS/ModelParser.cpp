@@ -44,7 +44,7 @@ namespace ngvs
         return xmlString;
     }
 
-    model_parser_error_code_t ModelParser::parseSchema(
+    error_code_t ModelParser::parseSchema(
         std::map<std::string, ModelDefine> &modelDefines, const std::string &schema,
         std::string &errorMsg)
     {

@@ -24,7 +24,7 @@ namespace ngvs
 
 
 
-    }model_parser_error_code_t;
+    }error_code_t;
 
 
     struct ModelDefine {
@@ -37,7 +37,7 @@ namespace ngvs
     class ModelParser
     {
     public:
-        model_parser_error_code_t parseSchema(std::map<std::string, ModelDefine> &modelDefines, const std::string &schema, std::string &errorMsg);
+        error_code_t parseSchema(std::map<std::string, ModelDefine> &modelDefines, const std::string &schema, std::string &errorMsg);
     private:
         std::set<std::string> visiting; //记录每次递归的模型名称，防止死循环
         std::set<std::string> _parsedExternalModels;
