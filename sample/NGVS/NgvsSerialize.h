@@ -1,12 +1,12 @@
-#ifndef ac_ngvs_serialize_h
-#define ac_ngvs_serialize_h
+#ifndef NGVS_SERIALIZE_H
+#define NGVS_SERIALIZE_H
 
 #include <string>
 #include <vector>
 
 namespace dsf
 {
-namespace ac
+namespace ngvs
 {
     class NgvsSerializer
     {

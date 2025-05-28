@@ -17,6 +17,7 @@ cmake_minimum_required(VERSION 3.16)
 option(COMPILE_SAMPLE "Build example" ON)
 
 project(DEMO  LANGUAGES  CXX)
+
 add_subdirectory(common/log)
 add_subdirectory(core)
 add_dependencies(test_exec log)

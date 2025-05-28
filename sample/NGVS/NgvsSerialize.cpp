@@ -1,8 +1,8 @@
-#include "ac_ngvs_serialize.h"
+#include "NgvsSerialize.h"
 
 namespace dsf
 {
-namespace ac
+namespace ngvs
 {
 
     NgvsSerializer::NgvsSerializer() {}
