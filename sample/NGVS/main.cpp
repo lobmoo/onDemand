@@ -36,10 +36,10 @@ int main(int argc, char *argv[])
         std::string modelName = entry.first;
         dsf::ngvs::ModelDefine modelDefine = entry.second;
         LOG(info) << "Model Name: " << modelName << ", Model Version: " << modelDefine.modelVersion
-                  << ", Schema: " << modelDefine.schema;
-        for (auto &entry2 : modelDefine.mapKeyType) {
-            LOG(warning) << "key: " << entry2.first << ", value: " << entry2.second;
-        }
+                  << ", Size: " << modelDefine.size << "\n";
+        // for (auto &entry2 : modelDefine.mapKeyType) {
+        //     LOG(warning) << "key: " << entry2.first << ", value: " << entry2.second;
+        // }
     }
     while (std::cin.get() != '\n') {
     }

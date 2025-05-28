@@ -17,27 +17,25 @@ namespace dsf
 {
 namespace ngvs
 {
-    typedef enum
-    {
+    typedef enum {
         MODEL_PARSER_OK = 0,
         ERROR_MODEL_PARSE_FAILED,
-
-
-
-    }error_code_t;
-
+    } error_code_t;
 
     struct ModelDefine {
         std::string modelName;
         std::string modelVersion;
         std::string schema;
+        size_t size; 
         std::map<std::string, std::string> mapKeyType;
     };
 
     class ModelParser
     {
     public:
-        error_code_t parseSchema(std::map<std::string, ModelDefine> &modelDefines, const std::string &schema, std::string &errorMsg);
+        error_code_t parseSchema(std::map<std::string, ModelDefine> &modelDefines,
+                                 const std::string &schema, std::string &errorMsg);
+
     private:
         std::set<std::string> visiting; //记录每次递归的模型名称，防止死循环
         std::set<std::string> _parsedExternalModels;
@@ -47,7 +45,7 @@ namespace ngvs
         void resolveModelMembers(const std::string &modelName,
                                  std::map<std::string, ModelDefine> &allModels,
                                  std::map<std::string, boost::property_tree::ptree> &structNodes,
-                                 std::map<std::string, std::string> &currentModelMemebers);
+                                 std::map<std::string, std::string> &currentModelMembers,size_t &modelSize);
         void generateArrayKeys(const std::string &memberName, const std::string &memberType,
                                const std::vector<int> &dimensions, std::vector<int> currentIndices,
                                std::map<std::string, std::string> &currentModelMemebers);
@@ -58,7 +56,8 @@ namespace ngvs
                                   std::vector<int> currentIndices,
                                   const std::map<std::string, std::string> &subMembers,
                                   std::map<std::string, std::string> &currentModelMembers);
+        size_t getBasicTypeSize(const std::string &type);
     };
-} // namespace ac
+} // namespace ngvs
 } // namespace dsf
 #endif

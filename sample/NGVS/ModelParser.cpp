@@ -44,11 +44,10 @@ namespace ngvs
         return xmlString;
     }
 
-    error_code_t ModelParser::parseSchema(
-        std::map<std::string, ModelDefine> &modelDefines, const std::string &schema,
-        std::string &errorMsg)
+    error_code_t ModelParser::parseSchema(std::map<std::string, ModelDefine> &modelDefines,
+                                          const std::string &schema, std::string &errorMsg)
     {
-       // _externalModelSchemas = modelSchemas;
+        // _externalModelSchemas = modelSchemas;
         std::istringstream iss(schema);
         boost::property_tree::ptree ptInput;
         try {
@@ -68,7 +67,7 @@ namespace ngvs
                 model.modelVersion = modelNode.second.get<std::string>("<xmlattr>.version");
 
                 model.schema = child2xml(modelNode.second, "struct");
-
+                model.size = 0; // Initialize size
                 modelDefines[model.modelName + ":" + model.modelVersion] = model;
                 structNodes[model.modelName + ":" + model.modelVersion] = modelNode.second;
             }
@@ -78,8 +77,10 @@ namespace ngvs
         for (auto it = modelDefines.begin(); it != modelDefines.end(); ++it) {
             const std::string &modelNameAndVersion = it->first;
             ModelDefine &modelDefine = it->second;
+            size_t modelSize = 0;
             resolveModelMembers(modelNameAndVersion, modelDefines, structNodes,
-                                modelDefine.mapKeyType);
+                                modelDefine.mapKeyType, modelSize);
+            modelDefine.size = modelSize;
         }
 
         return MODEL_PARSER_OK;
@@ -88,7 +89,7 @@ namespace ngvs
     void ModelParser::resolveModelMembers(
         const std::string &currentModelNameAndVersion, std::map<std::string, ModelDefine> &allNodes,
         std::map<std::string, boost::property_tree::ptree> &structNodes,
-        std::map<std::string, std::string> &currentModelMemebers)
+        std::map<std::string, std::string> &currentModelMembers, size_t &modelSize)
     {
         if (visiting.count(currentModelNameAndVersion)) {
             LOG(error) << "Detected cyclic dependency at model: " << currentModelNameAndVersion;
@@ -155,8 +156,14 @@ namespace ngvs
             structNode.get_optional<std::string>("<xmlattr>.baseTypeVersion");
 
         if (baseTypeNameOptional && baseTypeVersionOptional) {
+            size_t baseSize = 0;
+            std::map<std::string, std::string> baseMembers;
             resolveModelMembers(baseTypeNameOptional.get() + ":" + baseTypeVersionOptional.get(),
-                                allNodes, structNodes, currentModelMemebers);
+                                allNodes, structNodes, currentModelMembers, baseSize);
+            for (const auto &kv : baseMembers) {
+                currentModelMembers[kv.first] = kv.second;
+            }
+            modelSize += baseSize;
         } else if (baseTypeNameOptional) {
             LOG(warning) << "baseType '" << baseTypeNameOptional.get()
                          << "' has no version specified in model: " << currentModelNameAndVersion;
@@ -177,9 +184,12 @@ namespace ngvs
                     std::vector<int> dimensions;
                     std::vector<std::string> dimsStr;
                     boost::split(dimsStr, arrayDimensionsOptional.get(), boost::is_any_of(","));
+                    size_t arraySize = 1;
                     for (const auto &dimStr : dimsStr) {
                         try {
-                            dimensions.push_back(std::stoi(dimStr));
+                            int dim = std::stoi(dimStr);
+                            dimensions.push_back(dim);
+                            arraySize *= dim;
                         } catch (const std::invalid_argument &e) {
                             LOG(error) << "Invalid array dimension: " << dimStr
                                        << " in model: " << currentModelNameAndVersion
@@ -194,7 +204,9 @@ namespace ngvs
                     }
                     if (memberType != "nonBasic") {
                         generateArrayKeys(memberName, memberType, dimensions, {},
-                                          currentModelMemebers);
+                                          currentModelMembers);
+                        size_t baseSize = getBasicTypeSize(memberType);
+                        modelSize += baseSize * arraySize;
                     } else {
                         std::string nonBasicTypeName =
                             memberNode.second.get<std::string>("<xmlattr>.nonBasicTypeName");
@@ -203,9 +215,10 @@ namespace ngvs
 
                         if (!nonBasicTypeName.empty() && nonBasicTypeVersionOptional) {
                             std::map<std::string, std::string> nonBasicMembers;
+                            size_t nonBasicSize = 0;
                             resolveModelMembers(nonBasicTypeName + ":"
                                                     + nonBasicTypeVersionOptional.get(),
-                                                allNodes, structNodes, nonBasicMembers);
+                                                allNodes, structNodes, nonBasicMembers, nonBasicSize);
 
                             std::function<void(std::vector<int>)> generateKeys;
                             generateKeys = [&](std::vector<int> indices) {
@@ -215,7 +228,7 @@ namespace ngvs
                                         prefix += "[" + std::to_string(idx) + "]";
                                     }
                                     for (const auto &kv : nonBasicMembers) {
-                                        currentModelMemebers[prefix + "." + kv.first] = kv.second;
+                                        currentModelMembers[prefix + "." + kv.first] = kv.second;
                                     }
                                     return;
                                 }
@@ -227,6 +240,7 @@ namespace ngvs
                                 }
                             };
                             generateKeys({});
+                            modelSize += nonBasicSize * arraySize;
                         } else {
                             LOG(error)
                                 << "nonBasic array member '" << memberName << "' of type '"
@@ -244,7 +258,9 @@ namespace ngvs
                             int maxLength = std::stoi(sequenceMaxLengthOptional.get());
                             if (maxLength > 0) {
                                 generateSequenceKeys(memberName, memberType, maxLength,
-                                                     currentModelMemebers);
+                                                     currentModelMembers);
+                                size_t baseSize = getBasicTypeSize(memberType);
+                                modelSize += baseSize * maxLength;
                             } else {
                                 LOG(error)
                                     << "Invalid sequenceMaxLength (must be > 0): " << maxLength
@@ -277,14 +293,16 @@ namespace ngvs
 
                     if (!nonBasicTypeName.empty() && nonBasicTypeVersionOptional.is_initialized()) {
                         std::map<std::string, std::string> nonBasicMembers;
+                        size_t nonBasicSize = 0;
                         resolveModelMembers(nonBasicTypeName + ":"
                                                 + nonBasicTypeVersionOptional.get(),
-                                            allNodes, structNodes, nonBasicMembers);
+                                            allNodes, structNodes, nonBasicMembers, nonBasicSize);
                         for (auto it = nonBasicMembers.begin(); it != nonBasicMembers.end(); ++it) {
                             const std::string &key = it->first;
                             const std::string &value = it->second;
-                            currentModelMemebers[memberName + "." + key] = value;
+                            currentModelMembers[memberName + "." + key] = value;
                         }
+                        modelSize += nonBasicSize;
                     } else {
                         LOG(error) << "nonBasic member '" << memberName << "' of type '"
                                    << nonBasicTypeName << "' has no version specified in model: "
@@ -292,11 +310,26 @@ namespace ngvs
                         // 这里需要处理 nonBasic 类型缺少版本的情况，可以返回错误或者记录错误信息
                     }
                 } else {
-                    currentModelMemebers[memberName] = memberType;
+                    currentModelMembers[memberName] = memberType;
+                    modelSize += getBasicTypeSize(memberType);
                 }
             }
         }
         visiting.erase(currentModelNameAndVersion);
+    }
+
+    size_t ModelParser::getBasicTypeSize(const std::string &type)
+    {
+        static const std::map<std::string, size_t> basicTypeSizes = {
+            {"int32", 4}, {"float32", 4}, {"int64", 8}, {"string", 82}
+            // Strings are variable-length; size depends on actual data
+        };
+        auto it = basicTypeSizes.find(type);
+        if (it != basicTypeSizes.end()) {
+            return it->second;
+        }
+        LOG(warning) << "Unknown basic type: " << type << ", assuming size 0";
+        return 0;
     }
 
     void ModelParser::generateArrayKeys(const std::string &memberName,
@@ -332,5 +365,5 @@ namespace ngvs
         }
     }
 
-} // namespace ac
+} // namespace ngvs
 } // namespace dsf
