@@ -14,12 +14,10 @@
 
 cmake_minimum_required(VERSION 3.16)
 
-project(DEMO  LANGUAGES  CXX)
-add_subdirectory(common/log)
-
-
 option(COMPILE_SAMPLE "Build example" ON)
 
+project(DEMO  LANGUAGES  CXX)
+add_subdirectory(common/log)
 add_subdirectory(core)
 add_dependencies(test_exec log)
 
@@ -28,12 +26,7 @@ if(COMPILE_SAMPLE)
     add_subdirectory(sample/node_test)
     add_subdirectory(sample/request_reply_example)
     add_subdirectory(sample/request_reply_test)
-
-
-    add_dependencies(node_example_exec log)
-    add_dependencies(node_test_exec log)
-    add_dependencies(request_reply_example_exec log)
-    add_dependencies(request_reply_test_exec log)
+    add_subdirectory(sample/NGVS)
 endif()
 
 
