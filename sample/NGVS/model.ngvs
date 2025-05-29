@@ -1,0 +1,84 @@
+{
+    "UDT": [
+        {
+            "Name": "STD.UDT_2",
+            "Length": 4,
+            "Members": [
+                {
+                    "Length": 1,
+                    "MemberName": "C1",
+                    "MemberType": "SINT",
+                    "Offset": 0
+                },
+                {
+                    "Length": 2,
+                    "MemberName": "C2",
+                    "MemberType": "ARRAY",
+                    "Offset": 1,
+                    "ElementType": "{\"Name\":\"INT\",\"Range\":[{\"end\":2,\"start\":1}]}"
+                }
+            ]
+        },
+        {
+            "Name": "STD.UDT_1",
+            "Length": 8,
+            "Members": [
+                {
+                    "Length": 2,
+                    "MemberName": "B1",
+                    "MemberType": "INT",
+                    "Offset": 0
+                },
+                {
+                    "Length": 1,
+                    "MemberName": "B2",
+                    "MemberType": "BOOL",
+                    "Offset": 2
+                },
+                {
+                    "Length": 4,
+                    "MemberName": "B3",
+                    "MemberType": "STD.UDT_2",
+                    "Offset": 4
+                }
+            ]
+        }
+    ],
+    "SendNGVS": [
+        {
+            "Name": "STD.NGVS_S1",
+            "NGVSVarNameSpace": "STD",
+            "LocalIPAddress": "127.0.0.1",
+            "LocalPort": 6000,
+            "Protocol": 1,
+            "NGVSVariables": [
+                {
+                    "Name": "STD.VAR1",
+                    "TypeOf": "STD.UDT_1",
+                    "Length": 8
+                },
+                {
+                    "Name": "STD.VAR2",
+                    "TypeOf": "ARRAY",
+                    "ElementType": "{\"Name\":\"INT\",\"Range\":[{\"end\":2,\"start\":1}]}",
+                    "Length": 4
+                },
+                {
+                    "Name": "STD.VAR3",
+                    "TypeOf": "INT",
+                    "Length": 2
+                },
+                {
+                    "Name": "STD.VAR4",
+                    "TypeOf": "BOOL",
+                    "Length": 1
+                },
+                {
+                    "Name": "STD.VAR5",
+                    "TypeOf": "STRING",
+                    "Length": 82
+                }
+            ]
+        }
+    ]
+}

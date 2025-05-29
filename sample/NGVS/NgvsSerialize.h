@@ -19,6 +19,10 @@
 
 #include <string>
 #include <vector>
+#include <map>
+#include <algorithm>
+
+#include "ModelParser.h"
 
 namespace dsf
 {
@@ -27,12 +31,21 @@ namespace ngvs
     class NgvsSerializer
     {
     public:
-        NgvsSerializer();
+        explicit NgvsSerializer(std::map<std::string, ModelDefine> modelDefines, size_t alignment = 4);
         ~NgvsSerializer();
         
 
+    void serialize();
+    const std::vector<char>& buffer() const;
+
 
     private:
+        size_t alignOffset(size_t offset, size_t alignment);
+    private:
+        std::vector<char> buffer_;
+        std::vector<ModelDefine> sortedModels_;; 
+        std::map<std::string, size_t> offsetMap_;
+        size_t ALIGNMENT_; 
     };
 
 } // namespace ac
