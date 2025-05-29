@@ -21,34 +21,42 @@
 #include <vector>
 #include <map>
 #include <algorithm>
-
 #include "ModelParser.h"
+#include "unordered_map"
 
 namespace dsf
 {
 namespace ngvs
 {
+    struct Result {
+        std::string name;
+        std::string type;
+        size_t size;
+        uint32_t offset;
+    };
+
     class NgvsSerializer
     {
     public:
-        explicit NgvsSerializer(std::map<std::string, ModelDefine> modelDefines, size_t alignment = 4);
+        NgvsSerializer(size_t alignment = 4);
         ~NgvsSerializer();
-        
 
-    void serialize();
-    const std::vector<char>& buffer() const;
-
+        bool serialize(std::string schema, const std::string ModelName);
+        const std::vector<char> &buffer() const;
 
     private:
         size_t alignOffset(size_t offset, size_t alignment);
+        std::vector<Result> calculateStructSize(const std::map<std::string, std::string> &data);
+
     private:
         std::vector<char> buffer_;
-        std::vector<ModelDefine> sortedModels_;; 
+        std::vector<ModelDefine> sortedModels_;
+        std::map<std::string, ModelDefine> modelDefines_;
         std::map<std::string, size_t> offsetMap_;
-        size_t ALIGNMENT_; 
+        size_t ALIGNMENT_;
     };
 
-} // namespace ac
+} // namespace ngvs
 } // namespace dsf
 
 #endif // ac_ngvs_serialize_h

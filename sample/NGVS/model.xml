@@ -1,14 +1,14 @@
 <models>
-    <struct name="STD.UDT_2" version="1.0">
-        <member name="C1" type="int16"/>
-        <member name="C2" type="int8" arrayDimensions="2" startIndex="1" endIndex="2"/>
+    <struct name="InnerModel" version="1.0">
+        <member name="first" type="int32"/>
+        <member name="complex_member2" type="nonBasic" nonBasicTypeName="InnerModel2" version="1.0"/>
     </struct>
 
-    <struct name="STD.UDT_1" version="1.0">
-        <member name="B1" type="int8"/>
-        <member name="B2" type="BOOL"/>
-        <member name="B3" type="nonBasic" nonBasicTypeName="STD.UDT_2" version="1.0"/>
+    <struct name="InnerModel2" version="1.0">
+        <member name="third" type="int32"/>
+        <member name="complex_member3" type="nonBasic" nonBasicTypeName="InnerModel3" version="1.0"/>
     </struct>
+
 
     <struct name="InnerModel5" version="1.0">
         <member name="first" type="float32"/>
@@ -17,7 +17,8 @@
 
     <struct name="InnerModel6" version="1.0">
         <member name="first" type="float32"/>
-        <member name="second" type="int64"/>         
+        <member name="second" type="int64"/> 
+        <member name="third" type="int8"/>        
     </struct>
 
     <struct name="ParentModel" version="2.0">

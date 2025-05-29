@@ -11,12 +11,20 @@
 
 #include <boost/property_tree/ptree.hpp>
 #include <map>
+#include <unordered_map>
 #include <set>
 
 namespace dsf
 {
 namespace ngvs
 {
+
+    static const std::unordered_map<std::string, size_t> basicTypeSizes = {
+        {"int32", 4}, {"float32", 4}, {"int64", 8}, {"string", 82}, {"int16", 2}, {"int8", 1}
+        
+      
+    };
+
     typedef enum {
         MODEL_PARSER_OK = 0,
         ERROR_MODEL_PARSE_FAILED,
@@ -26,7 +34,7 @@ namespace ngvs
         std::string modelName;
         std::string modelVersion;
         std::string schema;
-        size_t size; 
+        size_t size;
         std::map<std::string, std::string> mapKeyType;
     };
 
@@ -45,7 +53,8 @@ namespace ngvs
         void resolveModelMembers(const std::string &modelName,
                                  std::map<std::string, ModelDefine> &allModels,
                                  std::map<std::string, boost::property_tree::ptree> &structNodes,
-                                 std::map<std::string, std::string> &currentModelMembers,size_t &modelSize);
+                                 std::map<std::string, std::string> &currentModelMembers,
+                                 size_t &modelSize);
         void generateArrayKeys(const std::string &memberName, const std::string &memberType,
                                const std::vector<int> &dimensions, std::vector<int> currentIndices,
                                std::map<std::string, std::string> &currentModelMemebers);

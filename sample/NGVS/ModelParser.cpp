@@ -320,10 +320,6 @@ namespace ngvs
 
     size_t ModelParser::getBasicTypeSize(const std::string &type)
     {
-        static const std::map<std::string, size_t> basicTypeSizes = {
-            {"int32", 4}, {"float32", 4}, {"int64", 8}, {"string", 82}
-            // Strings are variable-length; size depends on actual data
-        };
         auto it = basicTypeSizes.find(type);
         if (it != basicTypeSizes.end()) {
             return it->second;
