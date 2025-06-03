@@ -26,23 +26,6 @@ namespace ngvs
     {
     }
 
-    //  size_t currentOffset = 0;
-    //     /*1.先保存一份副本*/
-    //     for (auto &model : modelDefines) {
-    //         ModelDefine define = model.second;
-    //         sortedModels_.push_back(define);
-    //     }
-    //     /*2.然后进行排序*/
-    //     std::sort(sortedModels_.begin(), sortedModels_.end(),
-    //               [](const ModelDefine &a, const ModelDefine &b) { return a.size > b.size; });
-    //     /*3.字节对齐一下*/
-    //     for (const auto &model : sortedModels_) {
-    //         currentOffset = alignOffset(currentOffset, ALIGNMENT_);
-    //         offsetMap_[model.modelName] = currentOffset;
-    //         currentOffset += model.size;
-    //     }
-    //     /*4.构造一块内存 用来放数据*/
-    //     buffer_.resize(currentOffset, 0);
     bool NgvsSerializer::serialize(std::string schema, const std::string ModelName)
     {
         ModelParser parser;
@@ -61,21 +44,24 @@ namespace ngvs
             LOG(error) << "model not found: " << ModelName;
             return false;
         }
-        /*找到数据类型，开始寻找根节点的数据类型以及计算偏移*/
+
+        // /*找到数据类型，开始寻找根节点的数据类型以及计算偏移*/
         ModelDefine modelDefine = it->second;
-
-        LOG(info) << "modelDefine Name: " << modelDefine.modelName
-                  << ", modelDefine Version: " << modelDefine.modelVersion
-                  << ", Size: " << modelDefine.size << "\n";
-        for (auto &entry2 : modelDefine.mapKeyType) {
-            LOG(info) << "key: " << entry2.first << ", value: " << entry2.second;
+        LOG(info) << "----------------------------/n";
+        LOG(info) << "model name: " << modelDefine.modelName
+                  << "  model name: " << modelDefine.modelVersion
+                  << "  model size: " << modelDefine.size;
+        for (auto &ele : modelDefine.mapKeyType) {
+            LOG(info) << "ele name: " << ele.first << "  ele type: " << ele.second.type
+                      << "  ele size: " << ele.second.size << "  ele offset: " << ele.second.offset;
         }
+        LOG(info) << "----------------------------/n";
 
-        std::vector<Result> res = calculateStructSize(modelDefine.mapKeyType);
-        for (const auto &result : res) {
-            LOG(info) << "+++++name: " << result.name << ", type: " << result.type
-                      << ", size: " << result.size << ", offset: " << result.offset;
-        }
+        // std::vector<Result> res = calculateStructSize(modelDefine.mapKeyType);
+        // for (const auto &result : res) {
+        //     LOG(info) << "+++++name: " << result.name << ", type: " << result.type
+        //               << ", size: " << result.size << ", offset: " << result.offset;
+        // }
 
         return 0;
     }
@@ -83,124 +69,124 @@ namespace ngvs
     std::vector<Result>
     NgvsSerializer::calculateStructSize(const std::map<std::string, std::string> &data)
     {
-        // 按根节点分组
-        std::map<std::string, std::vector<std::pair<std::string, std::string>>> root_nodes;
-        for (const auto &entry : data) {
-            std::string key = entry.first;
-            std::string root =
-                key.substr(0, key.find('[') != std::string::npos ? key.find('[') : key.find('.'));
-            root_nodes[root].push_back(entry);
-        }
-        for (auto &node : root_nodes) {
-            // LOG(debug) << "root: " << node.first;
-        }
+        // // 按根节点分组
+        // std::map<std::string, std::vector<std::pair<std::string, std::string>>> root_nodes;
+        // for (const auto &entry : data) {
+        //     std::string key = entry.first;
+        //     std::string root =
+        //         key.substr(0, key.find('[') != std::string::npos ? key.find('[') : key.find('.'));
+        //     root_nodes[root].push_back(entry);
+        // }
+        // for (auto &node : root_nodes) {
+        //     // LOG(debug) << "root: " << node.first;
+        // }
 
-        std::vector<Result> result;
-        for (const auto &root_entry : root_nodes) {
-            std::string root = root_entry.first;
-            const auto &entries = root_entry.second;
+        // std::vector<Result> result;
+        // for (const auto &root_entry : root_nodes) {
+        //     std::string root = root_entry.first;
+        //     const auto &entries = root_entry.second;
 
-            if (entries[0].first.find('[') == std::string::npos
-                && entries[0].first.find('.') == std::string::npos) {
-                // 既不是结构也不是数组，直接处理简单变量
-                std::string name = root;
-                std::string dtype = entries[0].second;
-                size_t size = basicTypeSizes.at(dtype);
-                unsigned int offset = size; // 简单变量的偏移量等于其大小
-                result.push_back({name, dtype, size, offset});
-            } else {
+        //     if (entries[0].first.find('[') == std::string::npos
+        //         && entries[0].first.find('.') == std::string::npos) {
+        //         // 既不是结构也不是数组，直接处理简单变量
+        //         std::string name = root;
+        //         std::string dtype = entries[0].second;
+        //         size_t size = basicTypeSizes.at(dtype);
+        //         unsigned int offset = size; // 简单变量的偏移量等于其大小
+        //         result.push_back({name, dtype, size, offset});
+        //     } else {
 
-                std::vector<std::pair<std::string, std::string>> first_elem_keys;
-                for (const auto &entry : entries) {
-                    // 只收集 [0] 的键（数组）或包含 . 的键（平铺结构体）
-                    if ((entry.first.find("[0]") != std::string::npos)
-                        || (entry.first.find('.') != std::string::npos
-                            && entry.first.find('[') == std::string::npos)) {
-                        first_elem_keys.push_back(entry);
-                    }
-                }
-                if (first_elem_keys.empty())
-                    continue;
+        //         std::vector<std::pair<std::string, std::string>> first_elem_keys;
+        //         for (const auto &entry : entries) {
+        //             // 只收集 [0] 的键（数组）或包含 . 的键（平铺结构体）
+        //             if ((entry.first.find("[0]") != std::string::npos)
+        //                 || (entry.first.find('.') != std::string::npos
+        //                     && entry.first.find('[') == std::string::npos)) {
+        //                 first_elem_keys.push_back(entry);
+        //             }
+        //         }
+        //         if (first_elem_keys.empty())
+        //             continue;
 
-                // 处理简单数组
-                if (entries[0].first.find('[') != std::string::npos
-                    && first_elem_keys[0].first.find('.') == std::string::npos) {
-                    std::string name = root;
-                    std::string dtype = first_elem_keys[0].second;
-                    size_t size = basicTypeSizes.at(dtype);
-                    // 数组总大小 = 元素大小 * 元素个数
-                    int array_size =
-                        std::count_if(entries.begin(), entries.end(),
-                                      [&root](const auto &e) {
-                                          return e.first.find(root) != std::string::npos;
-                                      })
-                        * size;
-                    unsigned int offset = array_size; // 数组的偏移量等于总大小（已对齐）
-                    result.push_back({name, dtype, size, offset});
-                } else {
-                    // 复杂结构体数组（如 long_array2）
-                    // 按成员分组
-                    std::map<std::string, std::vector<std::pair<std::string, std::string>>>
-                        struct_members;
-                    for (const auto &entry : first_elem_keys) {
-                        std::string member = entry.first.substr(entry.first.find("[0].") + 4);
-                        member = member.substr(0, member.find('.'));
-                        /*存到struct 的数组里面*/
-                        struct_members[member].push_back(entry);
-                    }
-                    // 计算结构体大小和偏移量（考虑四字节对齐）
-                    unsigned int offset = 0;
-                    for (const auto &member_entry : struct_members) {
-                        std::string member = member_entry.first;
-                        const auto &members = member_entry.second;
-                        int size;
-                        std::string dtype;
+        //         // 处理简单数组
+        //         if (entries[0].first.find('[') != std::string::npos
+        //             && first_elem_keys[0].first.find('.') == std::string::npos) {
+        //             std::string name = root;
+        //             std::string dtype = first_elem_keys[0].second;
+        //             size_t size = basicTypeSizes.at(dtype);
+        //             // 数组总大小 = 元素大小 * 元素个数
+        //             int array_size =
+        //                 std::count_if(entries.begin(), entries.end(),
+        //                               [&root](const auto &e) {
+        //                                   return e.first.find(root) != std::string::npos;
+        //                               })
+        //                 * size;
+        //             unsigned int offset = array_size; // 数组的偏移量等于总大小（已对齐）
+        //             result.push_back({name, dtype, size, offset});
+        //         } else {
+        //             // 复杂结构体数组（如 long_array2）
+        //             // 按成员分组
+        //             std::map<std::string, std::vector<std::pair<std::string, std::string>>>
+        //                 struct_members;
+        //             for (const auto &entry : first_elem_keys) {
+        //                 std::string member = entry.first.substr(entry.first.find("[0].") + 4);
+        //                 member = member.substr(0, member.find('.'));
+        //                 /*存到struct 的数组里面*/
+        //                 struct_members[member].push_back(entry);
+        //             }
+        //             // 计算结构体大小和偏移量（考虑四字节对齐）
+        //             unsigned int offset = 0;
+        //             for (const auto &member_entry : struct_members) {
+        //                 std::string member = member_entry.first;
+        //                 const auto &members = member_entry.second;
+        //                 int size;
+        //                 std::string dtype;
 
-                        if (members.size() == 1
-                            && members[0].first.substr(members[0].first.find("[0].") + 4).find('.')
-                                   == std::string::npos) {
-                            // 简单成员（如 long_array2[0].first）
-                            dtype = members[0].second;
-                            size = basicTypeSizes.at(dtype);
-                        } else {
-                            // 嵌套结构体（如 complex_member6）
-                            dtype = member;
-                            size = 0;
-                            unsigned int sub_offset = 0;
-                            std::vector<std::pair<std::string, std::string>> sorted_members =
-                                members;
-                            std::sort(sorted_members.begin(), sorted_members.end());
-                            for (const auto &sub_entry : sorted_members) {
-                                int sub_size = basicTypeSizes.at(sub_entry.second);
-                                // 四字节对齐
-                                if (sub_offset % 4 != 0) {
-                                    sub_offset += 4 - (sub_offset % 4);
-                                }
-                                sub_offset += sub_size;
-                                size += sub_size; // 累加实际大小
-                            }
-                            // 嵌套结构体偏移量四字节对齐
-                            sub_offset = static_cast<unsigned int>(
-                                std::ceil(static_cast<double>(sub_offset) / 4) * 4);
-                            size = sub_offset; // 嵌套结构体大小按对齐后的偏移量计算
-                        }
+        //                 if (members.size() == 1
+        //                     && members[0].first.substr(members[0].first.find("[0].") + 4).find('.')
+        //                            == std::string::npos) {
+        //                     // 简单成员（如 long_array2[0].first）
+        //                     dtype = members[0].second;
+        //                     size = basicTypeSizes.at(dtype);
+        //                 } else {
+        //                     // 嵌套结构体（如 complex_member6）
+        //                     dtype = member;
+        //                     size = 0;
+        //                     unsigned int sub_offset = 0;
+        //                     std::vector<std::pair<std::string, std::string>> sorted_members =
+        //                         members;
+        //                     std::sort(sorted_members.begin(), sorted_members.end());
+        //                     for (const auto &sub_entry : sorted_members) {
+        //                         int sub_size = basicTypeSizes.at(sub_entry.second);
+        //                         // 四字节对齐
+        //                         if (sub_offset % 4 != 0) {
+        //                             sub_offset += 4 - (sub_offset % 4);
+        //                         }
+        //                         sub_offset += sub_size;
+        //                         size += sub_size; // 累加实际大小
+        //                     }
+        //                     // 嵌套结构体偏移量四字节对齐
+        //                     sub_offset = static_cast<unsigned int>(
+        //                         std::ceil(static_cast<double>(sub_offset) / 4) * 4);
+        //                     size = sub_offset; // 嵌套结构体大小按对齐后的偏移量计算
+        //                 }
 
-                        // 四字节对齐
-                        if (offset % 4 != 0) {
-                            offset += 4 - (offset % 4);
-                        }
-                        offset += size;
-                        // 记录第一个成员
-                        if (offset == size || (offset - size) % 4 == 0) {
-                            result.push_back({root, dtype, basicTypeSizes.at(dtype), offset});
-                        }
-                        break; // 只记录第一个成员
-                    }
-                }
-            }
-        }
+        //                 // 四字节对齐
+        //                 if (offset % 4 != 0) {
+        //                     offset += 4 - (offset % 4);
+        //                 }
+        //                 offset += size;
+        //                 // 记录第一个成员
+        //                 if (offset == size || (offset - size) % 4 == 0) {
+        //                     result.push_back({root, dtype, basicTypeSizes.at(dtype), offset});
+        //                 }
+        //                 break; // 只记录第一个成员
+        //             }
+        //         }
+        //     }
+        // }
 
-        return result;
+        //return result;
     }
 
     const std::vector<char> &NgvsSerializer::buffer() const

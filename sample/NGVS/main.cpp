@@ -31,18 +31,17 @@ int main(int argc, char *argv[])
     // dsf::ngvs::error_code_t ret = parser->parseSchema(modelDefines, xmlContent, error_message);
     // if (ret != dsf::ngvs::MODEL_PARSER_OK)
     //     LOG(error) << "error_message: " << error_message;
-    // for (auto &entry : modelDefines) {
-    //     LOG(info) << "++++++++++++++++++++++++++++++++++++++++";
-    //     std::string modelName = entry.first;
-    //     dsf::ngvs::ModelDefine modelDefine = entry.second;
-    //     LOG(info) << "Model Name: " << modelName << ", Model Version: " << modelDefine.modelVersion
-    //               << ", Size: " << modelDefine.size << "\n";
-    //     for (auto &entry2 : modelDefine.mapKeyType) {
-    //         LOG(warning) << "key: " << entry2.first << ", value: " << entry2.second;
+    // for(auto model:modelDefines)
+    // {
+    //     LOG(info) << "model name: " << model.second.modelName << "  model name: " << model.second.modelVersion << "  model size: " << model.second.size;
+    //     for(auto &ele:model.second.mapKeyType)
+    //     {
+    //         LOG(info) << "ele name: " << ele.first << "  ele type: " << ele.second.type << "  ele size: " << ele.second.size << "  ele offset: " << ele.second.offset;
     //     }
+    //     LOG(info) << "----------------------------/n";
     // }
     dsf::ngvs::NgvsSerializer serializer;
-    serializer.serialize(xmlContent, "InnerModel3:1.0");
+    serializer.serialize(xmlContent, "InnerModel6:1.0");
     while (std::cin.get() != '\n') {
     }
     return 0;

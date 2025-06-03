@@ -28,12 +28,6 @@ namespace dsf
 {
 namespace ngvs
 {
-    struct Result {
-        std::string name;
-        std::string type;
-        size_t size;
-        uint32_t offset;
-    };
 
     class NgvsSerializer
     {
