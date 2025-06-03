@@ -20,22 +20,27 @@ namespace ngvs
 {
 
     static const std::unordered_map<std::string, size_t> basicTypeSizes = {
-        {"int32", 4}, {"float32", 4}, {"int64", 8}, {"string", 82}, {"int16", 2}, {"int8", 1}
-        
-      
-    };
+        {"int32", 4}, {"float32", 4}, {"int64", 8}, {"string", 82}, {"int16", 2}, {"int8", 1}};
 
     typedef enum {
         MODEL_PARSER_OK = 0,
         ERROR_MODEL_PARSE_FAILED,
     } error_code_t;
 
+    struct Result {
+        std::string name;
+        std::string type;
+        size_t size;
+        unsigned int offset;
+    };
+
     struct ModelDefine {
         std::string modelName;
         std::string modelVersion;
         std::string schema;
         size_t size;
-        std::map<std::string, std::string> mapKeyType;
+        std::map<std::string, Result>
+            mapKeyType; //后续可以优化为unordered_map，提升查找效率
     };
 
     class ModelParser
@@ -50,21 +55,29 @@ namespace ngvs
 
         std::string child2xml(const boost::property_tree::ptree &childNode,
                               const std::string &rootName);
-        void resolveModelMembers(const std::string &modelName,
-                                 std::map<std::string, ModelDefine> &allModels,
+        void resolveModelMembers(const std::string &currentModelNameAndVersion,
+                                 std::map<std::string, ModelDefine> &allNodes,
                                  std::map<std::string, boost::property_tree::ptree> &structNodes,
-                                 std::map<std::string, std::string> &currentModelMembers,
-                                 size_t &modelSize);
+                                 std::map<std::string, Result> &currentModelMembers,
+                                 size_t &modelSize, size_t &offset);
+        // void generateArrayKeys(const std::string &memberName, const std::string &memberType,
+        //                        const std::vector<int> &dimensions, std::vector<int> currentIndices,
+        //                        std::map<std::string, std::string> &currentModelMemebers);
+        // void generateSequenceKeys(const std::string &memberName, const std::string &memberType,
+        //                           int maxLength,
+        //                           std::map<std::string, std::string> &currentModelMemebers);
+        // void generateArrayMembers(const std::string &memberName, const std::vector<int> &dimensions,
+        //                           std::vector<int> currentIndices,
+        //                           const std::map<std::string, std::string> &subMembers,
+        //                           std::map<std::string, std::string> &currentModelMembers);
         void generateArrayKeys(const std::string &memberName, const std::string &memberType,
                                const std::vector<int> &dimensions, std::vector<int> currentIndices,
-                               std::map<std::string, std::string> &currentModelMemebers);
+                               std::map<std::string, Result> &currentModelMembers,
+                               size_t &offset);
         void generateSequenceKeys(const std::string &memberName, const std::string &memberType,
                                   int maxLength,
-                                  std::map<std::string, std::string> &currentModelMemebers);
-        void generateArrayMembers(const std::string &memberName, const std::vector<int> &dimensions,
-                                  std::vector<int> currentIndices,
-                                  const std::map<std::string, std::string> &subMembers,
-                                  std::map<std::string, std::string> &currentModelMembers);
+                                  std::map<std::string, Result> &currentModelMembers,
+                                  size_t &offset);
         size_t getBasicTypeSize(const std::string &type);
     };
 } // namespace ngvs
