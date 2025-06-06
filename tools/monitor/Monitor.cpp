@@ -103,6 +103,8 @@ void Monitor::run()
         }
 
         /*json 解析管理数据*/
+
+        
         auto dump = StatisticsBackend::dump_database(reset_);
         json &j = dump;
         try {
