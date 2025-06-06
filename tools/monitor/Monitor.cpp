@@ -101,7 +101,11 @@ void Monitor::run()
         if (!dump_file_.empty()) {
             dump_in_file();
         }
-
+        // 这里清除inactive entity和statistics数据试试
+        StatisticsBackend::clear_inactive_entities();
+        // StatisticsBackend::clear_statistics_data();
+        // 将database类内数据清空
+        MonitorDataBase::getInstance().reset();
         /*json 解析管理数据*/
         auto dump = StatisticsBackend::dump_database(reset_);
         json &j = dump;
