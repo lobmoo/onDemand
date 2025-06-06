@@ -27,6 +27,7 @@ if(COMPILE_SAMPLE)
     add_subdirectory(sample/node_test)
     add_subdirectory(sample/request_reply_example)
     add_subdirectory(sample/request_reply_test)
+    add_subdirectory(sample/monitor)
     add_subdirectory(sample/NGVS)
 endif()
 

@@ -24,7 +24,6 @@
 #include "DDSTopicDataWriter.hpp"
 #include "ParticipantQosHandler.h"
 
-
 class DDSParticipantManager
 {
     typedef std::function<eprosima::fastdds::dds::TopicDataType *()> TopicDataTypeCreator;
@@ -46,12 +45,12 @@ public:
                                      DomainParticipantListener *listener);
 
     template <typename T>
-    DDSTopicDataWriter<T> *
+    std::shared_ptr<DDSTopicDataWriter<T>>
     createDataWriter(std::string topicName,
                      const eprosima::fastdds::dds::DataWriterQos *dataWriterQos);
 
     template <typename T>
-    DDSTopicDataReader<T> *
+    std::shared_ptr<DDSTopicDataReader<T>>
     createDataReader(std::string topicName,
                      std::function<void(const std::string &, std::shared_ptr<T>)> callback,
                      const eprosima::fastdds::dds::DataReaderQos *dataReaderQos);
@@ -68,44 +67,40 @@ private:
 };
 
 template <typename T>
-DDSTopicDataWriter<T> *
+std::shared_ptr<DDSTopicDataWriter<T>>
 DDSParticipantManager::createDataWriter(std::string topicName,
                                         const eprosima::fastdds::dds::DataWriterQos *dataWriterQos)
 {
-        if(!m_participant->get_default_topic_qos(topicQos_))
-        {
-            LOG(error) << "get default topic qos error, using default topic qos";
-            topicQos_ = eprosima::fastdds::dds::TOPIC_QOS_DEFAULT;
-        }
-        // if (!m_participant->get_topic_qos_from_profile(CONFIGURATION_TOPIC_PROFILE, topicQos_)) {
-        //     LOG(error) << "get topic qos from profile error, using default topic qos";
-        // }
-        eprosima::fastdds::dds::DataWriterQos config_dataWriterQos;
-        if (!m_participant->get_default_datawriter_qos(config_dataWriterQos)) {
-            LOG(error) << "get default datawriter qos error, using default datawriter qos";
-            config_dataWriterQos = eprosima::fastdds::dds::DATAWRITER_QOS_DEFAULT;
-        }
-        if (dataWriterQos) {
-            config_dataWriterQos = *dataWriterQos;
-        }
-        // if (!m_participant->get_datawriter_qos_from_profile(CONFIGURATION_DATAWRITER_PROFILE,
-        //                                                     config_dataWriterQos)) {
-        //     LOG(error) << "get datawriter qos from profile error, using default datawriter qos";
-        // }
-        if (!m_participant->registerTopic(topicName, getTopicDataType(topicName), topicQos_))
-            return nullptr;
-        return m_participant->createDataWriter<T>(topicName, config_dataWriterQos);
-    
-    
+    if (!m_participant->get_default_topic_qos(topicQos_)) {
+        LOG(error) << "get default topic qos error, using default topic qos";
+        topicQos_ = eprosima::fastdds::dds::TOPIC_QOS_DEFAULT;
+    }
+    // if (!m_participant->get_topic_qos_from_profile(CONFIGURATION_TOPIC_PROFILE, topicQos_)) {
+    //     LOG(error) << "get topic qos from profile error, using default topic qos";
+    // }
+    eprosima::fastdds::dds::DataWriterQos config_dataWriterQos;
+    if (!m_participant->get_default_datawriter_qos(config_dataWriterQos)) {
+        LOG(error) << "get default datawriter qos error, using default datawriter qos";
+        config_dataWriterQos = eprosima::fastdds::dds::DATAWRITER_QOS_DEFAULT;
+    }
+    if (dataWriterQos) {
+        config_dataWriterQos = *dataWriterQos;
+    }
+    // if (!m_participant->get_datawriter_qos_from_profile(CONFIGURATION_DATAWRITER_PROFILE,
+    //                                                     config_dataWriterQos)) {
+    //     LOG(error) << "get datawriter qos from profile error, using default datawriter qos";
+    // }
+    if (!m_participant->registerTopic(topicName, getTopicDataType(topicName), topicQos_))
+        return nullptr;
+    return m_participant->createDataWriter<T>(topicName, config_dataWriterQos);
 }
 
 template <typename T>
-DDSTopicDataReader<T> *DDSParticipantManager::createDataReader(
+std::shared_ptr<DDSTopicDataReader<T>> DDSParticipantManager::createDataReader(
     std::string topicName, std::function<void(const std::string &, std::shared_ptr<T>)> callback,
     const eprosima::fastdds::dds::DataReaderQos *dataReaderQos)
 {
-    if(!m_participant->get_default_topic_qos(topicQos_))
-    {
+    if (!m_participant->get_default_topic_qos(topicQos_)) {
         LOG(error) << "get default topic qos error, using default topic qos";
         topicQos_ = eprosima::fastdds::dds::TOPIC_QOS_DEFAULT;
     }
@@ -118,7 +113,7 @@ DDSTopicDataReader<T> *DDSParticipantManager::createDataReader(
     if (dataReaderQos) {
         config_dataReaderQos = *dataReaderQos;
     }
-    
+
     if (!m_participant->registerTopic(topicName, getTopicDataType(topicName), topicQos_))
         return nullptr;
     return m_participant->createDataReader(topicName, callback, config_dataReaderQos);

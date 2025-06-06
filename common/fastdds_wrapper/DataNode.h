@@ -37,7 +37,7 @@ public:
    */
     DataNode(int domainId, const std::string &participant_name,
              ParticipantQosConfigurator qos_configurator = nullptr,
-             DomainParticipantListener *listener = nullptr)
+             DDSParticipantListener *listener = nullptr)
         : DDSParticipantManager(domainId), qos_configurator_(qos_configurator)
     {
         initDomainParticipant(participant_name, listener);
@@ -47,7 +47,7 @@ public:
    * @brief 依照配置文件创建数据通信节点
    * @param  qosXmlConfig     配置文件路径
    */
-    DataNode(const std::string &qosXmlConfig, DomainParticipantListener *listener = nullptr)
+    DataNode(const std::string &qosXmlConfig, DDSParticipantListener *listener = nullptr)
         : DDSParticipantManager()
     {
         initDomainParticipantForXml(qosXmlConfig, listener);
@@ -74,12 +74,12 @@ protected:
 
 public:
     template <typename T>
-    DDSTopicDataWriter<T> *
+    std::shared_ptr<DDSTopicDataWriter<T>>
     createDataWriter(const std::string topicName,
                      eprosima::fastdds::dds::DataWriterQos *dataWriterQos = nullptr);
 
     template <typename T>
-    DDSTopicDataReader<T> *
+    std::shared_ptr<DDSTopicDataReader<T>>
     createDataReader(const std::string topicName,
                      std::function<void(const std::string &, std::shared_ptr<T>)> callback,
                      const eprosima::fastdds::dds::DataReaderQos *dataReaderQos = nullptr);
@@ -97,7 +97,7 @@ public:
  * @return DDSTopicDataWriter<T>*
  */
 template <typename T>
-DDSTopicDataWriter<T> *
+std::shared_ptr<DDSTopicDataWriter<T>>
 DataNode::createDataWriter(const std::string topicName,
                            eprosima::fastdds::dds::DataWriterQos *dataWriterQos)
 {
@@ -111,7 +111,7 @@ DataNode::createDataWriter(const std::string topicName,
  * @return DDSTopicDataReader<T>*
  */
 template <typename T>
-DDSTopicDataReader<T> *
+std::shared_ptr<DDSTopicDataReader<T>>
 DataNode::createDataReader(const std::string topicName,
                            std::function<void(const std::string &, std::shared_ptr<T>)> callback,
                            const eprosima::fastdds::dds::DataReaderQos *dataReaderQos)

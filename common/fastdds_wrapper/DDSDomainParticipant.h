@@ -39,11 +39,11 @@ public:
 
 public:
     template <typename T>
-    DDSTopicDataWriter<T> *createDataWriter(std::string topicName,
-                                            eprosima::fastdds::dds::DataWriterQos dataWriterQos);
+    std::shared_ptr<DDSTopicDataWriter<T>>
+    createDataWriter(std::string topicName, eprosima::fastdds::dds::DataWriterQos dataWriterQos);
 
     template <typename T>
-    DDSTopicDataReader<T> *
+    std::shared_ptr<DDSTopicDataReader<T>>
     createDataReader(std::string topicName,
                      std::function<void(const std::string &, std::shared_ptr<T>)> callback,
                      const eprosima::fastdds::dds::DataReaderQos &dataReaderQos);
@@ -75,26 +75,27 @@ private:
 };
 
 template <typename T>
-DDSTopicDataWriter<T> *
+std::shared_ptr<DDSTopicDataWriter<T>>
 DDSDomainParticipant::createDataWriter(std::string topicName,
                                        eprosima::fastdds::dds::DataWriterQos dataWriterQos)
 {
     std::lock_guard<std::mutex> guard(m_topicLock);
     if (m_mapTopics.find(topicName) == m_mapTopics.end())
         return nullptr;
-    return new DDSTopicDataWriter<T>(m_publisher, m_mapTopics.at(topicName), dataWriterQos);
+    return std::make_shared<DDSTopicDataWriter<T>>(m_publisher, m_mapTopics.at(topicName),
+                                                   dataWriterQos);
 }
 
 template <typename T>
-DDSTopicDataReader<T> *DDSDomainParticipant::createDataReader(
+std::shared_ptr<DDSTopicDataReader<T>> DDSDomainParticipant::createDataReader(
     std::string topicName, std::function<void(const std::string &, std::shared_ptr<T>)> callback,
     const eprosima::fastdds::dds::DataReaderQos &dataReaderQos)
 {
     std::lock_guard<std::mutex> guard(m_topicLock);
     if (m_mapTopics.find(topicName) == m_mapTopics.end())
         return nullptr;
-    return new DDSTopicDataReader<T>(m_subscriber, m_mapTopics.at(topicName), callback,
-                                     dataReaderQos);
+    return std::make_shared<DDSTopicDataReader<T>>(m_subscriber, m_mapTopics.at(topicName),
+                                                   callback, dataReaderQos);
 }
 
 #endif

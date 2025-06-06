@@ -24,7 +24,6 @@
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
 
-
 ParticipantQosHandler::ParticipantQosHandler(std::string participant_name)
 {
     m_participantQos = PARTICIPANT_QOS_DEFAULT;
@@ -115,4 +114,31 @@ void ParticipantQosHandler::addUDPV6Transport(uint32_t buffer_size)
     udp_transport->receiveBufferSize = buffer_size;
     udp_transport->non_blocking_send = true;
     m_participantQos.transport().user_transports.push_back(udp_transport);
+}
+
+void ParticipantQosHandler::add_statistics_and_monitor()
+{
+    m_participantQos.properties().properties().emplace_back("fastdds.enable_monitor_service",
+                                                            "true");
+    m_participantQos.properties().properties().emplace_back("fastdds.statistics",
+                                                            "MONITOR_SERVICE_TOPIC;");
+
+    m_participantQos.properties().properties().emplace_back("fastdds.statistics",
+            "HISTORY_LATENCY_TOPIC;" \
+            "NETWORK_LATENCY_TOPIC;" \
+            "PUBLICATION_THROUGHPUT_TOPIC;" \
+            "SUBSCRIPTION_THROUGHPUT_TOPIC;" \
+            "RTPS_SENT_TOPIC;" \
+            "RTPS_LOST_TOPIC;" \
+            "HEARTBEAT_COUNT_TOPIC;" \
+            "ACKNACK_COUNT_TOPIC;" \
+            "NACKFRAG_COUNT_TOPIC;" \
+            "GAP_COUNT_TOPIC;" \
+            "DATA_COUNT_TOPIC;" \
+            "RESENT_DATAS_TOPIC;" \
+            "SAMPLE_DATAS_TOPIC;" \
+            "PDP_PACKETS_TOPIC;" \
+            "EDP_PACKETS_TOPIC;" \
+            "DISCOVERY_TOPIC;" \
+            "PHYSICAL_DATA_TOPIC;");    
 }

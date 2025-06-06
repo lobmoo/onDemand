@@ -81,8 +81,9 @@ DDSDomainParticipant::DDSDomainParticipant(std::string XmlConfig,
 }
 
 DDSDomainParticipant::~DDSDomainParticipant()
-{
+{  
     if (m_participant) {
+        m_participant->delete_contained_entities();
         DomainParticipantFactory::get_instance()->delete_participant(m_participant);
     }
 }

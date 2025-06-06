@@ -74,6 +74,11 @@ public:
      */
     void setParticipantQosProperties(std::string name, std::string value, bool propagate);
 
+    /**
+     * @brief open statistics and monitor
+     */
+    void add_statistics_and_monitor();
+
 private:
     //eprosima::fastdds::dds::DomainParticipantQos m_participantQos;
     eprosima::fastdds::dds::DomainParticipantExtendedQos m_participantQos;

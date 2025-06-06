@@ -51,8 +51,9 @@ DDSTopicDataReader<T>::DDSTopicDataReader(
 template <typename T>
 DDSTopicDataReader<T>::~DDSTopicDataReader()
 {
-    if (m_dataReader)
+    if (m_dataReader) {
         m_subscriber->delete_datareader(m_dataReader);
+    }
 }
 
 #endif

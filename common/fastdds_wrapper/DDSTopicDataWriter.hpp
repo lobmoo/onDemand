@@ -52,7 +52,9 @@ DDSTopicDataWriter<T>::DDSTopicDataWriter(
 template <typename T>
 DDSTopicDataWriter<T>::~DDSTopicDataWriter()
 {
-    m_publisher->delete_datawriter(m_dataWriter);
+    if (m_dataWriter) {
+        m_publisher->delete_datawriter(m_dataWriter);
+    }
 }
 
 template <typename T>
