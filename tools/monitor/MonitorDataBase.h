@@ -1538,6 +1538,23 @@ public:
         printMap(datawriters);
         LOG(info) << "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n";
     }
+
+    void reset()
+    {
+        //清空所有数据
+        std::lock_guard<std::mutex> lock(mutex_);
+        datareaders.clear();
+        datawriters.clear();
+        domains.clear();
+        hosts.clear();
+        locators.clear();
+        participants.clear();
+        processes.clear();
+        topics.clear();
+        users.clear();
+        Topic2IDMap.clear();
+        version = "";
+    }
 };
 } // namespace Monitor
 #endif // MONITOR_DATA_BASE_H
