@@ -1,17 +1,3 @@
-# Copyright 2016 Proyectos y Sistemas de Mantenimiento SL (eProsima).
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 cmake_minimum_required(VERSION 3.16)
 
 option(COMPILE_SAMPLE "Build example" ON)
@@ -22,12 +8,13 @@ add_subdirectory(common/log)
 add_subdirectory(core)
 add_dependencies(test_exec log)
 
+ add_subdirectory(tools/monitor)
+
 if(COMPILE_SAMPLE)
     add_subdirectory(sample/node_example)
     add_subdirectory(sample/node_test)
     add_subdirectory(sample/request_reply_example)
     add_subdirectory(sample/request_reply_test)
-    add_subdirectory(sample/monitor)
     add_subdirectory(sample/NGVS)
 endif()
 
