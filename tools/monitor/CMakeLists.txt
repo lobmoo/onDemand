@@ -52,13 +52,13 @@ set(OBJ_CPP_INCLUDE
 target_include_directories(${PROJECT_NAME} PRIVATE  ${OBJ_CPP_INCLUDE})
 
 
-# ≤È’“√ø∏ˆø‚
+# Êü•ÊâæÊØè‰∏™Â∫ì
 find_library(FASTRTPS_LIBRARY NAMES fastdds PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../thirdparty/fast_dds/lib)
 find_library(FOONATHAN_MEMORY_LIBRARY NAMES foonathan_memory-0.7.3 PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../thirdparty/fast_dds/lib)
 find_library(FASTCDR_LIBRARY NAMES fastcdr PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../thirdparty/fast_dds/lib)
 find_library(FASTDDS_STATISTICS_BACKEND NAMES fastdds_statistics_backend PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../thirdparty/fast_dds/lib)
 
-# ºÏ≤È√ø∏ˆø‚ «∑Ò∂º’“µΩ¡À
+# Ê£ÄÊü•ÊØè‰∏™Â∫ìÊòØÂê¶ÈÉΩÊâæÂà∞‰∫Ü
 if(FASTRTPS_LIBRARY AND FOONATHAN_MEMORY_LIBRARY AND FASTCDR_LIBRARY AND FASTDDS_STATISTICS_BACKEND)
     list(APPEND OBJ_CPP_LIBS ${FASTRTPS_LIBRARY} ${FOONATHAN_MEMORY_LIBRARY} ${FASTCDR_LIBRARY})
     message(STATUS "Found all FAST DDS libraries")

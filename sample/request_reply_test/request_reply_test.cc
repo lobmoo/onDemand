@@ -34,7 +34,7 @@ void request_callback_1k(const CalculatorRequestType_512 &request, CalculatorRep
 
     std::unique_ptr<std::array<int16_t, 512>> data = std::make_unique<std::array<int16_t, 512>>();
     for (size_t i = 0; i < data->size(); ++i) {
-        (*data)[i] = static_cast<int16_t>(10086); // 示例数据
+        (*data)[i] = static_cast<int16_t>(10086); // 绀轰緥鏁版嵁
     }
     reply.data(*data);
     reply.result(result);
@@ -57,7 +57,7 @@ void request_callback_100k(const CalculatorRequestType_51200 &request,
     reply.timestamp(timestamp);
     std::unique_ptr<std::array<int16_t, 51200>> data = std::make_unique<std::array<int16_t, 51200>>();
     for (size_t i = 0; i < data->size(); ++i) {
-        (*data)[i] = static_cast<int16_t>(10086); // 示例数据
+        (*data)[i] = static_cast<int16_t>(10086); // 绀轰緥鏁版嵁
     }
     reply.data(*data);
     reply.result(result);
@@ -80,7 +80,7 @@ void request_callback_1M(const CalculatorRequestType_524288 &request,
     reply.timestamp(timestamp);
     std::unique_ptr<std::array<int16_t, 524288>> data = std::make_unique<std::array<int16_t, 524288>>();
     for (size_t i = 0; i < data->size(); ++i) {
-        (*data)[i] = static_cast<int16_t>(10086); // 示例数据
+        (*data)[i] = static_cast<int16_t>(10086); // 绀轰緥鏁版嵁
     }
     reply.data(*data);
     reply.result(result);
@@ -178,7 +178,7 @@ TEST_F(UDPTestRequestReply, UDPTestRequestReplyClientTest1k)
         std::unique_ptr<std::array<int16_t, 512>> data =
             std::make_unique<std::array<int16_t, 512>>();
         for (size_t i = 0; i < data->size(); ++i) {
-            (*data)[i] = static_cast<int16_t>(index); // 示例数据
+            (*data)[i] = static_cast<int16_t>(index); // 绀轰緥鏁版嵁
         }
 
         request.client_id();
@@ -233,7 +233,7 @@ TEST_F(UDPTestRequestReply, UDPTestRequestReplyClientTest100k)
         std::unique_ptr<std::array<int16_t, 51200>> data =
             std::make_unique<std::array<int16_t, 51200>>();
         for (size_t i = 0; i < data->size(); ++i) {
-            (*data)[i] = static_cast<int16_t>(index); // 示例数据
+            (*data)[i] = static_cast<int16_t>(index); // 绀轰緥鏁版嵁
         }
 
         request.client_id();
@@ -287,7 +287,7 @@ TEST_F(UDPTestRequestReply, UDPTestRequestReplyClientTest1M)
         std::unique_ptr<std::array<int16_t, 524288>> data =
             std::make_unique<std::array<int16_t, 524288>>();
         for (size_t i = 0; i < data->size(); ++i) {
-            (*data)[i] = static_cast<int16_t>(index); // 示例数据
+            (*data)[i] = static_cast<int16_t>(index); // 绀轰緥鏁版嵁
         }
 
         request.client_id();

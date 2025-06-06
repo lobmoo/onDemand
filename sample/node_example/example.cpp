@@ -110,16 +110,16 @@ void run_dds_data_Multiwriter()
     int index = 0;
     bool runFlag = true;
 
-    // ³õÊ¼»¯½Úµã
+    // åˆå§‹åŒ–èŠ‚ç‚¹
     DataNode node(100, "sender_node");
 
-    // ×¢²á¶à¸öÖ÷Ìâ
+    // æ³¨å†Œå¤šä¸ªä¸»é¢˜
     std::vector<std::string> topics = {"Topic_1", "Topic_2", "Topic_3"};
     for (const auto &topic : topics) {
         node.registerTopicType<HelloWorldOnePubSubType>(topic);
     }
 
-    // ´´½¨¶à¸öÊı¾İĞ´ÈëÆ÷
+    // åˆ›å»ºå¤šä¸ªæ•°æ®å†™å…¥å™¨
     std::unordered_map<std::string,  std::shared_ptr<DDSTopicDataWriter<HelloWorldOne>>> dataWriters;
 
     for (const auto &topic : topics) {
@@ -139,7 +139,7 @@ void run_dds_data_Multiwriter()
             message.index(++index);
             message.points(std::vector<uint8_t>(100));
 
-            // ·¢ËÍÏûÏ¢
+            // å‘é€æ¶ˆæ¯
             if (dataWriters[topic]->writeMessage(message)) {
                 LOG(info) << "send message to [" << topic << "]: " << message.index();
             }
@@ -152,17 +152,17 @@ void run_dds_data_Multiwriter()
 
 void run_dds_data_Multireader()
 {
-    // ´æ´¢Ã¿¸öÖ÷ÌâµÄÑÓ³Ù
+    // å­˜å‚¨æ¯ä¸ªä¸»é¢˜çš„å»¶è¿Ÿ
     std::unordered_map<std::string, std::vector<uint64_t>> topicDelays;
 
-    // ³õÊ¼»¯½Úµã
+    // åˆå§‹åŒ–èŠ‚ç‚¹
     DataNode node(100, "receiver_node");
 
-    // ×¢²á¶à¸öÖ÷Ìâ
+    // æ³¨å†Œå¤šä¸ªä¸»é¢˜
     std::vector<std::string> topics = {"Topic_1", "Topic_2", "Topic_3"};
     for (const auto &topic : topics) {
         node.registerTopicType<HelloWorldOnePubSubType>(topic);
-        // ´´½¨Êı¾İ¶ÁÈ¡Æ÷
+        // åˆ›å»ºæ•°æ®è¯»å–å™¨
         node.createDataReader<HelloWorldOne>(
             topic, [](const std::string &topic_name, std::shared_ptr<HelloWorldOne> data) {
                 LOG(info) << "recv message from [" << topic_name << "]: " << data->index();

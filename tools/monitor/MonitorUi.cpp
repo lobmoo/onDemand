@@ -34,7 +34,7 @@ void launchTopicMonitorUI()
 
         for (int i = start; i < end; ++i) {
             const auto &name = topicNames[i];
-            const auto info = manager.getTopicInfo(name); // ¡û Äã×Ô¼ºµÄÊý¾Ý½á¹¹
+            const auto info = manager.getTopicInfo(name); // â† ä½ è‡ªå·±çš„æ•°æ®ç»“æž„
 
             Elements block;
             block.push_back(text("Topic: " + name) | bold | color(Color::Yellow));
@@ -49,16 +49,16 @@ void launchTopicMonitorUI()
             for (const auto &w : info.datawriters)
                 block.push_back(text("    - " + w));
 
-            // ¿ÉÑ¡£ºparticipants¡¢processes¡¢users¡¢hosts...
+            // å¯é€‰ï¼šparticipantsã€processesã€usersã€hosts...
             topic_blocks.push_back(vbox(std::move(block)) | border | flex);
         }
 
         return vbox({hbox(text(" Topic Monitor ") | bold | color(Color::Green)), separator(),
                      vbox(topic_blocks) | frame | size(HEIGHT, LESS_THAN, 40), separator(),
-                     hbox(text(" ¡ü¡ý: ·­Ò³ | q: ÍË³ö ") | dim)});
+                     hbox(text(" â†‘â†“: ç¿»é¡µ | q: é€€å‡º ") | dim)});
     });
 
-    // ¿ØÖÆÉÏÏÂ·­Ò³
+    // æŽ§åˆ¶ä¸Šä¸‹ç¿»é¡µ
     auto component = CatchEvent(renderer, [&](Event event) {
         if (event == Event::ArrowDown) {
             scroll_offset++;
@@ -75,11 +75,11 @@ void launchTopicMonitorUI()
         return false;
     });
 
-    // Æô¶¯ UI£¬¶¨Ê±Ë¢ÐÂ
+    // å¯åŠ¨ UIï¼Œå®šæ—¶åˆ·æ–°
     std::thread([&] {
         while (true) {
             std::this_thread::sleep_for(std::chrono::seconds(1));
-            screen.PostEvent(Event::Custom); // ´¥·¢ÖØ»æ
+            screen.PostEvent(Event::Custom); // è§¦å‘é‡ç»˜
         }
     }).detach();
 

@@ -5,12 +5,12 @@
  * @version 1.0
  * @date 2025-03-25
  * 
- * @copyright Copyright (c) 2025  by  ±¦ĞÅ
+ * @copyright Copyright (c) 2025  by  å®ä¿¡
  * 
- * @par ĞŞ¸ÄÈÕÖ¾:
+ * @par ä¿®æ”¹æ—¥å¿—:
  * <table>
  * <tr><th>Date       <th>Version <th>Author  <th>Description
- * <tr><td>2025-03-25     <td>1.0     <td>wwk   <td>ĞŞ¸Ä?
+ * <tr><td>2025-03-25     <td>1.0     <td>wwk   <td>ä¿®æ”¹?
  * </table>
  */
 #ifndef LOGGER_IMPL_H
@@ -51,7 +51,7 @@ class Logger::LoggerImpl
             if (!inFile.is_open()) {
                 WARNINGMESSAGE("Failed to open config file: " + jsonPath + ", using default config");
                 isValid = false;
-                return; // ÎÄ¼ş´ò²»¿ª ¡ú ÓÃÄ¬ÈÏÖµ
+                return; // æ–‡ä»¶æ‰“ä¸å¼€ â†’ ç”¨é»˜è®¤å€¼
             }
 
             json j;
@@ -88,7 +88,7 @@ class Logger::LoggerImpl
             } else if (type == "both") {
                 return Logger::both;
             } else {
-                return Logger::console; // Ä¬ÈÏÖµ
+                return Logger::console; // é»˜è®¤å€¼
             }
         }
         severity_level getLevel(const std::string &levelStr) const
@@ -106,7 +106,7 @@ class Logger::LoggerImpl
             } else if (levelStr == "critical") {
                 return Logger::critical;
             } else {
-                return Logger::info; // Ä¬ÈÏÖµ
+                return Logger::info; // é»˜è®¤å€¼
             }
         }
         severity_level getLogLevel() const { return getLevel(level); }

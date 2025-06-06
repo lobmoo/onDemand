@@ -5,12 +5,12 @@
  * @version 1.0
  * @date 2025-03-25
  * 
- * @copyright Copyright (c) 2025  by  ±¦ĞÅ
+ * @copyright Copyright (c) 2025  by  å®ä¿¡
  * 
- * @par ĞŞ¸ÄÈÕÖ¾:
+ * @par ä¿®æ”¹æ—¥å¿—:
  * <table>
  * <tr><th>Date       <th>Version <th>Author  <th>Description
- * <tr><td>2025-03-25     <td>1.0     <td>wwk   <td>ĞŞ¸Ä?
+ * <tr><td>2025-03-25     <td>1.0     <td>wwk   <td>ä¿®æ”¹?
  * </table>
  */
 #ifndef DDS_PARTICIPANT_LISTENER_H
@@ -28,7 +28,7 @@ using namespace eprosima::fastdds::dds;
 class DDSParticipantListener : public eprosima::fastdds::dds::DomainParticipantListener
 {
 public:
-    // µ±Ò»¸öĞÂµÄ²ÎÓëÕß±»·¢ÏÖÊ±µ÷ÓÃ
+    // å½“ä¸€ä¸ªæ–°çš„å‚ä¸è€…è¢«å‘ç°æ—¶è°ƒç”¨
     virtual void on_participant_discovery(
         DomainParticipant *participant, eprosima::fastdds::rtps::ParticipantDiscoveryStatus reason,
         const ParticipantBuiltinTopicData &info, bool &should_be_ignored) override
@@ -40,7 +40,7 @@ public:
         should_be_ignored = false;
     }
 
-    // µ±Êı¾İ¶ÁÈ¡Õß±»·¢ÏÖÊ±µ÷ÓÃ
+    // å½“æ•°æ®è¯»å–è€…è¢«å‘ç°æ—¶è°ƒç”¨
     virtual void
     on_data_reader_discovery(eprosima::fastdds::dds::DomainParticipant *participant,
                              eprosima::fastdds::rtps::ReaderDiscoveryStatus reason,
@@ -51,7 +51,7 @@ public:
         should_be_ignored = false;
     }
 
-    // ÁíÒ»¸ö on_data_writer_discovery µÄÖØÔØ°æ±¾
+    // å¦ä¸€ä¸ª on_data_writer_discovery çš„é‡è½½ç‰ˆæœ¬
     virtual void
     on_data_writer_discovery(eprosima::fastdds::dds::DomainParticipant *participant,
                              eprosima::fastdds::rtps::WriterDiscoveryStatus reason,

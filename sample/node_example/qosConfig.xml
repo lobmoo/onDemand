@@ -10,7 +10,7 @@
             <type>UDPv4</type>
         </transport_descriptor>
     </transport_descriptors>
-    <!-- ²ÎÓëÕß -->
+    <!-- å‚ä¸Žè€… -->
     <participant profile_name="default_participant_profile" is_default_profile="true">
         <domainId>10</domainId>
         <rtps>

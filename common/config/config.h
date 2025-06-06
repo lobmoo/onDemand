@@ -6,7 +6,7 @@
 #include <mutex>
 #include <string>
 
-/*���ýṹ*/
+/*配置结构*/
 
 struct ConfigData {
     std::string server_ip = "127.0.0.1";

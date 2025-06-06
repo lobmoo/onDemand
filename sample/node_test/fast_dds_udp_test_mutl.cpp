@@ -37,7 +37,7 @@ static int32_t get_hostname()
         size_t hash_value = hasher(hostname);
         return static_cast<int32_t>(hash_value);
     } else {
-        return -1; // ´íÎó´¦Àí
+        return -1; // é”™è¯¯å¤„ç†
     }
 }
 
@@ -198,7 +198,7 @@ protected:
                         {
                             std::lock_guard<std::mutex> lock(delays_mutex_512);
                             auto &host_delays = (*delays_512)[id];
-                            auto &delays = host_delays[topic_name]; // »ñÈ¡»ò´´½¨ topic µÄ vector
+                            auto &delays = host_delays[topic_name]; // è·å–æˆ–åˆ›å»º topic çš„ vector
                             delays.push_back(delay_time);
                         }
                         LOG(debug) << "recv message [" << topic_name << "]: " << data->id()
@@ -226,7 +226,7 @@ protected:
                         {
                             std::lock_guard<std::mutex> lock(delays_mutex_51200);
                             auto &host_delays = (*delays_51200)[id];
-                            auto &delays = host_delays[topic_name]; // »ñÈ¡»ò´´½¨ topic µÄ vector
+                            auto &delays = host_delays[topic_name]; // è·å–æˆ–åˆ›å»º topic çš„ vector
                             delays.push_back(delay_time);
                         }
 
@@ -255,8 +255,8 @@ protected:
                         {
                             std::lock_guard<std::mutex> lock(delays_mutex_524288);
                             auto &host_delays = (*delays_524288)[id];
-                            auto &delays = host_delays[topic_name]; // »ñÈ¡»ò´´½¨ topic µÄ vector
-                            delays.push_back(delay_time);           // Ìí¼ÓÑÓ³ÙÊı¾İ
+                            auto &delays = host_delays[topic_name]; // è·å–æˆ–åˆ›å»º topic çš„ vector
+                            delays.push_back(delay_time);           // æ·»åŠ å»¶è¿Ÿæ•°æ®
                         }
 
                         LOG(debug) << "recv message [" << topic_name << "]: " << data->id()
@@ -285,8 +285,8 @@ protected:
                         {
                             std::lock_guard<std::mutex> lock(delays_mutex_2621440);
                             auto &host_delays = (*delays_2621440)[id];
-                            auto &delays = host_delays[topic_name]; // »ñÈ¡»ò´´½¨ topic µÄ vector
-                            delays.push_back(delay_time);           // Ìí¼ÓÑÓ³ÙÊı¾İ
+                            auto &delays = host_delays[topic_name]; // è·å–æˆ–åˆ›å»º topic çš„ vector
+                            delays.push_back(delay_time);           // æ·»åŠ å»¶è¿Ÿæ•°æ®
                         }
 
                         LOG(debug) << "recv message [" << topic_name << "]: " << data->id()
@@ -315,8 +315,8 @@ protected:
                         {
                             std::lock_guard<std::mutex> lock(delays_mutex_4194304);
                             auto &host_delays = (*delays_4194304)[id];
-                            auto &delays = host_delays[topic_name]; // »ñÈ¡»ò´´½¨ topic µÄ vector
-                            delays.push_back(delay_time);           // Ìí¼ÓÑÓ³ÙÊı¾İ
+                            auto &delays = host_delays[topic_name]; // è·å–æˆ–åˆ›å»º topic çš„ vector
+                            delays.push_back(delay_time);           // æ·»åŠ å»¶è¿Ÿæ•°æ®
                         }
 
                         LOG(debug) << "recv message [" << topic_name << "]: " << data->id()
@@ -344,8 +344,8 @@ protected:
                         {
                             std::lock_guard<std::mutex> lock(delays_mutex_3145728);
                             auto &host_delays = (*delays_3145728)[id];
-                            auto &delays = host_delays[topic_name]; // »ñÈ¡»ò´´½¨ topic µÄ vector
-                            delays.push_back(delay_time);           // Ìí¼ÓÑÓ³ÙÊı¾İ
+                            auto &delays = host_delays[topic_name]; // è·å–æˆ–åˆ›å»º topic çš„ vector
+                            delays.push_back(delay_time);           // æ·»åŠ å»¶è¿Ÿæ•°æ®
                         }
 
                         LOG(debug) << "recv message [" << topic_name << "]: " << data->id()
@@ -356,16 +356,16 @@ protected:
         }
     }
 
-    // ÇåÀíº¯Êı
+    // æ¸…ç†å‡½æ•°
     void TearDown() override
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(5000));
-        // Ïú»Ù½ÚµãºÍÆäËû×ÊÔ´
+        // é”€æ¯èŠ‚ç‚¹å’Œå…¶ä»–èµ„æº
         senderNode.reset();
         receiverNode.reset();
     }
 
-    // ¹«¹²³ÉÔ±±äÁ¿
+    // å…¬å…±æˆå‘˜å˜é‡
     std::unique_ptr<DataNode> senderNode;
     std::unique_ptr<DataNode> receiverNode;
 
@@ -427,7 +427,7 @@ static void calculateAverageDelay(
                              << topic_name << "].";
                 continue;
             }
-            // ÑéÖ¤ÑÓ³ÙÊıÁ¿
+            // éªŒè¯å»¶è¿Ÿæ•°é‡
             if (delay.size() != 10) {
                 LOG(warning) << "Unexpected number of delays for HOST ID [" << id << "] and topic ["
                              << topic_name << "]: " << delay.size() << " (expected 10)";
@@ -497,7 +497,7 @@ TEST_F(UDPTestFixtureMult, MultiSenderReceiverTest1k)
         std::unique_ptr<std::array<int16_t, 512>> data =
             std::make_unique<std::array<int16_t, 512>>();
         for (size_t i = 0; i < data->size(); ++i) {
-            (*data)[i] = static_cast<int16_t>(cnt); // Ê¾ÀıÊı¾İ
+            (*data)[i] = static_cast<int16_t>(cnt); // ç¤ºä¾‹æ•°æ®
         }
         message.data(*data);
 
@@ -528,7 +528,7 @@ TEST_F(UDPTestFixtureMult, MultiSenderReceiverTest100k)
         std::unique_ptr<std::array<int16_t, 51200>> data =
             std::make_unique<std::array<int16_t, 51200>>();
         for (size_t i = 0; i < data->size(); ++i) {
-            (*data)[i] = static_cast<int16_t>(cnt); // Ê¾ÀıÊı¾İ
+            (*data)[i] = static_cast<int16_t>(cnt); // ç¤ºä¾‹æ•°æ®
         }
         message.data(*data);
         for (auto &[topic_name, dataWriter] : dataWriter_51200) {
@@ -558,7 +558,7 @@ TEST_F(UDPTestFixtureMult, MultiSenderReceiverTest1M)
         std::unique_ptr<std::array<int16_t, 524288>> data =
             std::make_unique<std::array<int16_t, 524288>>();
         for (size_t i = 0; i < data->size(); ++i) {
-            (*data)[i] = static_cast<int16_t>(cnt); // Ê¾ÀıÊı¾İ
+            (*data)[i] = static_cast<int16_t>(cnt); // ç¤ºä¾‹æ•°æ®
         }
         message.data(*data);
         for (auto &[topic_name, dataWriter] : dataWriter_524288) {
@@ -588,7 +588,7 @@ TEST_F(UDPTestFixtureMult, MultiSenderReceiverTest5M)
         std::unique_ptr<std::array<int16_t, 2621440>> data =
             std::make_unique<std::array<int16_t, 2621440>>();
         for (size_t i = 0; i < data->size(); ++i) {
-            (*data)[i] = static_cast<int16_t>(cnt); // Ê¾ÀıÊı¾İ
+            (*data)[i] = static_cast<int16_t>(cnt); // ç¤ºä¾‹æ•°æ®
         }
         message.data(*data);
         for (auto &[topic_name, dataWriter] : dataWriter_2621440) {
@@ -618,7 +618,7 @@ TEST_F(UDPTestFixtureMult, MultiSenderReceiverTest8M)
         std::unique_ptr<std::array<int16_t, 4194304>> data =
             std::make_unique<std::array<int16_t, 4194304>>();
         for (size_t i = 0; i < data->size(); ++i) {
-            (*data)[i] = static_cast<int16_t>(cnt); // Ê¾ÀıÊı¾İ
+            (*data)[i] = static_cast<int16_t>(cnt); // ç¤ºä¾‹æ•°æ®
         }
         message.data(*data);
         for (auto &[topic_name, dataWriter] : dataWriter_4194304) {
@@ -648,7 +648,7 @@ TEST_F(UDPTestFixtureMult, MultiSenderReceiverTest6M)
         std::unique_ptr<std::array<int16_t, 3145728>> data =
             std::make_unique<std::array<int16_t, 3145728>>();
         for (size_t i = 0; i < data->size(); ++i) {
-            (*data)[i] = static_cast<int16_t>(cnt); // Ê¾ÀıÊı¾İ
+            (*data)[i] = static_cast<int16_t>(cnt); // ç¤ºä¾‹æ•°æ®
         }
         message.data(*data);
         for (auto &[topic_name, dataWriter] : dataReader_3145728) {

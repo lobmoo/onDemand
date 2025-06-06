@@ -5,12 +5,12 @@
  * @version 1.0
  * @date 2025-06-05
  * 
- * @copyright Copyright (c) 2025  by  ±¦ĞÅ
+ * @copyright Copyright (c) 2025  by  å®ä¿¡
  * 
- * @par ĞŞ¸ÄÈÕÖ¾:
+ * @par ä¿®æ”¹æ—¥å¿—:
  * <table>
  * <tr><th>Date       <th>Version <th>Author  <th>Description
- * <tr><td>2025-06-05     <td>1.0     <td>wwk   <td>ĞŞ¸Ä?
+ * <tr><td>2025-06-05     <td>1.0     <td>wwk   <td>ä¿®æ”¹?
  * </table>
  */
 
@@ -35,7 +35,7 @@ struct info_t{
 };
 
 
-struct topicInfo_t {  // ÒªÌî³äÂú
+struct topicInfo_t {  // è¦å¡«å……æ»¡
     std::string data_type;
     std::string domainId;
     std::vector<std::string> datareaders;
@@ -43,7 +43,7 @@ struct topicInfo_t {  // ÒªÌî³äÂú
     std::vector<info_t> participants; 
     std::vector<info_t> users; 
     std::vector<info_t> processes; 
-    std::vector<info_t> hosts; //TODO ¿ÉÒÔÀ©Õ¹ËùÓĞĞÅÏ¢ 
+    std::vector<info_t> hosts; //TODO å¯ä»¥æ‰©å±•æ‰€æœ‰ä¿¡æ¯ 
 };
 
 

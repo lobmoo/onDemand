@@ -13,7 +13,7 @@ Config& Config::getInstance() {
 
 
 void Config::loadConfig(const std::string& filename) {
-    std::lock_guard<std::mutex> lock(mutex_);  // 避免多线程访问时数据冲突
+    std::lock_guard<std::mutex> lock(mutex_);  // 閬垮厤澶氱嚎绋嬭闂椂鏁版嵁鍐茬獊
     YAML::Node config = YAML::LoadFile(filename); 
 
     if (!data) {

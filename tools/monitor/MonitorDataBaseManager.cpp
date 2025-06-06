@@ -5,12 +5,12 @@
  * @version 1.0
  * @date 2025-05-21
  * 
- * @copyright Copyright (c) 2025  by  ±¦ĞÅ
+ * @copyright Copyright (c) 2025  by  å®ä¿¡
  * 
- * @par ĞŞ¸ÄÈÕÖ¾:
+ * @par ä¿®æ”¹æ—¥å¿—:
  * <table>
  * <tr><th>Date       <th>Version <th>Author  <th>Description
- * <tr><td>2025-05-21     <td>1.0     <td>wwk   <td>ĞŞ¸Ä?
+ * <tr><td>2025-05-21     <td>1.0     <td>wwk   <td>ä¿®æ”¹?
  * </table>
  */
 #include <thread>
@@ -80,28 +80,28 @@ bool MonitorDataBaseManager::parseTopic(const std::string &topicName)
 
         auto parseParticipant = [&DataBase, &topicInfo](const std::string &Id, 
                                                         R_W_Type type) {
-            /*´¦ÀíÂß¼­¶¼Ğ´µ½ÕâÀï*/
+            /*å¤„ç†é€»è¾‘éƒ½å†™åˆ°è¿™é‡Œ*/
             const Participant &participant = DataBase.getParticipant(EntityID("participants", Id));
             info_t participantInfo;
             participantInfo.type = type; 
             participantInfo.name = participant.name;
             topicInfo.participants.push_back(participantInfo);
             /*TODO*/
-            /*²éÑ¯ process */
+            /*æŸ¥è¯¢ process */
             const Process &process = DataBase.getProcess(EntityID("processes", participant.process));
             info_t processInfo;
             processInfo.type = type;
             processInfo.name = process.name;
             topicInfo.processes.push_back(processInfo);
 
-            /*²éÑ¯ user */
+            /*æŸ¥è¯¢ user */
             const User &user = DataBase.getUser(EntityID("users", process.user));
             info_t userInfo;
             userInfo.type = type;
             userInfo.name = user.name;
             topicInfo.users.push_back(userInfo);
 
-            /*²éÑ¯ host */
+            /*æŸ¥è¯¢ host */
             const Host &host = DataBase.getHost(EntityID("hosts", user.host));
             info_t hostInfo;
             hostInfo.type = type;
@@ -109,29 +109,29 @@ bool MonitorDataBaseManager::parseTopic(const std::string &topicName)
             topicInfo.hosts.push_back(hostInfo);
         };
 
-        /*ÄÃµ½id*/
+        /*æ‹¿åˆ°id*/
         EntityID topicId = DataBase.getTopicID(topicName);
-        /*ÄÃµ½topicĞÅÏ¢*/
+        /*æ‹¿åˆ°topicä¿¡æ¯*/
         const Topic &topic = DataBase.getTopic(topicId);
         topicInfo.data_type = topic.data_type;
         topicInfo.domainId = topic.domain;
 
-        /*²éÑ¯ reader */
+        /*æŸ¥è¯¢ reader */
         for (auto &readerId : topic.datareaders) {
             const DataReader &datareader =
                 DataBase.getDataReader(EntityID("datareaders", readerId));
             topicInfo.datareaders.push_back(datareader.name);
-            /*»ñÈ¡participantµÄid*/
+            /*è·å–participantçš„id*/
             std::string participantId = datareader.participant;
             parseParticipant(participantId, R_TYPE);
         }
 
-        /*²éÑ¯ writer */
+        /*æŸ¥è¯¢ writer */
         for (auto &writerId : topic.datawriters) {
             const DataWriter &datawriter =
                 DataBase.getDataWriter(EntityID("datawriters", writerId));
             topicInfo.datawriters.push_back(datawriter.name);
-            /*»ñÈ¡participantµÄid*/
+            /*è·å–participantçš„id*/
             std::string participantId = datawriter.participant;
             parseParticipant(participantId, W_TYPE);
         }
@@ -151,7 +151,7 @@ void MonitorDataBaseManager::run()
 {
     while(running_)
     {
-        // ±éÀúËùÓĞtopic£¬È»ºó¶¼½âÎöÒ»±é
+        // éå†æ‰€æœ‰topicï¼Œç„¶åéƒ½è§£æä¸€é
         auto &DataBase = MonitorDataBase::getInstance();
         const std::vector<std::string> &allTopicsName = DataBase.getAllTopicsName();
 
@@ -159,7 +159,7 @@ void MonitorDataBaseManager::run()
             if(!parseTopic(topicName)) {
                 LOG(error) << "Failed to parse topic: " << topicName;
             } else {
-                // Êä³ötopicÁĞ±í
+                // è¾“å‡ºtopicåˆ—è¡¨
                 LOG(info) << "Monitoring topics: ";
                 for (const auto &topicName : allTopicsName) {
                     std::cout << topicName << "  ";
@@ -175,7 +175,7 @@ void MonitorDataBaseManager::run()
 
 void MonitorDataBaseManager::printTopicInfo(const std::string &topicName)
 {
-    // Êä³ötopicĞÅÏ¢
+    // è¾“å‡ºtopicä¿¡æ¯
     auto topicInfo = getTopicInfo(topicName);
 
     std::cout << "Topic Name: " << topicName << "\n";
@@ -227,16 +227,16 @@ topicInfo_t MonitorDataBaseManager::getTopicInfo(const std::string &topicName) c
 }
 
 std::string MonitorDataBaseManager::getProcessNameByPid(const std::string& pid_str) {
-    // ¼ì²éÊÇ·ñÎªºÏ·¨Êı×Ö
+    // æ£€æŸ¥æ˜¯å¦ä¸ºåˆæ³•æ•°å­—
     if (pid_str.empty() || !std::all_of(pid_str.begin(), pid_str.end(), ::isdigit)) {
         std::cerr << "Invalid PID string: not a numeric value" << std::endl;
         return "";
     }
 
-    // ×ª»»Îª pid_t ÀàĞÍ£¨int£©
+    // è½¬æ¢ä¸º pid_t ç±»å‹ï¼ˆintï¼‰
     pid_t pid = static_cast<pid_t>(std::stoi(pid_str));
 
-    // ¹¹½¨Â·¾¶
+    // æ„å»ºè·¯å¾„
     std::ostringstream path;
     path << "/proc/" << pid << "/comm";
 

@@ -5,12 +5,12 @@
  * @version 1.0
  * @date 2025-05-21
  * 
- * @copyright Copyright (c) 2025  by  ±¦ĞÅ
+ * @copyright Copyright (c) 2025  by  å®ä¿¡
  * 
- * @par ĞŞ¸ÄÈÕÖ¾:
+ * @par ä¿®æ”¹æ—¥å¿—:
  * <table>
  * <tr><th>Date       <th>Version <th>Author  <th>Description
- * <tr><td>2025-05-21     <td>1.0     <td>wwk   <td>ĞŞ¸Ä?
+ * <tr><td>2025-05-21     <td>1.0     <td>wwk   <td>ä¿®æ”¹?
  * </table>
  */
 #ifndef MONITORDATABASEMANAGER_H_
@@ -34,7 +34,7 @@ namespace Monitor
 //     std::string name;
 // };
 
-// struct topicInfo_t {  // ÒªÌî³äÂú
+// struct topicInfo_t {  // è¦å¡«å……æ»¡
 //     std::string data_type;
 //     std::string domainId;
 //     std::vector<std::string> datareaders;
@@ -42,7 +42,7 @@ namespace Monitor
 //     std::vector<info_t> participants; 
 //     std::vector<info_t> users; 
 //     std::vector<info_t> processes; 
-//     std::vector<info_t> hosts; //TODO ¿ÉÒÔÀ©Õ¹ËùÓĞĞÅÏ¢ 
+//     std::vector<info_t> hosts; //TODO å¯ä»¥æ‰©å±•æ‰€æœ‰ä¿¡æ¯ 
 // };
 
 class MonitorDataBaseManager
@@ -61,7 +61,7 @@ public:
     bool parseTopic(const std::string &topicName);
     topicInfo_t getTopicInfo(const std::string &topicName) const;
     void printTopicInfo(const std::string &topicName);
-    std::string getProcessNameByPid(const std::string& pid_str); // ¸ù¾İ½ø³ÌºÅÈ¥²éÑ¯½ø³ÌÃû
+    std::string getProcessNameByPid(const std::string& pid_str); // æ ¹æ®è¿›ç¨‹å·å»æŸ¥è¯¢è¿›ç¨‹å
 
 private:
     MonitorDataBaseManager();
