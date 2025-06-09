@@ -77,7 +77,7 @@ namespace ngvs
             size_t offset = 0;
             resolveModelMembers(modelNameAndVersion, modelDefines, structNodes, modelDefine.members,
                                 modelSize, offset, modelDefine.modelVersion);
-            modelDefine.size = (offset + 3) / 4 * 4; // Pad total size to multiple of 4
+            modelDefine.size = (offset + 3) / 4 * 4;
         }
 
         return MODEL_PARSER_OK;
@@ -128,15 +128,20 @@ namespace ngvs
 
                 // Use versioned name only for non-basic types
                 std::string nodeName = memberName;
+                std::string nodeNonBasicTypeName;
+                std::string nodeVersion;
                 if (memberType == "nonBasic") {
                     auto nonBasicTypeVersionOptional =
                         memberNode.second.get_optional<std::string>("<xmlattr>.version");
                     if (nonBasicTypeVersionOptional) {
                         nodeName = memberName + ":" + nonBasicTypeVersionOptional.get();
+                        nodeVersion = nonBasicTypeVersionOptional.get();
                     } else {
                         LOG(warning) << "Non-basic member '" << memberName
                                      << "' lacks version, using name without version";
                     }
+                    nodeNonBasicTypeName =
+                        memberNode.second.get<std::string>("<xmlattr>.nonBasicTypeName", "");
                 }
 
                 if (arrayDimensionsOptional) {
@@ -190,7 +195,9 @@ namespace ngvs
                                     arrayNode.offset = offset;
                                     arrayNode.is_array = true;
                                     arrayNode.array_indices = indices;
-                                    arrayNode.children = nonBasicMembers; // Copy sub-members
+                                    arrayNode.children = nonBasicMembers;
+                                    arrayNode.nonBasicTypeName = nonBasicTypeName;
+                                    arrayNode.version = nonBasicVersion;
                                     for (auto &child : arrayNode.children) {
                                         child.offset += offset; // Adjust child offsets
                                     }
@@ -227,8 +234,57 @@ namespace ngvs
                                 << "Invalid sequenceMaxLength: " << sequenceMaxLengthOptional.get();
                         }
                     } else {
-                        LOG(error)
-                            << "sequenceMaxLength not supported for nonBasic type: " << memberName;
+                        std::string nonBasicTypeName =
+                            memberNode.second.get<std::string>("<xmlattr>.nonBasicTypeName");
+                        auto nonBasicTypeVersionOptional =
+                            memberNode.second.get_optional<std::string>("<xmlattr>.version");
+                        if (!nonBasicTypeName.empty() && nonBasicTypeVersionOptional) {
+                            std::string nonBasicKey =
+                                nonBasicTypeName + ":" + nonBasicTypeVersionOptional.get();
+                            std::string nonBasicVersion = nonBasicTypeVersionOptional.get();
+                            std::vector<TreeNode> nonBasicMembers;
+                            size_t nonBasicOffset = 0;
+                            size_t nonBasicSize = 0;
+                            resolveModelMembers(nonBasicKey, allNodes, structNodes, nonBasicMembers,
+                                                nonBasicSize, nonBasicOffset, nonBasicVersion);
+                            nonBasicSize = (nonBasicOffset + 3) / 4 * 4;
+
+                            int maxLength;
+                            try {
+                                maxLength = std::stoi(sequenceMaxLengthOptional.get());
+                                if (maxLength <= 0) {
+                                    LOG(error) << "Invalid sequenceMaxLength: " << maxLength;
+                                    continue;
+                                }
+                            } catch (const std::exception &e) {
+                                LOG(error) << "Invalid sequenceMaxLength: "
+                                           << sequenceMaxLengthOptional.get();
+                                continue;
+                            }
+
+                            for (int i = 0; i < maxLength; ++i) {
+                                std::string key = memberName + "[" + std::to_string(i) + "]";
+                                std::string versionedKey = key + ":" + nonBasicVersion;
+                                TreeNode seqNode;
+                                seqNode.name = versionedKey;
+                                seqNode.type = memberType;
+                                seqNode.size = nonBasicSize;
+                                seqNode.offset = offset;
+                                seqNode.is_array = true;
+                                seqNode.array_indices = {i};
+                                seqNode.children = nonBasicMembers;
+                                seqNode.nonBasicTypeName = nonBasicTypeName;
+                                seqNode.version = nonBasicVersion;
+                                for (auto &child : seqNode.children) {
+                                    child.offset += offset;
+                                }
+                                currentModelMembers.push_back(seqNode);
+                                offset += nonBasicSize;
+                            }
+                        } else {
+                            LOG(error)
+                                << "nonBasic sequence member '" << memberName << "' lacks version";
+                        }
                     }
                 } else if (memberType == "nonBasic") {
                     std::string nonBasicTypeName =
@@ -251,8 +307,10 @@ namespace ngvs
                         node.size = (subOffset + 3) / 4 * 4;
                         node.offset = startingOffset;
                         node.children = subMembers;
+                        node.nonBasicTypeName = nonBasicTypeName;
+                        node.version = nonBasicVersion;
                         for (auto &child : node.children) {
-                            child.offset += startingOffset; // Adjust child offsets
+                            child.offset += startingOffset;
                         }
                         currentModelMembers.push_back(node);
                         offset = startingOffset + node.size;
@@ -261,12 +319,14 @@ namespace ngvs
                     }
                 } else {
                     size_t typeSize = getBasicTypeSize(memberType);
-                    offset = (offset + 3) / 4 * 4; // Align to 4 bytes
+                    offset = (offset + 3) / 4 * 4;
                     TreeNode node;
                     node.name = nodeName;
                     node.type = memberType;
                     node.size = typeSize;
                     node.offset = offset;
+                    node.nonBasicTypeName = "";
+                    node.version = "";
                     currentModelMembers.push_back(node);
                     offset += typeSize;
                 }
@@ -288,7 +348,6 @@ namespace ngvs
             for (int index : currentIndices) {
                 key += "[" + std::to_string(index) + "]";
             }
-            // Only append version for non-basic types
             std::string nodeName = (basicTypeSizes.find(memberType) == basicTypeSizes.end())
                                        ? (key + ":" + modelVersion)
                                        : key;
@@ -300,6 +359,10 @@ namespace ngvs
             node.offset = offset;
             node.is_array = true;
             node.array_indices = currentIndices;
+            node.nonBasicTypeName =
+                (basicTypeSizes.find(memberType) == basicTypeSizes.end()) ? memberType : "";
+            node.version =
+                (basicTypeSizes.find(memberType) == basicTypeSizes.end()) ? modelVersion : "";
             currentModelMembers.push_back(node);
             offset += typeSize;
             return;
@@ -323,7 +386,6 @@ namespace ngvs
         size_t typeSize = getBasicTypeSize(memberType);
         for (int i = 0; i < maxLength; ++i) {
             std::string key = memberName + "[" + std::to_string(i) + "]";
-            // Only append version for non-basic types
             std::string nodeName = (basicTypeSizes.find(memberType) == basicTypeSizes.end())
                                        ? (key + ":" + modelVersion)
                                        : key;
@@ -334,6 +396,10 @@ namespace ngvs
             node.offset = offset;
             node.is_array = true;
             node.array_indices = {i};
+            node.nonBasicTypeName =
+                (basicTypeSizes.find(memberType) == basicTypeSizes.end()) ? memberType : "";
+            node.version =
+                (basicTypeSizes.find(memberType) == basicTypeSizes.end()) ? modelVersion : "";
             currentModelMembers.push_back(node);
             offset += typeSize;
         }
@@ -349,7 +415,6 @@ namespace ngvs
         return 0;
     }
 
-    // 递归获取所有叶子节点
     void ModelParser::getLeafNodes(const TreeNode &node, std::vector<TreeNode> &leaves)
     {
         if (node.children.empty()) {
@@ -361,9 +426,8 @@ namespace ngvs
         }
     }
 
-    // 查找特定节点并返回其叶子节点
     bool ModelParser::findNodeAndGetLeaves(const ModelDefine &model, const std::string &targetName,
-                              std::vector<TreeNode> &leaves)
+                                           std::vector<TreeNode> &leaves)
     {
         std::function<bool(const std::vector<TreeNode> &)> search =
             [&](const std::vector<TreeNode> &nodes) {
@@ -382,7 +446,51 @@ namespace ngvs
         return search(model.members);
     }
 
-    
+    void ModelParser::printInfo(std::vector<TreeNode> &nodes)
+    {
+        for (auto node : nodes)
+
+        {
+            LOG(info) << "Node Name: " << node.name << ", Type: " << node.type
+                      << ", Size: " << node.size << ", Offset: " << node.offset
+                      << ", NonBasicTypeName: " << node.nonBasicTypeName
+                      << ", Version: " << node.version
+                      << ", Is Array: " << (node.is_array ? "Yes" : "No");
+            for (const auto &index : node.array_indices) {
+                LOG(info) << index << " ";
+            }
+        }
+    }
+
+    void ModelParser::printLeafNodes(const ModelDefine &model) const
+    {
+        // 递归收集并打印叶子节点
+        std::function<void(const std::vector<TreeNode> &)> collectLeaves =
+            [&](const std::vector<TreeNode> &nodes) {
+                for (const auto &node : nodes) {
+                    if (node.children.empty()) {
+                        // 打印叶子节点
+                        LOG(info) << "Leaf node: name=" << node.name << ", type=" << node.type
+                                  << ", size=" << node.size << ", offset=" << node.offset
+                                  << ", nonBasicTypeName=" << node.nonBasicTypeName
+                                  << ", version=" << node.version;
+                    } else {
+                        collectLeaves(node.children); // 递归处理子节点
+                    }
+                }
+            };
+
+        if (model.members.empty()) {
+            LOG(warning) << "No members found in model: " << model.modelName << ":"
+                         << model.modelVersion;
+            return;
+        }
+
+        LOG(info) << "Printing leaf nodes for model: " << model.modelName << ":"
+                  << model.modelVersion;
+        collectLeaves(model.members);
+    }
+
 
 } // namespace ngvs
 } // namespace dsf

@@ -35,6 +35,8 @@ namespace ngvs
         size_t size;                    // 大小
         unsigned int offset;            // 偏移量
         std::vector<TreeNode> children; // 子节点（仅非基本类型或数组/序列）
+        std::string version;            // 版本（仅非基本类型）
+        std::string nonBasicTypeName;   // 非基本类型名称（如果适用）
         bool is_array;                  // 是否为数组元素
         std::vector<int> array_indices; // 数组索引（如果适用）
 
@@ -54,35 +56,39 @@ namespace ngvs
     public:
         error_code_t parseSchema(std::map<std::string, ModelDefine> &modelDefines,
                                  const std::string &schema, std::string &errorMsg);
-        std::string child2xml(const boost::property_tree::ptree &childNode,
-                              const std::string &rootName);
-        void getLeafNodes(const TreeNode &node, std::vector<TreeNode> &leaves);
+
         // 查找特定节点并返回其叶子节点
         bool findNodeAndGetLeaves(const ModelDefine &model, const std::string &targetName,
                                   std::vector<TreeNode> &leaves);
-        
-        private:
-            std::set<std::string> visiting;
 
-            void resolveModelMembers(
-                const std::string &currentModelNameAndVersion,
-                std::map<std::string, ModelDefine> &allNodes,
-                std::map<std::string, boost::property_tree::ptree> &structNodes,
-                std::vector<TreeNode> &currentModelMembers, size_t &modelSize, size_t &offset,
-                const std::string &modelVersion);
+        void printInfo(std::vector<TreeNode> &nodes);
 
-            void generateArrayKeys(const std::string &memberName, const std::string &memberType,
-                                   const std::vector<int> &dimensions,
-                                   std::vector<int> currentIndices, const std::string &modelVersion,
-                                   std::vector<TreeNode> &currentModelMembers, size_t &offset);
+        void printLeafNodes(const ModelDefine &model) const;
 
-            void generateSequenceKeys(const std::string &memberName, const std::string &memberType,
-                                      int maxLength, const std::string &modelVersion,
-                                      std::vector<TreeNode> &currentModelMembers, size_t &offset);
+    private:
+        void getLeafNodes(const TreeNode &node, std::vector<TreeNode> &leaves);
+        std::set<std::string> visiting;
 
-            size_t getBasicTypeSize(const std::string &type);
-        };
-    } // namespace ngvs
+        std::string child2xml(const boost::property_tree::ptree &childNode,
+                              const std::string &rootName);
+        void resolveModelMembers(const std::string &currentModelNameAndVersion,
+                                 std::map<std::string, ModelDefine> &allNodes,
+                                 std::map<std::string, boost::property_tree::ptree> &structNodes,
+                                 std::vector<TreeNode> &currentModelMembers, size_t &modelSize,
+                                 size_t &offset, const std::string &modelVersion);
+
+        void generateArrayKeys(const std::string &memberName, const std::string &memberType,
+                               const std::vector<int> &dimensions, std::vector<int> currentIndices,
+                               const std::string &modelVersion,
+                               std::vector<TreeNode> &currentModelMembers, size_t &offset);
+
+        void generateSequenceKeys(const std::string &memberName, const std::string &memberType,
+                                  int maxLength, const std::string &modelVersion,
+                                  std::vector<TreeNode> &currentModelMembers, size_t &offset);
+
+        size_t getBasicTypeSize(const std::string &type);
+    };
+} // namespace ngvs
 } // namespace dsf
 
 #endif // MODEL_PARSER_H

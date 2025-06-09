@@ -49,23 +49,27 @@ int main(int argc, char *argv[])
         LOG(error) << "parse schema failed, ret: " << ret;
         return false;
     }
-  
+
     std::vector<dsf::ngvs::TreeNode> leaves;
     dsf::ngvs::ModelDefine model = modelDefines_["InnerModel:1.0"];
     if (model.members.empty()) {
         LOG(error) << "Model members are empty for model: InnerModel:1.0";
         return 1;
     }
-    LOG(info) << "Model name: " << model.modelName
-              << ", version: " << model.modelVersion
+    LOG(info) << "Model name: " << model.modelName << ", version: " << model.modelVersion
               << ", size: " << model.size;
-    if (parser.findNodeAndGetLeaves(model, "complex_member2:1.0", leaves)) {
-        for (const auto &leaf : leaves) {
-            LOG(info) << "Leaf: name=" << leaf.name << ", type=" << leaf.type
-                      << ", size=" << leaf.size << ", offset=" << leaf.offset;
-        }
-    }
+
+    // if (parser.findNodeAndGetLeaves(model, "complex_member2:1.0", leaves)) {
+    //     for (const auto &leaf : leaves) {
+    //         LOG(info) << "Leaf: name=" << leaf.name << ", type=" << leaf.type
+    //                   << ", size=" << leaf.size << ", offset=" << leaf.offset;
+    //     }
+    // }
+
+    // parser.printInfo(model.members);
+    parser.printLeafNodes(model);
     while (std::cin.get() != '\n') {
     }
+
     return 0;
 }
