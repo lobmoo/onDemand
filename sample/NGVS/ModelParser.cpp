@@ -76,7 +76,8 @@ namespace ngvs
             size_t modelSize = 0;
             size_t offset = 0;
             resolveModelMembers(modelNameAndVersion, modelDefines, structNodes,
-                                modelDefine.mapKeyType, modelDefine.members, modelSize, offset);
+                                modelDefine.mapKeyType, modelDefine.members, modelSize, offset,
+                                modelDefine.modelVersion);
             modelDefine.size = (offset + 3) / 4 * 4; // Pad total size to multiple of 4
         }
 
@@ -87,7 +88,8 @@ namespace ngvs
         const std::string &currentModelNameAndVersion, std::map<std::string, ModelDefine> &allNodes,
         std::map<std::string, boost::property_tree::ptree> &structNodes,
         std::map<std::string, Result> &currentModelMembers,
-        std::vector<Result> &currentModelMembersVector, size_t &modelSize, size_t &offset)
+        std::vector<Result> &currentModelMembersVector, size_t &modelSize, size_t &offset,
+        const std::string &modelVersion)
     {
         if (visiting.count(currentModelNameAndVersion)) {
             LOG(error) << "Detected cyclic dependency at model: " << currentModelNameAndVersion;
@@ -107,9 +109,11 @@ namespace ngvs
         auto baseTypeVersionOptional =
             structNode.get_optional<std::string>("<xmlattr>.baseTypeVersion");
         if (baseTypeNameOptional && baseTypeVersionOptional) {
-            resolveModelMembers(baseTypeNameOptional.get() + ":" + baseTypeVersionOptional.get(),
-                                allNodes, structNodes, currentModelMembers,
-                                currentModelMembersVector, modelSize, offset);
+            std::string baseTypeKey =
+                baseTypeNameOptional.get() + ":" + baseTypeVersionOptional.get();
+            resolveModelMembers(baseTypeKey, allNodes, structNodes, currentModelMembers,
+                                currentModelMembersVector, modelSize, offset,
+                                baseTypeVersionOptional.get());
         } else if (baseTypeNameOptional) {
             LOG(warning) << "baseType '" << baseTypeNameOptional.get()
                          << "' has no version specified in model: " << currentModelNameAndVersion;
@@ -125,11 +129,24 @@ namespace ngvs
                 auto sequenceMaxLengthOptional =
                     memberNode.second.get_optional<std::string>("<xmlattr>.sequenceMaxLength");
 
+                // Use versioned name only for non-basic types, using the member's version attribute
+                std::string versionedName = memberName;
+                if (memberType == "nonBasic") {
+                    auto nonBasicTypeVersionOptional =
+                        memberNode.second.get_optional<std::string>("<xmlattr>.version");
+                    if (nonBasicTypeVersionOptional) {
+                        versionedName = memberName + ":" + nonBasicTypeVersionOptional.get();
+                    } else {
+                        LOG(warning) << "Non-basic member '" << memberName
+                                     << "' lacks version, using name without version";
+                    }
+                }
+
                 if (arrayDimensionsOptional) {
                     std::vector<int> dimensions;
                     std::vector<std::string> dimsStr;
                     boost::split(dimsStr, arrayDimensionsOptional.get(), boost::is_any_of(","));
-                    size_t arraySize = 1;
+                    size_t  arraySize = 1;
                     for (const auto &dimStr : dimsStr) {
                         try {
                             int dim = std::stoi(dimStr);
@@ -143,7 +160,7 @@ namespace ngvs
                     }
                     offset = (offset + 3) / 4 * 4; // Align array start
                     if (memberType != "nonBasic") {
-                        generateArrayKeys(memberName, memberType, dimensions, {},
+                        generateArrayKeys(memberName, memberType, dimensions, {}, modelVersion,
                                           currentModelMembers, currentModelMembersVector, offset);
                     } else {
                         std::string nonBasicTypeName =
@@ -153,13 +170,14 @@ namespace ngvs
                         if (!nonBasicTypeName.empty() && nonBasicTypeVersionOptional) {
                             std::string nonBasicKey =
                                 nonBasicTypeName + ":" + nonBasicTypeVersionOptional.get();
+                            std::string nonBasicVersion = nonBasicTypeVersionOptional.get();
                             std::map<std::string, Result> nonBasicMembers;
                             std::vector<Result> nonBasicMembersVector;
                             size_t nonBasicOffset = 0;
                             size_t nonBasicSize = 0;
                             resolveModelMembers(nonBasicKey, allNodes, structNodes, nonBasicMembers,
-                                                nonBasicMembersVector, nonBasicSize,
-                                                nonBasicOffset);
+                                                nonBasicMembersVector, nonBasicSize, nonBasicOffset,
+                                                nonBasicVersion);        // Use nonBasic version
                             nonBasicSize = (nonBasicOffset + 3) / 4 * 4; // Pad nonBasic size
 
                             std::function<void(std::vector<int>)> generateArrayElements;
@@ -169,13 +187,14 @@ namespace ngvs
                                     for (int idx : indices) {
                                         prefix += "[" + std::to_string(idx) + "]";
                                     }
+                                    std::string versionedPrefix =
+                                        prefix + ":" + nonBasicVersion; // Use nonBasic version
                                     size_t elementOffset = offset;
                                     for (const auto &res : nonBasicMembersVector) {
-                                        std::string subKey = prefix + "." + res.name;
+                                        std::string subKey = versionedPrefix + "." + res.name;
                                         Result subResult = res;
                                         subResult.offset += elementOffset;
-                                        subResult.name = subKey;
-
+                                        subResult.name = subKey; // res.name handles basic/non-basic
                                         currentModelMembers[subKey] = subResult;
                                         currentModelMembersVector.push_back(subResult);
                                     }
@@ -202,8 +221,8 @@ namespace ngvs
                             if (maxLength > 0) {
                                 offset = (offset + 3) / 4 * 4; // Align sequence start
                                 generateSequenceKeys(memberName, memberType, maxLength,
-                                                     currentModelMembers, currentModelMembersVector,
-                                                     offset);
+                                                     modelVersion, currentModelMembers,
+                                                     currentModelMembersVector, offset);
                             } else {
                                 LOG(error) << "Invalid sequenceMaxLength: " << maxLength;
                             }
@@ -221,18 +240,22 @@ namespace ngvs
                     auto nonBasicTypeVersionOptional =
                         memberNode.second.get_optional<std::string>("<xmlattr>.version");
                     if (!nonBasicTypeName.empty() && nonBasicTypeVersionOptional) {
+                        std::string nonBasicKey =
+                            nonBasicTypeName + ":" + nonBasicTypeVersionOptional.get();
+                        std::string nonBasicVersion = nonBasicTypeVersionOptional.get();
                         size_t startingOffset = (offset + 3) / 4 * 4;
                         std::map<std::string, Result> subMembers;
                         std::vector<Result> subMembersVector;
                         size_t subOffset = 0;
                         size_t subSize = 0;
-                        resolveModelMembers(
-                            nonBasicTypeName + ":" + nonBasicTypeVersionOptional.get(), allNodes,
-                            structNodes, subMembers, subMembersVector, subSize, subOffset);
+                        resolveModelMembers(nonBasicKey, allNodes, structNodes, subMembers,
+                                            subMembersVector, subSize, subOffset,
+                                            nonBasicVersion); // Use nonBasic version
                         for (const auto &res : subMembersVector) {
                             Result newRes = res;
                             newRes.offset += startingOffset;
-                            newRes.name = memberName + "." + res.name;
+                            newRes.name =
+                                versionedName + "." + res.name; // res.name handles basic/non-basic
                             currentModelMembers[newRes.name] = newRes;
                             currentModelMembersVector.push_back(newRes);
                         }
@@ -242,16 +265,15 @@ namespace ngvs
                     }
                 } else {
                     size_t typeSize = getBasicTypeSize(memberType);
-                    offset = (offset + 3) / 4 * 4; // Align to 4 bytes
-                    currentModelMembers[memberName] =
+                    offset = (offset + 3) / 4 * 4;    // Align to 4 bytes
+                    currentModelMembers[memberName] = // No version for basic types
                         Result{memberName, memberType, typeSize, (unsigned int)offset};
                     currentModelMembersVector.push_back(currentModelMembers[memberName]);
                     offset += typeSize;
                 }
             }
         }
-        modelSize =
-            offset; // Update modelSize to final offset before padding total size in parseSchema
+        modelSize = offset;
         visiting.erase(currentModelNameAndVersion);
     }
 
@@ -265,22 +287,26 @@ namespace ngvs
         return 0;
     }
 
-    void ModelParser::generateArrayKeys(const std::string &memberName,
-                                        const std::string &memberType,
-                                        const std::vector<int> &dimensions,
-                                        std::vector<int> currentIndices,
-                                        std::map<std::string, Result> &currentModelMembers,
-                                        std::vector<Result> &currentModelMembersVector,
-                                        size_t &offset)
+    void
+    ModelParser::generateArrayKeys(const std::string &memberName, const std::string &memberType,
+                                   const std::vector<int> &dimensions,
+                                   std::vector<int> currentIndices, const std::string &modelVersion,
+                                   std::map<std::string, Result> &currentModelMembers,
+                                   std::vector<Result> &currentModelMembersVector, size_t &offset)
     {
         if (currentIndices.size() == dimensions.size()) {
             std::string key = memberName;
             for (int index : currentIndices) {
                 key += "[" + std::to_string(index) + "]";
             }
+            // Only append version for non-basic types
+            std::string versionedKey = (basicTypeSizes.find(memberType) == basicTypeSizes.end())
+                                           ? (key + ":" + modelVersion)
+                                           : key;
             size_t typeSize = getBasicTypeSize(memberType);
-            currentModelMembers[key] = Result{key, memberType, typeSize, (unsigned int)offset};
-            currentModelMembersVector.push_back(currentModelMembers[key]);
+            currentModelMembers[versionedKey] =
+                Result{versionedKey, memberType, typeSize, (unsigned int)offset};
+            currentModelMembersVector.push_back(currentModelMembers[versionedKey]);
             offset += typeSize;
             return;
         }
@@ -289,22 +315,27 @@ namespace ngvs
         for (int i = 0; i < currentDimension; ++i) {
             std::vector<int> nextIndices = currentIndices;
             nextIndices.push_back(i);
-            generateArrayKeys(memberName, memberType, dimensions, nextIndices, currentModelMembers,
-                              currentModelMembersVector, offset);
+            generateArrayKeys(memberName, memberType, dimensions, nextIndices, modelVersion,
+                              currentModelMembers, currentModelMembersVector, offset);
         }
     }
 
     void ModelParser::generateSequenceKeys(const std::string &memberName,
                                            const std::string &memberType, int maxLength,
+                                           const std::string &modelVersion,
                                            std::map<std::string, Result> &currentModelMembers,
                                            std::vector<Result> &currentModelMembersVector,
                                            size_t &offset)
     {
-        size_t typeSize = getBasicTypeSize(memberType);
+       size_t typeSize = getBasicTypeSize(memberType);
         for (int i = 0; i < maxLength; ++i) {
             std::string key = memberName + "[" + std::to_string(i) + "]";
-            currentModelMembers[key] = Result{key, memberType, typeSize, (unsigned int)offset};
-            currentModelMembersVector.push_back(currentModelMembers[key]);
+            // Only append version for non-basic types
+            std::string versionedKey = (basicTypeSizes.find(memberType) == basicTypeSizes.end()) 
+                                      ? (key + ":" + modelVersion) : key;
+            currentModelMembers[versionedKey] =
+                Result{versionedKey, memberType, typeSize, (unsigned int)offset};
+            currentModelMembersVector.push_back(currentModelMembers[versionedKey]);
             offset += typeSize;
         }
     }

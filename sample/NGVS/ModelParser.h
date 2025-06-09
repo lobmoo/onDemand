@@ -38,10 +38,21 @@ namespace ngvs
         std::string modelName;
         std::string modelVersion;
         std::string schema;
+        std::string basicTypeName;
         size_t size;
         std::map<std::string, Result> mapKeyType; //后续可以优化为unordered_map，提升查找效率
         std::vector<Result> members;              //存储成员信息，便于后续序列化
     };
+
+    //  struct ModelDefine {
+    //     std::string modelName;
+    //     std::string modelVersion;
+    //     std::string schema;
+    //     std::string basicTypeName;
+    //     size_t size;
+    //     ModelDefine *stu;  
+    // };
+
 
     class ModelParser
     {
@@ -60,7 +71,7 @@ namespace ngvs
                                  std::map<std::string, boost::property_tree::ptree> &structNodes,
                                  std::map<std::string, Result> &currentModelMembers,
                                  std::vector<Result> &currentModelMembersVector, size_t &modelSize,
-                                 size_t &offset);
+                                 size_t &offset, const std::string &modelVersion);
         // void generateArrayKeys(const std::string &memberName, const std::string &memberType,
         //                        const std::vector<int> &dimensions, std::vector<int> currentIndices,
         //                        std::map<std::string, std::string> &currentModelMemebers);
@@ -73,10 +84,12 @@ namespace ngvs
         //                           std::map<std::string, std::string> &currentModelMembers);
         void generateArrayKeys(const std::string &memberName, const std::string &memberType,
                                const std::vector<int> &dimensions, std::vector<int> currentIndices,
+                               const std::string &modelVersion,
                                std::map<std::string, Result> &currentModelMembers,
                                std::vector<Result> &currentModelMembersVector, size_t &offset);
         void generateSequenceKeys(const std::string &memberName, const std::string &memberType,
-                                  int maxLength, std::map<std::string, Result> &currentModelMembers,
+                                  int maxLength, const std::string &modelVersion,
+                                  std::map<std::string, Result> &currentModelMembers,
                                   std::vector<Result> &currentModelMembersVector, size_t &offset);
         size_t getBasicTypeSize(const std::string &type);
     };

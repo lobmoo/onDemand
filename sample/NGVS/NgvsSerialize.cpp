@@ -55,6 +55,12 @@ namespace ngvs
             LOG(info) << "ele name: " << ptr.name << "  ele type: " << ptr.type
                       << "  ele size: " << ptr.size << "  ele offset: " << ptr.offset;
         }
+
+        for(auto &ptr : modelDefines_)
+        {
+            LOG(info) << "ele name: " << ptr.first << "size :" << ptr.second.size;
+                    
+        }
         LOG(info) << "----------------------------/n";
 
         /*找出model下面的结构*/
