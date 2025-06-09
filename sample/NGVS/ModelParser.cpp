@@ -170,13 +170,15 @@ namespace ngvs
                                         prefix += "[" + std::to_string(idx) + "]";
                                     }
                                     size_t elementOffset = offset;
-                                    for (const auto &kv : nonBasicMembers) {
-                                        std::string subKey = prefix + "." + kv.first;
-                                        Result subResult = kv.second;
+                                    for (const auto &res : nonBasicMembersVector) {
+                                        std::string subKey = prefix + "." + res.name;
+                                        Result subResult = res;
                                         subResult.offset += elementOffset;
                                         subResult.name = subKey;
+
                                         currentModelMembers[subKey] = subResult;
-                                        nonBasicMembersVector.push_back(subResult);
+                                        currentModelMembersVector.push_back(
+                                            subResult); 
                                     }
                                     offset += nonBasicSize;
                                     return;
@@ -228,12 +230,12 @@ namespace ngvs
                         resolveModelMembers(
                             nonBasicTypeName + ":" + nonBasicTypeVersionOptional.get(), allNodes,
                             structNodes, subMembers, subMembersVector, subSize, subOffset);
-                        for (const auto &kv : subMembers) {
-                            Result res = kv.second;
-                            res.offset += startingOffset;
-                            res.name = memberName + "." + kv.first;
-                            currentModelMembers[memberName + "." + kv.first] = res;
-                            currentModelMembersVector.push_back(res);
+                        for (const auto &res : subMembersVector) {
+                            Result newRes = res;
+                            newRes.offset += startingOffset;
+                            newRes.name = memberName + "." + res.name;
+                            currentModelMembers[newRes.name] = newRes;
+                            currentModelMembersVector.push_back(newRes);
                         }
                         offset = startingOffset + ((subOffset + 3) / 4 * 4);
                     } else {
