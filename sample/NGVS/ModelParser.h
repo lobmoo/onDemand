@@ -39,8 +39,8 @@ namespace ngvs
         std::string modelVersion;
         std::string schema;
         size_t size;
-        std::map<std::string, Result>
-            mapKeyType; //后续可以优化为unordered_map，提升查找效率
+        std::map<std::string, Result> mapKeyType; //后续可以优化为unordered_map，提升查找效率
+        std::vector<Result> members;              //存储成员信息，便于后续序列化
     };
 
     class ModelParser
@@ -59,7 +59,8 @@ namespace ngvs
                                  std::map<std::string, ModelDefine> &allNodes,
                                  std::map<std::string, boost::property_tree::ptree> &structNodes,
                                  std::map<std::string, Result> &currentModelMembers,
-                                 size_t &modelSize, size_t &offset);
+                                 std::vector<Result> &currentModelMembersVector, size_t &modelSize,
+                                 size_t &offset);
         // void generateArrayKeys(const std::string &memberName, const std::string &memberType,
         //                        const std::vector<int> &dimensions, std::vector<int> currentIndices,
         //                        std::map<std::string, std::string> &currentModelMemebers);
@@ -73,11 +74,10 @@ namespace ngvs
         void generateArrayKeys(const std::string &memberName, const std::string &memberType,
                                const std::vector<int> &dimensions, std::vector<int> currentIndices,
                                std::map<std::string, Result> &currentModelMembers,
-                               size_t &offset);
+                               std::vector<Result> &currentModelMembersVector, size_t &offset);
         void generateSequenceKeys(const std::string &memberName, const std::string &memberType,
-                                  int maxLength,
-                                  std::map<std::string, Result> &currentModelMembers,
-                                  size_t &offset);
+                                  int maxLength, std::map<std::string, Result> &currentModelMembers,
+                                  std::vector<Result> &currentModelMembersVector, size_t &offset);
         size_t getBasicTypeSize(const std::string &type);
     };
 } // namespace ngvs

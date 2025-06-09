@@ -76,7 +76,7 @@ namespace ngvs
             size_t modelSize = 0;
             size_t offset = 0;
             resolveModelMembers(modelNameAndVersion, modelDefines, structNodes,
-                                modelDefine.mapKeyType, modelSize, offset);
+                                modelDefine.mapKeyType, modelDefine.members, modelSize, offset);
             modelDefine.size = (offset + 3) / 4 * 4; // Pad total size to multiple of 4
         }
 
@@ -84,12 +84,10 @@ namespace ngvs
     }
 
     void ModelParser::resolveModelMembers(
-        const std::string &currentModelNameAndVersion,
-        std::map<std::string, ModelDefine> &allNodes,
+        const std::string &currentModelNameAndVersion, std::map<std::string, ModelDefine> &allNodes,
         std::map<std::string, boost::property_tree::ptree> &structNodes,
         std::map<std::string, Result> &currentModelMembers,
-        size_t &modelSize,
-        size_t &offset)
+        std::vector<Result> &currentModelMembersVector, size_t &modelSize, size_t &offset)
     {
         if (visiting.count(currentModelNameAndVersion)) {
             LOG(error) << "Detected cyclic dependency at model: " << currentModelNameAndVersion;
@@ -106,10 +104,12 @@ namespace ngvs
 
         // Handle baseType
         auto baseTypeNameOptional = structNode.get_optional<std::string>("<xmlattr>.baseType");
-        auto baseTypeVersionOptional = structNode.get_optional<std::string>("<xmlattr>.baseTypeVersion");
+        auto baseTypeVersionOptional =
+            structNode.get_optional<std::string>("<xmlattr>.baseTypeVersion");
         if (baseTypeNameOptional && baseTypeVersionOptional) {
             resolveModelMembers(baseTypeNameOptional.get() + ":" + baseTypeVersionOptional.get(),
-                                allNodes, structNodes, currentModelMembers, modelSize, offset);
+                                allNodes, structNodes, currentModelMembers,
+                                currentModelMembersVector, modelSize, offset);
         } else if (baseTypeNameOptional) {
             LOG(warning) << "baseType '" << baseTypeNameOptional.get()
                          << "' has no version specified in model: " << currentModelNameAndVersion;
@@ -120,8 +120,10 @@ namespace ngvs
             if (memberNode.first == "member") {
                 std::string memberName = memberNode.second.get<std::string>("<xmlattr>.name");
                 std::string memberType = memberNode.second.get<std::string>("<xmlattr>.type");
-                auto arrayDimensionsOptional = memberNode.second.get_optional<std::string>("<xmlattr>.arrayDimensions");
-                auto sequenceMaxLengthOptional = memberNode.second.get_optional<std::string>("<xmlattr>.sequenceMaxLength");
+                auto arrayDimensionsOptional =
+                    memberNode.second.get_optional<std::string>("<xmlattr>.arrayDimensions");
+                auto sequenceMaxLengthOptional =
+                    memberNode.second.get_optional<std::string>("<xmlattr>.sequenceMaxLength");
 
                 if (arrayDimensionsOptional) {
                     std::vector<int> dimensions;
@@ -134,22 +136,30 @@ namespace ngvs
                             dimensions.push_back(dim);
                             arraySize *= dim;
                         } catch (const std::exception &e) {
-                            LOG(error) << "Invalid array dimension: " << dimStr << " - " << e.what();
+                            LOG(error)
+                                << "Invalid array dimension: " << dimStr << " - " << e.what();
                             continue;
                         }
                     }
                     offset = (offset + 3) / 4 * 4; // Align array start
                     if (memberType != "nonBasic") {
-                        generateArrayKeys(memberName, memberType, dimensions, {}, currentModelMembers, offset);
+                        generateArrayKeys(memberName, memberType, dimensions, {},
+                                          currentModelMembers, currentModelMembersVector, offset);
                     } else {
-                        std::string nonBasicTypeName = memberNode.second.get<std::string>("<xmlattr>.nonBasicTypeName");
-                        auto nonBasicTypeVersionOptional = memberNode.second.get_optional<std::string>("<xmlattr>.version");
+                        std::string nonBasicTypeName =
+                            memberNode.second.get<std::string>("<xmlattr>.nonBasicTypeName");
+                        auto nonBasicTypeVersionOptional =
+                            memberNode.second.get_optional<std::string>("<xmlattr>.version");
                         if (!nonBasicTypeName.empty() && nonBasicTypeVersionOptional) {
-                            std::string nonBasicKey = nonBasicTypeName + ":" + nonBasicTypeVersionOptional.get();
+                            std::string nonBasicKey =
+                                nonBasicTypeName + ":" + nonBasicTypeVersionOptional.get();
                             std::map<std::string, Result> nonBasicMembers;
+                            std::vector<Result> nonBasicMembersVector;
                             size_t nonBasicOffset = 0;
                             size_t nonBasicSize = 0;
-                            resolveModelMembers(nonBasicKey, allNodes, structNodes, nonBasicMembers, nonBasicSize, nonBasicOffset);
+                            resolveModelMembers(nonBasicKey, allNodes, structNodes, nonBasicMembers,
+                                                nonBasicMembersVector, nonBasicSize,
+                                                nonBasicOffset);
                             nonBasicSize = (nonBasicOffset + 3) / 4 * 4; // Pad nonBasic size
 
                             std::function<void(std::vector<int>)> generateArrayElements;
@@ -166,6 +176,7 @@ namespace ngvs
                                         subResult.offset += elementOffset;
                                         subResult.name = subKey;
                                         currentModelMembers[subKey] = subResult;
+                                        nonBasicMembersVector.push_back(subResult);
                                     }
                                     offset += nonBasicSize;
                                     return;
@@ -179,7 +190,8 @@ namespace ngvs
                             };
                             generateArrayElements({});
                         } else {
-                            LOG(error) << "nonBasic array member '" << memberName << "' lacks version";
+                            LOG(error)
+                                << "nonBasic array member '" << memberName << "' lacks version";
                         }
                     }
                 } else if (sequenceMaxLengthOptional) {
@@ -188,31 +200,40 @@ namespace ngvs
                             int maxLength = std::stoi(sequenceMaxLengthOptional.get());
                             if (maxLength > 0) {
                                 offset = (offset + 3) / 4 * 4; // Align sequence start
-                                generateSequenceKeys(memberName, memberType, maxLength, currentModelMembers, offset);
+                                generateSequenceKeys(memberName, memberType, maxLength,
+                                                     currentModelMembers, currentModelMembersVector,
+                                                     offset);
                             } else {
                                 LOG(error) << "Invalid sequenceMaxLength: " << maxLength;
                             }
                         } catch (const std::exception &e) {
-                            LOG(error) << "Invalid sequenceMaxLength: " << sequenceMaxLengthOptional.get();
+                            LOG(error)
+                                << "Invalid sequenceMaxLength: " << sequenceMaxLengthOptional.get();
                         }
                     } else {
-                        LOG(error) << "sequenceMaxLength not supported for nonBasic type: " << memberName;
+                        LOG(error)
+                            << "sequenceMaxLength not supported for nonBasic type: " << memberName;
                     }
                 } else if (memberType == "nonBasic") {
-                    std::string nonBasicTypeName = memberNode.second.get<std::string>("<xmlattr>.nonBasicTypeName");
-                    auto nonBasicTypeVersionOptional = memberNode.second.get_optional<std::string>("<xmlattr>.version");
+                    std::string nonBasicTypeName =
+                        memberNode.second.get<std::string>("<xmlattr>.nonBasicTypeName");
+                    auto nonBasicTypeVersionOptional =
+                        memberNode.second.get_optional<std::string>("<xmlattr>.version");
                     if (!nonBasicTypeName.empty() && nonBasicTypeVersionOptional) {
                         size_t startingOffset = (offset + 3) / 4 * 4;
                         std::map<std::string, Result> subMembers;
+                        std::vector<Result> subMembersVector;
                         size_t subOffset = 0;
                         size_t subSize = 0;
-                        resolveModelMembers(nonBasicTypeName + ":" + nonBasicTypeVersionOptional.get(),
-                                            allNodes, structNodes, subMembers, subSize, subOffset);
+                        resolveModelMembers(
+                            nonBasicTypeName + ":" + nonBasicTypeVersionOptional.get(), allNodes,
+                            structNodes, subMembers, subMembersVector, subSize, subOffset);
                         for (const auto &kv : subMembers) {
                             Result res = kv.second;
                             res.offset += startingOffset;
                             res.name = memberName + "." + kv.first;
                             currentModelMembers[memberName + "." + kv.first] = res;
+                            currentModelMembersVector.push_back(res);
                         }
                         offset = startingOffset + ((subOffset + 3) / 4 * 4);
                     } else {
@@ -221,12 +242,15 @@ namespace ngvs
                 } else {
                     size_t typeSize = getBasicTypeSize(memberType);
                     offset = (offset + 3) / 4 * 4; // Align to 4 bytes
-                    currentModelMembers[memberName] = Result{memberName, memberType, typeSize, (unsigned int)offset};
+                    currentModelMembers[memberName] =
+                        Result{memberName, memberType, typeSize, (unsigned int)offset};
+                    currentModelMembersVector.push_back(currentModelMembers[memberName]);
                     offset += typeSize;
                 }
             }
         }
-        modelSize = offset; // Update modelSize to final offset before padding total size in parseSchema
+        modelSize =
+            offset; // Update modelSize to final offset before padding total size in parseSchema
         visiting.erase(currentModelNameAndVersion);
     }
 
@@ -245,6 +269,7 @@ namespace ngvs
                                         const std::vector<int> &dimensions,
                                         std::vector<int> currentIndices,
                                         std::map<std::string, Result> &currentModelMembers,
+                                        std::vector<Result> &currentModelMembersVector,
                                         size_t &offset)
     {
         if (currentIndices.size() == dimensions.size()) {
@@ -254,6 +279,7 @@ namespace ngvs
             }
             size_t typeSize = getBasicTypeSize(memberType);
             currentModelMembers[key] = Result{key, memberType, typeSize, (unsigned int)offset};
+            currentModelMembersVector.push_back(currentModelMembers[key]);
             offset += typeSize;
             return;
         }
@@ -262,20 +288,22 @@ namespace ngvs
         for (int i = 0; i < currentDimension; ++i) {
             std::vector<int> nextIndices = currentIndices;
             nextIndices.push_back(i);
-            generateArrayKeys(memberName, memberType, dimensions, nextIndices, currentModelMembers, offset);
+            generateArrayKeys(memberName, memberType, dimensions, nextIndices, currentModelMembers,
+                              currentModelMembersVector, offset);
         }
     }
 
     void ModelParser::generateSequenceKeys(const std::string &memberName,
-                                           const std::string &memberType,
-                                           int maxLength,
+                                           const std::string &memberType, int maxLength,
                                            std::map<std::string, Result> &currentModelMembers,
+                                           std::vector<Result> &currentModelMembersVector,
                                            size_t &offset)
     {
         size_t typeSize = getBasicTypeSize(memberType);
         for (int i = 0; i < maxLength; ++i) {
             std::string key = memberName + "[" + std::to_string(i) + "]";
             currentModelMembers[key] = Result{key, memberType, typeSize, (unsigned int)offset};
+            currentModelMembersVector.push_back(currentModelMembers[key]);
             offset += typeSize;
         }
     }
