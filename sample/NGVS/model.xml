@@ -9,7 +9,6 @@
         <member name="complex_member3" type="nonBasic" nonBasicTypeName="InnerModel3" version="1.0"/>
     </struct>
 
-
     <struct name="InnerModel5" version="1.0">
         <member name="first" type="float32"/>
         <member name="complex_member6" type="nonBasic" nonBasicTypeName="InnerModel6" version="1.0"/> 
@@ -34,7 +33,7 @@
     <struct name="InnerModel3" version="1.0">
         <member name="fourth" type="int32"/>
         <member name="long_array" type="int32" arrayDimensions="10" startIndex="0" endIndex="20"/>
-        <member name="long_array2" type="nonBasic"  nonBasicTypeName="InnerModel5" arrayDimensions="10" startIndex="0" endIndex="20"  version="1.0"/>
+        <member name="long_array2" type="nonBasic"  nonBasicTypeName="InnerModel" arrayDimensions="10" startIndex="0" endIndex="20"  version="1.0"/>
     </struct>
 </models>
 

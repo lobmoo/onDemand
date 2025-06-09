@@ -73,10 +73,10 @@ namespace ngvs
             return 0;
     }
 
-    std::vector<Result>
-    NgvsSerializer::calculateStructSize(const std::map<std::string, std::string> &data)
-    {
-    }
+    // std::vector<Result>
+    // NgvsSerializer::calculateStructSize(const std::map<std::string, std::string> &data)
+    // {
+    // }
 
     const std::vector<char> &NgvsSerializer::buffer() const
     {

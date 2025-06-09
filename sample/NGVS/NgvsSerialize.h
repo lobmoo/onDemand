@@ -40,7 +40,7 @@ namespace ngvs
 
     private:
         size_t alignOffset(size_t offset, size_t alignment);
-        std::vector<Result> calculateStructSize(const std::map<std::string, std::string> &data);
+       // std::vector<Result> calculateStructSize(const std::map<std::string, std::string> &data);
 
     private:
         std::vector<char> buffer_;

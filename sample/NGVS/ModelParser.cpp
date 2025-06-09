@@ -75,9 +75,8 @@ namespace ngvs
             ModelDefine &modelDefine = it->second;
             size_t modelSize = 0;
             size_t offset = 0;
-            resolveModelMembers(modelNameAndVersion, modelDefines, structNodes,
-                                modelDefine.mapKeyType, modelDefine.members, modelSize, offset,
-                                modelDefine.modelVersion);
+            resolveModelMembers(modelNameAndVersion, modelDefines, structNodes, modelDefine.members,
+                                modelSize, offset, modelDefine.modelVersion);
             modelDefine.size = (offset + 3) / 4 * 4; // Pad total size to multiple of 4
         }
 
@@ -87,8 +86,7 @@ namespace ngvs
     void ModelParser::resolveModelMembers(
         const std::string &currentModelNameAndVersion, std::map<std::string, ModelDefine> &allNodes,
         std::map<std::string, boost::property_tree::ptree> &structNodes,
-        std::map<std::string, Result> &currentModelMembers,
-        std::vector<Result> &currentModelMembersVector, size_t &modelSize, size_t &offset,
+        std::vector<TreeNode> &currentModelMembers, size_t &modelSize, size_t &offset,
         const std::string &modelVersion)
     {
         if (visiting.count(currentModelNameAndVersion)) {
@@ -111,9 +109,8 @@ namespace ngvs
         if (baseTypeNameOptional && baseTypeVersionOptional) {
             std::string baseTypeKey =
                 baseTypeNameOptional.get() + ":" + baseTypeVersionOptional.get();
-            resolveModelMembers(baseTypeKey, allNodes, structNodes, currentModelMembers,
-                                currentModelMembersVector, modelSize, offset,
-                                baseTypeVersionOptional.get());
+            resolveModelMembers(baseTypeKey, allNodes, structNodes, currentModelMembers, modelSize,
+                                offset, baseTypeVersionOptional.get());
         } else if (baseTypeNameOptional) {
             LOG(warning) << "baseType '" << baseTypeNameOptional.get()
                          << "' has no version specified in model: " << currentModelNameAndVersion;
@@ -129,13 +126,13 @@ namespace ngvs
                 auto sequenceMaxLengthOptional =
                     memberNode.second.get_optional<std::string>("<xmlattr>.sequenceMaxLength");
 
-                // Use versioned name only for non-basic types, using the member's version attribute
-                std::string versionedName = memberName;
+                // Use versioned name only for non-basic types
+                std::string nodeName = memberName;
                 if (memberType == "nonBasic") {
                     auto nonBasicTypeVersionOptional =
                         memberNode.second.get_optional<std::string>("<xmlattr>.version");
                     if (nonBasicTypeVersionOptional) {
-                        versionedName = memberName + ":" + nonBasicTypeVersionOptional.get();
+                        nodeName = memberName + ":" + nonBasicTypeVersionOptional.get();
                     } else {
                         LOG(warning) << "Non-basic member '" << memberName
                                      << "' lacks version, using name without version";
@@ -146,7 +143,7 @@ namespace ngvs
                     std::vector<int> dimensions;
                     std::vector<std::string> dimsStr;
                     boost::split(dimsStr, arrayDimensionsOptional.get(), boost::is_any_of(","));
-                    size_t  arraySize = 1;
+                    size_t arraySize = 1;
                     for (const auto &dimStr : dimsStr) {
                         try {
                             int dim = std::stoi(dimStr);
@@ -161,7 +158,7 @@ namespace ngvs
                     offset = (offset + 3) / 4 * 4; // Align array start
                     if (memberType != "nonBasic") {
                         generateArrayKeys(memberName, memberType, dimensions, {}, modelVersion,
-                                          currentModelMembers, currentModelMembersVector, offset);
+                                          currentModelMembers, offset);
                     } else {
                         std::string nonBasicTypeName =
                             memberNode.second.get<std::string>("<xmlattr>.nonBasicTypeName");
@@ -171,13 +168,11 @@ namespace ngvs
                             std::string nonBasicKey =
                                 nonBasicTypeName + ":" + nonBasicTypeVersionOptional.get();
                             std::string nonBasicVersion = nonBasicTypeVersionOptional.get();
-                            std::map<std::string, Result> nonBasicMembers;
-                            std::vector<Result> nonBasicMembersVector;
+                            std::vector<TreeNode> nonBasicMembers;
                             size_t nonBasicOffset = 0;
                             size_t nonBasicSize = 0;
                             resolveModelMembers(nonBasicKey, allNodes, structNodes, nonBasicMembers,
-                                                nonBasicMembersVector, nonBasicSize, nonBasicOffset,
-                                                nonBasicVersion);        // Use nonBasic version
+                                                nonBasicSize, nonBasicOffset, nonBasicVersion);
                             nonBasicSize = (nonBasicOffset + 3) / 4 * 4; // Pad nonBasic size
 
                             std::function<void(std::vector<int>)> generateArrayElements;
@@ -187,17 +182,19 @@ namespace ngvs
                                     for (int idx : indices) {
                                         prefix += "[" + std::to_string(idx) + "]";
                                     }
-                                    std::string versionedPrefix =
-                                        prefix + ":" + nonBasicVersion; // Use nonBasic version
-                                    size_t elementOffset = offset;
-                                    for (const auto &res : nonBasicMembersVector) {
-                                        std::string subKey = versionedPrefix + "." + res.name;
-                                        Result subResult = res;
-                                        subResult.offset += elementOffset;
-                                        subResult.name = subKey; // res.name handles basic/non-basic
-                                        currentModelMembers[subKey] = subResult;
-                                        currentModelMembersVector.push_back(subResult);
+                                    std::string versionedPrefix = prefix + ":" + nonBasicVersion;
+                                    TreeNode arrayNode;
+                                    arrayNode.name = versionedPrefix;
+                                    arrayNode.type = memberType;
+                                    arrayNode.size = nonBasicSize;
+                                    arrayNode.offset = offset;
+                                    arrayNode.is_array = true;
+                                    arrayNode.array_indices = indices;
+                                    arrayNode.children = nonBasicMembers; // Copy sub-members
+                                    for (auto &child : arrayNode.children) {
+                                        child.offset += offset; // Adjust child offsets
                                     }
+                                    currentModelMembers.push_back(arrayNode);
                                     offset += nonBasicSize;
                                     return;
                                 }
@@ -221,8 +218,7 @@ namespace ngvs
                             if (maxLength > 0) {
                                 offset = (offset + 3) / 4 * 4; // Align sequence start
                                 generateSequenceKeys(memberName, memberType, maxLength,
-                                                     modelVersion, currentModelMembers,
-                                                     currentModelMembersVector, offset);
+                                                     modelVersion, currentModelMembers, offset);
                             } else {
                                 LOG(error) << "Invalid sequenceMaxLength: " << maxLength;
                             }
@@ -244,37 +240,103 @@ namespace ngvs
                             nonBasicTypeName + ":" + nonBasicTypeVersionOptional.get();
                         std::string nonBasicVersion = nonBasicTypeVersionOptional.get();
                         size_t startingOffset = (offset + 3) / 4 * 4;
-                        std::map<std::string, Result> subMembers;
-                        std::vector<Result> subMembersVector;
+                        std::vector<TreeNode> subMembers;
                         size_t subOffset = 0;
                         size_t subSize = 0;
-                        resolveModelMembers(nonBasicKey, allNodes, structNodes, subMembers,
-                                            subMembersVector, subSize, subOffset,
-                                            nonBasicVersion); // Use nonBasic version
-                        for (const auto &res : subMembersVector) {
-                            Result newRes = res;
-                            newRes.offset += startingOffset;
-                            newRes.name =
-                                versionedName + "." + res.name; // res.name handles basic/non-basic
-                            currentModelMembers[newRes.name] = newRes;
-                            currentModelMembersVector.push_back(newRes);
+                        resolveModelMembers(nonBasicKey, allNodes, structNodes, subMembers, subSize,
+                                            subOffset, nonBasicVersion);
+                        TreeNode node;
+                        node.name = nodeName;
+                        node.type = memberType;
+                        node.size = (subOffset + 3) / 4 * 4;
+                        node.offset = startingOffset;
+                        node.children = subMembers;
+                        for (auto &child : node.children) {
+                            child.offset += startingOffset; // Adjust child offsets
                         }
-                        offset = startingOffset + ((subOffset + 3) / 4 * 4);
+                        currentModelMembers.push_back(node);
+                        offset = startingOffset + node.size;
                     } else {
                         LOG(error) << "nonBasic member '" << memberName << "' lacks version";
                     }
                 } else {
                     size_t typeSize = getBasicTypeSize(memberType);
-                    offset = (offset + 3) / 4 * 4;    // Align to 4 bytes
-                    currentModelMembers[memberName] = // No version for basic types
-                        Result{memberName, memberType, typeSize, (unsigned int)offset};
-                    currentModelMembersVector.push_back(currentModelMembers[memberName]);
+                    offset = (offset + 3) / 4 * 4; // Align to 4 bytes
+                    TreeNode node;
+                    node.name = nodeName;
+                    node.type = memberType;
+                    node.size = typeSize;
+                    node.offset = offset;
+                    currentModelMembers.push_back(node);
                     offset += typeSize;
                 }
             }
         }
         modelSize = offset;
         visiting.erase(currentModelNameAndVersion);
+    }
+
+    void ModelParser::generateArrayKeys(const std::string &memberName,
+                                        const std::string &memberType,
+                                        const std::vector<int> &dimensions,
+                                        std::vector<int> currentIndices,
+                                        const std::string &modelVersion,
+                                        std::vector<TreeNode> &currentModelMembers, size_t &offset)
+    {
+        if (currentIndices.size() == dimensions.size()) {
+            std::string key = memberName;
+            for (int index : currentIndices) {
+                key += "[" + std::to_string(index) + "]";
+            }
+            // Only append version for non-basic types
+            std::string nodeName = (basicTypeSizes.find(memberType) == basicTypeSizes.end())
+                                       ? (key + ":" + modelVersion)
+                                       : key;
+            size_t typeSize = getBasicTypeSize(memberType);
+            TreeNode node;
+            node.name = nodeName;
+            node.type = memberType;
+            node.size = typeSize;
+            node.offset = offset;
+            node.is_array = true;
+            node.array_indices = currentIndices;
+            currentModelMembers.push_back(node);
+            offset += typeSize;
+            return;
+        }
+
+        int currentDimension = dimensions[currentIndices.size()];
+        for (int i = 0; i < currentDimension; ++i) {
+            std::vector<int> nextIndices = currentIndices;
+            nextIndices.push_back(i);
+            generateArrayKeys(memberName, memberType, dimensions, nextIndices, modelVersion,
+                              currentModelMembers, offset);
+        }
+    }
+
+    void ModelParser::generateSequenceKeys(const std::string &memberName,
+                                           const std::string &memberType, int maxLength,
+                                           const std::string &modelVersion,
+                                           std::vector<TreeNode> &currentModelMembers,
+                                           size_t &offset)
+    {
+        size_t typeSize = getBasicTypeSize(memberType);
+        for (int i = 0; i < maxLength; ++i) {
+            std::string key = memberName + "[" + std::to_string(i) + "]";
+            // Only append version for non-basic types
+            std::string nodeName = (basicTypeSizes.find(memberType) == basicTypeSizes.end())
+                                       ? (key + ":" + modelVersion)
+                                       : key;
+            TreeNode node;
+            node.name = nodeName;
+            node.type = memberType;
+            node.size = typeSize;
+            node.offset = offset;
+            node.is_array = true;
+            node.array_indices = {i};
+            currentModelMembers.push_back(node);
+            offset += typeSize;
+        }
     }
 
     size_t ModelParser::getBasicTypeSize(const std::string &type)
@@ -287,58 +349,40 @@ namespace ngvs
         return 0;
     }
 
-    void
-    ModelParser::generateArrayKeys(const std::string &memberName, const std::string &memberType,
-                                   const std::vector<int> &dimensions,
-                                   std::vector<int> currentIndices, const std::string &modelVersion,
-                                   std::map<std::string, Result> &currentModelMembers,
-                                   std::vector<Result> &currentModelMembersVector, size_t &offset)
+    // 递归获取所有叶子节点
+    void ModelParser::getLeafNodes(const TreeNode &node, std::vector<TreeNode> &leaves)
     {
-        if (currentIndices.size() == dimensions.size()) {
-            std::string key = memberName;
-            for (int index : currentIndices) {
-                key += "[" + std::to_string(index) + "]";
-            }
-            // Only append version for non-basic types
-            std::string versionedKey = (basicTypeSizes.find(memberType) == basicTypeSizes.end())
-                                           ? (key + ":" + modelVersion)
-                                           : key;
-            size_t typeSize = getBasicTypeSize(memberType);
-            currentModelMembers[versionedKey] =
-                Result{versionedKey, memberType, typeSize, (unsigned int)offset};
-            currentModelMembersVector.push_back(currentModelMembers[versionedKey]);
-            offset += typeSize;
+        if (node.children.empty()) {
+            leaves.push_back(node);
             return;
         }
-
-        int currentDimension = dimensions[currentIndices.size()];
-        for (int i = 0; i < currentDimension; ++i) {
-            std::vector<int> nextIndices = currentIndices;
-            nextIndices.push_back(i);
-            generateArrayKeys(memberName, memberType, dimensions, nextIndices, modelVersion,
-                              currentModelMembers, currentModelMembersVector, offset);
+        for (const auto &child : node.children) {
+            getLeafNodes(child, leaves);
         }
     }
 
-    void ModelParser::generateSequenceKeys(const std::string &memberName,
-                                           const std::string &memberType, int maxLength,
-                                           const std::string &modelVersion,
-                                           std::map<std::string, Result> &currentModelMembers,
-                                           std::vector<Result> &currentModelMembersVector,
-                                           size_t &offset)
+    // 查找特定节点并返回其叶子节点
+    bool ModelParser::findNodeAndGetLeaves(const ModelDefine &model, const std::string &targetName,
+                              std::vector<TreeNode> &leaves)
     {
-       size_t typeSize = getBasicTypeSize(memberType);
-        for (int i = 0; i < maxLength; ++i) {
-            std::string key = memberName + "[" + std::to_string(i) + "]";
-            // Only append version for non-basic types
-            std::string versionedKey = (basicTypeSizes.find(memberType) == basicTypeSizes.end()) 
-                                      ? (key + ":" + modelVersion) : key;
-            currentModelMembers[versionedKey] =
-                Result{versionedKey, memberType, typeSize, (unsigned int)offset};
-            currentModelMembersVector.push_back(currentModelMembers[versionedKey]);
-            offset += typeSize;
-        }
+        std::function<bool(const std::vector<TreeNode> &)> search =
+            [&](const std::vector<TreeNode> &nodes) {
+                for (const auto &node : nodes) {
+                    if (node.name == targetName) {
+                        getLeafNodes(node, leaves);
+                        return true;
+                    }
+                    if (!node.children.empty()) {
+                        if (search(node.children))
+                            return true;
+                    }
+                }
+                return false;
+            };
+        return search(model.members);
     }
+
+    
 
 } // namespace ngvs
 } // namespace dsf

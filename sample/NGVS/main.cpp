@@ -38,8 +38,33 @@ int main(int argc, char *argv[])
     //     }
     //     LOG(info) << "----------------------------/n";
     // }
-    dsf::ngvs::NgvsSerializer serializer;
-    serializer.serialize(xmlContent, "InnerModel6:1.0");
+
+    dsf::ngvs::ModelParser parser;
+    std::string error_message;
+
+    std::map<std::string, dsf::ngvs::ModelDefine> modelDefines_;
+    /*1.解析xml数据*/
+    dsf::ngvs::error_code_t ret = parser.parseSchema(modelDefines_, xmlContent, error_message);
+    if (ret != dsf::ngvs::MODEL_PARSER_OK) {
+        LOG(error) << "parse schema failed, ret: " << ret;
+        return false;
+    }
+  
+    std::vector<dsf::ngvs::TreeNode> leaves;
+    dsf::ngvs::ModelDefine model = modelDefines_["InnerModel:1.0"];
+    if (model.members.empty()) {
+        LOG(error) << "Model members are empty for model: InnerModel:1.0";
+        return 1;
+    }
+    LOG(info) << "Model name: " << model.modelName
+              << ", version: " << model.modelVersion
+              << ", size: " << model.size;
+    if (parser.findNodeAndGetLeaves(model, "complex_member2:1.0", leaves)) {
+        for (const auto &leaf : leaves) {
+            LOG(info) << "Leaf: name=" << leaf.name << ", type=" << leaf.type
+                      << ", size=" << leaf.size << ", offset=" << leaf.offset;
+        }
+    }
     while (std::cin.get() != '\n') {
     }
     return 0;
