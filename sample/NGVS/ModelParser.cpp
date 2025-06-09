@@ -1,4 +1,4 @@
-﻿/**
+/**
  * @author DSF Team
  * @file ModelParser.cpp
  * @date 2025-04-16
@@ -177,8 +177,7 @@ namespace ngvs
                                         subResult.name = subKey;
 
                                         currentModelMembers[subKey] = subResult;
-                                        currentModelMembersVector.push_back(
-                                            subResult); 
+                                        currentModelMembersVector.push_back(subResult);
                                     }
                                     offset += nonBasicSize;
                                     return;

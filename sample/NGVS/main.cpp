@@ -19,11 +19,9 @@ std::string readXmlFile(const std::string &filePath)
     return content;
 }
 
-
-
 int main(int argc, char *argv[])
 {
-    Logger::Instance().Init("log/myapp.log", Logger::console, Logger::debug, 60, 5); 
+    Logger::Instance().Init("log/myapp.log", Logger::console, Logger::debug, 60, 5);
     std::string xmlContent = readXmlFile("/home/wwk/workspaces/test_demo/sample/NGVS/model.xml");
     // dsf::ngvs::ModelParser *parser = new dsf::ngvs::ModelParser();
     // std::map<std::string, dsf::ngvs::ModelDefine> modelDefines;

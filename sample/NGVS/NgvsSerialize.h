@@ -5,12 +5,12 @@
  * @version 1.0
  * @date 2025-05-28
  * 
- * @copyright Copyright (c) 2025  by  宝信
+ * @copyright Copyright (c) 2025  by  瀹濅俊
  * 
- * @par 修改日志:
+ * @par 淇�鏀规棩蹇�:
  * <table>
  * <tr><th>Date       <th>Version <th>Author  <th>Description
- * <tr><td>2025-05-28     <td>1.0     <td>wwk   <td>修改?
+ * <tr><td>2025-05-28     <td>1.0     <td>wwk   <td>淇�鏀�?
  * </table>
  */
 
