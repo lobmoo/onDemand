@@ -96,7 +96,7 @@ namespace ngvs
         visiting.insert(currentModelNameAndVersion);
         const auto &itStructNode = structNodes.find(currentModelNameAndVersion);
         if (itStructNode == structNodes.end()) {
-            LOG(warning) << "Failed to find struct node for model: " + currentModelNameAndVersion;
+            LOG(warning) << "Failed to find struct node for model: " << currentModelNameAndVersion;
             visiting.erase(currentModelNameAndVersion);
             return;
         }
@@ -126,7 +126,6 @@ namespace ngvs
                 auto sequenceMaxLengthOptional =
                     memberNode.second.get_optional<std::string>("<xmlattr>.sequenceMaxLength");
 
-                // Use versioned name only for non-basic types
                 std::string nodeName = memberName;
                 std::string nodeNonBasicTypeName;
                 std::string nodeVersion;
@@ -174,11 +173,13 @@ namespace ngvs
                                 nonBasicTypeName + ":" + nonBasicTypeVersionOptional.get();
                             std::string nonBasicVersion = nonBasicTypeVersionOptional.get();
                             std::vector<TreeNode> nonBasicMembers;
-                            size_t nonBasicOffset = 0;
+                            size_t nonBasicOffset =
+                                offset; // Start sub-offset at current global offset
                             size_t nonBasicSize = 0;
                             resolveModelMembers(nonBasicKey, allNodes, structNodes, nonBasicMembers,
                                                 nonBasicSize, nonBasicOffset, nonBasicVersion);
-                            nonBasicSize = (nonBasicOffset + 3) / 4 * 4; // Pad nonBasic size
+                            nonBasicSize =
+                                (nonBasicOffset - offset + 3) / 4 * 4; // Size of nonBasic type
 
                             std::function<void(std::vector<int>)> generateArrayElements;
                             generateArrayElements = [&](std::vector<int> indices) {
@@ -192,17 +193,19 @@ namespace ngvs
                                     arrayNode.name = versionedPrefix;
                                     arrayNode.type = memberType;
                                     arrayNode.size = nonBasicSize;
-                                    arrayNode.offset = offset;
+                                    arrayNode.offset = offset; // Global offset for array node
                                     arrayNode.is_array = true;
                                     arrayNode.array_indices = indices;
-                                    arrayNode.children = nonBasicMembers;
+                                    arrayNode.children =
+                                        nonBasicMembers; // Sub-members with global offsets
                                     arrayNode.nonBasicTypeName = nonBasicTypeName;
                                     arrayNode.version = nonBasicVersion;
+                                    // Adjust child offsets to be global
                                     for (auto &child : arrayNode.children) {
-                                        child.offset += offset; // Adjust child offsets
+                                        child.offset += offset - arrayNode.children.front().offset;
                                     }
                                     currentModelMembers.push_back(arrayNode);
-                                    offset += nonBasicSize;
+                                    offset += nonBasicSize; // Update global offset
                                     return;
                                 }
                                 int dim = dimensions[indices.size()];
@@ -223,7 +226,7 @@ namespace ngvs
                         try {
                             int maxLength = std::stoi(sequenceMaxLengthOptional.get());
                             if (maxLength > 0) {
-                                offset = (offset + 3) / 4 * 4; // Align sequence start
+                                offset = (offset + 3) / 4 * 4;
                                 generateSequenceKeys(memberName, memberType, maxLength,
                                                      modelVersion, currentModelMembers, offset);
                             } else {
@@ -243,11 +246,12 @@ namespace ngvs
                                 nonBasicTypeName + ":" + nonBasicTypeVersionOptional.get();
                             std::string nonBasicVersion = nonBasicTypeVersionOptional.get();
                             std::vector<TreeNode> nonBasicMembers;
-                            size_t nonBasicOffset = 0;
+                            size_t nonBasicOffset =
+                                offset; // Start sub-offset at current global offset
                             size_t nonBasicSize = 0;
                             resolveModelMembers(nonBasicKey, allNodes, structNodes, nonBasicMembers,
                                                 nonBasicSize, nonBasicOffset, nonBasicVersion);
-                            nonBasicSize = (nonBasicOffset + 3) / 4 * 4;
+                            nonBasicSize = (nonBasicOffset - offset + 3) / 4 * 4;
 
                             int maxLength;
                             try {
@@ -269,17 +273,19 @@ namespace ngvs
                                 seqNode.name = versionedKey;
                                 seqNode.type = memberType;
                                 seqNode.size = nonBasicSize;
-                                seqNode.offset = offset;
+                                seqNode.offset = offset; // Global offset for sequence node
                                 seqNode.is_array = true;
                                 seqNode.array_indices = {i};
-                                seqNode.children = nonBasicMembers;
+                                seqNode.children =
+                                    nonBasicMembers; // Sub-members with global offsets
                                 seqNode.nonBasicTypeName = nonBasicTypeName;
                                 seqNode.version = nonBasicVersion;
+                                // Adjust child offsets to be global
                                 for (auto &child : seqNode.children) {
-                                    child.offset += offset;
+                                    child.offset += offset - seqNode.children.front().offset;
                                 }
                                 currentModelMembers.push_back(seqNode);
-                                offset += nonBasicSize;
+                                offset += nonBasicSize; // Update global offset
                             }
                         } else {
                             LOG(error)
@@ -295,40 +301,38 @@ namespace ngvs
                         std::string nonBasicKey =
                             nonBasicTypeName + ":" + nonBasicTypeVersionOptional.get();
                         std::string nonBasicVersion = nonBasicTypeVersionOptional.get();
-                        size_t startingOffset = (offset + 3) / 4 * 4;
+                        size_t startingOffset = (offset + 3) / 4 * 4; // Align parent node
                         std::vector<TreeNode> subMembers;
-                        size_t subOffset = 0;
+                        size_t subOffset = startingOffset; // Start sub-offset at global offset
                         size_t subSize = 0;
                         resolveModelMembers(nonBasicKey, allNodes, structNodes, subMembers, subSize,
                                             subOffset, nonBasicVersion);
                         TreeNode node;
                         node.name = nodeName;
                         node.type = memberType;
-                        node.size = (subOffset + 3) / 4 * 4;
-                        node.offset = startingOffset;
-                        node.children = subMembers;
+                        node.size =
+                            (subOffset - startingOffset + 3) / 4 * 4; // Size of nonBasic node
+                        node.offset = startingOffset; // Global offset for parent node
+                        node.children = subMembers;   // Sub-members with global offsets
                         node.nonBasicTypeName = nonBasicTypeName;
                         node.version = nonBasicVersion;
-                        for (auto &child : node.children) {
-                            child.offset += startingOffset;
-                        }
                         currentModelMembers.push_back(node);
-                        offset = startingOffset + node.size;
+                        offset = startingOffset + node.size; // Update global offset
                     } else {
                         LOG(error) << "nonBasic member '" << memberName << "' lacks version";
                     }
                 } else {
                     size_t typeSize = getBasicTypeSize(memberType);
-                    offset = (offset + 3) / 4 * 4;
+                    offset = (offset + 3) / 4 * 4; // Align basic type
                     TreeNode node;
                     node.name = nodeName;
                     node.type = memberType;
                     node.size = typeSize;
-                    node.offset = offset;
+                    node.offset = offset; // Global offset for basic type
                     node.nonBasicTypeName = "";
                     node.version = "";
                     currentModelMembers.push_back(node);
-                    offset += typeSize;
+                    offset += typeSize; // Update global offset
                 }
             }
         }
@@ -490,7 +494,6 @@ namespace ngvs
                   << model.modelVersion;
         collectLeaves(model.members);
     }
-
 
 } // namespace ngvs
 } // namespace dsf
