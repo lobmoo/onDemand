@@ -61,9 +61,10 @@ namespace ngvs
         bool findNodeAndGetLeaves(const ModelDefine &model, const std::string &targetName,
                                   std::vector<TreeNode> &leaves);
 
-        void printInfo(std::vector<TreeNode> &nodes);
+        bool findNodeAllLeaves(const ModelDefine &model,std::vector<TreeNode> &leaves);    
 
-        void printLeafNodes(const ModelDefine &model) const;
+        void printmembersInfo(std::vector<TreeNode> &nodes);
+        void printAllLeafNodesInfo(const ModelDefine &model) const;
 
     private:
         void getLeafNodes(const TreeNode &node, std::vector<TreeNode> &leaves);

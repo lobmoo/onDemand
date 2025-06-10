@@ -450,7 +450,30 @@ namespace ngvs
         return search(model.members);
     }
 
-    void ModelParser::printInfo(std::vector<TreeNode> &nodes)
+    bool ModelParser::findNodeAllLeaves(const ModelDefine &model, std::vector<TreeNode> &leaves)
+    {
+        if (model.members.empty()) {
+            LOG(warning) << "No members found in model: " << model.modelName << ":"
+                         << model.modelVersion;
+            return false;
+        }
+
+        std::function<void(const std::vector<TreeNode> &)> collectLeaves =
+            [&](const std::vector<TreeNode> &nodes) {
+                for (const auto &node : nodes) {
+                    if (node.children.empty()) {
+                        leaves.push_back(node);
+                    } else {
+                        collectLeaves(node.children);
+                    }
+                }
+            };
+
+        collectLeaves(model.members);
+        return !leaves.empty();
+    }
+
+    void ModelParser::printmembersInfo(std::vector<TreeNode> &nodes)
     {
         for (auto node : nodes)
 
@@ -466,7 +489,7 @@ namespace ngvs
         }
     }
 
-    void ModelParser::printLeafNodes(const ModelDefine &model) const
+    void ModelParser::printAllLeafNodesInfo(const ModelDefine &model) const
     {
         // 递归收集并打印叶子节点
         std::function<void(const std::vector<TreeNode> &)> collectLeaves =
