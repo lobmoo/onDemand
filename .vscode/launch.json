@@ -8,7 +8,7 @@
         "name": "(gdb) 启动",
         "type": "cppdbg",
         "request": "launch",
-        "program": "/home/wwk/workspaces/test_demo/test_exec",
+        "program": "/home/wwk/workspaces/test_demo/build/NGVS_example_exec",
         "args": ["cli"],
         "stopAtEntry": false,
         "cwd": "${fileDirname}",

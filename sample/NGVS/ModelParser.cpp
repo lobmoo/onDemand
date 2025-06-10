@@ -107,6 +107,7 @@ namespace parser
         auto baseTypeNameOptional = structNode.get_optional<std::string>("<xmlattr>.baseType");
         auto baseTypeVersionOptional =
             structNode.get_optional<std::string>("<xmlattr>.baseTypeVersion");
+        /*解决父子版本继承的结构*/
         if (baseTypeNameOptional && baseTypeVersionOptional) {
             std::string baseTypeKey =
                 baseTypeNameOptional.get() + ":" + baseTypeVersionOptional.get();
@@ -268,6 +269,7 @@ namespace parser
                                 generateArrayElements(next, currentOffset);
                             }
                         };
+                        /*这里递归调用出多维数组*/
                         generateArrayElements({}, offset);
                         arrayNode.size = (offset - startingOffset + 3) / 4 * 4;
                     }
