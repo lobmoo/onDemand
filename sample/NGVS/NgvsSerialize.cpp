@@ -28,9 +28,35 @@ namespace ngvs
     {
     }
 
+    inline bool NgvsSerializer::map2Buffer(const ModelDefine &model,
+                                           const std::unordered_map<std::string, char *> &inData,
+                                           std::vector<char> &outBuffer)
+    {
+        outBuffer.clear();
+        outBuffer.reserve(model.size);
+        size_t offset = 0;
+        for(const auto &member : model.members) {
+            auto it = inData.find(member.name);
+            if (it == inData.end()) {
+                LOG(warning) << "Member not found in input data: " << member.name;
+                size_t memberSize = member.size;
+                offset = alignOffset(offset, ALIGNMENT_);
+                std::memcpy(outBuffer.data() + offset, "/0", memberSize);
+                offset += memberSize;
+                continue; // Skip if member not found in input data
+            }
+
+            size_t memberSize = member.size;
+            offset = alignOffset(offset, ALIGNMENT_);
+            std::memcpy(outBuffer.data() + offset, it->second, memberSize);
+            offset += memberSize;
+        }
+        return true;
+    }
+
     bool NgvsSerializer::serialize(const std::string &schema, const std::string &ModelName,
-                          const std::unordered_map<std::string, char *> &inData,
-                          std::vector<char> &outBuffer)
+                                   const std::unordered_map<std::string, char *> &inData,
+                                   std::vector<char> &outBuffer)
     {
         ModelParser parser;
         std::string error_message;
@@ -54,10 +80,11 @@ namespace ngvs
 
 #ifdef NGVS_DEBUG
         parser.printAllLeafNodesInfo(model);
+        parser.printmembersInfo(model.members);
 #endif
         /*按照大小对udt进行排序,并且结构体放到最前面*/
 
-        std::sort(model.members.begin(), model.members.end(),
+        std::stable_sort(model.members.begin(), model.members.end(),
                   [](const TreeNode &a, const TreeNode &b) {
                       bool a_is_nonbasic = a.type == "nonBasic";
                       bool b_is_nonbasic = b.type == "nonBasic";
@@ -68,17 +95,15 @@ namespace ngvs
                       if (a_is_nonbasic && b_is_nonbasic) {
                           return a.size > b.size;
                       }
+                      return false;
                   });
 
-        // std::vector<TreeNode> leaves;
-        // parser.findNodeAndGetLeaves(model, "long_array", leaves);
-        // for(auto &leaf : leaves) {
-        //     LOG(info) << "Leaf Node: " << leaf.name << ", Type: " << leaf.type
-        //               << ", Size: " << leaf.size << ", Offset: " << leaf.offset;
-        // }
-
-        parser.printmembersInfo(model.members);
-
+        if(map2Buffer(model, inData, outBuffer)) {
+            LOG(info) << "Serialization successful, buffer size: " << outBuffer.size();
+        } else {
+            LOG(error) << "Serialization failed";
+            return false;
+        }     
         return true;
     }
     bool NgvsSerializer::serialize(const std::string &schema, const std::string &ModelName,
@@ -109,7 +134,7 @@ namespace ngvs
 #endif
         /*按照大小对udt进行排序,并且结构体放到最前面*/
 
-        std::sort(model.members.begin(), model.members.end(),
+        std::stable_sort(model.members.begin(), model.members.end(),
                   [](const TreeNode &a, const TreeNode &b) {
                       bool a_is_nonbasic = a.type == "nonBasic";
                       bool b_is_nonbasic = b.type == "nonBasic";
@@ -120,6 +145,7 @@ namespace ngvs
                       if (a_is_nonbasic && b_is_nonbasic) {
                           return a.size > b.size;
                       }
+                      return false;
                   });
 
         // std::vector<TreeNode> leaves;

@@ -24,24 +24,29 @@
 #include <unordered_map>
 #include "ModelParser.h"
 
-
 namespace dsf
 {
 namespace ngvs
 {
-     using namespace dsf::parser;
+    using namespace dsf::parser;
     class NgvsSerializer
     {
     public:
         NgvsSerializer(size_t alignment = 4);
         ~NgvsSerializer();
 
-        bool serialize(const std::string &schema, const std::string &ModelName, const std::vector<char>&inBuffer, std::vector<char> &outBuffer);
-        bool serialize(const std::string &schema, const std::string &ModelName, const std::unordered_map<std::string, char *> &inData, std::vector<char> &outBuffer);
+        bool serialize(const std::string &schema, const std::string &ModelName,
+                       const std::vector<char> &inBuffer, std::vector<char> &outBuffer);
+        bool serialize(const std::string &schema, const std::string &ModelName,
+                       const std::unordered_map<std::string, char *> &inData,
+                       std::vector<char> &outBuffer);
         const std::vector<char> &buffer() const;
 
     private:
         size_t alignOffset(size_t offset, size_t alignment);
+        inline bool map2Buffer(const ModelDefine &model,
+                               const std::unordered_map<std::string, char *> &inData,
+                               std::vector<char> &outBuffer);
 
     private:
         std::vector<char> buffer_;
