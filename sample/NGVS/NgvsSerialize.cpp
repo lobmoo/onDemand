@@ -69,7 +69,7 @@ namespace ngvs
                   });
         
         
-        outBuffer.push_back          
+               
         // std::vector<TreeNode> leaves;
         // parser.findNodeAndGetLeaves(model, "long_array", leaves);   
         // for(auto &leaf : leaves) {

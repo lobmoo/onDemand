@@ -24,7 +24,8 @@ int main(int argc, char *argv[])
     Logger::Instance().Init("log/myapp.log", Logger::console, Logger::debug, 60, 5);
     std::string xmlContent = readXmlFile("/home/wwk/workspaces/test_demo/sample/NGVS/model.xml");
     dsf::ngvs::NgvsSerializer serializer;
-    if (!serializer.serialize(xmlContent, "InnerModel:1.0")) {
+    std::vector<char> outBuffer;
+    if (!serializer.serialize(xmlContent, "InnerModel:1.0", outBuffer)) {
         LOG(error) << "Serialization failed";
         return 1;
     }
