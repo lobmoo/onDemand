@@ -18,7 +18,7 @@
 
 namespace dsf
 {
-namespace ngvs
+namespace parser
 {
     static const std::unordered_map<std::string, size_t> basicTypeSizes = {
         {"int32", 4}, {"float32", 4}, {"int64", 8}, {"string", 82}, {"int16", 2}, {"int8", 1}};
@@ -82,7 +82,7 @@ namespace ngvs
                                   std::vector<TreeNode> &currentModelMembers, size_t &offset);
         size_t getBasicTypeSize(const std::string &type);
     };
-} // namespace ngvs
+} // namespace 
 } // namespace dsf
 
 #endif // MODEL_PARSER_H

@@ -17,11 +17,13 @@
 #include "log/logger.h"
 #include <cmath>
 
+#define NGVS_DEBUG
+
 namespace dsf
 {
 namespace ngvs
 {
-
+    using namespace dsf::parser;
     NgvsSerializer::NgvsSerializer(size_t alignment) : ALIGNMENT_(alignment)
     {
     }
@@ -46,38 +48,16 @@ namespace ngvs
         }
 
         // /*找到数据类型，开始�?�找根节点的数据类型以及计算偏移*/
-        ModelDefine modelDefine = it->second;
-        LOG(info) << "----------------------------/n";
-        LOG(info) << "model name: " << modelDefine.modelName
-                  << "  model name: " << modelDefine.modelVersion
-                  << "  model size: " << modelDefine.size;
-        for (auto &ptr : modelDefine.members) {
-            LOG(info) << "ele name: " << ptr.name << "  ele type: " << ptr.type
-                      << "  ele size: " << ptr.size << "  ele offset: " << ptr.offset;
-        }
+        ModelDefine model = it->second;
 
-        for(auto &ptr : modelDefines_)
-        {
-            LOG(info) << "ele name: " << ptr.first << "size :" << ptr.second.size;
-                    
-        }
-        LOG(info) << "----------------------------/n";
-
-        /*找出model下面的结构*/
-        std::vector<std::string> modekeys;
-        // for (auto &ptr : modelDefine.members)
-        // {
-        //     if()
-        // }
+#ifdef NGVS_DEBUG
+        parser.printAllLeafNodesInfo(model);
+#endif
 
             return 0;
     }
 
-    // std::vector<Result>
-    // NgvsSerializer::calculateStructSize(const std::map<std::string, std::string> &data)
-    // {
-    // }
-
+  
     const std::vector<char> &NgvsSerializer::buffer() const
     {
         return buffer_;
