@@ -25,7 +25,8 @@ int main(int argc, char *argv[])
     std::string xmlContent = readXmlFile("/home/wwk/workspaces/test_demo/sample/NGVS/model.xml");
     dsf::ngvs::NgvsSerializer serializer;
     std::vector<char> outBuffer;
-    if (!serializer.serialize(xmlContent, "InnerModel:1.0", outBuffer)) {
+    std::unordered_map<std::string, char *> inData;
+    if (!serializer.serialize(xmlContent, "InnerModel:1.0", inData, outBuffer)) {
         LOG(error) << "Serialization failed";
         return 1;
     }

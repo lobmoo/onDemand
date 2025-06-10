@@ -21,8 +21,9 @@
 #include <vector>
 #include <map>
 #include <algorithm>
+#include <unordered_map>
 #include "ModelParser.h"
-#include "unordered_map"
+
 
 namespace dsf
 {
@@ -35,7 +36,8 @@ namespace ngvs
         NgvsSerializer(size_t alignment = 4);
         ~NgvsSerializer();
 
-        bool serialize(const std::string &schema, const std::string &ModelName, std::vector<char> &outBuffer);
+        bool serialize(const std::string &schema, const std::string &ModelName, const std::vector<char>&inBuffer, std::vector<char> &outBuffer);
+        bool serialize(const std::string &schema, const std::string &ModelName, const std::unordered_map<std::string, char *> &inData, std::vector<char> &outBuffer);
         const std::vector<char> &buffer() const;
 
     private:
