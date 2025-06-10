@@ -56,13 +56,9 @@ namespace ngvs
     public:
         error_code_t parseSchema(std::map<std::string, ModelDefine> &modelDefines,
                                  const std::string &schema, std::string &errorMsg);
-
-        // 查找特定节点并返回其叶子节点
         bool findNodeAndGetLeaves(const ModelDefine &model, const std::string &targetName,
                                   std::vector<TreeNode> &leaves);
-
-        bool findNodeAllLeaves(const ModelDefine &model,std::vector<TreeNode> &leaves);    
-
+        bool findNodeAllLeaves(const ModelDefine &model, std::vector<TreeNode> &leaves);
         void printmembersInfo(std::vector<TreeNode> &nodes);
         void printAllLeafNodesInfo(const ModelDefine &model) const;
 
@@ -77,16 +73,13 @@ namespace ngvs
                                  std::map<std::string, boost::property_tree::ptree> &structNodes,
                                  std::vector<TreeNode> &currentModelMembers, size_t &modelSize,
                                  size_t &offset, const std::string &modelVersion);
-
         void generateArrayKeys(const std::string &memberName, const std::string &memberType,
                                const std::vector<int> &dimensions, std::vector<int> currentIndices,
                                const std::string &modelVersion,
                                std::vector<TreeNode> &currentModelMembers, size_t &offset);
-
         void generateSequenceKeys(const std::string &memberName, const std::string &memberType,
                                   int maxLength, const std::string &modelVersion,
                                   std::vector<TreeNode> &currentModelMembers, size_t &offset);
-
         size_t getBasicTypeSize(const std::string &type);
     };
 } // namespace ngvs
