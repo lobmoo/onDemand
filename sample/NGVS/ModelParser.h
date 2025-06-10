@@ -73,13 +73,6 @@ namespace parser
                                  std::map<std::string, boost::property_tree::ptree> &structNodes,
                                  std::vector<TreeNode> &currentModelMembers, size_t &modelSize,
                                  size_t &offset, const std::string &modelVersion);
-        void generateArrayKeys(const std::string &memberName, const std::string &memberType,
-                               const std::vector<int> &dimensions, std::vector<int> currentIndices,
-                               const std::string &modelVersion,
-                               std::vector<TreeNode> &currentModelMembers, size_t &offset);
-        void generateSequenceKeys(const std::string &memberName, const std::string &memberType,
-                                  int maxLength, const std::string &modelVersion,
-                                  std::vector<TreeNode> &currentModelMembers, size_t &offset);
         size_t getBasicTypeSize(const std::string &type);
     };
 } // namespace 

@@ -47,17 +47,39 @@ namespace ngvs
             return false;
         }
 
-        // /*找到数据类型，开始�?�找根节点的数据类型以及计算偏移*/
+        // /*找到数据类型*/
         ModelDefine model = it->second;
 
 #ifdef NGVS_DEBUG
         parser.printAllLeafNodesInfo(model);
 #endif
+        /*按照大小对udt进行排序,并且结构体放到最前面*/
 
-            return 0;
+        std::sort(model.members.begin(), model.members.end(),
+                  [](const TreeNode &a, const TreeNode &b) {
+                      bool a_is_nonbasic = a.type == "nonBasic";
+                      bool b_is_nonbasic = b.type == "nonBasic";
+
+                      if (a_is_nonbasic != b_is_nonbasic) {
+                          return a_is_nonbasic > b_is_nonbasic;
+                      }
+                      if (a_is_nonbasic && b_is_nonbasic) {
+                          return a.size > b.size;
+                      }
+                  });
+        
+        // std::vector<TreeNode> leaves;
+        // parser.findNodeAndGetLeaves(model, "long_array", leaves);   
+        // for(auto &leaf : leaves) {
+        //     LOG(info) << "Leaf Node: " << leaf.name << ", Type: " << leaf.type
+        //               << ", Size: " << leaf.size << ", Offset: " << leaf.offset;
+        // }
+
+        parser.printmembersInfo(model.members);
+
+        return true;
     }
 
-  
     const std::vector<char> &NgvsSerializer::buffer() const
     {
         return buffer_;

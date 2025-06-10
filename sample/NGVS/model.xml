@@ -1,8 +1,13 @@
 <models>
     <struct name="InnerModel" version="1.0">
-        <member name="first" type="int32"/>
-        <member name="complex_member2" type="nonBasic" nonBasicTypeName="InnerModel2" version="1.0"/>
+      
+        <!-- <member name="complex_member2" type="nonBasic" nonBasicTypeName="InnerModel2" version="1.0"/>
         <member name="complex_member6" type="nonBasic" nonBasicTypeName="InnerModel6" version="1.0"/>
+        <member name="complex_member7" type="nonBasic" nonBasicTypeName="InnerModel7" version="1.0"/>
+        <member name="complex_member8" type="nonBasic" nonBasicTypeName="InnerModel8" version="1.0"/>
+        <member name="long_array" type="int32" arrayDimensions="10" startIndex="0" endIndex="20"  version="1.0" /> -->
+        <member name="long_array2" type="nonBasic"  nonBasicTypeName="InnerModel5" arrayDimensions="10" startIndex="0" endIndex="20"  version="1.0"/>
+      
     </struct>
 
     <struct name="InnerModel2" version="1.0">
@@ -17,9 +22,23 @@
 
     <struct name="InnerModel6" version="1.0">
         <member name="first" type="float32"/>
-        <member name="second" type="int64"/> 
-        <member name="third" type="int8"/>        
+        <member name="second" type="int32"/> 
+        <member name="third" type="int32"/>        
     </struct>
+
+    <struct name="InnerModel7" version="1.0">
+        <member name="first" type="float32"/>
+        <member name="second" type="int64"/> 
+        <member name="third" type="int8"/>  
+        <member name="long_array" type="int32" arrayDimensions="10" startIndex="0" endIndex="20"/>      
+    </struct>
+
+    <struct name="InnerModel8" version="1.0">
+        <member name="long_array" type="int32" arrayDimensions="10" startIndex="0" endIndex="20"/>
+        <member name="long_array" type="int32" arrayDimensions="10" startIndex="0" endIndex="20"/>
+        <member name="long_array" type="int32" arrayDimensions="10" startIndex="0" endIndex="20"/>      
+    </struct>
+
 
     <struct name="ParentModel" version="2.0">
         <member name="first" type="float32"/>
