@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @author DSF Team
  * @file ModelParser.cpp
  * @date 2025-04-16
@@ -517,5 +517,18 @@ namespace parser
         collectLeaves(model.members);
     }
 
+    void ModelParser::reCalcuOffset(ModelDefine &model)
+    {
+        std::vector<TreeNode> leaves;
+        findNodeAllLeaves(model, leaves);
+        size_t offset = 0;
+        for (auto &leaf : leaves)
+        {
+            leaf.offset = offset;
+            offset += leaf.size;
+            offset = (offset + 3) / 4 * 4; // 对齐到4字节边界
+        }
+        return;
+    }
 } // namespace parser
 } // namespace dsf
