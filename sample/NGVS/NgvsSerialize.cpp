@@ -28,7 +28,7 @@ namespace ngvs
     {
     }
 
-    bool NgvsSerializer::serialize(std::string schema, const std::string ModelName)
+    bool NgvsSerializer::serialize(const std::string &schema, const std::string &ModelName, std::vector<char> &outBuffer)
     {
         ModelParser parser;
         std::string error_message;
@@ -68,6 +68,8 @@ namespace ngvs
                       }
                   });
         
+        
+        outBuffer.push_back          
         // std::vector<TreeNode> leaves;
         // parser.findNodeAndGetLeaves(model, "long_array", leaves);   
         // for(auto &leaf : leaves) {

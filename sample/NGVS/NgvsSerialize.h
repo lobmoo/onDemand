@@ -35,7 +35,7 @@ namespace ngvs
         NgvsSerializer(size_t alignment = 4);
         ~NgvsSerializer();
 
-        bool serialize(std::string schema, const std::string ModelName);
+        bool serialize(const std::string &schema, const std::string &ModelName, std::vector<char> &outBuffer);
         const std::vector<char> &buffer() const;
 
     private:
