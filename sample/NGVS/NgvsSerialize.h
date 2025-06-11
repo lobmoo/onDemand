@@ -32,7 +32,6 @@ namespace ngvs
     class NgvsSerializer
     {
     public:
-       
         static NgvsSerializer &getInstance()
         {
             static NgvsSerializer instance;
@@ -45,6 +44,9 @@ namespace ngvs
         bool serialize(const std::string &schema, const std::string &ModelName,
                        const std::unordered_map<std::string, char *> &inData,
                        std::vector<char> &outBuffer);
+        bool deserialize(const std::string &schema, const std::string &ModelName,
+                         const std::vector<char> &inBuffer,
+                         std::unordered_map<std::string, char *> &outData);
         const std::vector<char> &buffer() const;
 
     private:

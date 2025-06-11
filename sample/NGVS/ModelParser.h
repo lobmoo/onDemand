@@ -54,6 +54,7 @@ namespace parser
     class ModelParser
     {
     public:
+        ModelParser(size_t alignment = 2);
         error_code_t parseSchema(std::map<std::string, ModelDefine> &modelDefines,
                                  const std::string &schema, std::string &errorMsg);
         bool findNodeAndGetLeaves(const ModelDefine &model, const std::string &targetName,
@@ -75,6 +76,9 @@ namespace parser
                                  std::vector<TreeNode> &currentModelMembers, size_t &modelSize,
                                  size_t &offset, const std::string &modelVersion);
         size_t getBasicTypeSize(const std::string &type);
+
+    private:
+        size_t ALIGNMENT_;
     };
 } // namespace 
 } // namespace dsf

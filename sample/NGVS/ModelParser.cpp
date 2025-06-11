@@ -17,6 +17,9 @@ namespace dsf
 namespace parser
 {
 
+    ModelParser::ModelParser(size_t alignment) : ALIGNMENT_(alignment)
+    {
+    }
     std::string ModelParser::child2xml(const boost::property_tree::ptree &childNode,
                                        const std::string &rootName)
     {
@@ -107,7 +110,6 @@ namespace parser
         auto baseTypeNameOptional = structNode.get_optional<std::string>("<xmlattr>.baseType");
         auto baseTypeVersionOptional =
             structNode.get_optional<std::string>("<xmlattr>.baseTypeVersion");
-        /*解决父子版本继承的结构*/
         if (baseTypeNameOptional && baseTypeVersionOptional) {
             std::string baseTypeKey =
                 baseTypeNameOptional.get() + ":" + baseTypeVersionOptional.get();
@@ -145,7 +147,8 @@ namespace parser
                         memberNode.second.get<std::string>("<xmlattr>.nonBasicTypeName", "");
                 }
 
-                offset = (offset + 3) / 4 * 4;  // Align start of member
+                // Align start of member using ALIGNMENT_
+                offset = (offset + ALIGNMENT_ - 1) / ALIGNMENT_ * ALIGNMENT_;
                 size_t startingOffset = offset; // Record start for size calculation
                 if (arrayDimensionsOptional) {
                     // Handle array (basic or nonBasic)
@@ -182,8 +185,9 @@ namespace parser
                             size_t elementOffset = 0; // Use relative offset for element parsing
                             resolveModelMembers(nonBasicKey, allNodes, structNodes, elementMembers,
                                                 elementSize, elementOffset, nodeVersion);
+                            // Align element size using ALIGNMENT_
                             size_t singleElementSize =
-                                (elementSize + 3) / 4 * 4; // Align element size
+                                (elementSize + ALIGNMENT_ - 1) / ALIGNMENT_ * ALIGNMENT_;
 
                             std::function<void(std::vector<int>, size_t &)> generateArrayElements;
                             generateArrayElements = [&](std::vector<int> indices,
@@ -211,7 +215,6 @@ namespace parser
                                     for (auto &child : elementNode.children) {
                                         child.offset =
                                             currentOffset + child.offset; // Add global offset
-                                        // Recursively adjust offsets for nested children
                                         std::function<void(TreeNode &)> adjustNestedOffsets =
                                             [&](TreeNode &node) {
                                                 for (auto &nestedChild : node.children) {
@@ -234,7 +237,8 @@ namespace parser
                                 }
                             };
                             generateArrayElements({}, offset);
-                            arrayNode.size = (offset - startingOffset + 3) / 4 * 4;
+                            arrayNode.size = (offset - startingOffset + ALIGNMENT_ - 1) / ALIGNMENT_
+                                             * ALIGNMENT_;
                         } else {
                             LOG(error)
                                 << "nonBasic array member '" << memberName << "' lacks version";
@@ -269,9 +273,9 @@ namespace parser
                                 generateArrayElements(next, currentOffset);
                             }
                         };
-                        /*这里递归调用出多维数组*/
                         generateArrayElements({}, offset);
-                        arrayNode.size = (offset - startingOffset + 3) / 4 * 4;
+                        arrayNode.size =
+                            (offset - startingOffset + ALIGNMENT_ - 1) / ALIGNMENT_ * ALIGNMENT_;
                     }
 
                     arrayNode.children = std::move(arrayElements);
@@ -307,8 +311,9 @@ namespace parser
                             size_t elementOffset = 0; // Use relative offset for element parsing
                             resolveModelMembers(nonBasicKey, allNodes, structNodes, elementMembers,
                                                 elementSize, elementOffset, nodeVersion);
+                            // Align element size using ALIGNMENT_
                             size_t singleElementSize =
-                                (elementSize + 3) / 4 * 4; // Align element size
+                                (elementSize + ALIGNMENT_ - 1) / ALIGNMENT_ * ALIGNMENT_;
 
                             for (int i = 0; i < maxLength; ++i) {
                                 std::string elementName =
@@ -329,7 +334,6 @@ namespace parser
                                 // Adjust child offsets to be global
                                 for (auto &child : elementNode.children) {
                                     child.offset = offset + child.offset; // Add global offset
-                                    // Recursively adjust nested offsets
                                     std::function<void(TreeNode &)> adjustNestedOffsets =
                                         [&](TreeNode &node) {
                                             for (auto &nestedChild : node.children) {
@@ -342,14 +346,15 @@ namespace parser
                                 seqElements.push_back(elementNode);
                                 offset += singleElementSize;
                             }
-                            seqNode.size = (offset - startingOffset + 3) / 4 * 4;
+                            seqNode.size = (offset - startingOffset + ALIGNMENT_ - 1) / ALIGNMENT_
+                                           * ALIGNMENT_;
                         } else {
                             LOG(error)
                                 << "nonBasic sequence member '" << memberName << "' lacks version";
                             continue;
                         }
                     } else {
-                        // Basic type sequence (unchanged, as it doesn't involve nested children)
+                        // Basic type sequence
                         size_t typeSize = getBasicTypeSize(memberType);
                         for (int i = 0; i < maxLength; ++i) {
                             std::string elementName = memberName + "[" + std::to_string(i) + "]";
@@ -363,7 +368,8 @@ namespace parser
                             seqElements.push_back(elementNode);
                             offset += typeSize;
                         }
-                        seqNode.size = (offset - startingOffset + 3) / 4 * 4;
+                        seqNode.size =
+                            (offset - startingOffset + ALIGNMENT_ - 1) / ALIGNMENT_ * ALIGNMENT_;
                     }
                     seqNode.children = std::move(seqElements);
                     currentModelMembers.push_back(std::move(seqNode));
@@ -379,7 +385,8 @@ namespace parser
                         TreeNode node;
                         node.name = nodeName;
                         node.type = memberType;
-                        node.size = (subOffset - startingOffset + 3) / 4 * 4;
+                        node.size =
+                            (subOffset - startingOffset + ALIGNMENT_ - 1) / ALIGNMENT_ * ALIGNMENT_;
                         node.offset = startingOffset;
                         node.children = std::move(subMembers);
                         node.nonBasicTypeName = nodeNonBasicTypeName;
@@ -522,8 +529,7 @@ namespace parser
         std::vector<TreeNode> leaves;
         findNodeAllLeaves(model, leaves);
         size_t offset = 0;
-        for (auto &leaf : leaves)
-        {
+        for (auto &leaf : leaves) {
             leaf.offset = offset;
             offset += leaf.size;
             offset = (offset + 3) / 4 * 4; // 对齐到4字节边界
