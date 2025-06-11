@@ -42,11 +42,11 @@ namespace ngvs
         bool serialize(const std::string &schema, const std::string &ModelName,
                        const std::vector<char> &inBuffer, std::vector<char> &outBuffer);
         bool serialize(const std::string &schema, const std::string &ModelName,
-                       const std::unordered_map<std::string, char *> &inData,
+                       const std::unordered_map<std::string, std::string> &inData,
                        std::vector<char> &outBuffer);
         bool deserialize(const std::string &schema, const std::string &ModelName,
                          const std::vector<char> &inBuffer,
-                         std::unordered_map<std::string, char *> &outData);
+                         std::unordered_map<std::string, std::string> &outData);
         const std::vector<char> &buffer() const;
 
     private:
@@ -55,7 +55,7 @@ namespace ngvs
         NgvsSerializer &operator=(const NgvsSerializer &) = delete;
         size_t alignOffset(size_t offset, size_t alignment);
         inline bool map2Buffer(const ModelDefine &model,
-                               const std::unordered_map<std::string, char *> &inData,
+                               const std::unordered_map<std::string, std::string> &inData,
                                std::vector<char> &outBuffer);
     private:
         std::map<std::string, ModelDefine> modelDefines_;

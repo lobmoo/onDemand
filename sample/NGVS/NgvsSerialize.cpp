@@ -29,7 +29,7 @@ namespace ngvs
     }
 
       inline bool NgvsSerializer::map2Buffer(const ModelDefine &model,
-                                           const std::unordered_map<std::string, char *> &inData,
+                                           const std::unordered_map<std::string, std::string> &inData,
                                            std::vector<char> &outBuffer)
     {
         outBuffer.clear();
@@ -59,7 +59,7 @@ namespace ngvs
             /*找到了就好好整*/
             size_t memberSize = leaf.size;
             offset = alignOffset(offset, ALIGNMENT_);
-            std::memcpy(outBuffer.data() + offset, it->second,  std::min(strlen(it->second), memberSize));
+            std::memcpy(outBuffer.data() + offset, it->second.data(),  std::min(it->second.size(), memberSize));
             offset += memberSize;
             
         }
@@ -67,7 +67,7 @@ namespace ngvs
     }
 
     bool NgvsSerializer::serialize(const std::string &schema, const std::string &ModelName,
-                                   const std::unordered_map<std::string, char *> &inData,
+                                   const std::unordered_map<std::string, std::string> &inData,
                                    std::vector<char> &outBuffer)
     {
         ModelParser parser;
@@ -95,7 +95,7 @@ namespace ngvs
         ModelDefine model = it->second;
 
 #ifdef NGVS_DEBUG
-        // parser.printAllLeafNodesInfo(model);
+        parser.printAllLeafNodesInfo(model);
         parser.printmembersInfo(model.members);
 #endif
         /*按照大小对udt进行排序,并且结构体放到最前面*/
