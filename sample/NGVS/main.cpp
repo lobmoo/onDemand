@@ -29,16 +29,12 @@ struct TestNormalModel {
 
 int main(int argc, char *argv[])
 {
+    /* 1. 初始化日志和xml内容 */
     Logger::Instance().Init("log/myapp.log", Logger::console, Logger::debug, 60, 5);
-    // std::string xmlContent = readXmlFile("/home/wwk/workspaces/test_demo/sample/NGVS/model.xml");
-    // dsf::ngvs::NgvsSerializer serializer;
-    // std::vector<char> outBuffer;
-    // if (!serializer.serialize(xmlContent, "InnerModel:1.0", outBuffer)) {
-    //     LOG(error) << "Serialization failed";
-    //     return 1;
-    // }
     std::string xmlContent = readXmlFile("/home/weiqb/src/test_demo/sample/NGVS/model.xml");
-    dsf::ngvs::KeyValueSerializer serializer;
+    auto &serializer = dsf::ngvs::KeyValueSerializer::getInstance();
+
+    /* 2. 定义输入数据和输出空间 */
     _Float32 first = 3.4028235e+38f;
     int64_t second = 9223372036854775807LL;
     int8_t third = 127;
@@ -49,14 +45,27 @@ int main(int argc, char *argv[])
         {"second", buf2},
         {"third", buf3}
     };
-    serializer.serialize(xmlContent, "InnerModel33:1.0", data);
+    std::vector<char> outBuff;
 
-    //取得serializer中的buffer，然后强转成struct
-    const char * buffer = serializer.buffer();
-    TestNormalModel* model = (TestNormalModel*)buffer;
-    LOG(info) << "first: " << model->first << " second: " << model->second << " third: " << (int)(model->third);
+    /* 3.序列化 */
+    serializer.serialize(xmlContent, "InnerModel33:1.0", data, outBuff);
+
+    
+    /* 4.输出序列化结果 */
+    // TestNormalModel* model = (TestNormalModel*)(outBuff.data());
+    // LOG(info) << "first: " << model->first << " second: " << model->second << " third: " << (int)(model->third);
+
+
+    /* 5.反序列化 */
+    std::unordered_map<std::string, char *> outData;
+    serializer.deserialize(xmlContent, "InnerModel33:1.0", outBuff, outData);
+
+    _Float32 first_ = *reinterpret_cast<_Float32*>(outData["first"]);
+    int64_t second_ = *reinterpret_cast<int64_t*>(outData["second"]);
+    int8_t third_ = *reinterpret_cast<int8_t*>(outData["third"]);
+    LOG(info) << "first: " << first_ << " second: " << second_ << " third: " << (int)third_;
+
     while (std::cin.get() != '\n') {
     }
-
     return 0;
 }

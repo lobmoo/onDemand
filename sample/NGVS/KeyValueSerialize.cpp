@@ -25,8 +25,8 @@ namespace ngvs
     {
     }
     // 要注意offset、越界等问题，多写点错误判断
-    bool KeyValueSerializer::serialize(std::string schema, const std::string ModelName, 
-                                                std::unordered_map<std::string, char *> &data, char* outBuffer)
+    bool KeyValueSerializer::serialize(const std::string &schema, const std::string &ModelName, 
+                                                const std::unordered_map<std::string, char *> &data, std::vector<char> &outBuffer)
     {
         parser::ModelParser parser;
         /* 1.先查询是否已经解析过model, 如果没解析过则调用ModelParser来解析所有model的结构 */
@@ -34,22 +34,24 @@ namespace ngvs
         if(it == modelDefines_.end())
         {
             //没查询到 需要解析
+            std::string error_message;
+            parser::error_code_t ret = parser.parseSchema(modelDefines_, schema, error_message);
+            if (ret != dsf::parser::MODEL_PARSER_OK) {
+                LOG(error) << "parse schema failed, ret: " << ret;
+                return false;
+            }
         }
         
-        std::string error_message;
 
-        parser::error_code_t ret = parser.parseSchema(modelDefines_, schema, error_message);
-        if (ret != dsf::parser::MODEL_PARSER_OK) {
-            LOG(error) << "parse schema failed, ret: " << ret;
-            return false;
-        }
 
         /* 2.判断解析的xml中是否含有该model */
-        auto it = modelDefines_.find(ModelName);
+        it = modelDefines_.find(ModelName);
         if (it == modelDefines_.end()) {
             LOG(error) << "model not found: " << ModelName;
             return false;
         }
+
+        /* 3.找到model, 输出其结构 */
         parser::ModelDefine modelDefine = it->second;
         std::vector<parser::TreeNode> leaves;
         parser.findNodeAllLeaves(modelDefine, leaves);
@@ -57,10 +59,10 @@ namespace ngvs
 
         
 
-        /* 3. 申请一段空间(大小是固定的)并且顺序地将key-value对填入 */
+        /* 4. 申请一段空间(大小是固定的)并且顺序地将key-value对填入 */
         leaves.clear();
         parser.findNodeAllLeaves(modelDefine, leaves);
-        outBuffer = new char[modelDefine.size]();
+        outBuffer.reserve(modelDefine.size);
         for(auto &leaf : leaves)
         {
             const std::string &key = leaf.name;
@@ -82,7 +84,7 @@ namespace ngvs
     }
 
     bool KeyValueSerializer::serializeKeyValuePair(dsf::parser::TreeNode &leaf, const std::string &key,
-                                                    const char* value, const parser::ModelDefine &modelDefine, char* outBuffer)
+                                                    const char* value, const parser::ModelDefine &modelDefine, std::vector<char> &outBuffer)
     {
         LOG(info) << "Key-Value Pair Serialization, Key:" << key 
                   << ", Offset: " << leaf.offset 
@@ -98,7 +100,7 @@ namespace ngvs
         for (int i = 0; i < modelDefine.size; ++i)
             printf("%02x ", static_cast<unsigned char>(outBuffer[i]));
         printf("\n");
-        std::memcpy(outBuffer + leaf.offset, value, leaf.size);
+        std::memcpy(outBuffer.data() + leaf.offset, value, leaf.size);
 
         LOG(error) << "After memcpy:" << std::endl;
         for (int i = 0; i < modelDefine.size; ++i)
@@ -108,7 +110,51 @@ namespace ngvs
     }
 
 
+    bool KeyValueSerializer::deserialize(const std::string &schema, const std::string &ModelName,
+                         const std::vector<char> &inBuffer, std::unordered_map<std::string, char *> &outData)
+    {
+        parser::ModelParser parser;
+        /* 1.先查询是否已经解析过model, 如果没解析过则调用ModelParser来解析所有model的结构 */
+        auto it = modelDefines_.find(ModelName);
+        if(it == modelDefines_.end())
+        {
+            //没查询到 需要解析
+            std::string error_message;
+            parser::error_code_t ret = parser.parseSchema(modelDefines_, schema, error_message);
+            if (ret != dsf::parser::MODEL_PARSER_OK) {
+                LOG(error) << "parse schema failed, ret: " << ret;
+                return false;
+            }
+        }
+        
+        /* 2.判断解析的xml中是否含有该model */
+        it = modelDefines_.find(ModelName);
+        if (it == modelDefines_.end()) {
+            LOG(error) << "model not found: " << ModelName;
+            return false;
+        }
+        auto modelDefine = it->second;
 
+        /* 3. 从inBuffer中顺序拿取data，然后构造成key-value pair并放入outData中*/
+        std::vector<parser::TreeNode> leaves;
+        parser.findNodeAllLeaves(modelDefine, leaves);
+        for(const auto &leaf : leaves)
+        {
+            std::string key = leaf.name;
+            if(leaf.offset + leaf.size > modelDefine.size) {
+                LOG(error) << "Buffer overflow for key: " << key;
+                return false;
+            }
+
+            char *value = new char[leaf.size];
+            std::memcpy(value , inBuffer.data() + leaf.offset, leaf.size);
+
+            // 将构造好的数据放入outData中
+            outData.emplace(key, value);
+        }
+
+        return true;
+    }
 
     KeyValueSerializer::~KeyValueSerializer()
     {
