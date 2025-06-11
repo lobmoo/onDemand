@@ -35,7 +35,25 @@ namespace ngvs
         outBuffer.clear();
         outBuffer.reserve(model.size);
         size_t offset = 0;
+        ModelParser parser;
+        std::vector<TreeNode> leaves;
+        parser.findNodeAllLeaves(model, leaves);
+        // for (const auto &leaf : leaves) {
+        //     LOG(info) << "Leaf Node: " << leaf.name << ", Type: " << leaf.type
+        //               << ", Size: " << leaf.size << ", Offset: " << leaf.offset;
+        // }
+        // for (auto &leaf : leaves) {
+        //     auto it = inData.find(leaf.name);
+        //     if (it == inData.end()) {
+        //         LOG(warning) << "Member not found in input data: " << leaf.name;
+        //         continue;
+        //     }
+            
+
+        // }
+
         for (const auto &member : model.members) {
+            LOG(critical) << "Model not found in cache, parsing schema: " << member.name;
             auto it = inData.find(member.name);
             if (it == inData.end()) {
                 LOG(warning) << "Member not found in input data: " << member.name;
@@ -64,6 +82,7 @@ namespace ngvs
         /*先找一下，找不到再解析*/
         auto modelDefines = modelDefines_.find(ModelName);
         if (modelDefines == modelDefines_.end()) {
+
             /*解析xml数据*/
             error_code_t ret = parser.parseSchema(modelDefines_, schema, error_message);
             if (ret != dsf::ngvs::MODEL_PARSER_OK) {
@@ -82,7 +101,7 @@ namespace ngvs
         ModelDefine model = it->second;
 
 #ifdef NGVS_DEBUG
-       // parser.printAllLeafNodesInfo(model);
+        parser.printAllLeafNodesInfo(model);
         parser.printmembersInfo(model.members);
 #endif
         /*按照大小对udt进行排序,并且结构体放到最前面*/
@@ -109,6 +128,7 @@ namespace ngvs
         }
         return true;
     }
+
     bool NgvsSerializer::serialize(const std::string &schema, const std::string &ModelName,
                                    const std::vector<char> &inBuffer, std::vector<char> &outBuffer)
     {
@@ -133,7 +153,7 @@ namespace ngvs
         ModelDefine model = it->second;
 
 #ifdef NGVS_DEBUG
-      //  parser.printAllLeafNodesInfo(model);
+        //  parser.printAllLeafNodesInfo(model);
         parser.printmembersInfo(model.members);
 #endif
         /*按照大小对udt进行排序,并且结构体放到最前面*/
@@ -161,7 +181,6 @@ namespace ngvs
 
         return true;
     }
-
 
     size_t NgvsSerializer::alignOffset(size_t offset, size_t alignment)
     {
