@@ -22,7 +22,7 @@ std::string readXmlFile(const std::string &filePath)
 int main(int argc, char *argv[])
 {
     Logger::Instance().Init("log/myapp.log", Logger::console, Logger::debug, 60, 5);
-    std::string xmlContent = readXmlFile("/home/wwk/workspaces/test_demo/sample/NGVS/model.xml");
+    std::string xmlContent = readXmlFile("/home/wwk/workspaces/test_demo/sample/NGVS/mode.xml");
     dsf::ngvs::NgvsSerializer serializer;
     std::vector<char> outBuffer;
     std::unordered_map<std::string, char *> inData;
