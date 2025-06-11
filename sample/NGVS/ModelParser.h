@@ -72,9 +72,9 @@ namespace parser
                               const std::string &rootName);
         void resolveModelMembers(const std::string &currentModelNameAndVersion,
                                  std::map<std::string, ModelDefine> &allNodes,
-                                 std::map<std::string, boost::property_tree::ptree> &structNodes,
+                                 const std::map<std::string, boost::property_tree::ptree> &structNodes,
                                  std::vector<TreeNode> &currentModelMembers, size_t &modelSize,
-                                 size_t &offset, const std::string &modelVersion);
+                                 size_t &offset, const std::string &modelVersion, const std::string &parentName = "");
         size_t getBasicTypeSize(const std::string &type);
 
     private:
