@@ -82,7 +82,7 @@ namespace ngvs
         ModelDefine model = it->second;
 
 #ifdef NGVS_DEBUG
-        parser.printAllLeafNodesInfo(model);
+       // parser.printAllLeafNodesInfo(model);
         parser.printmembersInfo(model.members);
 #endif
         /*按照大小对udt进行排序,并且结构体放到最前面*/
@@ -133,7 +133,7 @@ namespace ngvs
         ModelDefine model = it->second;
 
 #ifdef NGVS_DEBUG
-        parser.printAllLeafNodesInfo(model);
+      //  parser.printAllLeafNodesInfo(model);
         parser.printmembersInfo(model.members);
 #endif
         /*按照大小对udt进行排序,并且结构体放到最前面*/
