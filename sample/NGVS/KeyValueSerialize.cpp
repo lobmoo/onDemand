@@ -96,16 +96,17 @@ namespace ngvs
             return false;
         }
         
-        LOG(error) << "Before memcpy:" << std::endl;
-        for (int i = 0; i < modelDefine.size; ++i)
-            printf("%02x ", static_cast<unsigned char>(outBuffer[i]));
-        printf("\n");
+        // LOG(error) << "Before memcpy:" << std::endl;
+        // for (int i = 0; i < modelDefine.size; ++i)
+        //     printf("%02x ", static_cast<unsigned char>(outBuffer[i]));
+        // printf("\n");
+
         std::memcpy(outBuffer.data() + leaf.offset, value, leaf.size);
 
-        LOG(error) << "After memcpy:" << std::endl;
-        for (int i = 0; i < modelDefine.size; ++i)
-            printf("%02x ", static_cast<unsigned char>(outBuffer[i]));
-        printf("\n");
+        // LOG(error) << "After memcpy:" << std::endl;
+        // for (int i = 0; i < modelDefine.size; ++i)
+        //     printf("%02x ", static_cast<unsigned char>(outBuffer[i]));
+        // printf("\n");
         return true;
     }
 

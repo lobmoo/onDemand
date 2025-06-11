@@ -43,7 +43,7 @@ namespace ngvs
         bool deserialize(const std::string &schema, const std::string &ModelName,
                          const std::vector<char> &inBuffer, std::unordered_map<std::string, char *> &outData);
     private:
-        KeyValueSerializer(size_t alignment = 4);
+        KeyValueSerializer(size_t alignment = 2);
         bool serializeKeyValuePair(parser::TreeNode &leaf, const std::string &key, const char* value, 
                                    const parser::ModelDefine &modelDefine, std::vector<char> &outBuffer);
 

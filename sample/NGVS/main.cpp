@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
     std::vector<char> outBuff;
 
     /* 3.序列化 */
-    serializer.serialize(xmlContent, "InnerModel33:1.0", data, outBuff);
+    serializer.serialize(xmlContent, "InnerModel:1.0", data, outBuff);
 
     
     /* 4.输出序列化结果 */
@@ -57,13 +57,13 @@ int main(int argc, char *argv[])
 
 
     /* 5.反序列化 */
-    std::unordered_map<std::string, char *> outData;
-    serializer.deserialize(xmlContent, "InnerModel33:1.0", outBuff, outData);
+    // std::unordered_map<std::string, char *> outData;
+    // serializer.deserialize(xmlContent, "InnerModel33:1.0", outBuff, outData);
 
-    _Float32 first_ = *reinterpret_cast<_Float32*>(outData["first"]);
-    int64_t second_ = *reinterpret_cast<int64_t*>(outData["second"]);
-    int8_t third_ = *reinterpret_cast<int8_t*>(outData["third"]);
-    LOG(info) << "first: " << first_ << " second: " << second_ << " third: " << (int)third_;
+    // _Float32 first_ = *reinterpret_cast<_Float32*>(outData["first"]);
+    // int64_t second_ = *reinterpret_cast<int64_t*>(outData["second"]);
+    // int8_t third_ = *reinterpret_cast<int8_t*>(outData["third"]);
+    // LOG(info) << "first: " << first_ << " second: " << second_ << " third: " << (int)third_;
 
     while (std::cin.get() != '\n') {
     }
