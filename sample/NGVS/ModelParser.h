@@ -61,6 +61,7 @@ namespace parser
         bool findNodeAllLeaves(const ModelDefine &model, std::vector<TreeNode> &leaves);
         void printmembersInfo(std::vector<TreeNode> &nodes);
         void printAllLeafNodesInfo(const ModelDefine &model) const;
+        void reCalcuOffset(ModelDefine &model);
 
     private:
         void getLeafNodes(const TreeNode &node, std::vector<TreeNode> &leaves);

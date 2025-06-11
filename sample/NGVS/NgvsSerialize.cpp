@@ -24,7 +24,7 @@ namespace dsf
 namespace ngvs
 {
     using namespace dsf::parser;
-    NgvsSerializer::NgvsSerializer(size_t alignment) : ALIGNMENT_(alignment)
+    NgvsSerializer::NgvsSerializer() : ALIGNMENT_(4)
     {
     }
 
@@ -61,13 +61,16 @@ namespace ngvs
         ModelParser parser;
         std::string error_message;
 
-        /*1.解析xml数据*/
-        error_code_t ret = parser.parseSchema(modelDefines_, schema, error_message);
-        if (ret != dsf::ngvs::MODEL_PARSER_OK) {
-            LOG(error) << "parse schema failed, ret: " << ret;
-            return false;
+        /*先找一下，找不到再解析*/
+        auto modelDefines = modelDefines_.find(ModelName);
+        if (modelDefines == modelDefines_.end()) {
+            /*解析xml数据*/
+            error_code_t ret = parser.parseSchema(modelDefines_, schema, error_message);
+            if (ret != dsf::ngvs::MODEL_PARSER_OK) {
+                LOG(error) << "parse schema failed, ret: " << ret;
+                return false;
+            }
         }
-
         /*2.解析model下面的数�?类型*/
         auto it = modelDefines_.find(ModelName);
         if (it == modelDefines_.end()) {
@@ -156,15 +159,9 @@ namespace ngvs
         //               << ", Size: " << leaf.size << ", Offset: " << leaf.offset;
         // }
 
-        
-
         return true;
     }
 
-    const std::vector<char> &NgvsSerializer::buffer() const
-    {
-        return buffer_;
-    }
 
     size_t NgvsSerializer::alignOffset(size_t offset, size_t alignment)
     {
