@@ -21,7 +21,7 @@ namespace dsf
 namespace parser
 {
     static const std::unordered_map<std::string, size_t> basicTypeSizes = {
-        {"int32", 4}, {"float32", 4}, {"int64", 8}, {"string", 82}, {"int16", 2}, {"int8", 1}};
+        {"int32", 4}, {"float32", 4}, {"int64", 8}, {"string", 82}, {"int16", 2}, {"int8", 1}, {"bool", 1},};
 
     typedef enum {
         MODEL_PARSER_OK = 0,
@@ -54,6 +54,7 @@ namespace parser
     class ModelParser
     {
     public:
+        ModelParser(size_t alignment = 2);
         error_code_t parseSchema(std::map<std::string, ModelDefine> &modelDefines,
                                  const std::string &schema, std::string &errorMsg);
         bool findNodeAndGetLeaves(const ModelDefine &model, const std::string &targetName,
@@ -75,6 +76,9 @@ namespace parser
                                  std::vector<TreeNode> &currentModelMembers, size_t &modelSize,
                                  size_t &offset, const std::string &modelVersion);
         size_t getBasicTypeSize(const std::string &type);
+
+    private:
+        size_t ALIGNMENT_;
     };
 } // namespace 
 } // namespace dsf

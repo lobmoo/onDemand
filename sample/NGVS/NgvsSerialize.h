@@ -21,31 +21,45 @@
 #include <vector>
 #include <map>
 #include <algorithm>
+#include <unordered_map>
 #include "ModelParser.h"
-#include "unordered_map"
 
 namespace dsf
 {
 namespace ngvs
 {
-     using namespace dsf::parser;
+    using namespace dsf::parser;
     class NgvsSerializer
     {
     public:
-        NgvsSerializer(size_t alignment = 4);
+        static NgvsSerializer &getInstance()
+        {
+            static NgvsSerializer instance;
+            return instance;
+        }
         ~NgvsSerializer();
 
-        bool serialize(const std::string &schema, const std::string &ModelName, std::vector<char> &outBuffer);
+        bool serialize(const std::string &schema, const std::string &ModelName,
+                       const std::vector<char> &inBuffer, std::vector<char> &outBuffer);
+        bool serialize(const std::string &schema, const std::string &ModelName,
+                       const std::unordered_map<std::string, char *> &inData,
+                       std::vector<char> &outBuffer);
+        bool deserialize(const std::string &schema, const std::string &ModelName,
+                         const std::vector<char> &inBuffer,
+                         std::unordered_map<std::string, char *> &outData);
         const std::vector<char> &buffer() const;
 
     private:
+        NgvsSerializer();
+        NgvsSerializer(const NgvsSerializer &) = delete;
+        NgvsSerializer &operator=(const NgvsSerializer &) = delete;
         size_t alignOffset(size_t offset, size_t alignment);
+        inline bool map2Buffer(const ModelDefine &model,
+                               const std::unordered_map<std::string, char *> &inData,
+                               std::vector<char> &outBuffer);
 
     private:
-        std::vector<char> buffer_;
-        std::vector<ModelDefine> sortedModels_;
         std::map<std::string, ModelDefine> modelDefines_;
-        std::map<std::string, size_t> offsetMap_;
         size_t ALIGNMENT_;
     };
 
