@@ -24,7 +24,16 @@ namespace kvpair
     KeyValueSerializer::KeyValueSerializer(size_t alignment) : ALIGNMENT_(alignment)
     {
     }
-    // 要注意offset、越界等问题，多写点错误判断
+
+    void printHex(const uint8_t *data, size_t size)
+    {
+        for(int i=0; i<size; i++)
+        {
+            printf("%02X", data[i]);
+        }
+        printf("\n");
+    }
+    // 要注意offset、越界等问题，多写点错误判断 
     bool KeyValueSerializer::serialize(const std::string &schema, const std::string &ModelName, 
                                                 const std::unordered_map<std::string,std::string> &data, std::vector<char> &outBuffer)
     {
@@ -64,7 +73,6 @@ namespace kvpair
         outBuffer.clear();
         outBuffer.resize(modelDefine.size);
         std::vector<uint8_t> memberData;
-        size_t offset = 0;
         for(auto &leaf : leaves)
         {
             const std::string &key = leaf.name;
@@ -75,7 +83,6 @@ namespace kvpair
                 return false; 
             }
             size_t memberSize = leaf.size;
-            offset = alignOffset(offset, ALIGNMENT_);
             memberData.clear();
             try {
                 dsf::parser::forwardToBuffer(leaf.type, it->second, memberData);  // 类型转换，转成 uint8_t
@@ -85,12 +92,15 @@ namespace kvpair
                 //todo 后续考虑是否继续
                 return false;
             }
-            if(offset + leaf.size > modelDefine.size)
+            if(leaf.offset + leaf.size > modelDefine.size)
             {
-            LOG(error) << "Buffer overflow for key: " << key;
-            return false;
+                LOG(error) << "size: " << leaf.size << ", offset: " << leaf.offset << "modelDefine_size: " << modelDefine.size;
+                LOG(error) << "Buffer overflow for key: " << key;
+                return false;
             }
-            std::memcpy(outBuffer.data() + offset, memberData.data(), std::min(it->second.size(), memberSize));
+            
+            std::memcpy(outBuffer.data() + leaf.offset, memberData.data(), std::min(it->second.size(), memberSize));
+
         } 
 
         return true;
@@ -133,11 +143,14 @@ namespace kvpair
                 LOG(error) << "Buffer overflow for key: " << key;
                 return false;
             }
-            std::string value(leaf.size, '\0'); // 初始化value为指定大小的字符串
+            std::vector<uint8_t> value(leaf.size);
             std::memcpy(&value[0], inBuffer.data() + leaf.offset, leaf.size);
 
+            // 转化成string
+            std::string valString = dsf::parser::forwardToString(value, leaf.type);
+
             // 将构造好的数据放入outData中
-            outData.emplace(key, value);
+            outData.emplace(key, valString);
         }
 
         return true;

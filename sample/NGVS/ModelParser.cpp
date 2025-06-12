@@ -81,7 +81,7 @@ namespace parser
         }
     }
 
-    std::string BufferToString(const std::vector<uint8_t> &buffer, const std::string &type)
+    std::string forwardToString(const std::vector<uint8_t> &buffer, const std::string &type)
     {
         auto checkSize = [&](size_t expected) {
             if (buffer.size() < expected) {
