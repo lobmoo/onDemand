@@ -28,52 +28,46 @@ namespace ngvs
     {
     }
 
-    inline bool NgvsSerializer::map2Buffer(const ModelDefine &model,
-                                           const std::unordered_map<std::string, char *> &inData,
+      inline bool NgvsSerializer::map2Buffer(const ModelDefine &model,
+                                           const std::unordered_map<std::string, std::string> &inData,
                                            std::vector<char> &outBuffer)
     {
         outBuffer.clear();
-        outBuffer.reserve(model.size);
+        outBuffer.resize(model.size);
+       
         size_t offset = 0;
         ModelParser parser;
         std::vector<TreeNode> leaves;
         parser.findNodeAllLeaves(model, leaves);
-        // for (const auto &leaf : leaves) {
-        //     LOG(info) << "Leaf Node: " << leaf.name << ", Type: " << leaf.type
-        //               << ", Size: " << leaf.size << ", Offset: " << leaf.offset;
-        // }
-        // for (auto &leaf : leaves) {
-        //     auto it = inData.find(leaf.name);
-        //     if (it == inData.end()) {
-        //         LOG(warning) << "Member not found in input data: " << leaf.name;
-        //         continue;
-        //     }
-            
-
-        // }
-
-        for (const auto &member : model.members) {
-            LOG(critical) << "Model not found in cache, parsing schema: " << member.name;
-            auto it = inData.find(member.name);
+        for (const auto &leaf : leaves) {
+            LOG(info) << "Leaf Node: " << leaf.name << ", Type: " << leaf.type
+                      << ", Size: " << leaf.size << ", Offset: " << leaf.offset;
+        }
+        for (auto &leaf : leaves) {
+            auto it = inData.find(leaf.name);
             if (it == inData.end()) {
-                LOG(warning) << "Member not found in input data: " << member.name;
-                size_t memberSize = member.size;
+                LOG(warning) << "Member not found in input data: " << leaf.name;
+                /*没有找到就填个空就继续*/
+                size_t memberSize = leaf.size;
                 offset = alignOffset(offset, ALIGNMENT_);
-                std::memcpy(outBuffer.data() + offset, "/0", memberSize);
+                std::memset(outBuffer.data() + offset, 0, memberSize);
                 offset += memberSize;
                 continue;
             }
-
-            size_t memberSize = member.size;
+            LOG(error) << "outBuffer size: " << outBuffer.size();
+            LOG(error) << "Final buffer size: " << offset;
+            /*找到了就好好整*/
+            size_t memberSize = leaf.size;
             offset = alignOffset(offset, ALIGNMENT_);
-            std::memcpy(outBuffer.data() + offset, it->second, memberSize);
+            std::memcpy(outBuffer.data() + offset, it->second.data(),  std::min(it->second.size(), memberSize));
             offset += memberSize;
+            
         }
         return true;
     }
 
     bool NgvsSerializer::serialize(const std::string &schema, const std::string &ModelName,
-                                   const std::unordered_map<std::string, char *> &inData,
+                                   const std::unordered_map<std::string, std::string> &inData,
                                    std::vector<char> &outBuffer)
     {
         ModelParser parser;
@@ -101,8 +95,8 @@ namespace ngvs
         ModelDefine model = it->second;
 
 #ifdef NGVS_DEBUG
-        parser.printAllLeafNodesInfo(model);
-        parser.printmembersInfo(model.members);
+       //parser.printAllLeafNodesInfo(model);
+       // parser.printmembersInfo(model.members);
 #endif
         /*按照大小对udt进行排序,并且结构体放到最前面*/
 
@@ -119,7 +113,7 @@ namespace ngvs
                              }
                              return false;
                          });
-
+        parser.printmembersInfo(model.members);                 
         if (map2Buffer(model, inData, outBuffer)) {
             LOG(info) << "Serialization successful, buffer size: " << outBuffer.size();
         } else {

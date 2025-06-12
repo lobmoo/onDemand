@@ -21,7 +21,9 @@ namespace dsf
 namespace parser
 {
     static const std::unordered_map<std::string, size_t> basicTypeSizes = {
-        {"int32", 4}, {"float32", 4}, {"int64", 8}, {"string", 82}, {"int16", 2}, {"int8", 1}, {"bool", 1},};
+        {"int32", 4}, {"float32", 4}, {"int64", 8}, {"string", 82},
+        {"int16", 2}, {"int8", 1},    {"bool", 1},
+    };
 
     typedef enum {
         MODEL_PARSER_OK = 0,
@@ -70,17 +72,27 @@ namespace parser
 
         std::string child2xml(const boost::property_tree::ptree &childNode,
                               const std::string &rootName);
-        void resolveModelMembers(const std::string &currentModelNameAndVersion,
-                                 std::map<std::string, ModelDefine> &allNodes,
-                                 const std::map<std::string, boost::property_tree::ptree> &structNodes,
-                                 std::vector<TreeNode> &currentModelMembers, size_t &modelSize,
-                                 size_t &offset, const std::string &modelVersion, const std::string &parentName = "");
+        void
+        resolveModelMembers(const std::string &currentModelNameAndVersion,
+                            std::map<std::string, ModelDefine> &allNodes,
+                            const std::map<std::string, boost::property_tree::ptree> &structNodes,
+                            std::vector<TreeNode> &currentModelMembers, size_t &modelSize,
+                            size_t &offset, const std::string &modelVersion,
+                            const std::string &parentName = "");
+        void resolveModelMembers_ex(
+            const std::string &currentModelNameAndVersion,
+            std::map<std::string, ModelDefine> &allNodes,
+            const std::map<std::string, boost::property_tree::ptree> &structNodes,
+            std::vector<TreeNode> &currentModelMembers, size_t &modelSize, size_t &offset,
+            const std::string &modelVersion, const std::string &parentName = "");
         size_t getBasicTypeSize(const std::string &type);
+
+        void updateChildNames(TreeNode &node, const std::string &parentPrefix);
 
     private:
         size_t ALIGNMENT_;
     };
-} // namespace 
+} // namespace parser
 } // namespace dsf
 
 #endif // MODEL_PARSER_H
