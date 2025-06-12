@@ -95,8 +95,8 @@ namespace ngvs
         ModelDefine model = it->second;
 
 #ifdef NGVS_DEBUG
-      //  parser.printAllLeafNodesInfo(model);
-        parser.printmembersInfo(model.members);
+       //parser.printAllLeafNodesInfo(model);
+       // parser.printmembersInfo(model.members);
 #endif
         /*按照大小对udt进行排序,并且结构体放到最前面*/
 
@@ -113,7 +113,7 @@ namespace ngvs
                              }
                              return false;
                          });
-
+        parser.printmembersInfo(model.members);                 
         if (map2Buffer(model, inData, outBuffer)) {
             LOG(info) << "Serialization successful, buffer size: " << outBuffer.size();
         } else {

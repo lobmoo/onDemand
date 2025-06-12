@@ -23,7 +23,7 @@ std::string readXmlFile(const std::string &filePath)
 int main(int argc, char *argv[])
 {
     Logger::Instance().Init("log/myapp.log", Logger::console, Logger::debug, 60, 5);
-    std::string xmlContent = readXmlFile("/home/wwk/workspaces/test_demo/sample/NGVS/mode.xml");
+    std::string xmlContent = readXmlFile("/home/wwk/workspaces/test_demo/sample/NGVS/modelNgvs.xml");
     auto &Serializer = dsf::ngvs::NgvsSerializer::getInstance();
     std::vector<char> outBuffer;
     std::unordered_map<std::string, std::string> inData;
@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
     inData["STD.VAR2.B2"] = "true";
     inData["STD.VAR3:B3.C1"] = "10";
     inData["STD.VAR3:B3.C2"] = "20";
-    if (!Serializer.serialize(xmlContent, "InnerModel3:1.0", inData, outBuffer)) {
+    if (!Serializer.serialize(xmlContent, "STD.NGVS_S1:1.0", inData, outBuffer)) {
         LOG(error) << "Serialization failed";
         return 1;
     }
