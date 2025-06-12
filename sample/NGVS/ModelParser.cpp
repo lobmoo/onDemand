@@ -83,8 +83,9 @@ namespace parser
             ModelDefine &modelDefine = it->second;
             size_t modelSize = 0;
             size_t offset = 0;
-            resolveModelMembers_ex(modelNameAndVersion, modelDefines, structNodes, modelDefine.members,
-                                modelSize, offset, modelDefine.modelVersion);
+            resolveModelMembers(modelNameAndVersion, modelDefines, structNodes,
+                                   modelDefine.members, modelSize, offset,
+                                   modelDefine.modelVersion);
             modelDefine.size = (offset + ALIGNMENT_ - 1) / ALIGNMENT_ * ALIGNMENT_;
         }
 
@@ -448,17 +449,30 @@ namespace parser
         visiting.erase(currentModelNameAndVersion);
     }
 
+    void ModelParser::updateChildNames(TreeNode &node, const std::string &parentPrefix)
+    {
+        for (auto &child : node.children) {
+            // 如果子节点名称已包含父节点名称的一部分，避免重复拼接
+            std::string newName = child.name;
+            if (newName.find(parentPrefix + ".") != 0) {
+                newName = parentPrefix + "." + child.name;
+            }
+            child.name = newName;
+            updateChildNames(child, child.name);
+        }
+    }
+
     void ModelParser::resolveModelMembers_ex(
         const std::string &currentModelNameAndVersion, std::map<std::string, ModelDefine> &allNodes,
         const std::map<std::string, boost::property_tree::ptree> &structNodes,
         std::vector<TreeNode> &currentModelMembers, size_t &modelSize, size_t &offset,
         const std::string &modelVersion, const std::string &parentName)
     {
-        if (ALIGNMENT_ <= 0) {
-            LOG(error) << "Alignment must be greater than 0, current value: " << ALIGNMENT_;
+        LOG(error) << "Resolving model members for: " << currentModelNameAndVersion;
+        if (visiting.count(currentModelNameAndVersion)) {
+            LOG(error) << "Detected cyclic dependency at model: " << currentModelNameAndVersion;
             return;
         }
-
         if (visiting.count(currentModelNameAndVersion)) {
             LOG(error) << "Detected cyclic dependency at model: " << currentModelNameAndVersion;
             return;
@@ -472,7 +486,7 @@ namespace parser
         }
         const auto &structNode = itStructNode->second;
 
-        // Handle baseType
+        // 处理基类型
         auto baseTypeNameOptional = structNode.get_optional<std::string>("<xmlattr>.baseType");
         auto baseTypeVersionOptional =
             structNode.get_optional<std::string>("<xmlattr>.baseTypeVersion");
@@ -482,12 +496,12 @@ namespace parser
             resolveModelMembers(baseTypeKey, allNodes, structNodes, currentModelMembers, modelSize,
                                 offset, baseTypeVersionOptional.get(), parentName);
         } else if (baseTypeNameOptional) {
-            LOG(error) << "baseType '" << baseTypeNameOptional.get()
-                       << "' has no version specified in model: '" << currentModelNameAndVersion;
+            LOG(warning) << "baseType '" << baseTypeNameOptional.get()
+                         << "' has no version specified in model: " << currentModelNameAndVersion;
         }
 
         try {
-            // Process members
+            // 处理成员
             for (const auto &memberNode : structNode.get_child("")) {
                 if (memberNode.first == "member") {
                     std::string memberName = memberNode.second.get<std::string>("<xmlattr>.name");
@@ -497,7 +511,7 @@ namespace parser
                     auto sequenceMaxLengthOptional =
                         memberNode.second.get_optional<std::string>("<xmlattr>.sequenceMaxLength");
 
-                    // Construct full path for this member
+                    // 构造成员的完整路径
                     std::string nodeName =
                         parentName.empty() ? memberName : parentName + "." + memberName;
                     std::string nodeNonBasicTypeName;
@@ -515,17 +529,12 @@ namespace parser
                             memberNode.second.get<std::string>("<xmlattr>.nonBasicTypeName", "");
                     }
 
-                    // Append [] for basic type arrays only
-                    std::string arrayNodeName = nodeName;
-                    if (arrayDimensionsOptional && memberType != "nonBasic") {
-                        arrayNodeName += "[]";
-                    }
-
-                    // Align start of member using ALIGNMENT_
+                    // 对齐成员起始偏移
                     offset = (offset + ALIGNMENT_ - 1) / ALIGNMENT_ * ALIGNMENT_;
-                    size_t startingOffset = offset; // Record start for size calculation
+                    size_t startingOffset = offset; // 记录起始偏移用于大小计算
+
                     if (arrayDimensionsOptional) {
-                        // Handle array (basic or nonBasic)
+                        // 处理数组（基本或非基本类型）
                         std::vector<int> dimensions;
                         std::vector<std::string> dimsStr;
                         boost::split(dimsStr, arrayDimensionsOptional.get(), boost::is_any_of(","));
@@ -543,24 +552,26 @@ namespace parser
                         }
 
                         TreeNode arrayNode;
-                        arrayNode.name = arrayNodeName; // Use name with [] for basic types
+                        arrayNode.name = nodeName;
                         arrayNode.type = "array";
                         arrayNode.offset = startingOffset;
                         arrayNode.nonBasicTypeName = nodeNonBasicTypeName;
                         arrayNode.version = nodeVersion;
 
                         std::vector<TreeNode> arrayElements;
+                        size_t currentOffset = offset;
                         if (memberType == "nonBasic") {
-                            // NonBasic array
+                            // 非基本类型数组
                             if (!nodeNonBasicTypeName.empty() && !nodeVersion.empty()) {
                                 std::string nonBasicKey = nodeNonBasicTypeName + ":" + nodeVersion;
                                 std::vector<TreeNode> elementMembers;
                                 size_t elementSize = 0;
-                                size_t elementOffset = 0; // Use relative offset for element parsing
+                                size_t elementOffset = 0; // 使用相对偏移解析元素
+                                // 使用空 parentName 解析非基本类型以获取相对名称
                                 resolveModelMembers(nonBasicKey, allNodes, structNodes,
                                                     elementMembers, elementSize, elementOffset,
-                                                    nodeVersion, nodeName);
-                                // Align element size using ALIGNMENT_
+                                                    nodeVersion, "");
+                                // 对齐单个元素大小
                                 size_t singleElementSize =
                                     (elementSize + ALIGNMENT_ - 1) / ALIGNMENT_ * ALIGNMENT_;
 
@@ -583,11 +594,13 @@ namespace parser
                                         elementNode.nonBasicTypeName = nodeNonBasicTypeName;
                                         elementNode.version = nodeVersion;
 
-                                        // Deep copy elementMembers and adjust offsets globally
+                                        // 深拷贝 elementMembers 并调整名称和偏移
                                         elementNode.children = elementMembers;
+                                        updateChildNames(elementNode,
+                                                         elementNode.name); // 修复嵌套成员名称
                                         for (auto &child : elementNode.children) {
                                             child.offset =
-                                                currentOffset + child.offset; // Add global offset
+                                                currentOffset + child.offset; // 添加全局偏移
                                             std::function<void(TreeNode &)> adjustNestedOffsets =
                                                 [&](TreeNode &node) {
                                                     for (auto &nestedChild : node.children) {
@@ -609,16 +622,17 @@ namespace parser
                                         generateArrayElements(next, currentOffset);
                                     }
                                 };
-                                generateArrayElements({}, offset);
-                                arrayNode.size = (offset - startingOffset + ALIGNMENT_ - 1)
+                                generateArrayElements({}, currentOffset);
+                                arrayNode.size = (currentOffset - startingOffset + ALIGNMENT_ - 1)
                                                  / ALIGNMENT_ * ALIGNMENT_;
+                                offset = currentOffset;
                             } else {
                                 LOG(error)
                                     << "nonBasic array member '" << memberName << "' lacks version";
                                 continue;
                             }
                         } else {
-                            // Basic type array
+                            // 基本类型数组
                             size_t typeSize = getBasicTypeSize(memberType);
                             std::function<void(std::vector<int>, size_t &)> generateArrayElements;
                             generateArrayElements = [&](std::vector<int> indices,
@@ -646,9 +660,10 @@ namespace parser
                                     generateArrayElements(next, currentOffset);
                                 }
                             };
-                            generateArrayElements({}, offset);
-                            arrayNode.size = (offset - startingOffset + ALIGNMENT_ - 1) / ALIGNMENT_
-                                             * ALIGNMENT_;
+                            generateArrayElements({}, currentOffset);
+                            arrayNode.size = (currentOffset - startingOffset + ALIGNMENT_ - 1)
+                                             / ALIGNMENT_ * ALIGNMENT_;
+                            offset = currentOffset;
                         }
 
                         arrayNode.children = std::move(arrayElements);
@@ -667,31 +682,27 @@ namespace parser
                             continue;
                         }
 
-                        // Append [] for basic type sequences only
-                        std::string seqNodeName = nodeName;
-                        if (memberType != "nonBasic") {
-                            seqNodeName += "[]";
-                        }
-
                         TreeNode seqNode;
-                        seqNode.name = seqNodeName; // Use name with [] for basic types
+                        seqNode.name = nodeName;
                         seqNode.type = "sequence";
                         seqNode.offset = startingOffset;
                         seqNode.nonBasicTypeName = nodeNonBasicTypeName;
                         seqNode.version = nodeVersion;
 
                         std::vector<TreeNode> seqElements;
+                        size_t currentOffset = offset;
                         if (memberType == "nonBasic") {
-                            // NonBasic sequence
+                            // 非基本类型序列
                             if (!nodeNonBasicTypeName.empty() && !nodeVersion.empty()) {
                                 std::string nonBasicKey = nodeNonBasicTypeName + ":" + nodeVersion;
                                 std::vector<TreeNode> elementMembers;
                                 size_t elementSize = 0;
-                                size_t elementOffset = 0; // Use relative offset for element parsing
+                                size_t elementOffset = 0; // 使用相对偏移解析元素
+                                // 使用空 parentName 解析非基本类型以获取相对名称
                                 resolveModelMembers(nonBasicKey, allNodes, structNodes,
                                                     elementMembers, elementSize, elementOffset,
-                                                    nodeVersion, nodeName);
-                                // Align element size using ALIGNMENT_
+                                                    nodeVersion, "");
+                                // 对齐单个元素大小
                                 size_t singleElementSize =
                                     (elementSize + ALIGNMENT_ - 1) / ALIGNMENT_ * ALIGNMENT_;
 
@@ -702,37 +713,40 @@ namespace parser
                                     elementNode.name = elementName;
                                     elementNode.type = memberType;
                                     elementNode.size = singleElementSize;
-                                    elementNode.offset = offset;
+                                    elementNode.offset = currentOffset;
                                     elementNode.is_array = true;
                                     elementNode.array_indices = {i};
                                     elementNode.nonBasicTypeName = nodeNonBasicTypeName;
                                     elementNode.version = nodeVersion;
+                                    // 深拷贝 elementMembers 并调整名称和偏移
                                     elementNode.children = elementMembers;
-                                    // Adjust child offsets to be global
+                                    updateChildNames(elementNode,
+                                                     elementNode.name); // 修复嵌套成员名称
                                     for (auto &child : elementNode.children) {
-                                        child.offset = offset + child.offset; // Add global offset
+                                        child.offset = currentOffset + child.offset; // 添加全局偏移
                                         std::function<void(TreeNode &)> adjustNestedOffsets =
                                             [&](TreeNode &node) {
                                                 for (auto &nestedChild : node.children) {
                                                     nestedChild.offset =
-                                                        offset + nestedChild.offset;
+                                                        currentOffset + nestedChild.offset;
                                                     adjustNestedOffsets(nestedChild);
                                                 }
                                             };
                                         adjustNestedOffsets(child);
                                     }
                                     seqElements.push_back(elementNode);
-                                    offset += singleElementSize;
+                                    currentOffset += singleElementSize;
                                 }
-                                seqNode.size = (offset - startingOffset + ALIGNMENT_ - 1)
+                                seqNode.size = (currentOffset - startingOffset + ALIGNMENT_ - 1)
                                                / ALIGNMENT_ * ALIGNMENT_;
+                                offset = currentOffset;
                             } else {
                                 LOG(error) << "nonBasic sequence member '" << memberName
                                            << "' lacks version";
                                 continue;
                             }
                         } else {
-                            // Basic type sequence
+                            // 基本类型序列
                             size_t typeSize = getBasicTypeSize(memberType);
                             for (int i = 0; i < maxLength; ++i) {
                                 std::string elementName = nodeName + "[" + std::to_string(i) + "]";
@@ -740,23 +754,24 @@ namespace parser
                                 elementNode.name = elementName;
                                 elementNode.type = memberType;
                                 elementNode.size = typeSize;
-                                elementNode.offset = offset;
+                                elementNode.offset = currentOffset;
                                 elementNode.is_array = true;
                                 elementNode.array_indices = {i};
                                 seqElements.push_back(elementNode);
-                                offset += typeSize;
+                                currentOffset += typeSize;
                             }
-                            seqNode.size = (offset - startingOffset + ALIGNMENT_ - 1) / ALIGNMENT_
-                                           * ALIGNMENT_;
+                            seqNode.size = (currentOffset - startingOffset + ALIGNMENT_ - 1)
+                                           / ALIGNMENT_ * ALIGNMENT_;
+                            offset = currentOffset;
                         }
                         seqNode.children = std::move(seqElements);
                         currentModelMembers.push_back(std::move(seqNode));
                     } else if (memberType == "nonBasic") {
-                        // Handle nonBasic type
+                        // 处理非基本类型
                         if (!nodeNonBasicTypeName.empty() && !nodeVersion.empty()) {
                             std::string nonBasicKey = nodeNonBasicTypeName + ":" + nodeVersion;
                             std::vector<TreeNode> subMembers;
-                            size_t subOffset = startingOffset; // Start at current global offset
+                            size_t subOffset = startingOffset; // 从当前全局偏移开始
                             size_t subSize = 0;
                             resolveModelMembers(nonBasicKey, allNodes, structNodes, subMembers,
                                                 subSize, subOffset, nodeVersion, nodeName);
@@ -775,7 +790,7 @@ namespace parser
                             LOG(error) << "nonBasic member '" << memberName << "' lacks version";
                         }
                     } else {
-                        // Handle basic type
+                        // 处理基本类型
                         size_t typeSize = getBasicTypeSize(memberType);
                         TreeNode node;
                         node.name = nodeName;

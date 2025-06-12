@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
     inData["STD.VAR2.B2"] = "true";
     inData["STD.VAR3:B3.C1"] = "10";
     inData["STD.VAR3:B3.C2"] = "20";
-    if (!Serializer.serialize(xmlContent, "InnerModel:1.0", inData, outBuffer)) {
+    if (!Serializer.serialize(xmlContent, "InnerModel3:1.0", inData, outBuffer)) {
         LOG(error) << "Serialization failed";
         return 1;
     }

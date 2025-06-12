@@ -87,6 +87,8 @@ namespace parser
             const std::string &modelVersion, const std::string &parentName = "");
         size_t getBasicTypeSize(const std::string &type);
 
+        void updateChildNames(TreeNode &node, const std::string &parentPrefix);
+
     private:
         size_t ALIGNMENT_;
     };
