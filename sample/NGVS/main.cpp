@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
     /* 1. 初始化日志和xml内容 */
     Logger::Instance().Init("log/myapp.log", Logger::console, Logger::debug, 60, 5);
     std::string xmlContent = readXmlFile("/home/weiqb/src/test_demo/sample/NGVS/model.xml");
-    auto &serializer = dsf::ngvs::KeyValueSerializer::getInstance();
+    auto &serializer = dsf::kvpair::KeyValueSerializer::getInstance();
 
     /* 2. 定义输入数据和输出空间 */
     // 基本元素

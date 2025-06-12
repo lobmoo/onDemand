@@ -18,7 +18,7 @@
 #include <cmath>
 namespace dsf
 {
-namespace ngvs
+namespace kvpair
 {
 
     KeyValueSerializer::KeyValueSerializer(size_t alignment) : ALIGNMENT_(alignment)
@@ -26,7 +26,7 @@ namespace ngvs
     }
     // 要注意offset、越界等问题，多写点错误判断
     bool KeyValueSerializer::serialize(const std::string &schema, const std::string &ModelName, 
-                                                const std::unordered_map<std::string, char *> &data, std::vector<char> &outBuffer)
+                                                const std::unordered_map<std::string,std::string> &data, std::vector<char> &outBuffer)
     {
         parser::ModelParser parser;
         /* 1.先查询是否已经解析过model, 如果没解析过则调用ModelParser来解析所有model的结构 */
@@ -60,9 +60,11 @@ namespace ngvs
         
 
         /* 4. 申请一段空间(大小是固定的)并且顺序地将key-value对填入 */
-        leaves.clear();
         parser.findNodeAllLeaves(modelDefine, leaves);
-        outBuffer.reserve(modelDefine.size);
+        outBuffer.clear();
+        outBuffer.resize(modelDefine.size);
+        std::vector<uint8_t> memberData;
+        size_t offset = 0;
         for(auto &leaf : leaves)
         {
             const std::string &key = leaf.name;
@@ -72,47 +74,32 @@ namespace ngvs
                 LOG(error) << "Key not found in data: " << key;
                 return false; 
             }
-            auto value = it->second;
-            if(!serializeKeyValuePair(leaf, key, value, modelDefine, outBuffer))// 第idx个叶子节点
-            {
-                LOG(error) << "Failed to serialize key-value pair: " << key;
+            size_t memberSize = leaf.size;
+            offset = alignOffset(offset, ALIGNMENT_);
+            memberData.clear();
+            try {
+                dsf::parser::forwardToBuffer(leaf.type, it->second, memberData);  // 类型转换，转成 uint8_t
+            } catch (const std::exception &e) {
+                LOG(error) << "Error converting value for key: " << it->first
+                           << ", Error: " << e.what();
+                //todo 后续考虑是否继续
                 return false;
             }
+            if(offset + leaf.size > modelDefine.size)
+            {
+            LOG(error) << "Buffer overflow for key: " << key;
+            return false;
+            }
+            std::memcpy(outBuffer.data() + offset, memberData.data(), std::min(it->second.size(), memberSize));
         } 
 
         return true;
     }
 
-    bool KeyValueSerializer::serializeKeyValuePair(dsf::parser::TreeNode &leaf, const std::string &key,
-                                                    const char* value, const parser::ModelDefine &modelDefine, std::vector<char> &outBuffer)
-    {
-        LOG(info) << "Key-Value Pair Serialization, Key:" << key 
-                  << ", Offset: " << leaf.offset 
-                  << ", Size: " << leaf.size; 
-
-        /* 1.根据offset和size，填充buffer_ */
-        if(leaf.offset + leaf.size > modelDefine.size) {
-            LOG(error) << "Buffer overflow for key: " << key;
-            return false;
-        }
-        
-        // LOG(error) << "Before memcpy:" << std::endl;
-        // for (int i = 0; i < modelDefine.size; ++i)
-        //     printf("%02x ", static_cast<unsigned char>(outBuffer[i]));
-        // printf("\n");
-
-        std::memcpy(outBuffer.data() + leaf.offset, value, leaf.size);
-
-        // LOG(error) << "After memcpy:" << std::endl;
-        // for (int i = 0; i < modelDefine.size; ++i)
-        //     printf("%02x ", static_cast<unsigned char>(outBuffer[i]));
-        // printf("\n");
-        return true;
-    }
 
 
     bool KeyValueSerializer::deserialize(const std::string &schema, const std::string &ModelName,
-                         const std::vector<char> &inBuffer, std::unordered_map<std::string, char *> &outData)
+                         const std::vector<char> &inBuffer, std::unordered_map<std::string, std::string> &outData)
     {
         parser::ModelParser parser;
         /* 1.先查询是否已经解析过model, 如果没解析过则调用ModelParser来解析所有model的结构 */
@@ -146,15 +133,19 @@ namespace ngvs
                 LOG(error) << "Buffer overflow for key: " << key;
                 return false;
             }
-
-            char *value = new char[leaf.size];
-            std::memcpy(value , inBuffer.data() + leaf.offset, leaf.size);
+            std::string value(leaf.size, '\0'); // 初始化value为指定大小的字符串
+            std::memcpy(&value[0], inBuffer.data() + leaf.offset, leaf.size);
 
             // 将构造好的数据放入outData中
             outData.emplace(key, value);
         }
 
         return true;
+    }
+
+    size_t KeyValueSerializer::alignOffset(size_t offset, size_t alignment)
+    {
+        return (offset + alignment - 1) & ~(alignment - 1);
     }
 
     KeyValueSerializer::~KeyValueSerializer()
