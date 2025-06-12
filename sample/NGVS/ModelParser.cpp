@@ -194,15 +194,7 @@ namespace parser
                             // NonBasic array
                             if (!nodeNonBasicTypeName.empty() && !nodeVersion.empty()) {
                                 std::string nonBasicKey = nodeNonBasicTypeName + ":" + nodeVersion;
-                                std::vector<TreeNode> elementMembers;
-                                size_t elementSize = 0;
-                                size_t elementOffset = 0; // Use relative offset for element parsing
-                                resolveModelMembers(nonBasicKey, allNodes, structNodes,
-                                                    elementMembers, elementSize, elementOffset,
-                                                    nodeVersion, nodeName);
-                                // Align element size using ALIGNMENT_
-                                size_t singleElementSize =
-                                    (elementSize + ALIGNMENT_ - 1) / ALIGNMENT_ * ALIGNMENT_;
+
 
                                 std::function<void(std::vector<int>, size_t &)>
                                     generateArrayElements;
@@ -215,6 +207,16 @@ namespace parser
                                         for (int idx : indices) {
                                             elementName += "[" + std::to_string(idx) + "]";
                                         }
+                                        std::vector<TreeNode> elementMembers;
+                                        size_t elementSize = 0;
+                                        size_t elementOffset = 0; // Use relative offset for element parsing
+                                        resolveModelMembers(nonBasicKey, allNodes, structNodes,
+                                                            elementMembers, elementSize, elementOffset,
+                                                            nodeVersion, elementName);
+                                        // Align element size using ALIGNMENT_
+                                        size_t singleElementSize =
+                                            (elementSize + ALIGNMENT_ - 1) / ALIGNMENT_ * ALIGNMENT_;
+
                                         if (memberType == "nonBasic") {
                                             elementName += ":" + nodeVersion;
                                         }

@@ -15,12 +15,21 @@
     <struct name="InnerModel33" version="1.0">
         <member name="first" type="float32"/>
         <member name="second" type="int64"/> 
-        <member name="third" type="int8"/>        
+        <member name="complex_member2" type="nonBasic" nonBasicTypeName="InnerModel2" version="1.0"/>
+        <member name="complex_member3" type="nonBasic" nonBasicTypeName="InnerModel5" version="1.0"/>
+        <member name="complex_member4" type="nonBasic" nonBasicTypeName="ComplexModel" version="3.0"/>
+        <member name="fourth" type="int8"/>        
+        <member name="short_sequence" sequenceMaxLength="5" type="int32"/>
     </struct>
 
     <struct name="InnerModel2" version="1.0">
         <member name="third" type="int32"/>
         <member name="complex_member3" type="nonBasic" nonBasicTypeName="InnerModel3" version="1.0"/>
+    </struct>
+
+    <struct name="StructArray" version="1.0">
+        <member name="third" type="int32"/>
+        <member name="long_array" type="nonBasic"  nonBasicTypeName="InnerModel6" arrayDimensions="5" startIndex="0" endIndex="10"  version="1.0"/>
     </struct>
 
     <struct name="InnerModel5" version="1.0">
@@ -30,7 +39,7 @@
     <struct name="InnerModel6" version="1.0">
         <member name="first" type="float32"/>
         <member name="second" type="int32"/> 
-        <member name="third" type="int32"/>        
+        <member name="third" type="int8"/>        
     </struct>
 
     <struct name="InnerModel7" version="1.0">
@@ -53,14 +62,14 @@
     </struct>
 
     <struct name="ComplexModel" baseType="ParentModel" baseTypeVersion="2.0" version="3.0">
-        <member name="complex_member" type="nonBasic" nonBasicTypeName="InnerModel" version="1.0"/>
+        <member name="complex_member" type="nonBasic" nonBasicTypeName="InnerModel3" version="1.0"/>
     </struct>
 
     
     <struct name="InnerModel3" version="1.0">
         <member name="fourth" type="int32"/>
-        <member name="long_array" type="int32" arrayDimensions="10" startIndex="0" endIndex="20"/>
-        <member name="long_array2" type="nonBasic"  nonBasicTypeName="InnerModel33" arrayDimensions="10" startIndex="0" endIndex="20"  version="1.0"/>
+        <member name="long_array" type="int32" arrayDimensions="5" startIndex="0" endIndex="10"/>
+        <!-- <member name="long_array2" type="nonBasic"  nonBasicTypeName="ParentModel" arrayDimensions="5" startIndex="0" endIndex="10"  version="2.0"/> -->
     </struct> 
 </models>
 
