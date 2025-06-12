@@ -20,211 +20,158 @@ namespace parser
     bool forwardToBuffer(const std::string &type, const std::string &value,
                          std::vector<uint8_t> &buffer)
     {
-        // 检查类型是否存在
+
         auto it = basicTypeSizes.find(type);
         if (it == basicTypeSizes.end()) {
             throw std::invalid_argument("未知的数据类型: " + type);
         }
-        size_t size = it->second;
+        buffer.clear();
+        buffer.resize(it->second); // 使用已验证的 it->second
 
         try {
-            // 处理不同数据类型
             if (type == "DT_BOOLEAN") {
                 uint8_t val = (value == "1" || value == "TRUE" || value == "true") ? 1 : 0;
-                buffer.push_back(val);
+                std::memcpy(buffer.data(), &val, it->second);
             } else if (type == "DT_BYTE" || type == "DT_USINT") {
                 uint8_t val = static_cast<uint8_t>(std::stoul(value));
-                buffer.push_back(val);
+                std::memcpy(buffer.data(), &val, it->second);
             } else if (type == "DT_SINT") {
                 int8_t val = static_cast<int8_t>(std::stoi(value));
-                buffer.push_back(static_cast<uint8_t>(val));
+                std::memcpy(buffer.data(), &val, it->second);
             } else if (type == "DT_WORD" || type == "DT_UINT") {
                 uint16_t val = static_cast<uint16_t>(std::stoul(value));
-                buffer.push_back(static_cast<uint8_t>(val >> 8)); // 大端序
-                buffer.push_back(static_cast<uint8_t>(val & 0xFF));
+                std::memcpy(buffer.data(), &val, it->second);
             } else if (type == "DT_INT") {
                 int16_t val = static_cast<int16_t>(std::stoi(value));
-                buffer.push_back(static_cast<uint8_t>(val >> 8));
-                buffer.push_back(static_cast<uint8_t>(val & 0xFF));
+                std::memcpy(buffer.data(), &val, it->second);
             } else if (type == "DT_DWORD" || type == "DT_UDINT") {
                 uint32_t val = static_cast<uint32_t>(std::stoul(value));
-                buffer.push_back(static_cast<uint8_t>(val >> 24));
-                buffer.push_back(static_cast<uint8_t>(val >> 16));
-                buffer.push_back(static_cast<uint8_t>(val >> 8));
-                buffer.push_back(static_cast<uint8_t>(val & 0xFF));
+                std::memcpy(buffer.data(), &val, it->second);
             } else if (type == "DT_DINT") {
                 int32_t val = std::stoi(value);
-                buffer.push_back(static_cast<uint8_t>(val >> 24));
-                buffer.push_back(static_cast<uint8_t>(val >> 16));
-                buffer.push_back(static_cast<uint8_t>(val >> 8));
-                buffer.push_back(static_cast<uint8_t>(val & 0xFF));
+                std::memcpy(buffer.data(), &val, it->second);
             } else if (type == "DT_LWORD" || type == "DT_ULINT") {
                 uint64_t val = std::stoull(value);
-                for (int i = 7; i >= 0; --i) {
-                    buffer.push_back(static_cast<uint8_t>(val >> (i * 8)));
-                }
+                std::memcpy(buffer.data(), &val, it->second);
             } else if (type == "DT_LINT") {
                 int64_t val = std::stoll(value);
-                for (int i = 7; i >= 0; --i) {
-                    buffer.push_back(static_cast<uint8_t>(val >> (i * 8)));
-                }
+                std::memcpy(buffer.data(), &val, it->second);
             } else if (type == "DT_REAL") {
                 float val = std::stof(value);
-                uint32_t bits;
-                std::memcpy(&bits, &val, sizeof(float));
-                buffer.push_back(static_cast<uint8_t>(bits >> 24));
-                buffer.push_back(static_cast<uint8_t>(bits >> 16));
-                buffer.push_back(static_cast<uint8_t>(bits >> 8));
-                buffer.push_back(static_cast<uint8_t>(bits & 0xFF));
+                std::memcpy(buffer.data(), &val, it->second);
             } else if (type == "DT_LREAL") {
                 double val = std::stod(value);
-                uint64_t bits;
-                std::memcpy(&bits, &val, sizeof(double));
-                for (int i = 7; i >= 0; --i) {
-                    buffer.push_back(static_cast<uint8_t>(bits >> (i * 8)));
-                }
+                std::memcpy(buffer.data(), &val, it->second);
             } else if (type == "DT_CHAR") {
                 if (value.length() != 1) {
                     throw std::invalid_argument("DT_CHAR需要单个字符");
                 }
-                buffer.push_back(static_cast<uint8_t>(value[0]));
+                uint8_t val = static_cast<uint8_t>(value[0]);
+                std::memcpy(buffer.data(), &val, it->second);
             } else if (type == "DT_CHARSEQ" || type == "DT_STRING") {
-                if (value.length() > size - 2) {
-                    throw std::invalid_argument("字符串长度超过限制");
-                }
-                // 写入长度（2字节）
-                uint16_t len = static_cast<uint16_t>(value.length());
-                buffer.push_back(static_cast<uint8_t>(len >> 8));
-                buffer.push_back(static_cast<uint8_t>(len & 0xFF));
-                // 写入字符串内容
-                for (char c : value) {
-                    buffer.push_back(static_cast<uint8_t>(c));
-                }
-                // 填充剩余字节
-                for (size_t i = value.length(); i < size - 2; ++i) {
-                    buffer.push_back(0);
-                }
             } else if (type == "DT_WCHAR") {
-                if (value.length() != 1) {
-                    throw std::invalid_argument("DT_WCHAR需要单个字符");
-                }
-                uint16_t val = static_cast<uint16_t>(value[0]);
-                buffer.push_back(static_cast<uint8_t>(val >> 8));
-                buffer.push_back(static_cast<uint8_t>(val & 0xFF));
-            } else if (type == "DT_WCHARSEQ" || type == "DT_WSTRING") {
-                if (value.length() > (size / 2) - 2) {
-                    throw std::invalid_argument("宽字符串长度超过限制");
-                }
-                // 写入长度（2字节）
-                uint16_t len = static_cast<uint16_t>(value.length());
-                buffer.push_back(static_cast<uint8_t>(len >> 8));
-                buffer.push_back(static_cast<uint8_t>(len & 0xFF));
-                // 写入宽字符内容（每个字符2字节）
-                for (char c : value) {
-                    uint16_t wc = static_cast<uint16_t>(c);
-                    buffer.push_back(static_cast<uint8_t>(wc >> 8));
-                    buffer.push_back(static_cast<uint8_t>(wc & 0xFF));
-                }
-                // 填充剩余字节
-                for (size_t i = value.length() * 2; i < size - 2; ++i) {
-                    buffer.push_back(0);
-                }
+            } else if (type == "DT_WCHARSEQ" || type == "DT_WSTRING") { // 剩余字节由resize初始化为0
             } else {
                 throw std::invalid_argument("不支持的数据类型: " + type);
             }
+
             return true;
         } catch (const std::exception &e) {
             throw std::runtime_error("转换失败: " + std::string(e.what()));
         }
     }
 
-    std::string BufferToString(const std::vector<uint8_t>& buffer, const std::string& type) {
-    auto checkSize = [&](size_t expected) {
-        if (buffer.size() < expected) {
-            throw std::out_of_range("Buffer too small for type: " + type);
+    std::string BufferToString(const std::vector<uint8_t> &buffer, const std::string &type)
+    {
+        auto checkSize = [&](size_t expected) {
+            if (buffer.size() < expected) {
+                throw std::out_of_range("Buffer too small for type: " + type);
+            }
+        };
+
+        const uint8_t *data = buffer.data();
+
+        if (type == "DT_BOOLEAN") {
+            checkSize(1);
+            return buffer[0] ? "true" : "false";
+        } else if (type == "DT_BYTE" || type == "DT_USINT") {
+            checkSize(1);
+            return std::to_string(data[0]);
+        } else if (type == "DT_SINT") {
+            checkSize(1);
+            int8_t val;
+            std::memcpy(&val, data, 1);
+            return std::to_string(val);
+        } else if (type == "DT_WORD" || type == "DT_UINT") {
+            checkSize(2);
+            uint16_t val;
+            std::memcpy(&val, data, 2);
+            return std::to_string(val);
+        } else if (type == "DT_INT") {
+            checkSize(2);
+            int16_t val;
+            std::memcpy(&val, data, 2);
+            return std::to_string(val);
+        } else if (type == "DT_DWORD" || type == "DT_UDINT") {
+            checkSize(4);
+            uint32_t val;
+            std::memcpy(&val, data, 4);
+            return std::to_string(val);
+        } else if (type == "DT_DINT") {
+            checkSize(4);
+            int32_t val;
+            std::memcpy(&val, data, 4);
+            return std::to_string(val);
+        } else if (type == "DT_LWORD" || type == "DT_ULINT") {
+            checkSize(8);
+            uint64_t val;
+            std::memcpy(&val, data, 8);
+            return std::to_string(val);
+        } else if (type == "DT_LINT") {
+            checkSize(8);
+            int64_t val;
+            std::memcpy(&val, data, 8);
+            return std::to_string(val);
+        } else if (type == "DT_REAL") {
+            checkSize(4);
+            float val;
+            std::memcpy(&val, data, 4);
+            return std::to_string(val);
+        } else if (type == "DT_LREAL") {
+            checkSize(8);
+            double val;
+            std::memcpy(&val, data, 8);
+            return std::to_string(val);
+        } else if (type == "DT_CHAR") {
+            checkSize(1);
+            return std::string(1, static_cast<char>(data[0]));
+        } else if (type == "DT_STRING" || type == "DT_CHARSEQ") {
+            checkSize(82);
+            uint16_t strlen_bytes;
+            std::memcpy(&strlen_bytes, data, 2);
+            if (strlen_bytes > 80)
+                strlen_bytes = 80;
+            return std::string(reinterpret_cast<const char *>(data + 2), strlen_bytes);
+        } else if (type == "DT_WCHAR") {
+            checkSize(2);
+            wchar_t wchar;
+            std::memcpy(&wchar, data, 2);
+            return std::string(1, static_cast<char>(wchar)); // 简化处理
+        } else if (type == "DT_WSTRING" || type == "DT_WCHARSEQ") {
+            checkSize(508);
+            uint16_t wlen;
+            std::memcpy(&wlen, data, 2);
+            if (wlen > 254)
+                wlen = 254;
+            std::wstring wstr(reinterpret_cast<const wchar_t *>(data + 2), wlen);
+            std::string result;
+            for (wchar_t wc : wstr)
+                result += static_cast<char>(wc); // 简化
+            return result;
         }
-    };
 
-    const uint8_t* data = buffer.data();
-
-    if (type == "DT_BOOLEAN") {
-        checkSize(1);
-        return buffer[0] ? "true" : "false";
-    } else if (type == "DT_BYTE" || type == "DT_USINT") {
-        checkSize(1);
-        return std::to_string(data[0]);
-    } else if (type == "DT_SINT") {
-        checkSize(1);
-        int8_t val;
-        std::memcpy(&val, data, 1);
-        return std::to_string(val);
-    } else if (type == "DT_WORD" || type == "DT_UINT") {
-        checkSize(2);
-        uint16_t val;
-        std::memcpy(&val, data, 2);
-        return std::to_string(val);
-    } else if (type == "DT_INT") {
-        checkSize(2);
-        int16_t val;
-        std::memcpy(&val, data, 2);
-        return std::to_string(val);
-    } else if (type == "DT_DWORD" || type == "DT_UDINT") {
-        checkSize(4);
-        uint32_t val;
-        std::memcpy(&val, data, 4);
-        return std::to_string(val);
-    } else if (type == "DT_DINT") {
-        checkSize(4);
-        int32_t val;
-        std::memcpy(&val, data, 4);
-        return std::to_string(val);
-    } else if (type == "DT_LWORD" || type == "DT_ULINT") {
-        checkSize(8);
-        uint64_t val;
-        std::memcpy(&val, data, 8);
-        return std::to_string(val);
-    } else if (type == "DT_LINT") {
-        checkSize(8);
-        int64_t val;
-        std::memcpy(&val, data, 8);
-        return std::to_string(val);
-    } else if (type == "DT_REAL") {
-        checkSize(4);
-        float val;
-        std::memcpy(&val, data, 4);
-        return std::to_string(val);
-    } else if (type == "DT_LREAL") {
-        checkSize(8);
-        double val;
-        std::memcpy(&val, data, 8);
-        return std::to_string(val);
-    } else if (type == "DT_CHAR") {
-        checkSize(1);
-        return std::string(1, static_cast<char>(data[0]));
-    } else if (type == "DT_STRING" || type == "DT_CHARSEQ") {
-        checkSize(82);
-        uint16_t strlen_bytes;
-        std::memcpy(&strlen_bytes, data, 2);
-        if (strlen_bytes > 80) strlen_bytes = 80;
-        return std::string(reinterpret_cast<const char*>(data + 2), strlen_bytes);
-    } else if (type == "DT_WCHAR") {
-        checkSize(2);
-        wchar_t wchar;
-        std::memcpy(&wchar, data, 2);
-        return std::string(1, static_cast<char>(wchar));  // 简化处理
-    } else if (type == "DT_WSTRING" || type == "DT_WCHARSEQ") {
-        checkSize(508);
-        uint16_t wlen;
-        std::memcpy(&wlen, data, 2);
-        if (wlen > 254) wlen = 254;
-        std::wstring wstr(reinterpret_cast<const wchar_t*>(data + 2), wlen);
-        std::string result;
-        for (wchar_t wc : wstr) result += static_cast<char>(wc);  // 简化
-        return result;
+        throw std::invalid_argument("Unsupported type: " + type);
     }
-
-    throw std::invalid_argument("Unsupported type: " + type);
-}
     ModelParser::ModelParser(size_t alignment) : ALIGNMENT_(alignment)
     {
     }
