@@ -23,21 +23,25 @@ namespace dsf
 {
 namespace ngvs
 {
+
+
     using namespace dsf::parser;
     NgvsSerializer::NgvsSerializer() : ALIGNMENT_(4)
     {
     }
 
-      inline bool NgvsSerializer::map2Buffer(const ModelDefine &model,
-                                           const std::unordered_map<std::string, std::string> &inData,
-                                           std::vector<char> &outBuffer)
+    inline bool
+    NgvsSerializer::map2Buffer(const ModelDefine &model,
+                               const std::unordered_map<std::string, std::string> &inData,
+                               std::vector<char> &outBuffer)
     {
         outBuffer.clear();
         outBuffer.resize(model.size);
-       
+
         size_t offset = 0;
         ModelParser parser;
         std::vector<TreeNode> leaves;
+        std::vector<uint8_t> memberData;
         parser.findNodeAllLeaves(model, leaves);
         for (const auto &leaf : leaves) {
             LOG(info) << "Leaf Node: " << leaf.name << ", Type: " << leaf.type
@@ -54,14 +58,22 @@ namespace ngvs
                 offset += memberSize;
                 continue;
             }
-            LOG(error) << "outBuffer size: " << outBuffer.size();
-            LOG(error) << "Final buffer size: " << offset;
+    
             /*找到了就好好整*/
             size_t memberSize = leaf.size;
             offset = alignOffset(offset, ALIGNMENT_);
-            std::memcpy(outBuffer.data() + offset, it->second.data(),  std::min(it->second.size(), memberSize));
+            memberData.clear();
+            try {
+                dsf::parser::forwardToBuffer(leaf.type, it->second, memberData);
+            } catch (const std::exception &e) {
+                LOG(error) << "Error converting value for key: " << it->first
+                           << ", Error: " << e.what();
+                //todo 后续考虑是否继续
+                return false;
+            }
+            std::memcpy(outBuffer.data() + offset, memberData.data(),
+                        std::min(it->second.size(), memberSize));
             offset += memberSize;
-            
         }
         return true;
     }
@@ -95,8 +107,8 @@ namespace ngvs
         ModelDefine model = it->second;
 
 #ifdef NGVS_DEBUG
-       //parser.printAllLeafNodesInfo(model);
-       // parser.printmembersInfo(model.members);
+        //parser.printAllLeafNodesInfo(model);
+        // parser.printmembersInfo(model.members);
 #endif
         /*按照大小对udt进行排序,并且结构体放到最前面*/
 
@@ -113,7 +125,7 @@ namespace ngvs
                              }
                              return false;
                          });
-        parser.printmembersInfo(model.members);                 
+        parser.printmembersInfo(model.members);
         if (map2Buffer(model, inData, outBuffer)) {
             LOG(info) << "Serialization successful, buffer size: " << outBuffer.size();
         } else {

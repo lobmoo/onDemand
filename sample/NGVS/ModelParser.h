@@ -20,9 +20,53 @@ namespace dsf
 {
 namespace parser
 {
+    /*DT_BOOLEAN: 布尔，1字节（FALSE=0, TRUE=1）
+    DT_BYTE: 8位，1字节（16#00~16#FF）
+    DT_WORD: 16位，2字节（16#0000~16#FFFF）
+    DT_DWORD: 32位，4字节（16#0000_0000~16#FFFF_FFFF）
+    DT_LWORD: 64位，8字节（16#0000_0000_0000_0000~16#FFFF_FFFF_FFFF_FFFF）
+    DT_SINT: 8位有符号整数，1字节（-128~127）
+    DT_USINT: 8位无符号整数，1字节（0~255）
+    DT_INT: 16位有符号整数，2字节（-32768~32767）
+    DT_UINT: 16位无符号整数，2字节（0~65535）
+    DT_DINT: 32位有符号整数，4字节（-2147483648~2147483647）
+    DT_UDINT: 32位无符号整数，4字节（0~4_294_967_295）
+    DT_LINT: 64位有符号整数，8字节（-2^63~2^63-1）
+    DT_ULINT: 64位无符号整数，8字节（0~2^64-1）
+    DT_REAL: 32位浮点数，4字节（IEEE 754单精度）
+    DT_LREAL: 64位浮点数，8字节（IEEE 754双精度）
+    DT_CHAR: 单字节字符，1字节
+    DT_CHARSEQ: 单字节字符数组，占用[N+2]字节，N≤254，默认N=80（即82字节）
+    DT_STRING: 字符串（未明确具体大小，需参考实现）
+    DT_STRINGSEQ: 字符串数组（未明确具体大小，需参考实现）
+    DT_WCHAR: 宽字节字符，2字节
+    DT_WCHARSEQ: 宽字节字符数组，占用[N+2]字（即2*(N+2)字节），N≤16382，默认N=254（即508字节）
+    DT_WSTRING: 宽字符串（未明确具体大小，需参考实现）
+    DT_WSTRINGSEQ: 宽字符串数组（未明确具体大小，需参考实现）*/
+
     static const std::unordered_map<std::string, size_t> basicTypeSizes = {
-        {"int32", 4}, {"float32", 4}, {"int64", 8}, {"string", 82},
-        {"int16", 2}, {"int8", 1},    {"bool", 1},
+        {"DT_BOOLEAN", 1},    // 布尔，1字节
+        {"DT_BYTE", 1},       // 8位，1字节
+        {"DT_WORD", 2},       // 16位，2字节
+        {"DT_DWORD", 4},      // 32位，4字节
+        {"DT_LWORD", 8},      // 64位，8字节
+        {"DT_SINT", 1},       // 8位有符号整数，1字节
+        {"DT_USINT", 1},      // 8位无符号整数，1字节
+        {"DT_INT", 2},        // 16位有符号整数，2字节
+        {"DT_UINT", 2},       // 16位无符号整数，2字节
+        {"DT_DINT", 4},       // 32位有符号整数，4字节
+        {"DT_UDINT", 4},      // 32位无符号整数，4字节
+        {"DT_LINT", 8},       // 64位有符号整数，8字节
+        {"DT_ULINT", 8},      // 64位无符号整数，8字节
+        {"DT_REAL", 4},       // 32位浮点数，4字节
+        {"DT_LREAL", 8},      // 64位浮点数，8字节
+        {"DT_CHAR", 1},       // 单字节字符，1字节
+        {"DT_CHARSEQ", 82},   // 单字节字符数组，默认N=80，占82字节
+        {"DT_STRING", 82},    // 字符串，假设与DT_CHARSEQ相同
+        {"DT_WCHAR", 2},      // 宽字节字符，2字节
+        {"DT_WCHARSEQ", 508}, // 宽字节字符数组，默认N=254，占508字节
+        {"DT_WSTRING", 508}   // 宽字符串，假设与DT_WCHARSEQ相同
+        //ADD
     };
 
     typedef enum {
@@ -53,6 +97,8 @@ namespace parser
         std::vector<TreeNode> members; // 替换 mapKeyType 和 members
     };
 
+    bool forwardToBuffer(const std::string &type, const std::string &value,
+                         std::vector<uint8_t> &buffer);
     class ModelParser
     {
     public:
