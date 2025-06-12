@@ -32,20 +32,23 @@ namespace ngvs
     class KeyValueSerializer
     {
     public:
-        KeyValueSerializer(size_t alignment = 4);
+        static KeyValueSerializer &getInstance()
+        {
+            static KeyValueSerializer instance;
+            return instance;
+        }
         ~KeyValueSerializer();
-
-        bool serialize(std::string schema, const std::string ModelName, std::unordered_map<std::string, char *> &data);
-        const char* buffer() const;
+        bool serialize(const std::string &schema, const std::string &ModelName, 
+                       const std::unordered_map<std::string, char *> &data, std::vector<char> &outBuffer);
+        bool deserialize(const std::string &schema, const std::string &ModelName,
+                         const std::vector<char> &inBuffer, std::unordered_map<std::string, char *> &outData);
+    private:
+        KeyValueSerializer(size_t alignment = 2);
+        bool serializeKeyValuePair(parser::TreeNode &leaf, const std::string &key, const char* value, 
+                                   const parser::ModelDefine &modelDefine, std::vector<char> &outBuffer);
 
     private:
-        bool serializeKeyValuePair(const parser::TreeNode &memberInfo, const std::string &key, const char* value);
-        void delBuffer() {delete[] buffer_; buffer_ = nullptr; return;}
-
-    private:
-        char* buffer_;
         std::map<std::string, parser::ModelDefine> modelDefines_;
-        std::map<std::string, size_t> offsetMap_;
         size_t ALIGNMENT_;
     };
 
