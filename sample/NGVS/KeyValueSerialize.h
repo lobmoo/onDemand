@@ -26,7 +26,7 @@
 
 namespace dsf
 {
-namespace ngvs
+namespace kvpair
 {
 
     class KeyValueSerializer
@@ -39,13 +39,14 @@ namespace ngvs
         }
         ~KeyValueSerializer();
         bool serialize(const std::string &schema, const std::string &ModelName, 
-                       const std::unordered_map<std::string, char *> &data, std::vector<char> &outBuffer);
+                       const std::unordered_map<std::string, std::string> &data, std::vector<char> &outBuffer);
         bool deserialize(const std::string &schema, const std::string &ModelName,
-                         const std::vector<char> &inBuffer, std::unordered_map<std::string, char *> &outData);
+                         const std::vector<char> &inBuffer, std::unordered_map<std::string, std::string> &outData);
     private:
         KeyValueSerializer(size_t alignment = 2);
-        bool serializeKeyValuePair(parser::TreeNode &leaf, const std::string &key, const char* value, 
+        bool serializeKeyValuePair(parser::TreeNode &leaf, const std::string &key, const std::string &value, 
                                    const parser::ModelDefine &modelDefine, std::vector<char> &outBuffer);
+        size_t alignOffset(size_t offset, size_t alignment);
 
     private:
         std::map<std::string, parser::ModelDefine> modelDefines_;
