@@ -138,6 +138,93 @@ namespace parser
         }
     }
 
+    std::string BufferToString(const std::vector<uint8_t>& buffer, const std::string& type) {
+    auto checkSize = [&](size_t expected) {
+        if (buffer.size() < expected) {
+            throw std::out_of_range("Buffer too small for type: " + type);
+        }
+    };
+
+    const uint8_t* data = buffer.data();
+
+    if (type == "DT_BOOLEAN") {
+        checkSize(1);
+        return buffer[0] ? "true" : "false";
+    } else if (type == "DT_BYTE" || type == "DT_USINT") {
+        checkSize(1);
+        return std::to_string(data[0]);
+    } else if (type == "DT_SINT") {
+        checkSize(1);
+        int8_t val;
+        std::memcpy(&val, data, 1);
+        return std::to_string(val);
+    } else if (type == "DT_WORD" || type == "DT_UINT") {
+        checkSize(2);
+        uint16_t val;
+        std::memcpy(&val, data, 2);
+        return std::to_string(val);
+    } else if (type == "DT_INT") {
+        checkSize(2);
+        int16_t val;
+        std::memcpy(&val, data, 2);
+        return std::to_string(val);
+    } else if (type == "DT_DWORD" || type == "DT_UDINT") {
+        checkSize(4);
+        uint32_t val;
+        std::memcpy(&val, data, 4);
+        return std::to_string(val);
+    } else if (type == "DT_DINT") {
+        checkSize(4);
+        int32_t val;
+        std::memcpy(&val, data, 4);
+        return std::to_string(val);
+    } else if (type == "DT_LWORD" || type == "DT_ULINT") {
+        checkSize(8);
+        uint64_t val;
+        std::memcpy(&val, data, 8);
+        return std::to_string(val);
+    } else if (type == "DT_LINT") {
+        checkSize(8);
+        int64_t val;
+        std::memcpy(&val, data, 8);
+        return std::to_string(val);
+    } else if (type == "DT_REAL") {
+        checkSize(4);
+        float val;
+        std::memcpy(&val, data, 4);
+        return std::to_string(val);
+    } else if (type == "DT_LREAL") {
+        checkSize(8);
+        double val;
+        std::memcpy(&val, data, 8);
+        return std::to_string(val);
+    } else if (type == "DT_CHAR") {
+        checkSize(1);
+        return std::string(1, static_cast<char>(data[0]));
+    } else if (type == "DT_STRING" || type == "DT_CHARSEQ") {
+        checkSize(82);
+        uint16_t strlen_bytes;
+        std::memcpy(&strlen_bytes, data, 2);
+        if (strlen_bytes > 80) strlen_bytes = 80;
+        return std::string(reinterpret_cast<const char*>(data + 2), strlen_bytes);
+    } else if (type == "DT_WCHAR") {
+        checkSize(2);
+        wchar_t wchar;
+        std::memcpy(&wchar, data, 2);
+        return std::string(1, static_cast<char>(wchar));  // 简化处理
+    } else if (type == "DT_WSTRING" || type == "DT_WCHARSEQ") {
+        checkSize(508);
+        uint16_t wlen;
+        std::memcpy(&wlen, data, 2);
+        if (wlen > 254) wlen = 254;
+        std::wstring wstr(reinterpret_cast<const wchar_t*>(data + 2), wlen);
+        std::string result;
+        for (wchar_t wc : wstr) result += static_cast<char>(wc);  // 简化
+        return result;
+    }
+
+    throw std::invalid_argument("Unsupported type: " + type);
+}
     ModelParser::ModelParser(size_t alignment) : ALIGNMENT_(alignment)
     {
     }

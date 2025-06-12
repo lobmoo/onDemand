@@ -99,6 +99,7 @@ namespace parser
 
     bool forwardToBuffer(const std::string &type, const std::string &value,
                          std::vector<uint8_t> &buffer);
+    std::string forwardToString(const std::string &type, const std::vector<uint8_t> &buffer);
     class ModelParser
     {
     public:
