@@ -57,6 +57,9 @@ namespace ngvs
         inline bool map2Buffer(const ModelDefine &model,
                                const std::unordered_map<std::string, std::string> &inData,
                                std::vector<char> &outBuffer);
+        inline bool buffer2Map(const ModelDefine &model, const std::vector<char> &inBuffer,
+                               std::unordered_map<std::string, std::string> &outData);
+
     private:
         std::map<std::string, ModelDefine> modelDefines_;
         size_t ALIGNMENT_;
