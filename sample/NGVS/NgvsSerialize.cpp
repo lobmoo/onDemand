@@ -40,6 +40,7 @@ namespace ngvs
         size_t offset = 0;
         ModelParser parser;
         std::vector<TreeNode> leaves;
+        size_t memberSize = 0;
         std::vector<uint8_t> memberData;
         parser.findNodeAllLeaves(model, leaves);
         for (const auto &leaf : leaves) {
@@ -47,6 +48,10 @@ namespace ngvs
                       << ", Size: " << leaf.size << ", Offset: " << leaf.offset;
         }
         for (auto &leaf : leaves) {
+            if (offset + memberSize > outBuffer.size()) {
+                LOG(error) << "Buffer overflow: offset + memberSize out of range";
+                return false;
+            }
             auto it = inData.find(leaf.name);
             if (it == inData.end()) {
                 LOG(warning) << "Member not found in input data: " << leaf.name;
@@ -59,7 +64,7 @@ namespace ngvs
             }
 
             /*找到了就好好整*/
-            size_t memberSize = leaf.size;
+            memberSize = leaf.size;
             offset = alignOffset(offset, ALIGNMENT_);
             memberData.clear();
             try {
@@ -70,8 +75,7 @@ namespace ngvs
                 //todo 后续考虑是否继续
                 return false;
             }
-            std::memcpy(outBuffer.data() + offset, memberData.data(),
-                        std::min(it->second.size(), memberSize));
+            std::memcpy(outBuffer.data() + offset, memberData.data(), memberSize);
             offset += memberSize;
         }
         return true;
@@ -84,6 +88,7 @@ namespace ngvs
         outData.clear();
         std::vector<uint8_t> memberData;
         size_t offset = 0;
+        size_t memberSize = 0;
         ModelParser parser;
         std::vector<TreeNode> leaves;
         parser.findNodeAllLeaves(model, leaves);
@@ -93,10 +98,14 @@ namespace ngvs
         }
 
         for (auto &leaf : leaves) {
+            if (offset + memberSize > inBuffer.size()) {
+                LOG(error) << "Buffer overflow: offset + memberSize out of range";
+                return false;
+            }
 
-            size_t memberSize = leaf.size;
+            memberSize = leaf.size;
             offset = alignOffset(offset, ALIGNMENT_);
-
+            memberData.clear();
             memberData = std::vector<uint8_t>(inBuffer.data() + offset,
                                               inBuffer.data() + offset + leaf.size);
             try {
@@ -140,7 +149,7 @@ namespace ngvs
         // /*找到数据类型*/
         ModelDefine model = it->second;
 
-        /*按照大小对udt进行排序,并且结构体放到最前面*/
+        // /*按照大小对udt进行排序,并且结构体放到最前面*/
         std::stable_sort(model.members.begin(), model.members.end(),
                          [](const TreeNode &a, const TreeNode &b) {
                              bool a_is_nonbasic = a.type == "nonBasic";
@@ -154,11 +163,11 @@ namespace ngvs
                              }
                              return false;
                          });
-        parser.printmembersInfo(model.members);
-        if (!buffer2Map(model, inBuffer, outData)) {
-            LOG(error) << "Deserialization failed";
-            return false;
-        }
+        // parser.printmembersInfo(model.members);
+        // if (!buffer2Map(model, inBuffer, outData)) {
+        //     LOG(error) << "Deserialization failed";
+        //     return false;
+        // }
         return true;
     }
 
