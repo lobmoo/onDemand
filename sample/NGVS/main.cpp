@@ -51,9 +51,9 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    // for(auto &pair : outData) {
-    //     LOG(info) << "Key: " << pair.first << ", Value: " << pair.second;
-    // }
+    for(auto &pair : outData) {
+        LOG(info) << "Key: " << pair.first << ", Value: " << pair.second;
+    }
 
     while (std::cin.get() != '\n') {
     }

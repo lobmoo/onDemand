@@ -61,7 +61,7 @@ namespace ngvs
                                std::unordered_map<std::string, std::string> &outData);
 
     private:
-        std::map<std::string, ModelDefine> modelDefines_;
+        std::unordered_map<std::string, ModelDefine> modelDefines_;
         size_t ALIGNMENT_;
     };
 

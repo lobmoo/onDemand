@@ -104,7 +104,7 @@ namespace parser
     {
     public:
         ModelParser(size_t alignment = 2);
-        error_code_t parseSchema(std::map<std::string, ModelDefine> &modelDefines,
+        error_code_t parseSchema(std::unordered_map<std::string, ModelDefine> &modelDefines,
                                  const std::string &schema, std::string &errorMsg);
         bool findNodeAndGetLeaves(const ModelDefine &model, const std::string &targetName,
                                   std::vector<TreeNode> &leaves);
@@ -121,17 +121,12 @@ namespace parser
                               const std::string &rootName);
         void
         resolveModelMembers(const std::string &currentModelNameAndVersion,
-                            std::map<std::string, ModelDefine> &allNodes,
+                            std::unordered_map<std::string, ModelDefine> &allNodes,
                             const std::map<std::string, boost::property_tree::ptree> &structNodes,
                             std::vector<TreeNode> &currentModelMembers, size_t &modelSize,
                             size_t &offset, const std::string &modelVersion,
                             const std::string &parentName = "");
-        void resolveModelMembers_ex(
-            const std::string &currentModelNameAndVersion,
-            std::map<std::string, ModelDefine> &allNodes,
-            const std::map<std::string, boost::property_tree::ptree> &structNodes,
-            std::vector<TreeNode> &currentModelMembers, size_t &modelSize, size_t &offset,
-            const std::string &modelVersion, const std::string &parentName = "");
+     
         size_t getBasicTypeSize(const std::string &type);
 
         void updateChildNames(TreeNode &node, const std::string &parentPrefix);

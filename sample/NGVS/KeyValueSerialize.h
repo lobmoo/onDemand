@@ -49,7 +49,7 @@ namespace kvpair
         size_t alignOffset(size_t offset, size_t alignment);
 
     private:
-        std::map<std::string, parser::ModelDefine> modelDefines_;
+        std::unordered_map<std::string, parser::ModelDefine> modelDefines_;
         size_t ALIGNMENT_;
     };
 

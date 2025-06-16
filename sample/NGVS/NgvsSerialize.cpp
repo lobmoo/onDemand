@@ -145,29 +145,26 @@ namespace ngvs
             LOG(error) << "model not found: " << ModelName;
             return false;
         }
-
         // /*找到数据类型*/
         ModelDefine model = it->second;
-
-        // /*按照大小对udt进行排序,并且结构体放到最前面*/
-        std::stable_sort(model.members.begin(), model.members.end(),
-                         [](const TreeNode &a, const TreeNode &b) {
-                             bool a_is_nonbasic = a.type == "nonBasic";
-                             bool b_is_nonbasic = b.type == "nonBasic";
-
-                             if (a_is_nonbasic != b_is_nonbasic) {
-                                 return a_is_nonbasic > b_is_nonbasic;
-                             }
-                             if (a_is_nonbasic && b_is_nonbasic) {
-                                 return a.size > b.size;
-                             }
-                             return false;
-                         });
-        // parser.printmembersInfo(model.members);
-        // if (!buffer2Map(model, inBuffer, outData)) {
-        //     LOG(error) << "Deserialization failed";
-        //     return false;
-        // }
+        parser.printmembersInfo(model.members);
+        // // /*按照大小对udt进行排序,并且结构体放到最前面*/
+        // std::stable_sort(model.members.begin(), model.members.end(),
+        //                  [](const TreeNode &a, const TreeNode &b) {
+        //                      bool a_is_nonbasic = a.type == "nonBasic";
+        //                      bool b_is_nonbasic = b.type == "nonBasic";
+        //                      if (a_is_nonbasic != b_is_nonbasic) {
+        //                          return a_is_nonbasic && !b_is_nonbasic;
+        //                      }
+        //                      if (a_is_nonbasic && b_is_nonbasic) {
+        //                          return a.size > b.size; // 大的在前面
+        //                      }
+        //                      return false;
+        //                  });
+        if (!buffer2Map(model, inBuffer, outData)) {
+            LOG(error) << "Deserialization failed";
+            return false;
+        }
         return true;
     }
 
