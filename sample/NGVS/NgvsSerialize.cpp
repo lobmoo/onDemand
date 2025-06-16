@@ -38,25 +38,25 @@ namespace ngvs
         outBuffer.resize(model.size);
 
         size_t offset = 0;
-        ModelParser parser;
-        std::vector<TreeNode> leaves;
+        auto  &parser = ModelParser::getInstance();
+        std::vector<std::shared_ptr<dsf::parser::TreeNode>> leaves;
         size_t memberSize = 0;
         std::vector<uint8_t> memberData;
         parser.findNodeAllLeaves(model, leaves);
         for (const auto &leaf : leaves) {
-            LOG(info) << "Leaf Node: " << leaf.name << ", Type: " << leaf.type
-                      << ", Size: " << leaf.size << ", Offset: " << leaf.offset;
+            LOG(info) << "Leaf Node: " << leaf->name << ", Type: " << leaf->type
+                      << ", Size: " << leaf->size << ", Offset: " << leaf->offset;
         }
         for (auto &leaf : leaves) {
             if (offset + memberSize > outBuffer.size()) {
                 LOG(error) << "Buffer overflow: offset + memberSize out of range";
                 return false;
             }
-            auto it = inData.find(leaf.name);
+            auto it = inData.find(leaf->name);
             if (it == inData.end()) {
-                LOG(warning) << "Member not found in input data: " << leaf.name;
+                LOG(warning) << "Member not found in input data: " << leaf->name;
                 /*没有找到就填个空就继续*/
-                size_t memberSize = leaf.size;
+                size_t memberSize = leaf->size;
                 offset = alignOffset(offset, ALIGNMENT_);
                 std::memset(outBuffer.data() + offset, 0, memberSize);
                 offset += memberSize;
@@ -64,11 +64,11 @@ namespace ngvs
             }
 
             /*找到了就好好整*/
-            memberSize = leaf.size;
+            memberSize = leaf->size;
             offset = alignOffset(offset, ALIGNMENT_);
             memberData.clear();
             try {
-                dsf::parser::forwardToBuffer(leaf.type, it->second, memberData);
+                dsf::parser::forwardToBuffer(leaf->type, it->second, memberData);
             } catch (const std::exception &e) {
                 LOG(error) << "Error converting value for key: " << it->first
                            << ", Error: " << e.what();
@@ -89,12 +89,12 @@ namespace ngvs
         std::vector<uint8_t> memberData;
         size_t offset = 0;
         size_t memberSize = 0;
-        ModelParser parser;
-        std::vector<TreeNode> leaves;
+        auto &parser = ModelParser::getInstance();
+        std::vector<std::shared_ptr<dsf::parser::TreeNode>> leaves;
         parser.findNodeAllLeaves(model, leaves);
         for (const auto &leaf : leaves) {
-            LOG(info) << "Leaf Node: " << leaf.name << ", Type: " << leaf.type
-                      << ", Size: " << leaf.size << ", Offset: " << leaf.offset;
+            LOG(info) << "Leaf Node: " << leaf->name << ", Type: " << leaf->type
+                      << ", Size: " << leaf->size << ", Offset: " << leaf->offset;
         }
 
         for (auto &leaf : leaves) {
@@ -103,15 +103,15 @@ namespace ngvs
                 return false;
             }
 
-            memberSize = leaf.size;
+            memberSize = leaf->size;
             offset = alignOffset(offset, ALIGNMENT_);
             memberData.clear();
             memberData = std::vector<uint8_t>(inBuffer.data() + offset,
-                                              inBuffer.data() + offset + leaf.size);
+                                              inBuffer.data() + offset + leaf->size);
             try {
-                outData[leaf.name] = forwardToString(memberData, leaf.type);
+                outData[leaf->name] = forwardToString(memberData, leaf->type);
             } catch (const std::exception &e) {
-                LOG(error) << "Error converting value for key: " << leaf.name
+                LOG(error) << "Error converting value for key: " << leaf->name
                            << ", Error: " << e.what();
                 //todo 后续考虑是否继续
                 return false;
@@ -121,46 +121,40 @@ namespace ngvs
         return true;
     }
 
-    bool NgvsSerializer::deserialize(const std::string &schema, const std::string &ModelName,
+    void NgvsSerializer::NgvsModelSort(ModelDefine &model)
+    { /*按照大小对udt进行排序,并且结构体放到最前面*/
+
+        std::stable_sort(
+            model.members.begin(), model.members.end(),
+            [](const std::shared_ptr<TreeNode> &a, const std::shared_ptr<TreeNode> &b) {
+                bool a_is_nonbasic = a->type == "nonBasic";
+                bool b_is_nonbasic = b->type == "nonBasic";
+                if (a_is_nonbasic != b_is_nonbasic) {
+                    return a_is_nonbasic && !b_is_nonbasic;
+                }
+                if (a_is_nonbasic && b_is_nonbasic) {
+                    return a->size > b->size; // 大的在前面
+                }
+                return false;
+            });
+    }
+
+    bool NgvsSerializer::deserialize(const std::string &ModelName,
                                      const std::vector<char> &inBuffer,
                                      std::unordered_map<std::string, std::string> &outData)
     {
-        ModelParser parser;
-        std::string error_message;
-
-        /*先找一下，找不到再解析*/
-        auto modelDefines = modelDefines_.find(ModelName);
-        if (modelDefines == modelDefines_.end()) {
-
-            /*解析xml数据*/
-            error_code_t ret = parser.parseSchema(modelDefines_, schema, error_message);
-            if (ret != dsf::ngvs::MODEL_PARSER_OK) {
-                LOG(error) << "parse schema failed, ret: " << ret;
-                return false;
-            }
-        }
-        /*2.解析model下面的数�?类型*/
-        auto it = modelDefines_.find(ModelName);
-        if (it == modelDefines_.end()) {
+        auto &parser = ModelParser::getInstance();
+        auto modelDefines = parser.getModelDefines();
+        auto it = modelDefines.find(ModelName);
+        if (it == modelDefines.end()) {
             LOG(error) << "model not found: " << ModelName;
             return false;
         }
         // /*找到数据类型*/
         ModelDefine model = it->second;
-        parser.printmembersInfo(model.members);
-        // // /*按照大小对udt进行排序,并且结构体放到最前面*/
-        // std::stable_sort(model.members.begin(), model.members.end(),
-        //                  [](const TreeNode &a, const TreeNode &b) {
-        //                      bool a_is_nonbasic = a.type == "nonBasic";
-        //                      bool b_is_nonbasic = b.type == "nonBasic";
-        //                      if (a_is_nonbasic != b_is_nonbasic) {
-        //                          return a_is_nonbasic && !b_is_nonbasic;
-        //                      }
-        //                      if (a_is_nonbasic && b_is_nonbasic) {
-        //                          return a.size > b.size; // 大的在前面
-        //                      }
-        //                      return false;
-        //                  });
+
+        NgvsModelSort(model);
+        ModelParser::printmembersInfo(model.members);
         if (!buffer2Map(model, inBuffer, outData)) {
             LOG(error) << "Deserialization failed";
             return false;
@@ -168,27 +162,16 @@ namespace ngvs
         return true;
     }
 
-    bool NgvsSerializer::serialize(const std::string &schema, const std::string &ModelName,
+    bool NgvsSerializer::serialize(const std::string &ModelName,
                                    const std::unordered_map<std::string, std::string> &inData,
                                    std::vector<char> &outBuffer)
     {
-        ModelParser parser;
-        std::string error_message;
+        auto &parser = ModelParser::getInstance();
 
-        /*先找一下，找不到再解析*/
-        auto modelDefines = modelDefines_.find(ModelName);
-        if (modelDefines == modelDefines_.end()) {
-
-            /*解析xml数据*/
-            error_code_t ret = parser.parseSchema(modelDefines_, schema, error_message);
-            if (ret != dsf::ngvs::MODEL_PARSER_OK) {
-                LOG(error) << "parse schema failed, ret: " << ret;
-                return false;
-            }
-        }
-        /*2.解析model下面的数�?类型*/
-        auto it = modelDefines_.find(ModelName);
-        if (it == modelDefines_.end()) {
+        auto modelDefines = parser.getModelDefines();
+        /*解析model下面的数�?类型*/
+        auto it = modelDefines.find(ModelName);
+        if (it == modelDefines.end()) {
             LOG(error) << "model not found: " << ModelName;
             return false;
         }
@@ -201,21 +184,8 @@ namespace ngvs
         // parser.printmembersInfo(model.members);
 #endif
         /*按照大小对udt进行排序,并且结构体放到最前面*/
-
-        std::stable_sort(model.members.begin(), model.members.end(),
-                         [](const TreeNode &a, const TreeNode &b) {
-                             bool a_is_nonbasic = a.type == "nonBasic";
-                             bool b_is_nonbasic = b.type == "nonBasic";
-
-                             if (a_is_nonbasic != b_is_nonbasic) {
-                                 return a_is_nonbasic > b_is_nonbasic;
-                             }
-                             if (a_is_nonbasic && b_is_nonbasic) {
-                                 return a.size > b.size;
-                             }
-                             return false;
-                         });
-        parser.printmembersInfo(model.members);
+        NgvsModelSort(model);
+        ModelParser::printmembersInfo(model.members);
         if (!map2Buffer(model, inData, outBuffer)) {
             LOG(error) << "Serialization failed";
             return false;
@@ -223,55 +193,9 @@ namespace ngvs
         return true;
     }
 
-    bool NgvsSerializer::serialize(const std::string &schema, const std::string &ModelName,
-                                   const std::vector<char> &inBuffer, std::vector<char> &outBuffer)
+    bool NgvsSerializer::serialize(const std::string &ModelName, const std::vector<char> &inBuffer,
+                                   std::vector<char> &outBuffer)
     {
-        ModelParser parser;
-        std::string error_message;
-
-        /*1.解析xml数据*/
-        error_code_t ret = parser.parseSchema(modelDefines_, schema, error_message);
-        if (ret != dsf::ngvs::MODEL_PARSER_OK) {
-            LOG(error) << "parse schema failed, ret: " << ret;
-            return false;
-        }
-
-        /*2.解析model下面的数�?类型*/
-        auto it = modelDefines_.find(ModelName);
-        if (it == modelDefines_.end()) {
-            LOG(error) << "model not found: " << ModelName;
-            return false;
-        }
-
-        // /*找到数据类型*/
-        ModelDefine model = it->second;
-
-#ifdef NGVS_DEBUG
-        //  parser.printAllLeafNodesInfo(model);
-        parser.printmembersInfo(model.members);
-#endif
-        /*按照大小对udt进行排序,并且结构体放到最前面*/
-
-        std::stable_sort(model.members.begin(), model.members.end(),
-                         [](const TreeNode &a, const TreeNode &b) {
-                             bool a_is_nonbasic = a.type == "nonBasic";
-                             bool b_is_nonbasic = b.type == "nonBasic";
-
-                             if (a_is_nonbasic != b_is_nonbasic) {
-                                 return a_is_nonbasic > b_is_nonbasic;
-                             }
-                             if (a_is_nonbasic && b_is_nonbasic) {
-                                 return a.size > b.size;
-                             }
-                             return false;
-                         });
-
-        // std::vector<TreeNode> leaves;
-        // parser.findNodeAndGetLeaves(model, "long_array", leaves);
-        // for(auto &leaf : leaves) {
-        //     LOG(info) << "Leaf Node: " << leaf.name << ", Type: " << leaf.type
-        //               << ", Size: " << leaf.size << ", Offset: " << leaf.offset;
-        // }
 
         return true;
     }

@@ -1,0 +1,10 @@
+<models>
+    <struct name="InnerModel2" version="1.0">
+        <member name="third" type="DT_DINT"/>
+        <member name="complex_member3" type="nonBasic" nonBasicTypeName="InnerModel3" version="1.0"/>
+    </struct>
+
+    <struct name="InnerModel5" version="1.0">
+        <member name="complex_member6" type="nonBasic" nonBasicTypeName="InnerModel6" version="1.0"/>
+    </struct>
+</models>

@@ -57,10 +57,10 @@ void test1()
 {
     /* 1. 初始化日志和xml内容 */
     Logger::Instance().Init("log/myapp.log", Logger::console, Logger::debug, 60, 5);
-    std::string xmlContent = readXmlFile("/home/weiqb/src/test_demo/sample/NGVS/model.xml");
+    std::string xmlContent0 = readXmlFile("/home/weiqb/src/test_demo/sample/NGVS/model0.xml");
+    std::string xmlContent1 = readXmlFile("/home/weiqb/src/test_demo/sample/NGVS/model1.xml");
     std::string xmlContent2 = readXmlFile("/home/weiqb/src/test_demo/sample/NGVS/model2.xml");
-    auto &serializer = dsf::kvpair::KeyValueSerializer::getInstance();
-
+    auto serializer = dsf::kvpair::KeyValueSerializer();
     /* 2. 定义输入数据和输出空间 */
     // 基本元素
     float first = 1111111;  
@@ -159,10 +159,13 @@ void test1()
     std::vector<char> outBuff;
 
     /* 2.5解析model */
-    serializer.init(xmlContent);
-    // serializer.init(xmlContent2);
+    auto &parser = dsf::parser::ModelParser::getInstance();
+    std::string ret;
+    parser.init(xmlContent0, ret);
+    parser.init(xmlContent1, ret);
+    parser.init(xmlContent2, ret);
     /* 3.序列化 */
-    serializer.serialize("InnerModel33:1.0", data, outBuff);
+    serializer.serialize("InnerModel44:1.0", data, outBuff);
 
     
     /* 4.输出序列化结果 */
@@ -171,7 +174,7 @@ void test1()
 
 
     std::unordered_map<std::string, std::string> outData;
-    serializer.deserialize("InnerModel33:1.0", outBuff, outData);
+    serializer.deserialize("InnerModel44:1.0", outBuff, outData);
 
     LOG(info) << "first: " << outData["first"];
     LOG(info) << "second: " << outData["second"];

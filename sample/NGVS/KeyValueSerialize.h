@@ -32,27 +32,18 @@ namespace kvpair
     class KeyValueSerializer
     {
     public:
-        static KeyValueSerializer &getInstance()
-        {
-            static KeyValueSerializer instance;
-            return instance;
-        }
+        KeyValueSerializer(size_t alignment = 2);
         ~KeyValueSerializer();
-        bool init(const std::string &schema);
         bool serialize(const std::string &ModelName, const std::unordered_map<std::string, std::string> &data, std::vector<char> &outBuffer);
         bool deserialize(const std::string &ModelName, const std::vector<char> &inBuffer, std::unordered_map<std::string, std::string> &outData);
     private:
-        KeyValueSerializer(size_t alignment = 2);
-        bool serializeKeyValuePair(parser::TreeNode &leaf, const std::string &key, const std::string &value, 
-                                   const parser::ModelDefine &modelDefine, std::vector<char> &outBuffer);
         size_t alignOffset(size_t offset, size_t alignment);
 
     private:
-        std::unordered_map<std::string, parser::ModelDefine> modelDefines_;
         size_t ALIGNMENT_;
     };
 
-} // namespace ngvs
+} // namespace kvpair
 } // namespace dsf
 
 #endif
