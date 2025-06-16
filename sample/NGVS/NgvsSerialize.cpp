@@ -168,7 +168,6 @@ namespace ngvs
                                    std::vector<char> &outBuffer)
     {
         auto &parser = ModelParser::getInstance();
-
         auto modelDefines = parser.getModelDefines();
         /*解析model下面的数�?类型*/
         auto it = modelDefines.find(ModelName);
@@ -180,19 +179,7 @@ namespace ngvs
         ModelDefine model = it->second;   
         /*按照大小对udt进行排序,并且结构体放到最前面*/
 
-        std::stable_sort(model.members.begin(), model.members.end(),
-                         [](const TreeNode &a, const TreeNode &b) {
-                             bool a_is_nonbasic = a.type == "nonBasic";
-                             bool b_is_nonbasic = b.type == "nonBasic";
-
-                             if (a_is_nonbasic != b_is_nonbasic) {
-                                 return a_is_nonbasic > b_is_nonbasic;
-                             }
-                             if (a_is_nonbasic && b_is_nonbasic) {
-                                 return a.size > b.size;
-                             }
-                             return false;
-                         });
+        NgvsModelSort(model);
         parser.printmembersInfo(model.members);
         if (!map2Buffer(model, inData, outBuffer)) {
             LOG(error) << "Serialization failed";
