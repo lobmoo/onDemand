@@ -175,14 +175,8 @@ namespace ngvs
             LOG(error) << "model not found: " << ModelName;
             return false;
         }
-
         // /*找到数据类型*/
-        ModelDefine model = it->second;
-
-#ifdef NGVS_DEBUG
-        //parser.printAllLeafNodesInfo(model);
-        // parser.printmembersInfo(model.members);
-#endif
+        ModelDefine model = it->second;   
         /*按照大小对udt进行排序,并且结构体放到最前面*/
         NgvsModelSort(model);
         ModelParser::printmembersInfo(model.members);

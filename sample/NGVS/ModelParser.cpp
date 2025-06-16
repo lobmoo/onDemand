@@ -69,6 +69,7 @@ namespace parser
                 uint8_t val = static_cast<uint8_t>(value[0]);
                 std::memcpy(buffer.data(), &val, it->second);
             } else if (type == "DT_CHARSEQ" || type == "DT_STRING") {
+                std::memcpy(buffer.data(), value.data(), it->second);
             } else if (type == "DT_WCHAR") {
             } else if (type == "DT_WCHARSEQ" || type == "DT_WSTRING") { // 剩余字节由resize初始化为0
             } else {
