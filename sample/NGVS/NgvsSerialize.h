@@ -32,13 +32,10 @@ namespace ngvs
     class NgvsSerializer
     {
     public:
-        static NgvsSerializer &getInstance()
-        {
-            static NgvsSerializer instance;
-            return instance;
-        }
+        NgvsSerializer();
+
         ~NgvsSerializer();
-        bool init(const std::string &schema);
+
         bool serialize(const std::string &ModelName, const std::vector<char> &inBuffer,
                        std::vector<char> &outBuffer);
         bool serialize(const std::string &ModelName,
@@ -46,12 +43,8 @@ namespace ngvs
                        std::vector<char> &outBuffer);
         bool deserialize(const std::string &ModelName, const std::vector<char> &inBuffer,
                          std::unordered_map<std::string, std::string> &outData);
-        const std::vector<char> &buffer() const;
 
     private:
-        NgvsSerializer();
-        NgvsSerializer(const NgvsSerializer &) = delete;
-        NgvsSerializer &operator=(const NgvsSerializer &) = delete;
         size_t alignOffset(size_t offset, size_t alignment);
         inline bool map2Buffer(const ModelDefine &model,
                                const std::unordered_map<std::string, std::string> &inData,
@@ -61,7 +54,6 @@ namespace ngvs
         void NgvsModelSort(ModelDefine &model);
 
     private:
-        std::unordered_map<std::string, ModelDefine> modelDefines_;
         size_t ALIGNMENT_;
     };
 

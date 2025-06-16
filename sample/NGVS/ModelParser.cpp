@@ -215,8 +215,6 @@ namespace parser
             errorMsg = e.what();
             return ERROR_MODEL_PARSE_FAILED;
         }
-
-        std::map<std::string, boost::property_tree::ptree> structNodes;
         try {
             for (const auto &modelNode : ptInput.get_child("models")) {
                 if (modelNode.first == "struct") {
@@ -225,34 +223,40 @@ namespace parser
                     model.modelVersion = modelNode.second.get<std::string>("<xmlattr>.version");
                     model.schema = child2xml(modelNode.second, "struct");
                     model.size = 0;
-                    modelDefines[model.modelName + ":" + model.modelVersion] = model;
-                    structNodes[model.modelName + ":" + model.modelVersion] = modelNode.second;
+                    if (modelDefines.find(model.modelName + ":" + model.modelVersion)
+                        == modelDefines.end()) {
+                        doParseModels.push_back(model.modelName + ":" + model.modelVersion);
+                        modelDefines[model.modelName + ":" + model.modelVersion] = model;
+                        structNodes_[model.modelName + ":" + model.modelVersion] = modelNode.second;    
+                    } else {
+                        LOG(warning) << "Model already exists: " << model.modelName << ":"
+                                     << model.modelVersion;
+                    }
                 }
             }
 
         } catch (const std::exception &e) {
             LOG(error) << "Error parsing XML schema: " << e.what();
         }
-
-        for (auto &it:modelDefines) {
-            const std::string &modelNameAndVersion = it.first;
-            auto &modelDefine = it.second;
+        for (auto &it : doParseModels) {
+            LOG(info) << "Model to parse: " << it;
+            const std::string &modelNameAndVersion = it;
+            auto &modelDefine = modelDefines[it];
             size_t modelSize = 0;
             size_t offset = 0;
-            resolveModelMembers(modelNameAndVersion, modelDefines, structNodes, modelDefine.members,
-                                modelSize, offset, modelDefine.modelVersion);
+            resolveModelMembers(modelNameAndVersion, modelDefines, modelDefine.members, modelSize,
+                                offset, modelDefine.modelVersion);
             modelDefine.size = (offset + ALIGNMENT_ - 1) / ALIGNMENT_ * ALIGNMENT_;
         }
-
         return MODEL_PARSER_OK;
     }
 
-    void ModelParser::resolveModelMembers(
-        const std::string &currentModelNameAndVersion,
-        std::unordered_map<std::string, ModelDefine> &allNodes,
-        const std::map<std::string, boost::property_tree::ptree> &structNodes,
-        std::vector<std::shared_ptr<TreeNode>> &currentModelMembers, size_t &modelSize,
-        size_t &offset, const std::string &modelVersion, const std::string &parentName)
+    void
+    ModelParser::resolveModelMembers(const std::string &currentModelNameAndVersion,
+                                     std::unordered_map<std::string, ModelDefine> &allNodes,
+                                     std::vector<std::shared_ptr<TreeNode>> &currentModelMembers,
+                                     size_t &modelSize, size_t &offset,
+                                     const std::string &modelVersion, const std::string &parentName)
     {
         if (ALIGNMENT_ <= 0) {
             LOG(error) << "Alignment must be greater than 0, current value: " << ALIGNMENT_;
@@ -264,8 +268,9 @@ namespace parser
             return;
         }
         visiting.insert(currentModelNameAndVersion);
-        const auto &itStructNode = structNodes.find(currentModelNameAndVersion);
-        if (itStructNode == structNodes.end()) {
+
+        const auto &itStructNode = structNodes_.find(currentModelNameAndVersion);
+        if (itStructNode == structNodes_.end()) {
             LOG(warning) << "Failed to find struct node for model: " << currentModelNameAndVersion;
             visiting.erase(currentModelNameAndVersion);
             return;
@@ -279,8 +284,8 @@ namespace parser
         if (baseTypeNameOptional && baseTypeVersionOptional) {
             std::string baseTypeKey =
                 baseTypeNameOptional.get() + ":" + baseTypeVersionOptional.get();
-            resolveModelMembers(baseTypeKey, allNodes, structNodes, currentModelMembers, modelSize,
-                                offset, baseTypeVersionOptional.get(), parentName);
+            resolveModelMembers(baseTypeKey, allNodes, currentModelMembers, modelSize, offset,
+                                baseTypeVersionOptional.get(), parentName);
         } else if (baseTypeNameOptional) {
             LOG(warning) << "baseType '" << baseTypeNameOptional.get()
                          << "' has no version specified in model: " << currentModelNameAndVersion;
@@ -363,9 +368,9 @@ namespace parser
                                         std::vector<std::shared_ptr<TreeNode>> elementMembers;
                                         size_t elementSize = 0;
                                         size_t elementOffset = 0; // 使用相对偏移量解析元素
-                                        resolveModelMembers(
-                                            nonBasicKey, allNodes, structNodes, elementMembers,
-                                            elementSize, elementOffset, nodeVersion, elementName);
+                                        resolveModelMembers(nonBasicKey, allNodes, elementMembers,
+                                                            elementSize, elementOffset, nodeVersion,
+                                                            elementName);
                                         // 对齐元素大小
                                         size_t singleElementSize = (elementSize + ALIGNMENT_ - 1)
                                                                    / ALIGNMENT_ * ALIGNMENT_;
@@ -411,7 +416,7 @@ namespace parser
                                 };
                                 generateArrayElements({}, currentOffset);
                                 arrayNode->size = (currentOffset - startingOffset + ALIGNMENT_ - 1)
-                                                 / ALIGNMENT_ * ALIGNMENT_;
+                                                  / ALIGNMENT_ * ALIGNMENT_;
                                 offset = currentOffset;
                             } else {
                                 LOG(error)
@@ -429,7 +434,8 @@ namespace parser
                                     for (int idx : indices) {
                                         elementName += "[" + std::to_string(idx) + "]";
                                     }
-                                    std::shared_ptr<TreeNode> elementNode = std::make_shared<TreeNode>();
+                                    std::shared_ptr<TreeNode> elementNode =
+                                        std::make_shared<TreeNode>();
                                     elementNode->name = elementName;
                                     elementNode->type = memberType;
                                     elementNode->size = typeSize;
@@ -449,7 +455,7 @@ namespace parser
                             };
                             generateArrayElements({}, currentOffset);
                             arrayNode->size = (currentOffset - startingOffset + ALIGNMENT_ - 1)
-                                             / ALIGNMENT_ * ALIGNMENT_;
+                                              / ALIGNMENT_ * ALIGNMENT_;
                             offset = currentOffset;
                         }
 
@@ -488,9 +494,9 @@ namespace parser
                                     std::vector<std::shared_ptr<TreeNode>> elementMembers;
                                     size_t elementSize = 0;
                                     size_t elementOffset = 0; // 使用相对偏移解析元素
-                                    resolveModelMembers(nonBasicKey, allNodes, structNodes,
-                                                        elementMembers, elementSize, elementOffset,
-                                                        nodeVersion, elementName);
+                                    resolveModelMembers(nonBasicKey, allNodes, elementMembers,
+                                                        elementSize, elementOffset, nodeVersion,
+                                                        elementName);
                                     // 对齐单个元素大小
                                     size_t singleElementSize =
                                         (elementSize + ALIGNMENT_ - 1) / ALIGNMENT_ * ALIGNMENT_;
@@ -521,7 +527,7 @@ namespace parser
                                     currentOffset += singleElementSize;
                                 }
                                 seqNode->size = (currentOffset - startingOffset + ALIGNMENT_ - 1)
-                                               / ALIGNMENT_ * ALIGNMENT_;
+                                                / ALIGNMENT_ * ALIGNMENT_;
                                 offset = currentOffset;
                             } else {
                                 LOG(error) << "nonBasic sequence member '" << memberName
@@ -544,7 +550,7 @@ namespace parser
                                 currentOffset += typeSize;
                             }
                             seqNode->size = (currentOffset - startingOffset + ALIGNMENT_ - 1)
-                                           / ALIGNMENT_ * ALIGNMENT_;
+                                            / ALIGNMENT_ * ALIGNMENT_;
                             offset = currentOffset;
                         }
                         seqNode->children = std::move(seqElements);
@@ -556,8 +562,8 @@ namespace parser
                             std::vector<std::shared_ptr<TreeNode>> subMembers;
                             size_t subOffset = startingOffset; // 从当前全局偏移开始
                             size_t subSize = 0;
-                            resolveModelMembers(nonBasicKey, allNodes, structNodes, subMembers,
-                                                subSize, subOffset, nodeVersion, nodeName);
+                            resolveModelMembers(nonBasicKey, allNodes, subMembers, subSize,
+                                                subOffset, nodeVersion, nodeName);
                             auto node = std::make_shared<TreeNode>();
                             node->name = nodeName;
                             node->type = memberType;
@@ -570,7 +576,6 @@ namespace parser
                             offset = startingOffset + node->size;
                             currentModelMembers.push_back(std::move(node));
 
-                           
                         } else {
                             LOG(error) << "nonBasic member '" << memberName << "' lacks version";
                         }

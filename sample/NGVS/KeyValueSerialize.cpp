@@ -37,25 +37,19 @@ namespace kvpair
     bool KeyValueSerializer::serialize(const std::string &schema, const std::string &ModelName, 
                                                 const std::unordered_map<std::string,std::string> &data, std::vector<char> &outBuffer)
     {
-        parser::ModelParser parser;
+        auto &parser = dsf::parser::ModelParser::getInstance();
+        auto modelDefines = parser.getModelDefines();
         /* 1.先查询是否已经解析过model, 如果没解析过则调用ModelParser来解析所有model的结构 */
-        auto it = modelDefines_.find(ModelName);
-        if(it == modelDefines_.end())
+        auto it = modelDefines.find(ModelName);
+        if(it == modelDefines.end())
         {
-            //没查询到 需要解析
-            std::string error_message;
-            parser::error_code_t ret = parser.parseSchema(modelDefines_, schema, error_message);
-            if (ret != dsf::parser::MODEL_PARSER_OK) {
-                LOG(error) << "parse schema failed, ret: " << ret;
-                return false;
-            }
+            LOG(error) << "parse schema failed, name: " << ModelName;
+            return false;
         }
-        
-
 
         /* 2.判断解析的xml中是否含有该model */
-        it = modelDefines_.find(ModelName);
-        if (it == modelDefines_.end()) {
+        it = modelDefines.find(ModelName);
+        if (it == modelDefines.end()) {
             LOG(error) << "model not found: " << ModelName;
             return false;
         }
@@ -109,23 +103,19 @@ namespace kvpair
     bool KeyValueSerializer::deserialize(const std::string &schema, const std::string &ModelName,
                          const std::vector<char> &inBuffer, std::unordered_map<std::string, std::string> &outData)
     {
-        parser::ModelParser parser;
+         auto &parser = dsf::parser::ModelParser::getInstance();
+        auto modelDefines = parser.getModelDefines();
         /* 1.先查询是否已经解析过model, 如果没解析过则调用ModelParser来解析所有model的结构 */
-        auto it = modelDefines_.find(ModelName);
-        if(it == modelDefines_.end())
+        auto it = modelDefines.find(ModelName);
+        if(it == modelDefines.end())
         {
-            //没查询到 需要解析
-            std::string error_message;
-            parser::error_code_t ret = parser.parseSchema(modelDefines_, schema, error_message);
-            if (ret != dsf::parser::MODEL_PARSER_OK) {
-                LOG(error) << "parse schema failed, ret: " << ret;
-                return false;
-            }
+            LOG(error) << "parse schema failed, name: " << ModelName;
+            return false;
         }
         
         /* 2.判断解析的xml中是否含有该model */
-        it = modelDefines_.find(ModelName);
-        if (it == modelDefines_.end()) {
+        it = modelDefines.find(ModelName);
+        if (it == modelDefines.end()) {
             LOG(error) << "model not found: " << ModelName;
             return false;
         }

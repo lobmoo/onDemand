@@ -1,6 +1,6 @@
 #include "log/logger.h"
 #include "NgvsSerialize.h"
-#include "KeyValueSerialize.h"
+// #include "KeyValueSerialize.h"
 #include "ModelParser.h"
 #include "iostream"
 #include <fstream>
@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
     Logger::Instance().Init("log/myapp.log", Logger::console, Logger::debug, 60, 5);
     std::string xmlContent =
         readXmlFile("/home/wwk/workspaces/test_demo/sample/NGVS/modelNgvs.xml");
-    auto &Serializer = dsf::ngvs::NgvsSerializer::getInstance();
+    auto &parser = dsf::parser::ModelParser::getInstance();
     std::vector<char> outBuffer;
     std::unordered_map<std::string, std::string> inData;
     inData["STD.VAR1.B1"] = "123";
@@ -39,24 +39,31 @@ int main(int argc, char *argv[])
     inData["STD.VAR4"] = "19";
     inData["STD.VAR5"] = "20";
 
-
-    if (!Serializer.serialize(xmlContent, "STD.NGVS_S1:1.0", inData, outBuffer)) {
+    std::string errorMsg;
+    if(!parser.init(xmlContent, errorMsg))
+    {
+        LOG(error) << "Initialization failed";
+        return 1;
+    }
+    dsf::ngvs::NgvsSerializer serializer; 
+    if (!serializer.serialize("STD.NGVS_S1:1.0", inData, outBuffer)) {
         LOG(error) << "Serialization failed";
         return 1;
     }
 
-    std::unordered_map<std::string, std::string> outData;
-    if (!Serializer.deserialize(xmlContent, "STD.NGVS_S1:1.0", outBuffer, outData)) {
-        LOG(error) << "deserialize failed";
-        return 1;
-    }
+    
+    // std::unordered_map<std::string, std::string> outData;
+    // if (!Serializer.deserialize("STD.NGVS_S1:1.0", outBuffer, outData)) {
+    //     LOG(error) << "deserialize failed";
+    //     return 1;
+    // }
 
-    for(auto &pair : outData) {
-        LOG(info) << "Key: " << pair.first << ", Value: " << pair.second;
-    }
+    // for(auto &pair : outData) {
+    //     LOG(info) << "Key: " << pair.first << ", Value: " << pair.second;
+    // }
 
-    while (std::cin.get() != '\n') {
-    }
+    // while (std::cin.get() != '\n') {
+    // }
 
     return 0;
 }
