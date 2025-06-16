@@ -240,7 +240,6 @@ namespace parser
             LOG(error) << "Error parsing XML schema: " << e.what();
         }
         for (auto &it : doParseModels) {
-            LOG(info) << "Model to parse: " << it;
             const std::string &modelNameAndVersion = it;
             auto &modelDefine = modelDefines[it];
             size_t modelSize = 0;

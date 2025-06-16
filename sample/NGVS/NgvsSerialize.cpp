@@ -49,7 +49,8 @@ namespace ngvs
         }
         for (auto &leaf : leaves) {
             if (offset + memberSize > outBuffer.size()) {
-                LOG(error) << "Buffer overflow: offset + memberSize out of range";
+                LOG(error) << "Buffer overflow: offset + memberSize out of range" << ", offset: " << offset
+                           << ", memberSize: " << memberSize << ", outBuffer.size(): " << outBuffer.size();
                 return false;
             }
             auto it = inData.find(leaf->name);
@@ -179,6 +180,7 @@ namespace ngvs
         ModelDefine model = it->second;   
         /*按照大小对udt进行排序,并且结构体放到最前面*/
         NgvsModelSort(model);
+        
         ModelParser::printmembersInfo(model.members);
         if (!map2Buffer(model, inData, outBuffer)) {
             LOG(error) << "Serialization failed";
