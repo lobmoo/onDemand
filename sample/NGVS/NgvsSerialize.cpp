@@ -39,24 +39,24 @@ namespace ngvs
 
         size_t offset = 0;
         ModelParser parser;
-        std::vector<TreeNode> leaves;
+        std::vector<std::shared_ptr<dsf::parser::TreeNode>> leaves;
         size_t memberSize = 0;
         std::vector<uint8_t> memberData;
         parser.findNodeAllLeaves(model, leaves);
         for (const auto &leaf : leaves) {
-            LOG(info) << "Leaf Node: " << leaf.name << ", Type: " << leaf.type
-                      << ", Size: " << leaf.size << ", Offset: " << leaf.offset;
+            LOG(info) << "Leaf Node: " << leaf->name << ", Type: " << leaf->type
+                      << ", Size: " << leaf->size << ", Offset: " << leaf->offset;
         }
         for (auto &leaf : leaves) {
             if (offset + memberSize > outBuffer.size()) {
                 LOG(error) << "Buffer overflow: offset + memberSize out of range";
                 return false;
             }
-            auto it = inData.find(leaf.name);
+            auto it = inData.find(leaf->name);
             if (it == inData.end()) {
-                LOG(warning) << "Member not found in input data: " << leaf.name;
+                LOG(warning) << "Member not found in input data: " << leaf->name;
                 /*没有找到就填个空就继续*/
-                size_t memberSize = leaf.size;
+                size_t memberSize = leaf->size;
                 offset = alignOffset(offset, ALIGNMENT_);
                 std::memset(outBuffer.data() + offset, 0, memberSize);
                 offset += memberSize;
@@ -64,11 +64,11 @@ namespace ngvs
             }
 
             /*找到了就好好整*/
-            memberSize = leaf.size;
+            memberSize = leaf->size;
             offset = alignOffset(offset, ALIGNMENT_);
             memberData.clear();
             try {
-                dsf::parser::forwardToBuffer(leaf.type, it->second, memberData);
+                dsf::parser::forwardToBuffer(leaf->type, it->second, memberData);
             } catch (const std::exception &e) {
                 LOG(error) << "Error converting value for key: " << it->first
                            << ", Error: " << e.what();
@@ -90,11 +90,11 @@ namespace ngvs
         size_t offset = 0;
         size_t memberSize = 0;
         ModelParser parser;
-        std::vector<TreeNode> leaves;
+        std::vector<std::shared_ptr<dsf::parser::TreeNode>> leaves;
         parser.findNodeAllLeaves(model, leaves);
         for (const auto &leaf : leaves) {
-            LOG(info) << "Leaf Node: " << leaf.name << ", Type: " << leaf.type
-                      << ", Size: " << leaf.size << ", Offset: " << leaf.offset;
+            LOG(info) << "Leaf Node: " << leaf->name << ", Type: " << leaf->type
+                      << ", Size: " << leaf->size << ", Offset: " << leaf->offset;
         }
 
         for (auto &leaf : leaves) {
@@ -103,15 +103,15 @@ namespace ngvs
                 return false;
             }
 
-            memberSize = leaf.size;
+            memberSize = leaf->size;
             offset = alignOffset(offset, ALIGNMENT_);
             memberData.clear();
             memberData = std::vector<uint8_t>(inBuffer.data() + offset,
-                                              inBuffer.data() + offset + leaf.size);
+                                              inBuffer.data() + offset + leaf->size);
             try {
-                outData[leaf.name] = forwardToString(memberData, leaf.type);
+                outData[leaf->name] = forwardToString(memberData, leaf->type);
             } catch (const std::exception &e) {
-                LOG(error) << "Error converting value for key: " << leaf.name
+                LOG(error) << "Error converting value for key: " << leaf->name
                            << ", Error: " << e.what();
                 //todo 后续考虑是否继续
                 return false;
@@ -125,14 +125,14 @@ namespace ngvs
     { /*按照大小对udt进行排序,并且结构体放到最前面*/
 
         std::stable_sort(model.members.begin(), model.members.end(),
-                         [](const TreeNode &a, const TreeNode &b) {
-                             bool a_is_nonbasic = a.type == "nonBasic";
-                             bool b_is_nonbasic = b.type == "nonBasic";
+                         [](const std::shared_ptr<TreeNode> &a, const std::shared_ptr<TreeNode> &b) {
+                             bool a_is_nonbasic = a->type == "nonBasic";
+                             bool b_is_nonbasic = b->type == "nonBasic";
                              if (a_is_nonbasic != b_is_nonbasic) {
                                  return a_is_nonbasic && !b_is_nonbasic;
                              }
                              if (a_is_nonbasic && b_is_nonbasic) {
-                                 return a.size > b.size; // 大的在前面
+                                 return a->size > b->size; // 大的在前面
                              }
                              return false;
                          });
@@ -153,6 +153,8 @@ namespace ngvs
             LOG(error) << "parse schema failed, ret: " << ret;
             return false;
         }
+        
+        dsf::parser::ModelParser::printAllLeafNodesInfo(modelDefines_["InnerModel:1.0"]);
         return true;
     }
 

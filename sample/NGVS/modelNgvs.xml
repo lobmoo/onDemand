@@ -11,11 +11,11 @@
     </struct>
 
     <struct name="STD.NGVS_S1" version="1.0">   
-        <member name="STD.VAR3" type="DT_INT"/>
-        <member name="STD.VAR4" type="DT_BOOLEAN"/>
-        <member name="STD.VAR5" type="DT_STRING"/>
         <member name="STD.VAR1" type="nonBasic" nonBasicTypeName="STD.UDT_1" version="1.0"/> 
         <member name="STD.VAR2" type="DT_INT" arrayDimensions="2" startIndex="1" endIndex="2"/>
+        <member name="STD.VAR3" type="DT_INT"/>
+        <member name="STD.VAR4" type="DT_BOOLEAN"/>
+        <member name="STD.VAR5" type="DT_STRING"/> 
     </struct>
 
 </models>

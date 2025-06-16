@@ -80,7 +80,7 @@ namespace parser
         std::string type;               // 类型（int32, nonBasic 等）
         size_t size;                    // 大小
         unsigned int offset;            // 偏移量
-        std::vector<TreeNode> children; // 子节点（仅非基本类型或数组/序列）
+        std::vector<std::shared_ptr<TreeNode>> children;  // 子节点（仅非基本类型或数组/序列）
         std::string version;            // 版本（仅非基本类型）
         std::string nonBasicTypeName;   // 非基本类型名称（如果适用）
         bool is_array;                  // 是否为数组元素
@@ -94,7 +94,7 @@ namespace parser
         std::string modelVersion;
         std::string schema;
         size_t size;
-        std::vector<TreeNode> members; // 替换 mapKeyType 和 members
+        std::vector<std::shared_ptr<TreeNode>> members; // 根节点们
     };
 
     bool forwardToBuffer(const std::string &type, const std::string &value,
@@ -108,13 +108,13 @@ namespace parser
         error_code_t parseSchema(std::unordered_map<std::string, ModelDefine> &modelDefines,
                                  const std::string &schema, std::string &errorMsg);
         bool findNodeAndGetLeaves(const ModelDefine &model, const std::string &targetName,
-                                  std::vector<TreeNode> &leaves);
-        bool findNodeAllLeaves(const ModelDefine &model, std::vector<TreeNode> &leaves);
-        static void printmembersInfo(std::vector<TreeNode> &nodes);
+                                  std::vector<std::shared_ptr<dsf::parser::TreeNode>> &leaves);
+        bool findNodeAllLeaves(const ModelDefine &model, std::vector<std::shared_ptr<dsf::parser::TreeNode>> &leaves);
+        static void printmembersInfo(std::vector<std::shared_ptr<dsf::parser::TreeNode>> &nodes);
         static void printAllLeafNodesInfo(const ModelDefine &model);
 
     private:
-        void getLeafNodes(const TreeNode &node, std::vector<TreeNode> &leaves);
+        void getLeafNodes(const TreeNode &node, std::vector<std::shared_ptr<dsf::parser::TreeNode>> &leaves);
         std::set<std::string> visiting;
 
         std::string child2xml(const boost::property_tree::ptree &childNode,
@@ -123,7 +123,7 @@ namespace parser
         resolveModelMembers(const std::string &currentModelNameAndVersion,
                             std::unordered_map<std::string, ModelDefine> &allNodes,
                             const std::map<std::string, boost::property_tree::ptree> &structNodes,
-                            std::vector<TreeNode> &currentModelMembers, size_t &modelSize,
+                            std::vector<std::shared_ptr<TreeNode>> &currentModelMembers, size_t &modelSize,
                             size_t &offset, const std::string &modelVersion,
                             const std::string &parentName = "");
      
