@@ -49,7 +49,8 @@ namespace ngvs
         }
         for (auto &leaf : leaves) {
             if (offset + memberSize > outBuffer.size()) {
-                LOG(error) << "Buffer overflow: offset + memberSize out of range";
+                LOG(error) << "Buffer overflow: offset + memberSize out of range" << ", offset: " << offset
+                           << ", memberSize: " << memberSize << ", outBuffer.size(): " << outBuffer.size();
                 return false;
             }
             auto it = inData.find(leaf->name);
@@ -175,17 +176,24 @@ namespace ngvs
             LOG(error) << "model not found: " << ModelName;
             return false;
         }
-
         // /*找到数据类型*/
-        ModelDefine model = it->second;
-
-#ifdef NGVS_DEBUG
-        //parser.printAllLeafNodesInfo(model);
-        // parser.printmembersInfo(model.members);
-#endif
+        ModelDefine model = it->second;   
         /*按照大小对udt进行排序,并且结构体放到最前面*/
-        NgvsModelSort(model);
-        ModelParser::printmembersInfo(model.members);
+
+        std::stable_sort(model.members.begin(), model.members.end(),
+                         [](const TreeNode &a, const TreeNode &b) {
+                             bool a_is_nonbasic = a.type == "nonBasic";
+                             bool b_is_nonbasic = b.type == "nonBasic";
+
+                             if (a_is_nonbasic != b_is_nonbasic) {
+                                 return a_is_nonbasic > b_is_nonbasic;
+                             }
+                             if (a_is_nonbasic && b_is_nonbasic) {
+                                 return a.size > b.size;
+                             }
+                             return false;
+                         });
+        parser.printmembersInfo(model.members);
         if (!map2Buffer(model, inData, outBuffer)) {
             LOG(error) << "Serialization failed";
             return false;

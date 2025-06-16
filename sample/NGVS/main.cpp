@@ -173,6 +173,7 @@ void test1()
     // LOG(info) << "first: " << model->first << " second: " << model->second << " third: " << (int)(model->third);
 
 
+    
     std::unordered_map<std::string, std::string> outData;
     serializer.deserialize("InnerModel44:1.0", outBuff, outData);
 
