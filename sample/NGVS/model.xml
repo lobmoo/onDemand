@@ -46,30 +46,4 @@
         <member name="third" type="DT_SINT"/>
     </struct>
 
-    <struct name="InnerModel7" version="1.0">
-        <member name="first" type="DT_REAL"/>
-        <member name="second" type="DT_LINT"/>
-        <member name="third" type="DT_SINT"/>
-        <member name="long_array" type="DT_DINT" arrayDimensions="10" startIndex="0" endIndex="20"/>
-    </struct>
-
-    <struct name="InnerModel8" version="1.0">
-        <member name="long_array" type="DT_DINT" arrayDimensions="10" startIndex="0" endIndex="20"/>
-        <member name="long_array" type="DT_DINT" arrayDimensions="10" startIndex="0" endIndex="20"/>
-        <member name="long_array" type="DT_DINT" arrayDimensions="10" startIndex="0" endIndex="20"/>
-    </struct>
-
-    <struct name="ParentModel" version="2.0">
-        <member name="first" type="DT_REAL"/>
-        <member name="second" type="DT_LINT"/>
-    </struct>
-
-    <struct name="ComplexModel" baseType="ParentModel" baseTypeVersion="2.0" version="3.0">
-        <member name="complex_member" type="nonBasic" nonBasicTypeName="InnerModel3" version="1.0"/>
-    </struct>
-
-    <struct name="InnerModel3" version="1.0">
-        <member name="fourth" type="DT_DINT"/>
-        <member name="long_array" type="DT_DINT" arrayDimensions="5" startIndex="0" endIndex="10"/>
-    </struct>
 </models>

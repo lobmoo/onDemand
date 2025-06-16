@@ -38,10 +38,9 @@ namespace kvpair
             return instance;
         }
         ~KeyValueSerializer();
-        bool serialize(const std::string &schema, const std::string &ModelName, 
-                       const std::unordered_map<std::string, std::string> &data, std::vector<char> &outBuffer);
-        bool deserialize(const std::string &schema, const std::string &ModelName,
-                         const std::vector<char> &inBuffer, std::unordered_map<std::string, std::string> &outData);
+        bool init(const std::string &schema);
+        bool serialize(const std::string &ModelName, const std::unordered_map<std::string, std::string> &data, std::vector<char> &outBuffer);
+        bool deserialize(const std::string &ModelName, const std::vector<char> &inBuffer, std::unordered_map<std::string, std::string> &outData);
     private:
         KeyValueSerializer(size_t alignment = 2);
         bool serializeKeyValuePair(parser::TreeNode &leaf, const std::string &key, const std::string &value, 
