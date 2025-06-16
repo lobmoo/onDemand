@@ -681,7 +681,7 @@ namespace parser
         }
     }
 
-    void ModelParser::printAllLeafNodesInfo(const ModelDefine &model) const
+    void ModelParser::printAllLeafNodesInfo(const ModelDefine &model)
     {
         // 递归收集并打印叶子节点
         std::function<void(const std::vector<TreeNode> &)> collectLeaves =
@@ -710,17 +710,5 @@ namespace parser
         collectLeaves(model.members);
     }
 
-    void ModelParser::reCalcuOffset(ModelDefine &model)
-    {
-        std::vector<TreeNode> leaves;
-        findNodeAllLeaves(model, leaves);
-        size_t offset = 0;
-        for (auto &leaf : leaves) {
-            leaf.offset = offset;
-            offset += leaf.size;
-            offset = (offset + 3) / 4 * 4; // 对齐到4字节边界
-        }
-        return;
-    }
 } // namespace parser
 } // namespace dsf

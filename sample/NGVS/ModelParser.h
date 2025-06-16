@@ -100,6 +100,7 @@ namespace parser
     bool forwardToBuffer(const std::string &type, const std::string &value,
                          std::vector<uint8_t> &buffer);
     std::string forwardToString(const std::vector<uint8_t> &buffer, const std::string &type);
+
     class ModelParser
     {
     public:
@@ -109,9 +110,8 @@ namespace parser
         bool findNodeAndGetLeaves(const ModelDefine &model, const std::string &targetName,
                                   std::vector<TreeNode> &leaves);
         bool findNodeAllLeaves(const ModelDefine &model, std::vector<TreeNode> &leaves);
-        void printmembersInfo(std::vector<TreeNode> &nodes);
-        void printAllLeafNodesInfo(const ModelDefine &model) const;
-        void reCalcuOffset(ModelDefine &model);
+        static void printmembersInfo(std::vector<TreeNode> &nodes);
+        static void printAllLeafNodesInfo(const ModelDefine &model);
 
     private:
         void getLeafNodes(const TreeNode &node, std::vector<TreeNode> &leaves);

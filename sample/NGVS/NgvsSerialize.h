@@ -38,14 +38,13 @@ namespace ngvs
             return instance;
         }
         ~NgvsSerializer();
-
-        bool serialize(const std::string &schema, const std::string &ModelName,
-                       const std::vector<char> &inBuffer, std::vector<char> &outBuffer);
-        bool serialize(const std::string &schema, const std::string &ModelName,
+        bool init(const std::string &schema);
+        bool serialize(const std::string &ModelName, const std::vector<char> &inBuffer,
+                       std::vector<char> &outBuffer);
+        bool serialize(const std::string &ModelName,
                        const std::unordered_map<std::string, std::string> &inData,
                        std::vector<char> &outBuffer);
-        bool deserialize(const std::string &schema, const std::string &ModelName,
-                         const std::vector<char> &inBuffer,
+        bool deserialize(const std::string &ModelName, const std::vector<char> &inBuffer,
                          std::unordered_map<std::string, std::string> &outData);
         const std::vector<char> &buffer() const;
 
@@ -59,6 +58,7 @@ namespace ngvs
                                std::vector<char> &outBuffer);
         inline bool buffer2Map(const ModelDefine &model, const std::vector<char> &inBuffer,
                                std::unordered_map<std::string, std::string> &outData);
+        void NgvsModelSort(ModelDefine &model);
 
     private:
         std::unordered_map<std::string, ModelDefine> modelDefines_;
