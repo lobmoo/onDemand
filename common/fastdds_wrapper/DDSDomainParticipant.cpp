@@ -67,14 +67,10 @@ DDSDomainParticipant::DDSDomainParticipant(std::string XmlConfig,
         if (m_participant) {
             SubscriberQos sub_qos = SUBSCRIBER_QOS_DEFAULT;
             m_participant->get_default_subscriber_qos(sub_qos);
-            // m_participant->get_subscriber_qos_from_profile("defaule_subscriber_profile",
-            //                                                sub_qos);
             m_subscriber = m_participant->create_subscriber(sub_qos, nullptr);
 
             PublisherQos pub_qos = PUBLISHER_QOS_DEFAULT;
             m_participant->get_default_publisher_qos(pub_qos);
-            // m_participant->get_publisher_qos_from_profile("configuration_publisher_profile",
-            //                                               pub_qos);
             m_publisher = m_participant->create_publisher(pub_qos, nullptr);
         }
     }

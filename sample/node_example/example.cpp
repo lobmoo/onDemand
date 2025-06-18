@@ -64,8 +64,8 @@ int main(int argc, char *argv[])
 void run_dds_data_writer()
 {
     DDSParticipantListener *listener = new DDSParticipantListener();
-    //DataNode node("/home/wwk/workspaces/test_demo/sample/node_example/qosConfig.xml", listener);
-    DataNode node(0, "test_writer", qos_configurator);
+    DataNode node("/home/wwk/workspaces/test_demo/sample/node_example/qosConfig.xml", listener);
+    //DataNode node(0, "test_writer", qos_configurator);
     //DataNode node(100, "test_writer");
     node.registerTopicType<HelloWorldOnePubSubType>("wwk");
 
@@ -87,16 +87,16 @@ void run_dds_data_writer()
         if (dataWriter->writeMessage(message)) {
             LOG(info) << "send message: " << message.index();
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
 }
 
 void run_dds_data_reader()
 {
     DDSParticipantListener *listener = new DDSParticipantListener();
-    //DataNode node("/home/wwk/workspaces/test_demo/sample/node_example/qosConfig.xml", listener);
+    DataNode node("/home/wwk/workspaces/test_demo/sample/node_example/qosConfig.xml", listener);
 
-    DataNode node(0, "test_reader", qos_configurator);
+   //DataNode node(0, "test_reader", qos_configurator);
     //DataNode node(100, "test_reader");
     node.registerTopicType<HelloWorldOnePubSubType>("wwk");
     auto dataReader = node.createDataReader<HelloWorldOne>("wwk", processHelloWorldOne);
