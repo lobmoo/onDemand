@@ -13,6 +13,7 @@ class DDSQosConfigXmlFilter
 {
 
 public:
+    /*debug 专用*/
     bool filterQoS(const std::string &input_file, const std::string &output_file)
     {
         tinyxml2::XMLDocument doc;
@@ -51,7 +52,6 @@ public:
             std::cerr << "Failed to load XML file: " << input_file << std::endl;
             return "";
         }
-        
         // 创建新的 XML 文档
         tinyxml2::XMLDocument new_doc;
         auto decl = new_doc.NewDeclaration();
@@ -136,6 +136,23 @@ private:
     }
 
 private:
+    /*<data_sharing>
+        <deadline>
+        <disable_heartbeat_piggyback>
+        <disablePositiveAcks>
+        <durability>
+        <entity_factory>
+        <groupData>
+        <latencyBudget>
+        <lifespan>
+        <liveliness>
+        <ownership>
+        <ownershipStrength>
+        <partition>
+        <publishMode>
+        <reliability>
+        <topicData>
+        <userData>*/
     const std::vector<std::string> allowed_qos = {"durability", "reliability", "history"};
 };
 
