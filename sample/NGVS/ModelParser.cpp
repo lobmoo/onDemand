@@ -71,7 +71,22 @@ namespace parser
             } else if (type == "DT_CHARSEQ" || type == "DT_STRING") {
                 std::memcpy(buffer.data(), value.data(), it->second);
             } else if (type == "DT_WCHAR") {
+                char16_t val = static_cast<char16_t>(value[0]);
+                std::memcpy(buffer.data(), &val, it->second);
             } else if (type == "DT_WCHARSEQ" || type == "DT_WSTRING") { // 剩余字节由resize初始化为0
+                std::memcpy(buffer.data(), value.data(), it->second);
+            } else if (type == "DT_TIME") {  // 有符号数字
+                int32_t val = std::stoi(value);      
+                std::memcpy(buffer.data(), &val, it->second);                
+            } else if (type == "DT_DATE" || type == "DT_TOD" || type == "DT_DT") {  // 4字节时间类型
+                uint32_t val = static_cast<uint32_t>(std::stoul(value));       
+                std::memcpy(buffer.data(), &val, it->second);
+            } else if (type == "DT_LTIME") {  // 有符号数字
+                int64_t val = std::stoll(value);
+                std::memcpy(buffer.data(), &val, it->second);
+            } else if (type == "DT_LDATE" || type == "DT_LTOD" || type == "DT_LDT") {  // 8字节时间类型
+                uint64_t val = std::stoull(value);
+                std::memcpy(buffer.data(), &val, it->second);
             } else {
                 throw std::invalid_argument("不支持的数据类型: " + type);
             }
@@ -169,6 +184,26 @@ namespace parser
             for (wchar_t wc : wstr)
                 result += static_cast<char>(wc); // 简化
             return result;
+        } else if (type == "DT_TIME") {
+            checkSize(4);
+            int32_t val;
+            std::memcpy(&val, data, 4);
+            return std::to_string(val);
+        } else if (type == "DT_DATE" || type == "DT_TOD" || type == "DT_DT") {
+            checkSize(4);
+            uint32_t val;
+            std::memcpy(&val, data, 4);
+            return std::to_string(val); 
+        } else if (type == "DT_LTIME") {
+            checkSize(8);
+            int64_t val;
+            std::memcpy(&val, data, 8);
+            return std::to_string(val);
+        } else if (type == "DT_LDATE" || type == "DT_LTOD" || type == "DT_LDT") {
+            checkSize(8);
+            uint64_t val;
+            std::memcpy(&val, data, 8);
+            return std::to_string(val); 
         }
 
         throw std::invalid_argument("Unsupported type: " + type);

@@ -1,5 +1,6 @@
 {
     "files.associations": {
+        "*.idl": "cpp",
         "*.log": "log",
         "*.toml": "yaml",
         "*.cpp": "cpp",
@@ -94,6 +95,8 @@
         "typeindex": "cpp",
         "valarray": "cpp",
         "*.cppbackup": "cpp",
-        "*.hbackup": "cpp"
+        "*.hbackup": "cpp",
+        "coroutine": "cpp",
+        "ranges": "cpp"
     }
 }

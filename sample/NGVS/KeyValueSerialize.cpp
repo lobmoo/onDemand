@@ -127,7 +127,15 @@ namespace kvpair
             std::memcpy(&value[0], inBuffer.data() + leaf->offset, leaf->size);
 
             // 转化成string
-            std::string valString = dsf::parser::forwardToString(value, leaf->type);
+            std::string valString;
+            try{
+            valString = dsf::parser::forwardToString(value, leaf->type);
+            } catch(const std::exception &e) {
+                LOG(error) << "Error converting value for key: " << it->first
+                           << ", Error: " << e.what();
+                return false;
+            }
+
 
             // 将构造好的数据放入outData中
             outData.emplace(key, valString);
