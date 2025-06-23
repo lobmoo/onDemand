@@ -35,10 +35,10 @@ ParticipantQosHandler::ParticipantQosHandler(std::string participant_name)
     // m_participantQos.wire_protocol().builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter = true;
     // m_participantQos.wire_protocol().builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader = true;
     // // 控制发现消息的广播频率
-    eprosima::fastdds::dds::Time_t duration = eprosima::fastdds::dds::Duration_t(3, 0);
-    m_participantQos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod = duration;
+    //eprosima::fastdds::dds::Time_t duration = eprosima::fastdds::dds::Duration_t(3, 0);
+    // m_participantQos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod = duration;
     // 提示远端认为此 RTPSParticipant 应该存活的时间
-    m_participantQos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastdds::dds::Duration_t(5, 0);
+    // m_participantQos.wire_protocol().builtin.discovery_config.leaseDuration = eprosima::fastdds::dds::Duration_t(5, 0);
     // m_participantQos.name(participant_name);
     // // 设置为 false 可禁用默认的 UDPv4 传输方式, 默认为true
     // m_participantQos.transport().use_builtin_transports = false;
@@ -48,9 +48,21 @@ ParticipantQosHandler::~ParticipantQosHandler()
 {
 }
 
+void ParticipantQosHandler::setDiscoveryKeepAlive(uint32_t lease_duration_ms,
+                                                  uint32_t announcement_period_ms)
+{
+    m_participantQos.wire_protocol().builtin.discovery_config.leaseDuration =
+        eprosima::fastdds::dds::Duration_t(lease_duration_ms / 1000,
+                                           (lease_duration_ms % 1000) * 1000000);
+    m_participantQos.wire_protocol().builtin.discovery_config.leaseDuration_announcementperiod =
+        eprosima::fastdds::dds::Duration_t(announcement_period_ms / 1000,
+                                           (announcement_period_ms % 1000) * 1000000);
+}
+
 void ParticipantQosHandler::setParticipantQosProperties(std::string name, std::string value,
                                                         bool propagate)
 {
+    m_participantQos.transport().use_builtin_transports = false;
     m_participantQos.properties().properties().emplace_back(name, value, propagate);
 }
 
@@ -107,6 +119,15 @@ void ParticipantQosHandler::addUDPV4Transport(uint32_t buffer_size,
     m_participantQos.transport().user_transports.push_back(udp_transport);
 }
 
+void ParticipantQosHandler::addUDPV4TransportInterface(std::string network_interface)
+{
+
+    auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
+    udp_transport->interfaceWhiteList.push_back(network_interface);
+    m_participantQos.transport().user_transports.push_back(udp_transport);
+    m_participantQos.transport().use_builtin_transports = false;
+}
+
 void ParticipantQosHandler::addUDPV6Transport(uint32_t buffer_size)
 {
     auto udp_transport = std::make_shared<UDPv6TransportDescriptor>();
@@ -124,21 +145,21 @@ void ParticipantQosHandler::add_statistics_and_monitor()
                                                             "MONITOR_SERVICE_TOPIC;");
 
     m_participantQos.properties().properties().emplace_back("fastdds.statistics",
-            "HISTORY_LATENCY_TOPIC;" \
-            "NETWORK_LATENCY_TOPIC;" \
-            "PUBLICATION_THROUGHPUT_TOPIC;" \
-            "SUBSCRIPTION_THROUGHPUT_TOPIC;" \
-            "RTPS_SENT_TOPIC;" \
-            "RTPS_LOST_TOPIC;" \
-            "HEARTBEAT_COUNT_TOPIC;" \
-            "ACKNACK_COUNT_TOPIC;" \
-            "NACKFRAG_COUNT_TOPIC;" \
-            "GAP_COUNT_TOPIC;" \
-            "DATA_COUNT_TOPIC;" \
-            "RESENT_DATAS_TOPIC;" \
-            "SAMPLE_DATAS_TOPIC;" \
-            "PDP_PACKETS_TOPIC;" \
-            "EDP_PACKETS_TOPIC;" \
-            "DISCOVERY_TOPIC;" \
-            "PHYSICAL_DATA_TOPIC;");    
+                                                            "HISTORY_LATENCY_TOPIC;"
+                                                            "NETWORK_LATENCY_TOPIC;"
+                                                            "PUBLICATION_THROUGHPUT_TOPIC;"
+                                                            "SUBSCRIPTION_THROUGHPUT_TOPIC;"
+                                                            "RTPS_SENT_TOPIC;"
+                                                            "RTPS_LOST_TOPIC;"
+                                                            "HEARTBEAT_COUNT_TOPIC;"
+                                                            "ACKNACK_COUNT_TOPIC;"
+                                                            "NACKFRAG_COUNT_TOPIC;"
+                                                            "GAP_COUNT_TOPIC;"
+                                                            "DATA_COUNT_TOPIC;"
+                                                            "RESENT_DATAS_TOPIC;"
+                                                            "SAMPLE_DATAS_TOPIC;"
+                                                            "PDP_PACKETS_TOPIC;"
+                                                            "EDP_PACKETS_TOPIC;"
+                                                            "DISCOVERY_TOPIC;"
+                                                            "PHYSICAL_DATA_TOPIC;");
 }

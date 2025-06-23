@@ -79,6 +79,19 @@ public:
      */
     void add_statistics_and_monitor();
 
+    /**
+     * @brief 设置网络接口
+     * @param  network_interfaceMyParamDoc
+     */
+    void addUDPV4TransportInterface(std::string network_interface);
+
+    /**
+     * @brief Set the Discovery Keep Alive object
+     * @param  lease_duration_ms 提示远端认为此 RTPSParticipant 应该存活的时间,如果其他参与者在这一时间内没有收到该参与者的保活消息，则认为对端挂掉
+     * @param  announcement_period_ms 对外保活公告周期，即每隔多少毫秒发送一次保活消息  这个参数一般要小于 lease_duration_ms的1/3
+     * @return * void 
+     */
+    void setDiscoveryKeepAlive(uint32_t lease_duration_ms, uint32_t announcement_period_ms);
 private:
     //eprosima::fastdds::dds::DomainParticipantQos m_participantQos;
     eprosima::fastdds::dds::DomainParticipantExtendedQos m_participantQos;
