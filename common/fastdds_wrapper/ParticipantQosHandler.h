@@ -18,7 +18,7 @@
 
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantExtendedQos.hpp>
-
+#include <fstream>
 class ParticipantQosHandler
 {
 public:
@@ -92,6 +92,43 @@ public:
      * @return * void 
      */
     void setDiscoveryKeepAlive(uint32_t lease_duration_ms, uint32_t announcement_period_ms);
+
+    /**
+     * @brief Set the Authentication Plugin
+     * @param  identity_ca            ca的证书的路径，须由file://标识
+     * @param  identity_certificate   本参与者证书的路径
+     * @param  private_key            本参与者的私钥
+     * @param  plugin                 身份认证插件的名称, 默认为builtin.PKI-DH
+     */
+    void setAuthenticationPlugin(std::string identity_ca, std::string identity_certificate, 
+                                 std::string private_key, std::string plugin="builtin.PKI-DH");
+
+    /**
+     * @brief Set the Access Control Plugin
+     * @param  identity_ca            ca的证书的路径，须由file://标识
+     * @param  governance             governance文件的路径，须由ca加密为smime格式
+     * @param  permissions            permissions文件的路径，须由ca加密为smime格式
+     * @param  plugin                 访问控制插件的名称，默认为builtin.Access-Permissions
+     */
+    void setAccessControlPlugin(std::string identity_ca, std::string governance, 
+                                 std::string permissions, std::string plugin="builtin.Access-Permissions");
+                    
+    /**
+     * @brief Set the Cryptographic Plugin
+     * @param  plugin                 加密插件的名称，默认为builtin.AES-GCM-GMAC
+     */
+    void setCryptographicPlugin(std::string plugin="builtin.AES-GCM-GMAC");
+
+    /**
+     * @brief Set the Security Logging Plugin
+     * @param  logging_level          日志等级
+     * @param  log_file               日志文件的路径
+     * @param  plugin                 加密插件的名称，默认为builtin.DDS_LogTopic
+     */
+    void setSecurityLogging(std::string logging_level, std::string log_file, std::string plugin="builtin.DDS_LogTopic");
+    
+    /**/
+    void setCloseDataSharing();
 private:
     //eprosima::fastdds::dds::DomainParticipantQos m_participantQos;
     eprosima::fastdds::dds::DomainParticipantExtendedQos m_participantQos;

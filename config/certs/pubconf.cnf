@@ -1,0 +1,11 @@
+prompt = no
+string_mask = utf8only
+distinguished_name = req_distinguished_name
+
+[ req_distinguished_name ]
+countryName = CN
+stateOrProvinceName = SH
+localityName = BaoSight
+organizationName = letsgo
+emailAddress = pub@baosight.com
+commonName = publisher

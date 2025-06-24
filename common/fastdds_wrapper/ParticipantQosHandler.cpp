@@ -164,3 +164,58 @@ void ParticipantQosHandler::add_statistics_and_monitor()
                                                             "PHYSICAL_DATA_TOPIC;");
 }
 
+bool file_exists(const std::string& path) {
+    std::ifstream f(path);
+    return f.good();
+}
+
+void ParticipantQosHandler::setAuthenticationPlugin(std::string identity_ca, std::string identity_certificate, 
+                                std::string private_key, std::string plugin)
+{
+    // if(!file_exists(identity_ca)) 
+    //     throw std::runtime_error("Certificate file missing while setting Authentication Plugin: " + identity_ca);
+    // if(!file_exists(identity_certificate))
+    //     throw std::runtime_error("Certificate file missing while setting Authentication Plugin: " + identity_certificate);
+    // if(!file_exists(private_key))
+    //     throw std::runtime_error("Private key file missing while setting Authentication Plugin: " + private_key);
+
+    auto& props = m_participantQos.properties().properties();
+    props.emplace_back("dds.sec.auth.plugin", plugin);
+    props.emplace_back("dds.sec.auth.builtin.PKI-DH.identity_ca", identity_ca);
+    props.emplace_back("dds.sec.auth.builtin.PKI-DH.identity_certificate", identity_certificate);
+    props.emplace_back("dds.sec.auth.builtin.PKI-DH.private_key", private_key); 
+}
+
+
+void ParticipantQosHandler::setAccessControlPlugin(std::string identity_ca, std::string governance, 
+                                std::string permissions, std::string plugin)
+{
+    // if(!file_exists(identity_ca)) 
+    //     throw std::runtime_error("Certificate file missing while setting Access Control Plugin: " + identity_ca);
+    // if(!file_exists(governance))
+    //     throw std::runtime_error("Governance file missing while setting Access Control Plugin: " + governance);
+    // if(!file_exists(permissions))
+    //     throw std::runtime_error("Permission file missing while setting Access Control Plugin: " + permissions);
+
+    auto& props = m_participantQos.properties().properties();
+    props.emplace_back("dds.sec.access.plugin", plugin);
+    props.emplace_back("dds.sec.access.builtin.Access-Permissions.permissions_ca", identity_ca);
+    props.emplace_back("dds.sec.access.builtin.Access-Permissions.governance", governance);
+    props.emplace_back("dds.sec.access.builtin.Access-Permissions.permissions", permissions);
+}
+
+void ParticipantQosHandler::setCryptographicPlugin(std::string plugin)
+{
+    auto& props = m_participantQos.properties().properties();
+    props.emplace_back("dds.sec.crypto.plugin", plugin);
+}
+
+void ParticipantQosHandler::setSecurityLogging(std::string logging_level, std::string log_file, std::string plugin)
+{
+    auto& props = m_participantQos.properties().properties();
+    props.emplace_back("dds.sec.log.plugin", plugin);
+    props.emplace_back("dds.sec.log.builtin.DDS_LogTopic.logging_level", logging_level);
+    props.emplace_back("dds.sec.log.builtin.DDS_LogTopic.log_file", log_file);
+}
+
+

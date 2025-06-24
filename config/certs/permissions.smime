@@ -1,0 +1,90 @@
+MIME-Version: 1.0
+Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg="sha-256"; boundary="----3BACA7C5D40230F523EEF902DEA1F698"
+
+This is an S/MIME signed message
+
+------3BACA7C5D40230F523EEF902DEA1F698
+Content-Type: text/plain
+
+<?xml version="1.0" encoding="utf-8"?>
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.omg.org/spec/DDS-Security/20170801/omg_shared_ca_permissions.xsd">
+    <permissions>
+        <grant name="PublisherPermissions">
+            <subject_name>C = CN, ST = SH, O = letsgo, CN = publisher, emailAddress = pub@baosight.com</subject_name>
+            <validity>
+                <not_before>2013-06-01T13:00:00</not_before>
+                <not_after>2038-06-01T13:00:00</not_after>
+            </validity>
+            <allow_rule>
+                <domains>
+                    <id_range>
+                        <min>0</min>
+                        <max>230</max>
+                    </id_range>
+                </domains>
+                <publish>
+                    <topics>
+                        <topic>wwk</topic>
+                    </topics>
+                </publish>
+            </allow_rule>
+            <default>DENY</default>
+        </grant>
+        <grant name="SubscriberPermissions">
+            <subject_name>C = CN, ST = SH, O = letsgo, CN = subscriber, emailAddress = sub@baosight.com</subject_name>
+            <validity>
+                <not_before>2013-06-01T13:00:00</not_before>
+                <not_after>2038-06-01T13:00:00</not_after>
+            </validity>
+            <allow_rule>
+                <domains>
+                    <id_range>
+                        <min>0</min>
+                        <max>230</max>
+                    </id_range>
+                </domains>
+                <!-- 只对订阅的权限进行了设置，那么就没办法发布(没有发布权限) -->
+                <subscribe>  
+                    <topics>
+                        <topic>wqb</topic>
+                        <topic>wwk</topic>
+                    </topics>
+                </subscribe>
+            </allow_rule>
+            <default>DENY</default>
+        </grant>
+    </permissions>
+</dds>
+
+------3BACA7C5D40230F523EEF902DEA1F698
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+
+MIIEawYJKoZIhvcNAQcCoIIEXDCCBFgCAQExDzANBglghkgBZQMEAgEFADALBgkq
+hkiG9w0BBwGgggJPMIICSzCCAfGgAwIBAgIUeiDcHUD84c8oJuVmsl4WgUHq5Zww
+CgYIKoZIzj0EAwIwczELMAkGA1UEBhMCQ04xCzAJBgNVBAgMAlNIMREwDwYDVQQH
+DAhCYW9TaWdodDEPMA0GA1UECgwGbGV0c2dvMQ8wDQYDVQQDDAZNYWluQ0ExIjAg
+BgkqhkiG9w0BCQEWE21haW5jYUBiYW9zaWdodC5jb20wHhcNMjUwNjE5MDgzNzE4
+WhcNMzUwNjE3MDgzNzE4WjBzMQswCQYDVQQGEwJDTjELMAkGA1UECAwCU0gxETAP
+BgNVBAcMCEJhb1NpZ2h0MQ8wDQYDVQQKDAZsZXRzZ28xDzANBgNVBAMMBk1haW5D
+QTEiMCAGCSqGSIb3DQEJARYTbWFpbmNhQGJhb3NpZ2h0LmNvbTBZMBMGByqGSM49
+AgEGCCqGSM49AwEHA0IABF0AR4qvJqLQVgD0m9/vo/5SNDsqqpee50m5yoMIpxYe
+Pr35KHlhYIQXCEVfE8LX/BFnGop74CzSqrKosK7G6QqjYzBhMB0GA1UdDgQWBBRQ
+duU/xvoRu8kMbC8cZv3kULHwcjAfBgNVHSMEGDAWgBRQduU/xvoRu8kMbC8cZv3k
+ULHwcjAPBgNVHRMBAf8EBTADAQH/MA4GA1UdDwEB/wQEAwIBBjAKBggqhkjOPQQD
+AgNIADBFAiEA0faJyS1ptlzivfeRPpw4B/Hq1YGVrKa62T0dYx0BopgCIEncaAF/
+MRlUDlMVv5RMT0dIKgvqeRnxk7vH21SVQPqMMYIB4DCCAdwCAQEwgYswczELMAkG
+A1UEBhMCQ04xCzAJBgNVBAgMAlNIMREwDwYDVQQHDAhCYW9TaWdodDEPMA0GA1UE
+CgwGbGV0c2dvMQ8wDQYDVQQDDAZNYWluQ0ExIjAgBgkqhkiG9w0BCQEWE21haW5j
+YUBiYW9zaWdodC5jb20CFHog3B1A/OHPKCblZrJeFoFB6uWcMA0GCWCGSAFlAwQC
+AQUAoIHkMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8X
+DTI1MDYyNDA2Mjk0M1owLwYJKoZIhvcNAQkEMSIEILbItLmO4pwLvDVegbI+fdCk
+ilBKXNvii+yRm8eNPrPMMHkGCSqGSIb3DQEJDzFsMGowCwYJYIZIAWUDBAEqMAsG
+CWCGSAFlAwQBFjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwDgYIKoZIhvcNAwIC
+AgCAMA0GCCqGSIb3DQMCAgFAMAcGBSsOAwIHMA0GCCqGSIb3DQMCAgEoMAoGCCqG
+SM49BAMCBEcwRQIgWtsLz8e1x/g982TNYeUjOZekXiYMaIIeirkT7O94h9ICIQCF
+8mjYGYYTwB4FEiAL0mtIaQYkpSEc/4iEpltN3EIXqQ==
+
+------3BACA7C5D40230F523EEF902DEA1F698--
+
