@@ -27,6 +27,8 @@
 class DataNode : public DDSParticipantManager
 {
     using ParticipantQosConfigurator = std::function<ParticipantQosHandler()>;
+    using DDSDataReaderQosConfigurator = std::function<DDSDataReaderQosHandler()>;
+    using DDSDataWriterQosConfigurator = std::function<DDSDataWriterQosHanler()>;
 
 public:
     /**
@@ -56,10 +58,9 @@ public:
     ~DataNode() override {}
 
 private:
-    mutable std::mutex topicMutex_;
-    std::unordered_map<std::string, std::function<eprosima::fastdds::dds::TopicDataType *()>>
-        topicTypeFactory_;
     ParticipantQosConfigurator qos_configurator_;
+    DDSDataReaderQosConfigurator data_reader_qos_handler_;
+    DDSDataWriterQosConfigurator data_writer_qos_handler_;
 
 protected:
     ParticipantQosHandler createParticipantQos(const std::string &participant_name) override
@@ -72,17 +73,37 @@ protected:
         }
     }
 
+    DDSDataWriterQosHanler createDataWriterQos() override
+    {
+        if (nullptr != data_writer_qos_handler_) {
+            return data_writer_qos_handler_();
+        } else {
+            DDSDataWriterQosHanler handler;
+            return handler;
+        }
+    }
+
+    DDSDataReaderQosHandler createDataReaderQos() override
+    {
+        if (nullptr != data_reader_qos_handler_) {
+            return data_reader_qos_handler_();
+        } else {
+            DDSDataReaderQosHandler handler;
+            return handler;
+        }
+    }
+
 public:
     template <typename T>
     std::shared_ptr<DDSTopicDataWriter<T>>
     createDataWriter(const std::string topicName,
-                     eprosima::fastdds::dds::DataWriterQos *dataWriterQos = nullptr);
+                     DDSDataWriterQosConfigurator dataWriterQosHandler = nullptr);
 
     template <typename T>
     std::shared_ptr<DDSTopicDataReader<T>>
     createDataReader(const std::string topicName,
                      std::function<void(const std::string &, std::shared_ptr<T>)> callback,
-                     const eprosima::fastdds::dds::DataReaderQos *dataReaderQos = nullptr);
+                     DDSDataReaderQosConfigurator dataReaderQosHandler = nullptr);
 
     template <typename T>
     void registerTopicType(const std::string &topicName)
@@ -99,9 +120,10 @@ public:
 template <typename T>
 std::shared_ptr<DDSTopicDataWriter<T>>
 DataNode::createDataWriter(const std::string topicName,
-                           eprosima::fastdds::dds::DataWriterQos *dataWriterQos)
-{
-    return DDSParticipantManager::createDataWriter<T>(topicName, dataWriterQos);
+                           DDSDataWriterQosConfigurator dataWriterQosHandler)
+{   
+    data_writer_qos_handler_ = dataWriterQosHandler;
+    return DDSParticipantManager::createDataWriter<T>(topicName);
 }
 
 /**
@@ -114,9 +136,10 @@ template <typename T>
 std::shared_ptr<DDSTopicDataReader<T>>
 DataNode::createDataReader(const std::string topicName,
                            std::function<void(const std::string &, std::shared_ptr<T>)> callback,
-                           const eprosima::fastdds::dds::DataReaderQos *dataReaderQos)
+                           DDSDataReaderQosConfigurator dataReaderQosHandler)
 {
-    return DDSParticipantManager::createDataReader<T>(topicName, callback, dataReaderQos);
+    data_reader_qos_handler_ = dataReaderQosHandler;
+    return DDSParticipantManager::createDataReader<T>(topicName, callback);
 }
 
 #endif
