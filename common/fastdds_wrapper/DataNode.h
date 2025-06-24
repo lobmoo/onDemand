@@ -47,7 +47,7 @@ public:
 
     /**
    * @brief 依照配置文件创建数据通信节点
-   * @param  qosXmlConfig     配置文件路径
+   * @param  qosXmlConfig     配置文件路径  注意：一旦用了配置文件的话，后面所有的qos配置，读写相关的都以配置文件优先级最高
    */
     DataNode(const std::string &qosXmlConfig, DDSParticipantListener *listener = nullptr)
         : DDSParticipantManager()
