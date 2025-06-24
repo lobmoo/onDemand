@@ -13,6 +13,11 @@ DDSDataWriterQosHanler::~DDSDataWriterQosHanler()
 
 }
 
+const DataWriterQos& DDSDataWriterQosHanler::getQos() const
+{
+    return m_dataWriterQos;
+}
+
 /**
  * @brief 配置写入器的消息持久化
  * @param  depth  需要历史保留的消息数

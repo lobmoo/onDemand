@@ -163,3 +163,4 @@ void ParticipantQosHandler::add_statistics_and_monitor()
                                                             "DISCOVERY_TOPIC;"
                                                             "PHYSICAL_DATA_TOPIC;");
 }
+

@@ -40,7 +40,7 @@ public:
 public:
     template <typename T>
     std::shared_ptr<DDSTopicDataWriter<T>>
-    createDataWriter(std::string topicName, eprosima::fastdds::dds::DataWriterQos dataWriterQos);
+    createDataWriter(std::string topicName, eprosima::fastdds::dds::DataWriterQos &dataWriterQos);
 
     template <typename T>
     std::shared_ptr<DDSTopicDataReader<T>>
@@ -77,7 +77,7 @@ private:
 template <typename T>
 std::shared_ptr<DDSTopicDataWriter<T>>
 DDSDomainParticipant::createDataWriter(std::string topicName,
-                                       eprosima::fastdds::dds::DataWriterQos dataWriterQos)
+                                       eprosima::fastdds::dds::DataWriterQos &dataWriterQos)
 {
     std::lock_guard<std::mutex> guard(m_topicLock);
     if (m_mapTopics.find(topicName) == m_mapTopics.end())
