@@ -92,6 +92,8 @@ public:
      * @return * void 
      */
     void setDiscoveryKeepAlive(uint32_t lease_duration_ms, uint32_t announcement_period_ms);
+
+    void addUDPV4TransportDefault();
 private:
     //eprosima::fastdds::dds::DomainParticipantQos m_participantQos;
     eprosima::fastdds::dds::DomainParticipantExtendedQos m_participantQos;

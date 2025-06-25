@@ -16,11 +16,30 @@ void run_dds_data_reader();
 void run_dds_data_Multiwriter();
 void run_dds_data_Multireader();
 
-
 ParticipantQosHandler qos_configurator()
 {
     ParticipantQosHandler handler("test");
     handler.add_statistics_and_monitor();
+    //handler.addUDPV4TransportInterface("eth2");
+    handler.addUDPV4TransportDefault();
+    return handler;
+}
+
+DDSDataReaderQosHandler qos_configurator_data_reader()
+{
+    DDSDataReaderQosHandler handler;
+    handler.setDurability(10);
+    handler.setResourceLimits(100, 10, 10);
+    handler.setCloseDataSharing();
+    return handler;
+}
+
+DDSDataWriterQosHanler qos_configurator_data_writer()
+{
+    DDSDataWriterQosHanler handler;
+    handler.setDurability(10);
+    handler.setResourceLimits(100, 10, 10);
+    handler.setCloseDataSharing();
     return handler;
 }
 
@@ -40,20 +59,17 @@ void test_multi_sub_pub(int argc, char *argv[])
         run_dds_data_reader();
     } else if (strcmp(argv[1], "pub") == 0) {
         run_dds_data_writer();
-    }
-    else if (strcmp(argv[1], "mpub") == 0) {
+    } else if (strcmp(argv[1], "mpub") == 0) {
         run_dds_data_Multiwriter();
     } else if (strcmp(argv[1], "msub") == 0) {
         run_dds_data_Multireader();
-    }
-    else {
+    } else {
         std::cerr << "unknown command: " << argv[1] << std::endl;
     }
     while (std::cin.get() != '\n') {
     }
     return;
 }
-
 
 int main(int argc, char *argv[])
 {
@@ -64,14 +80,14 @@ int main(int argc, char *argv[])
 void run_dds_data_writer()
 {
     DDSParticipantListener *listener = new DDSParticipantListener();
-    DataNode node("/home/wwk/workspaces/test_demo/sample/node_example/qosConfig.xml", listener);
-    //DataNode node(0, "test_writer", qos_configurator);
+    //DataNode node("/home/wwk/workspaces/test_demo/sample/node_example/qosConfig.xml", listener);
+    DataNode node(10, "test_writer", qos_configurator, listener);
     //DataNode node(100, "test_writer");
     node.registerTopicType<HelloWorldOnePubSubType>("wwk");
 
     // eprosima::fastdds::dds::DataWriterQos dataWriterQos;
     // dataWriterQos = eprosima::fastdds::dds::DATAWRITER_QOS_DEFAULT;
-    auto dataWriter = node.createDataWriter<HelloWorldOne>("wwk");
+    auto dataWriter = node.createDataWriter<HelloWorldOne>("wwk", qos_configurator_data_writer);
     bool runFlag = true;
     int index = 0;
     std::thread([&]() {
@@ -94,12 +110,13 @@ void run_dds_data_writer()
 void run_dds_data_reader()
 {
     DDSParticipantListener *listener = new DDSParticipantListener();
-    DataNode node("/home/wwk/workspaces/test_demo/sample/node_example/qosConfig.xml", listener);
+    // DataNode node("/home/wwk/workspaces/test_demo/sample/node_example/qosConfig.xml", listener);
 
-   //DataNode node(0, "test_reader", qos_configurator);
+    DataNode node(10, "test_reader", qos_configurator, listener);
     //DataNode node(100, "test_reader");
     node.registerTopicType<HelloWorldOnePubSubType>("wwk");
-    auto dataReader = node.createDataReader<HelloWorldOne>("wwk", processHelloWorldOne);
+    auto dataReader = node.createDataReader<HelloWorldOne>("wwk", processHelloWorldOne,
+                                                           qos_configurator_data_reader);
     while (std::cin.get() != '\n') {
     }
 }
@@ -120,7 +137,7 @@ void run_dds_data_Multiwriter()
     }
 
     // 创建多个数据写入器
-    std::unordered_map<std::string,  std::shared_ptr<DDSTopicDataWriter<HelloWorldOne>>> dataWriters;
+    std::unordered_map<std::string, std::shared_ptr<DDSTopicDataWriter<HelloWorldOne>>> dataWriters;
 
     for (const auto &topic : topics) {
         dataWriters[topic] = node.createDataWriter<HelloWorldOne>(topic);
@@ -130,7 +147,6 @@ void run_dds_data_Multiwriter()
         while (std::cin.get() != '\n') {
         }
         runFlag = false;
-        
     }).detach();
 
     while (cnt < 100000 && runFlag) {

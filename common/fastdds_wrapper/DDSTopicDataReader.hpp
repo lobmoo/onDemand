@@ -46,6 +46,13 @@ DDSTopicDataReader<T>::DDSTopicDataReader(
 {
     m_readerListener.m_callback = callback;
     m_dataReader = subscriber->create_datareader(topic, dataReaderQos, &m_readerListener);
+    eprosima::fastdds::dds::DataReaderQos qos;
+    m_dataReader->get_qos(qos);
+    if (qos.data_sharing().kind() == eprosima::fastdds::dds::DataSharingKind::OFF) {
+       LOG(error) <<  "DataSharing QoS is OFF";
+    } else {
+        LOG(error) << "DataSharing QoS is ENABLED";
+    }
 }
 
 template <typename T>

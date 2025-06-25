@@ -29,6 +29,7 @@ public:
     void setDurability(u_int32_t depth);
     void setResourceLimits(uint32_t max_samples, uint32_t max_instances,
                            uint32_t max_samples_per_instance);
+    void setCloseDataSharing();
 
 private:
     eprosima::fastdds::dds::DataWriterQos m_dataWriterQos;

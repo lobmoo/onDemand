@@ -46,3 +46,9 @@ void DDSDataWriterQosHanler::setResourceLimits(uint32_t max_samples = 0, uint32_
         static_cast<int32_t>(max_samples_per_instance);
 }
 
+void DDSDataWriterQosHanler::setCloseDataSharing()
+{
+    m_dataWriterQos.data_sharing().off();
+    
+}
+
