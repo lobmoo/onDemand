@@ -129,6 +129,7 @@ public:
     
     /**/
     void setCloseDataSharing();
+    void addUDPV4TransportDefault();
 private:
     //eprosima::fastdds::dds::DomainParticipantQos m_participantQos;
     eprosima::fastdds::dds::DomainParticipantExtendedQos m_participantQos;

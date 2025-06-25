@@ -45,3 +45,8 @@ void DDSDataReaderQosHandler::setResourceLimits(uint32_t max_samples = 0,
     m_dataReaderQos.resource_limits().max_samples_per_instance =
         static_cast<int32_t>(max_samples_per_instance);
 }
+
+void DDSDataReaderQosHandler::setCloseDataSharing()
+{
+    m_dataReaderQos.data_sharing().off();
+}

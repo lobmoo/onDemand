@@ -24,7 +24,7 @@
     </participant>
 
     <topic profile_name="default_topic_profile" is_default_profile="true">
-        <historyQos>
+        <!-- <historyQos>
             <kind>KEEP_LAST</kind>
             <depth>20</depth>
         </historyQos>
@@ -34,7 +34,7 @@
             <max_samples_per_instance>1</max_samples_per_instance>
             <allocated_samples>20</allocated_samples>
             <extra_samples>10</extra_samples>
-        </resourceLimitsQos>
+        </resourceLimitsQos> -->
     </topic>
 
     <publisher profile_name="default_publisher_profile" is_default_profile="true">

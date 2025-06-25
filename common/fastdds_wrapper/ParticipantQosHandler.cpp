@@ -119,6 +119,15 @@ void ParticipantQosHandler::addUDPV4Transport(uint32_t buffer_size,
     m_participantQos.transport().user_transports.push_back(udp_transport);
 }
 
+void ParticipantQosHandler::addUDPV4TransportDefault()
+{
+    m_participantQos.transport().use_builtin_transports = false;
+    m_participantQos.transport().user_transports.clear(); // 移除自定义 SHM 传输m_participantQos
+    auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
+    m_participantQos.transport().user_transports.push_back(udp_transport);
+   
+}
+
 void ParticipantQosHandler::addUDPV4TransportInterface(std::string network_interface)
 {
 
