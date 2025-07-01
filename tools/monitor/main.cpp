@@ -95,22 +95,15 @@ int main(int argc, char **argv)
         return 1;
     }
     else{
-        LOG(info) << "MonitorDataBaseManager initialized successfully";
-        std::thread([&manager]() { manager.run();}).detach();
+       // LOG(info) << "MonitorDataBaseManager initialized successfully";
+       // std::thread([&manager]() { manager.run();}).detach();
     }
     int count = 0;
 
     //Monitor::launchTopicMonitorUI();
+    Monitor::MonitorUI ui;
+    ui.run();
     while (true) {
-        
-        if (count++ % 5 == 0) {
-            LOG(info) << "Monitor is running...";
-        }
-        // if(count % 10 == 0) {
-        //   manager.stop();
-        //   LOG(info) << "MonitorDataBaseManager stopped successfully";
-        //   break;
-        // }
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }
     return 0;

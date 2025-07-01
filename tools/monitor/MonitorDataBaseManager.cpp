@@ -215,6 +215,7 @@ void MonitorDataBaseManager::printTopicInfo(const std::string &topicName)
 
     return ;
 }
+
 topicInfo_t MonitorDataBaseManager::getTopicInfo(const std::string &topicName) const
 {
     auto it = topicInfo_.find(topicName);

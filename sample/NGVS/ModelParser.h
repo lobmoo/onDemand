@@ -95,7 +95,7 @@ namespace parser
         std::string modelVersion;
         std::string schema;
         size_t size;
-        std::vector<std::shared_ptr<TreeNode>> members; // 根节点们
+        std::vector<std::shared_ptr<TreeNode>> members;   //根节点们
     };
 
     bool forwardToBuffer(const std::string &type, const std::string &value,
