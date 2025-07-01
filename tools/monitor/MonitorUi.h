@@ -26,11 +26,13 @@ private:
     ftxui::Component component_;
     int current_page_ = 0; // 0 表示菜单页，1 表示详情页
     std::string current_topic_;
-    
+
     std::vector<std::string> topic_names_;
     std::map<std::string, topicInfo_t> topic_info_map_;
+    std::mutex data_mutex_;
     int current_index_ = 0;
-    bool running_ = true;
+    std::atomic<bool> running_{true};
+    std::thread update_thread_;
 
     void updateTopics();
     void nextTopic();

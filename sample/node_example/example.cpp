@@ -21,7 +21,7 @@ ParticipantQosHandler qos_configurator()
     ParticipantQosHandler handler("test");
     handler.add_statistics_and_monitor();
     //handler.addUDPV4TransportInterface("eth2");
-    handler.addUDPV4TransportDefault();
+    //handler.addUDPV4TransportDefault();
     return handler;
 }
 
@@ -81,13 +81,13 @@ void run_dds_data_writer()
 {
     DDSParticipantListener *listener = new DDSParticipantListener();
     //DataNode node("/home/wwk/workspaces/test_demo/sample/node_example/qosConfig.xml", listener);
-    DataNode node(10, "test_writer", qos_configurator, listener);
-    //DataNode node(100, "test_writer");
+    // DataNode node(10, "test_writer", qos_configurator, listener);
+    DataNode node(100, "test_writer");
     node.registerTopicType<HelloWorldOnePubSubType>("wwk");
 
     // eprosima::fastdds::dds::DataWriterQos dataWriterQos;
     // dataWriterQos = eprosima::fastdds::dds::DATAWRITER_QOS_DEFAULT;
-    auto dataWriter = node.createDataWriter<HelloWorldOne>("wwk", qos_configurator_data_writer);
+    auto dataWriter = node.createDataWriter<HelloWorldOne>("wwk");
     bool runFlag = true;
     int index = 0;
     std::thread([&]() {
@@ -111,12 +111,10 @@ void run_dds_data_reader()
 {
     DDSParticipantListener *listener = new DDSParticipantListener();
     // DataNode node("/home/wwk/workspaces/test_demo/sample/node_example/qosConfig.xml", listener);
-
-    DataNode node(10, "test_reader", qos_configurator, listener);
-    //DataNode node(100, "test_reader");
+    // DataNode node(10, "test_reader", qos_configurator, listener);
+    DataNode node(100, "test_reader");
     node.registerTopicType<HelloWorldOnePubSubType>("wwk");
-    auto dataReader = node.createDataReader<HelloWorldOne>("wwk", processHelloWorldOne,
-                                                           qos_configurator_data_reader);
+    auto dataReader = node.createDataReader<HelloWorldOne>("wwk", processHelloWorldOne);
     while (std::cin.get() != '\n') {
     }
 }
@@ -168,21 +166,21 @@ void run_dds_data_Multiwriter()
 
 void run_dds_data_Multireader()
 {
-    // 存储每个主题的延迟
-    std::unordered_map<std::string, std::vector<uint64_t>> topicDelays;
-
     // 初始化节点
     DataNode node(100, "receiver_node");
+    std::vector<std::shared_ptr<DDSTopicDataReader<HelloWorldOne>>> readers;
 
     // 注册多个主题
     std::vector<std::string> topics = {"Topic_1", "Topic_2", "Topic_3"};
     for (const auto &topic : topics) {
         node.registerTopicType<HelloWorldOnePubSubType>(topic);
-        // 创建数据读取器
-        node.createDataReader<HelloWorldOne>(
+  
+        auto reader = node.createDataReader<HelloWorldOne>(
             topic, [](const std::string &topic_name, std::shared_ptr<HelloWorldOne> data) {
                 LOG(info) << "recv message from [" << topic_name << "]: " << data->index();
             });
+
+        readers.push_back(reader);
     }
 
     while (std::cin.get() != '\n') {
