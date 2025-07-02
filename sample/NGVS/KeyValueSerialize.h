@@ -32,7 +32,7 @@ namespace kvpair
     class KeyValueSerializer
     {
     public:
-        KeyValueSerializer(size_t alignment = 2);
+        KeyValueSerializer(size_t alignment = 4);
         ~KeyValueSerializer();
         bool serialize(const std::string &ModelName, const std::unordered_map<std::string, std::string> &data, std::vector<char> &outBuffer);
         bool deserialize(const std::string &ModelName, const std::vector<char> &inBuffer, std::unordered_map<std::string, std::string> &outData);

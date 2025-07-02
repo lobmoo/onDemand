@@ -4,6 +4,8 @@
 #include "ModelParser.h"
 #include "iostream"
 #include <fstream>
+#include <stddef.h>
+
 std::string readXmlFile(const std::string &filePath)
 {
     std::ifstream file(filePath);
@@ -18,38 +20,6 @@ std::string readXmlFile(const std::string &filePath)
     }
     return content;
 }
-
-#pragma pack(push, 2)
-// __attribute__((packed, aligned(2)))
-struct SimpleModel {
-    bool DT_BOOLEAN;          // 布尔，1字节
-    uint8_t  _pad0;
-    int8_t DT_BYTE;           // 8位，1字节
-    uint8_t  _pad1; 
-    int16_t DT_WORD;          // 16位，2字节
-    int32_t DT_DWORD;         // 32位，4字节
-    int64_t DT_LWORD;         // 64位，8字节
-    int8_t DT_SINT;           // 8位有符号整数，1字节
-    uint8_t  _pad2;
-    uint8_t DT_USINT;         // 8位无符号整数，1字节
-    uint8_t  _pad3;
-    int16_t DT_INT;           // 16位有符号整数，2字节
-    uint16_t DT_UINT;         // 16位无符号整数，2字节
-    int32_t DT_DINT;          // 32位有符号整数，4字节
-    uint32_t DT_UDINT;        // 32位无符号整数，4字节
-    int64_t DT_LINT;          // 64位有符号整数，8字节
-    uint64_t DT_ULINT;        // 64位无符号整数，8字节
-    float DT_REAL;            // 32位浮点数，4字节
-    double DT_LREAL;          // 64位浮点数，8字节
-    char DT_CHAR;             // 单字节字符，1字节
-    uint8_t  _pad4;
-    char DT_CHARSEQ[82];      // 单字节字符数组，默认N=80，占82字节
-    char DT_STRING[82];       // 字符串，假设与DT_CHARSEQ相同
-    // wchar_t DT_WCHAR;         // 宽字节字符，2字节
-    // wchar_t DT_WCHARSEQ[254]; // 宽字节字符数组，默认N=254，占508字节
-    // wchar_t DT_WSTRING[254];  // 宽字符串，假设与DT_WCHARSEQ相同
-};
-#pragma pack(pop)
 
 void test1()
 {
@@ -295,11 +265,34 @@ void test2()
     LOG(info) << "LongTime.fourth: " << outData["LongTime.fourth"];    
     LOG(info) << "String.first: " << outData["String.first"];
     LOG(info) << "String.second: " << outData["String.second"];
-
-
-    while (std::cin.get() != '\n') {
-    }
 }
+#pragma pack(push, 4)
+struct SimpleModel {
+    bool DT_BOOLEAN;          // 布尔，1字节
+    // uint8_t  _pad0;
+    int8_t DT_BYTE;           // 8位，1字节
+    // uint8_t  _pad1; 
+    int16_t DT_WORD;          // 16位，2字节
+    int32_t DT_DWORD;         // 32位，4字节
+    int64_t DT_LWORD;         // 64位，8字节
+    int8_t DT_SINT;           // 8位有符号整数，1字节
+    // uint8_t  _pad2;
+    uint8_t DT_USINT;         // 8位无符号整数，1字节
+    // uint8_t  _pad3;
+    int16_t DT_INT;           // 16位有符号整数，2字节
+    uint16_t DT_UINT;         // 16位无符号整数，2字节
+    int32_t DT_DINT;          // 32位有符号整数，4字节
+    uint32_t DT_UDINT;        // 32位无符号整数，4字节
+    int64_t DT_LINT;          // 64位有符号整数，8字节
+    uint64_t DT_ULINT;        // 64位无符号整数，8字节
+    float DT_REAL;            // 32位浮点数，4字节
+    double DT_LREAL;          // 64位浮点数，8字节
+    char DT_CHAR;             // 单字节字符，1字节
+    // uint8_t  _pad4;
+    char DT_CHARSEQ[82];      // 单字节字符数组，默认N=80，占82字节
+    char DT_STRING[82];       // 字符串，假设与DT_CHARSEQ相同
+};
+#pragma pack(pop)
 
 void test_struct()
 {
@@ -323,8 +316,6 @@ void test_struct()
     std::cout << "Offset of DT_CHARSEQ: " << offsetof(SimpleModel, DT_CHARSEQ) << "\n";
     std::cout << "Offset of DT_STRING: " << offsetof(SimpleModel, DT_STRING) << "\n";
 
-
-    Logger::Instance().Init("log/myapp.log", Logger::console, Logger::debug, 60, 5);
     std::string xmlContent = R"(<models>
             <struct name="SimpleModel" version="1.0">
                 <member name="DT_BOOLEAN" type="DT_BOOLEAN" default="0"/>
@@ -351,6 +342,9 @@ void test_struct()
     std::string errorMsg;
     bool ret = modelParser.init(xmlContent, errorMsg);
     std::cout << "modelParser result: " << ret << std::endl;
+
+    auto modelDefines = modelParser.getModelDefines();
+    modelParser.printAllLeafNodesInfo(modelDefines["SimpleModel:1.0"]);
     dsf::kvpair::KeyValueSerializer kvs = dsf::kvpair::KeyValueSerializer();
     std::unordered_map<std::string, std::string> inData = {
         {"DT_BOOLEAN", "1"},  {"DT_BYTE", "2"},    {"DT_WORD", "4"},     {"DT_DWORD", "5"},
@@ -411,13 +405,61 @@ void test_struct()
     std::cout << "DT_CHAR: " << simpleVar->DT_CHAR << std::endl;
     std::cout << "DT_CHARSEQ: " << simpleVar->DT_CHARSEQ << std::endl;
     std::cout << "DT_STRING: " << simpleVar->DT_STRING << std::endl;
-    // std::cout << "DT_WCHAR: " << simpleVar->DT_WCHAR << std::endl;
-    // std::wcout << L"DT_WCHARSEQ: " << simpleVar->DT_WCHARSEQ << std::endl;
-    // std::wcout << L"DT_WSTRING: " << simpleVar->DT_WSTRING << std::endl;
+    // // std::cout << "DT_WCHAR: " << simpleVar->DT_WCHAR << std::endl;
+    // // std::wcout << L"DT_WCHARSEQ: " << simpleVar->DT_WCHARSEQ << std::endl;
+    // // std::wcout << L"DT_WSTRING: " << simpleVar->DT_WSTRING << std::endl;
+
+}
+
+void test_NGVS()
+{
+    std::string xmlContent =
+        readXmlFile("/home/wwk/workspaces/test_demo/sample/NGVS/modelNgvs.xml");
+    auto &parser = dsf::parser::ModelParser::getInstance();  
+    std::string error_text;
+    parser.init(xmlContent, error_text);
+    auto modelDefines = parser.getModelDefines();
+    parser.printAllLeafNodesInfo(modelDefines["SimpleModel:1.0"]);
+    // dsf::ngvs::NgvsSerializer Serializer;
+    // std::vector<char> outBuffer;
+    // std::unordered_map<std::string, std::string> inData;
+    // inData["STD.VAR1.B1"] = "123";
+    // inData["STD.VAR1.B2"] = "true";
+    // inData["STD.VAR1.B3.C1"] = "789";
+    // inData["STD.VAR1.B3.C2[0]"] = "3.13";
+    // inData["STD.VAR1.B3.C2[1]"] = "3.14";
+    // inData["STD.VAR2[0]"] = "16";
+    // inData["STD.VAR2[1]"] = "17";
+    // inData["STD.VAR3"] = "18";
+    // inData["STD.VAR4"] = "19";
+    // inData["STD.VAR5"] = "20";
+
+    // std::vector<std::shared_ptr<dsf::parser::TreeNode>> leaves;
+    // dsf::parser::ModelDefine model;
+
+  
+    // if (!Serializer.serialize("STD.NGVS_S1:1.0", inData, outBuffer)) {
+    //     LOG(error) << "Serialization failed";
+    //     return 1;
+    // }
+
+    // std::unordered_map<std::string, std::string> outData;
+    // if (!Serializer.deserialize("STD.NGVS_S1:1.0", outBuffer, outData)) {
+    //     LOG(error) << "deserialize failed";
+    //     return 1;
+    // }
+
+    // for(auto &pair : outData) {
+    //     LOG(info) << "Key: " << pair.first << ", Value: " << pair.second;
+    // }
+
+    // while (std::cin.get() != '\n') {
+    // }
 
 }
 int main(int argc, char *argv[])
 {
+    Logger::Instance().Init("log/myapp.log", Logger::console, Logger::debug, 60, 5);
     test_struct();
 
     return 0;

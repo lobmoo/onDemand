@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @author DSF Team
  * @file ModelParser.h
  * @date 2025-04-16
@@ -124,7 +124,7 @@ namespace parser
         bool findNodeAllLeaves(const ModelDefine &model,
                                std::vector<std::shared_ptr<dsf::parser::TreeNode>> &leaves);
 
-        std::unordered_map<std::string, ModelDefine> getModelDefines() const
+        const std::unordered_map<std::string, ModelDefine> getModelDefines() const
         {
             return modelDefines_;
         }
@@ -138,7 +138,7 @@ namespace parser
         static void printmembersInfo(std::vector<std::shared_ptr<dsf::parser::TreeNode>> &nodes);
         static void printAllLeafNodesInfo(const ModelDefine &model);
 
-        static ModelParser &getInstance(size_t alignment = 2)
+        static ModelParser &getInstance(size_t alignment = 4)
         {
             static ModelParser instance(alignment);
             return instance;
@@ -174,7 +174,7 @@ namespace parser
     private:
         size_t ALIGNMENT_;
         std::set<std::string> visiting;
-        std::vector<std::string> doParseModels; // 需要解析的模型列表
+        std::vector<std::string> doParseModels; // 需要解析的模型列表1
         std::unordered_map<std::string, ModelDefine> modelDefines_;
         std::map<std::string, boost::property_tree::ptree> structNodes_;
         std::mutex mutex_;
