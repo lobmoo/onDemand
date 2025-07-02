@@ -83,7 +83,7 @@ namespace kvpair
                 return false;
             }
 
-            std::memcpy(outBuffer.data() + leaf->offset, memberData.data(), std::min(it->second.size(), memberSize));
+            std::memcpy(outBuffer.data() + leaf->offset, memberData.data(), leaf->size);
 
         } 
 

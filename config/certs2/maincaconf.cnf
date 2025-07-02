@@ -1,0 +1,79 @@
+# File: maincaconf.cnf
+# OpenSSL example Certificate Authority configuration file
+
+####################################################################
+[ ca ]
+default_ca = CA_default # 默认使用哪个 CA 的配置块
+
+####################################################################
+[ CA_default ]
+
+dir = . # 所有文件默认都在当前目录
+certs = $dir/certs # 存储颁发出去的证书
+crl_dir = $dir/crl # 存放吊销列表（CRL）
+database = $dir/index.txt # 是一个记录所有已签发证书的数据库文件（必须存在，哪怕是空文件）
+unique_subject = yes # 表示允许多个证书使用相同的 Subject Name（否则必须唯一）
+# several ctificates with same subject.
+new_certs_dir = $dir/certs  # OpenSSL 会把新签发的证书临时存这里
+
+certificate = $dir/maincacert.pem # 这个 CA 自己的公钥证书（用来签别人）
+serial = $dir/serial # 记录下一个颁发证书的序列号（一般第一行为“01”）
+crlnumber = $dir/crlnumber # 当前 CRL 的编号（如果使用 CRL）
+# must be commented out to leave a V1 CRL
+crl = $dir/crl.pem # 当前的吊销列表（CRL）
+private_key = $dir/maincakey.pem # 这个 CA 的私钥（用来做签名）
+RANDFILE = $dir/private/.rand # 保存随机数种子文件，增强加密随机性
+
+name_opt = ca_default # 控制如何打印证书字段，默认即可。
+cert_opt = ca_default # 控制如何打印证书字段，默认即可。
+
+default_days= 1825 # 签发证书有效期默认是 5 年（365*5）
+default_crl_days = 30 # CRL 默认每 30 天更新
+default_md = sha256 # 默认使用 SHA-256 哈希算法进行签名
+preserve = no # 不保留 DN（主题）字段的顺序
+
+policy = policy_match  # 这是使用的签发策略。指向了 [policy_match] 这个配置块
+
+# For the CA policy  
+[ policy_match ]  # 限制哪些字段必须匹配 CA
+countryName = match  # match意思是 证书请求中的值必须与 CA 自己相同
+stateOrProvinceName = match
+organizationName = match
+organizationalUnitName = optional   # 	可有可无
+commonName = supplied  # 	只需要有这个字段，不强制与 CA 一致
+emailAddress = optional
+
+# For the 'anything' policy
+# At this point in time, you must list all acceptable 'object'
+# types.
+[ policy_anything ]  # 宽松的匹配策略，谁都可以来申请签名
+countryName = optional
+stateOrProvinceName = optional
+localityName = optional
+organizationName = optional
+organizationalUnitName = optional
+commonName = supplied
+emailAddress = optional
+
+[ req ]  # 证书请求（CSR）时的默认设置
+prompt = no   # 不交互式填写字段，而是直接使用 [req_distinguished_name] 的配置
+#default_bits = 1024
+#default_keyfile = privkey.pem
+distinguished_name= req_distinguished_name
+#attributes = req_attributes
+x509_extensions = v3_ca
+string_mask = utf8only  # 只允许 UTF-8 字符（推荐）
+
+[ req_distinguished_name ]  # 默认的 DN 字段（主题名称）
+countryName = CN   # 创建 CA 的证书（或其他证书）时的默认字段值
+stateOrProvinceName = SH   # 可以修改这些值，创建你自己的证书身份
+localityName = BaoSight
+0.organizationName = letsgo
+commonName = MainCA
+emailAddress = mainca@baosight.com
+
+[ v3_ca ]
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid:always,issuer
+basicConstraints = critical, CA:TRUE
+keyUsage = critical, keyCertSign, cRLSign
