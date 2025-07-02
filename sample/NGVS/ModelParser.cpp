@@ -246,7 +246,7 @@ namespace parser
             size_t offset = 0;
             resolveModelMembers(modelNameAndVersion, modelDefines, modelDefine.members, modelSize,
                                 offset, modelDefine.modelVersion);
-            modelDefine.size = (offset + ALIGNMENT_ - 1) / ALIGNMENT_ * ALIGNMENT_;
+            modelDefine.size = offset;
         }
         return MODEL_PARSER_OK;
     }
@@ -608,13 +608,7 @@ namespace parser
                                      std::vector<std::shared_ptr<TreeNode>> &currentModelMembers,
                                      size_t &modelSize, size_t &offset,
                                      const std::string &modelVersion, const std::string &parentName)
-
     {
-        if (ALIGNMENT_ <= 0) {
-            LOG(error) << "Alignment must be greater than 0, current value: " << ALIGNMENT_;
-            return;
-        }
-
         if (visiting.count(currentModelNameAndVersion)) {
             LOG(error) << "Detected cyclic dependency at model: " << currentModelNameAndVersion;
             return;
@@ -667,18 +661,16 @@ namespace parser
                         if (nonBasicTypeVersionOptional) {
                             nodeVersion = nonBasicTypeVersionOptional.get();
                         } else {
-                            LOG(warning) << "Non-basic member '" << memberName
-                                         << "' lacks version, using name without version";
+                            LOG(warning) << "Non-basic member '" << memberName << "' lacks version";
                         }
                         nodeNonBasicTypeName =
                             memberNode.second.get<std::string>("<xmlattr>.nonBasicTypeName", "");
                     }
 
-                    // 强制对齐到 ALIGNMENT_ 边界
-                    offset = (offset + ALIGNMENT_ - 1) / ALIGNMENT_ * ALIGNMENT_;
-                    size_t startingOffset = offset;
+                    size_t startingOffset = offset; // 记录当前偏移量
 
                     if (arrayDimensionsOptional) {
+                        // 数组处理逻辑保持不变，但移除对齐
                         std::vector<int> dimensions;
                         std::vector<std::string> dimsStr;
                         boost::split(dimsStr, arrayDimensionsOptional.get(), boost::is_any_of(","));
@@ -709,23 +701,6 @@ namespace parser
                                 continue;
                             }
                         }
-                        // 验证 endIndex（仅用于日志或调试）
-                        if (endIndexOptional) {
-                            try {
-                                int endIndex = std::stoi(endIndexOptional.get());
-                                if (endIndex < startIndex
-                                    || endIndex - startIndex + 1 != (int)arraySize) {
-                                    LOG(warning) << "Array indices mismatch for " << memberName
-                                                 << ": startIndex=" << startIndex
-                                                 << ", endIndex=" << endIndex
-                                                 << ", expected size=" << arraySize;
-                                }
-                            } catch (const std::exception &e) {
-                                LOG(warning)
-                                    << "Invalid endIndex for " << memberName << ": " << e.what();
-                            }
-                        }
-
                         auto arrayNode = std::make_shared<TreeNode>();
                         arrayNode->name = nodeName;
                         arrayNode->type = "array";
@@ -754,11 +729,6 @@ namespace parser
                                         resolveModelMembers(nonBasicKey, allNodes, elementMembers,
                                                             elementSize, elementOffset, nodeVersion,
                                                             elementName);
-                                        // 强制对齐每个数组元素
-                                        currentOffset = (currentOffset + ALIGNMENT_ - 1)
-                                                        / ALIGNMENT_ * ALIGNMENT_;
-                                        LOG(info) << "Aligning array element " << elementName
-                                                  << " to offset " << currentOffset;
                                         size_t singleElementSize = elementSize;
 
                                         auto elementNode = std::make_shared<TreeNode>();
@@ -815,19 +785,6 @@ namespace parser
                                     for (int idx : indices) {
                                         elementName += "[" + std::to_string(idx + startIndex) + "]";
                                     }
-                                    // 检查剩余空间
-                                    size_t currentAlignment = currentOffset % ALIGNMENT_;
-                                    size_t remainingSpace = currentAlignment == 0
-                                                                ? ALIGNMENT_
-                                                                : ALIGNMENT_ - currentAlignment;
-                                    if (typeSize > remainingSpace) {
-                                        currentOffset = (currentOffset + ALIGNMENT_ - 1)
-                                                        / ALIGNMENT_ * ALIGNMENT_;
-                                        LOG(info) << "Aligning array element " << elementName
-                                                  << " to offset " << currentOffset
-                                                  << " (typeSize=" << typeSize
-                                                  << ", remainingSpace=" << remainingSpace << ")";
-                                    }
                                     auto elementNode = std::make_shared<TreeNode>();
                                     elementNode->name = elementName;
                                     elementNode->type = memberType;
@@ -853,6 +810,7 @@ namespace parser
                         arrayNode->children = std::move(arrayElements);
                         currentModelMembers.push_back(std::move(arrayNode));
                     } else if (sequenceMaxLengthOptional) {
+                        // 序列处理逻辑保持不变，但移除对齐
                         int maxLength;
                         try {
                             maxLength = std::stoi(sequenceMaxLengthOptional.get());
@@ -887,10 +845,6 @@ namespace parser
                                     resolveModelMembers(nonBasicKey, allNodes, elementMembers,
                                                         elementSize, elementOffset, nodeVersion,
                                                         elementName);
-                                    currentOffset =
-                                        (currentOffset + ALIGNMENT_ - 1) / ALIGNMENT_ * ALIGNMENT_;
-                                    LOG(info) << "Aligning sequence element " << elementName
-                                              << " to offset " << currentOffset;
                                     size_t singleElementSize = elementSize;
 
                                     auto elementNode = std::make_shared<TreeNode>();
@@ -928,18 +882,6 @@ namespace parser
                             size_t typeSize = getBasicTypeSize(memberType);
                             for (int i = 0; i < maxLength; ++i) {
                                 std::string elementName = nodeName + "[" + std::to_string(i) + "]";
-                                size_t currentAlignment = currentOffset % ALIGNMENT_;
-                                size_t remainingSpace = currentAlignment == 0
-                                                            ? ALIGNMENT_
-                                                            : ALIGNMENT_ - currentAlignment;
-                                if (typeSize > remainingSpace) {
-                                    currentOffset =
-                                        (currentOffset + ALIGNMENT_ - 1) / ALIGNMENT_ * ALIGNMENT_;
-                                    LOG(info) << "Aligning sequence element " << elementName
-                                              << " to offset " << currentOffset
-                                              << " (typeSize=" << typeSize
-                                              << ", remainingSpace=" << remainingSpace << ")";
-                                }
                                 auto elementNode = std::make_shared<TreeNode>();
                                 elementNode->name = elementName;
                                 elementNode->type = memberType;
@@ -978,22 +920,27 @@ namespace parser
                         }
                     } else {
                         size_t typeSize = getBasicTypeSize(memberType);
-                        size_t currentAlignment = offset % ALIGNMENT_;
-                        size_t remainingSpace =
-                            currentAlignment == 0 ? ALIGNMENT_ : ALIGNMENT_ - currentAlignment;
-                        if (typeSize > remainingSpace) {
-                            offset = (offset + ALIGNMENT_ - 1) / ALIGNMENT_ * ALIGNMENT_;
-                            startingOffset = offset;
+
+                        int iRet = offset % ALIGNMENT_;
+                        if (0 != iRet && (typeSize <= 8)) /*只有基本类型才对齐 数组类型直接拼*/
+                        {
+                            // 如果当前偏移量不是4字节对齐
+                            if (typeSize > (ALIGNMENT_ - iRet)) {
+                                offset = (offset + ALIGNMENT_ - iRet); // 对齐到4字节边界
+                                LOG(info) << "offset :" << offset << " typeSize :" << typeSize;
+                            }
+                            
                         }
+
                         auto node = std::make_shared<TreeNode>();
                         node->name = nodeName;
                         node->type = memberType;
                         node->size = typeSize;
-                        node->offset = startingOffset;
+                        node->offset = offset; // 直接使用当前偏移量，无需对齐
                         node->nonBasicTypeName = "";
                         node->version = "";
                         currentModelMembers.push_back(node);
-                        offset = startingOffset + typeSize;
+                        offset += typeSize; // 直接累加大小
                     }
                 }
             }

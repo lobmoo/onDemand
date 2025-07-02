@@ -4,6 +4,7 @@
 #include "ModelParser.h"
 #include "iostream"
 #include <fstream>
+#include <stddef.h>
 
 std::string readXmlFile(const std::string &filePath)
 {
@@ -326,7 +327,150 @@ void test1()
 //     }
 // }
 
+#pragma pack(push, 4)
+struct SimpleModel {
+    bool DT_BOOLEAN;          // 布尔，1字节
+    // uint8_t  _pad0;
+    int8_t DT_BYTE;           // 8位，1字节
+    // uint8_t  _pad1; 
+    int16_t DT_WORD;          // 16位，2字节
+    int32_t DT_DWORD;         // 32位，4字节
+    int64_t DT_LWORD;         // 64位，8字节
+    int8_t DT_SINT;           // 8位有符号整数，1字节
+    // uint8_t  _pad2;
+    uint8_t DT_USINT;         // 8位无符号整数，1字节
+    // uint8_t  _pad3;
+    int16_t DT_INT;           // 16位有符号整数，2字节
+    uint16_t DT_UINT;         // 16位无符号整数，2字节
+    int32_t DT_DINT;          // 32位有符号整数，4字节
+    uint32_t DT_UDINT;        // 32位无符号整数，4字节
+    int64_t DT_LINT;          // 64位有符号整数，8字节
+    uint64_t DT_ULINT;        // 64位无符号整数，8字节
+    float DT_REAL;            // 32位浮点数，4字节
+    double DT_LREAL;          // 64位浮点数，8字节
+    char DT_CHAR;             // 单字节字符，1字节
+    // uint8_t  _pad4;
+    char DT_CHARSEQ[82];      // 单字节字符数组，默认N=80，占82字节
+    char DT_STRING[82];       // 字符串，假设与DT_CHARSEQ相同
+};
+#pragma pack(pop)
 
+void test_struct()
+{
+    // 打印struct的偏移值
+    std::cout << "Offset of DT_BOOLEAN: " << offsetof(SimpleModel, DT_BOOLEAN) << "\n";
+    std::cout << "Offset of DT_BYTE: " << offsetof(SimpleModel, DT_BYTE) << "\n";
+    std::cout << "Offset of DT_WORD: " << offsetof(SimpleModel, DT_WORD) << "\n";
+    std::cout << "Offset of DT_DWORD: " << offsetof(SimpleModel, DT_DWORD) << "\n";
+    std::cout << "Offset of DT_LWORD: " << offsetof(SimpleModel, DT_LWORD) << "\n";
+    std::cout << "Offset of DT_SINT: " << offsetof(SimpleModel, DT_SINT) << "\n";
+    std::cout << "Offset of DT_USINT: " << offsetof(SimpleModel, DT_USINT) << "\n";
+    std::cout << "Offset of DT_INT: " << offsetof(SimpleModel, DT_INT) << "\n";
+    std::cout << "Offset of DT_UINT: " << offsetof(SimpleModel, DT_UINT) << "\n";
+    std::cout << "Offset of DT_DINT: " << offsetof(SimpleModel, DT_DINT) << "\n";
+    std::cout << "Offset of DT_UDINT: " << offsetof(SimpleModel, DT_UDINT) << "\n";
+    std::cout << "Offset of DT_LINT: " << offsetof(SimpleModel, DT_LINT) << "\n";
+    std::cout << "Offset of DT_ULINT: " << offsetof(SimpleModel, DT_ULINT) << "\n";
+    std::cout << "Offset of DT_REAL: " << offsetof(SimpleModel, DT_REAL) << "\n";
+    std::cout << "Offset of DT_LREAL: " << offsetof(SimpleModel, DT_LREAL) << "\n";
+    std::cout << "Offset of DT_CHAR: " << offsetof(SimpleModel, DT_CHAR) << "\n";
+    std::cout << "Offset of DT_CHARSEQ: " << offsetof(SimpleModel, DT_CHARSEQ) << "\n";
+    std::cout << "Offset of DT_STRING: " << offsetof(SimpleModel, DT_STRING) << "\n";
+
+    std::string xmlContent = R"(<models>
+            <struct name="SimpleModel" version="1.0">
+                <member name="DT_BOOLEAN" type="DT_BOOLEAN" default="0"/>
+                <member name="DT_BYTE" type="DT_BYTE"/>
+                <member name="DT_WORD" type="DT_WORD"/>
+                <member name="DT_DWORD" type="DT_DWORD"/>
+                <member name="DT_LWORD" type="DT_LWORD"/>
+                <member name="DT_SINT" type="DT_SINT"/>
+                <member name="DT_USINT" type="DT_USINT"/>
+                <member name="DT_INT" type="DT_INT"/>
+                <member name="DT_UINT" type="DT_UINT"/>
+                <member name="DT_DINT" type="DT_DINT"/>
+                <member name="DT_UDINT" type="DT_UDINT"/>
+                <member name="DT_LINT" type="DT_LINT"/>
+                <member name="DT_ULINT" type="DT_ULINT"/>
+                <member name="DT_REAL" type="DT_REAL"/>
+                <member name="DT_LREAL" type="DT_LREAL"/>
+                <member name="DT_CHAR" type="DT_CHAR"/>
+                <member name="DT_CHARSEQ" type="DT_CHARSEQ"/>
+                <member name="DT_STRING" type="DT_STRING"/>
+            </struct>
+        </models>)";
+    auto &modelParser = dsf::parser::ModelParser::getInstance();
+    std::string errorMsg;
+    bool ret = modelParser.init(xmlContent, errorMsg);
+    std::cout << "modelParser result: " << ret << std::endl;
+
+    auto modelDefines = modelParser.getModelDefines();
+    modelParser.printAllLeafNodesInfo(modelDefines["SimpleModel:1.0"]);
+    // dsf::kvpair::KeyValueSerializer kvs = dsf::kvpair::KeyValueSerializer();
+    // std::unordered_map<std::string, std::string> inData = {
+    //     {"DT_BOOLEAN", "1"},  {"DT_BYTE", "2"},    {"DT_WORD", "4"},     {"DT_DWORD", "5"},
+    //     {"DT_LWORD", "6"},    {"DT_SINT", "7"},    {"DT_USINT", "8"},    {"DT_INT", "9"},
+    //     {"DT_UINT", "10"},    {"DT_DINT", "11"},   {"DT_UDINT", "12"},   {"DT_LINT", "13"},
+    //     {"DT_ULINT", "14"},   {"DT_REAL", "15.0"}, {"DT_LREAL", "16.0"},
+    //     {"DT_CHAR", "7"}, {"DT_CHARSEQ", "18"}, {"DT_STRING", "19"}
+    //     // {"DT_WCHAR", "20"},   {"DT_WCHARSEQ", "21"}, {"DT_WSTRING", "22"}
+    //     };
+    // std::vector<char> outBuffer;
+    // ret = kvs.serialize("SimpleModel:1.0", inData, outBuffer);
+    // std::cout << "Serialize result: " << ret << std::endl;
+    // std::unordered_map<std::string, std::string> outData;
+    // ret = kvs.deserialize("SimpleModel:1.0", outBuffer, outData);
+    // std::cout << "deserialize result: " << ret << std::endl;
+    // std::cout << "outBuffer size: " << outBuffer.size() << std::endl;
+    // LOG(info) << "DT_BOOLEAN: " << outData["DT_BOOLEAN"];
+    // LOG(info) << "DT_BYTE: " << outData["DT_BYTE"];
+    // LOG(info) << "DT_WORD: " << outData["DT_WORD"];
+    // LOG(info) << "DT_DWORD: " << outData["DT_DWORD"];
+    // LOG(info) << "DT_LWORD: " << outData["DT_LWORD"];
+    // LOG(info) << "DT_SINT: " << outData["DT_SINT"];
+    // LOG(info) << "DT_USINT: " << outData["DT_USINT"];
+    // LOG(info) << "DT_INT: " << outData["DT_INT"];
+    // LOG(info) << "DT_UINT: " << outData["DT_UINT"];
+    // LOG(info) << "DT_DINT: " << outData["DT_DINT"];
+    // LOG(info) << "DT_UDINT: " << outData["DT_UDINT"];
+    // LOG(info) << "DT_LINT: " << outData["DT_LINT"];
+    // LOG(info) << "DT_ULINT: " << outData["DT_ULINT"];
+    // LOG(info) << "DT_REAL: " << outData["DT_REAL"];
+    // LOG(info) << "DT_LREAL: " << outData["DT_LREAL"];
+    // LOG(info) << "DT_CHAR: " << outData["DT_CHAR"];
+    // LOG(info) << "DT_CHARSEQ: " << outData["DT_CHARSEQ"];
+    // LOG(info) << "DT_STRING: " << outData["DT_STRING"];
+    // // LOG(info) << "DT_WCHAR: " << outData["DT_WCHAR"];
+    // // LOG(info) << "DT_WCHARSEQ: " << outData["DT_WCHARSEQ"];
+    // // LOG(info) << "DT_WSTRING: " << outData["DT_WSTRING"];
+    // // for (auto &item : outData) {
+    // //     std::cout << item.first << ":" << item.second << std::endl;
+    // // }
+    // SimpleModel* simpleVar = (SimpleModel *)outBuffer.data();
+    // std::cout << "---------------SimpleModel:---------------" << std::endl;
+    // std::cout << "DT_BOOLEAN: " << simpleVar->DT_BOOLEAN << std::endl;
+    // std::cout << "DT_BYTE: " << (int)simpleVar->DT_BYTE << std::endl;
+    // std::cout << "DT_WORD: " << simpleVar->DT_WORD << std::endl;
+    // std::cout << "DT_DWORD: " << simpleVar->DT_DWORD << std::endl;
+    // std::cout << "DT_LWORD: " << simpleVar->DT_LWORD << std::endl;
+    // std::cout << "DT_SINT: " << (int)simpleVar->DT_SINT << std::endl;
+    // std::cout << "DT_USINT: " << (unsigned int)simpleVar->DT_USINT << std::endl;
+    // std::cout << "DT_INT: " << simpleVar->DT_INT << std::endl;
+    // std::cout << "DT_UINT: " << simpleVar->DT_UINT << std::endl;
+    // std::cout << "DT_DINT: " << simpleVar->DT_DINT << std::endl;
+    // std::cout << "DT_UDINT: " << simpleVar->DT_UDINT << std::endl;
+    // std::cout << "DT_LINT: " << simpleVar->DT_LINT << std::endl;
+    // std::cout << "DT_ULINT: " << simpleVar->DT_ULINT << std::endl;
+    // std::cout << "DT_REAL: " << simpleVar->DT_REAL << std::endl;
+    // std::cout << "DT_LREAL: " << simpleVar->DT_LREAL << std::endl;
+    // std::cout << "DT_CHAR: " << simpleVar->DT_CHAR << std::endl;
+    // std::cout << "DT_CHARSEQ: " << simpleVar->DT_CHARSEQ << std::endl;
+    // std::cout << "DT_STRING: " << simpleVar->DT_STRING << std::endl;
+    // // std::cout << "DT_WCHAR: " << simpleVar->DT_WCHAR << std::endl;
+    // // std::wcout << L"DT_WCHARSEQ: " << simpleVar->DT_WCHARSEQ << std::endl;
+    // // std::wcout << L"DT_WSTRING: " << simpleVar->DT_WSTRING << std::endl;
+
+}
 
 int testNgvs()
 {
@@ -335,41 +479,43 @@ int testNgvs()
     auto &parser = dsf::parser::ModelParser::getInstance();  
     std::string error_text;
     parser.init(xmlContent, error_text);
-    dsf::ngvs::NgvsSerializer Serializer;
-    std::vector<char> outBuffer;
-    std::unordered_map<std::string, std::string> inData;
-    inData["STD.VAR1.B1"] = "123";
-    inData["STD.VAR1.B2"] = "true";
-    inData["STD.VAR1.B3.C1"] = "789";
-    inData["STD.VAR1.B3.C2[0]"] = "3.13";
-    inData["STD.VAR1.B3.C2[1]"] = "3.14";
-    inData["STD.VAR2[0]"] = "16";
-    inData["STD.VAR2[1]"] = "17";
-    inData["STD.VAR3"] = "18";
-    inData["STD.VAR4"] = "19";
-    inData["STD.VAR5"] = "20";
+    auto modelDefines = parser.getModelDefines();
+    parser.printAllLeafNodesInfo(modelDefines["SimpleModel:1.0"]);
+    // dsf::ngvs::NgvsSerializer Serializer;
+    // std::vector<char> outBuffer;
+    // std::unordered_map<std::string, std::string> inData;
+    // inData["STD.VAR1.B1"] = "123";
+    // inData["STD.VAR1.B2"] = "true";
+    // inData["STD.VAR1.B3.C1"] = "789";
+    // inData["STD.VAR1.B3.C2[0]"] = "3.13";
+    // inData["STD.VAR1.B3.C2[1]"] = "3.14";
+    // inData["STD.VAR2[0]"] = "16";
+    // inData["STD.VAR2[1]"] = "17";
+    // inData["STD.VAR3"] = "18";
+    // inData["STD.VAR4"] = "19";
+    // inData["STD.VAR5"] = "20";
 
-    std::vector<std::shared_ptr<dsf::parser::TreeNode>> leaves;
-    dsf::parser::ModelDefine model;
+    // std::vector<std::shared_ptr<dsf::parser::TreeNode>> leaves;
+    // dsf::parser::ModelDefine model;
 
   
-    if (!Serializer.serialize("STD.NGVS_S1:1.0", inData, outBuffer)) {
-        LOG(error) << "Serialization failed";
-        return 1;
-    }
+    // if (!Serializer.serialize("STD.NGVS_S1:1.0", inData, outBuffer)) {
+    //     LOG(error) << "Serialization failed";
+    //     return 1;
+    // }
 
-    std::unordered_map<std::string, std::string> outData;
-    if (!Serializer.deserialize("STD.NGVS_S1:1.0", outBuffer, outData)) {
-        LOG(error) << "deserialize failed";
-        return 1;
-    }
+    // std::unordered_map<std::string, std::string> outData;
+    // if (!Serializer.deserialize("STD.NGVS_S1:1.0", outBuffer, outData)) {
+    //     LOG(error) << "deserialize failed";
+    //     return 1;
+    // }
 
-    for(auto &pair : outData) {
-        LOG(info) << "Key: " << pair.first << ", Value: " << pair.second;
-    }
+    // for(auto &pair : outData) {
+    //     LOG(info) << "Key: " << pair.first << ", Value: " << pair.second;
+    // }
 
-    while (std::cin.get() != '\n') {
-    }
+    // while (std::cin.get() != '\n') {
+    // }
 
     return 0;
 }
@@ -378,7 +524,7 @@ int testNgvs()
 int main(int argc, char *argv[])
 {
     Logger::Instance().Init("log/myapp.log", Logger::console, Logger::debug, 60, 5);
-    testNgvs();
+    test_struct();
 
     return 0;
 }
