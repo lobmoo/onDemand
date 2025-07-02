@@ -107,6 +107,11 @@ void Logger::LoggerImpl::stop()
 bool Logger::LoggerImpl::Init(std::string fileName, LoggerType type, severity_level level,
                               uint32_t maxFileSize, uint32_t maxBackupIndex, bool isAsync)
 {
+    if (spdlog::get("Logger")) {
+        spdlog::warn("Logger already initialized, skipping re-initialization");
+        return false;
+    } 
+
     std::size_t max_file_size = 1024 * 1024 * maxFileSize;
     std::vector<spdlog::sink_ptr> sinks;
 
