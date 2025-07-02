@@ -138,7 +138,7 @@ namespace parser
         static void printmembersInfo(std::vector<std::shared_ptr<dsf::parser::TreeNode>> &nodes);
         static void printAllLeafNodesInfo(const ModelDefine &model);
 
-        static ModelParser &getInstance(size_t alignment = 4)
+        static ModelParser &getInstance(size_t alignment = 2)
         {
             static ModelParser instance(alignment);
             return instance;

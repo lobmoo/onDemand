@@ -19,20 +19,20 @@ std::string readXmlFile(const std::string &filePath)
     return content;
 }
 
-#pragma pack(push, 4)
+#pragma pack(push, 2)
 // __attribute__((packed, aligned(2)))
 struct SimpleModel {
     bool DT_BOOLEAN;          // 布尔，1字节
-    // uint8_t  _pad0;
+    uint8_t  _pad0;
     int8_t DT_BYTE;           // 8位，1字节
-    // uint8_t  _pad1; 
+    uint8_t  _pad1; 
     int16_t DT_WORD;          // 16位，2字节
     int32_t DT_DWORD;         // 32位，4字节
     int64_t DT_LWORD;         // 64位，8字节
     int8_t DT_SINT;           // 8位有符号整数，1字节
-    // uint8_t  _pad2;
+    uint8_t  _pad2;
     uint8_t DT_USINT;         // 8位无符号整数，1字节
-    // uint8_t  _pad3;
+    uint8_t  _pad3;
     int16_t DT_INT;           // 16位有符号整数，2字节
     uint16_t DT_UINT;         // 16位无符号整数，2字节
     int32_t DT_DINT;          // 32位有符号整数，4字节
@@ -42,7 +42,7 @@ struct SimpleModel {
     float DT_REAL;            // 32位浮点数，4字节
     double DT_LREAL;          // 64位浮点数，8字节
     char DT_CHAR;             // 单字节字符，1字节
-    // uint8_t  _pad4;
+    uint8_t  _pad4;
     char DT_CHARSEQ[82];      // 单字节字符数组，默认N=80，占82字节
     char DT_STRING[82];       // 字符串，假设与DT_CHARSEQ相同
     // wchar_t DT_WCHAR;         // 宽字节字符，2字节

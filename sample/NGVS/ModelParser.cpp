@@ -163,11 +163,7 @@ namespace parser
             return std::string(1, static_cast<char>(data[0]));
         } else if (type == "DT_STRING" || type == "DT_CHARSEQ") {
             checkSize(82);
-            uint16_t strlen_bytes;
-            std::memcpy(&strlen_bytes, data, 2);
-            if (strlen_bytes > 80)
-                strlen_bytes = 80;
-            return std::string(reinterpret_cast<const char *>(data + 2), strlen_bytes);
+            return std::string(reinterpret_cast<const char*>(data));
         } else if (type == "DT_WCHAR") {
             checkSize(2);
             wchar_t wchar;
