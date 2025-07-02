@@ -103,7 +103,7 @@ namespace parser
         std::string modelVersion;
         std::string schema;
         size_t size;
-        std::vector<std::shared_ptr<TreeNode>> members; // 根节点们
+        std::vector<std::shared_ptr<TreeNode>> members; //根节点们
     };
 
     bool forwardToBuffer(const std::string &type, const std::string &value,
@@ -138,7 +138,7 @@ namespace parser
         static void printmembersInfo(std::vector<std::shared_ptr<dsf::parser::TreeNode>> &nodes);
         static void printAllLeafNodesInfo(const ModelDefine &model);
 
-        static ModelParser &getInstance(size_t alignment = 2)
+        static ModelParser &getInstance(size_t alignment = 4)
         {
             static ModelParser instance(alignment);
             return instance;
@@ -162,7 +162,11 @@ namespace parser
                                  std::vector<std::shared_ptr<TreeNode>> &currentModelMembers,
                                  size_t &modelSize, size_t &offset, const std::string &modelVersion,
                                  const std::string &parentName = "");
-
+        void resolveModelMembers_ex(const std::string &currentModelNameAndVersion,
+                                    std::unordered_map<std::string, ModelDefine> &allNodes,
+                                    std::vector<std::shared_ptr<TreeNode>> &currentModelMembers,
+                                    size_t &modelSize, size_t &offset,
+                                    const std::string &modelVersion, const std::string &parentName);
         size_t getBasicTypeSize(const std::string &type);
 
         void updateChildNames(TreeNode &node, const std::string &parentPrefix);
