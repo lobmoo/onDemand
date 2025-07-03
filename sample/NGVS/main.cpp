@@ -20,39 +20,6 @@ std::string readXmlFile(const std::string &filePath)
     }
     return content;
 }
-// #pragma pack(push, 4)  // 强制对齐为4字节
-// struct TestNormalModel {
-//     _Float32 first;   // 4 字节
-//     int64_t second;   // 8 字节，允许非8字节对齐
-//     int8_t third;     // 1 字节
-// };
-// #pragma pack(pop)
-#pragma pack(push, 2)  // 强制对齐为2字节
-struct InnerModel3 {
-    int32_t long_array[1][2][1];
-    int16_t short_sequence[5];
-};
-
-struct InnerModel2 {
-    // <member name="complex_member3" type="nonBasic" nonBasicTypeName="InnerModel3" version="1.0"/>
-    InnerModel3 complex_member3;
-};
-
-struct InnerModel {
-    int32_t first;
-    InnerModel2 complex_member2;
-};
-
-struct ParentModel {
-    float first;
-    int64_t second;
-};
-
-struct ComplexModel : public ParentModel {
-    // <member name="complex_member" type="nonBasic" nonBasicTypeName="InnerModel" version="1.0"/>
-    InnerModel complex_member;
-};
-#pragma pack(pop)
 
 void test1()
 {
@@ -228,105 +195,77 @@ void test1()
     while (std::cin.get() != '\n') {
     }
 }
-// void test2()
-// {
-//         /* 1. 初始化日志和xml内容 */
-//     Logger::Instance().Init("log/myapp.log", Logger::console, Logger::debug, 60, 5);
-//     std::string xmlContent = readXmlFile("/home/weiqb/src/test_demo/sample/NGVS/test.xml");
-//     auto &serializer = dsf::kvpair::KeyValueSerializer::getInstance();
+void test2()
+{
+    /* 1. 初始化日志和xml内容 */
+    Logger::Instance().Init("log/myapp.log", Logger::console, Logger::debug, 60, 5);
+    std::string xmlContent0 = readXmlFile("/home/weiqb/src/test_demo/sample/NGVS/model0.xml");
+    std::string xmlContent1 = readXmlFile("/home/weiqb/src/test_demo/sample/NGVS/model1.xml");
+    std::string xmlContent2 = readXmlFile("/home/weiqb/src/test_demo/sample/NGVS/model2.xml");
+    auto serializer = dsf::kvpair::KeyValueSerializer();
+    /* 2. 定义输入数据和输出空间 */
+    // NormalTime
+    int32_t NormalTime_first = 111111;
+    uint32_t NormalTime_second = 222222;
+    uint32_t NormalTime_third = 333333;
+    uint32_t NormalTime_fourth = 444444;
+    // LongTime
+    int64_t LongTime_first = 5555555555;
+    uint64_t LongTime_second = 6666666666;
+    uint64_t LongTime_third = 7777777777;
+    uint64_t LongTime_fourth = 8888888888;
+    // String
+    std::string String_first = "aaaaaaaaaaaaaaaaaaa";
+    std::string String_second = "bbbbbbbbbbbbbbbbbbb";
+    // char16_t String_third = u'我';
+    // std::u16string String_fourth = u"你好世界";    
+    // std::u16string String_fifth = u"你好世界2";
 
-//     /* 2. 定义输入数据和输出空间 */
-//     // 基本元素
-//     float first = 1111.11;
-//     int64_t second = 2222222222222LL;
-//     int32_t complex_member_first = 333333;
-//     int32_t complex_member_complex_member2_complex_member3_longarray000 = 444444;
-//     int32_t complex_member_complex_member2_complex_member3_longarray010 = 555555;
-//     int16_t complex_member_omplex_member2_complex_member3_short_sequence0 = 666;
-//     int16_t complex_member_complex_member2_complex_member3_short_sequence1 = 777;
-//     int16_t complex_member_complex_member2_complex_member3_short_sequence2 = 888;
-//     int16_t complex_member_complex_member2_complex_member3_short_sequence3 = 999;
-//     int16_t complex_member_complex_member2_complex_member3_short_sequence4 = 1010;
-//     std::unordered_map<std::string, std::string> data = {
-//         {"first", std::to_string(first)},
-//         {"second", std::to_string(second)},
-//         {"complex_member.first", std::to_string(complex_member_first)},
-//         {"complex_member.complex_member2.complex_member3.long_array[0][0][0]", std::to_string(complex_member_complex_member2_complex_member3_longarray000)},
-//         {"complex_member.complex_member2.complex_member3.long_array[0][1][0]", std::to_string(complex_member_complex_member2_complex_member3_longarray010)},
-//         {"complex_member.complex_member2.complex_member3.short_sequence[0]", std::to_string(complex_member_omplex_member2_complex_member3_short_sequence0)},
-//         {"complex_member.complex_member2.complex_member3.short_sequence[1]", std::to_string(complex_member_complex_member2_complex_member3_short_sequence1)},
-//         {"complex_member.complex_member2.complex_member3.short_sequence[2]", std::to_string(complex_member_complex_member2_complex_member3_short_sequence2)},
-//         {"complex_member.complex_member2.complex_member3.short_sequence[3]", std::to_string(complex_member_complex_member2_complex_member3_short_sequence3)},
-//         {"complex_member.complex_member2.complex_member3.short_sequence[4]", std::to_string(complex_member_complex_member2_complex_member3_short_sequence4)}
-//     };
-//     std::vector<char> outBuff;
+    // utf-16转utf-8
+    std::unordered_map<std::string, std::string> data = {
+        {"NormalTime.first", std::to_string(NormalTime_first)},
+        {"NormalTime.second", std::to_string(NormalTime_second)},
+        {"NormalTime.third", std::to_string(NormalTime_third)},
+        {"NormalTime.fourth", std::to_string(NormalTime_fourth)},
+        {"LongTime.first", std::to_string(LongTime_first)},
+        {"LongTime.second", std::to_string(LongTime_second)},
+        {"LongTime.third", std::to_string(LongTime_third)},
+        {"LongTime.fourth", std::to_string(LongTime_fourth)},
+        {"String.first", String_first},
+        {"String.second", String_second}
+    };
+    std::vector<char> outBuff;
 
-//     /* 3.序列化 */
-//     serializer.serialize(xmlContent, "ComplexModel:3.0", data, outBuff);
+    /* 2.5解析model */
+    auto &parser = dsf::parser::ModelParser::getInstance();
+    std::string ret;
+    parser.init(xmlContent0, ret);
+    parser.init(xmlContent1, ret);
+    parser.init(xmlContent2, ret);
+    /* 3.序列化 */
+    serializer.serialize("TestModel:1.0", data, outBuff);
 
     
-//     /* 4.输出序列化结果 */
-//     ComplexModel* model = (ComplexModel*)(outBuff.data());
-//     LOG(info) << "first: " << model->first;
-//     LOG(info) << "second: " << model->second;
-//     LOG(info) << "complex_member.first: " << model->complex_member.first;
-//     LOG(info) << "complex_member2.complex_member3.long_array[0][0][0]: " << model->complex_member.complex_member2.complex_member3.long_array[0][0][0];
-//     LOG(info) << "complex_member2.complex_member3.long_array[0][1][0]: " << model->complex_member.complex_member2.complex_member3.long_array[0][1][0];
-//     LOG(info) << "complex_member2.complex_member3.short_sequence[0]: " << model->complex_member.complex_member2.complex_member3.short_sequence[0];
-//     LOG(info) << "complex_member2.complex_member3.short_sequence[1]: " << model->complex_member.complex_member2.complex_member3.short_sequence[1];
-//     LOG(info) << "complex_member2.complex_member3.short_sequence[2]: " << model->complex_member.complex_member2.complex_member3.short_sequence[2];
-//     LOG(info) << "complex_member2.complex_member3.short_sequence[3]: " << model->complex_member.complex_member2.complex_member3.short_sequence[3];
-//     LOG(info) << "complex_member2.complex_member3.short_sequence[4]: " << model->complex_member.complex_member2.complex_member3.short_sequence[4];
+    /* 4.输出序列化结果 */
+    // TestNormalModel* model = (TestNormalModel*)(outBuff.data());
+    // LOG(info) << "first: " << model->first << " second: " << model->second << " third: " << (int)(model->third);
 
 
+    /* 5.反序列化 */
+    std::unordered_map<std::string, std::string> outData;
+    serializer.deserialize("TestModel2:1.0", outBuff, outData);
 
-
-//     /* 5.反序列化 */
-//     // std::unordered_map<std::string, std::string> outData;
-//     // serializer.deserialize(xmlContent, "InnerModel:1.0", outBuff, outData);
-
-//     // LOG(info) << "first: " << outData["first"];
-//     // LOG(info) << "complex_member2.complex_member3.long_array[0][0][0]: " << outData["complex_member2.complex_member3.long_array[0][0][0]"];
-//     // LOG(info) << "complex_member2.complex_member3.long_array[0][1][0]: " << outData["complex_member2.complex_member3.long_array[0][1][0]"];
-//     // LOG(info) << "complex_member2.complex_member3.short_sequence[0]: " << outData["complex_member2.complex_member3.short_sequence[0]"];
-//     // LOG(info) << "complex_member2.complex_member3.short_sequence[1]: " << outData["complex_member2.complex_member3.short_sequence[1]"];
-//     // LOG(info) << "complex_member2.complex_member3.short_sequence[2]: " << outData["complex_member2.complex_member3.short_sequence[2]"];
-//     // LOG(info) << "complex_member2.complex_member3.short_sequence[3]: " << outData["complex_member2.complex_member3.short_sequence[3]"];
-//     // LOG(info) << "complex_member2.complex_member3.short_sequence[4]: " << outData["complex_member2.complex_member3.short_sequence[4]"];
-
-
-
-//     while (std::cin.get() != '\n') {
-//     }
-// }
-// void test3()
-// {
-//     /* 1. 初始化日志和xml内容 */
-//     Logger::Instance().Init("log/myapp.log", Logger::console, Logger::debug, 60, 5);
-
-//     ComplexModel var;
-//     LOG(error) << "Model Size: " << sizeof(ComplexModel);
-//     var.complex_member.complex_member2.complex_member3.short_sequence[4] = 123;
-//     std::unordered_map<std::string, std::string> pairs;
-//     dsf::kvpair::KeyValueSerializer keyValueSerializer =
-//         dsf::kvpair::KeyValueSerializer::getInstance();
-//     std::string modelIndex = "ComplexModel:3.0";
-//     std::string schema = readXmlFile("/home/weiqb/src/test_demo/sample/NGVS/test.xml");
-//     std::cout << schema << std::endl;
-//     std::cout << "keyValuePair.size(): " << pairs.size() << std::endl;
-//     char *byteData = static_cast<char *>((void *)&var);
-//     std::vector<char> vec(byteData, byteData + sizeof(ComplexModel));
-
-//     keyValueSerializer.deserialize(schema, modelIndex, vec, pairs);
-//     std::cout << pairs.size();
-//     for (auto pair : pairs) {
-//         std::cout << pair.first << ":" << pair.second << std::endl;
-//     }
-
-//     while (std::cin.get() != '\n') {
-//     }
-// }
-
+    LOG(info) << "NormalTime.first: " << outData["NormalTime.first"];
+    LOG(info) << "NormalTime.second: " << outData["NormalTime.second"];
+    LOG(info) << "NormalTime.third: " << outData["NormalTime.third"];
+    LOG(info) << "NormalTime.fourth: " << outData["NormalTime.fourth"];
+    LOG(info) << "LongTime.first: " << outData["LongTime.first"];
+    LOG(info) << "LongTime.second: " << outData["LongTime.second"];   
+    LOG(info) << "LongTime.third: " << outData["LongTime.third"];
+    LOG(info) << "LongTime.fourth: " << outData["LongTime.fourth"];    
+    LOG(info) << "String.first: " << outData["String.first"];
+    LOG(info) << "String.second: " << outData["String.second"];
+}
 #pragma pack(push, 4)
 struct SimpleModel {
     bool DT_BOOLEAN;          // 布尔，1字节
@@ -406,73 +345,73 @@ void test_struct()
 
     auto modelDefines = modelParser.getModelDefines();
     modelParser.printAllLeafNodesInfo(modelDefines["SimpleModel:1.0"]);
-    // dsf::kvpair::KeyValueSerializer kvs = dsf::kvpair::KeyValueSerializer();
-    // std::unordered_map<std::string, std::string> inData = {
-    //     {"DT_BOOLEAN", "1"},  {"DT_BYTE", "2"},    {"DT_WORD", "4"},     {"DT_DWORD", "5"},
-    //     {"DT_LWORD", "6"},    {"DT_SINT", "7"},    {"DT_USINT", "8"},    {"DT_INT", "9"},
-    //     {"DT_UINT", "10"},    {"DT_DINT", "11"},   {"DT_UDINT", "12"},   {"DT_LINT", "13"},
-    //     {"DT_ULINT", "14"},   {"DT_REAL", "15.0"}, {"DT_LREAL", "16.0"},
-    //     {"DT_CHAR", "7"}, {"DT_CHARSEQ", "18"}, {"DT_STRING", "19"}
-    //     // {"DT_WCHAR", "20"},   {"DT_WCHARSEQ", "21"}, {"DT_WSTRING", "22"}
-    //     };
-    // std::vector<char> outBuffer;
-    // ret = kvs.serialize("SimpleModel:1.0", inData, outBuffer);
-    // std::cout << "Serialize result: " << ret << std::endl;
-    // std::unordered_map<std::string, std::string> outData;
-    // ret = kvs.deserialize("SimpleModel:1.0", outBuffer, outData);
-    // std::cout << "deserialize result: " << ret << std::endl;
-    // std::cout << "outBuffer size: " << outBuffer.size() << std::endl;
-    // LOG(info) << "DT_BOOLEAN: " << outData["DT_BOOLEAN"];
-    // LOG(info) << "DT_BYTE: " << outData["DT_BYTE"];
-    // LOG(info) << "DT_WORD: " << outData["DT_WORD"];
-    // LOG(info) << "DT_DWORD: " << outData["DT_DWORD"];
-    // LOG(info) << "DT_LWORD: " << outData["DT_LWORD"];
-    // LOG(info) << "DT_SINT: " << outData["DT_SINT"];
-    // LOG(info) << "DT_USINT: " << outData["DT_USINT"];
-    // LOG(info) << "DT_INT: " << outData["DT_INT"];
-    // LOG(info) << "DT_UINT: " << outData["DT_UINT"];
-    // LOG(info) << "DT_DINT: " << outData["DT_DINT"];
-    // LOG(info) << "DT_UDINT: " << outData["DT_UDINT"];
-    // LOG(info) << "DT_LINT: " << outData["DT_LINT"];
-    // LOG(info) << "DT_ULINT: " << outData["DT_ULINT"];
-    // LOG(info) << "DT_REAL: " << outData["DT_REAL"];
-    // LOG(info) << "DT_LREAL: " << outData["DT_LREAL"];
-    // LOG(info) << "DT_CHAR: " << outData["DT_CHAR"];
-    // LOG(info) << "DT_CHARSEQ: " << outData["DT_CHARSEQ"];
-    // LOG(info) << "DT_STRING: " << outData["DT_STRING"];
-    // // LOG(info) << "DT_WCHAR: " << outData["DT_WCHAR"];
-    // // LOG(info) << "DT_WCHARSEQ: " << outData["DT_WCHARSEQ"];
-    // // LOG(info) << "DT_WSTRING: " << outData["DT_WSTRING"];
-    // // for (auto &item : outData) {
-    // //     std::cout << item.first << ":" << item.second << std::endl;
-    // // }
-    // SimpleModel* simpleVar = (SimpleModel *)outBuffer.data();
-    // std::cout << "---------------SimpleModel:---------------" << std::endl;
-    // std::cout << "DT_BOOLEAN: " << simpleVar->DT_BOOLEAN << std::endl;
-    // std::cout << "DT_BYTE: " << (int)simpleVar->DT_BYTE << std::endl;
-    // std::cout << "DT_WORD: " << simpleVar->DT_WORD << std::endl;
-    // std::cout << "DT_DWORD: " << simpleVar->DT_DWORD << std::endl;
-    // std::cout << "DT_LWORD: " << simpleVar->DT_LWORD << std::endl;
-    // std::cout << "DT_SINT: " << (int)simpleVar->DT_SINT << std::endl;
-    // std::cout << "DT_USINT: " << (unsigned int)simpleVar->DT_USINT << std::endl;
-    // std::cout << "DT_INT: " << simpleVar->DT_INT << std::endl;
-    // std::cout << "DT_UINT: " << simpleVar->DT_UINT << std::endl;
-    // std::cout << "DT_DINT: " << simpleVar->DT_DINT << std::endl;
-    // std::cout << "DT_UDINT: " << simpleVar->DT_UDINT << std::endl;
-    // std::cout << "DT_LINT: " << simpleVar->DT_LINT << std::endl;
-    // std::cout << "DT_ULINT: " << simpleVar->DT_ULINT << std::endl;
-    // std::cout << "DT_REAL: " << simpleVar->DT_REAL << std::endl;
-    // std::cout << "DT_LREAL: " << simpleVar->DT_LREAL << std::endl;
-    // std::cout << "DT_CHAR: " << simpleVar->DT_CHAR << std::endl;
-    // std::cout << "DT_CHARSEQ: " << simpleVar->DT_CHARSEQ << std::endl;
-    // std::cout << "DT_STRING: " << simpleVar->DT_STRING << std::endl;
+    dsf::kvpair::KeyValueSerializer kvs = dsf::kvpair::KeyValueSerializer();
+    std::unordered_map<std::string, std::string> inData = {
+        {"DT_BOOLEAN", "1"},  {"DT_BYTE", "2"},    {"DT_WORD", "4"},     {"DT_DWORD", "5"},
+        {"DT_LWORD", "6"},    {"DT_SINT", "7"},    {"DT_USINT", "8"},    {"DT_INT", "9"},
+        {"DT_UINT", "10"},    {"DT_DINT", "11"},   {"DT_UDINT", "12"},   {"DT_LINT", "13"},
+        {"DT_ULINT", "14"},   {"DT_REAL", "15.0"}, {"DT_LREAL", "16.0"},
+        {"DT_CHAR", "7"}, {"DT_CHARSEQ", "18"}, {"DT_STRING", "19"}
+        // {"DT_WCHAR", "20"},   {"DT_WCHARSEQ", "21"}, {"DT_WSTRING", "22"}
+        };
+    std::vector<char> outBuffer;
+    ret = kvs.serialize("SimpleModel:1.0", inData, outBuffer);
+    std::cout << "Serialize result: " << ret << std::endl;
+    std::unordered_map<std::string, std::string> outData;
+    ret = kvs.deserialize("SimpleModel:1.0", outBuffer, outData);
+    std::cout << "deserialize result: " << ret << std::endl;
+    std::cout << "outBuffer size: " << outBuffer.size() << std::endl;
+    LOG(info) << "DT_BOOLEAN: " << outData["DT_BOOLEAN"];
+    LOG(info) << "DT_BYTE: " << outData["DT_BYTE"];
+    LOG(info) << "DT_WORD: " << outData["DT_WORD"];
+    LOG(info) << "DT_DWORD: " << outData["DT_DWORD"];
+    LOG(info) << "DT_LWORD: " << outData["DT_LWORD"];
+    LOG(info) << "DT_SINT: " << outData["DT_SINT"];
+    LOG(info) << "DT_USINT: " << outData["DT_USINT"];
+    LOG(info) << "DT_INT: " << outData["DT_INT"];
+    LOG(info) << "DT_UINT: " << outData["DT_UINT"];
+    LOG(info) << "DT_DINT: " << outData["DT_DINT"];
+    LOG(info) << "DT_UDINT: " << outData["DT_UDINT"];
+    LOG(info) << "DT_LINT: " << outData["DT_LINT"];
+    LOG(info) << "DT_ULINT: " << outData["DT_ULINT"];
+    LOG(info) << "DT_REAL: " << outData["DT_REAL"];
+    LOG(info) << "DT_LREAL: " << outData["DT_LREAL"];
+    LOG(info) << "DT_CHAR: " << outData["DT_CHAR"];
+    LOG(info) << "DT_CHARSEQ: " << outData["DT_CHARSEQ"];
+    LOG(info) << "DT_STRING: " << outData["DT_STRING"];
+    // LOG(info) << "DT_WCHAR: " << outData["DT_WCHAR"];
+    // LOG(info) << "DT_WCHARSEQ: " << outData["DT_WCHARSEQ"];
+    // LOG(info) << "DT_WSTRING: " << outData["DT_WSTRING"];
+    // for (auto &item : outData) {
+    //     std::cout << item.first << ":" << item.second << std::endl;
+    // }
+    SimpleModel* simpleVar = (SimpleModel *)outBuffer.data();
+    std::cout << "---------------SimpleModel:---------------" << std::endl;
+    std::cout << "DT_BOOLEAN: " << simpleVar->DT_BOOLEAN << std::endl;
+    std::cout << "DT_BYTE: " << (int)simpleVar->DT_BYTE << std::endl;
+    std::cout << "DT_WORD: " << simpleVar->DT_WORD << std::endl;
+    std::cout << "DT_DWORD: " << simpleVar->DT_DWORD << std::endl;
+    std::cout << "DT_LWORD: " << simpleVar->DT_LWORD << std::endl;
+    std::cout << "DT_SINT: " << (int)simpleVar->DT_SINT << std::endl;
+    std::cout << "DT_USINT: " << (unsigned int)simpleVar->DT_USINT << std::endl;
+    std::cout << "DT_INT: " << simpleVar->DT_INT << std::endl;
+    std::cout << "DT_UINT: " << simpleVar->DT_UINT << std::endl;
+    std::cout << "DT_DINT: " << simpleVar->DT_DINT << std::endl;
+    std::cout << "DT_UDINT: " << simpleVar->DT_UDINT << std::endl;
+    std::cout << "DT_LINT: " << simpleVar->DT_LINT << std::endl;
+    std::cout << "DT_ULINT: " << simpleVar->DT_ULINT << std::endl;
+    std::cout << "DT_REAL: " << simpleVar->DT_REAL << std::endl;
+    std::cout << "DT_LREAL: " << simpleVar->DT_LREAL << std::endl;
+    std::cout << "DT_CHAR: " << simpleVar->DT_CHAR << std::endl;
+    std::cout << "DT_CHARSEQ: " << simpleVar->DT_CHARSEQ << std::endl;
+    std::cout << "DT_STRING: " << simpleVar->DT_STRING << std::endl;
     // // std::cout << "DT_WCHAR: " << simpleVar->DT_WCHAR << std::endl;
     // // std::wcout << L"DT_WCHARSEQ: " << simpleVar->DT_WCHARSEQ << std::endl;
     // // std::wcout << L"DT_WSTRING: " << simpleVar->DT_WSTRING << std::endl;
 
 }
 
-int testNgvs()
+void test_NGVS()
 {
     std::string xmlContent =
         readXmlFile("/home/wwk/workspaces/test_demo/sample/NGVS/modelNgvs.xml");
@@ -517,10 +456,7 @@ int testNgvs()
     // while (std::cin.get() != '\n') {
     // }
 
-    return 0;
 }
-
-
 int main(int argc, char *argv[])
 {
     Logger::Instance().Init("log/myapp.log", Logger::console, Logger::debug, 60, 5);

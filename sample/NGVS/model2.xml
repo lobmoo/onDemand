@@ -9,4 +9,32 @@
         <member name="short_sequence" sequenceMaxLength="5" type="DT_DINT"/>
         <member name="struct_array" type="nonBasic" nonBasicTypeName="InnerModel6" arrayDimensions="5" startIndex="0" endIndex="10" version="1.0"/>
     </struct>
+
+    <struct name="NormalTimeModel" version="1.0">
+        <member name="first" type="DT_TIME"/>
+        <member name="second" type="DT_DATE"/>
+        <member name="third" type="DT_TOD"/>
+        <member name="fourth" type="DT_DT"/>
+    </struct>
+
+    <struct name="LongTimeModel" version="1.0">
+        <member name="first" type="DT_LTIME"/>
+        <member name="second" type="DT_LDATE"/>
+        <member name="third" type="DT_LTOD"/>
+        <member name="fourth" type="DT_LDT"/>
+    </struct>
+
+    <struct name="StringModel" version="1.0">
+        <member name="first" type="DT_CHARSEQ"/>
+        <member name="second" type="DT_STRING"/>
+        <!-- <member name="third" type="DT_WCHAR"/> -->
+        <!-- <member name="fourth" type="DT_WCHARSEQ"/>
+        <member name="fifth" type="DT_WSTRING"/> -->
+    </struct>
+
+    <struct name="TestModel" version="1.0">
+        <member name="NormalTime" type="nonBasic" nonBasicTypeName="NormalTimeModel" version="1.0"/>
+        <member name="LongTime" type="nonBasic" nonBasicTypeName="LongTimeModel" version="1.0"/>
+        <member name="String" type="nonBasic" nonBasicTypeName="StringModel" version="1.0"/>
+    </struct>
 </models>

@@ -1,0 +1,2 @@
+[1750745679.236164323] [EMERGENCY] 01.0f.94.06.5b.97.67.4b.00.00.00.00|0.0.1.c1 0 PKIDH::validate_local_identity : Unsupported URI format /home/weiqb/src/test_demo/config/certs/subkey.pem (/home/weiqb/src/Fast-DDS/src/cpp/security/authentication/PKIDH.cpp:290)
+[1750745876.620548223] [EMERGENCY] 01.0f.94.06.54.9f.91.6f.00.00.00.00|0.0.1.c1 10 Permissions::check_create_datareader : wwk topic not found in allow rule. (/home/weiqb/src/Fast-DDS/src/cpp/security/accesscontrol/Permissions.cpp:1247)

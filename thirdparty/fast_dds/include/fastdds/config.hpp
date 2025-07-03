@@ -54,7 +54,7 @@
 
 // Security
 #ifndef HAVE_SECURITY
-#define HAVE_SECURITY 0
+#define HAVE_SECURITY 1
 #endif /* ifndef HAVE_SECURITY */
 
 //Sqlite3 support
