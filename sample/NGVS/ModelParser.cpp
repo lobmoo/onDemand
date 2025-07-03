@@ -958,7 +958,6 @@ namespace parser
                             // 如果当前偏移量不是4字节对齐
                             if (typeSize > (ALIGNMENT_ - iRet)) {
                                 offset = (offset + ALIGNMENT_ - iRet); // 对齐到4字节边界
-                                LOG(info) << "offset :" << offset << " typeSize :" << typeSize;
                             }
                             
                         }
