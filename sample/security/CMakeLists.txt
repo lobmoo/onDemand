@@ -24,7 +24,6 @@ set(OBJ_CPP_INCLUDE
     ${CMAKE_CURRENT_SOURCE_DIR}/HelloWorldOne/source
     ${CMAKE_CURRENT_SOURCE_DIR}/../../common
     ${CMAKE_CURRENT_SOURCE_DIR}/../../thirdparty/fast_dds/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../thirdparty/openssl/include
 )
 list(APPEND OBJ_CPP_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/../../thirdparty/fast_dds/include)
 target_include_directories(${PROJECT_NAME} PRIVATE  ${OBJ_CPP_INCLUDE})

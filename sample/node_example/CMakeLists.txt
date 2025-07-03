@@ -24,7 +24,6 @@ set(OBJ_CPP_INCLUDE
     ${CMAKE_CURRENT_SOURCE_DIR}/HelloWorldOne/source
     ${CMAKE_CURRENT_SOURCE_DIR}/../../common
     ${CMAKE_CURRENT_SOURCE_DIR}/../../thirdparty/fast_dds/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../thirdparty/openssl/include
 )
 list(APPEND OBJ_CPP_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/../../thirdparty/fast_dds/include)
 target_include_directories(${PROJECT_NAME} PRIVATE  ${OBJ_CPP_INCLUDE})
@@ -46,8 +45,7 @@ else()
 endif()
 
 # link_directories(${LIBRARY_PATH})
-target_link_libraries(${PROJECT_NAME} PRIVATE ${OBJ_CPP_LIBS} pthread  ${CMAKE_SOURCE_DIR}/common/log/lib/liblog.a 
-                        ${CMAKE_SOURCE_DIR}/thirdparty/openssl/lib/libssl.a ${CMAKE_SOURCE_DIR}/thirdparty/openssl/lib/libcrypto.a)
+target_link_libraries(${PROJECT_NAME} PRIVATE ${OBJ_CPP_LIBS} pthread  ${CMAKE_SOURCE_DIR}/common/log/lib/liblog.a)
 
 
 # option(USE_SYSTEM_RPATH "Use system RPATH for installed libraries and executables" ON)

@@ -98,5 +98,8 @@
         "*.hbackup": "cpp",
         "coroutine": "cpp",
         "ranges": "cpp"
-    }
+    },
+    "editor.mouseWheelZoom": true,
+    "editor.formatOnPaste": true,
+    "editor.formatOnSave": true
 }

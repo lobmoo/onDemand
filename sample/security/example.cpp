@@ -21,22 +21,27 @@ ParticipantQosHandler qos_configurator_subscriber()
     ParticipantQosHandler handler("test");
     // handler.add_statistics_and_monitor();
     handler.addUDPV4TransportDefault();
-    try{
-    // 身份认证
-    std::string identity_ca_path = "file:///home/weiqb/src/test_demo/config/certs/maincacert.pem";
-    std::string sub_cert_path = "file:///home/weiqb/src/test_demo/config/certs/subcert_selfsigned.pem";
-    std::string sub_privateKey_path = "file:///home/weiqb/src/test_demo/config/certs/subkey_selfsigned.pem";
-    handler.setAuthenticationPlugin(identity_ca_path, sub_cert_path, sub_privateKey_path);
-    // 访问控制
-    // std::string governance_path = "file:///home/weiqb/src/test_demo/config/certs/governance.smime";
-    // std::string permission_path = "file:///home/weiqb/src/test_demo/config/certs/permissions.smime";
-    // handler.setAccessControlPlugin(identity_ca_path, governance_path, permission_path);
-    // // 加密插件 待测试
-    // handler.setCryptographicPlugin();
-    // // 日志插件
-    // std::string log_file_path = "/home/weiqb/src/test_demo/config/certs/logfile/sub.log";   
-    // handler.setSecurityLogging("INFORMATIONAL_LEVEL", log_file_path);
-    } catch (std::exception &e) {        std::cout << e.what() << std::endl; }
+    try {
+        // 身份认证
+        std::string identity_ca_path =
+            "file:///home/weiqb/src/test_demo/config/certs/maincacert.pem";
+        std::string sub_cert_path =
+            "file:///home/weiqb/src/test_demo/config/certs/subcert_selfsigned.pem";
+        std::string sub_privateKey_path =
+            "file:///home/weiqb/src/test_demo/config/certs/subkey_selfsigned.pem";
+        handler.setAuthenticationPlugin(identity_ca_path, sub_cert_path, sub_privateKey_path);
+        // 访问控制
+        // std::string governance_path = "file:///home/weiqb/src/test_demo/config/certs/governance.smime";
+        // std::string permission_path = "file:///home/weiqb/src/test_demo/config/certs/permissions.smime";
+        // handler.setAccessControlPlugin(identity_ca_path, governance_path, permission_path);
+        // // 加密插件 待测试
+        // handler.setCryptographicPlugin();
+        // // 日志插件
+        // std::string log_file_path = "/home/weiqb/src/test_demo/config/certs/logfile/sub.log";
+        // handler.setSecurityLogging("INFORMATIONAL_LEVEL", log_file_path);
+    } catch (std::exception &e) {
+        std::cout << e.what() << std::endl;
+    }
     return handler;
 }
 
@@ -57,7 +62,7 @@ ParticipantQosHandler qos_configurator_publisher()
     // // 加密插件 待测试
     // handler.setCryptographicPlugin();
     // 日志插件
-    // std::string log_file_path = "/home/weiqb/src/test_demo/config/certs/logfile/pub.log";   
+    // std::string log_file_path = "/home/weiqb/src/test_demo/config/certs/logfile/pub.log";
     // handler.setSecurityLogging("DEBUG_LEVEL", log_file_path);
     return handler;
 }
@@ -221,7 +226,7 @@ void run_dds_data_Multireader()
     std::vector<std::string> topics = {"Topic_1", "Topic_2", "Topic_3"};
     for (const auto &topic : topics) {
         node.registerTopicType<HelloWorldOnePubSubType>(topic);
-  
+
         auto reader = node.createDataReader<HelloWorldOne>(
             topic, [](const std::string &topic_name, std::shared_ptr<HelloWorldOne> data) {
                 LOG(info) << "recv message from [" << topic_name << "]: " << data->index();
