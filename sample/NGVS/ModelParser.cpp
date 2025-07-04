@@ -282,6 +282,7 @@ namespace parser
         return MODEL_PARSER_OK;
     }
 
+    /*该接口暂时保留 */
     // void
     // ModelParser::resolveModelMembers(const std::string &currentModelNameAndVersion,
     //                                  std::unordered_map<std::string, ModelDefine> &allNodes,
