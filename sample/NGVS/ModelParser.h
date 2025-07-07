@@ -137,6 +137,8 @@ namespace parser
 
         static void printmembersInfo(std::vector<std::shared_ptr<dsf::parser::TreeNode>> &nodes);
         static void printAllLeafNodesInfo(const ModelDefine &model);
+        static void printStructNode(std::string modelNameAndVersion);
+        static void printHashCache();
 
         static ModelParser &getInstance(size_t alignment = 4)
         {
@@ -170,6 +172,7 @@ namespace parser
         size_t getBasicTypeSize(const std::string &type);
 
         void updateChildNames(TreeNode &node, const std::string &parentPrefix);
+        std::string ptreeToXml(const boost::property_tree::ptree &pt);
 
     private:
         size_t ALIGNMENT_;
@@ -177,6 +180,7 @@ namespace parser
         std::vector<std::string> doParseModels; // 需要解析的模型列表1
         std::unordered_map<std::string, ModelDefine> modelDefines_;
         std::map<std::string, boost::property_tree::ptree> structNodes_;
+        std::unordered_map<std::string, std::string> hashCache_;
         std::mutex mutex_;
     };
 } // namespace parser

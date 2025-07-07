@@ -10,6 +10,7 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/algorithm/string.hpp>
+#include "picosha2.h"
 #include "log/logger.h"
 
 namespace dsf
@@ -75,16 +76,17 @@ namespace parser
                 std::memcpy(buffer.data(), &val, it->second);
             } else if (type == "DT_WCHARSEQ" || type == "DT_WSTRING") { // 剩余字节由resize初始化为0
                 std::memcpy(buffer.data(), value.data(), it->second);
-            } else if (type == "DT_TIME") {  // 有符号数字
-                int32_t val = std::stoi(value);      
-                std::memcpy(buffer.data(), &val, it->second);                
-            } else if (type == "DT_DATE" || type == "DT_TOD" || type == "DT_DT") {  // 4字节时间类型
-                uint32_t val = static_cast<uint32_t>(std::stoul(value));       
+            } else if (type == "DT_TIME") { // 有符号数字
+                int32_t val = std::stoi(value);
                 std::memcpy(buffer.data(), &val, it->second);
-            } else if (type == "DT_LTIME") {  // 有符号数字
+            } else if (type == "DT_DATE" || type == "DT_TOD" || type == "DT_DT") { // 4字节时间类型
+                uint32_t val = static_cast<uint32_t>(std::stoul(value));
+                std::memcpy(buffer.data(), &val, it->second);
+            } else if (type == "DT_LTIME") { // 有符号数字
                 int64_t val = std::stoll(value);
                 std::memcpy(buffer.data(), &val, it->second);
-            } else if (type == "DT_LDATE" || type == "DT_LTOD" || type == "DT_LDT") {  // 8字节时间类型
+            } else if (type == "DT_LDATE" || type == "DT_LTOD"
+                       || type == "DT_LDT") { // 8字节时间类型
                 uint64_t val = std::stoull(value);
                 std::memcpy(buffer.data(), &val, it->second);
             } else {
@@ -163,7 +165,7 @@ namespace parser
             return std::string(1, static_cast<char>(data[0]));
         } else if (type == "DT_STRING" || type == "DT_CHARSEQ") {
             checkSize(82);
-            return std::string(reinterpret_cast<const char*>(data));
+            return std::string(reinterpret_cast<const char *>(data));
         } else if (type == "DT_WCHAR") {
             checkSize(2);
             wchar_t wchar;
@@ -189,7 +191,7 @@ namespace parser
             checkSize(4);
             uint32_t val;
             std::memcpy(&val, data, 4);
-            return std::to_string(val); 
+            return std::to_string(val);
         } else if (type == "DT_LTIME") {
             checkSize(8);
             int64_t val;
@@ -199,7 +201,7 @@ namespace parser
             checkSize(8);
             uint64_t val;
             std::memcpy(&val, data, 8);
-            return std::to_string(val); 
+            return std::to_string(val);
         }
 
         throw std::invalid_argument("Unsupported type: " + type);
@@ -278,7 +280,32 @@ namespace parser
             resolveModelMembers(modelNameAndVersion, modelDefines, modelDefine.members, modelSize,
                                 offset, modelDefine.modelVersion);
             modelDefine.size = offset;
+
+            /*替换version里面的版本为hash*/
+            std::string hashStr = hashCache_[modelNameAndVersion];
+            modelDefine.modelVersion = hashStr;
         }
+
+        try {
+
+            for (auto &modelNode : ptInput.get_child("models")) {
+                if (modelNode.first == "struct") {
+                    std::string nodeName = modelNode.second.get<std::string>("<xmlattr>.name");
+                    std::string nodeVersion =
+                        modelNode.second.get<std::string>("<xmlattr>.version");
+                    std::string originalKey = nodeName + ":" + nodeVersion;
+                    auto &attr = modelNode.second.get_child("<xmlattr>");   
+                    attr.put("version", hashCache_[originalKey]);
+                    modelNode.second.put_child("<xmlattr>", attr);
+                    // 更新对应 modelDefine.schema
+                    modelDefines[originalKey].schema = child2xml(modelNode.second, "struct");
+                    break;
+                }
+            }
+        } catch (const std::exception &e) {
+            LOG(error) << "Error updating model version: " << e.what();
+        }
+
         return MODEL_PARSER_OK;
     }
 
@@ -653,7 +680,10 @@ namespace parser
             visiting.erase(currentModelNameAndVersion);
             return;
         }
-        const auto &structNode = itStructNode->second;
+        auto &structNode = itStructNode->second;
+
+        // 构建哈希输入字符串
+        std::string hashInput = currentModelNameAndVersion;
 
         // 处理基类型
         auto baseTypeNameOptional = structNode.get_optional<std::string>("<xmlattr>.baseType");
@@ -664,6 +694,10 @@ namespace parser
                 baseTypeNameOptional.get() + ":" + baseTypeVersionOptional.get();
             resolveModelMembers(baseTypeKey, allNodes, currentModelMembers, modelSize, offset,
                                 baseTypeVersionOptional.get(), parentName);
+            // 这里先找一下，这个模型有没有对应的hash，没有的化 后面计算，有的话 说明已经计算过了，就算了把
+            if (hashCache_.find(baseTypeKey) != hashCache_.end()) {
+                hashInput += baseTypeNameOptional.get() + hashCache_[baseTypeKey];
+            }
         } else if (baseTypeNameOptional) {
             LOG(warning) << "baseType '" << baseTypeNameOptional.get()
                          << "' has no version specified in model: " << currentModelNameAndVersion;
@@ -687,6 +721,7 @@ namespace parser
                         parentName.empty() ? memberName : parentName + "." + memberName;
                     std::string nodeNonBasicTypeName;
                     std::string nodeVersion;
+
                     if (memberType == "nonBasic") {
                         auto nonBasicTypeVersionOptional =
                             memberNode.second.get_optional<std::string>("<xmlattr>.version");
@@ -697,6 +732,17 @@ namespace parser
                         }
                         nodeNonBasicTypeName =
                             memberNode.second.get<std::string>("<xmlattr>.nonBasicTypeName", "");
+                    }
+
+                    // 添加名字和类型
+                    hashInput += memberName + memberType;
+                    if (memberType == "nonBasic" && !nodeNonBasicTypeName.empty()
+                        && !nodeVersion.empty()) {
+                        std::string nonBasicKey = nodeNonBasicTypeName + ":" + nodeVersion;
+                        hashInput += nodeNonBasicTypeName;
+                        if (hashCache_.find(nonBasicKey) != hashCache_.end()) {
+                            hashInput += hashCache_[nonBasicKey];
+                        }
                     }
 
                     size_t startingOffset = offset; // 记录当前偏移量
@@ -960,7 +1006,6 @@ namespace parser
                             if (typeSize > (ALIGNMENT_ - iRet)) {
                                 offset = (offset + ALIGNMENT_ - iRet); // 对齐到4字节边界
                             }
-                            
                         }
 
                         auto node = std::make_shared<TreeNode>();
@@ -979,6 +1024,22 @@ namespace parser
             LOG(error) << "Error processing model members for " << currentModelNameAndVersion
                        << ": " << e.what();
         }
+
+        // 计算哈希并更新缓存
+        std::string hash_hex_str;
+        picosha2::hash256_hex_string(hashInput, hash_hex_str);
+        hashCache_[currentModelNameAndVersion] = hashInput;
+
+        // 更新 structNodes_ 中的节点
+        // structNodes_[currentModelNameAndVersion] = structNode;
+
+        // LOG(info) << "\n" << ptreeToXml(structNodes_[currentModelNameAndVersion]);
+
+        // ModelDefine def;
+        // def.name = currentModelNameAndVersion;
+        // def.version = hash_hex_str;
+        // allNodes[currentModelNameAndVersion] = def;
+
         modelSize = offset;
         visiting.erase(currentModelNameAndVersion);
     }
@@ -1104,6 +1165,38 @@ namespace parser
         LOG(info) << "Printing leaf nodes for model: " << model.modelName << ":"
                   << model.modelVersion;
         collectLeaves(model.members);
+    }
+
+    std::string ModelParser::ptreeToXml(const boost::property_tree::ptree &pt)
+    {
+        std::ostringstream oss;
+        boost::property_tree::write_xml(
+            oss, pt, boost::property_tree::xml_writer_make_settings<std::string>(' ', 4));
+        return oss.str();
+    }
+
+    void ModelParser::printStructNode(std::string modelNameAndVersion)
+    {
+        auto it = getInstance().structNodes_.find(modelNameAndVersion);
+        if (it == getInstance().structNodes_.end()) {
+            LOG(error) << "Model not found: " << modelNameAndVersion;
+            return;
+        }
+        const auto &structNode = it->second;
+
+        // 打印 XML 格式的结构体节点
+        std::ostringstream oss;
+        boost::property_tree::write_xml(
+            oss, structNode, boost::property_tree::xml_writer_make_settings<std::string>(' ', 4));
+        LOG(info) << "Struct Node for " << modelNameAndVersion << ":\n" << oss.str();
+    }
+
+    void ModelParser::printHashCache()
+    {
+        LOG(info) << "Hash Cache Contents:";
+        for (const auto &pair : getInstance().hashCache_) {
+            LOG(info) << "Key: " << pair.first << ", Value: " << pair.second;
+        }
     }
 
 } // namespace parser

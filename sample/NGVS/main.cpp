@@ -419,7 +419,10 @@ void test_NGVS()
     std::string error_text;
     parser.init(xmlContent, error_text);
     auto modelDefines = parser.getModelDefines();
-    parser.printAllLeafNodesInfo(modelDefines["SimpleModel:1.0"]);
+    // parser.printAllLeafNodesInfo(modelDefines["InnerModel:1.0"]);
+    //parser.printStructNode("InnerModel:1.0");
+    parser.printHashCache();
+
     // dsf::ngvs::NgvsSerializer Serializer;
     // std::vector<char> outBuffer;
     // std::unordered_map<std::string, std::string> inData;
@@ -460,7 +463,7 @@ void test_NGVS()
 int main(int argc, char *argv[])
 {
     Logger::Instance().Init("log/myapp.log", Logger::console, Logger::debug, 60, 5);
-    test_struct();
+    test_NGVS();
 
     return 0;
 }
