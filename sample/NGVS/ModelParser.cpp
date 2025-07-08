@@ -238,15 +238,16 @@ namespace parser
     }
 
     error_code_t
-    ModelParser::parseSchema(std::unordered_map<std::string, ModelDefine> &modelDefines,
-                             const std::string &schema, std::string &errorMsg)
+    ModelParser::processModelSchema(const std::string &schema,
+                                    std::unordered_map<std::string, ModelDefine> &modelDefines,
+                                    std::string &processedschema)
     {
         std::istringstream iss(schema);
         boost::property_tree::ptree ptInput;
         try {
             boost::property_tree::read_xml(iss, ptInput);
         } catch (const boost::property_tree::xml_parser::xml_parser_error &e) {
-            errorMsg = e.what();
+            LOG(error) << e.what();
             return ERROR_MODEL_PARSE_FAILED;
         }
         try {
@@ -310,7 +311,7 @@ namespace parser
                     auto &modelDefine = modelDefines[originalKey];
                     modelDefine.modelVersion = hash_hex_str;
                     modelDefines[nodeName+ ":" + hash_hex_str] = modelDefine;
-
+                    processedschema += modelDefines[nodeName + ":" + hash_hex_str].schema;
                 }
             }
         } catch (const std::exception &e) {

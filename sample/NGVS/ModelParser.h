@@ -113,10 +113,10 @@ namespace parser
     class ModelParser
     {
     public:
-        bool init(const std::string &schema, std::string &errorMsg)
+        bool init(const std::string &schema, std::string &processedschema)
         {
             std::lock_guard<std::mutex> lock(mutex_);
-            return parseSchema(modelDefines_, schema, errorMsg) == MODEL_PARSER_OK;
+            return processModelSchema(schema,  modelDefines_, processedschema) == MODEL_PARSER_OK;
         }
 
         bool findNodeAndGetLeaves(const ModelDefine &model, const std::string &targetName,
@@ -157,8 +157,11 @@ namespace parser
 
         std::string child2xml(const boost::property_tree::ptree &childNode,
                               const std::string &rootName);
-        error_code_t parseSchema(std::unordered_map<std::string, ModelDefine> &modelDefines,
-                                 const std::string &schema, std::string &errorMsg);
+
+        error_code_t processModelSchema(const std::string &schema,
+                                        std::unordered_map<std::string, ModelDefine> &modelDefines,
+                                        std::string &processedschema);
+
         void resolveModelMembers(const std::string &currentModelNameAndVersion,
                                  std::unordered_map<std::string, ModelDefine> &allNodes,
                                  std::vector<std::shared_ptr<TreeNode>> &currentModelMembers,
