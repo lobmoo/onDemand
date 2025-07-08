@@ -181,6 +181,7 @@ namespace parser
         std::unordered_map<std::string, ModelDefine> modelDefines_;
         std::map<std::string, boost::property_tree::ptree> structNodes_;
         std::unordered_map<std::string, std::string> hashCache_;
+        std::unordered_map<std::string, std::string> HashStr_;
         std::mutex mutex_;
     };
 } // namespace parser
