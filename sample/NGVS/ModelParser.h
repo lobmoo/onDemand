@@ -135,10 +135,10 @@ namespace parser
             ALIGNMENT_ = alignment;
         }
 
-        static void printmembersInfo(std::vector<std::shared_ptr<dsf::parser::TreeNode>> &nodes);
-        static void printAllLeafNodesInfo(const ModelDefine &model);
-        static void printStructNode(std::string modelNameAndVersion);
-        static void printHashCache();
+        void printmembersInfo(std::vector<std::shared_ptr<dsf::parser::TreeNode>> &nodes);
+        void printAllLeafNodesInfo(const ModelDefine &model);
+        void printStructNode(std::string modelNameAndVersion);
+        void printHashCache();
 
         static ModelParser &getInstance(size_t alignment = 4)
         {

@@ -25,9 +25,9 @@ void test1()
 {
     /* 1. 初始化日志和xml内容 */
     Logger::Instance().Init("log/myapp.log", Logger::console, Logger::debug, 60, 5);
-    std::string xmlContent0 = readXmlFile("/home/weiqb/src/test_demo/sample/NGVS/model0.xml");
-    std::string xmlContent1 = readXmlFile("/home/weiqb/src/test_demo/sample/NGVS/model1.xml");
-    std::string xmlContent2 = readXmlFile("/home/weiqb/src/test_demo/sample/NGVS/model2.xml");
+    std::string xmlContent0 = readXmlFile("/home/wwk/workspaces/test_demo/sample/NGVS/model0.xml");
+    std::string xmlContent1 = readXmlFile("/home/wwk/workspaces/test_demo/sample/NGVS/model1.xml");
+    std::string xmlContent2 = readXmlFile("/home/wwk/workspaces/test_demo/sample/NGVS/model2.xml");
     auto serializer = dsf::kvpair::KeyValueSerializer();
     /* 2. 定义输入数据和输出空间 */
     // 基本元素
@@ -223,11 +223,11 @@ void test1()
 }
 void test2()
 {
-    /* 1. 初始化日志和xml内容 */
+    /* 1. 初始化日志和xml内容 */  ///home/wwk/workspaces/test_demo/sample/NGVS/model0.xml
     Logger::Instance().Init("log/myapp.log", Logger::console, Logger::debug, 60, 5);
-    std::string xmlContent0 = readXmlFile("/home/weiqb/src/test_demo/sample/NGVS/model0.xml");
-    std::string xmlContent1 = readXmlFile("/home/weiqb/src/test_demo/sample/NGVS/model1.xml");
-    std::string xmlContent2 = readXmlFile("/home/weiqb/src/test_demo/sample/NGVS/model2.xml");
+    std::string xmlContent0 = readXmlFile("/home/wwk/workspaces/test_demo/sample/NGVS/model0.xml");
+    std::string xmlContent1 = readXmlFile("/home/wwk/workspaces/test_demo/sample/NGVS/model1.xml");
+    std::string xmlContent2 = readXmlFile("/home/wwk/workspaces/test_demo/sample/NGVS/model2.xml");
     auto serializer = dsf::kvpair::KeyValueSerializer();
     /* 2. 定义输入数据和输出空间 */
     // NormalTime
@@ -453,12 +453,13 @@ void test_NGVS()
     std::string xmlContent =
         readXmlFile("/home/wwk/workspaces/test_demo/sample/NGVS/modelNgvs.xml");
     auto &parser = dsf::parser::ModelParser::getInstance();
-    std::string error_text;
-    parser.init(xmlContent, error_text);
-    auto modelDefines = parser.getModelDefines();
-    // parser.printAllLeafNodesInfo(modelDefines["ComplexModel:2e935d6140175b1353eab2ba94032c9e"]);
-    // parser.printStructNode("InnerModel:1.0");
-    // parser.printHashCache();
+    std::string scama;
+    parser.init(xmlContent, scama);
+
+    // auto modelDefines = parser.getModelDefines();
+    // // parser.printAllLeafNodesInfo(modelDefines["ComplexModel:2e935d6140175b1353eab2ba94032c9e"]);
+    // // parser.printStructNode("InnerModel:1.0");
+    // // parser.printHashCache();
 
     dsf::ngvs::NgvsSerializer Serializer;
     std::vector<char> outBuffer;
@@ -466,39 +467,33 @@ void test_NGVS()
     inData["STD.VAR1.B1"] = "123";
     inData["STD.VAR1.B2"] = "true";
     inData["STD.VAR1.B3.C1"] = "789";
-    inData["STD.VAR1.B3.C2[0]"] = "3.13";
-    inData["STD.VAR1.B3.C2[1]"] = "3.14";
-    inData["STD.VAR2[0]"] = "16";
-    inData["STD.VAR2[1]"] = "17";
+    inData["STD.VAR1.B3.C2[1]"] = "3.13";
+    inData["STD.VAR1.B3.C2[2]"] = "3.14";
+    inData["STD.VAR2[1]"] = "16";
+    inData["STD.VAR2[2]"] = "17";
     inData["STD.VAR3"] = "18";
     inData["STD.VAR4"] = "19";
     inData["STD.VAR5"] = "20";
-
     std::vector<std::shared_ptr<dsf::parser::TreeNode>> leaves;
     dsf::parser::ModelDefine model;
-
     if (!Serializer.serialize("STD.NGVS_S1:1.0", inData, outBuffer)) {
         LOG(error) << "Serialization failed";
         return;
     }
-
     std::unordered_map<std::string, std::string> outData;
     if (!Serializer.deserialize("STD.NGVS_S1:1.0", outBuffer, outData)) {
         LOG(error) << "deserialize failed";
         return;
     }
-
     for (auto &pair : outData) {
         LOG(info) << "Key: " << pair.first << ", Value: " << pair.second;
     }
-
-    while (std::cin.get() != '\n') {
-    }
 }
+
+
 int main(int argc, char *argv[])
 {
     Logger::Instance().Init("log/myapp.log", Logger::console, Logger::debug, 60, 5);
     test_NGVS();
-
     return 0;
 }

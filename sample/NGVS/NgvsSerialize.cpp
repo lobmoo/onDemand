@@ -155,7 +155,7 @@ namespace ngvs
         ModelDefine model = it->second;
 
         NgvsModelSort(model);
-        ModelParser::printmembersInfo(model.members);
+        parser.printmembersInfo(model.members);
         if (!buffer2Map(model, inBuffer, outData)) {
             LOG(error) << "Deserialization failed";
             return false;
