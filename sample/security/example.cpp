@@ -20,24 +20,25 @@ ParticipantQosHandler qos_configurator_subscriber()
 {
     ParticipantQosHandler handler("test");
     // handler.add_statistics_and_monitor();
-    handler.addUDPV4TransportDefault();
+    // handler.addUDPV4TransportDefault();
     try {
         // 身份认证
         std::string identity_ca_path =
-            "file:///home/weiqb/src/test_demo/config/certs/maincacert.pem";
-        std::string sub_cert_path =
-            "file:///home/weiqb/src/test_demo/config/certs/subcert_selfsigned.pem";
+            "file:///home/weiqb/src/test_demo/config/certs2/maincacert.pem";
+        std::string sub_cert_path = "file:///home/weiqb/src/test_demo/config/certs2/subcert.pem";
         std::string sub_privateKey_path =
-            "file:///home/weiqb/src/test_demo/config/certs/subkey_selfsigned.pem";
+            "file:///home/weiqb/src/test_demo/config/certs2/subkey.pem";
         handler.setAuthenticationPlugin(identity_ca_path, sub_cert_path, sub_privateKey_path);
         // 访问控制
-        std::string governance_path = "file:///home/weiqb/src/test_demo/config/certs/governance.smime";
-        std::string permission_path = "file:///home/weiqb/src/test_demo/config/certs/permissions.smime";
+        std::string governance_path =
+            "file:///home/weiqb/src/test_demo/config/certs2/governance.smime";
+        std::string permission_path =
+            "file:///home/weiqb/src/test_demo/config/certs2/permissions.smime";
         handler.setAccessControlPlugin(identity_ca_path, governance_path, permission_path);
         // 加密插件 待测试
         handler.setCryptographicPlugin();
         // 日志插件
-        std::string log_file_path = "/home/weiqb/src/test_demo/config/certs/logfile/sub.log";
+        std::string log_file_path = "/home/weiqb/src/test_demo/config/certs2/logfile/sub.log";
         handler.setSecurityLogging("INFORMATIONAL_LEVEL", log_file_path);
     } catch (std::exception &e) {
         std::cout << e.what() << std::endl;
@@ -49,20 +50,21 @@ ParticipantQosHandler qos_configurator_publisher()
 {
     ParticipantQosHandler handler("test");
     // handler.add_statistics_and_monitor();
-    handler.addUDPV4TransportDefault();
+    // handler.addUDPV4TransportDefault();
     // 身份认证
-    std::string identity_ca_path = "file:///home/weiqb/src/test_demo/config/certs/maincacert.pem";
-    std::string sub_cert_path = "file:///home/weiqb/src/test_demo/config/certs/pubcert.pem";
-    std::string sub_privateKey_path = "file:///home/weiqb/src/test_demo/config/certs/pubkey.pem";
-    handler.setAuthenticationPlugin(identity_ca_path, sub_cert_path, sub_privateKey_path);
+    std::string identity_ca_path = "file:///home/weiqb/src/test_demo/config/certs2/maincacert.pem";
+    std::string pub_cert_path = "file:///home/weiqb/src/test_demo/config/certs2/pubcert.pem";
+    std::string pub_privateKey_path = "file:///home/weiqb/src/test_demo/config/certs2/pubkey.pem";
+    handler.setAuthenticationPlugin(identity_ca_path, pub_cert_path, pub_privateKey_path);
     //访问控制
-    std::string governance_path = "file:///home/weiqb/src/test_demo/config/certs/governance.smime";
-    std::string permission_path = "file:///home/weiqb/src/test_demo/config/certs/permissions.smime";
+    std::string governance_path = "file:///home/weiqb/src/test_demo/config/certs2/governance.smime";
+    std::string permission_path =
+        "file:///home/weiqb/src/test_demo/config/certs2/permissions.smime";
     handler.setAccessControlPlugin(identity_ca_path, governance_path, permission_path);
     // 加密插件 待测试
     handler.setCryptographicPlugin();
     //日志插件
-    std::string log_file_path = "/home/weiqb/src/test_demo/config/certs/logfile/pub.log";
+    std::string log_file_path = "/home/weiqb/src/test_demo/config/certs2/logfile/pub.log";
     handler.setSecurityLogging("DEBUG_LEVEL", log_file_path);
     return handler;
 }
@@ -129,16 +131,16 @@ int main(int argc, char *argv[])
 
 void run_dds_data_writer()
 {
-    // 创建participant
     DDSParticipantListener *listener = new DDSParticipantListener();
     //DataNode node("/home/wwk/workspaces/test_demo/sample/node_example/qosConfig.xml", listener);
-    DataNode node(10, "test_writer", qos_configurator_publisher, listener);
+    DataNode node(10, "test_writer", qos_configurator_publisher);
+
     //DataNode node(100, "test_writer");
     node.registerTopicType<HelloWorldOnePubSubType>("wwk");
 
     // eprosima::fastdds::dds::DataWriterQos dataWriterQos;
     // dataWriterQos = eprosima::fastdds::dds::DATAWRITER_QOS_DEFAULT;
-    auto dataWriter = node.createDataWriter<HelloWorldOne>("wwk", qos_configurator_data_writer);
+    auto dataWriter = node.createDataWriter<HelloWorldOne>("wwk");
     bool runFlag = true;
     int index = 0;
     std::thread([&]() {
@@ -154,20 +156,18 @@ void run_dds_data_writer()
         if (dataWriter->writeMessage(message)) {
             LOG(info) << "send message: " << message.index();
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 }
 
 void run_dds_data_reader()
 {
     DDSParticipantListener *listener = new DDSParticipantListener();
-    // DataNode node("/home/wwk/workspaces/test_demo/sample/node_example/qosConfig.xml", listener);
-
-    DataNode node(10, "test_reader", qos_configurator_subscriber, listener);
+    //DataNode node("/home/wwk/workspaces/test_demo/sample/node_example/qosConfig.xml", listener);
+    DataNode node(10, "test_reader", qos_configurator_subscriber);
     //DataNode node(100, "test_reader");
     node.registerTopicType<HelloWorldOnePubSubType>("wwk");
-    auto dataReader = node.createDataReader<HelloWorldOne>("wwk", processHelloWorldOne,
-                                                           qos_configurator_data_reader);
+    auto dataReader = node.createDataReader<HelloWorldOne>("wwk", processHelloWorldOne);
     while (std::cin.get() != '\n') {
     }
 }
