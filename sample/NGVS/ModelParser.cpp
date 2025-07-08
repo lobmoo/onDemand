@@ -610,6 +610,7 @@ namespace parser
                                 }
                                 seqNode->size = currentOffset - startingOffset;
                                 offset = currentOffset;
+                              
                             } else {
                                 LOG(error) << "nonBasic sequence member '" << memberName
                                            << "' lacks version";
@@ -651,6 +652,11 @@ namespace parser
                             node->nonBasicTypeName = nodeNonBasicTypeName;
                             node->version = nodeVersion;
                             offset = startingOffset + node->size;
+                            int iRet = offset % ALIGNMENT_;
+                            if(0 != iRet) /*只有基本类型才对齐 数组类型直接拼*/
+                            {
+                                offset = (offset + ALIGNMENT_ - iRet); // 对齐到4字节边界    
+                            }
                             currentModelMembers.push_back(std::move(node));
                         } else {
                             LOG(error) << "nonBasic member '" << memberName << "' lacks version";
