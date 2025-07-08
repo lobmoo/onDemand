@@ -31,8 +31,8 @@ void test1()
     auto serializer = dsf::kvpair::KeyValueSerializer();
     /* 2. 定义输入数据和输出空间 */
     // 基本元素
-    float first = 1111111;  
-    
+    float first = 1111111;
+
     int64_t second = 2222222222222LL;
     // 嵌套一层
     int32_t complex_member2_third = 33333333;
@@ -44,7 +44,7 @@ void test1()
     int32_t complex_member2_complex_member3_longarray2 = 77777777;
     int32_t complex_member2_complex_member3_longarray3 = 88888888;
     int32_t complex_member2_complex_member3_longarray4 = 99999999;
-    int8_t fourth =  100;
+    int8_t fourth = 100;
     // 多个non-basic元素 & 不同层元素重名测试
     float complex_member3_complex_member6_first = 11.11f;
     int32_t complex_member3_complex_member6_second = 1212121212;
@@ -85,24 +85,39 @@ void test1()
         {"first", std::to_string(first)},
         {"second", std::to_string(second)},
         {"complex_member2.third", std::to_string(complex_member2_third)},
-        {"complex_member2.complex_member3.fourth", std::to_string(complex_member2_complex_member3_fourth)},
-        {"complex_member2.complex_member3.long_array[0]", std::to_string(complex_member2_complex_member3_longarray0)},
-        {"complex_member2.complex_member3.long_array[1]", std::to_string(complex_member2_complex_member3_longarray1)},
-        {"complex_member2.complex_member3.long_array[2]", std::to_string(complex_member2_complex_member3_longarray2)},
-        {"complex_member2.complex_member3.long_array[3]", std::to_string(complex_member2_complex_member3_longarray3)},
-        {"complex_member2.complex_member3.long_array[4]", std::to_string(complex_member2_complex_member3_longarray4)},
+        {"complex_member2.complex_member3.fourth",
+         std::to_string(complex_member2_complex_member3_fourth)},
+        {"complex_member2.complex_member3.long_array[0]",
+         std::to_string(complex_member2_complex_member3_longarray0)},
+        {"complex_member2.complex_member3.long_array[1]",
+         std::to_string(complex_member2_complex_member3_longarray1)},
+        {"complex_member2.complex_member3.long_array[2]",
+         std::to_string(complex_member2_complex_member3_longarray2)},
+        {"complex_member2.complex_member3.long_array[3]",
+         std::to_string(complex_member2_complex_member3_longarray3)},
+        {"complex_member2.complex_member3.long_array[4]",
+         std::to_string(complex_member2_complex_member3_longarray4)},
         {"fourth", std::to_string(fourth)},
-        {"complex_member3.complex_member6.first", std::to_string(complex_member3_complex_member6_first)},
-        {"complex_member3.complex_member6.second", std::to_string(complex_member3_complex_member6_second)},
-        {"complex_member3.complex_member6.third", std::to_string(complex_member3_complex_member6_third)},
+        {"complex_member3.complex_member6.first",
+         std::to_string(complex_member3_complex_member6_first)},
+        {"complex_member3.complex_member6.second",
+         std::to_string(complex_member3_complex_member6_second)},
+        {"complex_member3.complex_member6.third",
+         std::to_string(complex_member3_complex_member6_third)},
         {"complex_member4.first", std::to_string(complex_member4_first)},
         {"complex_member4.second", std::to_string(complex_member4_second)},
-        {"complex_member4.complex_member.fourth", std::to_string(complex_member4_complex_member_fourth)},
-        {"complex_member4.complex_member.long_array[0]", std::to_string(complex_member4_complex_member_longarray0)},
-        {"complex_member4.complex_member.long_array[1]", std::to_string(complex_member4_complex_member_longarray1)},
-        {"complex_member4.complex_member.long_array[2]", std::to_string(complex_member4_complex_member_longarray2)},
-        {"complex_member4.complex_member.long_array[3]", std::to_string(complex_member4_complex_member_longarray3)},
-        {"complex_member4.complex_member.long_array[4]", std::to_string(complex_member4_complex_member_longarray4)},
+        {"complex_member4.complex_member.fourth",
+         std::to_string(complex_member4_complex_member_fourth)},
+        {"complex_member4.complex_member.long_array[0]",
+         std::to_string(complex_member4_complex_member_longarray0)},
+        {"complex_member4.complex_member.long_array[1]",
+         std::to_string(complex_member4_complex_member_longarray1)},
+        {"complex_member4.complex_member.long_array[2]",
+         std::to_string(complex_member4_complex_member_longarray2)},
+        {"complex_member4.complex_member.long_array[3]",
+         std::to_string(complex_member4_complex_member_longarray3)},
+        {"complex_member4.complex_member.long_array[4]",
+         std::to_string(complex_member4_complex_member_longarray4)},
         {"short_sequence[0]", std::to_string(short_sequence0)},
         {"short_sequence[1]", std::to_string(short_sequence1)},
         {"short_sequence[2]", std::to_string(short_sequence2)},
@@ -135,37 +150,49 @@ void test1()
     /* 3.序列化 */
     serializer.serialize("InnerModel44:1.0", data, outBuff);
 
-    
     /* 4.输出序列化结果 */
     // TestNormalModel* model = (TestNormalModel*)(outBuff.data());
     // LOG(info) << "first: " << model->first << " second: " << model->second << " third: " << (int)(model->third);
 
-
-    
     std::unordered_map<std::string, std::string> outData;
     serializer.deserialize("InnerModel44:1.0", outBuff, outData);
 
     LOG(info) << "first: " << outData["first"];
     LOG(info) << "second: " << outData["second"];
     LOG(info) << "complex_member2.third: " << outData["complex_member2.third"];
-    LOG(info) << "complex_member2.complex_member3.fourth: " << outData["complex_member2.complex_member3.fourth"];
-    LOG(info) << "complex_member2.complex_member3.long_array[0]: " << outData["complex_member2.complex_member3.long_array[0]"];
-    LOG(info) << "complex_member2.complex_member3.long_array[1]: " << outData["complex_member2.complex_member3.long_array[1]"];
-    LOG(info) << "complex_member2.complex_member3.long_array[2]: " << outData["complex_member2.complex_member3.long_array[2]"];
-    LOG(info) << "complex_member2.complex_member3.long_array[3]: " << outData["complex_member2.complex_member3.long_array[3]"];
-    LOG(info) << "complex_member2.complex_member3.long_array[4]: " << outData["complex_member2.complex_member3.long_array[4]"];
+    LOG(info) << "complex_member2.complex_member3.fourth: "
+              << outData["complex_member2.complex_member3.fourth"];
+    LOG(info) << "complex_member2.complex_member3.long_array[0]: "
+              << outData["complex_member2.complex_member3.long_array[0]"];
+    LOG(info) << "complex_member2.complex_member3.long_array[1]: "
+              << outData["complex_member2.complex_member3.long_array[1]"];
+    LOG(info) << "complex_member2.complex_member3.long_array[2]: "
+              << outData["complex_member2.complex_member3.long_array[2]"];
+    LOG(info) << "complex_member2.complex_member3.long_array[3]: "
+              << outData["complex_member2.complex_member3.long_array[3]"];
+    LOG(info) << "complex_member2.complex_member3.long_array[4]: "
+              << outData["complex_member2.complex_member3.long_array[4]"];
     LOG(info) << "fourth: " << outData["fourth"];
-    LOG(info) << "complex_member3.complex_member6.first: " << outData["complex_member3.complex_member6.first"];
-    LOG(info) << "complex_member3.complex_member6.second: " << outData["complex_member3.complex_member6.second"];
-    LOG(info) << "complex_member3.complex_member6.third: " << outData["complex_member3.complex_member6.third"];
+    LOG(info) << "complex_member3.complex_member6.first: "
+              << outData["complex_member3.complex_member6.first"];
+    LOG(info) << "complex_member3.complex_member6.second: "
+              << outData["complex_member3.complex_member6.second"];
+    LOG(info) << "complex_member3.complex_member6.third: "
+              << outData["complex_member3.complex_member6.third"];
     LOG(info) << "complex_member4.first: " << outData["complex_member4.first"];
     LOG(info) << "complex_member4.second: " << outData["complex_member4.second"];
-    LOG(info) << "complex_member4.complex_member.fourth: " << outData["complex_member4.complex_member.fourth"];
-    LOG(info) << "complex_member4.complex_member.long_array[0]: " << outData["complex_member4.complex_member.long_array[0]"];
-    LOG(info) << "complex_member4.complex_member.long_array[1]: " << outData["complex_member4.complex_member.long_array[1]"];
-    LOG(info) << "complex_member4.complex_member.long_array[2]: " << outData["complex_member4.complex_member.long_array[2]"];
-    LOG(info) << "complex_member4.complex_member.long_array[3]: " << outData["complex_member4.complex_member.long_array[3]"];
-    LOG(info) << "complex_member4.complex_member.long_array[4]: " << outData["complex_member4.complex_member.long_array[4]"];
+    LOG(info) << "complex_member4.complex_member.fourth: "
+              << outData["complex_member4.complex_member.fourth"];
+    LOG(info) << "complex_member4.complex_member.long_array[0]: "
+              << outData["complex_member4.complex_member.long_array[0]"];
+    LOG(info) << "complex_member4.complex_member.long_array[1]: "
+              << outData["complex_member4.complex_member.long_array[1]"];
+    LOG(info) << "complex_member4.complex_member.long_array[2]: "
+              << outData["complex_member4.complex_member.long_array[2]"];
+    LOG(info) << "complex_member4.complex_member.long_array[3]: "
+              << outData["complex_member4.complex_member.long_array[3]"];
+    LOG(info) << "complex_member4.complex_member.long_array[4]: "
+              << outData["complex_member4.complex_member.long_array[4]"];
     LOG(info) << "short_sequence[0]: " << outData["short_sequence[0]"];
     LOG(info) << "short_sequence[1]: " << outData["short_sequence[1]"];
     LOG(info) << "short_sequence[2]: " << outData["short_sequence[2]"];
@@ -186,7 +213,6 @@ void test1()
     LOG(info) << "struct_array[4].first: " << outData["struct_array[4].first"];
     LOG(info) << "struct_array[4].second: " << outData["struct_array[4].second"];
     LOG(info) << "struct_array[4].third: " << outData["struct_array[4].third"];
-
 
     // for(auto &pair : outData) {
     //     LOG(info) << "Key: " << pair.first << ", Value: " << pair.second;
@@ -218,7 +244,7 @@ void test2()
     std::string String_first = "aaaaaaaaaaaaaaaaaaa";
     std::string String_second = "bbbbbbbbbbbbbbbbbbb";
     // char16_t String_third = u'我';
-    // std::u16string String_fourth = u"你好世界";    
+    // std::u16string String_fourth = u"你好世界";
     // std::u16string String_fifth = u"你好世界2";
 
     // utf-16转utf-8
@@ -232,8 +258,7 @@ void test2()
         {"LongTime.third", std::to_string(LongTime_third)},
         {"LongTime.fourth", std::to_string(LongTime_fourth)},
         {"String.first", String_first},
-        {"String.second", String_second}
-    };
+        {"String.second", String_second}};
     std::vector<char> outBuff;
 
     /* 2.5解析model */
@@ -245,11 +270,9 @@ void test2()
     /* 3.序列化 */
     serializer.serialize("TestModel:1.0", data, outBuff);
 
-    
     /* 4.输出序列化结果 */
     // TestNormalModel* model = (TestNormalModel*)(outBuff.data());
     // LOG(info) << "first: " << model->first << " second: " << model->second << " third: " << (int)(model->third);
-
 
     /* 5.反序列化 */
     std::unordered_map<std::string, std::string> outData;
@@ -260,37 +283,37 @@ void test2()
     LOG(info) << "NormalTime.third: " << outData["NormalTime.third"];
     LOG(info) << "NormalTime.fourth: " << outData["NormalTime.fourth"];
     LOG(info) << "LongTime.first: " << outData["LongTime.first"];
-    LOG(info) << "LongTime.second: " << outData["LongTime.second"];   
+    LOG(info) << "LongTime.second: " << outData["LongTime.second"];
     LOG(info) << "LongTime.third: " << outData["LongTime.third"];
-    LOG(info) << "LongTime.fourth: " << outData["LongTime.fourth"];    
+    LOG(info) << "LongTime.fourth: " << outData["LongTime.fourth"];
     LOG(info) << "String.first: " << outData["String.first"];
     LOG(info) << "String.second: " << outData["String.second"];
 }
 #pragma pack(push, 4)
 struct SimpleModel {
-    bool DT_BOOLEAN;          // 布尔，1字节
+    bool DT_BOOLEAN; // 布尔，1字节
     // uint8_t  _pad0;
-    int8_t DT_BYTE;           // 8位，1字节
-    // uint8_t  _pad1; 
-    int16_t DT_WORD;          // 16位，2字节
-    int32_t DT_DWORD;         // 32位，4字节
-    int64_t DT_LWORD;         // 64位，8字节
-    int8_t DT_SINT;           // 8位有符号整数，1字节
+    int8_t DT_BYTE; // 8位，1字节
+    // uint8_t  _pad1;
+    int16_t DT_WORD;  // 16位，2字节
+    int32_t DT_DWORD; // 32位，4字节
+    int64_t DT_LWORD; // 64位，8字节
+    int8_t DT_SINT;   // 8位有符号整数，1字节
     // uint8_t  _pad2;
-    uint8_t DT_USINT;         // 8位无符号整数，1字节
+    uint8_t DT_USINT; // 8位无符号整数，1字节
     // uint8_t  _pad3;
-    int16_t DT_INT;           // 16位有符号整数，2字节
-    uint16_t DT_UINT;         // 16位无符号整数，2字节
-    int32_t DT_DINT;          // 32位有符号整数，4字节
-    uint32_t DT_UDINT;        // 32位无符号整数，4字节
-    int64_t DT_LINT;          // 64位有符号整数，8字节
-    uint64_t DT_ULINT;        // 64位无符号整数，8字节
-    float DT_REAL;            // 32位浮点数，4字节
-    double DT_LREAL;          // 64位浮点数，8字节
-    char DT_CHAR;             // 单字节字符，1字节
+    int16_t DT_INT;    // 16位有符号整数，2字节
+    uint16_t DT_UINT;  // 16位无符号整数，2字节
+    int32_t DT_DINT;   // 32位有符号整数，4字节
+    uint32_t DT_UDINT; // 32位无符号整数，4字节
+    int64_t DT_LINT;   // 64位有符号整数，8字节
+    uint64_t DT_ULINT; // 64位无符号整数，8字节
+    float DT_REAL;     // 32位浮点数，4字节
+    double DT_LREAL;   // 64位浮点数，8字节
+    char DT_CHAR;      // 单字节字符，1字节
     // uint8_t  _pad4;
-    char DT_CHARSEQ[82];      // 单字节字符数组，默认N=80，占82字节
-    char DT_STRING[82];       // 字符串，假设与DT_CHARSEQ相同
+    char DT_CHARSEQ[82]; // 单字节字符数组，默认N=80，占82字节
+    char DT_STRING[82];  // 字符串，假设与DT_CHARSEQ相同
 };
 #pragma pack(pop)
 
@@ -346,14 +369,29 @@ void test_struct()
     auto modelDefines = modelParser.getModelDefines();
     modelParser.printAllLeafNodesInfo(modelDefines["SimpleModel:1.0"]);
     dsf::kvpair::KeyValueSerializer kvs = dsf::kvpair::KeyValueSerializer();
-    std::unordered_map<std::string, std::string> inData = {
-        {"DT_BOOLEAN", "1"},  {"DT_BYTE", "2"},    {"DT_WORD", "4"},     {"DT_DWORD", "5"},
-        {"DT_LWORD", "6"},    {"DT_SINT", "7"},    {"DT_USINT", "8"},    {"DT_INT", "9"},
-        {"DT_UINT", "10"},    {"DT_DINT", "11"},   {"DT_UDINT", "12"},   {"DT_LINT", "13"},
-        {"DT_ULINT", "14"},   {"DT_REAL", "15.0"}, {"DT_LREAL", "16.0"},
-        {"DT_CHAR", "7"}, {"DT_CHARSEQ", "18"}, {"DT_STRING", "19"}
-        // {"DT_WCHAR", "20"},   {"DT_WCHARSEQ", "21"}, {"DT_WSTRING", "22"}
-        };
+    std::
+        unordered_map<std::string, std::string>
+            inData =
+                {
+                    {"DT_BOOLEAN", "1"},
+                    {"DT_BYTE", "2"},
+                    {"DT_WORD", "4"},
+                    {"DT_DWORD", "5"},
+                    {"DT_LWORD", "6"},
+                    {"DT_SINT", "7"},
+                    {"DT_USINT", "8"},
+                    {"DT_INT", "9"},
+                    {"DT_UINT", "10"},
+                    {"DT_DINT", "11"},
+                    {"DT_UDINT", "12"},
+                    {"DT_LINT", "13"},
+                    {"DT_ULINT", "14"},
+                    {"DT_REAL", "15.0"},
+                    {"DT_LREAL", "16.0"},
+                    {"DT_CHAR", "7"},
+                    {"DT_CHARSEQ", "18"},
+                    {"DT_STRING", "19"} // {"DT_WCHAR", "20"},   {"DT_WCHARSEQ", "21"}, {"DT_WSTRING", "22"}
+                };
     std::vector<char> outBuffer;
     ret = kvs.serialize("SimpleModel:1.0", inData, outBuffer);
     std::cout << "Serialize result: " << ret << std::endl;
@@ -385,7 +423,7 @@ void test_struct()
     // for (auto &item : outData) {
     //     std::cout << item.first << ":" << item.second << std::endl;
     // }
-    SimpleModel* simpleVar = (SimpleModel *)outBuffer.data();
+    SimpleModel *simpleVar = (SimpleModel *)outBuffer.data();
     std::cout << "---------------SimpleModel:---------------" << std::endl;
     std::cout << "DT_BOOLEAN: " << simpleVar->DT_BOOLEAN << std::endl;
     std::cout << "DT_BYTE: " << (int)simpleVar->DT_BYTE << std::endl;
@@ -408,57 +446,54 @@ void test_struct()
     // // std::cout << "DT_WCHAR: " << simpleVar->DT_WCHAR << std::endl;
     // // std::wcout << L"DT_WCHARSEQ: " << simpleVar->DT_WCHARSEQ << std::endl;
     // // std::wcout << L"DT_WSTRING: " << simpleVar->DT_WSTRING << std::endl;
-
 }
 
 void test_NGVS()
 {
     std::string xmlContent =
         readXmlFile("/home/wwk/workspaces/test_demo/sample/NGVS/modelNgvs.xml");
-    auto &parser = dsf::parser::ModelParser::getInstance();  
+    auto &parser = dsf::parser::ModelParser::getInstance();
     std::string error_text;
     parser.init(xmlContent, error_text);
     auto modelDefines = parser.getModelDefines();
-    // parser.printAllLeafNodesInfo(modelDefines["InnerModel:1.0"]);
-    //parser.printStructNode("InnerModel:1.0");
-    parser.printHashCache();
+    // parser.printAllLeafNodesInfo(modelDefines["ComplexModel:2e935d6140175b1353eab2ba94032c9e"]);
+    // parser.printStructNode("InnerModel:1.0");
+    // parser.printHashCache();
 
-    // dsf::ngvs::NgvsSerializer Serializer;
-    // std::vector<char> outBuffer;
-    // std::unordered_map<std::string, std::string> inData;
-    // inData["STD.VAR1.B1"] = "123";
-    // inData["STD.VAR1.B2"] = "true";
-    // inData["STD.VAR1.B3.C1"] = "789";
-    // inData["STD.VAR1.B3.C2[0]"] = "3.13";
-    // inData["STD.VAR1.B3.C2[1]"] = "3.14";
-    // inData["STD.VAR2[0]"] = "16";
-    // inData["STD.VAR2[1]"] = "17";
-    // inData["STD.VAR3"] = "18";
-    // inData["STD.VAR4"] = "19";
-    // inData["STD.VAR5"] = "20";
+    dsf::ngvs::NgvsSerializer Serializer;
+    std::vector<char> outBuffer;
+    std::unordered_map<std::string, std::string> inData;
+    inData["STD.VAR1.B1"] = "123";
+    inData["STD.VAR1.B2"] = "true";
+    inData["STD.VAR1.B3.C1"] = "789";
+    inData["STD.VAR1.B3.C2[0]"] = "3.13";
+    inData["STD.VAR1.B3.C2[1]"] = "3.14";
+    inData["STD.VAR2[0]"] = "16";
+    inData["STD.VAR2[1]"] = "17";
+    inData["STD.VAR3"] = "18";
+    inData["STD.VAR4"] = "19";
+    inData["STD.VAR5"] = "20";
 
-    // std::vector<std::shared_ptr<dsf::parser::TreeNode>> leaves;
-    // dsf::parser::ModelDefine model;
+    std::vector<std::shared_ptr<dsf::parser::TreeNode>> leaves;
+    dsf::parser::ModelDefine model;
 
-  
-    // if (!Serializer.serialize("STD.NGVS_S1:1.0", inData, outBuffer)) {
-    //     LOG(error) << "Serialization failed";
-    //     return 1;
-    // }
+    if (!Serializer.serialize("STD.NGVS_S1:1.0", inData, outBuffer)) {
+        LOG(error) << "Serialization failed";
+        return;
+    }
 
-    // std::unordered_map<std::string, std::string> outData;
-    // if (!Serializer.deserialize("STD.NGVS_S1:1.0", outBuffer, outData)) {
-    //     LOG(error) << "deserialize failed";
-    //     return 1;
-    // }
+    std::unordered_map<std::string, std::string> outData;
+    if (!Serializer.deserialize("STD.NGVS_S1:1.0", outBuffer, outData)) {
+        LOG(error) << "deserialize failed";
+        return;
+    }
 
-    // for(auto &pair : outData) {
-    //     LOG(info) << "Key: " << pair.first << ", Value: " << pair.second;
-    // }
+    for (auto &pair : outData) {
+        LOG(info) << "Key: " << pair.first << ", Value: " << pair.second;
+    }
 
-    // while (std::cin.get() != '\n') {
-    // }
-
+    while (std::cin.get() != '\n') {
+    }
 }
 int main(int argc, char *argv[])
 {
