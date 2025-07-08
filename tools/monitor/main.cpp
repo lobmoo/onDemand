@@ -15,7 +15,7 @@ enum EntityType { PUBLISHER, SUBSCRIBER, MONITOR };
 
 int main(int argc, char **argv)
 {
-    Logger::Instance().Init("log/myapp.log", Logger::console, Logger::info, 60, 5);
+    Logger::Instance()->Init("log/myapp.log", Logger::console, Logger::info, 60, 5);
 
     int domain = 0;
     int n_bins = 1;

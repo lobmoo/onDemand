@@ -24,9 +24,9 @@ Logger::~Logger()
 {
 }
 
-Logger &Logger::Instance()
+Logger* Logger::Instance()
 {
-    static Logger log;
+    static Logger* log = new Logger();
     return log;
 }
 

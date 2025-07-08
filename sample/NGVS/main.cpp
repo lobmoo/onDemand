@@ -24,7 +24,7 @@ std::string readXmlFile(const std::string &filePath)
 void test1()
 {
     /* 1. 初始化日志和xml内容 */
-    Logger::Instance().Init("log/myapp.log", Logger::console, Logger::debug, 60, 5);
+    Logger::Instance()->Init("log/myapp.log", Logger::console, Logger::debug, 60, 5);
     std::string xmlContent0 = readXmlFile("/home/wwk/workspaces/test_demo/sample/NGVS/model0.xml");
     std::string xmlContent1 = readXmlFile("/home/wwk/workspaces/test_demo/sample/NGVS/model1.xml");
     std::string xmlContent2 = readXmlFile("/home/wwk/workspaces/test_demo/sample/NGVS/model2.xml");
@@ -224,7 +224,7 @@ void test1()
 void test2()
 {
     /* 1. 初始化日志和xml内容 */  ///home/wwk/workspaces/test_demo/sample/NGVS/model0.xml
-    Logger::Instance().Init("log/myapp.log", Logger::console, Logger::debug, 60, 5);
+    Logger::Instance()->Init("log/myapp.log", Logger::console, Logger::debug, 60, 5);
     std::string xmlContent0 = readXmlFile("/home/wwk/workspaces/test_demo/sample/NGVS/model0.xml");
     std::string xmlContent1 = readXmlFile("/home/wwk/workspaces/test_demo/sample/NGVS/model1.xml");
     std::string xmlContent2 = readXmlFile("/home/wwk/workspaces/test_demo/sample/NGVS/model2.xml");
@@ -493,7 +493,7 @@ void test_NGVS()
 
 int main(int argc, char *argv[])
 {
-    Logger::Instance().Init("log/myapp.log", Logger::console, Logger::debug, 60, 5);
+    Logger::Instance()->Init("log/myapp.log", Logger::console, Logger::debug, 60, 5);
     test_NGVS();
     return 0;
 }

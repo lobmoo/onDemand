@@ -69,7 +69,7 @@ struct __attribute__((aligned(4))) SimpleModel {
 
 int main(int argc, char *argv[])
 {
-    Logger::Instance().Init("");
+    Logger::Instance()->Init("");
 
     LOG(info) << "stu size: " << sizeof(stu);
     LOG(info) << "stu1 size: " << sizeof(stu1); 
