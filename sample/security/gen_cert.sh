@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-# cd /home/weiqb/src/test_demo/config/certs2
+cd /home/weiqb/src/test_demo/config/certs
 
 # 参数默认值
 KEY_OUT=""

@@ -24,21 +24,21 @@ ParticipantQosHandler qos_configurator_subscriber()
     try {
         // 身份认证
         std::string identity_ca_path =
-            "file:///home/weiqb/src/test_demo/config/certs2/maincacert.pem";
-        std::string sub_cert_path = "file:///home/weiqb/src/test_demo/config/certs2/subcert.pem";
+            "file:///home/weiqb/src/test_demo/config/certs/maincacert.pem";
+        std::string sub_cert_path = "file:///home/weiqb/src/test_demo/config/certs/subcert.pem";
         std::string sub_privateKey_path =
-            "file:///home/weiqb/src/test_demo/config/certs2/subkey.pem";
+            "file:///home/weiqb/src/test_demo/config/certs/subkey.pem";
         handler.setAuthenticationPlugin(identity_ca_path, sub_cert_path, sub_privateKey_path);
         // 访问控制
         std::string governance_path =
-            "file:///home/weiqb/src/test_demo/config/certs2/governance.smime";
+            "file:///home/weiqb/src/test_demo/config/certs/governance.smime";
         std::string permission_path =
-            "file:///home/weiqb/src/test_demo/config/certs2/permissions.smime";
+            "file:///home/weiqb/src/test_demo/config/certs/permissions.smime";
         handler.setAccessControlPlugin(identity_ca_path, governance_path, permission_path);
         // 加密插件 待测试
         handler.setCryptographicPlugin();
         // 日志插件
-        std::string log_file_path = "/home/weiqb/src/test_demo/config/certs2/logfile/sub.log";
+        std::string log_file_path = "/home/weiqb/src/test_demo/config/certs/logfile/sub.log";
         handler.setSecurityLogging("INFORMATIONAL_LEVEL", log_file_path);
     } catch (std::exception &e) {
         std::cout << e.what() << std::endl;
@@ -52,19 +52,18 @@ ParticipantQosHandler qos_configurator_publisher()
     // handler.add_statistics_and_monitor();
     // handler.addUDPV4TransportDefault();
     // 身份认证
-    std::string identity_ca_path = "file:///home/weiqb/src/test_demo/config/certs2/maincacert.pem";
-    std::string pub_cert_path = "file:///home/weiqb/src/test_demo/config/certs2/pubcert.pem";
-    std::string pub_privateKey_path = "file:///home/weiqb/src/test_demo/config/certs2/pubkey.pem";
+    std::string identity_ca_path = "file:///home/weiqb/src/test_demo/config/certs/maincacert.pem";
+    std::string pub_cert_path = "file:///home/weiqb/src/test_demo/config/certs/pubcert.pem";
+    std::string pub_privateKey_path = "file:///home/weiqb/src/test_demo/config/certs/pubkey.pem";
     handler.setAuthenticationPlugin(identity_ca_path, pub_cert_path, pub_privateKey_path);
     //访问控制
-    std::string governance_path = "file:///home/weiqb/src/test_demo/config/certs2/governance.smime";
-    std::string permission_path =
-        "file:///home/weiqb/src/test_demo/config/certs2/permissions.smime";
+    std::string governance_path = "file:///home/weiqb/src/test_demo/config/certs/governance.smime";
+    std::string permission_path = "file:///home/weiqb/src/test_demo/config/certs/permissions.smime";
     handler.setAccessControlPlugin(identity_ca_path, governance_path, permission_path);
     // 加密插件 待测试
     handler.setCryptographicPlugin();
     //日志插件
-    std::string log_file_path = "/home/weiqb/src/test_demo/config/certs2/logfile/pub.log";
+    std::string log_file_path = "/home/weiqb/src/test_demo/config/certs/logfile/pub.log";
     handler.setSecurityLogging("DEBUG_LEVEL", log_file_path);
     return handler;
 }

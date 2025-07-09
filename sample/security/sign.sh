@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-# cd /home/weiqb/src/test_demo/config/certs2
+cd /home/weiqb/src/test_demo/config/certs
 # 签名用的证书和私钥
 CERT="maincacert.pem"
 KEY="maincakey.pem"

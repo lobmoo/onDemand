@@ -1,2 +1,0 @@
-[1751957204.196244024] [EMERGENCY] 01.0f.94.06.7b.68.62.ac.00.00.00.00|0.0.1.c1 10 PKIDH::validate_local_identity : OpenSSL library cannot read file /home/weiqb/src/test_demo/config/certs2/subcert_selfsigned.pem (/home/weiqb/src/Fast-DDS/src/cpp/security/artifact_providers/FileProvider.cpp:186)
-[1751958490.609187403] [EMERGENCY] 01.0f.94.06.da.91.38.cc.00.00.00.00|0.0.1.c1 10 Permissions::check_create_datareader : wwk topic not found in allow rule. (/home/wwk/workspaces/Fast-DDS/src/cpp/security/accesscontrol/Permissions.cpp:1247)
