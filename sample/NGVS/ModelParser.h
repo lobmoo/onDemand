@@ -113,11 +113,10 @@ namespace parser
     class ModelParser
     {
     public:
-        bool init(const std::string &schema, std::string &processedschema)
-        {
-            std::lock_guard<std::mutex> lock(mutex_);
-            return processModelSchema(schema,  modelDefines_, processedschema) == MODEL_PARSER_OK;
-        }
+        error_code_t processModelSchema(const std::string &schema,
+                                        std::unordered_map<std::string, ModelDefine> &modelDefines,
+                                        std::string &processedschema);
+
 
         bool findNodeAndGetLeaves(const ModelDefine &model, const std::string &targetName,
                                   std::vector<std::shared_ptr<dsf::parser::TreeNode>> &leaves);
@@ -158,9 +157,7 @@ namespace parser
         std::string child2xml(const boost::property_tree::ptree &childNode,
                               const std::string &rootName);
 
-        error_code_t processModelSchema(const std::string &schema,
-                                        std::unordered_map<std::string, ModelDefine> &modelDefines,
-                                        std::string &processedschema);
+       
 
         void resolveModelMembers(const std::string &currentModelNameAndVersion,
                                  std::unordered_map<std::string, ModelDefine> &allNodes,
@@ -180,7 +177,7 @@ namespace parser
     private:
         size_t ALIGNMENT_;
         std::set<std::string> visiting;
-        std::vector<std::string> doParseModels; // 需要解析的模型列表1
+        std::vector<std::string> doParseModels;        // 需要解析的模型列表
         std::unordered_map<std::string, ModelDefine> modelDefines_;
         std::map<std::string, boost::property_tree::ptree> structNodes_;
         std::unordered_map<std::string, std::string> hashCache_;

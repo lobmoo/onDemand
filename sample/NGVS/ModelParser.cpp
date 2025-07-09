@@ -317,7 +317,11 @@ namespace parser
         } catch (const std::exception &e) {
             LOG(error) << "Error updating model version: " << e.what();
         }
-
+        /*结束后就再写到全局的里面*/
+        std::lock_guard<std::mutex> lock(mutex_);
+        for (auto &[key, value] : modelDefines) {
+            modelDefines_[key] = value;
+        }
         return MODEL_PARSER_OK;
     }
 
