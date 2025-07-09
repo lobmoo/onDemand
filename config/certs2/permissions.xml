@@ -2,7 +2,7 @@
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.omg.org/spec/DDS-Security/20170801/omg_shared_ca_permissions.xsd">
     <permissions>
         <grant name="PublisherPermissions">
-            <subject_name>C=CN, ST=SH, L=BaoSight, O=DSFconncetor, CN=participant, emailAddress=pub@baosight.com</subject_name>
+            <subject_name>C=CN, ST=SH, L=BaoSight, O=DSFconncetor, CN=pub, emailAddress=DSFconncetor@baosight.com</subject_name>
             <validity>
                 <not_before>2013-06-01T13:00:00</not_before>
                 <not_after>2038-06-01T13:00:00</not_after>
@@ -23,7 +23,7 @@
             <default>DENY</default>
         </grant>
         <grant name="SubscriberPermissions">
-            <subject_name>C=CN, ST=SH, L=BaoSight, O=DSFconncetor, CN=participant, emailAddress=sub@baosight.com</subject_name>
+            <subject_name>C=CN, ST=SH, L=BaoSight, O=DSFconncetor, CN=sub, emailAddress=DSFconncetor@baosight.com</subject_name>
             <validity>
                 <not_before>2013-06-01T13:00:00</not_before>
                 <not_after>2038-06-01T13:00:00</not_after>

@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-cd /home/weiqb/src/test_demo/config/certs2
+# cd /home/weiqb/src/test_demo/config/certs2
 
 # 参数默认值
 KEY_OUT=""
@@ -63,7 +63,7 @@ case "$SUBJECT" in
     ;;
   *)
     # 简写别名，自动构造 DN 字符串
-    SUBJECT="/C=CN/ST=SH/L=BaoSight/O=DSFconncetor/CN=participant/emailAddress=${SUBJECT}@baosight.com"
+    SUBJECT="/C=CN/ST=SH/L=BaoSight/O=DSFconncetor/CN=${SUBJECT}/emailAddress=DSFconncetor@baosight.com"
     ;;
 esac
 

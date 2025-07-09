@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e  # 一旦出错就退出脚本
-cd /home/weiqb/src/test_demo/config/certs2
+# cd /home/weiqb/src/test_demo/config/certs2
 # 设置参数
 CURVE_NAME="prime256v1"
 EC_PARAM_FILE="ecdsaparam"
