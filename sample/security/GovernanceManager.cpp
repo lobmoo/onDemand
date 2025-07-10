@@ -1,6 +1,6 @@
-// SecurityManager.cpp
+// GovernanceManager.cpp
 
-#include "SecurityManager.h"
+#include "GovernanceManager.h"
 #include <iostream>
 #include <sstream>
 #include <fstream>
@@ -9,7 +9,7 @@
 
 using namespace tinyxml2;
 
-SecurityManager::SecurityManager()
+GovernanceManager::GovernanceManager()
 {
     // 初始化 XML 内容
     m_doc.NewElement("dds");
@@ -23,13 +23,14 @@ SecurityManager::SecurityManager()
     root->InsertEndChild(domain_access_rules);
 }
 
-SecurityManager *SecurityManager::getInstance()
+GovernanceManager *GovernanceManager::getInstance()
 {
-    static SecurityManager *instance = new SecurityManager; // 保证单例
+    static GovernanceManager *instance = new GovernanceManager; // 保证单例
     return instance;
 }
 
-bool SecurityManager::addDomainRule(int min_id, int max_id, const DomainRuleAttributes &attributes)
+bool GovernanceManager::addDomainRule(int min_id, int max_id,
+                                      const DomainRuleAttributes &attributes)
 {
     // 检查是否已经存在相同的 min 和 max 范围
     if (findDomainRule(min_id, max_id) != nullptr) {
@@ -48,8 +49,8 @@ bool SecurityManager::addDomainRule(int min_id, int max_id, const DomainRuleAttr
     return true;
 }
 
-XMLElement *SecurityManager::createDomainRuleElement(int min_id, int max_id,
-                                                     const DomainRuleAttributes &attributes)
+XMLElement *GovernanceManager::createDomainRuleElement(int min_id, int max_id,
+                                                       const DomainRuleAttributes &attributes)
 {
     XMLElement *domainRule = m_doc.NewElement("domain_rule");
 
@@ -89,7 +90,7 @@ XMLElement *SecurityManager::createDomainRuleElement(int min_id, int max_id,
     return domainRule;
 }
 
-XMLElement *SecurityManager::findDomainRule(int min_id, int max_id) const
+XMLElement *GovernanceManager::findDomainRule(int min_id, int max_id) const
 {
     XMLElement *root = const_cast<tinyxml2::XMLElement *>(m_doc.FirstChildElement("dds"));
     XMLElement *domain_access_rules = root->FirstChildElement("domain_access_rules");
@@ -108,7 +109,7 @@ XMLElement *SecurityManager::findDomainRule(int min_id, int max_id) const
     return nullptr; // 没有找到对应的 domain rule
 }
 
-DomainRuleAttributes SecurityManager::getDomainRuleAttributes(XMLElement *domainRule)
+DomainRuleAttributes GovernanceManager::getDomainRuleAttributes(XMLElement *domainRule)
 {
     DomainRuleAttributes attributes;
 
@@ -146,8 +147,8 @@ DomainRuleAttributes SecurityManager::getDomainRuleAttributes(XMLElement *domain
     return attributes;
 }
 
-void SecurityManager::modifyDomainRule(XMLElement *domainRule,
-                                       const DomainRuleAttributes &attributes)
+void GovernanceManager::modifyDomainRule(XMLElement *domainRule,
+                                         const DomainRuleAttributes &attributes)
 {
     // 修改对应的属性值
     domainRule->FirstChildElement("allow_unauthenticated_participants")
@@ -162,7 +163,7 @@ void SecurityManager::modifyDomainRule(XMLElement *domainRule,
         ->SetText(attributes.rtps_protection_kind.c_str());
 }
 
-bool SecurityManager::setAllowUnauthenticatedParticipants(int min_id, int max_id, bool value)
+bool GovernanceManager::setAllowUnauthenticatedParticipants(int min_id, int max_id, bool value)
 {
     XMLElement *domainRule = findDomainRule(min_id, max_id);
     if (domainRule == nullptr) {
@@ -176,7 +177,7 @@ bool SecurityManager::setAllowUnauthenticatedParticipants(int min_id, int max_id
     return true;
 }
 
-bool SecurityManager::setEnableJoinAccessControl(int min_id, int max_id, bool value)
+bool GovernanceManager::setEnableJoinAccessControl(int min_id, int max_id, bool value)
 {
     XMLElement *domainRule = findDomainRule(min_id, max_id);
     if (domainRule == nullptr) {
@@ -190,7 +191,7 @@ bool SecurityManager::setEnableJoinAccessControl(int min_id, int max_id, bool va
     return true;
 }
 
-bool SecurityManager::setDiscoveryProtectionKind(int min_id, int max_id, const std::string &value)
+bool GovernanceManager::setDiscoveryProtectionKind(int min_id, int max_id, const std::string &value)
 {
     XMLElement *domainRule = findDomainRule(min_id, max_id);
     if (domainRule == nullptr) {
@@ -204,7 +205,8 @@ bool SecurityManager::setDiscoveryProtectionKind(int min_id, int max_id, const s
     return true;
 }
 
-bool SecurityManager::setLivelinessProtectionKind(int min_id, int max_id, const std::string &value)
+bool GovernanceManager::setLivelinessProtectionKind(int min_id, int max_id,
+                                                    const std::string &value)
 {
     XMLElement *domainRule = findDomainRule(min_id, max_id);
     if (domainRule == nullptr) {
@@ -218,7 +220,7 @@ bool SecurityManager::setLivelinessProtectionKind(int min_id, int max_id, const 
     return true;
 }
 
-bool SecurityManager::setRtpsProtectionKind(int min_id, int max_id, const std::string &value)
+bool GovernanceManager::setRtpsProtectionKind(int min_id, int max_id, const std::string &value)
 {
     XMLElement *domainRule = findDomainRule(min_id, max_id);
     if (domainRule == nullptr) {
@@ -232,15 +234,15 @@ bool SecurityManager::setRtpsProtectionKind(int min_id, int max_id, const std::s
     return true;
 }
 
-std::string SecurityManager::getXML() const
+std::string GovernanceManager::getXML() const
 {
     XMLPrinter printer;
     m_doc.Accept(&printer);
     return printer.CStr(); // 返回格式化的 XML 字符串
 }
 
-bool SecurityManager::addTopicRule(int min_id, int max_id, const std::string &topic_expression,
-                                   const TopicRuleAttributes &topicRule)
+bool GovernanceManager::addTopicRule(int min_id, int max_id, const std::string &topic_expression,
+                                     const TopicRuleAttributes &topicRule)
 {
     // 检查是否已经存在相同的 min 和 max 范围
     if (findDomainRule(min_id, max_id) == nullptr) {
@@ -266,8 +268,8 @@ bool SecurityManager::addTopicRule(int min_id, int max_id, const std::string &to
     return true;
 }
 
-XMLElement *SecurityManager::createTopicRuleElement(const std::string &topic_expression,
-                                                    const TopicRuleAttributes &topicRule)
+XMLElement *GovernanceManager::createTopicRuleElement(const std::string &topic_expression,
+                                                      const TopicRuleAttributes &topicRule)
 {
     XMLElement *topicRuleElement = m_doc.NewElement("topic_rule");
 
@@ -305,8 +307,8 @@ XMLElement *SecurityManager::createTopicRuleElement(const std::string &topic_exp
     return topicRuleElement;
 }
 
-XMLElement *SecurityManager::findTopicRule(int min_id, int max_id,
-                                           const std::string &topic_expression) const
+XMLElement *GovernanceManager::findTopicRule(int min_id, int max_id,
+                                             const std::string &topic_expression) const
 {
     XMLElement *root = const_cast<tinyxml2::XMLElement *>(m_doc.FirstChildElement("dds"));
     XMLElement *domain_access_rules = root->FirstChildElement("domain_access_rules");
@@ -339,7 +341,7 @@ XMLElement *SecurityManager::findTopicRule(int min_id, int max_id,
     return nullptr; // 没有找到对应的 topic rule
 }
 
-TopicRuleAttributes SecurityManager::getTopicRuleAttributes(XMLElement *topicRule)
+TopicRuleAttributes GovernanceManager::getTopicRuleAttributes(XMLElement *topicRule)
 {
     TopicRuleAttributes attributes;
 
@@ -380,7 +382,8 @@ TopicRuleAttributes SecurityManager::getTopicRuleAttributes(XMLElement *topicRul
     return attributes;
 }
 
-void SecurityManager::modifyTopicRule(XMLElement *topicRule, const TopicRuleAttributes &attributes)
+void GovernanceManager::modifyTopicRule(XMLElement *topicRule,
+                                        const TopicRuleAttributes &attributes)
 {
     topicRule->FirstChildElement("enable_discovery_protection")
         ->SetText(attributes.enable_discovery_protection);
@@ -396,8 +399,9 @@ void SecurityManager::modifyTopicRule(XMLElement *topicRule, const TopicRuleAttr
         ->SetText(attributes.data_protection_kind.c_str());
 }
 
-bool SecurityManager::setEnableDiscoveryProtection(int min_id, int max_id,
-                                                   const std::string &topic_expression, bool value)
+bool GovernanceManager::setEnableDiscoveryProtection(int min_id, int max_id,
+                                                     const std::string &topic_expression,
+                                                     bool value)
 {
     XMLElement *topicRule = findTopicRule(min_id, max_id, topic_expression);
     if (topicRule == nullptr) {
@@ -411,8 +415,9 @@ bool SecurityManager::setEnableDiscoveryProtection(int min_id, int max_id,
     return true;
 }
 
-bool SecurityManager::setEnableLivelinessProtection(int min_id, int max_id,
-                                                    const std::string &topic_expression, bool value)
+bool GovernanceManager::setEnableLivelinessProtection(int min_id, int max_id,
+                                                      const std::string &topic_expression,
+                                                      bool value)
 {
     XMLElement *topicRule = findTopicRule(min_id, max_id, topic_expression);
     if (topicRule == nullptr) {
@@ -426,8 +431,8 @@ bool SecurityManager::setEnableLivelinessProtection(int min_id, int max_id,
     return true;
 }
 
-bool SecurityManager::setEnableReadAccessControl(int min_id, int max_id,
-                                                 const std::string &topic_expression, bool value)
+bool GovernanceManager::setEnableReadAccessControl(int min_id, int max_id,
+                                                   const std::string &topic_expression, bool value)
 {
     XMLElement *topicRule = findTopicRule(min_id, max_id, topic_expression);
     if (topicRule == nullptr) {
@@ -441,8 +446,8 @@ bool SecurityManager::setEnableReadAccessControl(int min_id, int max_id,
     return true;
 }
 
-bool SecurityManager::setEnableWriteAccessControl(int min_id, int max_id,
-                                                  const std::string &topic_expression, bool value)
+bool GovernanceManager::setEnableWriteAccessControl(int min_id, int max_id,
+                                                    const std::string &topic_expression, bool value)
 {
     XMLElement *topicRule = findTopicRule(min_id, max_id, topic_expression);
     if (topicRule == nullptr) {
@@ -456,9 +461,9 @@ bool SecurityManager::setEnableWriteAccessControl(int min_id, int max_id,
     return true;
 }
 
-bool SecurityManager::setMetadataProtectionKind(int min_id, int max_id,
-                                                const std::string &topic_expression,
-                                                const std::string &value)
+bool GovernanceManager::setMetadataProtectionKind(int min_id, int max_id,
+                                                  const std::string &topic_expression,
+                                                  const std::string &value)
 {
     XMLElement *topicRule = findTopicRule(min_id, max_id, topic_expression);
     if (topicRule == nullptr) {
@@ -472,9 +477,9 @@ bool SecurityManager::setMetadataProtectionKind(int min_id, int max_id,
     return true;
 }
 
-bool SecurityManager::setDataProtectionKind(int min_id, int max_id,
-                                            const std::string &topic_expression,
-                                            const std::string &value)
+bool GovernanceManager::setDataProtectionKind(int min_id, int max_id,
+                                              const std::string &topic_expression,
+                                              const std::string &value)
 {
     XMLElement *topicRule = findTopicRule(min_id, max_id, topic_expression);
     if (topicRule == nullptr) {
@@ -487,15 +492,15 @@ bool SecurityManager::setDataProtectionKind(int min_id, int max_id,
     modifyTopicRule(topicRule, attributes);
     return true;
 }
-bool SecurityManager::saveToFile(std::string &filename)
+bool GovernanceManager::saveToFile(std::string &filename)
 {
     LOG(info) << "Saving File to: " << filename;
     return m_doc.SaveFile(filename.c_str()) == XML_SUCCESS; // 保存到文件
 }
 
-bool SecurityManager::signGovernanceFile(const std::string &governance,
-                                         const std::string &cert_file, const std::string &key_file,
-                                         const std::string &out_file)
+bool GovernanceManager::signGovernanceFile(const std::string &governance,
+                                           const std::string &cert_file,
+                                           const std::string &key_file, const std::string &out_file)
 {
     // OpenSSL_add_all_algorithms();
     // ERR_load_crypto_strings();

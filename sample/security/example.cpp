@@ -9,7 +9,7 @@
 #include "fastdds_wrapper/DataNode.h"
 #include "fastdds_wrapper/DDSParticipantListener.h"
 #include "log/logger.h"
-#include "SecurityManager.h"
+#include "GovernanceManager.h"
 using namespace std;
 
 void run_dds_data_writer();
@@ -32,7 +32,7 @@ ParticipantQosHandler qos_configurator_subscriber()
         handler.setAuthenticationPlugin(identity_ca_path, sub_cert_path, sub_privateKey_path);
         // 访问控制
         std::string governance_path =
-            "file:///home/weiqb/src/test_demo/config/certs/governance2.smime";
+            "file:///home/weiqb/src/test_demo/config/certs/governance.smime";
         std::string permission_path =
             "file:///home/weiqb/src/test_demo/config/certs/permissions.smime";
         handler.setAccessControlPlugin(identity_ca_path, governance_path, permission_path);
@@ -58,7 +58,7 @@ ParticipantQosHandler qos_configurator_publisher()
     std::string pub_privateKey_path = "file:///home/weiqb/src/test_demo/config/certs/pubkey.pem";
     handler.setAuthenticationPlugin(identity_ca_path, pub_cert_path, pub_privateKey_path);
     //访问控制
-    std::string governance_path = "file:///home/weiqb/src/test_demo/config/certs/governance2.smime";
+    std::string governance_path = "file:///home/weiqb/src/test_demo/config/certs/governance.smime";
     std::string permission_path = "file:///home/weiqb/src/test_demo/config/certs/permissions.smime";
     handler.setAccessControlPlugin(identity_ca_path, governance_path, permission_path);
     // 加密插件 待测试
@@ -125,7 +125,7 @@ void test_multi_sub_pub(int argc, char *argv[])
 
 void setSecuritySetting()
 {
-    auto secManager = SecurityManager::getInstance();
+    auto secManager = GovernanceManager::getInstance();
     // 添加一条domain rule
     DomainRuleAttributes domainRule(false, true, "ENCRYPT", "SIGN", "ENCRYPT");
     secManager->addDomainRule(0, 230, domainRule);
@@ -152,16 +152,16 @@ int main(int argc, char *argv[])
 {
     Logger::Instance()->Init("log/myapp.log", Logger::console, Logger::info, 60, 5);
     setSecuritySetting();
-    // test_multi_sub_pub(argc, argv);
+    test_multi_sub_pub(argc, argv);
 }
 
 void run_dds_data_writer()
 {
     DDSParticipantListener *listener = new DDSParticipantListener();
     //DataNode node("/home/wwk/workspaces/test_demo/sample/node_example/qosConfig.xml", listener);
-    LOG(error) << 222;
-    DataNode node(10, "test_writer"); // qos_configurator_publisher
-    LOG(error) << 333;
+    // LOG(error) << 222;
+    DataNode node(10, "test_writer", qos_configurator_publisher); // qos_configurator_publisher
+    // LOG(error) << 333;
     //DataNode node(100, "test_writer");
     node.registerTopicType<HelloWorldOnePubSubType>("wwk");
 

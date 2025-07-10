@@ -39,7 +39,7 @@
                 <subscribe>  
                     <topics>
                         <topic>wqb</topic>
-                        <!-- <topic>wwk</topic> -->
+                        <topic>wwk</topic>
                     </topics>
                 </subscribe>
             </allow_rule>

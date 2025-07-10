@@ -1,7 +1,7 @@
-// SecurityManager.h
+// GovernanceManager.h
 
-#ifndef SECURITY_MANAGER_H
-#define SECURITY_MANAGER_H
+#ifndef GOVERNANCE_MANAGER_H
+#define GOVERNANCE_MANAGER_H
 
 #include "log/logger.h"
 #include <tinyxml2.h>
@@ -71,40 +71,61 @@ struct TopicRuleAttributes {
     }
 };
 
-class SecurityManager
+class GovernanceManager
 {
 public:
     // 获取单例实例
-    static SecurityManager *getInstance();
+    static GovernanceManager *getInstance();
 
-    // 添加一个新的 domain rule
+    /**
+     * @brief 添加一条新的 domain rule
+     * 
+     * @param min_id 规则对应的domain id范围的最小值(闭区间)
+     * @param max_id 规则对应的domain id范围的最大值(闭区间)
+     * @param attributes 一条新的domain rule(用结构体封装)
+     * @return true  添加成功
+     * @return false 添加失败
+     */
     bool addDomainRule(int min_id, int max_id, const DomainRuleAttributes &attributes);
 
-    // 根据 min 和 max 修改 allow_unauthenticated_participants 属性
+    /**
+     * @brief 根据 domainId范围的 min 和 max 修改 allow_unauthenticated_participants等各种属性
+     * 
+     * @param min_id 要修改的规则的domain id范围的最小值(闭区间)
+     * @param max_id 要修改的规则的domain id范围的最大值(闭区间)
+     * @param value  对应属性的值
+     * @return true  修改成功
+     * @return false 修改失败
+     */
     bool setAllowUnauthenticatedParticipants(int min_id, int max_id, bool value);
-
-    // 根据 min 和 max 修改 enable_join_access_control 属性
     bool setEnableJoinAccessControl(int min_id, int max_id, bool value);
-
-    // 根据 min 和 max 修改 discovery_protection_kind 属性
     bool setDiscoveryProtectionKind(int min_id, int max_id, const std::string &value);
-
-    // 根据 min 和 max 修改 liveliness_protection_kind 属性
     bool setLivelinessProtectionKind(int min_id, int max_id, const std::string &value);
-
-    // 根据 min 和 max 修改 rtps_protection_kind 属性
     bool setRtpsProtectionKind(int min_id, int max_id, const std::string &value);
 
+    /**
+     * @brief 添加一条新的 topic rule
+     * 
+     * @param min_id 规则对应的domain id范围的最小值(闭区间)
+     * @param max_id 规则对应的domain id范围的最大值(闭区间)
+     * @param topic_expression topic的名称
+     * @param topicRule 一条新的topic rule(用结构体封装)
+     * @return true 添加成功
+     * @return false 添加失败
+     */
     bool addTopicRule(int min_id, int max_id, const std::string &topic_expression,
                       const TopicRuleAttributes &topicRule);
 
-    // 返回当前的 XML 内容
-    std::string getXML() const;
-
-    // 将当前的 XML 保存到文件
-    bool saveToFile(std::string &filename);
-
-    // 单独修改某个属性
+    /**
+     * @brief 根据 domainId范围的 min 和 max以及topic名称去修改已有的topic rule的各种属性
+     * 
+     * @param min_id topic rule对应的domain id范围的最小值(闭区间)
+     * @param max_id topic rule对应的domain id范围的最大值(闭区间)
+     * @param topic_expression topic的名称
+     * @param value topic rule的属性值
+     * @return true 修改成
+     * @return false 修改失败
+     */
     bool setEnableDiscoveryProtection(int min_id, int max_id, const std::string &topic_expression,
                                       bool value);
     bool setEnableLivelinessProtection(int min_id, int max_id, const std::string &topic_expression,
@@ -118,16 +139,40 @@ public:
     bool setDataProtectionKind(int min_id, int max_id, const std::string &topic_expression,
                                const std::string &value);
 
-    // 对governance.xml文件进行签名，得到smime文件
+    /**
+     * @brief 对governance.xml文件进行签名，得到smime文件
+     * 
+     * @param governance 要签名的 governance.xml 文件的路径
+     * @param cert_file  用于签名的ca证书文件路径
+     * @param key_file   用于签名的ca私钥文件路径
+     * @param out_file   签名后的smime格式文件的保存路径
+     * @return true      签名成功
+     * @return false     签名失败
+     */
     bool signGovernanceFile(const std::string &governance, const std::string &cert_file,
                             const std::string &key_file, const std::string &out_file);
+    /**
+     * @brief 返回当前的 XML 内容
+     * 
+     * @return std::string格式的XML内
+     */
+    std::string getXML() const;
+
+    /**
+     * @brief 将当前的 XML 内容保存到指定的文件中
+     * 
+     * @param filename 保存的文件路径
+     * @return true    保存成功
+     * @return false   保存失败
+     */
+    bool saveToFile(std::string &filename);
 
 private:
-    SecurityManager(); // 私有构造函数，禁止外部创建实例
-    ~SecurityManager() = default;
+    GovernanceManager(); // 私有构造函数，禁止外部创建实例
+    ~GovernanceManager() = default;
 
-    SecurityManager(const SecurityManager &) = delete;
-    SecurityManager &operator=(const SecurityManager &) = delete;
+    GovernanceManager(const GovernanceManager &) = delete;
+    GovernanceManager &operator=(const GovernanceManager &) = delete;
 
     tinyxml2::XMLDocument m_doc; // 用来存储 XML 内容
 
@@ -158,4 +203,4 @@ private:
     void modifyTopicRule(tinyxml2::XMLElement *topicRule, const TopicRuleAttributes &attributes);
 };
 
-#endif // SECURITY_MANAGER_H
+#endif // GOVERNANCE_MANAGER_H
