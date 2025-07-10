@@ -73,7 +73,7 @@ void test_multi_sub_pub(int argc, char *argv[])
 
 int main(int argc, char *argv[])
 {
-    Logger::Instance().Init("log/myapp.log", Logger::console, Logger::info, 60, 5);
+    Logger::Instance()->Init("log/myapp.log", Logger::console, Logger::info, 60, 5);
     test_multi_sub_pub(argc, argv);
 }
 

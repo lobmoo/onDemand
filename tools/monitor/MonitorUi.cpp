@@ -54,6 +54,7 @@ MonitorUI::MonitorUI() : screen_(ScreenInteractive::TerminalOutput())
                                if (update_thread_.joinable()) {
                                    update_thread_.join(); // 🧷 等它安全退出
                                }
+                               MonitorDataBaseManager::getInstance().stop();
                                screen_.Exit();
                                return true;
                            }

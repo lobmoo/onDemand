@@ -61,8 +61,8 @@ void request_callback2(const CalculatorRequestType &request, CalculatorReplyType
 
 int main(int argc, char *argv[])
 {
-    Logger::Instance().setFlushOnLevel(Logger::trace);
-    Logger::Instance().Init("log/myapp.log", Logger::console, Logger::debug, 60, 5);
+    Logger::Instance()->setFlushOnLevel(Logger::trace);
+    Logger::Instance()->Init("log/myapp.log", Logger::console, Logger::debug, 60, 5);
 
     if (argc < 2) {
         std::cerr << "Usage: " << argv[0] << " svr/cli" << std::endl;

@@ -81,7 +81,7 @@ public:
 
     void setLogBufferSize(size_t size);
 
-    static Logger &Instance();
+    static Logger* Instance();
 
 private:
     void Log(severity_level level, const std::string &msg, const char *file, uint32_t line,
@@ -136,7 +136,7 @@ public:
 };
 
 #define LOG(level)                                                                                 \
-    LogStream(Logger::Instance(), Logger::level, __FILE__, __LINE__, __FUNCTION__).stream()
+    LogStream(*Logger::Instance(), Logger::level, __FILE__, __LINE__, __FUNCTION__).stream()
 #define LOG_TIME(level, interval_ms)                                                               \
     if (LogRateLimiter::shouldLog(std::string(__FILE__) + ":" + std::to_string(__LINE__),          \
                                   interval_ms))                                                    \

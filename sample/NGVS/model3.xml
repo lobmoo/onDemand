@@ -9,7 +9,7 @@
         <member name="complex_member3" type="nonBasic" nonBasicTypeName="InnerModel3" version="1.0"/>
     </struct>
 
-    <struct name="ParentModel" version="2.0">
+    <struct name="ParentModel" version="1.0">
         <member name="first" type="DT_REAL"/>
         <member name="second" type="DT_LINT"/>
     </struct>
