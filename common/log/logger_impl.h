@@ -67,10 +67,12 @@ class Logger::LoggerImpl
                 maxFileSize = loggerConfig.value("MaxFileSize", maxFileSize);
                 maxBackupIndex = loggerConfig.value("MaxBackupIndex", maxBackupIndex);
                 isAsync = loggerConfig.value("IsAsync", isAsync);
+                bufferSize = loggerConfig.value("BufferSize", 8 * 1024); // 默认8KB
                 flushOnLevel = loggerConfig.value("FlushOnLevel", flushOnLevel);
                 LogConsoleLevel = loggerConfig.value("ConsoleLogLevel", LogConsoleLevel);
                 LogFileLevel = loggerConfig.value("FileLogLevel", LogFileLevel);
                 LogPattern = loggerConfig.value("LogPattern", LogPattern);
+
 
             } catch (const json::exception &e) {
                 spdlog::warn("Failed to parse JSON config: {}, using default config", e.what());
@@ -116,6 +118,7 @@ class Logger::LoggerImpl
         std::string getLogPattern() const { return LogPattern; }
         std::string getFileName() const { return fileName; }
         bool getIsAsync() const { return isAsync; }
+        uint32_t getBufferSize() const { return bufferSize; }
         uint32_t getMaxFileSize() const { return maxFileSize; }
         uint32_t getMaxBackupIndex() const { return maxBackupIndex; }
         bool getIsValid() const { return isValid; }
@@ -134,6 +137,7 @@ class Logger::LoggerImpl
         std::string level;
         uint32_t maxFileSize;
         uint32_t maxBackupIndex;
+        uint32_t bufferSize;
         bool isAsync;
         std::string flushOnLevel;
         std::string LogConsoleLevel;
