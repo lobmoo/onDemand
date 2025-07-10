@@ -45,7 +45,7 @@ else()
 endif()
 
 # link_directories(${LIBRARY_PATH})
-target_link_libraries(${PROJECT_NAME} PRIVATE ${OBJ_CPP_LIBS} pthread  ${CMAKE_SOURCE_DIR}/common/log/lib/liblog.a ${CMAKE_SOURCE_DIR}/thirdparty/tinyxml/lib/libtinyxml2.a)
+target_link_libraries(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/thirdparty/tinyxml/lib/libtinyxml2.a ${OBJ_CPP_LIBS} pthread   ${CMAKE_SOURCE_DIR}/common/log/lib/liblog.a)
 
 
 

@@ -32,15 +32,15 @@ ParticipantQosHandler qos_configurator_subscriber()
         handler.setAuthenticationPlugin(identity_ca_path, sub_cert_path, sub_privateKey_path);
         // 访问控制
         std::string governance_path =
-            "file:///home/weiqb/src/test_demo/config/certs/governance.smime";
+            "file:///home/weiqb/src/test_demo/config/certs/governance2.smime";
         std::string permission_path =
             "file:///home/weiqb/src/test_demo/config/certs/permissions.smime";
         handler.setAccessControlPlugin(identity_ca_path, governance_path, permission_path);
         // 加密插件 待测试
         handler.setCryptographicPlugin();
         // 日志插件
-        std::string log_file_path = "/home/weiqb/src/test_demo/config/certs/logfile/sub.log";
-        handler.setSecurityLogging("INFORMATIONAL_LEVEL", log_file_path);
+        // std::string log_file_path = "/home/weiqb/src/test_demo/config/certs/logfile/sub.log";
+        // handler.setSecurityLogging("INFORMATIONAL_LEVEL", log_file_path);
     } catch (std::exception &e) {
         std::cout << e.what() << std::endl;
     }
@@ -58,14 +58,14 @@ ParticipantQosHandler qos_configurator_publisher()
     std::string pub_privateKey_path = "file:///home/weiqb/src/test_demo/config/certs/pubkey.pem";
     handler.setAuthenticationPlugin(identity_ca_path, pub_cert_path, pub_privateKey_path);
     //访问控制
-    std::string governance_path = "file:///home/weiqb/src/test_demo/config/certs/governance.smime";
+    std::string governance_path = "file:///home/weiqb/src/test_demo/config/certs/governance2.smime";
     std::string permission_path = "file:///home/weiqb/src/test_demo/config/certs/permissions.smime";
     handler.setAccessControlPlugin(identity_ca_path, governance_path, permission_path);
     // 加密插件 待测试
     handler.setCryptographicPlugin();
     //日志插件
-    std::string log_file_path = "/home/weiqb/src/test_demo/config/certs/logfile/pub.log";
-    handler.setSecurityLogging("DEBUG_LEVEL", log_file_path);
+    // std::string log_file_path = "/home/weiqb/src/test_demo/config/certs/logfile/pub.log";
+    // handler.setSecurityLogging("DEBUG_LEVEL", log_file_path);
     return handler;
 }
 // ParticipantQosHandler qos_configurator()
@@ -123,34 +123,34 @@ void test_multi_sub_pub(int argc, char *argv[])
     return;
 }
 
-void setSecuritySetting()
-{
-    auto secManager = SecurityManager::getInstance();
-    // 添加一条domain rule
-    DomainRuleAttributes domainRule(false, true, "ENCRYPT", "SIGN", "ENCRYPT");
-    secManager->addDomainRule(0, 230, domainRule);
-    // 修改某一条属性
-    secManager->setLivelinessProtectionKind(0, 230, "NONE");
-    // 添加一条topic rule
-    TopicRuleAttributes topicRule("wwk", true, false, true, true, "NONE", "ENCRYPT");
-    // 修改某一条属性
-    secManager->addTopicRule(0, 230, topicRule.topic_expression, topicRule);
-    secManager->setMetadataProtectionKind(0, 230, "wwk", "SIGN");
-    std::string outPath = "/home/weiqb/src/test_demo/config/certs/governance.xml";
-    if (!secManager->saveToFile(outPath))
-        LOG(error) << "Saving File Error!";
+// void setSecuritySetting()
+// {
+//     auto secManager = SecurityManager::getInstance();
+//     // 添加一条domain rule
+//     DomainRuleAttributes domainRule(false, true, "ENCRYPT", "SIGN", "ENCRYPT");
+//     secManager->addDomainRule(0, 230, domainRule);
+//     // 修改某一条属性
+//     secManager->setLivelinessProtectionKind(0, 230, "NONE");
+//     // 添加一条topic rule
+//     TopicRuleAttributes topicRule("wwk", true, false, true, true, "NONE", "ENCRYPT");
+//     // 修改某一条属性
+//     secManager->addTopicRule(0, 230, topicRule.topic_expression, topicRule);
+//     secManager->setMetadataProtectionKind(0, 230, "wwk", "SIGN");
+//     std::string outPath = "/home/weiqb/src/test_demo/config/certs/governance.xml";
+//     if (!secManager->saveToFile(outPath))
+//         LOG(error) << "Saving File Error!";
 
-    // 签名 得到smime文件
-    std::string governance = outPath;
-    std::string maincakey = "/home/weiqb/src/test_demo/config/certs/maincakey.pem";
-    std::string maincacert = "/home/weiqb/src/test_demo/config/certs/maincacert.pem";
-    std::string outFilePath = "/home/weiqb/src/test_demo/config/certs/governance.smime";
-    secManager->signGovernanceFile(governance, maincacert, maincakey, outFilePath);
-}
+//     // 签名 得到smime文件
+//     std::string governance = outPath;
+//     std::string maincakey = "/home/weiqb/src/test_demo/config/certs/maincakey.pem";
+//     std::string maincacert = "/home/weiqb/src/test_demo/config/certs/maincacert.pem";
+//     std::string outFilePath = "/home/weiqb/src/test_demo/config/certs/governance.smime";
+//     secManager->signGovernanceFile(governance, maincacert, maincakey, outFilePath);
+// }
 int main(int argc, char *argv[])
 {
-    Logger::Instance().Init("log/myapp.log", Logger::console, Logger::info, 60, 5);
-    setSecuritySetting();
+    Logger::Instance()->Init("log/myapp.log", Logger::console, Logger::info, 60, 5);
+    // setSecuritySetting();
     test_multi_sub_pub(argc, argv);
 }
 
@@ -158,8 +158,9 @@ void run_dds_data_writer()
 {
     DDSParticipantListener *listener = new DDSParticipantListener();
     //DataNode node("/home/wwk/workspaces/test_demo/sample/node_example/qosConfig.xml", listener);
-    DataNode node(10, "test_writer", qos_configurator_publisher);
-
+    LOG(error) << 222;
+    DataNode node(10, "test_writer"); // qos_configurator_publisher
+    LOG(error) << 333;
     //DataNode node(100, "test_writer");
     node.registerTopicType<HelloWorldOnePubSubType>("wwk");
 

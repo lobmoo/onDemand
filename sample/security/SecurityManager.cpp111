@@ -501,8 +501,8 @@ bool SecurityManager::signGovernanceFile(const std::string &governance,
                                          const std::string &cert_file, const std::string &key_file,
                                          const std::string &out_file)
 {
-    OpenSSL_add_all_algorithms();
-    ERR_load_crypto_strings();
+    // OpenSSL_add_all_algorithms();
+    // ERR_load_crypto_strings();
 
     BIO *in = BIO_new_file(governance.c_str(), "r");
     BIO *out = BIO_new_file(out_file.c_str(), "w");
@@ -547,6 +547,7 @@ bool SecurityManager::signGovernanceFile(const std::string &governance,
         return false;
     }
 
+    LOG(info) << "Saving Signed File to: " << out_file;
     // 释放资源
     PKCS7_free(p7);
     X509_free(signer_cert);
