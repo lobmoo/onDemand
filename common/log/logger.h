@@ -30,7 +30,7 @@ public:
     enum LoggerType { both = 0, console, file };
 
 public:
-    ~Logger();
+    ~Logger() = default;
 
     /**
    * @brief 初始化日志系统

@@ -120,6 +120,14 @@ class Logger::LoggerImpl
         uint32_t getMaxBackupIndex() const { return maxBackupIndex; }
         bool getIsValid() const { return isValid; }
 
+        void printConfig() const
+        {
+            spdlog::info("LoggerConfig: fileName={}, type={}, level={}, maxFileSize={}, "
+                         "maxBackupIndex={}, isAsync={}, flushOnLevel={}, LogConsoleLevel={}, "
+                         "LogFileLevel={}, LogPattern={}",
+                         fileName, type, level, maxFileSize, maxBackupIndex, isAsync,
+                         flushOnLevel, LogConsoleLevel, LogFileLevel, LogPattern);
+        }
     private:
         std::string fileName;
         std::string type;

@@ -28,6 +28,7 @@ Logger::LoggerImpl::LoggerImpl()
 }
 Logger::LoggerImpl::~LoggerImpl()
 {
+    Uinit();
 }
 
 void Logger::LoggerImpl::LoggerConfigChecker()

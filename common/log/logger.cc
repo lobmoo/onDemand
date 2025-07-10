@@ -20,9 +20,6 @@
 Logger::Logger() : pImpl(std::make_unique<LoggerImpl>())
 {
 }
-Logger::~Logger()
-{
-}
 
 Logger* Logger::Instance()
 {
