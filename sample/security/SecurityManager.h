@@ -6,6 +6,11 @@
 #include "log/logger.h"
 #include <tinyxml2.h>
 #include <string>
+#include <openssl/pkcs7.h>
+#include <openssl/x509.h>
+#include <openssl/pem.h>
+#include <openssl/err.h>
+#include <openssl/bio.h>
 
 // 定义 DomainRuleAttributes 结构体，带默认值
 struct DomainRuleAttributes {

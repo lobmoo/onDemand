@@ -5,12 +5,8 @@
 #include <sstream>
 #include <fstream>
 #include "tinyxml2.h"
+#include <dlfcn.h>
 
-#include <openssl/pkcs7.h>
-#include <openssl/x509.h>
-#include <openssl/pem.h>
-#include <openssl/err.h>
-#include <openssl/bio.h>
 using namespace tinyxml2;
 
 SecurityManager::SecurityManager()
@@ -532,7 +528,7 @@ bool SecurityManager::signGovernanceFile(const std::string &governance,
     PKCS7 *p7 = PKCS7_sign(signer_cert, signer_key, nullptr, in, PKCS7_TEXT | PKCS7_DETACHED);
     if (!p7) {
         LOG(error) << "PKCS7_sign failed.";
-        ERR_print_errors_fp(stderr);
+        // ERR_print_errors_fp(stderr);
         return false;
     }
 
@@ -543,7 +539,7 @@ bool SecurityManager::signGovernanceFile(const std::string &governance,
     // 输出 S/MIME 文件
     if (!SMIME_write_PKCS7(out, p7, in, PKCS7_TEXT | PKCS7_DETACHED)) {
         LOG(error) << "Failed to write S/MIME file.";
-        ERR_print_errors_fp(stderr);
+        // ERR_print_errors_fp(stderr);
         return false;
     }
 
