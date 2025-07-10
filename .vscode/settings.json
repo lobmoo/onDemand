@@ -101,5 +101,10 @@
     },
     "editor.mouseWheelZoom": true,
     "editor.formatOnPaste": true,
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "cSpell.words": [
+        "rtps",
+        "thirdparty",
+        "tinyxml"
+    ]
 }

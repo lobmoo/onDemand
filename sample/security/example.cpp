@@ -9,6 +9,7 @@
 #include "fastdds_wrapper/DataNode.h"
 #include "fastdds_wrapper/DDSParticipantListener.h"
 #include "log/logger.h"
+#include "SecurityManager.h"
 using namespace std;
 
 void run_dds_data_writer();
@@ -67,32 +68,32 @@ ParticipantQosHandler qos_configurator_publisher()
     handler.setSecurityLogging("DEBUG_LEVEL", log_file_path);
     return handler;
 }
-ParticipantQosHandler qos_configurator()
-{
-    ParticipantQosHandler handler("test");
-    handler.add_statistics_and_monitor();
-    //handler.addUDPV4TransportInterface("eth2");
-    //handler.addUDPV4TransportDefault();
-    return handler;
-}
+// ParticipantQosHandler qos_configurator()
+// {
+//     ParticipantQosHandler handler("test");
+//     handler.add_statistics_and_monitor();
+//     //handler.addUDPV4TransportInterface("eth2");
+//     //handler.addUDPV4TransportDefault();
+//     return handler;
+// }
 
-DDSDataReaderQosHandler qos_configurator_data_reader()
-{
-    DDSDataReaderQosHandler handler;
-    // handler.setDurability(10);
-    // handler.setResourceLimits(100, 10, 10);
-    handler.setCloseDataSharing();
-    return handler;
-}
+// DDSDataReaderQosHandler qos_configurator_data_reader()
+// {
+//     DDSDataReaderQosHandler handler;
+//     // handler.setDurability(10);
+//     // handler.setResourceLimits(100, 10, 10);
+//     handler.setCloseDataSharing();
+//     return handler;
+// }
 
-DDSDataWriterQosHanler qos_configurator_data_writer()
-{
-    DDSDataWriterQosHanler handler;
-    // handler.setDurability(10);
-    // handler.setResourceLimits(100, 10, 10);
-    handler.setCloseDataSharing();
-    return handler;
-}
+// DDSDataWriterQosHanler qos_configurator_data_writer()
+// {
+//     DDSDataWriterQosHanler handler;
+//     // handler.setDurability(10);
+//     // handler.setResourceLimits(100, 10, 10);
+//     handler.setCloseDataSharing();
+//     return handler;
+// }
 
 void processHelloWorldOne(const std::string &topic_name, std::shared_ptr<HelloWorldOne> data)
 {
@@ -122,9 +123,34 @@ void test_multi_sub_pub(int argc, char *argv[])
     return;
 }
 
+void setSecuritySetting()
+{
+    auto secManager = SecurityManager::getInstance();
+    // 添加一条domain rule
+    DomainRuleAttributes domainRule(false, true, "ENCRYPT", "SIGN", "ENCRYPT");
+    secManager->addDomainRule(0, 230, domainRule);
+    // 修改某一条属性
+    secManager->setLivelinessProtectionKind(0, 230, "NONE");
+    // 添加一条topic rule
+    TopicRuleAttributes topicRule("wwk", true, false, true, true, "NONE", "ENCRYPT");
+    // 修改某一条属性
+    secManager->addTopicRule(0, 230, topicRule.topic_expression, topicRule);
+    secManager->setMetadataProtectionKind(0, 230, "wwk", "SIGN");
+    std::string outPath = "/home/weiqb/src/test_demo/config/certs/governance.xml";
+    if (!secManager->saveToFile(outPath))
+        LOG(error) << "Saving File Error!";
+
+    // 签名 得到smime文件
+    std::string governance = outPath;
+    std::string maincakey = "/home/weiqb/src/test_demo/config/certs/maincakey.pem";
+    std::string maincacert = "/home/weiqb/src/test_demo/config/certs/maincacert.pem";
+    std::string outFilePath = "/home/weiqb/src/test_demo/config/certs/governance.smime";
+    secManager->signGovernanceFile(governance, maincacert, maincakey, outFilePath);
+}
 int main(int argc, char *argv[])
 {
     Logger::Instance().Init("log/myapp.log", Logger::console, Logger::info, 60, 5);
+    setSecuritySetting();
     test_multi_sub_pub(argc, argv);
 }
 
