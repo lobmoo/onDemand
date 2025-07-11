@@ -5,7 +5,7 @@
     "LogLevel": "trace",
     "MaxFileSize": 1,
     "MaxBackupIndex": 10,
-    "IsAsync": true,
+    "IsAsync": false,
     "BufferSize": 8192,
     "FlushOnLevel": "error",
     "ConsoleLogLevel": "tarce",

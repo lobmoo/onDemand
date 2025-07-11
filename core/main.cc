@@ -9,6 +9,7 @@ int main()
         // 创建FIFO队列
         fifo::Fifo::Params params{1024};
         fifo::Fifo fifo(params);
+        std::cout << "FIFO created with size=" << params.size << "\n";
 
         // 添加用户
         auto user1 = fifo.add_user(true); // 从头开始读取
