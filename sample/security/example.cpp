@@ -1,15 +1,17 @@
-#include <cstring>
-#include <iostream>
-#include <memory>
-#include <thread>
-#include <chrono>
+#if 0
 
-#include "HelloWorldOne.hpp"
-#include "HelloWorldOnePubSubTypes.hpp"
-#include "fastdds_wrapper/DataNode.h"
-#include "fastdds_wrapper/DDSParticipantListener.h"
-#include "log/logger.h"
-#include "GovernanceManager.h"
+#    include <cstring>
+#    include <iostream>
+#    include <memory>
+#    include <thread>
+#    include <chrono>
+
+#    include "HelloWorldOne.hpp"
+#    include "HelloWorldOnePubSubTypes.hpp"
+#    include "fastdds_wrapper/DataNode.h"
+#    include "fastdds_wrapper/DDSParticipantListener.h"
+#    include "log/logger.h"
+#    include "GovernanceManager.h"
 using namespace std;
 
 void run_dds_data_writer();
@@ -266,3 +268,5 @@ void run_dds_data_Multireader()
     while (std::cin.get() != '\n') {
     }
 }
+
+#endif
