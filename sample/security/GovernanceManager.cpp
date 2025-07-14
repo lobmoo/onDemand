@@ -1,11 +1,10 @@
 // GovernanceManager.cpp
-#if 0
-#    include "GovernanceManager.h"
-#    include <iostream>
-#    include <sstream>
-#    include <fstream>
-#    include "tinyxml2.h"
-#    include <dlfcn.h>
+#include "GovernanceManager.h"
+#include <iostream>
+#include <sstream>
+#include <fstream>
+#include "tinyxml2.h"
+#include <dlfcn.h>
 
 using namespace tinyxml2;
 
@@ -560,5 +559,3 @@ bool GovernanceManager::signGovernanceFile(const std::string &governance,
 
     return true;
 }
-
-#endif

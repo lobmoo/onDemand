@@ -14,7 +14,7 @@ if(COMPILE_SAMPLE)
     add_subdirectory(sample/request_reply_example)
     add_subdirectory(sample/request_reply_test)
     add_subdirectory(sample/NGVS)
-    add_subdirectory(sample/security)
+    # add_subdirectory(sample/security)
 endif()
 
 
