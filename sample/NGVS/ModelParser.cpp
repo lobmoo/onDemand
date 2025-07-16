@@ -293,6 +293,25 @@ namespace parser
 
             for (auto &modelNode : ptInput.get_child("models")) {
                 if (modelNode.first == "struct") {
+
+                    auto baseTypeNameOptional =
+                        modelNode.second.get_optional<std::string>("<xmlattr>.baseType");
+                    auto baseTypeVersionOptional =
+                        modelNode.second.get_optional<std::string>("<xmlattr>.baseTypeVersion");
+
+                    if (baseTypeNameOptional && baseTypeVersionOptional) {
+                        std::string nonBasicKey =
+                            baseTypeNameOptional.get() + ":" + baseTypeVersionOptional.get();
+
+                        if (hashCache_.find(nonBasicKey) != hashCache_.end()) {
+                            std::string nonBasicHash = hashCache_[nonBasicKey];
+                            nonBasicHash =
+                                nonBasicHash.substr(0, std::min<size_t>(nonBasicHash.length(), 32));
+                            modelNode.second.get_child("<xmlattr>")
+                                .put("baseTypeVersion", nonBasicHash);
+                        }
+                    }
+
                     std::string nodeName = modelNode.second.get<std::string>("<xmlattr>.name");
                     std::string nodeVersion =
                         modelNode.second.get<std::string>("<xmlattr>.version");
@@ -313,6 +332,7 @@ namespace parser
                             std::string memberType =
                                 memberNode.second.get<std::string>("<xmlattr>.type", "");
                             if (memberType == "nonBasic") {
+
                                 std::string nonBasicTypeName = memberNode.second.get<std::string>(
                                     "<xmlattr>.nonBasicTypeName");
                                 std::string nonBasicVersion =
@@ -378,7 +398,8 @@ namespace parser
         auto &structNode = itStructNode->second;
 
         // 构建哈希输入字符串
-        std::string hashInput = currentModelNameAndVersion.substr(0, currentModelNameAndVersion.find(':'));
+        std::string hashInput =
+            currentModelNameAndVersion.substr(0, currentModelNameAndVersion.find(':'));
 
         // 处理基类型
         auto baseTypeNameOptional = structNode.get_optional<std::string>("<xmlattr>.baseType");
@@ -431,8 +452,7 @@ namespace parser
 
                     // 添加名字和类型
                     hashInput += memberName + memberType;
-                    if (memberType == "nonBasic" && !nodeNonBasicTypeName.empty()
-                        && !nodeVersion.empty()) {
+                    if (memberType == "nonBasic" && !nodeNonBasicTypeName.empty()) {
                         std::string nonBasicKey = nodeNonBasicTypeName + ":" + nodeVersion;
                         hashInput += nodeNonBasicTypeName;
                         if (hashCache_.find(nonBasicKey) != hashCache_.end()) {
@@ -885,10 +905,10 @@ namespace parser
 
     void ModelParser::printHashCache()
     {
-        // LOG(info) << "Hash Cache Contents:";
-        // for (const auto &pair : getInstance().hashCache_) {
-        //     LOG(info) << "Key: " << pair.first << ", Value: " << pair.second;
-        // }
+        LOG(info) << "Hash Cache Contents:";
+        for (const auto &pair : getInstance().hashCache_) {
+            LOG(info) << "Key: " << pair.first << ", Value: " << pair.second;
+        }
 
         for (const auto &pair : getInstance().HashStr_) {
             LOG(info) << "Key: " << pair.first << ", Hash String: " << pair.second;
