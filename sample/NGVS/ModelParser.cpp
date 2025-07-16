@@ -378,7 +378,7 @@ namespace parser
         auto &structNode = itStructNode->second;
 
         // 构建哈希输入字符串
-        std::string hashInput = currentModelNameAndVersion;
+        std::string hashInput = currentModelNameAndVersion.substr(0, currentModelNameAndVersion.find(':'));
 
         // 处理基类型
         auto baseTypeNameOptional = structNode.get_optional<std::string>("<xmlattr>.baseType");
@@ -885,18 +885,18 @@ namespace parser
 
     void ModelParser::printHashCache()
     {
-        LOG(info) << "Hash Cache Contents:";
-        for (const auto &pair : getInstance().hashCache_) {
-            LOG(info) << "Key: " << pair.first << ", Value: " << pair.second;
-        }
+        // LOG(info) << "Hash Cache Contents:";
+        // for (const auto &pair : getInstance().hashCache_) {
+        //     LOG(info) << "Key: " << pair.first << ", Value: " << pair.second;
+        // }
 
         for (const auto &pair : getInstance().HashStr_) {
             LOG(info) << "Key: " << pair.first << ", Hash String: " << pair.second;
         }
 
-        for (const auto &pair : getInstance().modelDefines_) {
-            LOG(info) << "pair name: " << pair.first << ", version: " << pair.second.modelVersion;
-        }
+        // for (const auto &pair : getInstance().modelDefines_) {
+        //     LOG(info) << "pair name: " << pair.first << ", version: " << pair.second.modelVersion;
+        // }
     }
 
 } // namespace parser
