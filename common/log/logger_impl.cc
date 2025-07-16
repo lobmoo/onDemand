@@ -13,6 +13,7 @@
  * <tr><td>2025-03-25     <td>1.0     <td>wwk   <td>修改?
  * </table>
  */
+
 #include "logger_impl.h"
 
 #include <iomanip>
@@ -28,6 +29,7 @@ Logger::LoggerImpl::LoggerImpl()
 }
 Logger::LoggerImpl::~LoggerImpl()
 {
+    Uinit();
 }
 
 void Logger::LoggerImpl::LoggerConfigChecker()
@@ -51,22 +53,6 @@ void Logger::LoggerImpl::LoggerConfigChecker()
     }
 }
 
-// void Logger::LoggerImpl::LoggerConfigChecker()
-// {
-//     while (isRunning_) {
-//         LoggerConfig Config(logConfigFilePath_);
-//         if(Config.getIsValid())
-//         {
-//             LogApplyConfig(Config);
-//         }
-//         else
-//         {
-//            break; //这里没想好怎么处理，暂时就这样吧
-//         }
-//         std::this_thread::sleep_for(std::chrono::seconds(1));
-//     }
-// }
-
 void Logger::LoggerImpl::LogApplyConfig(const LoggerConfig &config)
 {
     setFlushOnLevel(config.getFlushOnLevel());
@@ -85,6 +71,7 @@ bool Logger::LoggerImpl::Init(const std::string logConfigFilePath)
     uint32_t maxFileSize = Config.getMaxFileSize();
     uint32_t maxBackupIndex = Config.getMaxBackupIndex();
     bool isAsync = Config.getIsAsync();
+    //Config.printConfig();
 
     if (!Init(fileName, type, level, maxFileSize, maxBackupIndex, isAsync)) {
         return false;
@@ -93,6 +80,7 @@ bool Logger::LoggerImpl::Init(const std::string logConfigFilePath)
     setLogConsoleLevel(Config.getConsoleLogLevel());
     setLogFileLevel(Config.getFileLogLevel());
     setLogPattern(Config.getLogPattern());
+    setLogBufferSize(Config.getBufferSize());
 
     /*启动监测线程*/
     std::thread([this]() { LoggerConfigChecker(); }).detach();
@@ -110,7 +98,7 @@ bool Logger::LoggerImpl::Init(std::string fileName, LoggerType type, severity_le
     if (spdlog::get("Logger")) {
         spdlog::warn("Logger already initialized, skipping re-initialization");
         return false;
-    } 
+    }
 
     std::size_t max_file_size = 1024 * 1024 * maxFileSize;
     std::vector<spdlog::sink_ptr> sinks;
@@ -154,7 +142,9 @@ bool Logger::LoggerImpl::Init(std::string fileName, LoggerType type, severity_le
         return false;
     }
     if (isAsync) {
-        spdlog::init_thread_pool(logBufferSize_, std::thread::hardware_concurrency() / 4);
+
+        logBufferSize_ = std::max(logBufferSize_, static_cast<size_t>(8 * 1024));
+            spdlog::init_thread_pool(logBufferSize_, std::thread::hardware_concurrency() / 4);
         logger_ = std::make_shared<spdlog::async_logger>("Logger", sinks.begin(), sinks.end(),
                                                          spdlog::thread_pool(),
                                                          spdlog::async_overflow_policy::block);

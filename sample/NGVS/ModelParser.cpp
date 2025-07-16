@@ -287,6 +287,8 @@ namespace parser
             modelDefine.modelVersion = hashStr;
         }
 
+        boost::property_tree::ptree ptOutput;
+        boost::property_tree::ptree modelsNode;
         try {
 
             for (auto &modelNode : ptInput.get_child("models")) {
@@ -304,19 +306,48 @@ namespace parser
 
                     auto &attr = modelNode.second.get_child("<xmlattr>");
                     attr.put("version", hash_hex_str);
-                    modelNode.second.put_child("<xmlattr>", attr);
+
+                    // 递归处理 member 中的 nonBasic 类型
+                    for (auto &memberNode : modelNode.second) {
+                        if (memberNode.first == "member") {
+                            std::string memberType =
+                                memberNode.second.get<std::string>("<xmlattr>.type", "");
+                            if (memberType == "nonBasic") {
+                                std::string nonBasicTypeName = memberNode.second.get<std::string>(
+                                    "<xmlattr>.nonBasicTypeName");
+                                std::string nonBasicVersion =
+                                    memberNode.second.get<std::string>("<xmlattr>.version");
+                                std::string nonBasicKey = nonBasicTypeName + ":" + nonBasicVersion;
+                                if (hashCache_.find(nonBasicKey) != hashCache_.end()) {
+                                    std::string nonBasicHash = hashCache_[nonBasicKey];
+                                    nonBasicHash = nonBasicHash.substr(
+                                        0, std::min<size_t>(nonBasicHash.length(), 32));
+                                    memberNode.second.get_child("<xmlattr>")
+                                        .put("version", nonBasicHash);
+                                }
+                            }
+                        }
+                    }
+
                     // 更新对应 modelDefine.schema
                     modelDefines[originalKey].schema = child2xml(modelNode.second, "struct");
 
                     auto &modelDefine = modelDefines[originalKey];
                     modelDefine.modelVersion = hash_hex_str;
-                    modelDefines[nodeName+ ":" + hash_hex_str] = modelDefine;
-                    processedschema += modelDefines[nodeName + ":" + hash_hex_str].schema;
+                    modelDefines[nodeName + ":" + hash_hex_str] = modelDefine;
+                    modelsNode.add_child("struct", modelNode.second);
                 }
             }
+
+            ptOutput.add_child("models", modelsNode);
+            std::ostringstream oss;
+            boost::property_tree::write_xml(
+                oss, ptOutput, boost::property_tree::xml_writer_settings<std::string>(' ', 4));
+            processedschema = oss.str();
         } catch (const std::exception &e) {
             LOG(error) << "Error updating model version: " << e.what();
         }
+
         /*结束后就再写到全局的里面*/
         std::lock_guard<std::mutex> lock(mutex_);
         for (auto &[key, value] : modelDefines) {
@@ -347,7 +378,7 @@ namespace parser
         auto &structNode = itStructNode->second;
 
         // 构建哈希输入字符串
-        std::string hashInput = currentModelNameAndVersion;
+        std::string hashInput = currentModelNameAndVersion.substr(0, currentModelNameAndVersion.find(':'));
 
         // 处理基类型
         auto baseTypeNameOptional = structNode.get_optional<std::string>("<xmlattr>.baseType");
@@ -615,7 +646,7 @@ namespace parser
                                 }
                                 seqNode->size = currentOffset - startingOffset;
                                 offset = currentOffset;
-                              
+
                             } else {
                                 LOG(error) << "nonBasic sequence member '" << memberName
                                            << "' lacks version";
@@ -658,9 +689,9 @@ namespace parser
                             node->version = nodeVersion;
                             offset = startingOffset + node->size;
                             int iRet = offset % ALIGNMENT_;
-                            if(0 != iRet) /*只有基本类型才对齐 数组类型直接拼*/
+                            if (0 != iRet) /*只有基本类型才对齐 数组类型直接拼*/
                             {
-                                offset = (offset + ALIGNMENT_ - iRet); // 对齐到4字节边界    
+                                offset = (offset + ALIGNMENT_ - iRet); // 对齐到4字节边界
                             }
                             currentModelMembers.push_back(std::move(node));
                         } else {
@@ -854,18 +885,18 @@ namespace parser
 
     void ModelParser::printHashCache()
     {
-        LOG(info) << "Hash Cache Contents:";
-        for (const auto &pair : getInstance().hashCache_) {
-            LOG(info) << "Key: " << pair.first << ", Value: " << pair.second;
-        }
+        // LOG(info) << "Hash Cache Contents:";
+        // for (const auto &pair : getInstance().hashCache_) {
+        //     LOG(info) << "Key: " << pair.first << ", Value: " << pair.second;
+        // }
 
-        for(const auto &pair : getInstance().HashStr_) {
+        for (const auto &pair : getInstance().HashStr_) {
             LOG(info) << "Key: " << pair.first << ", Hash String: " << pair.second;
         }
 
-        for (const auto &pair : getInstance().modelDefines_) {
-            LOG(info) << "pair name: " << pair.first << ", version: " << pair.second.modelVersion;
-        }
+        // for (const auto &pair : getInstance().modelDefines_) {
+        //     LOG(info) << "pair name: " << pair.first << ", version: " << pair.second.modelVersion;
+        // }
     }
 
 } // namespace parser
