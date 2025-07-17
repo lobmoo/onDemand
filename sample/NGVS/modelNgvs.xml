@@ -1,23 +1,25 @@
 <models>
-    <struct name="STD.UDT_2" version="1.0">
-        <member name="C1" type="DT_SINT"/>
-        <member name="C2" type="DT_SINT" arrayDimensions="2" startIndex="1" endIndex="2"/>
+    <struct name="InnerModel" version="">
+        <member name="first" type="DT_DINT"/>
+        <member name="complex_member2" type="nonBasic" nonBasicTypeName="InnerModel2" version=""/>
     </struct>
 
-    <struct name="STD.UDT_1" version="1.0">
-        <member name="B1" type="DT_INT"/>
-        <member name="B2" type="DT_BOOLEAN"/>
-        <member name="B3" type="nonBasic" nonBasicTypeName="STD.UDT_2" version="1.0"/>
+    <struct name="InnerModel2" version="">
+        <!-- <member name="third" type="int32"/> -->
+        <member name="complex_member3" type="nonBasic" nonBasicTypeName="InnerModel3" version=""/>
     </struct>
 
-    <struct name="STD.NGVS_S1" version="1.0">   
-        <member name="STD.VAR1" type="nonBasic" nonBasicTypeName="STD.UDT_1" version="1.0"/> 
-        <member name="STD.VAR2" type="DT_INT" arrayDimensions="2" startIndex="1" endIndex="2"/>
-        <member name="STD.VAR3" type="DT_INT"/>
-        <member name="STD.VAR4" type="DT_BOOLEAN"/>
-        <member name="STD.VAR5" type="DT_STRING"/> 
+    <struct name="ParentModel" version="">
+        <member name="first" type="DT_REAL"/>
+        <member name="second" type="DT_LINT"/>
     </struct>
 
+    <struct name="ComplexModel" baseType="ParentModel" baseTypeVersion="" version="">
+        <member name="complex_member" type="nonBasic" nonBasicTypeName="InnerModel" version=""/>
+    </struct>
+
+    <struct name="InnerModel3" version="">
+        <member name="long_array" type="DT_DINT" arrayDimensions="1,2,1"/>
+        <member name="short_sequence" sequenceMaxLength="5" type="DT_INT"/>
+    </struct>
 </models>
-
-

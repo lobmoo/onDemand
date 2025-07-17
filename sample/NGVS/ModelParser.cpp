@@ -237,6 +237,27 @@ namespace parser
         return xmlString;
     }
 
+    void ModelParser::keepOnlyHashModels(std::unordered_map<std::string, ModelDefine> &modelDefines)
+    {
+        auto isHash = [](const std::string &name) {
+            size_t pos = name.rfind(':');
+            if (pos == std::string::npos || pos + 1 >= name.size())
+                return false;
+            const std::string suffix = name.substr(pos + 1);
+            return suffix.size() == 32 && std::all_of(suffix.begin(), suffix.end(), [](char c) {
+                       return std::isxdigit(static_cast<unsigned char>(c));
+                   });
+        };
+
+        for (auto it = modelDefines.begin(); it != modelDefines.end();) {
+            if (!isHash(it->first)) {
+                it = modelDefines.erase(it);
+            } else {
+                ++it;
+            }
+        }
+    }
+
     error_code_t
     ModelParser::processModelSchema(const std::string &schema,
                                     std::unordered_map<std::string, ModelDefine> &modelDefines,
@@ -368,6 +389,9 @@ namespace parser
             LOG(error) << "Error updating model version: " << e.what();
         }
 
+        /*这里删除原先不带版本号的key*/
+        keepOnlyHashModels(modelDefines);
+        
         /*结束后就再写到全局的里面*/
         std::lock_guard<std::mutex> lock(mutex_);
         for (auto &[key, value] : modelDefines) {

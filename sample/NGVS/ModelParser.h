@@ -117,7 +117,6 @@ namespace parser
                                         std::unordered_map<std::string, ModelDefine> &modelDefines,
                                         std::string &processedschema);
 
-
         bool findNodeAndGetLeaves(const ModelDefine &model, const std::string &targetName,
                                   std::vector<std::shared_ptr<dsf::parser::TreeNode>> &leaves);
         bool findNodeAllLeaves(const ModelDefine &model,
@@ -125,6 +124,7 @@ namespace parser
 
         const std::unordered_map<std::string, ModelDefine> getModelDefines() const
         {
+            std::lock_guard<std::mutex> lock(mutex_);
             return modelDefines_;
         }
 
@@ -157,8 +157,6 @@ namespace parser
         std::string child2xml(const boost::property_tree::ptree &childNode,
                               const std::string &rootName);
 
-       
-
         void resolveModelMembers(const std::string &currentModelNameAndVersion,
                                  std::unordered_map<std::string, ModelDefine> &allNodes,
                                  std::vector<std::shared_ptr<TreeNode>> &currentModelMembers,
@@ -171,18 +169,20 @@ namespace parser
                                     const std::string &modelVersion, const std::string &parentName);
         size_t getBasicTypeSize(const std::string &type);
 
+        void keepOnlyHashModels(std::unordered_map<std::string, ModelDefine> &modelDefines);
+
         void updateChildNames(TreeNode &node, const std::string &parentPrefix);
         std::string ptreeToXml(const boost::property_tree::ptree &pt);
 
     private:
         size_t ALIGNMENT_;
         std::set<std::string> visiting;
-        std::vector<std::string> doParseModels;        // 需要解析的模型列表
+        std::vector<std::string> doParseModels; // 需要解析的模型列表
         std::unordered_map<std::string, ModelDefine> modelDefines_;
         std::map<std::string, boost::property_tree::ptree> structNodes_;
         std::unordered_map<std::string, std::string> hashCache_;
         std::unordered_map<std::string, std::string> HashStr_;
-        std::mutex mutex_;
+        mutable std::mutex mutex_;
     };
 } // namespace parser
 } // namespace dsf

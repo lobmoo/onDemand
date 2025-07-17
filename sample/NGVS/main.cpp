@@ -33,13 +33,18 @@ void test_NGVS()
     std::unordered_map<std::string, dsf::parser::ModelDefine> modelDefinels;
     parser.processModelSchema(xmlContent, modelDefinels, scama);
 
+    // parser.printHashCache();
+    // LOG(info) << "++++++++++++++++++++++++++++++++ \n";
+    
     // LOG(info) << "Model schema \n" << scama;
 
-    // for(const auto &modelDefine : modelDefinels) {
-    //     LOG(info) << "Model Name: " << modelDefine.second.modelName
-    //               << ", schema: " << modelDefine.second.schema;
-    // }
-
+   
+    for(const auto &modelDefine : modelDefinels) {
+        LOG(info) << "Model Name: " << modelDefine.first
+                  << ", Version: " << modelDefine.second.modelVersion
+                  << ", Size: " << modelDefine.second.size;
+    }
+    LOG(info) << "++++++++++++++++++++++++++++++++ \n";
     auto modelDefines = parser.getModelDefines();
     for (const auto &modelDefine : modelDefines) {
         LOG(info) << "Model Name: " << modelDefine.first
