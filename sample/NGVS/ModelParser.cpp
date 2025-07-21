@@ -206,9 +206,7 @@ namespace parser
 
         throw std::invalid_argument("Unsupported type: " + type);
     }
-    ModelParser::ModelParser(size_t alignment) : ALIGNMENT_(alignment)
-    {
-    }
+    ModelParser::ModelParser(size_t alignment) : ALIGNMENT_(alignment) {}
     std::string ModelParser::child2xml(const boost::property_tree::ptree &childNode,
                                        const std::string &rootName)
     {
@@ -391,7 +389,7 @@ namespace parser
 
         /*这里删除原先不带版本号的key*/
         keepOnlyHashModels(modelDefines);
-        
+
         /*结束后就再写到全局的里面*/
         std::lock_guard<std::mutex> lock(mutex_);
         for (auto &[key, value] : modelDefines) {

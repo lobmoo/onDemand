@@ -21,13 +21,9 @@ std::string readXmlFile(const std::string &filePath)
     return content;
 }
 
-
-
-
 void test_NGVS()
 {
-    std::string xmlContent =
-        readXmlFile("/home/wwk/workspaces/test_demo/sample/NGVS/modelNgvs.xml");
+    std::string xmlContent = readXmlFile("/home/weiqb/src/test_demo/sample/NGVS/model3.xml");
     auto &parser = dsf::parser::ModelParser::getInstance();
     std::string scama;
     std::unordered_map<std::string, dsf::parser::ModelDefine> modelDefinels;
@@ -35,11 +31,10 @@ void test_NGVS()
 
     // parser.printHashCache();
     // LOG(info) << "++++++++++++++++++++++++++++++++ \n";
-    
+
     // LOG(info) << "Model schema \n" << scama;
 
-   
-    for(const auto &modelDefine : modelDefinels) {
+    for (const auto &modelDefine : modelDefinels) {
         LOG(info) << "Model Name: " << modelDefine.first
                   << ", Version: " << modelDefine.second.modelVersion
                   << ", Size: " << modelDefine.second.size;
@@ -51,7 +46,7 @@ void test_NGVS()
                   << ", Version: " << modelDefine.second.modelVersion
                   << ", Size: " << modelDefine.second.size;
     }
-    
+
     // // parser.printStructNode("InnerModel:1.0");
     // // parser.printHashCache();
 
