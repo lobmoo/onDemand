@@ -264,6 +264,7 @@ namespace parser
                                     std::string &processedschema)
     {
         std::istringstream iss(schema);
+        std::vector<std::string>  doParseModels;
         boost::property_tree::ptree ptInput;
         try {
             boost::property_tree::read_xml(iss, ptInput);
@@ -279,10 +280,10 @@ namespace parser
                     model.modelVersion = modelNode.second.get<std::string>("<xmlattr>.version");
                     model.schema = child2xml(modelNode.second, "struct");
                     model.size = 0;
-                    if (modelDefines.find(model.modelName + ":" + model.modelVersion)
-                        == modelDefines.end()) {
+                    if (modelDefines_.find(model.modelName + ":" + model.modelVersion)
+                        == modelDefines_.end()) {
                         doParseModels.push_back(model.modelName + ":" + model.modelVersion);
-                        modelDefines[model.modelName + ":" + model.modelVersion] = model;
+                        modelDefines_[model.modelName + ":" + model.modelVersion] = model;
                         structNodes_[model.modelName + ":" + model.modelVersion] = modelNode.second;
                     } else {
                         LOG(warning) << "Model already exists: " << model.modelName << ":"
@@ -296,7 +297,7 @@ namespace parser
         }
         for (auto &it : doParseModels) {
             const std::string &modelNameAndVersion = it;
-            auto &modelDefine = modelDefines[it];
+            auto &modelDefine = modelDefines_[it];
             size_t modelSize = 0;
             size_t offset = 0;
             resolveModelMembers(modelNameAndVersion, modelDefines, modelDefine.members, modelSize,
@@ -307,7 +308,7 @@ namespace parser
             std::string hashStr = hashCache_[modelNameAndVersion];
             modelDefine.modelVersion = hashStr;
         }
-
+        
         boost::property_tree::ptree ptOutput;
         boost::property_tree::ptree modelsNode;
         try {
@@ -391,7 +392,7 @@ namespace parser
 
         /*这里删除原先不带版本号的key*/
         keepOnlyHashModels(modelDefines);
-        
+
         /*结束后就再写到全局的里面*/
         std::lock_guard<std::mutex> lock(mutex_);
         for (auto &[key, value] : modelDefines) {
