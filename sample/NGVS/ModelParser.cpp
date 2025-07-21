@@ -298,7 +298,7 @@ namespace parser
         }
         for (auto &it : doParseModels) {
             const std::string &modelNameAndVersion = it;
-            auto &modelDefine = modelDefines_[it];
+            auto &modelDefine = modelDefines[it];
             size_t modelSize = 0;
             size_t offset = 0;
             resolveModelMembers(modelNameAndVersion, modelDefines, modelDefine.members, modelSize,
@@ -870,9 +870,6 @@ namespace parser
                       << ", NonBasicTypeName: " << node->nonBasicTypeName
                       << ", Version: " << node->version
                       << ", Is Array: " << (node->is_array ? "Yes" : "No");
-            for (const auto &index : node->array_indices) {
-                LOG(info) << index << " ";
-            }
         }
     }
 
