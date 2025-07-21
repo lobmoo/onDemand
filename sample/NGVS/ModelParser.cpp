@@ -285,6 +285,7 @@ namespace parser
                         doParseModels.push_back(model.modelName + ":" + model.modelVersion);
                         modelDefines_[model.modelName + ":" + model.modelVersion] = model;
                         structNodes_[model.modelName + ":" + model.modelVersion] = modelNode.second;
+                        modelDefines[model.modelName + ":" + model.modelVersion] = model;
                     } else {
                         LOG(warning) << "Model already exists: " << model.modelName << ":"
                                      << model.modelVersion;
