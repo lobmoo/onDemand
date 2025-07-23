@@ -48,8 +48,8 @@ namespace kvpair
         /* 2.找到model, 输出其结构 */
         parser::ModelDefine modelDefine = it->second;
         std::vector<std::shared_ptr<dsf::parser::TreeNode>> leaves;
-        parser.findNodeAllLeaves(modelDefine, leaves);
-        parser.printmembersInfo(leaves);
+        // parser.findNodeAllLeaves(modelDefine, leaves);
+        // parser.printmembersInfo(leaves);
 
         /* 4. 申请一段空间(大小是固定的)并且顺序地将key-value对填入 */
         parser.findNodeAllLeaves(modelDefine, leaves);

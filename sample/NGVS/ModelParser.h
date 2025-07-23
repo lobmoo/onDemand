@@ -177,7 +177,6 @@ namespace parser
     private:
         size_t ALIGNMENT_;
         std::set<std::string> visiting;
-        std::vector<std::string> doParseModels; // 需要解析的模型列表
         std::unordered_map<std::string, ModelDefine> modelDefines_;
         std::map<std::string, boost::property_tree::ptree> structNodes_;
         std::unordered_map<std::string, std::string> hashCache_;
