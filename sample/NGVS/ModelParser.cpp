@@ -262,7 +262,7 @@ namespace parser
                                     std::string &processedschema)
     {
         std::istringstream iss(schema);
-        std::vector<std::string>  doParseModels;
+        std::vector<std::string> doParseModels;
         boost::property_tree::ptree ptInput;
         try {
             boost::property_tree::read_xml(iss, ptInput);
@@ -307,14 +307,20 @@ namespace parser
             std::string hashStr = hashCache_[modelNameAndVersion];
             modelDefine.modelVersion = hashStr;
         }
-        
+
         boost::property_tree::ptree ptOutput;
         boost::property_tree::ptree modelsNode;
         try {
 
             for (auto &modelNode : ptInput.get_child("models")) {
                 if (modelNode.first == "struct") {
-
+                    // 如果不在doParseModels中，则不处理
+                    if (std::find(doParseModels.begin(), doParseModels.end(),
+                                  modelNode.second.get<std::string>("<xmlattr>.name") + ":"
+                                      + modelNode.second.get<std::string>("<xmlattr>.version"))
+                        == doParseModels.end()) {
+                        continue;
+                    }
                     auto baseTypeNameOptional =
                         modelNode.second.get_optional<std::string>("<xmlattr>.baseType");
                     auto baseTypeVersionOptional =
