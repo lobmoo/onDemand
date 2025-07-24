@@ -12,3 +12,5 @@ common/log/lib
 example_exec
 !thirdparty/*.log
 !common/log
+.vscode/
+.clangd/

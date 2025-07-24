@@ -1,2 +1,0 @@
-V	350617083950Z		35318A5FEC4A9E67628A16117D95915942656C30	unknown	/C=CN/ST=SH/O=letsgo/CN=publisher/emailAddress=pub@baosight.com
-V	350617084056Z		35318A5FEC4A9E67628A16117D95915942656C31	unknown	/C=CN/ST=SH/O=letsgo/CN=subscriber/emailAddress=sub@baosight.com
