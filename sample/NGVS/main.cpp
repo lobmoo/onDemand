@@ -251,8 +251,11 @@ void test_struct4()
     std::string schema2 =
         R"(<models><struct name="modelMessage" version="7c87a8009c13fbdd3310fe5e652d348d">
         <member name="short_sequence" sequenceMaxLength="512" type="DT_SINT"/></struct></models>)";
-    ret = modelParser.processModelSchema(schema, modelDefines, processdSchema);
+    processdSchema = "";
+    modelDefines.clear();
+    ret = modelParser.processModelSchema(schema2, modelDefines, processdSchema);
     std::cout << "modelParser result: " << ret << std::endl;
+    std::cout << "modelDefines size: " << modelDefines.size() << std::endl;
     std::cout << "processdSchema: " << processdSchema << std::endl;
 
     dsf::kvpair::KeyValueSerializer kvs = dsf::kvpair::KeyValueSerializer();
@@ -262,6 +265,8 @@ void test_struct4()
     }
     std::vector<char> outBuffer;
     ret = kvs.serialize("modelMessage:7c87a8009c13fbdd3310fe5e652d348d", inData, outBuffer);
+    std::cout << "serialize result: " << ret << std::endl;
+    std::cout << "outBuffer size: " << outBuffer.size() << std::endl;
 }
 int main(int argc, char *argv[])
 {

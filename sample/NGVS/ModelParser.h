@@ -85,10 +85,10 @@ namespace parser
 
     // 新增树节点结构
     struct TreeNode {
-        std::string name;    // 成员名称（基本类型：纯名称；非基本类型：name:version）
-        std::string type;    // 类型（int32, nonBasic 等）
-        size_t size;         // 大小
-        unsigned int offset; // 偏移量
+        std::string name; // 成员名称（基本类型：纯名称；非基本类型：name:version）
+        std::string type;                                // 类型（int32, nonBasic 等）
+        size_t size;                                     // 大小
+        unsigned int offset;                             // 偏移量
         std::vector<std::shared_ptr<TreeNode>> children; // 子节点（仅非基本类型或数组/序列）
         std::string version;                             // 版本（仅非基本类型）
         std::string nonBasicTypeName;                    // 非基本类型名称（如果适用）

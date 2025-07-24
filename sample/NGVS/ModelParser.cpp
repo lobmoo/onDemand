@@ -869,11 +869,11 @@ namespace parser
     void ModelParser::printmembersInfo(std::vector<std::shared_ptr<dsf::parser::TreeNode>> &nodes)
     {
         for (const auto &node : nodes) {
-            LOG(info) << "Node Name: " << node->name << ", Type: " << node->type
-                      << ", Size: " << node->size << ", Offset: " << node->offset
-                      << ", NonBasicTypeName: " << node->nonBasicTypeName
-                      << ", Version: " << node->version
-                      << ", Is Array: " << (node->is_array ? "Yes" : "No");
+            LOG(trace) << "Node Name: " << node->name << ", Type: " << node->type
+                       << ", Size: " << node->size << ", Offset: " << node->offset
+                       << ", NonBasicTypeName: " << node->nonBasicTypeName
+                       << ", Version: " << node->version
+                       << ", Is Array: " << (node->is_array ? "Yes" : "No");
         }
     }
 
@@ -885,10 +885,10 @@ namespace parser
                 for (const auto &node : nodes) {
                     if (node->children.empty()) {
                         // 打印叶子节点
-                        LOG(info) << "Leaf node: name=" << node->name << ", type=" << node->type
-                                  << ", size=" << node->size << ", offset=" << node->offset
-                                  << ", nonBasicTypeName=" << node->nonBasicTypeName
-                                  << ", version=" << node->version;
+                        LOG(trace) << "Leaf node: name=" << node->name << ", type=" << node->type
+                                   << ", size=" << node->size << ", offset=" << node->offset
+                                   << ", nonBasicTypeName=" << node->nonBasicTypeName
+                                   << ", version=" << node->version;
                     } else {
                         collectLeaves(node->children); // 递归处理子节点
                     }
@@ -901,8 +901,8 @@ namespace parser
             return;
         }
 
-        LOG(info) << "Printing leaf nodes for model: " << model.modelName << ":"
-                  << model.modelVersion;
+        LOG(trace) << "Printing leaf nodes for model: " << model.modelName << ":"
+                   << model.modelVersion;
         collectLeaves(model.members);
     }
 
@@ -927,18 +927,18 @@ namespace parser
         std::ostringstream oss;
         boost::property_tree::write_xml(
             oss, structNode, boost::property_tree::xml_writer_make_settings<std::string>(' ', 4));
-        LOG(info) << "Struct Node for " << modelNameAndVersion << ":\n" << oss.str();
+        LOG(trace) << "Struct Node for " << modelNameAndVersion << ":\n" << oss.str();
     }
 
     void ModelParser::printHashCache()
     {
-        LOG(info) << "Hash Cache Contents:";
+        LOG(trace) << "Hash Cache Contents:";
         for (const auto &pair : getInstance().hashCache_) {
-            LOG(info) << "Key: " << pair.first << ", Value: " << pair.second;
+            LOG(trace) << "Key: " << pair.first << ", Value: " << pair.second;
         }
 
         for (const auto &pair : getInstance().HashStr_) {
-            LOG(info) << "Key: " << pair.first << ", Hash String: " << pair.second;
+            LOG(trace) << "Key: " << pair.first << ", Hash String: " << pair.second;
         }
 
         // for (const auto &pair : getInstance().modelDefines_) {
