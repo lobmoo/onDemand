@@ -45,6 +45,7 @@ else()
 endif()
 
 # link_directories(${LIBRARY_PATH})
+
 target_link_libraries(${PROJECT_NAME} PRIVATE ${OBJ_CPP_LIBS}   ${CMAKE_SOURCE_DIR}/common/log/lib/liblog.a  pthread)
 
 

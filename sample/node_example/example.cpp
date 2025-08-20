@@ -112,7 +112,7 @@ void run_dds_data_reader()
     DDSParticipantListener *listener = new DDSParticipantListener();
     //DataNode node("/home/wwk/workspaces/test_demo/sample/node_example/qosConfig.xml", listener);
 
-    DataNode node(0, "test_reader", qos_configurator);
+    DataNode node(10, "test_reader", qos_configurator);
     //DataNode node(100, "test_reader");
     node.registerTopicType<HelloWorldOnePubSubType>("wwk");
     auto dataReader = node.createDataReader<HelloWorldOne>("wwk", processHelloWorldOne);
