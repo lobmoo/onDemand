@@ -35,7 +35,7 @@ public:
      * @param segment_size
      */
     void addSHMTransport(uint32_t segment_size);
-
+    
     /**
      * @brief 使用TCP v4方式传输
      *
@@ -100,8 +100,8 @@ public:
      * @param  private_key            本参与者的私钥
      * @param  plugin                 身份认证插件的名称, 默认为builtin.PKI-DH
      */
-    void setAuthenticationPlugin(std::string identity_ca, std::string identity_certificate, 
-                                 std::string private_key, std::string plugin="builtin.PKI-DH");
+    void setAuthenticationPlugin(std::string identity_ca, std::string identity_certificate,
+                                 std::string private_key, std::string plugin = "builtin.PKI-DH");
 
     /**
      * @brief Set the Access Control Plugin
@@ -110,14 +110,15 @@ public:
      * @param  permissions            permissions文件的路径，须由ca加密为smime格式
      * @param  plugin                 访问控制插件的名称，默认为builtin.Access-Permissions
      */
-    void setAccessControlPlugin(std::string identity_ca, std::string governance, 
-                                 std::string permissions, std::string plugin="builtin.Access-Permissions");
-                    
+    void setAccessControlPlugin(std::string identity_ca, std::string governance,
+                                std::string permissions,
+                                std::string plugin = "builtin.Access-Permissions");
+
     /**
      * @brief Set the Cryptographic Plugin
      * @param  plugin                 加密插件的名称，默认为builtin.AES-GCM-GMAC
      */
-    void setCryptographicPlugin(std::string plugin="builtin.AES-GCM-GMAC");
+    void setCryptographicPlugin(std::string plugin = "builtin.AES-GCM-GMAC");
 
     /**
      * @brief Set the Security Logging Plugin
@@ -125,11 +126,13 @@ public:
      * @param  log_file               日志文件的路径
      * @param  plugin                 加密插件的名称，默认为builtin.DDS_LogTopic
      */
-    void setSecurityLogging(std::string logging_level, std::string log_file, std::string plugin="builtin.DDS_LogTopic");
-    
+    void setSecurityLogging(std::string logging_level, std::string log_file,
+                            std::string plugin = "builtin.DDS_LogTopic");
+
     /**/
     void setCloseDataSharing();
     void addUDPV4TransportDefault();
+
 private:
     //eprosima::fastdds::dds::DomainParticipantQos m_participantQos;
     eprosima::fastdds::dds::DomainParticipantExtendedQos m_participantQos;

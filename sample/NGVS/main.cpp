@@ -23,8 +23,7 @@ std::string readXmlFile(const std::string &filePath)
 
 void test_NGVS()
 {
-    std::string xmlContent =
-        readXmlFile("/home/wwk/workspaces/test_demo/sample/NGVS/modelNgvs.xml");
+    std::string xmlContent = readXmlFile("/home/weiqb/src/test_demo/sample/NGVS/model3.xml");
     auto &parser = dsf::parser::ModelParser::getInstance();
     std::string scama;
     std::unordered_map<std::string, dsf::parser::ModelDefine> modelDefinels;
@@ -208,10 +207,70 @@ void test_struct1()
 #endif
 }
 
+void test_struct3()
+{
+    std::string schema = R"(<models><struct name="modelMessage" version="">
+        <member name="short_sequence" sequenceMaxLength="512" type="DT_SINT"/></struct></models>)";
+    auto &modelParser = dsf::parser::ModelParser::getInstance();
+    std::string processdSchema;
+    std::unordered_map<std::string, dsf::parser::ModelDefine> modelDefines;
+    bool ret = modelParser.processModelSchema(schema, modelDefines, processdSchema);
+    std::cout << "modelParser result: " << ret << std::endl;
+    std::cout << "processdSchema: " << processdSchema << std::endl;
+
+    std::string schema2 =
+        R"(<models><struct name="modelMessage" version="7c87a8009c13fbdd3310fe5e652d348d">
+        <member name="short_sequence" sequenceMaxLength="512" type="DT_SINT"/></struct></models>)";
+    ret = modelParser.processModelSchema(schema, modelDefines, processdSchema);
+    std::cout << "modelParser result: " << ret << std::endl;
+    std::cout << "processdSchema: " << processdSchema << std::endl;
+
+    dsf::kvpair::KeyValueSerializer kvs = dsf::kvpair::KeyValueSerializer();
+    std::unordered_map<std::string, std::string> inData;
+    for (int i = 0; i < 512; i++) {
+        inData["short_sequence[" + std::to_string(i) + "]"] = std::to_string(i);
+    }
+    std::vector<char> outBuffer;
+    ret = kvs.serialize("modelMessage:7c87a8009c13fbdd3310fe5e652d348d", inData, outBuffer);
+    std::cout << "serialize result: " << ret << std::endl;
+    std::cout << "outBuffer size: " << outBuffer.size() << std::endl;
+}
+
+void test_struct4()
+{
+    // dsf_ac_init("log.xml");
+    std::string schema = R"(<models><struct name="modelMessage" version="">
+        <member name="short_sequence" sequenceMaxLength="512" type="DT_SINT"/></struct></models>)";
+    auto &modelParser = dsf::parser::ModelParser::getInstance();
+    std::string processdSchema;
+    std::unordered_map<std::string, dsf::parser::ModelDefine> modelDefines;
+    bool ret = modelParser.processModelSchema(schema, modelDefines, processdSchema);
+    std::cout << "modelParser result: " << ret << std::endl;
+    std::cout << "processdSchema: " << processdSchema << std::endl;
+
+    std::string schema2 =
+        R"(<models><struct name="modelMessage" version="7c87a8009c13fbdd3310fe5e652d348d">
+        <member name="short_sequence" sequenceMaxLength="512" type="DT_SINT"/></struct></models>)";
+    processdSchema = "";
+    modelDefines.clear();
+    ret = modelParser.processModelSchema(schema2, modelDefines, processdSchema);
+    std::cout << "modelParser result: " << ret << std::endl;
+    std::cout << "modelDefines size: " << modelDefines.size() << std::endl;
+    std::cout << "processdSchema: " << processdSchema << std::endl;
+
+    dsf::kvpair::KeyValueSerializer kvs = dsf::kvpair::KeyValueSerializer();
+    std::unordered_map<std::string, std::string> inData;
+    for (int i = 0; i < 512; i++) {
+        inData["short_sequence[" + std::to_string(i) + "]"] = std::to_string(i);
+    }
+    std::vector<char> outBuffer;
+    ret = kvs.serialize("modelMessage:7c87a8009c13fbdd3310fe5e652d348d", inData, outBuffer);
+    std::cout << "serialize result: " << ret << std::endl;
+    std::cout << "outBuffer size: " << outBuffer.size() << std::endl;
+}
 int main(int argc, char *argv[])
 {
     Logger::Instance()->Init("log/myapp.log", Logger::console, Logger::debug, 60, 5);
-    // test_NGVS();
-    test_struct1();
+    test_struct4();
     return 0;
 }

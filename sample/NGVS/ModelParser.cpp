@@ -206,9 +206,7 @@ namespace parser
 
         throw std::invalid_argument("Unsupported type: " + type);
     }
-    ModelParser::ModelParser(size_t alignment) : ALIGNMENT_(alignment)
-    {
-    }
+    ModelParser::ModelParser(size_t alignment) : ALIGNMENT_(alignment) {}
     std::string ModelParser::child2xml(const boost::property_tree::ptree &childNode,
                                        const std::string &rootName)
     {
@@ -264,7 +262,7 @@ namespace parser
                                     std::string &processedschema)
     {
         std::istringstream iss(schema);
-        std::vector<std::string>  doParseModels;
+        std::vector<std::string> doParseModels;
         boost::property_tree::ptree ptInput;
         try {
             boost::property_tree::read_xml(iss, ptInput);
@@ -309,14 +307,20 @@ namespace parser
             std::string hashStr = hashCache_[modelNameAndVersion];
             modelDefine.modelVersion = hashStr;
         }
-        
+
         boost::property_tree::ptree ptOutput;
         boost::property_tree::ptree modelsNode;
         try {
 
             for (auto &modelNode : ptInput.get_child("models")) {
                 if (modelNode.first == "struct") {
-
+                    // 如果不在doParseModels中，则不处理
+                    if (std::find(doParseModels.begin(), doParseModels.end(),
+                                  modelNode.second.get<std::string>("<xmlattr>.name") + ":"
+                                      + modelNode.second.get<std::string>("<xmlattr>.version"))
+                        == doParseModels.end()) {
+                        continue;
+                    }
                     auto baseTypeNameOptional =
                         modelNode.second.get_optional<std::string>("<xmlattr>.baseType");
                     auto baseTypeVersionOptional =
@@ -865,11 +869,11 @@ namespace parser
     void ModelParser::printmembersInfo(std::vector<std::shared_ptr<dsf::parser::TreeNode>> &nodes)
     {
         for (const auto &node : nodes) {
-            LOG(info) << "Node Name: " << node->name << ", Type: " << node->type
-                      << ", Size: " << node->size << ", Offset: " << node->offset
-                      << ", NonBasicTypeName: " << node->nonBasicTypeName
-                      << ", Version: " << node->version
-                      << ", Is Array: " << (node->is_array ? "Yes" : "No");
+            LOG(trace) << "Node Name: " << node->name << ", Type: " << node->type
+                       << ", Size: " << node->size << ", Offset: " << node->offset
+                       << ", NonBasicTypeName: " << node->nonBasicTypeName
+                       << ", Version: " << node->version
+                       << ", Is Array: " << (node->is_array ? "Yes" : "No");
         }
     }
 
@@ -881,10 +885,10 @@ namespace parser
                 for (const auto &node : nodes) {
                     if (node->children.empty()) {
                         // 打印叶子节点
-                        LOG(info) << "Leaf node: name=" << node->name << ", type=" << node->type
-                                  << ", size=" << node->size << ", offset=" << node->offset
-                                  << ", nonBasicTypeName=" << node->nonBasicTypeName
-                                  << ", version=" << node->version;
+                        LOG(trace) << "Leaf node: name=" << node->name << ", type=" << node->type
+                                   << ", size=" << node->size << ", offset=" << node->offset
+                                   << ", nonBasicTypeName=" << node->nonBasicTypeName
+                                   << ", version=" << node->version;
                     } else {
                         collectLeaves(node->children); // 递归处理子节点
                     }
@@ -897,8 +901,8 @@ namespace parser
             return;
         }
 
-        LOG(info) << "Printing leaf nodes for model: " << model.modelName << ":"
-                  << model.modelVersion;
+        LOG(trace) << "Printing leaf nodes for model: " << model.modelName << ":"
+                   << model.modelVersion;
         collectLeaves(model.members);
     }
 
@@ -923,18 +927,18 @@ namespace parser
         std::ostringstream oss;
         boost::property_tree::write_xml(
             oss, structNode, boost::property_tree::xml_writer_make_settings<std::string>(' ', 4));
-        LOG(info) << "Struct Node for " << modelNameAndVersion << ":\n" << oss.str();
+        LOG(trace) << "Struct Node for " << modelNameAndVersion << ":\n" << oss.str();
     }
 
     void ModelParser::printHashCache()
     {
-        LOG(info) << "Hash Cache Contents:";
+        LOG(trace) << "Hash Cache Contents:";
         for (const auto &pair : getInstance().hashCache_) {
-            LOG(info) << "Key: " << pair.first << ", Value: " << pair.second;
+            LOG(trace) << "Key: " << pair.first << ", Value: " << pair.second;
         }
 
         for (const auto &pair : getInstance().HashStr_) {
-            LOG(info) << "Key: " << pair.first << ", Hash String: " << pair.second;
+            LOG(trace) << "Key: " << pair.first << ", Hash String: " << pair.second;
         }
 
         // for (const auto &pair : getInstance().modelDefines_) {
