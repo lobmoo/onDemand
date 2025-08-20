@@ -45,7 +45,7 @@ else()
 endif()
 
 # link_directories(${LIBRARY_PATH})
-target_link_libraries(${PROJECT_NAME} PRIVATE ${OBJ_CPP_LIBS} pthread  ${CMAKE_SOURCE_DIR}/common/log/lib/liblog.a)
+target_link_libraries(${PROJECT_NAME} PRIVATE ${OBJ_CPP_LIBS}   ${CMAKE_SOURCE_DIR}/common/log/lib/liblog.a  pthread)
 
 
 # option(USE_SYSTEM_RPATH "Use system RPATH for installed libraries and executables" ON)
