@@ -49,7 +49,8 @@ public:
                                      DomainParticipantListener *listener);
 
     template <typename T>
-    std::shared_ptr<DDSTopicDataWriter<T>> createDataWriter(std::string topicName);
+    std::shared_ptr<DDSTopicDataWriter<T>>
+    createDataWriter(std::string topicName, DDSDataWriterListener *listener);
 
     template <typename T>
     std::shared_ptr<DDSTopicDataReader<T>>
@@ -69,7 +70,7 @@ private:
 
 template <typename T>
 std::shared_ptr<DDSTopicDataWriter<T>>
-DDSParticipantManager::createDataWriter(std::string topicName)
+DDSParticipantManager::createDataWriter(std::string topicName, DDSDataWriterListener *listener)
 {
     eprosima::fastdds::dds::DataWriterQos m_dataWriterQos;
     if (m_isXmlConfig_) {
@@ -88,7 +89,7 @@ DDSParticipantManager::createDataWriter(std::string topicName)
     }
     if (!m_participant->registerTopic(topicName, getTopicDataType(topicName), topicQos_))
         return nullptr;
-    return m_participant->createDataWriter<T>(topicName, m_dataWriterQos);
+    return m_participant->createDataWriter<T>(topicName, m_dataWriterQos, listener);
 }
 
 template <typename T>

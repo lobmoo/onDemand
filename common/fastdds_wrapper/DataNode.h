@@ -97,7 +97,7 @@ public:
     template <typename T>
     std::shared_ptr<DDSTopicDataWriter<T>>
     createDataWriter(const std::string topicName,
-                     DDSDataWriterQosConfigurator dataWriterQosHandler = nullptr);
+                     DDSDataWriterQosConfigurator dataWriterQosHandler = nullptr, DDSDataWriterListener* listener = nullptr);
 
     template <typename T>
     std::shared_ptr<DDSTopicDataReader<T>>
@@ -120,10 +120,10 @@ public:
 template <typename T>
 std::shared_ptr<DDSTopicDataWriter<T>>
 DataNode::createDataWriter(const std::string topicName,
-                           DDSDataWriterQosConfigurator dataWriterQosHandler)
+                           DDSDataWriterQosConfigurator dataWriterQosHandler,  DDSDataWriterListener* listener)
 {   
     data_writer_qos_handler_ = dataWriterQosHandler;
-    return DDSParticipantManager::createDataWriter<T>(topicName);
+    return DDSParticipantManager::createDataWriter<T>(topicName, listener);
 }
 
 /**

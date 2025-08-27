@@ -27,7 +27,8 @@ class DDSTopicDataWriter
 public:
     DDSTopicDataWriter(eprosima::fastdds::dds::Publisher *publisher,
                        eprosima::fastdds::dds::Topic *topic,
-                       const eprosima::fastdds::dds::DataWriterQos &dataWriterQos);
+                       const eprosima::fastdds::dds::DataWriterQos &dataWriterQos,
+                       DataWriterListener *listener);
     ~DDSTopicDataWriter();
 
 public:
@@ -35,7 +36,6 @@ public:
     bool clear_history(size_t *removed);
 
 private:
-    DDSDataWriterListener m_writerListener;
     eprosima::fastdds::dds::DataWriter *m_dataWriter;
     eprosima::fastdds::dds::Publisher *m_publisher;
 };
@@ -43,10 +43,10 @@ private:
 template <typename T>
 DDSTopicDataWriter<T>::DDSTopicDataWriter(
     eprosima::fastdds::dds::Publisher *publisher, eprosima::fastdds::dds::Topic *topic,
-    const eprosima::fastdds::dds::DataWriterQos &dataWriterQos)
+    const eprosima::fastdds::dds::DataWriterQos &dataWriterQos, DataWriterListener *listener)
     : m_publisher(publisher)
 {
-    m_dataWriter = publisher->create_datawriter(topic, dataWriterQos, &m_writerListener);
+    m_dataWriter = publisher->create_datawriter(topic, dataWriterQos, listener);
 }
 
 template <typename T>
