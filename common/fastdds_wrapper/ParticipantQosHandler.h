@@ -35,7 +35,7 @@ public:
      * @param segment_size
      */
     void addSHMTransport(uint32_t segment_size);
-    
+
     /**
      * @brief 使用TCP v4方式传输
      *
@@ -132,6 +132,12 @@ public:
     /**/
     void setCloseDataSharing();
     void addUDPV4TransportDefault();
+
+    void setUserMulticastLocator();
+
+    void setIgnoreLocalEndpoints();
+
+    void addTCPTransportDefault(uint16_t listen_port = 0);
 
 private:
     //eprosima::fastdds::dds::DomainParticipantQos m_participantQos;

@@ -25,8 +25,9 @@ const DataReaderQos& DDSDataReaderQosHandler::getQos() const
 void DDSDataReaderQosHandler::setDurability(u_int32_t depth)
 {
     m_dataReaderQos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    m_dataReaderQos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-    m_dataReaderQos.history().kind = KEEP_LAST_HISTORY_QOS;
+    m_dataReaderQos.reliability().max_blocking_time = {1, 0};
+    m_dataReaderQos.durability().kind = TRANSIENT_DURABILITY_QOS;
+    m_dataReaderQos.history().kind = KEEP_ALL_HISTORY_QOS;
     m_dataReaderQos.history().depth = static_cast<int32_t>(depth);
 }
 

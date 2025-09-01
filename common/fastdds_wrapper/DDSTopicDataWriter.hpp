@@ -34,6 +34,8 @@ public:
 public:
     bool writeMessage(const T &message);
     bool clear_history(size_t *removed);
+    bool wait_for_acknowledgments(const eprosima::fastdds::dds::Duration_t &max_wait);
+    bool get_matched_subscriptions(std::vector<InstanceHandle_t> &subscription_handles);
 
 private:
     eprosima::fastdds::dds::DataWriter *m_dataWriter;
@@ -70,4 +72,25 @@ bool DDSTopicDataWriter<T>::clear_history(size_t *removed)
     return m_dataWriter->clear_history(removed) == eprosima::fastdds::dds::RETCODE_OK ? true
                                                                                       : false;
 }
+
+template <typename T>
+bool DDSTopicDataWriter<T>::wait_for_acknowledgments(
+    const eprosima::fastdds::dds::Duration_t &max_wait)
+{
+    return m_dataWriter->wait_for_acknowledgments(max_wait) == eprosima::fastdds::dds::RETCODE_OK
+               ? true
+               : false;
+}
+
+
+template <typename T>
+bool DDSTopicDataWriter<T>::get_matched_subscriptions(
+    std::vector<InstanceHandle_t> &subscription_handles)
+{
+    return m_dataWriter->get_matched_subscriptions(subscription_handles)
+                   == eprosima::fastdds::dds::RETCODE_OK
+               ? true
+               : false;
+}
+
 #endif

@@ -25,10 +25,13 @@ const DataWriterQos& DDSDataWriterQosHanler::getQos() const
 void DDSDataWriterQosHanler::setDurability(u_int32_t depth)
 {
     m_dataWriterQos.reliability().kind = RELIABLE_RELIABILITY_QOS;
-    m_dataWriterQos.durability().kind = TRANSIENT_LOCAL_DURABILITY_QOS;
-    m_dataWriterQos.history().kind = KEEP_LAST_HISTORY_QOS;
+    m_dataWriterQos.reliability().max_blocking_time = {1, 0};
+    m_dataWriterQos.durability().kind = TRANSIENT_DURABILITY_QOS;
+    m_dataWriterQos.history().kind = KEEP_ALL_HISTORY_QOS;
     m_dataWriterQos.history().depth = static_cast<int32_t>(depth);
 }
+
+
 
 
 /**

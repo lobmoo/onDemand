@@ -102,6 +102,17 @@ void ParticipantQosHandler::addTCPV4Transport(uint16_t listen_port,
     m_participantQos.transport().user_transports.push_back(tcp_transport);
 }
 
+void ParticipantQosHandler::addTCPTransportDefault(uint16_t listen_port)
+{
+    auto tcp_transport = std::make_shared<TCPv6TransportDescriptor>();
+    if (listen_port != 0) {
+        tcp_transport->add_listener_port(listen_port);
+    }
+    m_participantQos.transport().use_builtin_transports = false;
+    m_participantQos.transport().user_transports.clear();
+    m_participantQos.transport().user_transports.push_back(tcp_transport);
+}
+
 void ParticipantQosHandler::addUDPV4Transport(uint32_t buffer_size,
                                               const std::vector<std::string> &ipaddrs)
 {
@@ -134,6 +145,20 @@ void ParticipantQosHandler::addUDPV4TransportInterface(std::string network_inter
     udp_transport->interfaceWhiteList.push_back(network_interface);
     m_participantQos.transport().user_transports.push_back(udp_transport);
     m_participantQos.transport().use_builtin_transports = false;
+}
+
+void ParticipantQosHandler::setUserMulticastLocator()
+{
+    eprosima::fastdds::rtps::Locator_t locator;
+    IPLocator::setIPv4(locator, 239, 255, 0, 2);
+    // locator.port = 22224;
+    m_participantQos.wire_protocol().default_multicast_locator_list.push_back(locator);
+}
+
+void ParticipantQosHandler::setIgnoreLocalEndpoints()
+{
+    m_participantQos.properties().properties().emplace_back("fastdds.ignore_local_endpoints",
+                                                            "true");
 }
 
 void ParticipantQosHandler::addUDPV6Transport(uint32_t buffer_size)
