@@ -38,7 +38,7 @@ public:
    * @param fileName        日志文件名，支持绝对路径和相对路径
    * @param type           日志类型，可选值：both（文件和控制台）, console（控制台）, file（文件）
    * @param level          日志级别，控制日志的输出级别
-   * @param maxFileSize    单个日志文件的最大大小（单位：字节）
+   * @param maxFileSize    单个日志文件的最大大小（单位：MB）
    * @param maxBackupIndex 备份日志文件的最大数量
    * @param isAsync        是否启用异步日志，默认为 false（同步模式）
    * @return true          初始化成功
