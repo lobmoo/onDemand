@@ -23,11 +23,11 @@ std::string readXmlFile(const std::string &filePath)
 
 void test_NGVS()
 {
-    std::string xmlContent = readXmlFile("/home/weiqb/src/test_demo/sample/NGVS/model3.xml");
+    std::string xmlContent = readXmlFile("/home/wwk/workspaces/test_demo/sample/NGVS/model1.xml");
     auto &parser = dsf::parser::ModelParser::getInstance();
     std::string scama;
     std::unordered_map<std::string, dsf::parser::ModelDefine> modelDefinels;
-    parser.processModelSchema(xmlContent, modelDefinels, scama);
+    bool ret = parser.processModelSchema(xmlContent, modelDefinels, scama);
 
     // parser.printHashCache();
     // LOG(info) << "++++++++++++++++++++++++++++++++ \n";
@@ -39,44 +39,56 @@ void test_NGVS()
                   << ", Version: " << modelDefine.second.modelVersion
                   << ", Size: " << modelDefine.second.size;
     }
-    LOG(info) << "++++++++++++++++++++++++++++++++ \n";
-    auto modelDefines = parser.getModelDefines();
-    for (const auto &modelDefine : modelDefines) {
-        LOG(info) << "Model Name: " << modelDefine.first
-                  << ", Version: " << modelDefine.second.modelVersion
-                  << ", Size: " << modelDefine.second.size;
+
+    parser.printAllLeafNodesInfo(modelDefinels["InnerModel5:b21f45ed05cbf1c275173e944d880eea"]);
+    parser.printmembersInfo(modelDefinels["InnerModel5:b21f45ed05cbf1c275173e944d880eea"].members);
+
+    LOG(info) << "modelParser result: " << ret << std::endl;
+    LOG(info) << "modelDefinels.size() :" << modelDefinels.size() << std::endl;
+
+    dsf::ngvs::NgvsSerializer Serializer;
+    std::vector<char> outBuffer;
+    std::unordered_map<std::string, std::string> inData;
+    inData["first"] = "3.14";
+    inData["DT_BIT_1[0]"] = "0";
+    inData["DT_BIT_1[1]"] = "1";
+    inData["DT_BIT_1[2]"] = "0";
+    inData["DT_BIT_1[3]"] = "1";
+    inData["second"] = "123456";
+    inData["DT_BIT_2[0]"] = "1";
+    inData["DT_BIT_2[1]"] = "0";
+    inData["DT_BIT_2[2]"] = "0";
+    inData["DT_BIT_2[3]"] = "1";
+    inData["DT_BIT_2[4]"] = "1";
+    inData["DT_BIT_2[5]"] = "0";
+    inData["DT_BIT_2[6]"] = "1";
+    inData["DT_BIT_2[7]"] = "0";
+    inData["DT_BIT_2[8]"] = "0";
+    inData["DT_BIT_2[9]"] = "1";
+    inData["DT_STRING"] = "Hello NGVS";
+   
+
+    if (!Serializer.serialize("InnerModel5:b21f45ed05cbf1c275173e944d880eea", inData, outBuffer)) {
+        LOG(error) << "Serialization failed";
+        return;
     }
+    LOG(info) << "Serialized data size: " << outBuffer.size();
 
-    // // parser.printStructNode("InnerModel:1.0");
-    // // parser.printHashCache();
+    for (size_t i = 0; i < outBuffer.size(); i++) {
+        printf("%02X ", static_cast<unsigned char>(outBuffer[i]));
+    }
+    std::cout << std::endl;
+    std::unordered_map<std::string, std::string> outData;
 
-    // dsf::ngvs::NgvsSerializer Serializer;
-    // std::vector<char> outBuffer;
-    // std::unordered_map<std::string, std::string> inData;
-    // inData["STD.VAR1.B1"] = "123";
-    // inData["STD.VAR1.B2"] = "true";
-    // inData["STD.VAR1.B3.C1"] = "789";
-    // inData["STD.VAR1.B3.C2[1]"] = "3.13";
-    // inData["STD.VAR1.B3.C2[2]"] = "3.14";
-    // inData["STD.VAR2[1]"] = "16";
-    // inData["STD.VAR2[2]"] = "17";
-    // inData["STD.VAR3"] = "18";
-    // inData["STD.VAR4"] = "19";
-    // inData["STD.VAR5"] = "20";
-    // std::vector<std::shared_ptr<dsf::parser::TreeNode>> leaves;
-    // dsf::parser::ModelDefine model;
-    // if (!Serializer.serialize("STD.NGVS_S1:1.0", inData, outBuffer)) {
-    //     LOG(error) << "Serialization failed";
-    //     return;
-    // }
-    // std::unordered_map<std::string, std::string> outData;
-    // if (!Serializer.deserialize("STD.NGVS_S1:1.0", outBuffer, outData)) {
-    //     LOG(error) << "deserialize failed";
-    //     return;
-    // }
-    // for (auto &pair : outData) {
-    //     LOG(info) << "Key: " << pair.first << ", Value: " << pair.second;
-    // }
+
+    /*反序列*/
+    if (!Serializer.deserialize("InnerModel5:b21f45ed05cbf1c275173e944d880eea", outBuffer, outData)) {
+        LOG(error) << "deserialize failed";
+        return;
+    }
+    for (auto &pair : outData) {
+        LOG(info) << "Key: " << pair.first << ", Value: " << pair.second;
+    }
 }
 
 #pragma pack(push, 4)
@@ -270,7 +282,7 @@ void test_struct4()
 }
 int main(int argc, char *argv[])
 {
-    Logger::Instance()->Init("log/myapp.log", Logger::console, Logger::debug, 60, 5);
-    test_struct4();
+    Logger::Instance()->Init("log/myapp.log", Logger::console, Logger::trace, 60, 5);
+    test_NGVS();
     return 0;
 }
