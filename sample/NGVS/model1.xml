@@ -1,9 +1,0 @@
-<models>
-    <struct name="InnerModel5" version="1.0">
-            <member name="first" type="DT_REAL"/>
-            <member name="DT_BIT_1" sequenceMaxLength="4" type="DT_BIT"/>
-            <member name="second" type="DT_DINT"/>
-            <member name="DT_BIT_2" sequenceMaxLength="10" type="DT_BIT"/>
-            <member name="DT_STRING" type="DT_STRING"/>     
-    </struct>
-</models>

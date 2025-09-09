@@ -47,10 +47,24 @@ public:
     bool Init(const std::string &fileName, LoggerType type, severity_level level,
               uint32_t maxFileSize, uint32_t maxBackupIndex, bool isAsync = false);
     /**
-     * @brief 按照配置文件生成，路劲无效会按照默认运行 不会写文件
-     * @param  logConfigFilePathMyParamDoc
-     * @return true 
-     * @return false 
+     * @brief 根据配置文件生成日志器。
+     *
+     * - 当日志路径无效时，将启用默认配置运行，此时不会写入文件。
+     * - 默认参数如下：
+     *     type            : "console"
+     *     level           : "trace"
+     *     maxFileSize     : 60 (MB)
+     *     maxBackupIndex  : 5
+     *     isAsync         : false
+     *     flushOnLevel    : "error"
+     *     LogConsoleLevel : "info"
+     *     LogFileLevel    : "info"
+     *     LogPattern      : "[%Y-%m-%d %H:%M:%S.%e] [%^%l%$] [%t] [%s:%# %!] %v"
+     *     isValid         : true
+     *
+     * @param logConfigFilePath 配置文件路径
+     * @return true  加载成功
+     * @return false 加载失败，使用默认配置
      */
     bool Init(const std::string &logConfigFilePath);
 
@@ -71,17 +85,40 @@ public:
    */
     void setFlushOnLevel(Logger::severity_level flushOnLevel);
 
+    /**
+     * @brief Set the Log Level object 动态设置日志输出级别
+     * @param  level           级别
+     */
     void setLogLevel(Logger::severity_level level);
 
+    /**
+     * @brief Set the Log Pattern object 设置日志输出格式
+     * @param  pattern         格式
+     */
     void setLogPattern(const std::string &pattern);
 
+    /**
+     * @brief Set the Log Console Level object 设置控制台日志输出级别
+     * @param  level           级别
+     * @return * void 
+     */
     void setLogConsoleLevel(Logger::severity_level level);
 
+    /**
+     * @brief Set the Log File Level object 设置文件日志输出级别
+     * @param  level           级别
+     * @return * void 
+     */
     void setLogFileLevel(Logger::severity_level level);
 
+    /**
+     * @brief Set the Log Buffer Size object 设置日志缓冲区大小，仅在异步模式下有效
+     * @param  size            大小，单位：字节
+     * @return * void 
+     */
     void setLogBufferSize(size_t size);
 
-    static Logger* Instance();
+    static Logger *Instance();
 
 private:
     void Log(severity_level level, const std::string &msg, const char *file, uint32_t line,

@@ -1,5 +1,0 @@
-struct HelloWorldOne
-{
-    unsigned long index;
-    sequence<octet, 10000000> points;
-};
