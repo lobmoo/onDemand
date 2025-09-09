@@ -40,7 +40,7 @@ public:
    * @param level          日志级别，控制日志的输出级别
    * @param maxFileSize    单个日志文件的最大大小（单位：MB）
    * @param maxBackupIndex 备份日志文件的最大数量
-   * @param isAsync        是否启用异步日志，默认为 false（同步模式）
+   * @param isAsync        是否启用异步日志，默认为 false（同步模式）  
    * @return true          初始化成功
    * @return false         初始化失败
    */
@@ -112,7 +112,7 @@ public:
     void setLogFileLevel(Logger::severity_level level);
 
     /**
-     * @brief Set the Log Buffer Size object 设置日志缓冲区大小，仅在异步模式下有效
+     * @brief Set the Log Buffer Size object 设置日志缓冲区大小，仅在异步模式下有效  默认 8 * 1024 字节
      * @param  size            大小，单位：字节
      * @return * void 
      */
