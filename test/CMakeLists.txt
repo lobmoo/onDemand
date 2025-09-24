@@ -15,7 +15,7 @@ add_executable(${PROJECT_NAME} ${API_TEST_SOURCES})
 set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
 
 target_link_libraries(${PROJECT_NAME} PRIVATE 
-    log
+    log::log
     gtest
     gtest_main
     pthread 

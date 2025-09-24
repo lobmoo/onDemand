@@ -72,7 +72,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/../../thirdparty/ftxui/lib/libftxui-component.a
 ${CMAKE_CURRENT_SOURCE_DIR}/../../thirdparty/ftxui/lib/libftxui-dom.a 
 ${CMAKE_CURRENT_SOURCE_DIR}/../../thirdparty/ftxui/lib/libftxui-screen.a
 ${CMAKE_CURRENT_SOURCE_DIR}/../../thirdparty/fast_dds/lib/libfastdds_statistics_backend.so    
-${CMAKE_SOURCE_DIR}/common/log/lib/liblog.a                                                        
+log::log                                                     
 pthread)
 
 target_compile_options(${PROJECT_NAME}  PRIVATE -g -std=c++17)
