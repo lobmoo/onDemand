@@ -8,7 +8,7 @@
 #include <algorithm>
 #include <chrono>
 #include <iostream>
-#include "BS_thread_pool.hpp"
+#include "thread_pool.h"
 #include "timer_wheel.h"
 
 using Tick = uint64_t;
@@ -30,7 +30,6 @@ public:
         stop_flag_.store(true);
         if (timer_thread_.joinable())
             timer_thread_.join();
-        thread_pool_.wait();
     }
 
     std::shared_ptr<TimerEventInterface> schedule(Callback cb, Tick delay_ticks)
@@ -84,7 +83,7 @@ public:
 
     void post(Callback cb)
     {
-        thread_pool_.detach_task([cb = std::move(cb)]() {
+        thread_pool_.enqueue([cb = std::move(cb)]() {
             try {
                 cb();
             } catch (const std::exception &e) {
@@ -187,7 +186,9 @@ private:
             if (now >= next_tick) {
                 {
                     std::lock_guard<std::mutex> lock(mutex_);
-                    size_t max_execute = thread_pool_.get_thread_count() * 10;
+                    
+                    //这个值限制了每次tick最多处理多少个到期的定时器
+                    size_t max_execute = 10;
                     timers_.advance(1, max_execute);
                 }
                 next_tick += tick_duration;
@@ -200,7 +201,7 @@ private:
     }
 
 private:
-    BS::thread_pool<> thread_pool_;
+    ThreadPool thread_pool_;
     TimerWheel timers_;
     std::atomic<bool> stop_flag_;
     std::thread timer_thread_;

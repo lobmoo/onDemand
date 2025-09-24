@@ -6,7 +6,6 @@ Makefile
 test_exec
 log
 logs
-test
 common/log/include
 common/log/lib
 example_exec
