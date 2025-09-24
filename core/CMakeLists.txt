@@ -1,18 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(test_exec  LANGUAGES  CXX)
-
-set(LIBRARY_OUTPUT_NAME  test)
-set(CMAKE_CXX_STANDARD 17) 
-# set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_COMPILER g++)
-
-# 指定安装路径的变量，可以在 CMake 命令行中覆盖
-set(INSTALL_LIB_DIR "${CMAKE_INSTALL_PREFIX}/lib")
-set(INSTALL_BIN_DIR "${CMAKE_INSTALL_PREFIX}/bin")
-set(INSTALL_INCLUDE_DIR "${CMAKE_INSTALL_PREFIX}/include")
-
-
+project(demo_exec  LANGUAGES  CXX)
+set(LIBRARY_OUTPUT_NAME  demo)
 
 #头文件
 set(OBJ_CPP_INCLUDE
@@ -26,22 +15,35 @@ set(OBJ_CPP_INCLUDE
 # set(SOURCES_CC_FOR_NET_WORK
 #     "${CMAKE_CURRENT_SOURCE_DIR}/net_interface.cc"
 # )
-
-                                      
-   
+                              
 file(GLOB SOURCES_CC_FOR_MAIN "${CMAKE_CURRENT_SOURCE_DIR}/*.cc")
 
-message(STATUS "CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX}")
 
 # 合并所有查找到的文件列表
 set(MAIN_SOURCES ${SOURCES_CC_FOR_MAIN} )
 
 
+option(BUILD_LIBRARY "Build library" OFF)
 option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
 
+
 if(BUILD_LIBRARY)
-add_library(${LIBRARY_OUTPUT_NAME} )
-target_include_directories(${LIBRARY_OUTPUT_NAME} PRIVATE   ${OBJ_CPP_INCLUDE})
+    add_library(${LIBRARY_OUTPUT_NAME} ${MAIN_SOURCES})  # 添加源文件
+    target_include_directories(${LIBRARY_OUTPUT_NAME} PRIVATE ${OBJ_CPP_INCLUDE})
+    
+    # 库也需要链接依赖
+    target_link_libraries(${LIBRARY_OUTPUT_NAME} PRIVATE 
+        ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_system.a
+        ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_thread.a
+        ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_filesystem.a 
+        ${CMAKE_SOURCE_DIR}/thirdparty/yaml-cpp/lib/libyaml-cpp.a
+        ${CMAKE_SOURCE_DIR}/thirdparty/tinyxml/lib/libtinyxml2.a 
+        pthread 
+        rt
+        log::log 
+    )
+    
+    target_compile_options(${LIBRARY_OUTPUT_NAME} PRIVATE -fPIC -O3)
 endif()
 
 
@@ -57,26 +59,34 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_thread.a
     ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_filesystem.a 
     ${CMAKE_SOURCE_DIR}/thirdparty/yaml-cpp/lib/libyaml-cpp.a
-    ${CMAKE_SOURCE_DIR}/common/log/lib/liblog.a
     ${CMAKE_SOURCE_DIR}/thirdparty/tinyxml/lib/libtinyxml2.a 
     pthread 
     rt
+    log::log 
 )
 
 target_compile_options(${PROJECT_NAME}  PRIVATE  -g )
 
 if(BUILD_LIBRARY)
-# 安装静态库到 lib 目录
-install(TARGETS ${LIBRARY_OUTPUT_NAME}
-        ARCHIVE DESTINATION ${INSTALL_LIB_DIR}
-        LIBRARY DESTINATION ${INSTALL_LIB_DIR})  # 动态库和可执行文件也可以放在 bin
+  include(GNUInstallDirs)  # ✅ 引入标准安装目录
+    
+    set(PUBLIC_HEADERS
+        ${CMAKE_CURRENT_SOURCE_DIR}/concurrentqueue.h
+    )
+    
+    
+    install(TARGETS ${LIBRARY_OUTPUT_NAME}
+            EXPORT ${LIBRARY_OUTPUT_NAME}Targets  # 支持find_package
+            ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+            PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${LIBRARY_OUTPUT_NAME})  # 头文件
+    
+    
+    install(EXPORT ${LIBRARY_OUTPUT_NAME}Targets
+            FILE ${LIBRARY_OUTPUT_NAME}Targets.cmake
+            NAMESPACE ${LIBRARY_OUTPUT_NAME}::
+            DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${LIBRARY_OUTPUT_NAME})
+            
+    message(STATUS "Library will be installed to: ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
 endif()
-
-# 安装可执行文件到 bin 目录
-install(TARGETS ${PROJECT_NAME}
-        RUNTIME DESTINATION ${INSTALL_BIN_DIR})
-
-# 安装头文件到 include 目录
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/src/
-        DESTINATION ${INSTALL_INCLUDE_DIR}
-        FILES_MATCHING PATTERN "*.h")

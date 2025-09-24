@@ -27,21 +27,22 @@ target_include_directories(${LIBRARY_OUTPUT_NAME} PRIVATE   ${OBJ_CPP_INCLUDE})
 
 
 
-target_compile_options(${PROJECT_NAME}  PRIVATE  -O3 -FPIC)
+target_compile_options(${PROJECT_NAME}  PRIVATE  -O3 -fPIC)
 
 # 导出目标
 add_library(log::log ALIAS log)
 
 
-set(LOG_HEADERS
-    "${CMAKE_CURRENT_SOURCE_DIR}/logger.h"
-)
 
 # 安装配置（可选）
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
     # 只在作为主项目时才安装
     include(GNUInstallDirs)
     
+    set(LOG_HEADERS
+    "${CMAKE_CURRENT_SOURCE_DIR}/logger.h"
+   )
+
     install(TARGETS log
             EXPORT logTargets
             LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}

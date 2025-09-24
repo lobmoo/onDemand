@@ -1,12 +1,13 @@
 cmake_minimum_required(VERSION 3.16)
 
-option(COMPILE_SAMPLE "Build example" ON)
+option(COMPILE_SAMPLE "Build example" OFF)
 
 project(DEMO  LANGUAGES  CXX)
 
 add_subdirectory(common/log)
+
 add_subdirectory(core)
-add_subdirectory(tools/monitor)
+# add_subdirectory(tools/monitor)
 
 
 # if(TEST)
