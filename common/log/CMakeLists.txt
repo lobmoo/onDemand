@@ -24,8 +24,7 @@ option(BUILD_SHARED_LIBS "Build using shared libraries" OFF)
 add_library(${LIBRARY_OUTPUT_NAME}   ${SOURCES_CC_FOR_LOG})
 target_include_directories(${LIBRARY_OUTPUT_NAME} PRIVATE   ${OBJ_CPP_INCLUDE})
 
-
-
+target_link_libraries(${PROJECT_NAME} PRIVATE pthread )
 
 target_compile_options(${PROJECT_NAME}  PRIVATE  -O3 -fPIC)
 

@@ -8,10 +8,10 @@
 
 int main()
 {
-    Logger::GetInstance()->Init("/home/wwk/workspaces/test_demo/config/logConfig.json");
+    bool result = Logger::GetInstance()->Init("");
 
     ThreadPool pool(4);
-    pool.enqueue([]() {
+    pool.enqueue([result]() {
         while(1)
         {
             LOG(info) << "Thread pool task is running";
@@ -20,10 +20,11 @@ int main()
                LOG(error) << "Thread pool task is running";
                 LOG(critical) << "Thread pool task is running";
                  LOG(warning) << "Thread pool task is running";
+                    LOG(critical) << "Thread pool task is running  : " << result;
             std::this_thread::sleep_for(std::chrono::seconds(1));
         }
     });
 
-    ///std::this_thread::sleep_for(std::chrono::seconds(1));
+    std::this_thread::sleep_for(std::chrono::seconds(1));
     return 0;
 }

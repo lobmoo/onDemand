@@ -28,7 +28,7 @@
 #include <vector>
 #include <fstream>
 #include <atomic>
-
+#include <iostream> 
 #include "custom_rotating_file_sink.h"
 #include "logger.h"
 
@@ -46,8 +46,9 @@ private:
         {
 
             auto warning_message = [](const std::string &message) {
-                spdlog::warn("\n{}\n[WARNING] {}\n{}\n", std::string(80, '!'), message,
-                             std::string(80, '!'));
+                std::cerr << "\n" << std::string(80, '!') << "\n";
+                std::cerr << "[WARNING] " << message << "\n";
+                std::cerr << std::string(80, '!') << "\n" << std::endl;
             };
 
             std::ifstream in_file(json_path);
