@@ -23,6 +23,29 @@
 #include <string>
 #include <unordered_map>
 
+
+/******************************************************** 
+ * 日志系统配置文件示例
+ * ******************************************************/
+/*
+{
+  "LoggerConfig": {
+    "FileName": "./dsfc.log",
+    "LogType": "both",
+    "LogLevel": "trace",
+    "MaxFileSize": 1,
+    "MaxBackupIndex": 10,
+    "IsAsync": false,
+    "BufferSize": 8192,
+    "FlushOnLevel": "error",
+    "ConsoleLogLevel": "tarce",
+    "FileLogLevel": "error",
+    "LogPattern": "[%Y-%m-%d %H:%M:%S.%e] [%^%l%$] [%t] [%s:%# %!] %v"
+  }
+}
+*/
+
+
 class Logger
 {
 public:
