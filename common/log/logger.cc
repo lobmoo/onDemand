@@ -14,73 +14,71 @@
  * </table>
  */
 #include "logger.h"
-
 #include "logger_impl.h"
 
-Logger::Logger() : pImpl(std::make_unique<LoggerImpl>())
+Logger::Logger() : impl_(std::make_unique<LoggerImpl>())
 {
 }
 
-Logger* Logger::Instance()
+Logger *Logger::GetInstance()
 {
-    static Logger* log = new Logger();
-    return log;
+    static Logger *instance = new Logger();
+    return instance;
 }
 
-void Logger::Uinit()
+void Logger::Uninit()
 {
-    return pImpl->Uinit();
+    return impl_->Uninit();
 }
 
-bool Logger::Init(const std::string &logConfigFilePath)
+bool Logger::Init(const std::string &log_config_file_path)
 {
-    return pImpl->Init(logConfigFilePath);
+    return impl_->Init(log_config_file_path);
 }
 
-
-bool Logger::Init(const std::string &fileName, LoggerType type, severity_level level,
-                  uint32_t maxFileSize, uint32_t maxBackupIndex, bool isAsync)
+bool Logger::Init(const std::string &file_name, LoggerType type, SeverityLevel level,
+                  uint32_t max_file_size, uint32_t max_backup_index, bool is_async)
 {
-    return pImpl->Init(fileName, type, level, maxFileSize, maxBackupIndex, isAsync);
+    return impl_->Init(file_name, type, level, max_file_size, max_backup_index, is_async);
 }
 
-void Logger::Log(severity_level level, const std::string &msg, const char *file, uint32_t line,
+void Logger::Log(SeverityLevel level, const std::string &msg, const char *file, uint32_t line,
                  const char *func)
 {
-    pImpl->log(level, msg, file, line, func);
+    impl_->Log(level, msg, file, line, func);
 }
 
-void Logger::setFlushEvery(uint32_t flushEvery)
+void Logger::SetFlushEvery(uint32_t flush_every)
 {
-    pImpl->setFlushEvery(flushEvery);
+    impl_->SetFlushEvery(flush_every);
 }
 
-void Logger::setFlushOnLevel(Logger::severity_level flushOnLevel)
+void Logger::SetFlushOnLevel(Logger::SeverityLevel flush_on_level)
 {
-    pImpl->setFlushOnLevel(flushOnLevel);
+    impl_->SetFlushOnLevel(flush_on_level);
 }
 
-void Logger::setLogLevel(Logger::severity_level level)
+void Logger::SetLogLevel(Logger::SeverityLevel level)
 {
-    pImpl->setLogLevel(level);
+    impl_->SetLogLevel(level);
 }
 
-void Logger::setLogPattern(const std::string &pattern)
+void Logger::SetLogPattern(const std::string &pattern)
 {
-    pImpl->setLogPattern(pattern);
+    impl_->SetLogPattern(pattern);
 }
 
-void Logger::setLogConsoleLevel(Logger::severity_level level)
+void Logger::SetLogConsoleLevel(Logger::SeverityLevel level)
 {
-    pImpl->setLogConsoleLevel(level);
+    impl_->SetLogConsoleLevel(level);
 }
 
-void Logger::setLogFileLevel(Logger::severity_level level)
+void Logger::SetLogFileLevel(Logger::SeverityLevel level)
 {
-    pImpl->setLogFileLevel(level);
+    impl_->SetLogFileLevel(level);
 }
 
-void Logger::setLogBufferSize(size_t size)
+void Logger::SetLogBufferSize(size_t size)
 {
-    pImpl->setLogBufferSize(size);
+    impl_->SetLogBufferSize(size);
 }

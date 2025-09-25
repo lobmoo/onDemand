@@ -8,13 +8,18 @@
 
 int main()
 {
-    Logger::Instance()->Init("log/myapp.log", Logger::console, Logger::info, 60, 5);
+    Logger::GetInstance()->Init("/home/wwk/workspaces/test_demo/config/logConfig.json");
 
     ThreadPool pool(4);
     pool.enqueue([]() {
         while(1)
         {
             LOG(info) << "Thread pool task is running";
+             LOG(trace) << "Thread pool task is running";
+              LOG(debug) << "Thread pool task is running";
+               LOG(error) << "Thread pool task is running";
+                LOG(critical) << "Thread pool task is running";
+                 LOG(warning) << "Thread pool task is running";
             std::this_thread::sleep_for(std::chrono::seconds(1));
         }
     });

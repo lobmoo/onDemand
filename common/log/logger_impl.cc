@@ -24,30 +24,32 @@
 namespace fs = std::filesystem;
 
 Logger::LoggerImpl::LoggerImpl()
-    : flushEvery_(0), flushOnLevel_(spdlog::level::err), isRunning_(true)
+    : flush_every_(0), flush_on_level_(spdlog::level::err), is_running_(true)
 {
 }
+
 Logger::LoggerImpl::~LoggerImpl()
 {
-    Uinit();
+    Uninit();
 }
 
 void Logger::LoggerImpl::LoggerConfigChecker()
 {
-    fs::file_time_type lastWriteTime;
-    while (isRunning_) {
+    fs::file_time_type last_write_time;
+    while (is_running_) {
         try {
-            fs::file_time_type currentWriteTime = fs::last_write_time(logConfigFilePath_);
-            if (currentWriteTime != lastWriteTime) {
-                lastWriteTime = currentWriteTime;
-                LoggerConfig config(logConfigFilePath_);
-                if (config.getIsValid()) {
+            fs::file_time_type current_write_time = fs::last_write_time(log_config_file_path_);
+            if (current_write_time != last_write_time) {
+                last_write_time = current_write_time;
+                LoggerConfig config(log_config_file_path_);
+                if (config.GetIsValid()) {
                     LogApplyConfig(config);
                 } else {
-                    break; //这里没想好怎么处理，暂时就这样吧
+                    break; // TODO(wwk): Better error handling needed
                 }
             }
         } catch (const fs::filesystem_error &) {
+            // Ignore filesystem errors and continue monitoring
         }
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }
@@ -55,52 +57,52 @@ void Logger::LoggerImpl::LoggerConfigChecker()
 
 void Logger::LoggerImpl::LogApplyConfig(const LoggerConfig &config)
 {
-    setFlushOnLevel(config.getFlushOnLevel());
-    setLogConsoleLevel(config.getConsoleLogLevel());
-    setLogFileLevel(config.getFileLogLevel());
+    SetFlushOnLevel(config.GetFlushOnLevel());
+    SetLogConsoleLevel(config.GetConsoleLogLevel());
+    SetLogFileLevel(config.GetFileLogLevel());
 }
 
-bool Logger::LoggerImpl::Init(const std::string logConfigFilePath)
+bool Logger::LoggerImpl::Init(const std::string &log_config_file_path)
 {
+    log_config_file_path_ = log_config_file_path;
+    LoggerConfig config(log_config_file_path);
+    Logger::LoggerType type = config.GetType();
+    Logger::SeverityLevel level = config.GetLogLevel();
+    std::string file_name = config.GetFileName();
+    uint32_t max_file_size = config.GetMaxFileSize();
+    uint32_t max_backup_index = config.GetMaxBackupIndex();
+    bool is_async = config.GetIsAsync();
 
-    logConfigFilePath_ = logConfigFilePath;
-    LoggerConfig Config(logConfigFilePath);
-    LoggerType type = Config.getType();
-    severity_level level = Config.getLogLevel();
-    std::string fileName = Config.getFileName();
-    uint32_t maxFileSize = Config.getMaxFileSize();
-    uint32_t maxBackupIndex = Config.getMaxBackupIndex();
-    bool isAsync = Config.getIsAsync();
-    //Config.printConfig();
-
-    if (!Init(fileName, type, level, maxFileSize, maxBackupIndex, isAsync)) {
+    if (!Init(file_name, type, level, max_file_size, max_backup_index, is_async)) {
         return false;
     }
-    setFlushOnLevel(Config.getFlushOnLevel());
-    setLogConsoleLevel(Config.getConsoleLogLevel());
-    setLogFileLevel(Config.getFileLogLevel());
-    setLogPattern(Config.getLogPattern());
-    setLogBufferSize(Config.getBufferSize());
 
-    /*启动监测线程*/
+    SetFlushOnLevel(config.GetFlushOnLevel());
+    SetLogConsoleLevel(config.GetConsoleLogLevel());
+    SetLogFileLevel(config.GetFileLogLevel());
+    SetLogPattern(config.GetLogPattern());
+    SetLogBufferSize(config.GetBufferSize());
+
+    // Start monitoring thread
     std::thread([this]() { LoggerConfigChecker(); }).detach();
     return true;
 }
 
-void Logger::LoggerImpl::stop()
+void Logger::LoggerImpl::Stop()
 {
-    isRunning_ = false;
+    is_running_ = false;
 }
 
-bool Logger::LoggerImpl::Init(std::string fileName, LoggerType type, severity_level level,
-                              uint32_t maxFileSize, uint32_t maxBackupIndex, bool isAsync)
+bool Logger::LoggerImpl::Init(const std::string &file_name, Logger::LoggerType type,
+                              Logger::SeverityLevel level, uint32_t max_file_size,
+                              uint32_t max_backup_index, bool is_async)
 {
     if (spdlog::get("Logger")) {
         spdlog::warn("Logger already initialized, skipping re-initialization");
         return false;
     }
 
-    std::size_t max_file_size = 1024 * 1024 * maxFileSize;
+    std::size_t max_file_size_bytes = 1024 * 1024 * max_file_size;
     std::vector<spdlog::sink_ptr> sinks;
 
     spdlog::level::level_enum console_level =
@@ -112,51 +114,54 @@ bool Logger::LoggerImpl::Init(std::string fileName, LoggerType type, severity_le
         case Logger::both: {
             console_sink_ = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
             file_sink_ = std::make_shared<spdlog::sinks::custom_rotating_file_sink_mt>(
-                fileName, max_file_size, maxBackupIndex);
-            /*按天数轮转记录器  todo*/
-            // file_sink_ = std::make_shared<spdlog::sinks::daily_file_sink_mt>(fileName, 23, 59);
+                file_name, max_file_size_bytes, max_backup_index);
             console_sink_->set_level(console_level);
             file_sink_->set_level(file_level);
             sinks.push_back(file_sink_);
             sinks.push_back(console_sink_);
-        } break;
+            break;
+        }
         case Logger::console: {
             console_sink_ = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
             console_sink_->set_level(console_level);
             sinks.push_back(console_sink_);
-        } break;
+            break;
+        }
         case Logger::file: {
             file_sink_ = std::make_shared<spdlog::sinks::custom_rotating_file_sink_mt>(
-                fileName, max_file_size, maxBackupIndex);
+                file_name, max_file_size_bytes, max_backup_index);
             file_sink_->set_level(file_level);
             sinks.push_back(file_sink_);
-        } break;
+            break;
+        }
         default:
             console_sink_ = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
             console_sink_->set_level(console_level);
             sinks.push_back(console_sink_);
             break;
     }
+
     if (sinks.empty()) {
         spdlog::error("No sinks were created for the logger");
         return false;
     }
-    if (isAsync) {
 
-        logBufferSize_ = std::max(logBufferSize_, static_cast<size_t>(8 * 1024));
-            spdlog::init_thread_pool(logBufferSize_, std::thread::hardware_concurrency() / 4);
+    if (is_async) {
+        log_buffer_size_ = std::max(log_buffer_size_, static_cast<size_t>(8 * 1024));
+        spdlog::init_thread_pool(log_buffer_size_, std::thread::hardware_concurrency() / 4);
         logger_ = std::make_shared<spdlog::async_logger>("Logger", sinks.begin(), sinks.end(),
                                                          spdlog::thread_pool(),
                                                          spdlog::async_overflow_policy::block);
     } else {
         logger_ = std::make_shared<spdlog::logger>("Logger", sinks.begin(), sinks.end());
     }
+
     logger_->set_level(spdlog::level::trace);
     logger_->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%l%$] [%t] [%s:%# %!] %v");
-    logger_->flush_on(flushOnLevel_);
+    logger_->flush_on(flush_on_level_);
 
-    if (flushEvery_ > 0) {
-        spdlog::flush_every(std::chrono::seconds(flushEvery_));
+    if (flush_every_ > 0) {
+        spdlog::flush_every(std::chrono::seconds(flush_every_));
     }
 
     spdlog::register_logger(logger_);
@@ -164,9 +169,9 @@ bool Logger::LoggerImpl::Init(std::string fileName, LoggerType type, severity_le
     return true;
 }
 
-void Logger::LoggerImpl::Uinit()
+void Logger::LoggerImpl::Uninit()
 {
-    stop();
+    Stop();
     if (logger_) {
         logger_->flush();
         spdlog::drop("Logger");
@@ -175,7 +180,7 @@ void Logger::LoggerImpl::Uinit()
     spdlog::shutdown();
 }
 
-void Logger::LoggerImpl::log(Logger::severity_level level, const std::string &msg, const char *file,
+void Logger::LoggerImpl::Log(Logger::SeverityLevel level, const std::string &msg, const char *file,
                              uint32_t line, const char *func)
 {
     if (logger_) {
@@ -196,47 +201,47 @@ Logger::LoggerImpl::GetLogLevelFromEnv(const std::string &env_var,
     return spdlog::level::from_str(level_str);
 }
 
-void Logger::LoggerImpl::setFlushEvery(uint32_t flushEvery)
+void Logger::LoggerImpl::SetFlushEvery(uint32_t flush_every)
 {
-    if (flushEvery > 0) {
-        flushEvery_ = flushEvery;
+    if (flush_every > 0) {
+        flush_every_ = flush_every;
     }
 }
 
-void Logger::LoggerImpl::setFlushOnLevel(Logger::severity_level flushOnLevel)
+void Logger::LoggerImpl::SetFlushOnLevel(Logger::SeverityLevel flush_on_level)
 {
-    flushOnLevel_ = static_cast<spdlog::level::level_enum>(flushOnLevel);
+    flush_on_level_ = static_cast<spdlog::level::level_enum>(flush_on_level);
 }
 
-void Logger::LoggerImpl::setLogLevel(Logger::severity_level level)
+void Logger::LoggerImpl::SetLogLevel(Logger::SeverityLevel level)
 {
     if (logger_) {
         logger_->set_level(static_cast<spdlog::level::level_enum>(level));
     }
 }
 
-void Logger::LoggerImpl::setLogPattern(const std::string &pattern)
+void Logger::LoggerImpl::SetLogPattern(const std::string &pattern)
 {
     if (logger_) {
         logger_->set_pattern(pattern);
     }
 }
 
-void Logger::LoggerImpl::setLogConsoleLevel(Logger::severity_level level)
+void Logger::LoggerImpl::SetLogConsoleLevel(Logger::SeverityLevel level)
 {
     if (console_sink_) {
         console_sink_->set_level(static_cast<spdlog::level::level_enum>(level));
     }
 }
 
-void Logger::LoggerImpl::setLogFileLevel(Logger::severity_level level)
+void Logger::LoggerImpl::SetLogFileLevel(Logger::SeverityLevel level)
 {
     if (file_sink_) {
         file_sink_->set_level(static_cast<spdlog::level::level_enum>(level));
     }
 }
 
-void Logger::LoggerImpl::setLogBufferSize(size_t size)
+void Logger::LoggerImpl::SetLogBufferSize(size_t size)
 {
-    logBufferSize_ = size;
+    log_buffer_size_ = size;
 }

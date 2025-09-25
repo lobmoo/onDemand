@@ -23,7 +23,6 @@
 #include <string>
 #include <unordered_map>
 
-
 /******************************************************** 
  * 日志系统配置文件示例
  * ******************************************************/
@@ -45,11 +44,10 @@
 }
 */
 
-
 class Logger
 {
 public:
-    enum severity_level { trace, debug, info, warning, error, critical };
+    enum SeverityLevel { trace, debug, info, warning, error, critical };
     enum LoggerType { both = 0, console, file };
 
 public:
@@ -67,8 +65,9 @@ public:
    * @return true          初始化成功
    * @return false         初始化失败
    */
-    bool Init(const std::string &fileName, LoggerType type, severity_level level,
-              uint32_t maxFileSize, uint32_t maxBackupIndex, bool isAsync = false);
+    bool Init(const std::string &file_name, LoggerType type, SeverityLevel level,
+              uint32_t max_file_size, uint32_t max_backup_index, bool is_async = false);
+
     /**
      * @brief 根据配置文件生成日志器。
      *
@@ -89,65 +88,40 @@ public:
      * @return true  加载成功
      * @return false 加载失败，使用默认配置
      */
-    bool Init(const std::string &logConfigFilePath);
+    bool Init(const std::string &log_config_file_path);
 
-    /**
-   * @brief 注销日志实例
-   */
-    void Uinit();
+    // Uninitialize logger
+    void Uninit();
 
-    /**
-   * @brief Set the Flush Every object  设置日志刷入文件的频率，单位：秒 默认0 则按默认机制刷入
-   * @param  flushEvery       间隔时间
-   */
-    void setFlushEvery(uint32_t flushEvery);
+    // Set flush interval in seconds (0 for default mechanism)
+    void SetFlushEvery(uint32_t flush_every);
 
-    /**
-   * @brief Set the Flush On Level object  设置日志立即刷入文件的级别 默认为error以上立即刷入 
-   * @param  flushOnLevel     级别
-   */
-    void setFlushOnLevel(Logger::severity_level flushOnLevel);
+    // Set severity level for immediate flush (default: error and above)
+    void SetFlushOnLevel(SeverityLevel flush_on_level);
 
-    /**
-     * @brief Set the Log Level object 动态设置日志输出级别
-     * @param  level           级别
-     */
-    void setLogLevel(Logger::severity_level level);
+    // Dynamically set log output level
+    void SetLogLevel(SeverityLevel level);
 
-    /**
-     * @brief Set the Log Pattern object 设置日志输出格式
-     * @param  pattern         格式
-     */
-    void setLogPattern(const std::string &pattern);
+    // Set log output pattern
+    void SetLogPattern(const std::string &pattern);
 
-    /**
-     * @brief Set the Log Console Level object 设置控制台日志输出级别
-     * @param  level           级别
-     * @return * void 
-     */
-    void setLogConsoleLevel(Logger::severity_level level);
+    // Set console log output level
+    void SetLogConsoleLevel(SeverityLevel level);
 
-    /**
-     * @brief Set the Log File Level object 设置文件日志输出级别
-     * @param  level           级别
-     * @return * void 
-     */
-    void setLogFileLevel(Logger::severity_level level);
+    // Set file log output level
+    void SetLogFileLevel(SeverityLevel level);
 
-    /**
-     * @brief Set the Log Buffer Size object 设置日志缓冲区大小，仅在异步模式下有效  默认 8 * 1024 字节
-     * @param  size            大小，单位：字节
-     * @return * void 
-     */
-    void setLogBufferSize(size_t size);
+    // Set log buffer size (effective only in async mode, default: 8KB)
+    void SetLogBufferSize(size_t size);
 
-    static Logger *Instance();
+    // Get singleton instance
+    static Logger *GetInstance();
 
 private:
-    void Log(severity_level level, const std::string &msg, const char *file, uint32_t line,
+    void Log(SeverityLevel level, const std::string &msg, const char *file, uint32_t line,
              const char *func);
     class LoggerImpl;
-    std::unique_ptr<LoggerImpl> pImpl;
+    std::unique_ptr<LoggerImpl> impl_;
     Logger();
     Logger(const Logger &) = delete;
     Logger &operator=(const Logger &) = delete;
@@ -157,7 +131,7 @@ private:
 class LogStream
 {
 public:
-    LogStream(Logger &logger, Logger::severity_level level, const char *file, uint32_t line,
+    LogStream(Logger &logger, Logger::SeverityLevel level, const char *file, uint32_t line,
               const char *func)
         : logger_(logger), level_(level), file_(file), line_(line), func_(func)
     {
@@ -168,7 +142,7 @@ public:
 
 private:
     Logger &logger_;
-    Logger::severity_level level_;
+    Logger::SeverityLevel level_;
     const char *file_;
     const char *func_;
     uint32_t line_;
@@ -196,7 +170,7 @@ public:
 };
 
 #define LOG(level)                                                                                 \
-    LogStream(*Logger::Instance(), Logger::level, __FILE__, __LINE__, __FUNCTION__).stream()
+    LogStream(*Logger::GetInstance(), Logger::level, __FILE__, __LINE__, __FUNCTION__).stream()
 #define LOG_TIME(level, interval_ms)                                                               \
     if (LogRateLimiter::shouldLog(std::string(__FILE__) + ":" + std::to_string(__LINE__),          \
                                   interval_ms))                                                    \

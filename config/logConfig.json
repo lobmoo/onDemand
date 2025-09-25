@@ -8,7 +8,7 @@
     "IsAsync": false,
     "BufferSize": 8192,
     "FlushOnLevel": "error",
-    "ConsoleLogLevel": "tarce",
+    "ConsoleLogLevel": "trace",
     "FileLogLevel": "error",
     "LogPattern": "[%Y-%m-%d %H:%M:%S.%e] [%^%l%$] [%t] [%s:%# %!] %v"
   }
