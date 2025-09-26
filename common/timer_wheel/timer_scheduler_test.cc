@@ -24,7 +24,7 @@ TEST_F(TimerSchedulerTest, SingleTaskScheduling)
 {
     std::atomic<int> count{0};
 
-    auto timer = scheduler->schedule([&count]() { count.fetch_add(1, std::memory_order_relaxed); },
+    auto timer = scheduler->Schedule([&count]() { count.fetch_add(1, std::memory_order_relaxed); },
                                      10); // 100ms delay (10 ticks)
 
     EXPECT_TRUE(timer != nullptr);
@@ -46,7 +46,7 @@ TEST_F(TimerSchedulerTest, MultipleSingleTasks)
     // 调度5个任务
     for (int i = 0; i < 5; ++i) {
         auto timer =
-            scheduler->schedule([&count]() { count.fetch_add(1, std::memory_order_relaxed); },
+            scheduler->Schedule([&count]() { count.fetch_add(1, std::memory_order_relaxed); },
                                 (i + 1) * 5); // 不同的延迟时间
 
         timers.push_back(timer);
@@ -70,7 +70,7 @@ TEST_F(TimerSchedulerTest, RecurringTaskScheduling)
     std::atomic<int> count{0};
 
     auto timer =
-        scheduler->scheduleRecurring([&count]() { count.fetch_add(1, std::memory_order_relaxed); },
+        scheduler->ScheduleRecurring([&count]() { count.fetch_add(1, std::memory_order_relaxed); },
                                      5, 10); // 50ms初始延迟，100ms间隔
 
     EXPECT_TRUE(timer != nullptr);
@@ -91,14 +91,14 @@ TEST_F(TimerSchedulerTest, TaskCancellation)
 {
     std::atomic<int> count{0};
 
-    auto timer = scheduler->schedule([&count]() { count.fetch_add(1, std::memory_order_relaxed); },
+    auto timer = scheduler->Schedule([&count]() { count.fetch_add(1, std::memory_order_relaxed); },
                                      20); // 200ms delay
 
     EXPECT_TRUE(timer->active());
 
     // 在任务执行前取消
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
-    scheduler->cancel(timer);
+    scheduler->Cancel(timer);
 
     EXPECT_FALSE(timer->active());
 
@@ -114,7 +114,7 @@ TEST_F(TimerSchedulerTest, RecurringTaskCancellation)
     std::atomic<int> count{0};
 
     auto timer =
-        scheduler->scheduleRecurring([&count]() { count.fetch_add(1, std::memory_order_relaxed); },
+        scheduler->ScheduleRecurring([&count]() { count.fetch_add(1, std::memory_order_relaxed); },
                                      5, 10); // 50ms初始延迟，100ms间隔
 
     EXPECT_TRUE(timer->active());
@@ -126,7 +126,7 @@ TEST_F(TimerSchedulerTest, RecurringTaskCancellation)
     EXPECT_GE(count_before_cancel, 1);
 
     // 取消任务
-    scheduler->cancel(timer);
+    scheduler->Cancel(timer);
     EXPECT_FALSE(timer->active());
 
     // 等待一段时间，确保任务不再执行
@@ -140,7 +140,7 @@ TEST_F(TimerSchedulerTest, ImmediateTaskExecution)
 {
     std::atomic<int> count{0};
 
-    scheduler->post([&count]() { count.fetch_add(1, std::memory_order_relaxed); });
+    scheduler->Post([&count]() { count.fetch_add(1, std::memory_order_relaxed); });
 
     // 等待短时间让任务执行
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
@@ -155,7 +155,7 @@ TEST_F(TimerSchedulerTest, MultipleImmediateTasks)
     const int num_tasks = 10;
 
     for (int i = 0; i < num_tasks; ++i) {
-        scheduler->post([&count]() { count.fetch_add(1, std::memory_order_relaxed); });
+        scheduler->Post([&count]() { count.fetch_add(1, std::memory_order_relaxed); });
     }
 
     // 等待所有任务执行
@@ -171,21 +171,21 @@ TEST_F(TimerSchedulerTest, TaskExecutionOrder)
     std::mutex order_mutex;
 
     // 调度不同延迟的任务
-    scheduler->schedule(
+    scheduler->Schedule(
         [&execution_order, &order_mutex]() {
             std::lock_guard<std::mutex> lock(order_mutex);
             execution_order.push_back(3);
         },
         15); // 150ms
 
-    scheduler->schedule(
+    scheduler->Schedule(
         [&execution_order, &order_mutex]() {
             std::lock_guard<std::mutex> lock(order_mutex);
             execution_order.push_back(1);
         },
         5); // 50ms
 
-    scheduler->schedule(
+    scheduler->Schedule(
         [&execution_order, &order_mutex]() {
             std::lock_guard<std::mutex> lock(order_mutex);
             execution_order.push_back(2);
@@ -208,7 +208,7 @@ TEST_F(TimerSchedulerTest, ExceptionHandling)
     std::atomic<int> count{0};
 
     // 调度一个会抛出异常的任务
-    auto timer1 = scheduler->schedule(
+    auto timer1 = scheduler->Schedule(
         [&count]() {
             count.fetch_add(1, std::memory_order_relaxed);
             throw std::runtime_error("Test exception");
@@ -217,7 +217,7 @@ TEST_F(TimerSchedulerTest, ExceptionHandling)
 
     // 调度一个正常的任务
     auto timer2 =
-        scheduler->schedule([&count]() { count.fetch_add(1, std::memory_order_relaxed); }, 10);
+        scheduler->Schedule([&count]() { count.fetch_add(1, std::memory_order_relaxed); }, 10);
 
     // 等待任务执行
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
@@ -237,7 +237,7 @@ TEST_F(TimerSchedulerTest, ConcurrentSafety)
     for (int t = 0; t < 4; ++t) {
         threads.emplace_back([&, t]() {
             for (int i = 0; i < num_tasks / 4; ++i) {
-                auto timer = scheduler->schedule(
+                auto timer = scheduler->Schedule(
                     [&count]() { count.fetch_add(1, std::memory_order_relaxed); },
                     (t * 10) + (i % 10) + 1);
 
@@ -266,7 +266,7 @@ TEST_F(TimerSchedulerTest, TimerDestructionCleanup)
     {
         TimerScheduler temp_scheduler(10, 2);
 
-        auto timer = temp_scheduler.schedule(
+        auto timer = temp_scheduler.Schedule(
             [&count]() { count.fetch_add(1, std::memory_order_relaxed); }, 20); // 200ms delay
 
         EXPECT_TRUE(timer->active());
@@ -291,7 +291,7 @@ TEST_F(TimerSchedulerTest, PerformanceTest)
 
     // 调度大量任务
     for (int i = 0; i < num_tasks; ++i) {
-        scheduler->schedule([&count]() { count.fetch_add(1, std::memory_order_relaxed); },
+        scheduler->Schedule([&count]() { count.fetch_add(1, std::memory_order_relaxed); },
                             (i % 100) + 1);
     }
 
