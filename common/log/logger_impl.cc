@@ -31,6 +31,11 @@ Logger::LoggerImpl::LoggerImpl()
 Logger::LoggerImpl::~LoggerImpl()
 {
     Uninit();
+    try {
+        spdlog::shutdown();
+    } catch (...) {
+        
+    }
 }
 
 void Logger::LoggerImpl::LoggerConfigChecker()
@@ -177,7 +182,6 @@ void Logger::LoggerImpl::Uninit()
         spdlog::drop("Logger");
         logger_.reset();
     }
-    spdlog::shutdown();
 }
 
 void Logger::LoggerImpl::Log(Logger::SeverityLevel level, const std::string &msg, const char *file,

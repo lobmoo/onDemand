@@ -100,6 +100,11 @@ public:
     void SetFlushOnLevel(SeverityLevel flush_on_level);
 
     // Dynamically set log output level
+    /**
+    *    日志消息流向：LOG(debug) → Logger → Sink → 输出
+    *         ↓          ↓       ↓
+    *   级别检查：    应用级别   Logger级别  Sink级别  该接口优先级低于 SetLogConsoleLevel(Sink)  SetLogFileLevel(Sink)
+    **/
     void SetLogLevel(SeverityLevel level);
 
     // Set log output pattern

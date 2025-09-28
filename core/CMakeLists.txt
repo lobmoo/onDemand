@@ -9,6 +9,7 @@ set(OBJ_CPP_INCLUDE
     ${CMAKE_SOURCE_DIR}/core
     ${CMAKE_SOURCE_DIR}/thirdparty/tinyxml/include
     ${CMAKE_SOURCE_DIR}/thirdparty/BS_thread_pool/include
+    ${CMAKE_SOURCE_DIR}/thirdparty/spdlog/include
 )
 
 

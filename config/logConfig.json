@@ -8,8 +8,8 @@
     "IsAsync": false,
     "BufferSize": 8192,
     "FlushOnLevel": "error",
-    "ConsoleLogLevel": "trace",
-    "FileLogLevel": "error",
+    "ConsoleLogLevel": "debug",
+    "FileLogLevel": "debug",
     "LogPattern": "[%Y-%m-%d %H:%M:%S.%e] [%^%l%$] [%t] [%s:%# %!] %v"
   }
 }

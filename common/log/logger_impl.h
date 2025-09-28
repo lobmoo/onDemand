@@ -79,7 +79,7 @@ private:
                 log_pattern = logger_config.value("LogPattern", log_pattern);
 
             } catch (const json::exception &e) {
-                spdlog::warn("Failed to parse JSON config: {}, using default config", e.what());
+                std::cerr << "Failed to parse JSON config: {}, using default config" << e.what() << std::endl;
                 is_valid = false;
                 return;
             }
