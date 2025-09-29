@@ -1,3 +1,18 @@
+/**
+ * @file timer_scheduler.h
+ * @brief 
+ * @author wwk (1162431386@qq.com)
+ * @version 1.0
+ * @date 2025-09-29
+ * 
+ * @copyright Copyright (c) 2025  by  wwk : wwk.lobmo@gmail.com
+ * 
+ * @par 修改日志:
+ * <table>
+ * <tr><th>Date       <th>Version <th>Author  <th>Description
+ * <tr><td>2025-09-29     <td>1.0     <td>wwk   <td>修改?
+ * </table>
+ */
 #pragma once
 
 #include <algorithm>
@@ -12,6 +27,20 @@
 
 #include "thread_pool.h"
 #include "timer_wheel.h"
+
+/*
+TimerScheduler 架构:
+┌─────────────────┐
+│   User Code     │ 
+├─────────────────┤
+│ TimerScheduler  │  ← 高级接口封装
+├─────────────────┤  
+│   TimerWheel    │  ← 底层时间轮算法
+├─────────────────┤
+│   ThreadPool    │  ← 异步执行引擎
+└─────────────────┘
+*/
+
 
 using Tick = uint64_t;
 
