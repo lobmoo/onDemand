@@ -28,7 +28,7 @@
 #include <vector>
 #include <fstream>
 #include <atomic>
-#include <iostream> 
+#include <iostream>
 #include "custom_rotating_file_sink.h"
 #include "logger.h"
 
@@ -79,7 +79,8 @@ private:
                 log_pattern = logger_config.value("LogPattern", log_pattern);
 
             } catch (const json::exception &e) {
-                std::cerr << "Failed to parse JSON config: {}, using default config" << e.what() << std::endl;
+                std::cerr << "Failed to parse JSON config: {}, using default config" << e.what()
+                          << std::endl;
                 is_valid = false;
                 return;
             }
@@ -161,10 +162,12 @@ public:
               uint32_t max_file_size, uint32_t max_backup_index, bool is_async);
     bool Init(const std::string &log_config_file_path);
 
-    void Log(Logger::SeverityLevel level, const std::string &msg, const char *file, uint32_t line,
+    void Log(Logger::SeverityLevel level, std::string &&msg, const char *file, uint32_t line,
              const char *func);
-    void Uninit();
 
+    bool ShouldLog(Logger::SeverityLevel level) const;
+
+    void Uninit();
     void SetFlushEvery(uint32_t flush_every);
     void SetFlushOnLevel(Logger::SeverityLevel flush_on_level);
     void SetLogLevel(Logger::SeverityLevel level);

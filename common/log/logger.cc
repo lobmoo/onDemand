@@ -42,10 +42,21 @@ bool Logger::Init(const std::string &file_name, LoggerType type, SeverityLevel l
     return impl_->Init(file_name, type, level, max_file_size, max_backup_index, is_async);
 }
 
-void Logger::Log(SeverityLevel level, const std::string &msg, const char *file, uint32_t line,
+LogStreamOptimized Logger::GetLogStream(SeverityLevel level, const char *file, uint32_t line,
+                                        const char *func)
+{
+    return LogStreamOptimized(*this, level, file, line, func);
+}
+
+void Logger::Log(SeverityLevel level, std::string &&msg, const char *file, uint32_t line,
                  const char *func)
 {
-    impl_->Log(level, msg, file, line, func);
+    impl_->Log(level, std::move(msg), file, line, func);
+}
+
+bool Logger::ShouldLog(SeverityLevel level) const
+{
+    return impl_ && impl_->ShouldLog(level);
 }
 
 void Logger::SetFlushEvery(uint32_t flush_every)

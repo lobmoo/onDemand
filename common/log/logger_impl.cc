@@ -34,7 +34,6 @@ Logger::LoggerImpl::~LoggerImpl()
     try {
         spdlog::shutdown();
     } catch (...) {
-        
     }
 }
 
@@ -152,11 +151,16 @@ bool Logger::LoggerImpl::Init(const std::string &file_name, Logger::LoggerType t
     }
 
     if (is_async) {
-        log_buffer_size_ = std::max(log_buffer_size_, static_cast<size_t>(8 * 1024));
-        spdlog::init_thread_pool(log_buffer_size_, std::thread::hardware_concurrency() / 4);
-        logger_ = std::make_shared<spdlog::async_logger>("Logger", sinks.begin(), sinks.end(),
-                                                         spdlog::thread_pool(),
-                                                         spdlog::async_overflow_policy::block);
+        log_buffer_size_ = std::max(log_buffer_size_, static_cast<size_t>(64 * 1024)); //64k
+        size_t thread_count = std::max(1u, std::thread::hardware_concurrency() / 4);   // 线程池
+        try {
+            spdlog::init_thread_pool(log_buffer_size_, thread_count);
+        } catch (const std::exception &e) {
+        }
+
+        logger_ = std::make_shared<spdlog::async_logger>(
+            "Logger", sinks.begin(), sinks.end(), spdlog::thread_pool(),
+            spdlog::async_overflow_policy::overrun_oldest); // 覆盖策略而非阻塞
     } else {
         logger_ = std::make_shared<spdlog::logger>("Logger", sinks.begin(), sinks.end());
     }
@@ -184,13 +188,18 @@ void Logger::LoggerImpl::Uninit()
     }
 }
 
-void Logger::LoggerImpl::Log(Logger::SeverityLevel level, const std::string &msg, const char *file,
+void Logger::LoggerImpl::Log(Logger::SeverityLevel level, std::string &&msg, const char *file,
                              uint32_t line, const char *func)
 {
     if (logger_) {
         logger_->log(spdlog::source_loc{file, static_cast<int>(line), func},
-                     static_cast<spdlog::level::level_enum>(level), msg);
+                     static_cast<spdlog::level::level_enum>(level), std::move(msg));
     }
+}
+
+bool Logger::LoggerImpl::ShouldLog(Logger::SeverityLevel level) const
+{
+    return logger_ && logger_->should_log(static_cast<spdlog::level::level_enum>(level));
 }
 
 spdlog::level::level_enum

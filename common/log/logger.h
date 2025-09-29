@@ -44,6 +44,8 @@
 }
 */
 
+class LogStreamOptimized;
+
 class Logger
 {
 public:
@@ -122,26 +124,37 @@ public:
     // Get singleton instance
     static Logger *GetInstance();
 
+    LogStreamOptimized GetLogStream(SeverityLevel level, const char *file, uint32_t line,
+                                    const char *func);
+    bool ShouldLog(SeverityLevel level) const;
+
 private:
-    void Log(SeverityLevel level, const std::string &msg, const char *file, uint32_t line,
+    void Log(SeverityLevel level, std::string &&msg, const char *file, uint32_t line,
              const char *func);
     class LoggerImpl;
     std::unique_ptr<LoggerImpl> impl_;
     Logger();
     Logger(const Logger &) = delete;
     Logger &operator=(const Logger &) = delete;
-    friend class LogStream;
+    friend class LogStreamOptimized;
 };
 
-class LogStream
+class LogStreamOptimized
 {
 public:
-    LogStream(Logger &logger, Logger::SeverityLevel level, const char *file, uint32_t line,
-              const char *func)
+    LogStreamOptimized(Logger &logger, Logger::SeverityLevel level, const char *file, uint32_t line,
+                       const char *func)
         : logger_(logger), level_(level), file_(file), line_(line), func_(func)
     {
     }
-    ~LogStream() { logger_.Log(level_, stream_.str(), file_, line_, func_); }
+
+    ~LogStreamOptimized()
+    {
+        auto str = stream_.str();
+        if (!str.empty()) {
+            logger_.Log(level_, std::move(str), file_, line_, func_);
+        }
+    }
 
     std::ostringstream &stream() { return stream_; }
 
@@ -175,7 +188,9 @@ public:
 };
 
 #define LOG(level)                                                                                 \
-    LogStream(*Logger::GetInstance(), Logger::level, __FILE__, __LINE__, __FUNCTION__).stream()
+    if (Logger::GetInstance()->ShouldLog(Logger::level))                                           \
+    Logger::GetInstance()->GetLogStream(Logger::level, __FILE__, __LINE__, __FUNCTION__).stream()
+
 #define LOG_TIME(level, interval_ms)                                                               \
     if (LogRateLimiter::shouldLog(std::string(__FILE__) + ":" + std::to_string(__LINE__),          \
                                   interval_ms))                                                    \
