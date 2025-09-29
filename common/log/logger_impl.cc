@@ -40,6 +40,7 @@ Logger::LoggerImpl::~LoggerImpl()
 void Logger::LoggerImpl::LoggerConfigChecker()
 {
     fs::file_time_type last_write_time;
+    pthread_setname_np(pthread_self(), "LogConfigCheck");
     while (is_running_) {
         try {
             fs::file_time_type current_write_time = fs::last_write_time(log_config_file_path_);
