@@ -187,6 +187,8 @@ public:
     }
 };
 
+
+/*该宏定义为流，性能较原生稍有下降*/
 #define LOG(level)                                                                                 \
     if (Logger::GetInstance()->ShouldLog(Logger::level))                                           \
     Logger::GetInstance()->GetLogStream(Logger::level, __FILE__, __LINE__, __FUNCTION__).stream()
@@ -195,5 +197,9 @@ public:
     if (LogRateLimiter::shouldLog(std::string(__FILE__) + ":" + std::to_string(__LINE__),          \
                                   interval_ms))                                                    \
     LOG(level)
+
+
+//TODO
+// LOGF(level, fmt, ...)                                                                        \
 
 #endif // LOGGER_H
