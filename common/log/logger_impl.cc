@@ -24,7 +24,7 @@
 namespace fs = std::filesystem;
 
 Logger::LoggerImpl::LoggerImpl()
-    : flush_every_(0), flush_on_level_(spdlog::level::err), is_running_(true)
+    :is_running_(true)
 {
 }
 
@@ -168,12 +168,7 @@ bool Logger::LoggerImpl::Init(const std::string &file_name, Logger::LoggerType t
 
     logger_->set_level(spdlog::level::trace);
     logger_->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%l%$] [%t] [%s:%# %!] %v");
-    logger_->flush_on(flush_on_level_);
-
-    if (flush_every_ > 0) {
-        spdlog::flush_every(std::chrono::seconds(flush_every_));
-    }
-
+  
     spdlog::register_logger(logger_);
     spdlog::set_default_logger(logger_);
     return true;
@@ -217,14 +212,16 @@ Logger::LoggerImpl::GetLogLevelFromEnv(const std::string &env_var,
 
 void Logger::LoggerImpl::SetFlushEvery(uint32_t flush_every)
 {
-    if (flush_every > 0) {
-        flush_every_ = flush_every;
+    if(logger_) {
+        spdlog::flush_every(std::chrono::seconds(flush_every));
     }
 }
 
 void Logger::LoggerImpl::SetFlushOnLevel(Logger::SeverityLevel flush_on_level)
 {
-    flush_on_level_ = static_cast<spdlog::level::level_enum>(flush_on_level);
+    if(logger_) {
+        logger_->flush_on(static_cast<spdlog::level::level_enum>(flush_on_level));
+    }
 }
 
 void Logger::LoggerImpl::SetLogLevel(Logger::SeverityLevel level)

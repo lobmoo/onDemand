@@ -180,9 +180,7 @@ private:
     std::shared_ptr<spdlog::logger> logger_ = nullptr;
     std::shared_ptr<spdlog::sinks::stdout_color_sink_mt> console_sink_ = nullptr;
     std::shared_ptr<spdlog::sinks::custom_rotating_file_sink_mt> file_sink_ = nullptr;
-    uint32_t flush_every_;
     size_t log_buffer_size_;
-    spdlog::level::level_enum flush_on_level_;
     std::atomic<bool> is_running_;
     std::string log_config_file_path_;
 
