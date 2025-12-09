@@ -9,7 +9,7 @@ file(GLOB DDS_SHM_HELLOWORLD_EXAMPLE_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/HelloW
                                                      "${CMAKE_CURRENT_SOURCE_DIR}/HelloWorldOne/source/*.ipp"
                                                      "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
 
-file(GLOB DDS_INTERFACE_SOURCES_CPP "${CMAKE_CURRENT_SOURCE_DIR}/../../common/fastdds_wrapper/*.cpp")
+file(GLOB DDS_INTERFACE_SOURCES_CPP "${CMAKE_CURRENT_SOURCE_DIR}/../../common/fastdds_wrapper/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/../../common/fastdds_wrapper/*.cc")
 
 
 message(STATUS "Collected CXX sources: ${DDS_SHM_HELLOWORLD_EXAMPLE_SOURCES}")
