@@ -32,7 +32,8 @@ class FastDDSTopicReader
 public:
     FastDDSTopicReader(eprosima::fastdds::dds::Subscriber *subscriber,
                        eprosima::fastdds::dds::Topic *topic, OnMessageCallback callback,
-                       const eprosima::fastdds::dds::DataReaderQos &dataReaderQos);
+                       const eprosima::fastdds::dds::DataReaderQos &dataReaderQos,
+                       DataReaderListener<T> *listener);
 
     ~FastDDSTopicReader();
     FastDDSTopicReader(const FastDDSTopicReader &) = delete;
@@ -47,11 +48,17 @@ private:
 template <typename T>
 FastDDSTopicReader<T>::FastDDSTopicReader(
     eprosima::fastdds::dds::Subscriber *subscriber, eprosima::fastdds::dds::Topic *topic,
-    OnMessageCallback callback, const eprosima::fastdds::dds::DataReaderQos &dataReaderQos)
+    OnMessageCallback callback, const eprosima::fastdds::dds::DataReaderQos &dataReaderQos,
+    DataReaderListener<T> *listener)
     : m_subscriber(subscriber)
 {
-    m_readerListener.setMessageCallback(std::move(callback));
-    m_dataReader = subscriber->create_datareader(topic, dataReaderQos, &m_readerListener);
+    if (nullptr != listener) {
+        listener->setMessageCallback(std::move(callback));
+        m_dataReader = subscriber->create_datareader(topic, dataReaderQos, listener);
+    } else {
+        m_readerListener.setMessageCallback(std::move(callback));
+        m_dataReader = subscriber->create_datareader(topic, dataReaderQos, &m_readerListener);
+    }
 }
 
 template <typename T>

@@ -170,7 +170,8 @@ public:
     template <typename MESSAGE, typename PUBSUB_TYPE>
     std::shared_ptr<FastddsWrapper::FastDDSTopicReader<MESSAGE>>
     createDataReader(const std::string topicName,
-                     std::function<void(const std::string &, std::shared_ptr<MESSAGE>)> callback)
+                     std::function<void(const std::string &, std::shared_ptr<MESSAGE>)> callback,
+                     DataReaderListener<MESSAGE> *listener = nullptr)
     {
         if (!initialized_) {
             LOG(error) << "FastDataNode not initialized";
@@ -202,7 +203,7 @@ public:
         auto topic = topics_[topicName];
 
         auto reader = std::make_shared<FastddsWrapper::FastDDSTopicReader<MESSAGE>>(
-            subscriber_, topic, callback, readerQos);
+            subscriber_, topic, callback, readerQos, listener);
 
         readers_[topicName] = reader;
 
@@ -214,7 +215,8 @@ public:
     std::shared_ptr<FastddsWrapper::FastDDSTopicReader<MESSAGE>>
     createDataReader(const std::string topicName,
                      std::function<void(const std::string &, std::shared_ptr<MESSAGE>)> callback,
-                     const DataReaderQoSBuilder &reader_qos)
+                     const DataReaderQoSBuilder &reader_qos,
+                     DataReaderListener<MESSAGE> *listener = nullptr)
     {
         if (!initialized_) {
             LOG(error) << "FastDataNode not initialized";
@@ -246,7 +248,7 @@ public:
         auto topic = topics_[topicName];
 
         auto reader = std::make_shared<FastddsWrapper::FastDDSTopicReader<MESSAGE>>(
-            subscriber_, topic, callback, readerQos);
+            subscriber_, topic, callback, readerQos, listener);
 
         readers_[topicName] = reader;
 
