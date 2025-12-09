@@ -1,40 +1,43 @@
 /**
- * @file DDSTopicDataWriter.hpp
+ * @file fastdds_topic_writer.hpp
  * @brief 
  * @author wwk (1162431386@qq.com)
  * @version 1.0
- * @date 2025-03-25
+ * @date 2025-11-21
  * 
- * @copyright Copyright (c) 2025  by  宝信
+ * @copyright Copyright (c) 2025  by  wwk : wwk.lobmo@gmail.com
  * 
  * @par 修改日志:
  * <table>
  * <tr><th>Date       <th>Version <th>Author  <th>Description
- * <tr><td>2025-03-25     <td>1.0     <td>wwk   <td>修改?
+ * <tr><td>2025-11-21     <td>1.0     <td>wwk   <td>修改?
  * </table>
  */
+
 #ifndef DDS_TOPIC_DATAWRITER_H
 #define DDS_TOPIC_DATAWRITER_H
 
-#include "DDSDataWriterListener.hpp"
+#include "fastdds_listeners.h"
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 
+namespace FastddsWrapper
+{
 template <typename T>
-class DDSTopicDataWriter
+class FastDDSTopicWriter
 {
 public:
-    DDSTopicDataWriter(eprosima::fastdds::dds::Publisher *publisher,
+    FastDDSTopicWriter(eprosima::fastdds::dds::Publisher *publisher,
                        eprosima::fastdds::dds::Topic *topic,
                        const eprosima::fastdds::dds::DataWriterQos &dataWriterQos,
                        DataWriterListener *listener);
-    ~DDSTopicDataWriter();
+    ~FastDDSTopicWriter();
 
 public:
-    bool writeMessage(const T &message);
-    bool clear_history(size_t *removed);
-    bool wait_for_acknowledgments(const eprosima::fastdds::dds::Duration_t &max_wait);
+    bool writeMessage(const T &message) const;
+    bool clear_history(size_t *removed) const;
+    bool wait_for_acknowledgments(const eprosima::fastdds::dds::Duration_t &max_wait) const;
     bool get_matched_subscriptions(std::vector<InstanceHandle_t> &subscription_handles);
 
 private:
@@ -43,7 +46,7 @@ private:
 };
 
 template <typename T>
-DDSTopicDataWriter<T>::DDSTopicDataWriter(
+FastDDSTopicWriter<T>::FastDDSTopicWriter(
     eprosima::fastdds::dds::Publisher *publisher, eprosima::fastdds::dds::Topic *topic,
     const eprosima::fastdds::dds::DataWriterQos &dataWriterQos, DataWriterListener *listener)
     : m_publisher(publisher)
@@ -52,45 +55,59 @@ DDSTopicDataWriter<T>::DDSTopicDataWriter(
 }
 
 template <typename T>
-DDSTopicDataWriter<T>::~DDSTopicDataWriter()
+FastDDSTopicWriter<T>::~FastDDSTopicWriter()
 {
-    if (m_dataWriter) {
+    if (m_dataWriter && m_publisher) {
         m_publisher->delete_datawriter(m_dataWriter);
     }
 }
 
 template <typename T>
-bool DDSTopicDataWriter<T>::writeMessage(const T &message)
+bool FastDDSTopicWriter<T>::writeMessage(const T &message) const
 {
-    return m_dataWriter->write((void *)&message) == eprosima::fastdds::dds::RETCODE_OK ? true
-                                                                                       : false;
+    if (!m_dataWriter) {
+        LOG(error) << "DataWriter is null, cannot write message";
+        return false;
+    }
+    return m_dataWriter->write(const_cast<void *>(static_cast<const void *>(&message)))
+           == eprosima::fastdds::dds::RETCODE_OK;
 }
 
 template <typename T>
-bool DDSTopicDataWriter<T>::clear_history(size_t *removed)
+bool FastDDSTopicWriter<T>::clear_history(size_t *removed) const
 {
-    return m_dataWriter->clear_history(removed) == eprosima::fastdds::dds::RETCODE_OK ? true
-                                                                                      : false;
+    if (!m_dataWriter) {
+        LOG(error) << "DataWriter is null";
+        return false;
+    }
+    return m_dataWriter->clear_history(removed) == eprosima::fastdds::dds::RETCODE_OK;
 }
 
 template <typename T>
-bool DDSTopicDataWriter<T>::wait_for_acknowledgments(
-    const eprosima::fastdds::dds::Duration_t &max_wait)
+bool FastDDSTopicWriter<T>::wait_for_acknowledgments(
+    const eprosima::fastdds::dds::Duration_t &max_wait) const
 {
+    if (!m_dataWriter) {
+        LOG(error) << "DataWriter is null";
+        return false;
+    }
     return m_dataWriter->wait_for_acknowledgments(max_wait) == eprosima::fastdds::dds::RETCODE_OK
                ? true
                : false;
 }
 
-
 template <typename T>
-bool DDSTopicDataWriter<T>::get_matched_subscriptions(
+bool FastDDSTopicWriter<T>::get_matched_subscriptions(
     std::vector<InstanceHandle_t> &subscription_handles)
 {
+    if (!m_dataWriter) {
+        LOG(error) << "DataWriter is null";
+        return false;
+    }
     return m_dataWriter->get_matched_subscriptions(subscription_handles)
                    == eprosima::fastdds::dds::RETCODE_OK
                ? true
                : false;
 }
-
+} // namespace FastddsWrapper
 #endif
