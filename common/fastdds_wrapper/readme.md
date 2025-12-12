@@ -1,0 +1,4 @@
+目前node创建需要外部捕获异常，方式创建失败coredum
+目前reader和write的生命周期跟随node一起结束，如果用户想要单独管理，由于类内部保存了share_ptr,引用计数不会消失，所以用户无法自己管理。
+todo：
+优化reader和writer的声明周期
