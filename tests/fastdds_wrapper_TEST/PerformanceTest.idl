@@ -1,0 +1,11 @@
+module PerformanceTest
+{
+    struct TestMessage
+    {
+        unsigned long seq_num;
+        unsigned long long timestamp;
+        string message_type;
+        sequence<octet> payload;
+    };
+};
+
