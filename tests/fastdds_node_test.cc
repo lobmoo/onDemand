@@ -12,4 +12,23 @@
 namespace FastddsWrapper
 {
 
+
+class LoggerTest : public ::testing::Test
+{
+protected:
+    void SetUp() override
+    {
+      
+    }
+    void TearDown() override
+    {
+       
+    }
+};
+
+
+
+
+
+
 } // namespace FastddsWrapper
