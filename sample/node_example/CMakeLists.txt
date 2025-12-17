@@ -28,26 +28,15 @@ set(OBJ_CPP_INCLUDE
 list(APPEND OBJ_CPP_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/../../thirdparty/fast_dds/include)
 target_include_directories(${PROJECT_NAME} PRIVATE  ${OBJ_CPP_INCLUDE})
 
-#设置库路径
-set(OBJ_CPP_LIBRARY_PATH  ${CMAKE_CURRENT_SOURCE_DIR}/../../thirdparty/fast_dds/lib)
 
-# 查找每个库
-find_library(FASTRTPS_LIBRARY NAMES fastdds PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../thirdparty/fast_dds/lib)
-find_library(FOONATHAN_MEMORY_LIBRARY NAMES foonathan_memory-0.7.3 PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../thirdparty/fast_dds/lib)
-find_library(FASTCDR_LIBRARY NAMES fastcdr PATHS ${CMAKE_CURRENT_SOURCE_DIR}/../../thirdparty/fast_dds/lib)
 
-# 检查每个库是否都找到了
-if(FASTRTPS_LIBRARY AND FOONATHAN_MEMORY_LIBRARY AND FASTCDR_LIBRARY)
-    list(APPEND OBJ_CPP_LIBS ${FASTRTPS_LIBRARY} ${FOONATHAN_MEMORY_LIBRARY} ${FASTCDR_LIBRARY})
-    message(STATUS "Found all FAST DDS libraries")
-else()
-    message(FATAL_ERROR "Could not find all required FAST DDS libraries")
-endif()
-
-# link_directories(${LIBRARY_PATH})
-
-target_link_libraries(${PROJECT_NAME} PRIVATE ${OBJ_CPP_LIBS}   log::log  pthread)
-
+target_link_libraries(${PROJECT_NAME} PRIVATE  
+    ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib/libfastdds.so
+    ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib/libfastcdr.so
+    ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib/libfoonathan_memory-0.7.3.so
+    log::log  
+    pthread
+)
 
 # option(USE_SYSTEM_RPATH "Use system RPATH for installed libraries and executables" ON)
 # if (USE_SYSTEM_RPATH)
