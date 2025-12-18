@@ -126,6 +126,7 @@ public:
     DataReaderQoSBuilder &setMaxInstances(int32_t max_instances);
     DataReaderQoSBuilder &setMaxSamplesPerInstance(int32_t max_samples_per_instance);
     DataReaderQoSBuilder &disableDataSharing();
+    DataReaderQoSBuilder &reader_resource_limits(int32_t max_matched_writer);
 
 private:
     // 内部方法：获取原生 QoS（仅内部使用，友元访问）

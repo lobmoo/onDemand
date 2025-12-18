@@ -67,8 +67,7 @@ void run_dds_data_writer()
     DataWriterQoSBuilder writer_qos;
     writer_qos.setDurabilityKind(DurabilityKind::TRANSIENT_LOCAL)
         .setReliabilityKind(ReliabilityKind::RELIABLE)
-        .setHistoryKind(HistoryKind::KEEP_ALL)
-        .writer_resource_limits(2);
+        .setHistoryKind(HistoryKind::KEEP_ALL);
 
     auto dataWriter =
         node.createDataWriter<HelloWorldOne, HelloWorldOnePubSubType>("wwk", writer_qos);
@@ -110,7 +109,8 @@ void run_dds_data_reader()
     DataReaderQoSBuilder reader_qos;
     reader_qos.setDurabilityKind(DurabilityKind::TRANSIENT_LOCAL)
         .setReliabilityKind(ReliabilityKind::RELIABLE)
-        .setHistoryKind(HistoryKind::KEEP_ALL);
+        .setHistoryKind(HistoryKind::KEEP_ALL)
+        .reader_resource_limits(2);
 
     auto dataReader = node.createDataReader<HelloWorldOne, HelloWorldOnePubSubType>(
         "wwk", processHelloWorldOne, reader_qos);
