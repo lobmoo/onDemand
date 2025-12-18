@@ -31,29 +31,20 @@ namespace FastddsWrapper
 /**
  * @brief 可靠性 QoS 策略类型
  */
-enum class ReliabilityKind {
-    BEST_EFFORT, 
-    RELIABLE      
-};
+enum class ReliabilityKind { BEST_EFFORT, RELIABLE };
 
 /**
  * @brief 持久性 QoS 策略类型
  */
-enum class DurabilityKind {
-    VOLATILE,             
-    TRANSIENT_LOCAL,      
-    TRANSIENT,            
-    PERSISTENT             
-};
+enum class DurabilityKind { VOLATILE, TRANSIENT_LOCAL, TRANSIENT, PERSISTENT };
 
 /**
  * @brief 历史 QoS 策略类型
  */
 enum class HistoryKind {
-    KEEP_LAST,  // 保留最后 N 个样本
-    KEEP_ALL    // 保留所有样本
+    KEEP_LAST, // 保留最后 N 个样本
+    KEEP_ALL   // 保留所有样本
 };
-
 
 // 前向声明
 class FastDataNode;
@@ -69,22 +60,25 @@ public:
     ParticipantQoSBuilder &setName(const std::string &name);
     ParticipantQoSBuilder &enableDiscovery(bool enable);
     ParticipantQoSBuilder &setMaxMessageSize(uint32_t size);
-    
+
     // 扩展方法以支持更多配置
-    ParticipantQoSBuilder &setDiscoveryKeepAlive(uint32_t lease_duration_ms, uint32_t announcement_period_ms);
-    ParticipantQoSBuilder &addUDPV4TransportInterfaces(const std::vector<std::string> &network_interfaces);
+    ParticipantQoSBuilder &setDiscoveryKeepAlive(uint32_t lease_duration_ms,
+                                                 uint32_t announcement_period_ms);
+    ParticipantQoSBuilder &
+    addUDPV4TransportInterfaces(const std::vector<std::string> &network_interfaces);
     ParticipantQoSBuilder &addUDPV4TransportCoreId(int core_id);
     ParticipantQoSBuilder &setUserMulticastLocator(const std::string &address, uint16_t port);
     ParticipantQoSBuilder &setDiscoveryMulticastLocator(const std::string &address, uint16_t port);
     ParticipantQoSBuilder &addFlowController();
-    ParticipantQoSBuilder &setParticipantQosProperties(const std::string &name, const std::string &value, bool propagate);
+    ParticipantQoSBuilder &setParticipantQosProperties(const std::string &name,
+                                                       const std::string &value, bool propagate);
 
 private:
     // 内部方法：获取原生 QoS（仅内部使用，友元访问）
     const eprosima::fastdds::dds::DomainParticipantQos &getQos() const;
-    
+
     friend class FastDataNode;
-    
+
     eprosima::fastdds::dds::DomainParticipantQos qos_;
 };
 
@@ -105,13 +99,14 @@ public:
     DataWriterQoSBuilder &setMaxInstances(int32_t max_instances);
     DataWriterQoSBuilder &setMaxSamplesPerInstance(int32_t max_samples_per_instance);
     DataWriterQoSBuilder &disableDataSharing();
+    DataWriterQoSBuilder &writer_resource_limits(int32_t max_matched_readers);
 
 private:
     // 内部方法：获取原生 QoS（仅内部使用，友元访问）
     const eprosima::fastdds::dds::DataWriterQos &getQos() const;
-    
+
     friend class FastDataNode;
-    
+
     eprosima::fastdds::dds::DataWriterQos qos_;
 };
 
@@ -135,9 +130,9 @@ public:
 private:
     // 内部方法：获取原生 QoS（仅内部使用，友元访问）
     const eprosima::fastdds::dds::DataReaderQos &getQos() const;
-    
+
     friend class FastDataNode;
-    
+
     eprosima::fastdds::dds::DataReaderQos qos_;
 };
 
@@ -152,11 +147,11 @@ namespace QoSPresets
     // Writer预设
     DataWriterQoSBuilder defaultWriter();
     DataWriterQoSBuilder reliableWriter();
-    
+
     // Reader预设
     DataReaderQoSBuilder defaultReader();
     DataReaderQoSBuilder reliableReader();
-   
+
 } // namespace QoSPresets
 
 } // namespace FastddsWrapper

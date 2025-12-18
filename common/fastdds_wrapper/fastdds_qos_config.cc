@@ -231,6 +231,13 @@ DataWriterQoSBuilder &DataWriterQoSBuilder::disableDataSharing()
     return *this;
 }
 
+DataWriterQoSBuilder &DataWriterQoSBuilder::writer_resource_limits(int32_t max_matched_readers)
+{
+    qos_.writer_resource_limits().matched_subscriber_allocation =
+        eprosima::fastdds::ResourceLimitedContainerConfig(0, max_matched_readers, 1u);
+    return *this;
+}
+
 const eprosima::fastdds::dds::DataWriterQos &DataWriterQoSBuilder::getQos() const
 {
     return qos_;

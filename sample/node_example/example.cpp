@@ -60,16 +60,18 @@ void run_dds_data_writer()
     ParticipantQoSBuilder qos_configurator;
     qos_configurator.setDiscoveryMulticastLocator("239.255.0.1", 7400)
         .setUserMulticastLocator("239.255.0.1", 7401);
-    
+
     FastDataNode node(10, "test_writer", qos_configurator, listener);
 
     // 配置 DataWriter QoS
     DataWriterQoSBuilder writer_qos;
     writer_qos.setDurabilityKind(DurabilityKind::TRANSIENT_LOCAL)
         .setReliabilityKind(ReliabilityKind::RELIABLE)
-        .setHistoryKind(HistoryKind::KEEP_ALL);
+        .setHistoryKind(HistoryKind::KEEP_ALL)
+        .writer_resource_limits(2);
 
-    auto dataWriter = node.createDataWriter<HelloWorldOne, HelloWorldOnePubSubType>("wwk", writer_qos);
+    auto dataWriter =
+        node.createDataWriter<HelloWorldOne, HelloWorldOnePubSubType>("wwk", writer_qos);
     if (!dataWriter) {
         LOG(error) << "Failed to create DataWriter";
         return;
@@ -101,7 +103,7 @@ void run_dds_data_reader()
     ParticipantQoSBuilder qos_configurator;
     qos_configurator.setDiscoveryMulticastLocator("239.255.0.1", 7400)
         .setUserMulticastLocator("239.255.0.1", 7401);
-    
+
     FastDataNode node(10, "test_reader", qos_configurator, listener);
 
     // 配置 DataReader QoS
