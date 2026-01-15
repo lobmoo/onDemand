@@ -40,7 +40,13 @@ using namespace eprosima::fastdds::rtps;
 /**
  * @brief Participant发现状态
  */
-enum class ParticipantStatus { DISCOVERED, /*发现*/ REMOVED /*移除*/, CHANGED /*改变*/ };
+enum class ParticipantStatus {
+    DISCOVERED, /*发现*/
+    REMOVED,    /*移除*/
+    CHANGED,    /*改变*/
+    DROPPED,    /*丢失*/
+    IGNORE      /*忽略*/
+};
 
 /**
  * @brief 匹配信息
@@ -70,7 +76,7 @@ struct EndpointInfo {
     bool discovered; // true: discovered, false: removed
 };
 
-//  Participant监听器基类 
+//  Participant监听器基类
 
 class ParticipantListener : public DomainParticipantListener
 {
@@ -108,6 +114,11 @@ protected:
             case ParticipantDiscoveryStatus::CHANGED_QOS_PARTICIPANT:
                 pinfo.status = ParticipantStatus::CHANGED;
                 break;
+            case ParticipantDiscoveryStatus::DROPPED_PARTICIPANT:
+                pinfo.status = ParticipantStatus::DROPPED;
+                break;
+            case ParticipantDiscoveryStatus::IGNORED_PARTICIPANT:
+                pinfo.status = ParticipantStatus::IGNORE;
             default:
                 return;
         }
@@ -194,7 +205,7 @@ protected:
 template <typename T>
 using MessageCallback = std::function<void(const std::string &topic, std::shared_ptr<T> message)>;
 
-// DataReader监听器基类 
+// DataReader监听器基类
 template <typename T>
 class DataReaderListener : public eprosima::fastdds::dds::DataReaderListener
 {
