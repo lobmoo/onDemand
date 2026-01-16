@@ -24,6 +24,7 @@
 #include <mutex>
 #include <thread>
 #include <vector>
+#include <unordered_set>
 
 #include "thread_pool.h"
 #include "timer_wheel.h"
@@ -41,7 +42,6 @@ TimerScheduler 架构:
 └─────────────────┘
 */
 
-
 using Tick = uint64_t;
 
 class TimerScheduler
@@ -57,7 +57,7 @@ public:
     // 调度单次执行的定时器
     std::shared_ptr<TimerEventInterface> Schedule(Callback callback, Tick delay_ticks);
 
-    // 调度周期性执行的定时器 
+    // 调度周期性执行的定时器
     std::shared_ptr<TimerEventInterface> ScheduleRecurring(Callback callback, Tick delay_ticks,
                                                            Tick interval_ticks);
 
@@ -69,20 +69,23 @@ public:
 
 private:
     // 单次执行定时器实现
-    class CallbackTimer : public TimerEventInterface
+    class CallbackTimer : public TimerEventInterface,
+                           public std::enable_shared_from_this<CallbackTimer>
     {
+        friend class TimerScheduler;
+
     public:
         CallbackTimer(Callback callback, TimerScheduler &scheduler);
         ~CallbackTimer() override = default;
 
         void execute() override;
         void cancel();
-        
 
     private:
         Callback callback_;
         TimerScheduler &scheduler_;
         std::atomic<bool> is_canceled_;
+        
     };
 
     // 周期性执行定时器实现
@@ -103,6 +106,9 @@ private:
         std::atomic<bool> is_canceled_;
     };
 
+    // 从活跃列表中移除（内部使用）
+    void RemoveFromActive(std::shared_ptr<TimerEventInterface> timer);
+
     // 重新调度周期性定时器（内部使用）
     void RescheduleRecurring(std::shared_ptr<TimerEventInterface> timer, Tick delay_ticks);
 
@@ -115,9 +121,9 @@ private:
     std::thread timer_thread_;
     std::mutex mutex_;
     Tick tick_ms_; // 时钟周期（毫秒）
-    std::vector<std::shared_ptr<TimerEventInterface>> active_timers_;
+    std::unordered_set<std::shared_ptr<TimerEventInterface>> active_timers_;
 
-    // 禁用拷贝构造和拷贝赋值
+   
     TimerScheduler(const TimerScheduler &) = delete;
     TimerScheduler &operator=(const TimerScheduler &) = delete;
 };
@@ -132,10 +138,20 @@ inline TimerScheduler::TimerScheduler(Tick tick_ms, size_t thread_pool_size)
 
 inline TimerScheduler::~TimerScheduler()
 {
+    // 先停止定时器线程
     should_stop_.store(true, std::memory_order_release);
     if (timer_thread_.joinable()) {
         timer_thread_.join();
     }
+    
+    // 取消所有活跃的周期性定时器，防止悬空引用
+    std::lock_guard<std::mutex> lock(mutex_);
+    for (auto& timer : active_timers_) {
+        if (timer) {
+            timer->cancel();
+        }
+    }
+    active_timers_.clear();
 }
 
 inline std::shared_ptr<TimerEventInterface> TimerScheduler::Schedule(Callback callback,
@@ -147,18 +163,12 @@ inline std::shared_ptr<TimerEventInterface> TimerScheduler::Schedule(Callback ca
         std::lock_guard<std::mutex> lock(mutex_);
         try {
             timer_wheel_.schedule(timer.get(), delay_ticks);
-
-            // 检查是否已经在活跃列表中，避免重复添加
-            if (std::find(active_timers_.begin(), active_timers_.end(), timer)
-                == active_timers_.end()) {
-                active_timers_.push_back(timer);
-            }
+            active_timers_.insert(timer);
         } catch (const std::exception &e) {
             std::cerr << "Error scheduling timer: " << e.what() << std::endl;
             throw;
         }
     }
-
     return timer;
 }
 
@@ -172,11 +182,7 @@ TimerScheduler::ScheduleRecurring(Callback callback, Tick delay_ticks, Tick inte
         std::lock_guard<std::mutex> lock(mutex_);
         try {
             timer_wheel_.schedule(timer.get(), delay_ticks);
-
-            if (std::find(active_timers_.begin(), active_timers_.end(), timer)
-                == active_timers_.end()) {
-                active_timers_.push_back(timer);
-            }
+            active_timers_.insert(timer);  
         } catch (const std::exception &e) {
             std::cerr << "Error scheduling recurring timer: " << e.what() << std::endl;
             throw;
@@ -196,8 +202,7 @@ inline void TimerScheduler::Cancel(std::shared_ptr<TimerEventInterface> timer)
 
     {
         std::lock_guard<std::mutex> lock(mutex_);
-        active_timers_.erase(std::remove(active_timers_.begin(), active_timers_.end(), timer),
-                             active_timers_.end());
+        active_timers_.erase(timer);
     }
 }
 
@@ -217,10 +222,6 @@ inline void TimerScheduler::RescheduleRecurring(std::shared_ptr<TimerEventInterf
 {
     std::lock_guard<std::mutex> lock(mutex_);
     timer_wheel_.schedule(timer.get(), delay_ticks);
-
-    if (std::find(active_timers_.begin(), active_timers_.end(), timer) == active_timers_.end()) {
-        active_timers_.push_back(timer);
-    }
 }
 
 inline void TimerScheduler::TimerLoop()
@@ -267,10 +268,13 @@ inline void TimerScheduler::CallbackTimer::execute()
         return;
     }
 
-    scheduler_.Post([callback = callback_, &is_canceled = is_canceled_]() {
+    auto self = shared_from_this();
+    scheduler_.Post([callback = callback_, &is_canceled = is_canceled_, self, &scheduler = scheduler_]() {
         if (!is_canceled.load(std::memory_order_acquire)) {
             callback();
         }
+        // 执行完后从活跃列表移除
+        scheduler.RemoveFromActive(self);
     });
 }
 
@@ -296,19 +300,18 @@ inline void TimerScheduler::RecurringCallbackTimer::execute()
         return;
     }
 
-    // 执行回调
-    scheduler_.Post([callback = callback_, &is_canceled = is_canceled_]() {
+    auto self = shared_from_this();
+    
+    // 执行回调并重新调度（原子操作，避免中间被取消导致不一致）
+    scheduler_.Post([callback = callback_, &is_canceled = is_canceled_, self]() {
         if (!is_canceled.load(std::memory_order_acquire)) {
             callback();
         }
-    });
-
-    // 重新调度下一次执行
-    if (!is_canceled_.load(std::memory_order_acquire)) {
-        scheduler_.Post([self = shared_from_this()]() {
+        // 执行完后重新调度下一次（无论回调是否执行）
+        if (!is_canceled.load(std::memory_order_acquire)) {
             self->scheduler_.RescheduleRecurring(self, self->interval_ticks_);
-        });
-    }
+        }
+    });
 }
 
 inline void TimerScheduler::RecurringCallbackTimer::cancel()
@@ -591,3 +594,8 @@ int main() {
     return 0;
 }
 #endif
+inline void TimerScheduler::RemoveFromActive(std::shared_ptr<TimerEventInterface> timer)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    active_timers_.erase(timer);
+}
