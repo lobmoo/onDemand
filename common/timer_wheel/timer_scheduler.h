@@ -64,6 +64,15 @@ public:
     // 取消定时器
     void Cancel(std::shared_ptr<TimerEventInterface> timer);
 
+    // 暂停调度器（所有定时器停止触发，但不清除）
+    void Pause();
+
+    // 恢复调度器
+    void Resume();
+
+    // 停止调度器（等同于析构，停止所有定时器）
+    void Stop();
+
     // 立即执行回调（异步）
     void Post(Callback callback);
 
@@ -118,6 +127,7 @@ private:
     ThreadPool thread_pool_;
     TimerWheel timer_wheel_;
     std::atomic<bool> should_stop_;
+    std::atomic<bool> is_paused_;  // 暂停标志
     std::thread timer_thread_;
     std::mutex mutex_;
     Tick tick_ms_; // 时钟周期（毫秒）
@@ -131,7 +141,8 @@ private:
 // ============ 实现部分（通常在.cc文件中） ============
 
 inline TimerScheduler::TimerScheduler(Tick tick_ms, size_t thread_pool_size)
-    : thread_pool_(thread_pool_size), timer_wheel_(), should_stop_(false), tick_ms_(tick_ms)
+    : mutex_(), active_timers_(), timer_wheel_(), tick_ms_(tick_ms), 
+      should_stop_(false), is_paused_(false), timer_thread_(), thread_pool_(thread_pool_size)
 {
     timer_thread_ = std::thread([this]() { TimerLoop(); });
 }
@@ -206,6 +217,32 @@ inline void TimerScheduler::Cancel(std::shared_ptr<TimerEventInterface> timer)
     }
 }
 
+inline void TimerScheduler::Pause()
+{
+    is_paused_.store(true, std::memory_order_release);
+}
+
+inline void TimerScheduler::Resume()
+{
+    is_paused_.store(false, std::memory_order_release);
+}
+
+inline void TimerScheduler::Stop()
+{
+    should_stop_.store(true, std::memory_order_release);
+    if (timer_thread_.joinable()) {
+        timer_thread_.join();
+    }
+    
+    std::lock_guard<std::mutex> lock(mutex_);
+    for (auto& timer : active_timers_) {
+        if (timer) {
+            timer->cancel();
+        }
+    }
+    active_timers_.clear();
+}
+
 inline void TimerScheduler::Post(Callback callback)
 {
     thread_pool_.enqueue([callback = std::move(callback)]() {
@@ -235,7 +272,8 @@ inline void TimerScheduler::TimerLoop()
         auto now = Clock::now();
 
         if (now >= next_tick) {
-            {
+            // 如果处于暂停状态，跳过定时器处理
+            if (!is_paused_.load(std::memory_order_acquire)) {
                 std::lock_guard<std::mutex> lock(mutex_);
 
                 // 限制每次tick最多处理的定时器数量，避免阻塞过久
@@ -319,6 +357,14 @@ inline void TimerScheduler::RecurringCallbackTimer::cancel()
     is_canceled_.store(true, std::memory_order_release);
     TimerEventInterface::cancel();
 }
+
+
+inline void TimerScheduler::RemoveFromActive(std::shared_ptr<TimerEventInterface> timer)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    active_timers_.erase(timer);
+}
+
 
 // ============ 使用示例 TEST ============
 
@@ -594,8 +640,3 @@ int main() {
     return 0;
 }
 #endif
-inline void TimerScheduler::RemoveFromActive(std::shared_ptr<TimerEventInterface> timer)
-{
-    std::lock_guard<std::mutex> lock(mutex_);
-    active_timers_.erase(timer);
-}
