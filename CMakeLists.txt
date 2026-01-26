@@ -21,6 +21,7 @@ option(SAMPLE "Build example" ON)
 if(SAMPLE)
     add_subdirectory(sample/node_example)
     add_subdirectory(sample/request_reply_example)
+    add_subdirectory(sample/shm_example)
 endif()
 
 
