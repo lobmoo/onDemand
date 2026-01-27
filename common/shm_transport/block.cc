@@ -16,56 +16,67 @@
 #include "block.h"
 #include "common.h"
 
-namespace shm_module {
+namespace shm_module
+{
 
 const int32_t Block::kRWLockFree = 0;
 const int32_t Block::kWriteExclusive = -1;
 const int32_t Block::kMaxTryLockTimes = 5;
 
-Block::Block() : msg_size_(0), msg_info_size_(0) {}
-
-Block::~Block() {}
-
-bool Block::TryLockForWrite() {
-  int32_t rw_lock_free = kRWLockFree;
-  if (!lock_num_.compare_exchange_weak(rw_lock_free, kWriteExclusive,
-                                       std::memory_order_acq_rel,
-                                       std::memory_order_relaxed)) {
-    SHM_DEBUG("Lock num: " << lock_num_.load());
-    return false;
-  }
-  return true;
+Block::Block() : msg_size_(0), msg_info_size_(0)
+{
 }
 
-bool Block::TryLockForRead() {
-  int32_t lock_num = lock_num_.load();
-  if (lock_num < kRWLockFree) {
-    SHM_INFO("Block is being written");
-    return false;
-  }
+Block::~Block()
+{
+}
 
-  int32_t try_times = 0;
-  while (!lock_num_.compare_exchange_weak(lock_num, lock_num + 1,
-                                          std::memory_order_acq_rel,
-                                          std::memory_order_relaxed)) {
-    ++try_times;
-    if (try_times == kMaxTryLockTimes) {
-      SHM_INFO("Failed to add read lock num, current num: " << lock_num);
-      return false;
+bool Block::TryLockForWrite()
+{
+    int32_t rw_lock_free = kRWLockFree;
+    if (!lock_num_.compare_exchange_weak(rw_lock_free, kWriteExclusive, std::memory_order_acq_rel,
+                                         std::memory_order_relaxed)) {
+        LOG(debug) << "Lock num: " << lock_num_.load();
+        return false;
     }
+    return true;
+}
 
-    lock_num = lock_num_.load();
+bool Block::TryLockForRead()
+{
+    int32_t lock_num = lock_num_.load();
     if (lock_num < kRWLockFree) {
-      SHM_INFO("Block is being written");
-      return false;
+        LOG(info) << "Block is being written";
+        return false;
     }
-  }
 
-  return true;
+    int32_t try_times = 0;
+    while (!lock_num_.compare_exchange_weak(lock_num, lock_num + 1, std::memory_order_acq_rel,
+                                            std::memory_order_relaxed)) {
+        ++try_times;
+        if (try_times == kMaxTryLockTimes) {
+            LOG(info) << "Failed to add read lock num, current num: " << lock_num;
+            return false;
+        }
+
+        lock_num = lock_num_.load();
+        if (lock_num < kRWLockFree) {
+            LOG(info) << "Block is being written";
+            return false;
+        }
+    }
+
+    return true;
 }
 
-void Block::ReleaseWriteLock() { lock_num_.fetch_add(1); }
+void Block::ReleaseWriteLock()
+{
+    lock_num_.fetch_add(1);
+}
 
-void Block::ReleaseReadLock() { lock_num_.fetch_sub(1); }
+void Block::ReleaseReadLock()
+{
+    lock_num_.fetch_sub(1);
+}
 
-}  // namespace shm_module
+} // namespace shm_module

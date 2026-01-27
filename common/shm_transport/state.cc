@@ -17,11 +17,15 @@
 
 #include "state.h"
 
-namespace shm_module {
+namespace shm_module
+{
 
-State::State(const uint64_t& ceiling_msg_size)
-    : ceiling_msg_size_(ceiling_msg_size) {}
+State::State(const uint64_t &ceiling_msg_size) : ceiling_msg_size_(ceiling_msg_size)
+{
+}
 
-State::~State() {}
+State::~State()
+{
+}
 
-}  // namespace shm_module
+} // namespace shm_module

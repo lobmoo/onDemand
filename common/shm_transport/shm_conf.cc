@@ -129,7 +129,7 @@ uint32_t ShmConf::GetBlockNum(const uint64_t &ceiling_msg_size)
             num = BLOCK_NUM_MORE;
             break;
         default:
-            SHM_ERROR("Unknown ceiling_msg_size: " << ceiling_msg_size);
+            LOG(error) << "Unknown ceiling_msg_size: " << ceiling_msg_size;
             break;
     }
     return num;

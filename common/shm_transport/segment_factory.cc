@@ -18,12 +18,13 @@
 #include "common.h"
 #include "log/logger.h"
 
-namespace shm_module {
+namespace shm_module
+{
 
-
-std::shared_ptr<Segment> SegmentFactory::CreateSegment(uint64_t id) {
-  LOG(info) << "Creating POSIX segment, channel_id: " << id;
-  return std::make_shared<PosixSegment>(id);
+std::shared_ptr<Segment> SegmentFactory::CreateSegment(uint64_t id)
+{
+    LOG(info) << "Creating POSIX segment, channel_id: " << id;
+    return std::make_shared<PosixSegment>(id);
 }
 
-}  // namespace shm_module
+} // namespace shm_module

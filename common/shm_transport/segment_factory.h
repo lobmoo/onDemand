@@ -19,13 +19,15 @@
 #include <memory>
 #include "segment.h"
 
-namespace shm_module {
+namespace shm_module
+{
 
-class SegmentFactory {
- public:
-  static std::shared_ptr<Segment> CreateSegment(uint64_t id);
+class SegmentFactory
+{
+public:
+    static std::shared_ptr<Segment> CreateSegment(uint64_t id);
 };
 
-}  // namespace shm_module
+} // namespace shm_module
 
-#endif  // SHM_MODULE_SEGMENT_FACTORY_H_
+#endif // SHM_MODULE_SEGMENT_FACTORY_H_

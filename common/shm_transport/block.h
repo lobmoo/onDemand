@@ -20,39 +20,39 @@
 #include <atomic>
 #include <cstdint>
 
-namespace shm_module {
+namespace shm_module
+{
 
-class Block {
-  friend class Segment;
+class Block
+{
+    friend class Segment;
 
- public:
-  Block();
-  virtual ~Block();
+public:
+    Block();
+    virtual ~Block();
 
-  uint64_t msg_size() const { return msg_size_; }
-  void set_msg_size(uint64_t msg_size) { msg_size_ = msg_size; }
+    uint64_t msg_size() const { return msg_size_; }
+    void set_msg_size(uint64_t msg_size) { msg_size_ = msg_size; }
 
-  uint64_t msg_info_size() const { return msg_info_size_; }
-  void set_msg_info_size(uint64_t msg_info_size) {
-    msg_info_size_ = msg_info_size;
-  }
+    uint64_t msg_info_size() const { return msg_info_size_; }
+    void set_msg_info_size(uint64_t msg_info_size) { msg_info_size_ = msg_info_size; }
 
-  static const int32_t kRWLockFree;
-  static const int32_t kWriteExclusive;
-  static const int32_t kMaxTryLockTimes;
+    static const int32_t kRWLockFree;
+    static const int32_t kWriteExclusive;
+    static const int32_t kMaxTryLockTimes;
 
- private:
-  bool TryLockForWrite();
-  bool TryLockForRead();
-  void ReleaseWriteLock();
-  void ReleaseReadLock();
+private:
+    bool TryLockForWrite();
+    bool TryLockForRead();
+    void ReleaseWriteLock();
+    void ReleaseReadLock();
 
-  std::atomic<int32_t> lock_num_ = {0};
+    std::atomic<int32_t> lock_num_ = {0};
 
-  uint64_t msg_size_;
-  uint64_t msg_info_size_;
+    uint64_t msg_size_;
+    uint64_t msg_info_size_;
 };
 
-}  // namespace shm_module
+} // namespace shm_module
 
-#endif  // SHM_MODULE_BLOCK_H_
+#endif // SHM_MODULE_BLOCK_H_

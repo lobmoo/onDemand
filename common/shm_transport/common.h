@@ -19,17 +19,13 @@
 #include <iostream>
 #include <cstdint>
 #include <cstring>
+#include "log/logger.h"
 
-// 简化的日志宏，替代 Apollo 的 AERROR, AINFO, ADEBUG
-#define SHM_ERROR(msg) std::cerr << "[ERROR] " << msg << std::endl
-#define SHM_INFO(msg) std::cout << "[INFO] " << msg << std::endl
-#define SHM_DEBUG(msg) std::cout << "[DEBUG] " << msg << std::endl
+// RETURN_VAL_IF_NULL
+#define RETURN_VAL_IF_NULL(ptr, val)                                                               \
+    if (ptr == nullptr) {                                                                          \
+        LOG(error) << "Null pointer check failed";                                                 \
+        return val;                                                                                \
+    }
 
-// 替代 RETURN_VAL_IF_NULL 宏
-#define RETURN_VAL_IF_NULL(ptr, val) \
-  if (ptr == nullptr) { \
-    SHM_ERROR("Null pointer check failed"); \
-    return val; \
-  }
-
-#endif  // SHM_MODULE_COMMON_H_
+#endif // SHM_MODULE_COMMON_H_

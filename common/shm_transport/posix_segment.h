@@ -20,25 +20,27 @@
 #include <string>
 #include "segment.h"
 
-namespace shm_module {
+namespace shm_module
+{
 
-class PosixSegment : public Segment {
- public:
-  explicit PosixSegment(uint64_t channel_id);
-  virtual ~PosixSegment();
+class PosixSegment : public Segment
+{
+public:
+    explicit PosixSegment(uint64_t channel_id);
+    virtual ~PosixSegment();
 
-  static const char* Type() { return "posix"; }
+    static const char *Type() { return "posix"; }
 
- protected:
-  bool OpenOrCreate() override;
-  bool OpenOnly() override;
-  bool Remove() override;
-  void Reset() override;
+protected:
+    bool OpenOrCreate() override;
+    bool OpenOnly() override;
+    bool Remove() override;
+    void Reset() override;
 
- private:
-  std::string shm_name_;
+private:
+    std::string shm_name_;
 };
 
-}  // namespace shm_module
+} // namespace shm_module
 
-#endif  // SHM_MODULE_POSIX_SEGMENT_H_
+#endif // SHM_MODULE_POSIX_SEGMENT_H_

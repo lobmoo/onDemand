@@ -24,218 +24,223 @@
 #include <cerrno>
 #include <cstring>
 
-namespace shm_module {
+namespace shm_module
+{
 
-PosixSegment::PosixSegment(uint64_t channel_id) : Segment(channel_id) {
-  shm_name_ = std::to_string(channel_id);
+PosixSegment::PosixSegment(uint64_t channel_id) : Segment(channel_id)
+{
+    shm_name_ = std::to_string(channel_id);
 }
 
-PosixSegment::~PosixSegment() { Destroy(); }
+PosixSegment::~PosixSegment()
+{
+    Destroy();
+}
 
-bool PosixSegment::OpenOrCreate() {
-  if (init_) {
-    return true;
-  }
-
-  // create shm
-  int fd = shm_open(shm_name_.c_str(), O_RDWR | O_CREAT | O_EXCL, 0644);
-  if (fd == -1) {
-    if (EEXIST == errno) {
-      SHM_DEBUG("Shm already exists, open only");
-      return OpenOnly();
-    } else {
-      SHM_ERROR("Create shm failed: " << strerror(errno));
-      return false;
+bool PosixSegment::OpenOrCreate()
+{
+    if (init_) {
+        return true;
     }
-  }
 
-  // truncate
-  if (ftruncate(fd, conf_.managed_shm_size()) == -1) {
-    SHM_ERROR("Truncate failed: " << strerror(errno));
+    // create shm
+    int fd = shm_open(shm_name_.c_str(), O_RDWR | O_CREAT | O_EXCL, 0644);
+    if (fd == -1) {
+        if (EEXIST == errno) {
+            LOG(error) << "Shm already exists, open only";
+            return OpenOnly();
+        } else {
+            LOG(error) << "Create shm failed: " << strerror(errno);
+            return false;
+        }
+    }
+
+    // truncate
+    if (ftruncate(fd, conf_.managed_shm_size()) == -1) {
+        LOG(error) << "Truncate failed: " << strerror(errno);
+        close(fd);
+        shm_unlink(shm_name_.c_str());
+        return false;
+    }
+
+    // mmap
+    managed_shm_ =
+        mmap(nullptr, conf_.managed_shm_size(), PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    if (managed_shm_ == MAP_FAILED) {
+        LOG(error) << "Attach shm failed: " << strerror(errno);
+        close(fd);
+        shm_unlink(shm_name_.c_str());
+        return false;
+    }
+
     close(fd);
-    shm_unlink(shm_name_.c_str());
-    return false;
-  }
 
-  // mmap
-  managed_shm_ = mmap(nullptr, conf_.managed_shm_size(), PROT_READ | PROT_WRITE,
-                      MAP_SHARED, fd, 0);
-  if (managed_shm_ == MAP_FAILED) {
-    SHM_ERROR("Attach shm failed: " << strerror(errno));
-    close(fd);
-    shm_unlink(shm_name_.c_str());
-    return false;
-  }
+    // create field state_
+    state_ = new (managed_shm_) State(conf_.ceiling_msg_size());
+    if (state_ == nullptr) {
+        LOG(error) << "Create state failed";
+        munmap(managed_shm_, conf_.managed_shm_size());
+        managed_shm_ = nullptr;
+        shm_unlink(shm_name_.c_str());
+        return false;
+    }
 
-  close(fd);
+    conf_.Update(state_->ceiling_msg_size());
 
-  // create field state_
-  state_ = new (managed_shm_) State(conf_.ceiling_msg_size());
-  if (state_ == nullptr) {
-    SHM_ERROR("Create state failed");
-    munmap(managed_shm_, conf_.managed_shm_size());
-    managed_shm_ = nullptr;
-    shm_unlink(shm_name_.c_str());
-    return false;
-  }
+    // create field blocks_
+    blocks_ = new (static_cast<char *>(managed_shm_) + sizeof(State)) Block[conf_.block_num()];
+    if (blocks_ == nullptr) {
+        LOG(error) << "Create blocks failed";
+        state_->~State();
+        state_ = nullptr;
+        munmap(managed_shm_, conf_.managed_shm_size());
+        managed_shm_ = nullptr;
+        shm_unlink(shm_name_.c_str());
+        return false;
+    }
 
-  conf_.Update(state_->ceiling_msg_size());
-
-  // create field blocks_
-  blocks_ = new (static_cast<char*>(managed_shm_) + sizeof(State))
-      Block[conf_.block_num()];
-  if (blocks_ == nullptr) {
-    SHM_ERROR("Create blocks failed");
-    state_->~State();
-    state_ = nullptr;
-    munmap(managed_shm_, conf_.managed_shm_size());
-    managed_shm_ = nullptr;
-    shm_unlink(shm_name_.c_str());
-    return false;
-  }
-
-  // create block buf
-  uint32_t i = 0;
-  for (; i < conf_.block_num(); ++i) {
-    uint8_t* addr =
-        new (static_cast<char*>(managed_shm_) + sizeof(State) +
-             conf_.block_num() * sizeof(Block) + i * conf_.block_buf_size())
+    // create block buf
+    uint32_t i = 0;
+    for (; i < conf_.block_num(); ++i) {
+        uint8_t *addr = new (static_cast<char *>(managed_shm_) + sizeof(State)
+                             + conf_.block_num() * sizeof(Block) + i * conf_.block_buf_size())
             uint8_t[conf_.block_buf_size()];
 
-    if (addr == nullptr) {
-      break;
+        if (addr == nullptr) {
+            break;
+        }
+
+        std::lock_guard<std::mutex> lock(block_buf_lock_);
+        block_buf_addrs_[i] = addr;
     }
 
-    std::lock_guard<std::mutex> lock(block_buf_lock_);
-    block_buf_addrs_[i] = addr;
-  }
-
-  if (i != conf_.block_num()) {
-    SHM_ERROR("Create block buf failed");
-    state_->~State();
-    state_ = nullptr;
-    blocks_ = nullptr;
-    {
-      std::lock_guard<std::mutex> lock(block_buf_lock_);
-      block_buf_addrs_.clear();
+    if (i != conf_.block_num()) {
+        LOG(error) << "Create block buf failed";
+        state_->~State();
+        state_ = nullptr;
+        blocks_ = nullptr;
+        {
+            std::lock_guard<std::mutex> lock(block_buf_lock_);
+            block_buf_addrs_.clear();
+        }
+        munmap(managed_shm_, conf_.managed_shm_size());
+        managed_shm_ = nullptr;
+        shm_unlink(shm_name_.c_str());
+        return false;
     }
-    munmap(managed_shm_, conf_.managed_shm_size());
-    managed_shm_ = nullptr;
-    shm_unlink(shm_name_.c_str());
-    return false;
-  }
 
-  state_->IncreaseReferenceCounts();
-  init_ = true;
-  return true;
-}
-
-bool PosixSegment::OpenOnly() {
-  if (init_) {
+    state_->IncreaseReferenceCounts();
+    init_ = true;
     return true;
-  }
+}
 
-  // open shm
-  int fd = shm_open(shm_name_.c_str(), O_RDWR, 0644);
-  if (fd == -1) {
-    SHM_ERROR("Open shm failed: " << strerror(errno));
-    return false;
-  }
+bool PosixSegment::OpenOnly()
+{
+    if (init_) {
+        return true;
+    }
 
-  struct stat file_attr;
-  if (fstat(fd, &file_attr) == -1) {
-    SHM_ERROR("Fstat failed: " << strerror(errno));
+    // open shm
+    int fd = shm_open(shm_name_.c_str(), O_RDWR, 0644);
+    if (fd == -1) {
+        LOG(error) << "Open shm failed: " << strerror(errno);
+        return false;
+    }
+
+    struct stat file_attr;
+    if (fstat(fd, &file_attr) == -1) {
+        LOG(error) << "Fstat failed: " << strerror(errno);
+        close(fd);
+        return false;
+    }
+
+    // mmap
+    managed_shm_ = mmap(nullptr, file_attr.st_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    if (managed_shm_ == MAP_FAILED) {
+        LOG(error) << "Attach shm failed: " << strerror(errno);
+        close(fd);
+        return false;
+    }
+
     close(fd);
-    return false;
-  }
 
-  // mmap
-  managed_shm_ = mmap(nullptr, file_attr.st_size, PROT_READ | PROT_WRITE,
-                      MAP_SHARED, fd, 0);
-  if (managed_shm_ == MAP_FAILED) {
-    SHM_ERROR("Attach shm failed: " << strerror(errno));
-    close(fd);
-    return false;
-  }
+    // get field state_
+    state_ = reinterpret_cast<State *>(managed_shm_);
+    if (state_ == nullptr) {
+        LOG(error) << "Get state failed";
+        munmap(managed_shm_, file_attr.st_size);
+        managed_shm_ = nullptr;
+        return false;
+    }
 
-  close(fd);
+    conf_.Update(state_->ceiling_msg_size());
 
-  // get field state_
-  state_ = reinterpret_cast<State*>(managed_shm_);
-  if (state_ == nullptr) {
-    SHM_ERROR("Get state failed");
-    munmap(managed_shm_, file_attr.st_size);
-    managed_shm_ = nullptr;
-    return false;
-  }
+    // get field blocks_
+    blocks_ = reinterpret_cast<Block *>(static_cast<char *>(managed_shm_) + sizeof(State));
+    if (blocks_ == nullptr) {
+        LOG(error) << "Get blocks failed";
+        state_ = nullptr;
+        munmap(managed_shm_, conf_.managed_shm_size());
+        managed_shm_ = nullptr;
+        return false;
+    }
 
-  conf_.Update(state_->ceiling_msg_size());
+    // get block buf
+    uint32_t i = 0;
+    for (; i < conf_.block_num(); ++i) {
+        uint8_t *addr = reinterpret_cast<uint8_t *>(
+            static_cast<char *>(managed_shm_) + sizeof(State) + conf_.block_num() * sizeof(Block)
+            + i * conf_.block_buf_size());
 
-  // get field blocks_
-  blocks_ = reinterpret_cast<Block*>(static_cast<char*>(managed_shm_) +
-                                     sizeof(State));
-  if (blocks_ == nullptr) {
-    SHM_ERROR("Get blocks failed");
-    state_ = nullptr;
-    munmap(managed_shm_, conf_.managed_shm_size());
-    managed_shm_ = nullptr;
-    return false;
-  }
+        std::lock_guard<std::mutex> lock(block_buf_lock_);
+        block_buf_addrs_[i] = addr;
+    }
 
-  // get block buf
-  uint32_t i = 0;
-  for (; i < conf_.block_num(); ++i) {
-    uint8_t* addr = reinterpret_cast<uint8_t*>(
-        static_cast<char*>(managed_shm_) + sizeof(State) +
-        conf_.block_num() * sizeof(Block) + i * conf_.block_buf_size());
+    if (i != conf_.block_num()) {
+        LOG(error) << "Open only failed";
+        state_->~State();
+        state_ = nullptr;
+        blocks_ = nullptr;
+        {
+            std::lock_guard<std::mutex> lock(block_buf_lock_);
+            block_buf_addrs_.clear();
+        }
+        munmap(managed_shm_, conf_.managed_shm_size());
+        managed_shm_ = nullptr;
+        shm_unlink(shm_name_.c_str());
+        return false;
+    }
 
-    std::lock_guard<std::mutex> lock(block_buf_lock_);
-    block_buf_addrs_[i] = addr;
-  }
+    state_->IncreaseReferenceCounts();
+    init_ = true;
+    LOG(error) << "Open only success";
+    return true;
+}
 
-  if (i != conf_.block_num()) {
-    SHM_ERROR("Open only failed");
-    state_->~State();
+bool PosixSegment::Remove()
+{
+    if (shm_unlink(shm_name_.c_str()) == -1) {
+        LOG(error) << "Remove failed: " << strerror(errno);
+        return false;
+    }
+    LOG(error) << "Remove success";
+    return true;
+}
+
+void PosixSegment::Reset()
+{
+    if (managed_shm_ != nullptr) {
+        munmap(managed_shm_, conf_.managed_shm_size());
+        managed_shm_ = nullptr;
+    }
+
     state_ = nullptr;
     blocks_ = nullptr;
     {
-      std::lock_guard<std::mutex> lock(block_buf_lock_);
-      block_buf_addrs_.clear();
+        std::lock_guard<std::mutex> lock(block_buf_lock_);
+        block_buf_addrs_.clear();
     }
-    munmap(managed_shm_, conf_.managed_shm_size());
-    managed_shm_ = nullptr;
-    shm_unlink(shm_name_.c_str());
-    return false;
-  }
-
-  state_->IncreaseReferenceCounts();
-  init_ = true;
-  SHM_DEBUG("Open only success");
-  return true;
+    init_ = false;
 }
 
-bool PosixSegment::Remove() {
-  if (shm_unlink(shm_name_.c_str()) == -1) {
-    SHM_ERROR("Remove failed: " << strerror(errno));
-    return false;
-  }
-  SHM_DEBUG("Remove success");
-  return true;
-}
-
-void PosixSegment::Reset() {
-  if (managed_shm_ != nullptr) {
-    munmap(managed_shm_, conf_.managed_shm_size());
-    managed_shm_ = nullptr;
-  }
-
-  state_ = nullptr;
-  blocks_ = nullptr;
-  {
-    std::lock_guard<std::mutex> lock(block_buf_lock_);
-    block_buf_addrs_.clear();
-  }
-  init_ = false;
-}
-
-}  // namespace shm_module
+} // namespace shm_module
