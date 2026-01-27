@@ -53,6 +53,15 @@ class ShmConf {
   // Message info size, Byte (预留元数据空间)
   static const uint64_t MESSAGE_INFO_SIZE;
   
+  //For 0-8B
+  static const uint32_t BLOCK_NUM_8B;
+  static const uint64_t MESSAGE_SIZE_8B;
+
+  //ADD
+  
+  //For 0-8KB
+  static const uint32_t BLOCK_NUM_8K;
+  static const uint64_t MESSAGE_SIZE_8K;
   // For message 0-16KB
   static const uint32_t BLOCK_NUM_16K;
   static const uint64_t MESSAGE_SIZE_16K;
