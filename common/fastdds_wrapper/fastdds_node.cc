@@ -207,7 +207,24 @@ void FastDataNode::cleanup()
 {
     std::lock_guard<std::mutex> lock(mutex_);
 
+    // 检查并释放仍然有效的writers
+    for (auto& pair : writers_) {
+        if (auto writer = pair.second.lock()) {
+            LOG(warning) << "DataWriter for topic '" << pair.first 
+                         << "' still exists, releasing...";
+            writer.reset();
+        }
+    }
     writers_.clear();
+
+    // 检查并释放仍然有效的readers
+    for (auto& pair : readers_) {
+        if (auto reader = pair.second.lock()) {
+            LOG(warning) << "DataReader for topic '" << pair.first 
+                         << "' still exists, releasing...";
+            reader.reset();
+        }
+    }
     readers_.clear();
 
     for (auto &pair : topics_) {

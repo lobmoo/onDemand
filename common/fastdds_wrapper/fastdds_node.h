@@ -97,7 +97,12 @@ public:
 
         std::lock_guard<std::mutex> lock(mutex_);
 
-        if (writers_.find(topicName) != writers_.end()) {
+        // 检查是否存在有效的writer
+
+        auto it = writers_.find(topicName);
+
+        if (it != writers_.end() && !it->second.expired()) {
+
             LOG(error) << "DataWriter for topic '" << topicName
                        << "' already exists. Use a different topic name or destroy the existing "
                           "writer first.";
@@ -137,7 +142,12 @@ public:
         }
 
         std::lock_guard<std::mutex> lock(mutex_);
-        if (writers_.find(topicName) != writers_.end()) {
+        // 检查是否存在有效的writer
+
+        auto it = writers_.find(topicName);
+
+        if (it != writers_.end() && !it->second.expired()) {
+
             LOG(error) << "DataWriter for topic '" << topicName
                        << "' already exists. Use a different topic name or destroy the existing "
                           "writer first.";
@@ -180,10 +190,13 @@ public:
 
         std::lock_guard<std::mutex> lock(mutex_);
 
-        if (readers_.find(topicName) != readers_.end()) {
+        auto it = readers_.find(topicName);
+
+        if (it != readers_.end() && !it->second.expired()) {
             LOG(error) << "DataReader for topic '" << topicName
                        << "' already exists. Use a different topic name or destroy the existing "
                           "writer first.";
+
             return nullptr;
         }
 
@@ -225,10 +238,13 @@ public:
 
         std::lock_guard<std::mutex> lock(mutex_);
 
-        if (readers_.find(topicName) != readers_.end()) {
+        auto it = readers_.find(topicName);
+
+        if (it != readers_.end() && !it->second.expired()) {
             LOG(error) << "DataReader for topic '" << topicName
                        << "' already exists. Use a different topic name or destroy the existing "
                           "writer first.";
+
             return nullptr;
         }
 
@@ -299,9 +315,9 @@ private:
     std::unordered_map<std::string, TopicDataTypeCreator> topic_types_;
     std::unordered_map<std::string, eprosima::fastdds::dds::TypeSupport> registered_topic_types_;
 
-    // 对象管理
-    std::unordered_map<std::string, std::shared_ptr<void>> writers_;
-    std::unordered_map<std::string, std::shared_ptr<void>> readers_;
+    // 对象管理（使用weak_ptr，不干预生命周期）
+    std::unordered_map<std::string, std::weak_ptr<void>> writers_;
+    std::unordered_map<std::string, std::weak_ptr<void>> readers_;
 
     // 线程安全
     mutable std::mutex mutex_;
