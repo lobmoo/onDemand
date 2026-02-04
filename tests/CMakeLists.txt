@@ -26,7 +26,7 @@ set(API_TEST_INCLUDE
 # 添加可执行文件目标
 add_executable(${PROJECT_NAME} ${API_TEST_SOURCES}  ${DDS_INTERFACE_SOURCES_CPP} ${DDS_GEN_SOURCES_CPP})
 # #指定可执行文件生成路径 目前是当前cmakelist文件所在根目录
-set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
+set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/tests")
 target_include_directories(${PROJECT_NAME} PRIVATE  ${API_TEST_INCLUDE})
 
 target_link_libraries(${PROJECT_NAME} PRIVATE 

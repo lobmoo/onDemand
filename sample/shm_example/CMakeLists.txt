@@ -12,7 +12,7 @@ message(STATUS "Collected CPP sources: ${SHM_TRANSPORT_CC}")
 # 添加可执行文件目标
 add_executable(${PROJECT_NAME} ${SHM_TRANSPORT_CC} ${MAIN_CC})
 
-set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
+set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample")
 
 #头文件
 set(OBJ_CPP_INCLUDE

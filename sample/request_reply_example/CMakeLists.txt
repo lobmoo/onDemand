@@ -32,7 +32,7 @@ set(MAIN_SOURCES ${SOURCES_CC_FOR_MAIN} ${SOURCES_CC_FOR_API} ${SOURCES_CC_FOR_X
 # 添加可执行文件目标
 add_executable(${PROJECT_NAME} ${MAIN_SOURCES})
 #指定可执行文件生成路径 目前是当前cmakelist文件所在根目录
-set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
+set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample")
 target_include_directories(${PROJECT_NAME} PRIVATE  ${OBJ_CPP_INCLUDE})
 
 
