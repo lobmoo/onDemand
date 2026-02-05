@@ -33,6 +33,9 @@ namespace dsf
 namespace ondemand
 {
 
+
+#define ONDEMAND_BUCKET_SIZE  20
+
 /*日志宏定义*/
 /************************************************************************************************ */
 #define ONDEMANDLOG(level)                                                                         \
@@ -267,6 +270,21 @@ namespace ondemand
     /*********************************************************************************************************** */
 
     /**
+    * @brief FNV-1a 哈希函数
+    */
+    inline uint64_t fast_hash(const char *str)
+    {
+        uint64_t hash = 0xcbf29ce484222325ULL;
+        while (*str) {
+            hash ^= static_cast<uint64_t>(*str++);
+            hash *= 0x100000001b3ULL;
+        }
+        return hash;
+    }
+
+    inline uint64_t fast_hash(const std::string &str) { return fast_hash(str.c_str()); }
+
+    /**
      * @brief 将字节数组转换为16进制字符串
      * @param data 数据指针
      * @param size 数据大小
@@ -325,25 +343,25 @@ namespace ondemand
     }
 
     template <typename TopicType, typename TopicPubSubType>
-    dsf_ac_error_t registerNodeTopicWriter(
+    int32_t registerNodeTopicWriter(
         std::shared_ptr<DdsWrapper::DataNode> node,
         std::shared_ptr<DdsWrapper::DDSTopicWriter<TopicType>> &dataWriter, // 输出引用
         const std::string &dsfTopicName, const DdsWrapper::DataWriterQoSBuilder &writer_qos,
         DdsWrapper::DataWriterListener *listener = nullptr)
     {
         dataWriter = node->template createDataWriter<TopicType, TopicPubSubType>(
-            dsfTopicName, writer_qos, writerListener);
+            dsfTopicName, writer_qos, listener);
         if (!dataWriter) {
             LOG(error) << "Failed to create topic writer for topic [" << dsfTopicName << "].";
-            return DSF_AC_ERROR_INIT_FAILED;
+            return -1;
         }
 
         LOG(info) << "Topic [" << dsfTopicName << "] writer created.";
-        return DSF_AC_OK;
+        return 0;
     }
 
     template <typename TopicType, typename TopicPubSubType>
-    dsf_ac_error_t registerNodeTopicReader(
+    int32_t registerNodeTopicReader(
         std::shared_ptr<DdsWrapper::DataNode> node,
         std::shared_ptr<DdsWrapper::DDSTopicReader<TopicType>> &dataReader, // 输出引用
         const std::string &dsfTopicName,
@@ -353,14 +371,14 @@ namespace ondemand
     {
 
         dataReader = node->template createDataReader<TopicType, TopicPubSubType>(
-            dsfTopicName, processFunc, reader_qos, readerListener);
+            dsfTopicName, processFunc, reader_qos, listener);
         if (!dataReader) {
             LOG(error) << "Failed to create topic reader for topic [" << dsfTopicName << "].";
-            return DSF_AC_ERROR_INIT_FAILED;
+            return -1;
         }
 
         LOG(debug) << "Topic [" << dsfTopicName << "] reader created.";
-        return DSF_AC_OK;
+        return 0;
     }
 
 } // namespace ondemand
