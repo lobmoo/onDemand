@@ -5,6 +5,15 @@ project(DEMO  LANGUAGES  C CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+option(USE_FASTDDS "Use FastDDS implementation" ON)
+
+if(USE_FASTDDS)
+    add_definitions(-DUSE_FASTDDS)
+    message(STATUS "Using FastDDS implementation")
+else()
+    add_definitions(-DUSE_TXDDS)
+    message(STATUS "Using TXDDS implementation")
+endif()
 
 add_subdirectory(common/log)
 add_subdirectory(core)

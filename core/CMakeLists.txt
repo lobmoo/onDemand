@@ -3,25 +3,28 @@ cmake_minimum_required(VERSION 3.16)
 project(demo_exec  LANGUAGES  CXX)
 set(LIBRARY_OUTPUT_NAME  demo)
 
+
+
 #头文件
 set(OBJ_CPP_INCLUDE
     ${CMAKE_SOURCE_DIR}/common
     ${CMAKE_SOURCE_DIR}/core
-    ${CMAKE_SOURCE_DIR}/thirdparty/tinyxml/include
-    ${CMAKE_SOURCE_DIR}/thirdparty/BS_thread_pool/include
+    ${CMAKE_SOURCE_DIR}/core/ondemand/.gensrc
     ${CMAKE_SOURCE_DIR}/thirdparty/spdlog/include
+    ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/include
 )
 
 
 # set(SOURCES_CC_FOR_NET_WORK
 #     "${CMAKE_CURRENT_SOURCE_DIR}/net_interface.cc"
 # )
-                              
-file(GLOB SOURCES_CC_FOR_MAIN "${CMAKE_CURRENT_SOURCE_DIR}/*.cc")
+   
+file(GLOB SOURCES_CC_FOR_ONDEMAND "${CMAKE_CURRENT_SOURCE_DIR}/ondemand/*.cc")
+file(GLOB SOURCES_CC_FOR_MAIN "${CMAKE_CURRENT_SOURCE_DIR}/main.cc")
 
 
 # 合并所有查找到的文件列表
-set(MAIN_SOURCES ${SOURCES_CC_FOR_MAIN} )
+set(MAIN_SOURCES ${SOURCES_CC_FOR_MAIN} ${SOURCES_CC_FOR_ONDEMAND})
 
 
 option(BUILD_LIBRARY "Build library" OFF)
@@ -29,22 +32,20 @@ option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
 
 
 if(BUILD_LIBRARY)
-    add_library(${LIBRARY_OUTPUT_NAME} ${MAIN_SOURCES})  # 添加源文件
+    add_library(${LIBRARY_OUTPUT_NAME} ${SOURCES_CC_FOR_ONDEMAND})  # 添加源文件
     target_include_directories(${LIBRARY_OUTPUT_NAME} PRIVATE ${OBJ_CPP_INCLUDE})
     
     # 库也需要链接依赖
     target_link_libraries(${LIBRARY_OUTPUT_NAME} PRIVATE 
-        ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_system.a
-        ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_thread.a
-        ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_filesystem.a 
-        ${CMAKE_SOURCE_DIR}/thirdparty/yaml-cpp/lib/libyaml-cpp.a
-        ${CMAKE_SOURCE_DIR}/thirdparty/tinyxml/lib/libtinyxml2.a 
+        ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib/libfastdds.so
+        ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib/libfastcdr.so
+        ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib/libfoonathan_memory-0.7.3.so
         pthread 
         rt
         log::log 
     )
     
-    target_compile_options(${LIBRARY_OUTPUT_NAME} PRIVATE -fPIC -O3)
+    target_compile_options(${LIBRARY_OUTPUT_NAME} PRIVATE -fPIC -g)
 endif()
 
 
@@ -56,11 +57,9 @@ target_include_directories(${PROJECT_NAME} PRIVATE  ${OBJ_CPP_INCLUDE})
 
 
 target_link_libraries(${PROJECT_NAME} PRIVATE 
-    ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_system.a
-    ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_thread.a
-    ${CMAKE_SOURCE_DIR}/thirdparty/boost/lib/libboost_filesystem.a 
-    ${CMAKE_SOURCE_DIR}/thirdparty/yaml-cpp/lib/libyaml-cpp.a
-    ${CMAKE_SOURCE_DIR}/thirdparty/tinyxml/lib/libtinyxml2.a 
+    ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib/libfastdds.so
+    ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib/libfastcdr.so
+    ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib/libfoonathan_memory-0.7.3.so
     pthread 
     rt
     log::log 
