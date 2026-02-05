@@ -159,15 +159,33 @@ bool Logger::LoggerImpl::Init(const std::string &file_name, Logger::LoggerType t
     if (is_async) {
         log_buffer_size_ = std::max(log_buffer_size_, static_cast<size_t>(64 * 1024)); //64k
         size_t thread_count = std::max(1u, std::thread::hardware_concurrency() / 4);   // 线程池
+        
+        // 尝试初始化或获取已存在的线程池
+        bool thread_pool_available = false;
         try {
             spdlog::init_thread_pool(log_buffer_size_, thread_count);
-        } catch (const std::exception &e) {
+            thread_pool_available = true;
+        } catch (const spdlog::spdlog_ex &e) {
+            // 线程池可能已存在,尝试获取
+            try {
+                auto tp = spdlog::thread_pool();
+                if (tp) {
+                    thread_pool_available = true;
+                }
+            } catch (...) {
+                std::cerr << "Warning: Failed to get thread pool, falling back to sync logger" << std::endl;
+            }
         }
 
-        logger_ = std::make_shared<spdlog::async_logger>(
-            "Logger", sinks.begin(), sinks.end(), spdlog::thread_pool(),
-            spdlog::async_overflow_policy::overrun_oldest); // 覆盖策略而非阻塞
-    } else {
+        if (thread_pool_available) {
+            logger_ = std::make_shared<spdlog::async_logger>(
+                "Logger", sinks.begin(), sinks.end(), spdlog::thread_pool(),
+                spdlog::async_overflow_policy::overrun_oldest); // 覆盖策略而非阻塞
+        } else {
+            std::cerr << "Warning: Using synchronous logger instead of async" << std::endl;
+            logger_ = std::make_shared<spdlog::logger>("Logger", sinks.begin(), sinks.end());
+        }
+        } else {
         logger_ = std::make_shared<spdlog::logger>("Logger", sinks.begin(), sinks.end());
     }
 
@@ -186,6 +204,10 @@ void Logger::LoggerImpl::Uninit()
         logger_->flush();
         spdlog::drop("Logger");
         logger_.reset();
+    }
+    try {
+        spdlog::shutdown();
+    } catch (...) {
     }
 }
 

@@ -30,9 +30,6 @@ class LoggerTest : public ::testing::Test
 protected:
     void SetUp() override
     {
-        // 清理测试环境
-        Logger::GetInstance()->Uninit();
-
         CleanupTestFiles();
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
         test_log_dir_ = "test_logs";
