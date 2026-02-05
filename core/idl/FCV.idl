@@ -1,0 +1,10 @@
+﻿// Flow Control Valve 流体调节阀  M1
+// FCV UDT
+struct FCVType {
+    float flow; //流量
+    float temp; //温度
+    float press; //压力
+    boolean isopen; //开 or 关
+    float openvalue; //开度
+    float healthlevel; //健康度
+};

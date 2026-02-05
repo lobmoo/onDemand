@@ -1,0 +1,67 @@
+﻿/******************************************************************************
+ * 该文件包含DSF-Node节点的定义及接口
+ * 包括节点内置主题、节点定义等
+ *****************************************************************************/
+ 
+ 
+#include "dsf_define_datatypes.idl"
+ 
+// dsf_node.idl
+module DSF {
+    // 网卡和IP信息结构，供节点模块使用
+    struct NetworkInterface {
+        string interfaceName;  // 网卡名称
+        string ipAddress;      // IP地址
+    };
+     
+    // 节点定义，考虑以后扩展DSF日志定义、DSF系统事件定义等
+    module Node {
+        //--------------------------------------------------------------------------
+        // 节点内置主题
+        //--------------------------------------------------------------------------
+        // 该主题获取节点信息
+        const string NODE_BASICINFO_TOPIC_NAME = "dsf/node/basicInfo";
+        // 该主题获取节点运行信息
+        const string NODE_RUNTIMEINFO_TOPIC_NAME = "dsf/node/runtimeInfo";
+     
+        //--------------------------------------------------------------------------
+        // 类型名称
+        //--------------------------------------------------------------------------
+        const string BASICINFO_TYPE_NAME = "DSF::Node::BasicInfo";
+        const string RUNTIMEINFO_TYPE_NAME = "DSF::Node::RuntimeInfo";
+ 
+        // 节点定义
+        @appendable // 实例可扩展
+        struct BasicInfo {
+            string nodeName;              // 节点名称
+            string description;           // 节点描述
+            string version;               // 版本号
+            DSF::Timespec pubtime;        // 发行时间
+        };
+ 
+        // 节点运行信息
+        @appendable // 实例可扩展
+        struct RuntimeInfo {
+            @key string nodeName;         // 节点名称
+            string processId;             // 节点PID
+            string hostName;              // 主机名称
+            string execPath;              // 应用程序名称及路径
+            DSF::Timespec execTimestamp;  // 应用程序开始执行时间
+            string userName;              // 运行用户
+            string publicAddress;         // 节点公共地址，以;分割   DSF11;DSF12;DSF13
+            @optional sequence<DSF::NamedValue> properities;   // 运行信息，如cpu使用率等（百分比）
+            @optional sequence<DSF::NetworkInterface> networkInterfaces;  // 网卡和IP信息
+        };
+
+        const string DSF_NODE_BASICINFO_NAME = "dsf.node.basicinfo.name";
+        const string DSF_NODE_BASICINFO_DESCRIPTION = "dsf.node.basicinfo.description";
+        const string DSF_NODE_BASICINFO_VERSION = "dsf.node.basicinfo.version";
+        const string DSF_NODE_BASICINFO_PUBTIME = "dsf.node.basicinfo.pubtime";
+        const string DSF_NODE_RUNTIMEINFO_PROCESSID = "dsf.node.runtimeinfo.processid";
+        const string DSF_NODE_RUNTIMEINFO_HOSTNAME = "dsf.node.runtimeinfo.hostname";
+        const string DSF_NODE_RUNTIMEINFO_EXE_FILEPATH = "dsf.node.runtimeinfo.exe_filepath";
+        const string DSF_NODE_RUNTIMEINFO_EXECUTION_TIMESTAMP = "dsf.node.runtimeinfo.execution_timestamp";
+        const string DSF_NODE_RUNTIMEINFO_USERNAME = "dsf.node.runtimeinfo.username";
+        const string DSF_NODE_RUNTIMEINFO_PUBLICADDRESS = "dsf.node.runtimeinfo.publicaddress";        
+    };
+};       

@@ -1,0 +1,195 @@
+﻿/******************************************************************************
+ * 该文件包含DSF消息定义
+ * 包括消息内置主题、事件(Events)、报警(Alarms)、控制(Control)等
+ *****************************************************************************/
+#include "dsf_define_node.idl"
+
+module DSF {
+    // ============  DSF 消息 ===
+    module Message{
+        //--------------------------------------------------------------------------
+        // 模型内置主题
+        //--------------------------------------------------------------------------
+        // 该主题发送控制
+        const string MESSAGE_COMMAND_REQUEST_CONTROL_TOPIC_NAME = "dsf/message/commandRequest/control";
+        // 该主题接收控制
+        const string MESSAGE_COMMAND_RESPONSE_CONTROL_TOPIC_NAME = "dsf/message/commandResponse/control";
+
+        // 该主题发送报警
+        const string MESSAGE_COMMAND_REQUEST_ALARM_TOPIC_NAME = "dsf/message/commandRequest/alarm";
+        // 该主题接收报警
+        const string MESSAGE_COMMAND_RESPONSE_ALARM_TOPIC_NAME = "dsf/message/commandResponse/alarm";
+
+        // 事件定义主题
+        const string MESSAGE_COMMAND_REQUEST_EVENT_DEFINE_TOPIC_NAME   = "dsf/message/commandRequest/event/define";
+
+        const string MESSAGE_COMMAND_REQUEST_EVENT_SYSTEM_TOPIC_NAME   = "dsf/message/commandRequest/event/system";
+        const string MESSAGE_COMMAND_REQUEST_EVENT_RESOURCE_TOPIC_NAME = "dsf/message/commandRequest/event/resource";
+        const string MESSAGE_COMMAND_REQUEST_EVENT_SECURITY_TOPIC_NAME = "dsf/message/commandRequest/event/security";
+        const string MESSAGE_COMMAND_REQUEST_EVENT_NETWORK_TOPIC_NAME  = "dsf/message/commandRequest/event/network";
+        const string MESSAGE_COMMAND_REQUEST_EVENT_PROGRESS_TOPIC_NAME = "dsf/message/commandRequest/event/progress";
+        const string MESSAGE_COMMAND_REQUEST_EVENT_VAR_TOPIC_NAME      = "dsf/message/commandRequest/event/var";
+        const string MESSAGE_COMMAND_REQUEST_EVENT_APPLICATION_TOPIC_NAME = "dsf/message/commandRequest/event/application";
+        const string MESSAGE_COMMAND_REQUEST_EVENT_OTHER_TOPIC_NAME    = "dsf/message/commandRequest/event/other";
+ 
+        // 该主题注册表变量(发送注册)
+        const string MESSAGE_COMMAND_REQUEST_SUB_TABLE_REGISTER_TOPIC_NAME = "dsf/message/commandRequest/subTableRegister";
+        // 该主题注册表变量(接收注册)
+        const string MESSAGE_COMMAND_RESPONSE_SUB_TABLE_REGISTER_TOPIC_NAME = "dsf/message/commandResponse/subTableRegister";
+        // 该主题注销表变量(发送注销)
+        const string MESSAGE_COMMAND_REQUEST_SUB_TABLE_UNREGISTER_TOPIC_NAME = "dsf/message/commandRequest/subTableUnregister";
+        // 该主题注销表变量(接收注销)
+        const string MESSAGE_COMMAND_RESPONSE_SUB_TABLE_UNREGISTER_TOPIC_NAME = "dsf/message/commandResponse/subTableUnregister";
+
+        //--------------------------------------------------------------------------
+        // 类型名称
+        //--------------------------------------------------------------------------
+        const string MESSAGE_COMMAND_REQUEST_TYPE_NAME = "DSF::Message::CommandRequest";
+        const string MESSAGE_COMMAND_RESPONSE_TYPE_NAME = "DSF::Message::CommandResponse";
+ 
+        
+        // 事件分类
+        enum EventCategory {
+            SYSTEM,
+            RESOURCE,
+            SECURITY,
+            NETWORK,
+            PROGRESS,
+            VAR,
+            APPLICATION,
+            OTHER
+        };
+
+        //消息类型
+        enum MSGTYPE {
+            CONTROL, //控制
+            EVENT,  //事件
+            ALARM,   //报警
+            SUB_TABLE_REGISTER, //表注册
+            SUB_TABLE_UNREGISTER //表注销
+        };
+     
+        // 事件定义
+        @appendable @nested
+        struct Event {
+            @key int32 eventCode;        // 事件编码（类型唯一性）
+            string payloadType;          // 事件数据类型(模型名)
+            string description;          // 事件描述（默认描述）
+            EventCategory category;      // 分类
+            DSF::Timespec createTime;    // 定义创建时间
+            MSGTYPE msgType;             // 事件类型
+        };
+
+        // 事件“实例传输”
+        @appendable @nested
+        struct EventTransfer {
+            @key int32 eventCode;        // 事件编码
+            string srcNode;              // 事件产生节点
+            int32 seqNum;                // 节点内递增流水号（srcNode+seqNum 唯一）
+            DSF::Timespec sourceTime;    // 发生时间（产生时刻）
+            DSF::Timespec sendTime;      // 发送时间（进入总线时刻）
+            DSF::DT_BLOB payloadData;    // 负载
+
+            @default(2)
+            int32 payloadBlobType;
+
+            @optional DSF::Node::RuntimeInfo nodeInfo;
+            @optional sequence<string> relatedVars;
+            @optional sequence<string> relatedNodes;
+        };
+
+        // 控制变量值类型
+        enum CONTROL_VAR_TYPE {
+            STR,    // 字符串
+            BLOB    // blob
+        };
+
+        // 命名blob
+        struct NamedBlob {
+            string name;
+            DSF::DT_BLOB blob;
+        };
+
+        struct ControlVar {
+            string nodeName; // 为空时表示广播控制
+            CONTROL_VAR_TYPE type;
+            NamedBlob namedValue;
+        };
+
+        @nested
+        struct Control {
+            @key DSF::GUID_t messageId;
+            DSF::Timespec currentTime; // 发送时间
+            MSGTYPE msgType;
+            sequence<ControlVar> vars;
+            string srcNode; // 发送方节点名称
+            sequence<string> write_tokens; // 写入权限令牌列表
+            string user;
+        };
+ 
+        @nested
+        struct SubTableRegister {
+            MSGTYPE msgType;
+            sequence<DSF::NamedValue> varFreqs; // 表内变量名称以及注册频率，一个名称只能有一种频率，覆盖式(单位为时间间隔)
+            string tableName; // 表名称
+            string nodeName; // 节点名称
+            string user;
+        };
+        //sequence<TableRegister>
+
+        @nested
+        struct SubTableUnregister {
+            MSGTYPE msgType;
+            sequence<string> varNames; // 表内变量名称
+            string tableName; // 表名称
+            string nodeName; // 节点名称
+            string user;
+        };
+
+        @appendable @nested // 实例可扩展
+        struct Alarm : Event  {
+            @range(min=1,max=256) @default(1)
+            uint8 priority;
+            uint8 status;
+            @optional DSF::Timespec tmConfirm; // 确认时间
+            @optional string confirmPerson; // 确认者
+            @optional DSF::Timespec tmRecovery; // 恢复时间
+            @optional string recoveryNamedValue; // 当前变量恢复值
+        };
+ 
+        @appendable
+        enum CommandResponseRetcode {
+            OK_RETCODE, // 成功
+            ERROR_RETCODE // 失败
+        };
+ 
+        struct NamedRetcode {
+            string nodeName;
+            string name;
+            CommandResponseRetcode retcode;
+            int32 nativeRetcode;
+        };
+
+        /* CommandRequest */
+        @nested
+        union CommandRequest switch (MSGTYPE) {
+            case CONTROL:
+                Control controlMsg;
+            case EVENT:
+                Event eventMsg;
+            case ALARM:
+                Alarm alarmMsg;
+        };
+
+        /* CommandResponse */
+        @appendable
+        struct CommandResponse {
+            @key DSF::GUID_t messageId;
+            @optional DSF::Node::RuntimeInfo nodeInfo;
+            CommandResponseRetcode retCode;
+            int32 nativeRetcode;
+            string statusVMessage;
+            sequence<NamedRetcode> controlRet;
+        };
+    };
+};

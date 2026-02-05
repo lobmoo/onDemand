@@ -1,0 +1,212 @@
+﻿/* dsf_define_datatypes.idl */
+ 
+ 
+// 该文件定义了DSF中的基本数据类型(DataTypes)
+// 除了上述基本类型之外，DSF还支持枚举 数组 结构体
+module DSF {
+ 
+    // 时间格式 POSIX.4标准定义
+    @final
+    struct Timespec {
+        long tv_sec;  // 表示自1970年1月1日00:00:00 UTC以来的秒数
+        unsigned long tv_nsec; // 表示秒后的纳秒数
+    };
+ 
+    struct NamedValue {
+        string name;
+        string value;
+    };
+
+    struct StructuredDataMapEntry {
+        string key;
+        sequence<NamedValue> pairs;
+    };
+ 
+    struct DataBuffer {
+        sequence<octet> data;
+        unsigned long length;
+    };
+ 
+    typedef octet GUID_t[16];
+
+    @default("")
+    typedef sequence<octet,2048> DT_BLOB;
+ 
+    // ============  DSF 基本数据类型 参照IEC61131-3, 6.4.2 ===
+    module DataTypes {
+        // DT_BOOLEAN 布尔 FALSE(0)或 TRUE(1)
+        // DT_BBOOL 位布尔，仅最低位生效（bit0为1表示 TRUE）
+        // DT_BYTE 字节 8位 16#00~16#FF
+        // DT_WORD 字 16位 16#0000~16#FFFF
+        // DT_DWORD 双字 32位 16#0000_0000~16#FFFF_FFFF
+        // DT_LWORD 长字 64位 16#0000_0000_0000_0000~16#FFFF_FFFF_FFFF_FFFF
+        // DT_SINT 短整型 8位 -128~127
+        // DT_USINT 无符号短整型 8位 0~255
+        // DT_INT 整型 16位 -32768～32767
+        // DT_UINT 无符号整型 16位 0～65535
+        // DT_DINT 双整型  32位 -2147483648～2147483647
+        // DT_UDINT 无符号双整型  32位 0～4_294_967_295
+        // DT_LINT 长整型  64位 -2^63～ (2^63-1)
+        // DT_ULINT 长整型  64位 0～ (2^64-1)
+        // DT_REAL 实数 32位 ±1.175495e-38 ~ ±3.402823e+38 该值遵循 IEEE 754-1985 单精度数据类型定义
+        // DT_LREAL 长实数 64位 ±2.2250738585072014e -308 ~ ±1.7976931348623157e +308
+        @default(FALSE)
+        typedef boolean DT_BOOLEAN;     
+        @default(0)
+        typedef octet DT_BBOOL;
+        @default(0)          
+        typedef octet DT_BYTE; 
+        @default(0)
+        typedef unsigned short DT_WORD; 
+        @default(0)
+        typedef unsigned long DT_DWORD; 
+        @default(0)
+        typedef unsigned long long DT_LWORD;
+        @default(0)
+        typedef int8 DT_SINT; 
+        @default(0)
+        typedef uint8 DT_USINT; 
+        @default(0)
+        typedef int16 DT_INT; 
+        @default(0)
+        typedef uint16 DT_UINT; 
+        @default(0)
+        typedef long DT_DINT; 
+        @default(0)
+        typedef unsigned long DT_UDINT;
+        @default(0)
+        typedef long long DT_LINT; 
+        @default(0)
+        typedef unsigned long long DT_ULINT; 
+        @default(0.0)
+        typedef float DT_REAL; 
+        @default(0.0)
+        typedef double DT_LREAL; 
+ 
+        // DT_FILE 文件是否需要考虑只读只写、锁定等？
+        @final
+        struct DT_FILE {
+            string fname; // 文件名称
+            DSF::DataBuffer fdata; // 长度是否够？
+            string fversion; // 版本
+        };
+ 
+        // DT_CHAR 单字节字符 8位
+        // DT_CHARSEQ 单字节字符数组 系统中实际占用存储空间=[N+2] BYTE ；N是常数，最大254；缺省值N=80
+        // DT_STRING 字符串
+        // DT_STRINGSEQ 字符串数组
+        // DT_WCHAR 宽字节字符 16位
+        // DT_WCHARSEQ 宽字节字符数组 系统中实际占用存储空间=[N+2] WORD 。N是常数，最大16382.缺省值N=254
+        // DT_WSTRING 字符串
+        // DT_WSTRINGSEQ 字符串数组
+        @default("")
+        typedef char DT_CHAR; 
+        @default("")
+        typedef sequence<char,256> DT_CHARSEQ;    
+ 
+        typedef string DT_STRING;
+        typedef sequence<string> DT_STRINGSEQ;
+ 
+        @default("")
+        typedef wchar DT_WCHAR; 
+        @default("")
+        typedef sequence<wchar,16384> DT_WCHARSEQ;
+ 
+        typedef wstring DT_WSTRING;
+        typedef sequence<wstring> DT_WSTRINGSEQ;
+ 
+        // DT_TIME 持续时间(ms) 32位
+        // T0#-24d_20h_31m_23s_648ms~+24d_20h_31m_23s_647ms
+        // T1#-2147483648～2147483647ms；毫秒
+        // @final 不允许更改
+        @final
+        union DT_TIME switch(uint8) {
+            case 0:
+                // @default("0d_0h_0m_0s_0ms") 
+                @range(min="-24d_20h_31m_23s_648ms",max="+24d_20h_31m_23s_647ms")
+                sequence<char,32> T0;
+            default:
+                long T1;
+        };
+        // DT_DATE 日期 32位 精度为天
+        // D0#1970-1-1 ～ D#2106-02-07
+        // D1#0～49710
+        @final
+        union DT_DATE switch(uint8) {
+            case 0:
+                // @default("1970-1-1") 
+                @range(min="1970-1-1",max="2106-02-07")
+                sequence<char,32> D0;
+            default:
+                @default(0) @range(min=0,max=49710)
+                long D1;
+        };
+        // DT_TIME_OF_DAY 日时 32位
+        // TOD0#0:0:0.000 ～ TOD#23:59:59.999
+        // TOD1#0～86399999
+        @final
+        union DT_TIME_OF_DAY switch(uint8) {
+            case 0:
+                // @default("0:0:0.000") 
+                @range(min="0:0:0.000",max="23:59:59.999")
+                sequence<char,32> TOD0;
+            default:
+                @default(0) @range(min=0,max=86399999)
+                long TOD1;
+        };
+        // DT_DATE_AND_TIME 日期和时间 32位 精度为秒
+        // DT0#1970-1-1-0:0:0 ～DT#2106-02-07-06:28:15
+        // DT1#0～4_294_967_295
+        @final
+        union DT_DATE_AND_TIME switch(uint8) {
+            case 0:
+                // @default("1970-1-1-0:0:0") 
+                @range(min="1970-1-1-0:0:0",max="2106-02-07-06:28:15")
+                sequence<char,32> DT0;
+            default:
+                @default(0) @range(min=0,max=4294967295)
+                long DT1;
+        };
+        // DT_LTIME 长持续时间(ms) 64位 -2^63～ 2^63-1
+        typedef long long DT_LTIME;
+        // DT_LDATE 长日期 64位 精度为天
+        // LD0#1970-1-1 ～ D#2554-07-21
+        // LD1#0～49710
+        @final
+        union DT_LDATE switch(uint8) {
+            case 0:
+                // @default("1970-1-1") sequence类型无法设置默认值
+                @range(min="1970-1-1",max="2554-07-21")
+                sequence<char,64> LD0;
+            default:
+                @default(0) @range(min=0,max=213503)
+                long LD1;
+        };
+        // DT_LTIME_OF_DAY 长日时 64位
+        // LTOD0#0:0:0.000000000 ～ LTOD#23:59:59.999999999
+        // LTOD1 纳秒
+        @final
+        union DT_LTIME_OF_DAY switch(uint8) {
+            case 0:
+                // @default("0:0:0.000000000") 
+                @range(min="0:0:0.000000000",max="23:59:59.999999999")
+                sequence<char,32> LTOD0;
+            default:
+                @default(0)
+                long long LTOD1; //纳秒
+        };
+        // DT_LDATE_AND_TIME 长日期和时间 64位 精度为纳秒
+        // LDT0#1970-01-01-00:00:00.000000000-LDT#2554-7-21-23:34:33.709551615
+        // LDT1纳秒
+        @final
+        union DT_LDATE_AND_TIME switch(uint8) {
+            case 0:
+                // @default("1970-01-01-00:00:00.000000000") 
+                @range(min="1970-01-01-00:00:00.000000000",max="2554-7-21-23:34:33.709551615")
+                sequence<char,32> LDT0;
+            default:
+                @default(0)
+                long long LDT1; //纳秒
+        };
+    };
+};

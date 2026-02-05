@@ -1,0 +1,152 @@
+﻿/******************************************************************************
+ * 该文件包含DSF变量数据传输结构定义和变量配置信息
+ *
+ *****************************************************************************/
+ 
+ 
+#include "dsf_define_model.idl"
+ 
+// dsf_node.idl
+module DSF {
+ 
+    // 变量定义
+    module Var {
+        //--------------------------------------------------------------------------
+        // 变量内置主题
+        //--------------------------------------------------------------------------
+        // 该主题获取变量定义信息
+        const string VAR_DEFINE_TOPIC_NAME = "dsf/sys/var/define";
+
+        // 每个变量拥有自己的主题，主题名为 VAR_DATA_TRANSFER_TOPIC_PREFIX + 变量名
+        const string VAR_DATA_TRANSFER_TOPIC_PREFIX = "dsf/var/data/transfer/";
+
+        // 变量发布订阅消息，用于监控
+        const string VAR_PUBSUB_TOPIC_NAME = "dsf/sys/var/pubsub";
+
+        // 该主题获取变量表的定义
+        const string TABLE_DEFINE_TOPIC_NAME = "dsf/sys/var/tableDefine";
+         
+        //--------------------------------------------------------------------------
+        // 类型名称
+        //--------------------------------------------------------------------------
+        const string VAR_DEFINE_TYPE_NAME = "DSF::Var::Define";
+        
+        // 变量传输类型，DSF把动态数据定义成一种特殊类型，动态主题按照该类型进行发布，发布订阅方通过MODEL_INSTANCE_DATA_TYPE_NAME进行序列化和反序列化
+        const string DYNAMIC_DATA_TYPE_NAME = "DSF::Var::Data::Transfer";
+ 
+        const string VAR_PUBSUB_TYPE_NAME = "DSF::Var::PubsubType";
+        // ============  DSF 变量 ===
+
+
+        // 权限控制结构体，定义读写令牌
+        struct AccessControl {
+            sequence<string> read_tokens;
+            sequence<string> write_tokens;
+        };
+
+        bitmask VarPublishMask {
+            VAR_PUB_REGULAR,    // 1 << 0 = 0x01
+            VAR_PUB_ON_DEMAND   // 1 << 1 = 0x02
+        };
+
+        // 变量配置
+        struct Define {
+            @key string name;       // 变量名称
+            string modelName;       // 模型名称
+            string modelVersion;    // 模型版本
+            string description;     // 描述
+            string nodeName;        // 创建节点名称
+            boolean isReadonly;     // 是否只读
+            VarPublishMask publishMask; // 发布能力掩码（PERIODIC/ON_DEMAND/BOTH）
+            @optional sequence<DSF::Message::Event> events; // 事件
+            @optional sequence<DSF::Message::Alarm> alarms; // 报警
+            @optional sequence<DSF::NamedValue> initialValues; // 初始值
+            @optional sequence<DSF::NamedValue> startIndexes; // 下标起始值
+            // 权限字段，可选，用于访问控制
+            @optional AccessControl permission;
+        };
+
+        struct Undefine {
+            string varName;         // 变量名称
+            string nodeName;        // 变量创建节点名称
+        };
+
+        enum DEFINE_TYPE {
+            VAR_DEFINE,  // 变量定义
+            VAR_UNDEFINE // 变量定义取消
+        };
+
+        union VarRequest switch (DEFINE_TYPE) {
+            case VAR_DEFINE:
+                Define varDefine;
+            case VAR_UNDEFINE:
+                Undefine varUndefine;
+        };
+
+        struct VarRequestEnvelope
+        {
+            VarRequest request;
+        };
+
+        enum BLOB_TYPE {
+            UNKNOWN,
+            NGVS, 
+            YAS,
+            STRUCTS
+        };
+
+        // 变量传输类型
+        struct DataTransfer {
+            @key string name; // 名称
+            string nodeName;        // 节点名称
+            DSF::Timespec timestamp; // 数据发布时间
+            DSF::DT_BLOB varData; // data和length，根据模型传输定义进行解析
+            BLOB_TYPE blobType; // blob类型，用于标识blob序列化方法
+        };
+
+        struct DataTransferEx : DataTransfer {
+            @optional sequence<DSF::NamedValue> stringProperties;
+            @optional sequence<DSF::NamedValue> blobProperties;
+        };
+
+        // 变量订阅消息
+        struct VarPubSubInfo {
+            string nodeName;              // 节点名称
+            string ownerNode;             // 变量所在发布节点
+            string varName;               // 变量名称
+            boolean isSub;                // 是否订阅/取消订阅
+            boolean isPub;                // 是否发布/取消发布
+        };
+
+        struct PubTableVarDefine {
+            @key uint16 id; // 变量在表中的ID
+            VarRequest var; // 变量创建及删除请求
+        };
+
+        // 表定义是一个特殊的变量定义，包含多个变量定义,一张表最大65536个变量
+        struct PubTableDefine{
+            @key string name; // 表名称
+            @key string nodeName; // 所属节点名称
+            string description; // 表描述
+            sequence<PubTableVarDefine> varDefines; // 表内变量定义
+        };
+
+        // 表数据传输类型定义
+        struct TableDataTransfer {
+            @key DSF::DT_BLOB mask; // 表中变量ID掩码
+            DSF::Timespec timestamp; // 数据发布时间
+            sequence<DSF::DT_BLOB> varData; // 变量数据数组，根据模型传输定义进行解析
+            BLOB_TYPE blobType; // blob类型，用于标识blob序列化方法
+        };
+
+        // 表数据传输 映射的主题名称是nodename_tablename
+        struct TableUpdateBatch {
+            sequence<TableDataTransfer> varDataBatch; // 表内变量值
+        };
+
+        // 表数据传输Ex 映射的主题名称是nodename_tablename
+        struct TableDataTransferEx : TableDataTransfer {
+            @optional sequence<DSF::NamedValue> properties;   // 变量附加信息，例如变量采集时间戳、质量等
+        };
+    };
+};

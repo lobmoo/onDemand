@@ -1,0 +1,62 @@
+﻿/******************************************************************************
+ * 该文件包含DSF模型的定义和主题
+ * 包括模型内置主题、变量数据传输主题、模型定义、模型数据定义等
+ *****************************************************************************/
+ 
+ 
+#include "dsf_define_messages.idl"
+ 
+// dsf_node.idl
+module DSF {
+ 
+    // 模型定义
+    module Model {
+        //--------------------------------------------------------------------------
+        // 模型内置主题
+        //--------------------------------------------------------------------------
+        // 该主题获取模型定义信息
+        const string MODEL_DEFINE_TOPIC_NAME = "dsf/sys/model/define";
+     
+        //--------------------------------------------------------------------------
+        // 类型名称
+        //--------------------------------------------------------------------------
+        const string MODEL_DEFINE_TYPE_NAME = "DSF::Model::Define";
+
+ 
+        // ============  DSF 模型 ===
+        // 模型定义 key联合起作用
+        struct Define {
+            @key string name;      // 模型名称
+            @key string version;   // 模型版本（哈希值）
+            string nodeName;      // 模型节点名称
+            string description;     // 模型描述
+            string dataSchema; // 模型数据结构定义（XML）
+            @optional string defaultValue; // 默认值
+            @optional string referenceValue; // 参考值范围
+            @optional sequence<DSF::Message::Event> events; // 模型事件
+            @optional sequence<DSF::Message::Alarm> alarms; // 模型报警
+        };
+
+        struct Undefine {
+            string modelIndex;      // 模型索引
+            string nodeName;        // 模型发布节点名称
+        };
+
+        enum DEFINE_TYPE {
+            MODEL_DEFINE,  // 模型定义
+            MODEL_UNDEFINE // 模型定义取消
+        };
+
+        union ModelRequest switch (DEFINE_TYPE) {
+            case MODEL_DEFINE:
+                Define modelDefine;
+            case MODEL_UNDEFINE:
+                Undefine modelUndefine;
+        };
+
+        struct ModelRequestEnvelope
+        {
+            ModelRequest request;
+        };
+    };
+};
