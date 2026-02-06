@@ -83,7 +83,7 @@ namespace ondemand
 
     bool OnDemandPub::createTableDefineWriter()
     {
-        constexpr uint32_t depth = 20;  
+        constexpr uint32_t depth = 20;
         DdsWrapper::DataWriterQoSBuilder writerQosBuilder;
         writerQosBuilder.setMaxSamples(256 * depth)
             .setMaxInstances(256)
@@ -154,9 +154,9 @@ namespace ondemand
         varIndex_.reserve(varIndex_.size() + VarDefines.size());
 
         for (const auto &VarDefine : VarDefines) {
-            const auto& varName = VarDefine.name();  // Use const reference to avoid string copy
+            const auto &varName = VarDefine.name(); // Use const reference to avoid string copy
             uint64_t varHash = fast_hash(varName);
-            size_t bucketIdx = BucketManager::CalculateBucketIndexFromHash(varHash);  // Reuse hash
+            size_t bucketIdx = BucketManager::CalculateBucketIndexFromHash(varHash); // Reuse hash
 
             VarMetadata meta;
             meta.varHash = varHash;
@@ -169,7 +169,7 @@ namespace ondemand
                 ONDEMANDLOG(warning) << "Variable already exists: " << varName;
                 continue;
             }
-            varIndex_.emplace(varHash, std::move(meta));  // Use move semantics
+            varIndex_.emplace(varHash, std::move(meta)); // Use move semantics
             bucketManager_.AddMember(varName, varHash);  // Pass pre-calculated hash
         }
 
@@ -211,14 +211,70 @@ namespace ondemand
                               << pubTableDefine.varDefines().size() << " variables";
             if (!pubTableDefine.varDefines().empty()) {
                 tableDefinePublish(pubTableDefine);
-                ONDEMANDLOG(info) << "Published bucket " << i+1 << "/" << bucketCount
-                                  << " with " << pubTableDefine.varDefines().size() << " variables";
+                std::this_thread::sleep_for(std::chrono::milliseconds(50));
+                ONDEMANDLOG(info) << "Published bucket " << i + 1 << "/" << bucketCount << " with "
+                                  << pubTableDefine.varDefines().size() << " variables";
             }
         }
 
         return true;
     }
 
+    bool OnDemandPub::deleteVars(const std::vector<std::string> &varNames)
+    {
+        std::unique_lock lock(varIndexMutex_);
+
+        for (const auto &varName : varNames) {
+            uint64_t varHash = fast_hash(varName);
+            auto it = varIndex_.find(varHash);
+            if (it == varIndex_.end()) {
+                ONDEMANDLOG(warning) << "Variable not found: " << varName;
+                continue;
+            }
+
+            varIndex_.erase(it);
+            bucketManager_.RemoveMember(varName, varHash);
+        }
+
+        uint32_t bucketCount = bucketManager_.GetBucketCount();
+        for (uint32_t i = 0; i < bucketCount; ++i) {
+
+            DSF::Var::PubTableDefine pubTableDefine;
+            pubTableDefine.name("bucket_" + std::to_string(i));
+            pubTableDefine.nodeName(nodeName_);
+            pubTableDefine.description("onDemandPub TableDefine");
+
+            /*给每个表下面的每个变量赋值*/
+            const auto members = bucketManager_.GetBucketMembers(i);
+            // Reserve space to avoid multiple reallocations
+            pubTableDefine.varDefines().reserve(members.size());
+
+            for (const auto &varName : members) {
+                uint64_t varHash = fast_hash(varName);
+                auto it = varIndex_.find(varHash);
+                if (it == varIndex_.end()) {
+                    continue;
+                }
+                const auto &meta = it->second;
+
+                DSF::Var::PubTableVarDefine pubTableVarDefine;
+                DSF::Var::VarRequest varRequest;
+                DSF::Var::Define varDefine;
+                varDefine = *(meta.varDefine);
+                varRequest.varDefine(varDefine);
+                pubTableVarDefine.var(std::move(varRequest));
+                pubTableDefine.varDefines().push_back(std::move(pubTableVarDefine));
+            }
+
+            // 差分删除：即使是空表也要发布，通知订阅者该表已清空
+            tableDefinePublish(pubTableDefine);
+            std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            ONDEMANDLOG(info) << "Published bucket " << i + 1 << "/" << bucketCount << " with "
+                              << pubTableDefine.varDefines().size() << " variables (delete mode)";
+        }
+
+        return true;
+    }
     // bool OnDemandPub::setVarData(const char *varName, const void *data, size_t size)
     // {
     //     uint64_t varHash = fast_hash(varName);

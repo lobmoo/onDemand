@@ -42,8 +42,8 @@ namespace ondemand
             FreqSub() : freq(0), subCount(0), subMask(0) {}
         };
 
-        std::vector<FreqSub> freqSubs;  // 按需分配
-        uint8_t activeFreqCount;          // 活跃频率数量
+        std::vector<FreqSub> freqSubs; // 按需分配
+        uint8_t activeFreqCount;       // 活跃频率数量
 
         VarMetadata()
             : varHash(0), bucketIndex(0), varId(0), currentFreq(0xFFFFFFFF), freqSubs{},
@@ -59,35 +59,58 @@ namespace ondemand
         ~OnDemandPub();
 
         /**
-     * @brief 初始化发布器
-     * @param nodeName 节点名称
-     * @param dds DDS抽象层
-     */
+         * @brief 
+         * @param  nodeName  节点名称
+         * @return true 
+         * @return false 
+         */
         bool init(const std::string &nodeName);
 
         /**
-     * @brief 启动发布器
-     */
+        * @brief 启动发布器
+        * @return true 
+        * @return false 
+        */
         bool start();
 
         /**
-     * @brief 停止发布器
-     */
+        * @brief 停止发布器
+        */
         void stop();
 
         /**
-      * @brief 批量创建变量
-      * @param  VarDefines     变量定义数组  
-      * @return size_t 
-      */
+         * @brief 暂停发布器
+         */
+        void pause();
+
+        /**
+          * @brief 恢复发布器
+          */
+        void resume();
+
+        /**
+         * @brief 批量创建变量
+         * @param  VarDefines     变量定义数组  
+         * @return size_t 
+         */
         bool createVars(const std::vector<DSF::Var::Define> &VarDefines);
 
         /**
-     * @brief 设置变量数据
-     * @param varName 变量名
-     * @param data 数据指针
-     * @param size 数据大小
-     */
+         * @brief 批量删除变量
+         * @param  varNames   变量名称数组
+         * @return true 
+         * @return false 
+         */
+        bool deleteVars(const std::vector<std::string> &varNames);
+
+        /**
+         * @brief Set the Var Data object
+         * @param  varName          MyParamDoc
+         * @param  data             MyParamDoc
+         * @param  size             MyParamDoc
+         * @return true 
+         * @return false 
+         */
         bool setVarData(const char *varName, const void *data, size_t size);
 
         /**
