@@ -1,126 +1,202 @@
-// /**
-//  * @file on_demand_sub_v2.cpp
-//  * @brief 按需订阅系统 - 重构版本实现
-//  * @date 2026-02-04
-//  */
+#include <functional>
+#include "on_demand_sub.h"
 
-// #include "on_demand_sub_v2.h"
-// #include <algorithm>
 
-// namespace dsf {
-// namespace ondemand {
-// namespace v2 {
+namespace dsf
+{
+namespace ondemand
+{
 
-// OnDemandSubscriberV2::OnDemandSubscriberV2()
-//     : initialized_(false), running_(false), totalReceived_(0) {}
+    OnDemandSub::OnDemandSub() : initialized_(false), running_(false), totalReceived_(0) {}
 
-// OnDemandSubscriberV2::~OnDemandSubscriberV2() {
-//     stop();
-// }
+    OnDemandSub::~OnDemandSub() { stop(); }
 
-// bool OnDemandSubscriberV2::init(const std::string& nodeName,
-//                                 std::shared_ptr<DDSAbstraction> dds) {
-//     if (initialized_.exchange(true)) {
-//         ONDEMANDLOG(WARNING) << "Already initialized";
-//         return false;
-//     }
-    
-//     nodeName_ = nodeName;
-//     ONDEMANDLOG(INFO) << "OnDemandSubscriberV2 initialized: " << nodeName;
-//     return true;
-// }
+    bool OnDemandSub::createTableDefineReader(
+        std::function<void(const std::string &, std::shared_ptr<DSF::Var::PubTableDefine>)>
+            processFunc)
+    {
 
-// bool OnDemandSubscriberV2::start() {
-//     if (running_.exchange(true)) {
-//         ONDEMANDLOG(WARNING) << "Already running";
-//         return false;
-//     }
-    
-//     ONDEMANDLOG(INFO) << "OnDemandSubscriberV2 started";
-//     return true;
-// }
+        constexpr uint32_t depth = 20;
+        DdsWrapper::DataReaderQoSBuilder readerQosBuilder;
+        readerQosBuilder.setMaxSamples(256 * depth)
+            .setMaxInstances(256)
+            .setMaxSamplesPerInstance(depth)
+            .setDurabilityKind(DdsWrapper::DurabilityKind::TRANSIENT_LOCAL)
+            .setReliabilityKind(DdsWrapper::ReliabilityKind::RELIABLE)
+            .setHistoryKind(DdsWrapper::HistoryKind::KEEP_LAST)
+            .setHistoryDepth(depth);
 
-// void OnDemandSubscriberV2::stop() {
-//     if (!running_.exchange(false)) {
-//         return;
-//     }
-    
-//     ONDEMANDLOG(INFO) << "OnDemandSubscriberV2 stopped";
-// }
+        if (0
+            != dsf::ondemand::registerNodeTopicReader<DSF::Var::PubTableDefine,
+                                                      DSF::Var::PubTableDefinePubSubType>(
+                dataNode_, pubTableDefineReader_, DSF::Var::TABLE_DEFINE_TOPIC_NAME, processFunc,
+                readerQosBuilder)) {
+            ONDEMANDLOG(error)
+                << "Failed to register topic for SubTableRegister: "
+                << DSF::Message::MESSAGE_COMMAND_REQUEST_SUB_TABLE_REGISTER_TOPIC_NAME;
 
-// bool OnDemandSubscriberV2::subscribe(const std::string& varName,
-//                                      const std::string& tableName,
-//                                      uint32_t frequency) {
-//     SubscriptionItem item(varName, tableName, frequency);
-    
-//     std::unique_lock lock(subMutex_);
-    
-//     if (subscriptions_.find(item.varHash) != subscriptions_.end()) {
-//         ONDEMANDLOG(WARNING) << "Already subscribed: " << varName;
-//         return false;
-//     }
-    
-//     subscriptions_[item.varHash] = item;
-    
-//     ONDEMANDLOG(INFO) << "Subscribed: " << varName << " @ " << frequency << "ms";
-//     return true;
-// }
+            return false;
+        }
 
-// size_t OnDemandSubscriberV2::batchSubscribe(const std::vector<SubscriptionItem>& items) {
-//     size_t successCount = 0;
-    
-//     std::unique_lock lock(subMutex_);
-//     for (const auto& item : items) {
-//         if (subscriptions_.find(item.varHash) == subscriptions_.end()) {
-//             subscriptions_[item.varHash] = item;
-//             successCount++;
-//         }
-//     }
-    
-//     ONDEMANDLOG(INFO) << "Batch subscribed " << successCount << "/" << items.size() << " vars";
-//     return successCount;
-// }
+        return true;
+    }
 
-// bool OnDemandSubscriberV2::unsubscribe(const std::string& varName) {
-//     uint64_t varHash = fast_hash(varName);
-    
-//     std::unique_lock lock(subMutex_);
-    
-//     auto it = subscriptions_.find(varHash);
-//     if (it == subscriptions_.end()) {
-//         ONDEMANDLOG(WARNING) << "Not subscribed: " << varName;
-//         return false;
-//     }
-    
-//     subscriptions_.erase(it);
-    
-//     ONDEMANDLOG(INFO) << "Unsubscribed: " << varName;
-//     return true;
-// }
+    bool OnDemandSub::createSubTableRegisterWriter()
+    {
+        constexpr uint32_t depth = 100;
+        DdsWrapper::DataWriterQoSBuilder writerQosBuilder;
+        writerQosBuilder.setMaxSamples(256 * depth)
+            .setMaxInstances(256)
+            .setMaxSamplesPerInstance(depth);
+        writerQosBuilder.setDurabilityKind(DdsWrapper::DurabilityKind::TRANSIENT_LOCAL)
+            .setReliabilityKind(DdsWrapper::ReliabilityKind::RELIABLE)
+            .setHistoryKind(DdsWrapper::HistoryKind::KEEP_LAST)
+            .setHistoryDepth(depth);
 
-// size_t OnDemandSubscriberV2::getSubscriptionCount() const {
-//     std::shared_lock lock(subMutex_);
-//     return subscriptions_.size();
-// }
+        if (0
+            != dsf::ondemand::registerNodeTopicWriter<DSF::Message::SubTableRegister,
+                                                      DSF::Message::SubTableRegisterPubSubType>(
+                dataNode_, subTableRegisterReqWriter_,
+                DSF::Message::MESSAGE_COMMAND_REQUEST_SUB_TABLE_REGISTER_TOPIC_NAME,
+                writerQosBuilder)) {
+            ONDEMANDLOG(error)
+                << "Failed to register topic for SubTableRegister: "
+                << DSF::Message::MESSAGE_COMMAND_REQUEST_SUB_TABLE_REGISTER_TOPIC_NAME;
+            return false;
+        }
+        return true;
+    }
 
-// void OnDemandSubscriberV2::dumpState(std::ostream& os) {
-//     os << "========== OnDemandSubscriberV2 State ==========\n";
-//     os << "Node: " << nodeName_ << "\n";
-//     os << "Running: " << (running_ ? "Yes" : "No") << "\n";
-//     os << "Total Received: " << totalReceived_.load() << "\n";
-    
-//     std::shared_lock lock(subMutex_);
-//     os << "Active Subscriptions: " << subscriptions_.size() << "\n\n";
-    
-//     os << "=== Subscriptions ===\n";
-//     for (const auto& [hash, item] : subscriptions_) {
-//         os << "  " << item.varName << " [" << item.tableName << "]"
-//            << " @ " << item.frequency << "ms\n";
-//     }
-    
-//     os << "==============================================\n";
-// }
+    bool OnDemandSub::onReceiveTableDefine(const std::string &topicName,
+                                           std::shared_ptr<DSF::Var::PubTableDefine> data)
+    {
+        ONDEMANDLOG(info) << "topic: " << topicName
+                          << ", TableDefine: " << data->name()
+                          << ", vars: " << data->varDefines().size();
+        return true;
+    }
 
-// } // namespace v2
-// } // namespace ondemand
-// } // namespace dsf
+    bool OnDemandSub::init(const std::string &nodeName)
+    {
+        if (initialized_.exchange(true)) {
+            ONDEMANDLOG(warning) << "Already initialized";
+            return false;
+        }
+        nodeName_ = nodeName;
+
+        /*创建变量定义接收reader*/
+        if (!createTableDefineReader(std::bind(&OnDemandSub::onReceiveTableDefine, this,
+                                               std::placeholders::_1, std::placeholders::_2))) {
+            ONDEMANDLOG(error) << "Failed to create TableDefine reader";
+            return false;
+        }
+
+        /*定义变量注册writer*/
+        if (!createSubTableRegisterWriter()) {
+            ONDEMANDLOG(error) << "Failed to create SubTableRegister writer";
+            return false;
+        }
+
+        ONDEMANDLOG(info) << "OnDemandSub initialized: " << nodeName;
+        return true;
+    }
+
+    // bool OnDemandSub::start()
+    // {
+    //     if (running_.exchange(true)) {
+    //         ONDEMANDLOG(WARNING) << "Already running";
+    //         return false;
+    //     }
+
+    //     ONDEMANDLOG(info) << "OnDemandSub started";
+    //     return true;
+    // }
+
+    void OnDemandSub::stop()
+    {
+        if (!running_.exchange(false)) {
+            return;
+        }
+
+        ONDEMANDLOG(info) << "OnDemandSub stopped";
+    }
+
+    // bool OnDemandSub::subscribe(const std::string &varName, const std::string &tableName,
+    //                                      uint32_t frequency)
+    // {
+    //     SubscriptionItem item(varName, tableName, frequency);
+
+    //     std::unique_lock lock(subMutex_);
+
+    //     if (subscriptions_.find(item.varHash) != subscriptions_.end()) {
+    //         ONDEMANDLOG(WARNING) << "Already subscribed: " << varName;
+    //         return false;
+    //     }
+
+    //     subscriptions_[item.varHash] = item;
+
+    //     ONDEMANDLOG(info) << "Subscribed: " << varName << " @ " << frequency << "ms";
+    //     return true;
+    // }
+
+    // size_t OnDemandSub::batchSubscribe(const std::vector<SubscriptionItem> &items)
+    // {
+    //     size_t successCount = 0;
+
+    //     std::unique_lock lock(subMutex_);
+    //     for (const auto &item : items) {
+    //         if (subscriptions_.find(item.varHash) == subscriptions_.end()) {
+    //             subscriptions_[item.varHash] = item;
+    //             successCount++;
+    //         }
+    //     }
+
+    //     ONDEMANDLOG(info) << "Batch subscribed " << successCount << "/" << items.size() << " vars";
+    //     return successCount;
+    // }
+
+    // bool OnDemandSub::unsubscribe(const std::string &varName)
+    // {
+    //     uint64_t varHash = fast_hash(varName);
+
+    //     std::unique_lock lock(subMutex_);
+
+    //     auto it = subscriptions_.find(varHash);
+    //     if (it == subscriptions_.end()) {
+    //         ONDEMANDLOG(WARNING) << "Not subscribed: " << varName;
+    //         return false;
+    //     }
+
+    //     subscriptions_.erase(it);
+
+    //     ONDEMANDLOG(info) << "Unsubscribed: " << varName;
+    //     return true;
+    // }
+
+    // size_t OnDemandSub::getSubscriptionCount() const
+    // {
+    //     std::shared_lock lock(subMutex_);
+    //     return subscriptions_.size();
+    // }
+
+    // void OnDemandSub::dumpState(std::ostream &os)
+    // {
+    //     os << "========== OnDemandSub State ==========\n";
+    //     os << "Node: " << nodeName_ << "\n";
+    //     os << "Running: " << (running_ ? "Yes" : "No") << "\n";
+    //     os << "Total Received: " << totalReceived_.load() << "\n";
+
+    //     std::shared_lock lock(subMutex_);
+    //     os << "Active Subscriptions: " << subscriptions_.size() << "\n\n";
+
+    //     os << "=== Subscriptions ===\n";
+    //     for (const auto &[hash, item] : subscriptions_) {
+    //         os << "  " << item.varName << " [" << item.tableName << "]"
+    //            << " @ " << item.frequency << "ms\n";
+    //     }
+
+    //     os << "==============================================\n";
+    // }
+
+} // namespace ondemand
+} // namespace dsf

@@ -16,13 +16,12 @@
 
 #include "on_demand_pub.h"
 
-
 namespace dsf
 {
 namespace ondemand
 {
 
-    OnDemandPub::OnDemandPub() : initialized_(false), running_(false) {}
+    OnDemandPub::OnDemandPub() : initialized_(false), running_(false), dataNode_(nullptr) {}
 
     OnDemandPub::~OnDemandPub() { stop(); }
 
@@ -36,11 +35,26 @@ namespace ondemand
         nodeName_ = nodeName;
 
         /*创建节点*/
+        try {
+            dataNode_ = std::make_shared<DdsWrapper::DataNode>(DOMAIN_ID, nodeName);
+        } catch (const std::exception &e) {
+            ONDEMANDLOG(error) << "Failed to create DataNode: " << e.what();
+            return false;
+        }
 
+        /*创建变量通知topic writer*/
+        if (!createTableDefineWriter()) {
+            return false;
+        }
+
+        /*创建接收频率请求topic reader*/
+        if (!createSubTableRegisterReader()) {
+            return false;
+        }
 
         ONDEMANDLOG(info) << "OnDemandPub initialized: " << nodeName;
         return true;
-    }
+    } // namespace ondemand
 
     bool OnDemandPub::start()
     {
@@ -62,110 +76,197 @@ namespace ondemand
         ONDEMANDLOG(info) << "OnDemandPub stopped";
     }
 
-    bool OnDemandPub::createVar(const char *varName, const char *tableName)
+    bool OnDemandPub::createTableDefineWriter()
     {
-        uint64_t varHash = fast_hash(varName);
+        constexpr uint32_t depth = 20;
+        DdsWrapper::DataWriterQoSBuilder writerQosBuilder;
+        writerQosBuilder.setMaxSamples(256 * depth)
+            .setMaxInstances(256)
+            .setMaxSamplesPerInstance(depth)
+            .setDurabilityKind(DdsWrapper::DurabilityKind::TRANSIENT_LOCAL)
+            .setReliabilityKind(DdsWrapper::ReliabilityKind::RELIABLE)
+            .setHistoryKind(DdsWrapper::HistoryKind::KEEP_LAST)
+            .setHistoryDepth(depth);
 
-        std::unique_lock lock(varIndexMutex_);
-
-        if (varIndex_.find(varHash) != varIndex_.end()) {
-            ONDEMANDLOG(warning) << "Variable already exists: " << varName;
+        if (0
+            != dsf::ondemand::registerNodeTopicWriter<DSF::Var::PubTableDefine,
+                                                      DSF::Var::PubTableDefinePubSubType>(
+                dataNode_, pubTableDefineWriter_, DSF::Var::TABLE_DEFINE_TOPIC_NAME,
+                writerQosBuilder)) {
+            ONDEMANDLOG(error) << "Failed to register topic for PubTableDefine: "
+                               << DSF::Var::TABLE_DEFINE_TOPIC_NAME;
             return false;
         }
 
-        VarMetadata meta;
-        meta.varHash = varHash;
-        meta.currentFreq = 0xFFFFFFFF;
-        meta.activeFreqCount = 0;
-
-        varIndex_[varHash] = meta;
-
-        ONDEMANDLOG(debug) << "Created var: " << varName;
         return true;
     }
 
-    size_t OnDemandPub::batchCreateVars(const std::vector<VarDef> &defs)
+    bool OnDemandPub::createSubTableRegisterReader()
     {
-        size_t successCount = 0;
+        DdsWrapper::DataReaderQoSBuilder readerQosBuilder;
+        readerQosBuilder.setMaxSamples(256 * 100)
+            .setMaxInstances(256)
+            .setMaxSamplesPerInstance(100)
+            .setDurabilityKind(DdsWrapper::DurabilityKind::TRANSIENT_LOCAL)
+            .setReliabilityKind(DdsWrapper::ReliabilityKind::RELIABLE)
+            .setHistoryKind(DdsWrapper::HistoryKind::KEEP_LAST)
+            .setHistoryDepth(100);
 
-        std::unique_lock lock(varIndexMutex_);
-        for (const auto &def : defs) {
-            uint64_t varHash = fast_hash(def.name);
-
-            if (varIndex_.find(varHash) == varIndex_.end()) {
-                VarMetadata meta;
-                meta.varHash = varHash;
-                meta.currentFreq = def.defaultFreq;
-                meta.activeFreqCount = 0;
-
-                varIndex_[varHash] = meta;
-                successCount++;
-            }
-        }
-
-        ONDEMANDLOG(info) << "Batch created " << successCount << "/" << defs.size() << " vars";
-        return successCount;
-    }
-
-    bool OnDemandPub::setVarData(const char *varName, const void *data, size_t size)
-    {
-        uint64_t varHash = fast_hash(varName);
-
-        std::shared_lock lock(varIndexMutex_);
-        if (varIndex_.find(varHash) == varIndex_.end()) {
-            ONDEMANDLOG(warning) << "Variable not found: " << varName;
+        if (0
+            != dsf::ondemand::registerNodeTopicReader<DSF::Message::SubTableRegister,
+                                                      DSF::Message::SubTableRegisterPubSubType>(
+                dataNode_, subTableRegisterReqReader_,
+                DSF::Message::MESSAGE_COMMAND_REQUEST_SUB_TABLE_REGISTER_TOPIC_NAME,
+                [this](const std::string &topic,
+                       std::shared_ptr<DSF::Message::SubTableRegister> msg) {
+                    // TODO: implement callback
+                },
+                readerQosBuilder)) {
+            ONDEMANDLOG(error)
+                << "Failed to register topic for SubTableRegister: "
+                << DSF::Message::MESSAGE_COMMAND_REQUEST_SUB_TABLE_REGISTER_TOPIC_NAME;
             return false;
         }
 
-        // TODO: 写入数据缓存
         return true;
     }
 
-    void
-    OnDemandPub::handleSubscribe(const std::string &nodeName,
-                                         const std::vector<std::pair<std::string, uint32_t>> &vars)
+    bool OnDemandPub::tableDefinePublish(const DSF::Var::PubTableDefine &pubTableDefine)
     {
-        uint64_t nodeHash = fast_hash(nodeName);
+        if (pubTableDefineWriter_ != nullptr) {
+            return pubTableDefineWriter_->writeMessage(pubTableDefine);
+        } else {
+            ONDEMANDLOG(error) << "pubTableDefineWriter_ is nullptr";
+            return false;
+        }
+    }
 
+    bool OnDemandPub::CreateVars(const std::vector<DSF::Var::Define> &VarDefines)
+    {
         std::unique_lock lock(varIndexMutex_);
-        for (const auto &[varName, freq] : vars) {
+        // Reserve space to avoid multiple reallocations
+        varIndex_.reserve(varIndex_.size() + VarDefines.size());
+        
+        for (const auto &VarDefine : VarDefines) {
+            std::string varName = VarDefine.name();
             uint64_t varHash = fast_hash(varName);
+            size_t bucketIdx = bucketManager_.CalculateBucketIndex(varName);
 
+            VarMetadata meta;
+            meta.varHash = varHash;
+            meta.currentFreq = 0xFFFFFFFF;
+            meta.activeFreqCount = 0;
+            meta.bucketIndex = bucketIdx;
+            meta.varDefine = std::make_shared<DSF::Var::Define>(VarDefine);
             auto it = varIndex_.find(varHash);
-            if (it == varIndex_.end()) {
+            if (it != varIndex_.end()) {
+                ONDEMANDLOG(warning) << "Variable already exists: " << varName;
                 continue;
             }
+            varIndex_.emplace(varHash, meta);
+            bucketManager_.AddMember(varName);
+        }
 
-            auto &meta = it->second;
+        uint32_t bucketCount = bucketManager_.GetBucketCount();
+        for (uint32_t i = 0; i < bucketCount; ++i) {
+            // Skip empty buckets
+            if (bucketManager_.GetBucketSize(i) == 0) {
+                continue;
+            }
+            
+            DSF::Var::PubTableDefine pubTableDefine;
+            pubTableDefine.name("bucket_" + std::to_string(i));
+            pubTableDefine.nodeName(nodeName_);
+            pubTableDefine.description("onDemandPub TableDefine");
 
-            // 更新频率
-            if (freq < meta.currentFreq) {
-                meta.currentFreq = freq;
+            /*给每个表下面的每个变量赋值*/
+            const auto members = bucketManager_.GetBucketMembers(i);
+            // Reserve space to avoid multiple reallocations
+            pubTableDefine.varDefines().reserve(members.size());
+            
+            for (const auto &varName : members) {
+                uint64_t varHash = fast_hash(varName);
+                auto it = varIndex_.find(varHash);
+                if (it == varIndex_.end()) {
+                    continue;
+                }
+                const auto &meta = it->second;
+
+                DSF::Var::PubTableVarDefine pubTableVarDefine;
+                DSF::Var::VarRequest varRequest;
+                DSF::Var::Define varDefine;
+                varDefine = *(meta.varDefine);
+                varRequest.varDefine(varDefine);
+                pubTableVarDefine.var(std::move(varRequest));
+                pubTableDefine.varDefines().push_back(std::move(pubTableVarDefine));
+            }
+            
+            // Only publish if there are variables in the bucket
+            if (!pubTableDefine.varDefines().empty()) {
+                tableDefinePublish(pubTableDefine);
             }
         }
 
-        ONDEMANDLOG(info) << "Node " << nodeName << " subscribed to " << vars.size() << " vars";
+        return true;
     }
 
-    void OnDemandPub::dumpState(std::ostream &os)
-    {
-        os << "========== OnDemandPub State ==========\n";
-        os << "Node: " << nodeName_ << "\n";
-        os << "Running: " << (running_ ? "Yes" : "No") << "\n";
+    // bool OnDemandPub::setVarData(const char *varName, const void *data, size_t size)
+    // {
+    //     uint64_t varHash = fast_hash(varName);
+    //     std::shared_lock lock(varIndexMutex_);
+    //     if (varIndex_.find(varHash) == varIndex_.end()) {
+    //         ONDEMANDLOG(warning) << "Variable not found: " << varName;
+    //         return false;
+    //     }
 
-        std::shared_lock lock(varIndexMutex_);
-        os << "Total Variables: " << varIndex_.size() << "\n";
+    //     // TODO: 写入数据缓存
+    //     return true;
+    // }
 
-        os << "==============================================\n";
-    }
+    // void OnDemandPub::handleSubscribe(const std::string &nodeName,
+    //                                   const std::vector<std::pair<std::string, uint32_t>> &vars)
+    // {
+    //     uint64_t nodeHash = fast_hash(nodeName);
 
-    size_t OnDemandPub::getMemoryUsage() const
-    {
-        std::shared_lock lock(varIndexMutex_);
-        size_t total = varIndex_.size() * sizeof(VarMetadata);
-        total += varIndex_.size() * (sizeof(uint64_t) + sizeof(void *));
-        return total;
-    }
+    //     std::unique_lock lock(varIndexMutex_);
+    //     for (const auto &[varName, freq] : vars) {
+    //         uint64_t varHash = fast_hash(varName);
+
+    //         auto it = varIndex_.find(varHash);
+    //         if (it == varIndex_.end()) {
+    //             continue;
+    //         }
+
+    //         auto &meta = it->second;
+
+    //         // 更新频率
+    //         if (freq < meta.currentFreq) {
+    //             meta.currentFreq = freq;
+    //         }
+    //     }
+
+    //     ONDEMANDLOG(info) << "Node " << nodeName << " subscribed to " << vars.size() << " vars";
+    // }
+
+    // void OnDemandPub::dumpState(std::ostream &os)
+    // {
+    //     os << "========== OnDemandPub State ==========\n";
+    //     os << "Node: " << nodeName_ << "\n";
+    //     os << "Running: " << (running_ ? "Yes" : "No") << "\n";
+
+    //     std::shared_lock lock(varIndexMutex_);
+    //     os << "Total Variables: " << varIndex_.size() << "\n";
+
+    //     os << "==============================================\n";
+    // }
+
+    // size_t OnDemandPub::getMemoryUsage() const
+    // {
+    //     std::shared_lock lock(varIndexMutex_);
+    //     size_t total = varIndex_.size() * sizeof(VarMetadata);
+    //     total += varIndex_.size() * (sizeof(uint64_t) + sizeof(void *));
+    //     return total;
+    // }
 
 } // namespace ondemand
 } // namespace dsf

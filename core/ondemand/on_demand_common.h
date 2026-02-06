@@ -25,6 +25,7 @@
 #include <unordered_map>
 #include <condition_variable>
 
+
 #include "dds_wrapper/dds_abstraction.h"
 #include "dds_wrapper/dds_idl_wrapper.h"
 
@@ -35,6 +36,8 @@ namespace ondemand
 
 
 #define ONDEMAND_BUCKET_SIZE  20
+#define DOMAIN_ID   66
+
 
 /*日志宏定义*/
 /************************************************************************************************ */
@@ -53,46 +56,39 @@ namespace ondemand
 
     /*bucket 管理类*/
     /************************************************************************************************** */
-    class BucketManager
+            class BucketManager
     {
     public:
         using Member = std::string;
-        using BucketName = std::string;
-        using BucketTable = std::unordered_map<BucketName, std::vector<Member>>;
+        using BucketIndex = std::size_t;
+        using BucketTable = std::vector<std::vector<Member>>;
 
         explicit BucketManager()
             : bucket_count_(ONDEMAND_BUCKET_SIZE == 0 ? 1 : ONDEMAND_BUCKET_SIZE)
+            , total_members_(0)
         {
+            buckets_.resize(bucket_count_);
         }
 
-        static BucketName CalculateBucketName(const Member &member)
+        static BucketIndex CalculateBucketIndex(const Member &member)
         {
-            const std::size_t idx =
-                static_cast<std::size_t>(Fnv1aHash64(member) % ONDEMAND_BUCKET_SIZE);
-            return "bucket_" + std::to_string(idx);
+            return static_cast<BucketIndex>(Fnv1aHash64(member) % ONDEMAND_BUCKET_SIZE);
         }
 
         bool AddMember(const Member &member)
         {
             std::lock_guard<std::mutex> lock(mutex_);
 
-            if (member_to_bucket_.count(member)) {
+            const BucketIndex idx = static_cast<BucketIndex>(Fnv1aHash64(member) % bucket_count_);
+            auto &bucket = buckets_[idx];
+            
+            // 检查是否已存在
+            if (std::find(bucket.begin(), bucket.end(), member) != bucket.end()) {
                 return false;
             }
 
-            //  第一次添加时，创建固定数量的桶
-            if (buckets_.empty()) {
-                for (std::size_t i = 0; i < bucket_count_; ++i) {
-                    buckets_[GetBucketName(i)] = std::vector<Member>{};
-                }
-            }
-
-            //  桶数量固定
-            const std::size_t idx = static_cast<std::size_t>(Fnv1aHash64(member) % bucket_count_);
-            BucketName bucket_name = GetBucketName(idx);
-
-            buckets_[bucket_name].push_back(member);
-            member_to_bucket_[member] = bucket_name;
+            bucket.push_back(member);
+            ++total_members_;
             return true;
         }
 
@@ -100,55 +96,56 @@ namespace ondemand
         {
             std::lock_guard<std::mutex> lock(mutex_);
 
-            auto it = member_to_bucket_.find(member);
-            if (it == member_to_bucket_.end()) {
+            const BucketIndex idx = static_cast<BucketIndex>(Fnv1aHash64(member) % bucket_count_);
+            auto &bucket = buckets_[idx];
+            
+            auto it = std::find(bucket.begin(), bucket.end(), member);
+            if (it == bucket.end()) {
                 return false;
             }
 
-            BucketName bucket_name = it->second;
-            auto bucket_it = buckets_.find(bucket_name);
-            if (bucket_it != buckets_.end()) {
-                auto &members = bucket_it->second;
-                members.erase(std::remove(members.begin(), members.end(), member), members.end());
-            }
-
-            member_to_bucket_.erase(it);
+            bucket.erase(it);
+            --total_members_;
             return true;
         }
 
         void Clear()
         {
             std::lock_guard<std::mutex> lock(mutex_);
-            member_to_bucket_.clear();
-            buckets_.clear();
+            for (auto &bucket : buckets_) {
+                bucket.clear();
+            }
+            total_members_ = 0;
         }
 
         void Build(const std::vector<Member> &members)
         {
             std::lock_guard<std::mutex> lock(mutex_);
 
-            member_to_bucket_.clear();
-            buckets_.clear();
+            for (auto &bucket : buckets_) {
+                bucket.clear();
+            }
 
-            // 无论成员是否为空，都创建固定数量的桶
-            std::vector<std::vector<Member>> temp_buckets(bucket_count_);
             for (const auto &name : members) {
-                const std::size_t idx = static_cast<std::size_t>(Fnv1aHash64(name) % bucket_count_);
-                temp_buckets[idx].push_back(name);
-                member_to_bucket_[name] = GetBucketName(idx);
+                const BucketIndex idx = static_cast<BucketIndex>(Fnv1aHash64(name) % bucket_count_);
+                buckets_[idx].push_back(name);
             }
-
-            buckets_.reserve(bucket_count_);
-            for (std::size_t i = 0; i < bucket_count_; ++i) {
-                buckets_.emplace(GetBucketName(i), std::move(temp_buckets[i]));
-            }
+            
+            total_members_ = members.size();
         }
 
-        BucketName GetMemberBucket(const Member &member) const
+        BucketIndex GetMemberBucket(const Member &member) const
+        {
+            // 直接计算，无需查表
+            return CalculateBucketIndex(member);
+        }
+
+        bool HasMember(const Member &member) const
         {
             std::lock_guard<std::mutex> lock(mutex_);
-            auto it = member_to_bucket_.find(member);
-            return it != member_to_bucket_.end() ? it->second : "";
+            const BucketIndex idx = CalculateBucketIndex(member);
+            const auto &bucket = buckets_[idx];
+            return std::find(bucket.begin(), bucket.end(), member) != bucket.end();
         }
 
         BucketTable GetSnapshot() const
@@ -159,95 +156,63 @@ namespace ondemand
 
         std::size_t GetBucketCount() const
         {
-            std::lock_guard<std::mutex> lock(mutex_);
-            return buckets_.size();
+            return bucket_count_;
         }
 
         std::size_t GetMemberCount() const
         {
             std::lock_guard<std::mutex> lock(mutex_);
-            return member_to_bucket_.size();
+            return total_members_;
         }
 
-        std::size_t GetBucketSize(const BucketName &bucket_name) const
+        std::size_t GetBucketSize(BucketIndex idx) const
         {
             std::lock_guard<std::mutex> lock(mutex_);
-            auto it = buckets_.find(bucket_name);
-            return it != buckets_.end() ? it->second.size() : 0;
+            return idx < buckets_.size() ? buckets_[idx].size() : 0;
         }
 
-        std::vector<Member> GetBucketMembers(const BucketName &bucket_name) const
+        std::vector<Member> GetBucketMembers(BucketIndex idx) const
         {
             std::lock_guard<std::mutex> lock(mutex_);
-            auto it = buckets_.find(bucket_name);
-            return it != buckets_.end() ? it->second : std::vector<Member>{};
+            return idx < buckets_.size() ? buckets_[idx] : std::vector<Member>{};
         }
 
         uint32_t GetTotalMembers() const
         {
             std::lock_guard<std::mutex> lock(mutex_);
-            return static_cast<uint32_t>(member_to_bucket_.size());
+            return static_cast<uint32_t>(total_members_);
         }
 
-        std::vector<BucketName> GetBucketNames() const
+        std::vector<BucketIndex> GetBucketIndices() const
         {
-            std::lock_guard<std::mutex> lock(mutex_);
-            std::vector<BucketName> names;
-            names.reserve(buckets_.size());
-            for (const auto &[name, _] : buckets_) {
-                names.push_back(name);
+            std::vector<BucketIndex> indices;
+            indices.reserve(bucket_count_);
+            for (BucketIndex i = 0; i < bucket_count_; ++i) {
+                indices.push_back(i);
             }
-            std::sort(names.begin(), names.end(), [](const BucketName &a, const BucketName &b) {
-                auto extract_num = [](const BucketName &s) -> std::size_t {
-                    std::size_t pos = s.find('_');
-                    if (pos != std::string::npos) {
-                        return std::stoull(s.substr(pos + 1));
-                    }
-                    return 0;
-                };
-                return extract_num(a) < extract_num(b);
-            });
-            return names;
+            return indices;
         }
 
         void PrintStats(std::ostream &os = std::cout) const
         {
             std::lock_guard<std::mutex> lock(mutex_);
-            os << "Total members: " << member_to_bucket_.size()
-               << ", Fixed bucket count: " << bucket_count_
-               << ", Created buckets: " << buckets_.size() << "\n";
+            os << "Total members: " << total_members_
+               << ", Fixed bucket count: " << bucket_count_ << "\n";
         }
 
         void PrintBuckets(std::ostream &os = std::cout) const
         {
             std::lock_guard<std::mutex> lock(mutex_);
 
-            std::vector<std::pair<std::size_t, BucketName>> indexed_names;
-            indexed_names.reserve(buckets_.size());
-
-            for (const auto &[name, _] : buckets_) {
-                std::size_t pos = name.find('_');
-                std::size_t idx =
-                    (pos != std::string::npos) ? std::stoull(name.substr(pos + 1)) : 0;
-                indexed_names.emplace_back(idx, name);
-            }
-
-            std::sort(indexed_names.begin(), indexed_names.end());
-
-            for (const auto &[idx, name] : indexed_names) {
-                auto it = buckets_.find(name);
-                if (it == buckets_.end())
-                    continue;
-
-                os << std::left << std::setw(12) << name << " (" << it->second.size() << "): ";
-                for (const auto &member : it->second) {
+            for (BucketIndex i = 0; i < buckets_.size(); ++i) {
+                os << "bucket_" << i << " (" << buckets_[i].size() << "): ";
+                for (const auto &member : buckets_[i]) {
                     os << member << " ";
                 }
                 os << "\n";
             }
         }
 
-        std::size_t GetFixedBucketCount() const { return bucket_count_; }
 
     private:
         static uint64_t Fnv1aHash64(const std::string &s)
@@ -260,11 +225,9 @@ namespace ondemand
             return h;
         }
 
-        BucketName GetBucketName(std::size_t idx) const { return "bucket_" + std::to_string(idx); }
-
         const std::size_t bucket_count_;
         BucketTable buckets_;
-        std::unordered_map<Member, BucketName> member_to_bucket_;
+        std::size_t total_members_;  
         mutable std::mutex mutex_;
     };
     /*********************************************************************************************************** */

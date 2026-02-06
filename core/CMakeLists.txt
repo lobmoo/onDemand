@@ -22,9 +22,17 @@ set(OBJ_CPP_INCLUDE
 file(GLOB SOURCES_CC_FOR_ONDEMAND "${CMAKE_CURRENT_SOURCE_DIR}/ondemand/*.cc")
 file(GLOB SOURCES_CC_FOR_MAIN "${CMAKE_CURRENT_SOURCE_DIR}/main.cc")
 
+# FastDDS wrapper源文件
+set(SOURCES_CC_FOR_FASTDDS_WRAPPER
+    ${CMAKE_SOURCE_DIR}/common/fastdds_wrapper/fastdds_node.cc
+    ${CMAKE_SOURCE_DIR}/common/fastdds_wrapper/fastdds_qos_config.cc
+)
+
+# IDL生成的源文件
+file(GLOB SOURCES_CXX_FOR_IDL "${CMAKE_CURRENT_SOURCE_DIR}/ondemand/.gensrc/*.cxx")
 
 # 合并所有查找到的文件列表
-set(MAIN_SOURCES ${SOURCES_CC_FOR_MAIN} ${SOURCES_CC_FOR_ONDEMAND})
+set(MAIN_SOURCES ${SOURCES_CC_FOR_MAIN} ${SOURCES_CC_FOR_ONDEMAND} ${SOURCES_CC_FOR_FASTDDS_WRAPPER} ${SOURCES_CXX_FOR_IDL})
 
 
 option(BUILD_LIBRARY "Build library" OFF)
