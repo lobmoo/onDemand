@@ -42,7 +42,7 @@ namespace ondemand
             FreqSub() : freq(0), subCount(0), subMask(0) {}
         };
 
-        std::array<FreqSub, 20> freqSubs; // 最多20个不同频率
+        std::vector<FreqSub> freqSubs;  // 按需分配
         uint8_t activeFreqCount;          // 活跃频率数量
 
         VarMetadata()
