@@ -2,26 +2,12 @@
 #define ON_DEMAND_SUB_H
 
 #include "on_demand_common.h"
+#include "concurrentqueue.h"
 
 namespace dsf
 {
 namespace ondemand
 {
-
-    /**
- * @brief 订阅项
- */
-    struct SubscriptionItem {
-        std::string varName;
-        std::string tableName;
-        uint64_t varHash;
-        uint32_t frequency;
-
-        SubscriptionItem(const std::string &vn, const std::string &tn, uint32_t freq)
-            : varName(vn), tableName(tn), varHash(fast_hash(vn)), frequency(freq)
-        {
-        }
-    };
 
     /**
  * @brief 数据回调函数
@@ -62,7 +48,7 @@ namespace ondemand
         /**
      * @brief 批量订阅变量
      */
-        size_t batchSubscribe(const std::vector<SubscriptionItem> &items);
+        size_t batchSubscribe();
 
         /**
      * @brief 取消订阅
@@ -80,17 +66,37 @@ namespace ondemand
         void dumpState(std::ostream &os);
 
     private:
+        /**
+       * @brief 创建变量定义数据读取器
+       * @param  processFunc      MyParamDoc
+       * @return true 
+       * @return false 
+       */
         bool createTableDefineReader(
             std::function<void(const std::string &, std::shared_ptr<DSF::Var::PubTableDefine>)>
                 processFunc);
+        /**
+          * @brief 创建频率请求数据写入器
+          * @return true 
+          * @return false 
+          */
         bool createSubTableRegisterWriter();
+        /**
+         * @brief 处理变量定义数据回调函数
+         * @param  topicName        
+         * @param  data             
+         * @return true 
+         * @return false 
+         */
         bool onReceiveTableDefine(const std::string &topicName,
                                   std::shared_ptr<DSF::Var::PubTableDefine> data);
 
-    private:
-        std::unordered_map<uint64_t, SubscriptionItem> subscriptions_;
-        mutable std::shared_mutex subMutex_;
+        /**
+        * @brief 处理变量定义数据
+        */
+        void processTableDefine();
 
+    private:
         std::string nodeName_;
         std::shared_ptr<DdsWrapper::DataNode> dataNode_;
 
@@ -104,6 +110,12 @@ namespace ondemand
         std::atomic<bool> running_;
 
         std::atomic<uint64_t> totalReceived_;
+
+        /*变量定义队列*/
+        moodycamel::ConcurrentQueue<std::shared_ptr<DSF::Var::PubTableDefine>> pubTableDefineQueue_;
+
+        /*处理线程*/
+        std::thread processTableDefineThread_;
     };
 
 } // namespace ondemand

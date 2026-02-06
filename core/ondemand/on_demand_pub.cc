@@ -74,9 +74,23 @@ namespace ondemand
 
     void OnDemandPub::stop()
     {
+        initialized_.store(false);
         if (!running_.exchange(false)) {
             return;
         }
+
+        std::unique_lock lock(varIndexMutex_);
+        varIndex_.clear();
+        bucketManager_.Clear();
+
+        pubTableDefineWriter_.reset();
+        pubTableDefineWriter_ = nullptr;
+        subTableRegisterReqReader_.reset();
+        subTableRegisterReqReader_ = nullptr;
+        subTableRegisterRespWriter_.reset();
+        subTableRegisterRespWriter_ = nullptr;
+        dataNode_.reset();
+        dataNode_ = nullptr;
 
         ONDEMANDLOG(info) << "OnDemandPub stopped";
     }
@@ -275,6 +289,7 @@ namespace ondemand
 
         return true;
     }
+
     // bool OnDemandPub::setVarData(const char *varName, const void *data, size_t size)
     // {
     //     uint64_t varHash = fast_hash(varName);

@@ -76,20 +76,18 @@ namespace ondemand
             return static_cast<BucketIndex>(fast_hash(member) % ONDEMAND_BUCKET_SIZE);
         }
 
-
         static BucketIndex CalculateBucketIndexFromHash(uint64_t hash)
         {
             return static_cast<BucketIndex>(hash % ONDEMAND_BUCKET_SIZE);
         }
 
-       
         bool AddMember(const Member &member, uint64_t hash)
         {
             std::lock_guard<std::mutex> lock(mutex_);
 
             const BucketIndex idx = static_cast<BucketIndex>(hash % bucket_count_);
             auto &bucket = buckets_[idx];
-            
+
             auto [it, inserted] = bucket.insert(member);
             if (inserted) {
                 ++total_members_;
@@ -97,18 +95,15 @@ namespace ondemand
             return inserted;
         }
 
-        
         bool AddMember(const Member &member) { return AddMember(member, fast_hash(member)); }
 
-      
         bool RemoveMember(const Member &member, uint64_t hash)
         {
             std::lock_guard<std::mutex> lock(mutex_);
 
             const BucketIndex idx = static_cast<BucketIndex>(hash % bucket_count_);
             auto &bucket = buckets_[idx];
-            
-            
+
             size_t erased = bucket.erase(member);
             if (erased > 0) {
                 --total_members_;
@@ -117,7 +112,6 @@ namespace ondemand
             return false;
         }
 
-       
         bool RemoveMember(const Member &member) { return RemoveMember(member, fast_hash(member)); }
 
         void Clear()
@@ -247,6 +241,34 @@ namespace ondemand
     }
 
     inline uint64_t fast_hash(const std::string &str) { return fast_hash(str.c_str()); }
+
+    /**
+    * @brief 变量元数据 
+    */
+    struct VarMetadata {
+        uint64_t varHash;                            // 变量名 hash (唯一标识)
+        BucketManager::BucketIndex bucketIndex;      // 所属桶索引 (0-19)
+        uint16_t varId;                              // 变量ID (桶内唯一)
+        uint32_t currentFreq;                        // 当前发布频率 (ms)
+        std::shared_ptr<DSF::Var::Define> varDefine; // 变量定义 (包含结构信息等)
+
+        // 订阅频率信息 (紧凑存储)
+        struct FreqSub {
+            uint32_t freq;     // 订阅频率
+            uint16_t subCount; // 订阅数量
+            uint64_t subMask;  // 订阅者掩码 (最多64个节点)
+            FreqSub() : freq(0), subCount(0), subMask(0) {}
+        };
+
+        std::vector<FreqSub> freqSubs; // 按需分配
+        uint8_t activeFreqCount;       // 活跃频率数量
+
+        VarMetadata()
+            : varHash(0), bucketIndex(0), varId(0), currentFreq(0xFFFFFFFF), freqSubs{},
+              activeFreqCount(0)
+        {
+        }
+    };
 
     /**
      * @brief 将字节数组转换为16进制字符串

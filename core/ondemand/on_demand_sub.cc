@@ -1,5 +1,6 @@
 #include <functional>
 #include "on_demand_sub.h"
+#include "concurrentqueue.h"
 
 namespace dsf
 {
@@ -7,9 +8,9 @@ namespace ondemand
 {
 
     OnDemandSub::OnDemandSub()
-        : subscriptions_(), subMutex_(), nodeName_(), dataNode_(nullptr),
-          pubTableDefineReader_(nullptr), subTableRegisterReqWriter_(nullptr), initialized_(false),
-          running_(false), totalReceived_(0)
+        : nodeName_(), dataNode_(nullptr), pubTableDefineReader_(nullptr),
+          subTableRegisterReqWriter_(nullptr), initialized_(false), running_(false),
+          totalReceived_(0)
     {
     }
 
@@ -20,7 +21,7 @@ namespace ondemand
             processFunc)
     {
 
-        constexpr uint32_t depth = 20;  
+        constexpr uint32_t depth = 20;
         DdsWrapper::DataReaderQoSBuilder readerQosBuilder;
         readerQosBuilder.setMaxSamples(256 * depth)
             .setMaxInstances(256)
@@ -74,9 +75,24 @@ namespace ondemand
     bool OnDemandSub::onReceiveTableDefine(const std::string &topicName,
                                            std::shared_ptr<DSF::Var::PubTableDefine> data)
     {
-        ONDEMANDLOG(info) << "topic: " << topicName << ", TableDefine: " << data->name()
-                          << ", vars size: " << data->varDefines().size();
+        pubTableDefineQueue_.enqueue(data);
         return true;
+    }
+
+    void OnDemandSub::processTableDefine()
+    {
+        pthread_setname_np(pthread_self(), "proc_tab_def");
+        while (running_) {
+            std::shared_ptr<DSF::Var::PubTableDefine> tableDefine;
+            if (pubTableDefineQueue_.try_dequeue(tableDefine)) {
+                if (tableDefine) {
+                    ONDEMANDLOG(info) << "Processing TableDefine: " << tableDefine->name()
+                                      << ", vars size: " << tableDefine->varDefines().size();
+                }
+            } else {
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            }
+        }
     }
 
     bool OnDemandSub::init(const std::string &nodeName)
@@ -112,23 +128,41 @@ namespace ondemand
         return true;
     }
 
-    // bool OnDemandSub::start()
-    // {
-    //     if (running_.exchange(true)) {
-    //         ONDEMANDLOG(WARNING) << "Already running";
-    //         return false;
-    //     }
+    bool OnDemandSub::start()
+    {
+        if (running_.exchange(true)) {
+            ONDEMANDLOG(warning) << "Already running";
+            return false;
+        }
 
-    //     ONDEMANDLOG(info) << "OnDemandSub started";
-    //     return true;
-    // }
+        processTableDefineThread_ = std::thread(&OnDemandSub::processTableDefine, this);
+        ONDEMANDLOG(info) << "OnDemandSub started";
+        return true;
+    }
 
     void OnDemandSub::stop()
     {
+        initialized_.store(false);
         if (!running_.exchange(false)) {
             return;
         }
+        if (processTableDefineThread_.joinable()) {
+            processTableDefineThread_.join();
+        }
+        pubTableDefineReader_.reset();
+        pubTableDefineReader_ = nullptr;
+        subTableRegisterReqWriter_.reset();
+        subTableRegisterReqWriter_ = nullptr;
+        dataNode_.reset();
+        dataNode_ = nullptr;
 
+        totalReceived_.store(0);
+
+       
+        std::shared_ptr<DSF::Var::PubTableDefine> dummy;
+        while (pubTableDefineQueue_.try_dequeue(dummy)) {
+            // Dequeue and discard remaining items
+        }
         ONDEMANDLOG(info) << "OnDemandSub stopped";
     }
 
