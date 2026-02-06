@@ -20,7 +20,7 @@ void publish()
         var.modelName("int");
         vars.push_back(std::move(var));
     }
-    pub.CreateVars(vars);
+    pub.createVars(vars);
 
     std::this_thread::sleep_for(std::chrono::seconds(100000));
 }
@@ -34,7 +34,7 @@ void subscribe()
 
 int main(int argc, char** argv)
 {
-    Logger::GetInstance()->Init("log/1.log", Logger::console, Logger::info, 10, 3, true);
+    Logger::GetInstance()->Init("log/1.log", Logger::console, Logger::info, 10, 3);
     LOG(info) << "start on demand demo";
 
     if (argc < 2) {

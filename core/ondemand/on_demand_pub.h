@@ -80,7 +80,7 @@ namespace ondemand
       * @param  VarDefines     变量定义数组  
       * @return size_t 
       */
-        bool CreateVars(const std::vector<DSF::Var::Define> &VarDefines);
+        bool createVars(const std::vector<DSF::Var::Define> &VarDefines);
 
         /**
      * @brief 设置变量数据

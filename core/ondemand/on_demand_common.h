@@ -65,7 +65,9 @@ namespace ondemand
 
         explicit BucketManager()
             : bucket_count_(ONDEMAND_BUCKET_SIZE == 0 ? 1 : ONDEMAND_BUCKET_SIZE)
+            , buckets_()
             , total_members_(0)
+            , mutex_()
         {
             buckets_.resize(bucket_count_);
         }

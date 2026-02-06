@@ -7,7 +7,18 @@ namespace dsf
 namespace ondemand
 {
 
-    OnDemandSub::OnDemandSub() : initialized_(false), running_(false), totalReceived_(0) {}
+OnDemandSub::OnDemandSub()
+    : subscriptions_()
+    , subMutex_()
+    , nodeName_()
+    , dataNode_(nullptr)
+    , pubTableDefineReader_(nullptr)
+    , subTableRegisterReqWriter_(nullptr)
+    , initialized_(false)
+    , running_(false)
+    , totalReceived_(0)
+{
+}
 
     OnDemandSub::~OnDemandSub() { stop(); }
 

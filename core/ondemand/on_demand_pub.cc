@@ -21,7 +21,19 @@ namespace dsf
 namespace ondemand
 {
 
-    OnDemandPub::OnDemandPub() : initialized_(false), running_(false), dataNode_(nullptr) {}
+    OnDemandPub::OnDemandPub()
+        : varIndex_()
+        , varIndexMutex_()
+        , bucketManager_()
+        , initialized_(false)
+        , running_(false)
+        , dataNode_(nullptr)
+        , nodeName_()
+        , pubTableDefineWriter_(nullptr)
+        , subTableRegisterReqReader_(nullptr)
+        , subTableRegisterRespWriter_(nullptr)
+    {
+    }
 
     OnDemandPub::~OnDemandPub() { stop(); }
 
@@ -141,7 +153,7 @@ namespace ondemand
         }
     }
 
-    bool OnDemandPub::CreateVars(const std::vector<DSF::Var::Define> &VarDefines)
+    bool OnDemandPub::createVars(const std::vector<DSF::Var::Define> &VarDefines)
     {
         std::unique_lock lock(varIndexMutex_);
         // Reserve space to avoid multiple reallocations
