@@ -13,13 +13,17 @@ void publish()
     pub.init("pubNode");
 
     std::vector<DSF::Var::Define> vars;
-    for (int i = 0; i < 100; ++i) {
+    auto start = std::chrono::high_resolution_clock::now();
+    for (int i = 0; i < 500000; ++i) {
         DSF::Var::Define var;
         var.name("var" + std::to_string(i));
         var.nodeName("pubNode");
         var.modelName("int");
         vars.push_back(std::move(var));
     }
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    LOG(info) << "create " << vars.size() << " vars, cost " << duration << " ms";
     pub.createVars(vars);
 
     std::this_thread::sleep_for(std::chrono::seconds(100000));

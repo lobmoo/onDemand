@@ -23,8 +23,8 @@
 #include <thread>
 #include <atomic>
 #include <unordered_map>
+#include <unordered_set>
 #include <condition_variable>
-
 
 #include "dds_wrapper/dds_abstraction.h"
 #include "dds_wrapper/dds_idl_wrapper.h"
@@ -34,10 +34,8 @@ namespace dsf
 namespace ondemand
 {
 
-
-#define ONDEMAND_BUCKET_SIZE  20
-#define DOMAIN_ID   66
-
+#define ONDEMAND_BUCKET_SIZE 20
+#define DOMAIN_ID 66
 
 /*日志宏定义*/
 /************************************************************************************************ */
@@ -54,62 +52,73 @@ namespace ondemand
 
     /************************************************************************************************** */
 
+    inline uint64_t fast_hash(const char *str);
+    inline uint64_t fast_hash(const std::string &str);
+
     /*bucket 管理类*/
     /************************************************************************************************** */
-            class BucketManager
+    class BucketManager
     {
     public:
         using Member = std::string;
         using BucketIndex = std::size_t;
-        using BucketTable = std::vector<std::vector<Member>>;
+        using BucketTable = std::vector<std::unordered_set<Member>>;
 
         explicit BucketManager()
-            : bucket_count_(ONDEMAND_BUCKET_SIZE == 0 ? 1 : ONDEMAND_BUCKET_SIZE)
-            , buckets_()
-            , total_members_(0)
-            , mutex_()
+            : bucket_count_(ONDEMAND_BUCKET_SIZE == 0 ? 1 : ONDEMAND_BUCKET_SIZE), buckets_(),
+              total_members_(0), mutex_()
         {
             buckets_.resize(bucket_count_);
         }
 
         static BucketIndex CalculateBucketIndex(const Member &member)
         {
-            return static_cast<BucketIndex>(Fnv1aHash64(member) % ONDEMAND_BUCKET_SIZE);
+            return static_cast<BucketIndex>(fast_hash(member) % ONDEMAND_BUCKET_SIZE);
         }
 
-        bool AddMember(const Member &member)
+
+        static BucketIndex CalculateBucketIndexFromHash(uint64_t hash)
+        {
+            return static_cast<BucketIndex>(hash % ONDEMAND_BUCKET_SIZE);
+        }
+
+       
+        bool AddMember(const Member &member, uint64_t hash)
         {
             std::lock_guard<std::mutex> lock(mutex_);
 
-            const BucketIndex idx = static_cast<BucketIndex>(Fnv1aHash64(member) % bucket_count_);
+            const BucketIndex idx = static_cast<BucketIndex>(hash % bucket_count_);
             auto &bucket = buckets_[idx];
             
-            // 检查是否已存在
-            if (std::find(bucket.begin(), bucket.end(), member) != bucket.end()) {
-                return false;
+            auto [it, inserted] = bucket.insert(member);
+            if (inserted) {
+                ++total_members_;
             }
-
-            bucket.push_back(member);
-            ++total_members_;
-            return true;
+            return inserted;
         }
 
-        bool RemoveMember(const Member &member)
+        
+        bool AddMember(const Member &member) { return AddMember(member, fast_hash(member)); }
+
+      
+        bool RemoveMember(const Member &member, uint64_t hash)
         {
             std::lock_guard<std::mutex> lock(mutex_);
 
-            const BucketIndex idx = static_cast<BucketIndex>(Fnv1aHash64(member) % bucket_count_);
+            const BucketIndex idx = static_cast<BucketIndex>(hash % bucket_count_);
             auto &bucket = buckets_[idx];
             
-            auto it = std::find(bucket.begin(), bucket.end(), member);
-            if (it == bucket.end()) {
-                return false;
+            
+            size_t erased = bucket.erase(member);
+            if (erased > 0) {
+                --total_members_;
+                return true;
             }
-
-            bucket.erase(it);
-            --total_members_;
-            return true;
+            return false;
         }
+
+       
+        bool RemoveMember(const Member &member) { return RemoveMember(member, fast_hash(member)); }
 
         void Clear()
         {
@@ -129,10 +138,10 @@ namespace ondemand
             }
 
             for (const auto &name : members) {
-                const BucketIndex idx = static_cast<BucketIndex>(Fnv1aHash64(name) % bucket_count_);
-                buckets_[idx].push_back(name);
+                const BucketIndex idx = static_cast<BucketIndex>(fast_hash(name) % bucket_count_);
+                buckets_[idx].insert(name);
             }
-            
+
             total_members_ = members.size();
         }
 
@@ -147,7 +156,7 @@ namespace ondemand
             std::lock_guard<std::mutex> lock(mutex_);
             const BucketIndex idx = CalculateBucketIndex(member);
             const auto &bucket = buckets_[idx];
-            return std::find(bucket.begin(), bucket.end(), member) != bucket.end();
+            return bucket.find(member) != bucket.end();
         }
 
         BucketTable GetSnapshot() const
@@ -156,10 +165,7 @@ namespace ondemand
             return buckets_;
         }
 
-        std::size_t GetBucketCount() const
-        {
-            return bucket_count_;
-        }
+        std::size_t GetBucketCount() const { return bucket_count_; }
 
         std::size_t GetMemberCount() const
         {
@@ -176,7 +182,11 @@ namespace ondemand
         std::vector<Member> GetBucketMembers(BucketIndex idx) const
         {
             std::lock_guard<std::mutex> lock(mutex_);
-            return idx < buckets_.size() ? buckets_[idx] : std::vector<Member>{};
+            if (idx >= buckets_.size()) {
+                return std::vector<Member>{};
+            }
+            const auto &bucket = buckets_[idx];
+            return std::vector<Member>(bucket.begin(), bucket.end());
         }
 
         uint32_t GetTotalMembers() const
@@ -198,8 +208,8 @@ namespace ondemand
         void PrintStats(std::ostream &os = std::cout) const
         {
             std::lock_guard<std::mutex> lock(mutex_);
-            os << "Total members: " << total_members_
-               << ", Fixed bucket count: " << bucket_count_ << "\n";
+            os << "Total members: " << total_members_ << ", Fixed bucket count: " << bucket_count_
+               << "\n";
         }
 
         void PrintBuckets(std::ostream &os = std::cout) const
@@ -215,21 +225,10 @@ namespace ondemand
             }
         }
 
-
     private:
-        static uint64_t Fnv1aHash64(const std::string &s)
-        {
-            uint64_t h = 1469598103934665603ULL;
-            for (unsigned char c : s) {
-                h ^= c;
-                h *= 1099511628211ULL;
-            }
-            return h;
-        }
-
         const std::size_t bucket_count_;
         BucketTable buckets_;
-        std::size_t total_members_;  
+        std::size_t total_members_;
         mutable std::mutex mutex_;
     };
     /*********************************************************************************************************** */

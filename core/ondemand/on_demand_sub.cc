@@ -20,7 +20,7 @@ namespace ondemand
             processFunc)
     {
 
-        constexpr uint32_t depth = 20;
+        constexpr uint32_t depth = 20;  
         DdsWrapper::DataReaderQoSBuilder readerQosBuilder;
         readerQosBuilder.setMaxSamples(256 * depth)
             .setMaxInstances(256)

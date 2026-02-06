@@ -22,16 +22,9 @@ namespace ondemand
 {
 
     OnDemandPub::OnDemandPub()
-        : varIndex_()
-        , varIndexMutex_()
-        , bucketManager_()
-        , initialized_(false)
-        , running_(false)
-        , dataNode_(nullptr)
-        , nodeName_()
-        , pubTableDefineWriter_(nullptr)
-        , subTableRegisterReqReader_(nullptr)
-        , subTableRegisterRespWriter_(nullptr)
+        : varIndex_(), varIndexMutex_(), bucketManager_(), initialized_(false), running_(false),
+          dataNode_(nullptr), nodeName_(), pubTableDefineWriter_(nullptr),
+          subTableRegisterReqReader_(nullptr), subTableRegisterRespWriter_(nullptr)
     {
     }
 
@@ -90,7 +83,7 @@ namespace ondemand
 
     bool OnDemandPub::createTableDefineWriter()
     {
-        constexpr uint32_t depth = 20;
+        constexpr uint32_t depth = 20;  
         DdsWrapper::DataWriterQoSBuilder writerQosBuilder;
         writerQosBuilder.setMaxSamples(256 * depth)
             .setMaxInstances(256)
@@ -115,14 +108,15 @@ namespace ondemand
 
     bool OnDemandPub::createSubTableRegisterReader()
     {
+        constexpr uint32_t depth = 100;
         DdsWrapper::DataReaderQoSBuilder readerQosBuilder;
-        readerQosBuilder.setMaxSamples(256 * 100)
+        readerQosBuilder.setMaxSamples(256 * depth)
             .setMaxInstances(256)
-            .setMaxSamplesPerInstance(100)
+            .setMaxSamplesPerInstance(depth)
             .setDurabilityKind(DdsWrapper::DurabilityKind::TRANSIENT_LOCAL)
             .setReliabilityKind(DdsWrapper::ReliabilityKind::RELIABLE)
             .setHistoryKind(DdsWrapper::HistoryKind::KEEP_LAST)
-            .setHistoryDepth(100);
+            .setHistoryDepth(depth);
 
         if (0
             != dsf::ondemand::registerNodeTopicReader<DSF::Message::SubTableRegister,
@@ -158,11 +152,11 @@ namespace ondemand
         std::unique_lock lock(varIndexMutex_);
         // Reserve space to avoid multiple reallocations
         varIndex_.reserve(varIndex_.size() + VarDefines.size());
-        
+
         for (const auto &VarDefine : VarDefines) {
-            std::string varName = VarDefine.name();
+            const auto& varName = VarDefine.name();  // Use const reference to avoid string copy
             uint64_t varHash = fast_hash(varName);
-            size_t bucketIdx = bucketManager_.CalculateBucketIndex(varName);
+            size_t bucketIdx = BucketManager::CalculateBucketIndexFromHash(varHash);  // Reuse hash
 
             VarMetadata meta;
             meta.varHash = varHash;
@@ -175,8 +169,8 @@ namespace ondemand
                 ONDEMANDLOG(warning) << "Variable already exists: " << varName;
                 continue;
             }
-            varIndex_.emplace(varHash, meta);
-            bucketManager_.AddMember(varName);
+            varIndex_.emplace(varHash, std::move(meta));  // Use move semantics
+            bucketManager_.AddMember(varName, varHash);  // Pass pre-calculated hash
         }
 
         uint32_t bucketCount = bucketManager_.GetBucketCount();
@@ -185,7 +179,7 @@ namespace ondemand
             if (bucketManager_.GetBucketSize(i) == 0) {
                 continue;
             }
-            
+
             DSF::Var::PubTableDefine pubTableDefine;
             pubTableDefine.name("bucket_" + std::to_string(i));
             pubTableDefine.nodeName(nodeName_);
@@ -195,7 +189,7 @@ namespace ondemand
             const auto members = bucketManager_.GetBucketMembers(i);
             // Reserve space to avoid multiple reallocations
             pubTableDefine.varDefines().reserve(members.size());
-            
+
             for (const auto &varName : members) {
                 uint64_t varHash = fast_hash(varName);
                 auto it = varIndex_.find(varHash);
@@ -212,10 +206,13 @@ namespace ondemand
                 pubTableVarDefine.var(std::move(varRequest));
                 pubTableDefine.varDefines().push_back(std::move(pubTableVarDefine));
             }
-            
-            // Only publish if there are variables in the bucket
+
+            ONDEMANDLOG(info) << "Publishing table define for bucket " << i << " with "
+                              << pubTableDefine.varDefines().size() << " variables";
             if (!pubTableDefine.varDefines().empty()) {
                 tableDefinePublish(pubTableDefine);
+                ONDEMANDLOG(info) << "Published bucket " << i+1 << "/" << bucketCount
+                                  << " with " << pubTableDefine.varDefines().size() << " variables";
             }
         }
 
