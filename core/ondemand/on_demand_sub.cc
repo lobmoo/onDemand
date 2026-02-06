@@ -1,24 +1,17 @@
 #include <functional>
 #include "on_demand_sub.h"
 
-
 namespace dsf
 {
 namespace ondemand
 {
 
-OnDemandSub::OnDemandSub()
-    : subscriptions_()
-    , subMutex_()
-    , nodeName_()
-    , dataNode_(nullptr)
-    , pubTableDefineReader_(nullptr)
-    , subTableRegisterReqWriter_(nullptr)
-    , initialized_(false)
-    , running_(false)
-    , totalReceived_(0)
-{
-}
+    OnDemandSub::OnDemandSub()
+        : subscriptions_(), subMutex_(), nodeName_(), dataNode_(nullptr),
+          pubTableDefineReader_(nullptr), subTableRegisterReqWriter_(nullptr), initialized_(false),
+          running_(false), totalReceived_(0)
+    {
+    }
 
     OnDemandSub::~OnDemandSub() { stop(); }
 
@@ -81,9 +74,8 @@ OnDemandSub::OnDemandSub()
     bool OnDemandSub::onReceiveTableDefine(const std::string &topicName,
                                            std::shared_ptr<DSF::Var::PubTableDefine> data)
     {
-        ONDEMANDLOG(info) << "topic: " << topicName
-                          << ", TableDefine: " << data->name()
-                          << ", vars: " << data->varDefines().size();
+        ONDEMANDLOG(info) << "topic: " << topicName << ", TableDefine: " << data->name()
+                          << ", vars size: " << data->varDefines().size();
         return true;
     }
 
@@ -94,6 +86,14 @@ OnDemandSub::OnDemandSub()
             return false;
         }
         nodeName_ = nodeName;
+
+        /*创建节点*/
+        try {
+            dataNode_ = std::make_shared<DdsWrapper::DataNode>(DOMAIN_ID, nodeName);
+        } catch (const std::exception &e) {
+            ONDEMANDLOG(error) << "Failed to create DataNode: " << e.what();
+            return false;
+        }
 
         /*创建变量定义接收reader*/
         if (!createTableDefineReader(std::bind(&OnDemandSub::onReceiveTableDefine, this,
