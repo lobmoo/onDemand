@@ -23,7 +23,13 @@
 
 namespace fs = std::filesystem;
 
-Logger::LoggerImpl::LoggerImpl() : is_running_(true)
+Logger::LoggerImpl::LoggerImpl() 
+    : logger_(nullptr)
+    , console_sink_(nullptr)
+    , file_sink_(nullptr)
+    , log_buffer_size_(8192)
+    , is_running_(true)
+    , log_config_file_path_()
 {
 }
 
