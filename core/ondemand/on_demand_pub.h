@@ -18,6 +18,7 @@
 #include <shared_mutex>
 #include <memory>
 #include "on_demand_common.h"
+#include "variable_store.h"
 
 namespace dsf
 {
@@ -129,6 +130,8 @@ namespace ondemand
             subTableRegisterReqReader_; // 频率请求数据读取器
         std::shared_ptr<DdsWrapper::DDSTopicWriter<DSF::Message::SubTableRegister>>
             subTableRegisterRespWriter_; // 频率回复数据写入器
+
+        VarStore varStore_; // 变量值存储
     };
 
 } // namespace ondemand

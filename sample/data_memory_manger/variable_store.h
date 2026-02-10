@@ -59,6 +59,20 @@ public:
         return (it != table_.end()) ? it->second : kInvalidId;
     }
 
+    bool unregister_var(uint64_t hash)
+    {
+        ConfigGuard g(this);
+        auto it = table_.find(hash);
+        if (it == table_.end())
+            return false;
+        uint32_t id = it->second;
+        if (id >= metas_.size())
+            return false;
+        metas_[id].size = 0;  // 软删除: 标记为无效
+        table_.erase(it);
+        return true;
+    }
+
     bool finalize()
     {
         ConfigGuard g(this);
@@ -98,7 +112,7 @@ public:
     bool write(uint32_t id, const void *src)
     {
         OpGuard g(this);
-        if (!arena_ || !dirty_flags_ || id >= var_count_)
+        if (!arena_ || !dirty_flags_ || id >= var_count_ || metas_[id].size == 0)
             return false;
         auto *slot = (Slot *)(arena_ + metas_[id].offset);
 
@@ -114,7 +128,7 @@ public:
     bool read(uint32_t id, void *dst) const
     {
         OpGuard g(this);
-        if (!arena_ || id >= var_count_)
+        if (!arena_ || id >= var_count_ || metas_[id].size == 0)
             return false;
         auto *slot = (const Slot *)(arena_ + metas_[id].offset);
         for (int retry = 0; retry < 10; ++retry) {
@@ -139,7 +153,7 @@ public:
             if (!s_)
                 return;
             s_->op_enter();
-            if (s_->arena_ && id < s_->var_count_) {
+            if (s_->arena_ && id < s_->var_count_ && s_->metas_[id].size != 0) {
                 auto *slot = (const Slot *)(s_->arena_ + s_->metas_[id].offset);
                 ptr_ = slot->data;
             }
@@ -170,7 +184,8 @@ public:
                     dirty_flags_[id].store(false, std::memory_order_release);
         }
         for (auto id : ids)
-            fn(id);
+            if (id < var_count_ && metas_[id].size != 0)
+                fn(id);
     }
 
     uint32_t var_count() const { return var_count_; }

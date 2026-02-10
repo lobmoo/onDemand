@@ -183,6 +183,7 @@ namespace ondemand
                 ONDEMANDLOG(warning) << "Variable already exists: " << varName;
                 continue;
             }
+            meta.varId = varStore_.register_var(varHash, 32);   //todo   这里应该按照真实大小分配内存
             varIndex_.emplace(varHash, std::move(meta)); // Use move semantics
             bucketManager_.AddMember(varName, varHash);  // Pass pre-calculated hash
         }
@@ -265,6 +266,7 @@ namespace ondemand
 
             for (const auto &varName : members) {
                 uint64_t varHash = fast_hash(varName);
+                varStore_.unregister_var(varHash);
                 auto it = varIndex_.find(varHash);
                 if (it == varIndex_.end()) {
                     continue;
