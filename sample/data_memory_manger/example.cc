@@ -128,10 +128,12 @@ void test_method2_string_hash_every_time(uint32_t test_points, int test_seconds)
     VarStore store;
     std::vector<std::string> id_to_name;
     id_to_name.reserve(test_points);
-
+    std::vector <std::string> varNames;
+    varNames.reserve(test_points);
     std::cout << "注册 " << test_points << " 个点位..." << std::endl;
     for (uint32_t i = 0; i < test_points; ++i) {
         std::string var_name = std::string("var_") + std::to_string(i);
+        varNames.push_back(var_name);
         uint64_t hash = fast_hash(var_name.c_str());
         uint32_t id = store.register_var(hash, sizeof(uint32_t));
         if (id >= id_to_name.size())
@@ -158,8 +160,8 @@ void test_method2_string_hash_every_time(uint32_t test_points, int test_seconds)
             for (uint32_t i = 0; i < test_points; ++i) {
                 uint32_t value = i + cycle * 100;
                 // ⚠️ 每次都要构造字符串 + 计算hash + get_id
-                std::string var_name = std::string("var_") + std::to_string(i);
-                uint64_t hash = fast_hash(var_name.c_str());
+                //std::string var_name = std::string("var_") + std::to_string(i);
+                uint64_t hash = fast_hash(varNames[i].c_str());
                 uint32_t id = store.get_id(hash);
                 store.write(id, &value);
             }
@@ -186,8 +188,8 @@ void test_method2_string_hash_every_time(uint32_t test_points, int test_seconds)
             for (uint32_t i = 0; i < test_points; ++i) {
                 uint32_t value;
                 // ⚠️ 每次都要构造字符串 + 计算hash + get_id
-                std::string var_name = std::string("var_") + std::to_string(i);
-                uint64_t hash = fast_hash(var_name.c_str());
+               // std::string var_name = std::string("var_") + std::to_string(i);
+                uint64_t hash = fast_hash(varNames[i].c_str());
                 uint32_t id = store.get_id(hash);
                 if (!store.read(id, &value)) {
                     read_errors++;
