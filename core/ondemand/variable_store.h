@@ -127,6 +127,26 @@ namespace ondemand
             return true;
         }
 
+        bool write(uint32_t id, const void *src, uint32_t actual_size)
+        {
+            OpGuard g(this);
+            if (!arena_ || !dirty_flags_ || id >= var_count_ || metas_[id].size == 0)
+                return false;
+
+            if (actual_size > metas_[id].size)
+                return false;
+
+            auto *slot = (Slot *)(arena_ + metas_[id].offset);
+
+            slot->seq.fetch_add(1, std::memory_order_acquire);
+            std::memcpy(slot->data, src, actual_size); // ← 使用实际大小
+            slot->seq.fetch_add(1, std::memory_order_release);
+
+            if (!dirty_flags_[id].exchange(true, std::memory_order_acq_rel))
+                dirty_queue_.enqueue(id);
+            return true;
+        }
+
         bool read(uint32_t id, void *dst) const
         {
             OpGuard g(this);

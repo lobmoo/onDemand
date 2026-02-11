@@ -183,9 +183,15 @@ namespace ondemand
                 ONDEMANDLOG(warning) << "Variable already exists: " << varName;
                 continue;
             }
-            meta.varId = varStore_.register_var(varHash, 32);   //todo   这里应该按照真实大小分配内存
+            meta.varId = varStore_.register_var(varHash, 32); //todo   这里应该按照真实大小分配内存
             varIndex_.emplace(varHash, std::move(meta)); // Use move semantics
             bucketManager_.AddMember(varName, varHash);  // Pass pre-calculated hash
+        }
+
+        /*初始化内存*/
+        if (!varStore_.finalize()) {
+            ONDEMANDLOG(error) << "Failed to finalize variable store";
+            return false;
         }
 
         uint32_t bucketCount = bucketManager_.GetBucketCount();
@@ -292,19 +298,28 @@ namespace ondemand
         return true;
     }
 
-    // bool OnDemandPub::setVarData(const char *varName, const void *data, size_t size)
-    // {
-    //     uint64_t varHash = fast_hash(varName);
-    //     std::shared_lock lock(varIndexMutex_);
-    //     if (varIndex_.find(varHash) == varIndex_.end()) {
-    //         ONDEMANDLOG(warning) << "Variable not found: " << varName;
-    //         return false;
-    //     }
+    bool OnDemandPub::setVarData(const char *varName, const void *data, size_t size)
+    {
+        uint64_t varHash = fast_hash(varName);
+        int32_t varId = -1;
+        {
+            std::shared_lock lock(varIndexMutex_);
+            auto it = varIndex_.find(varHash);
+            if (it == varIndex_.end()) {
+                return false;
+            }
+            varId = it->second.varId;
+        }
+        /*写数据*/
+        if (!varStore_.write(varId, data, size)) {
+            ONDEMANDLOG(error) << "Failed to set data for variable: " << varName;
+            return false;
+        }
+        return true;
+    }
 
-    //     // TODO: 写入数据缓存
-    //     return true;
-    // }
 
+    
     // void OnDemandPub::handleSubscribe(const std::string &nodeName,
     //                                   const std::vector<std::pair<std::string, uint32_t>> &vars)
     // {
