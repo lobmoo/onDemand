@@ -79,6 +79,9 @@ namespace ondemand
         return true;
     }
 
+    /**
+     * @brief 处理变量定义
+     */
     void OnDemandSub::processTableDefine()
     {
         pthread_setname_np(pthread_self(), "proc_tab_def");
@@ -88,12 +91,36 @@ namespace ondemand
                 if (tableDefine) {
                     ONDEMANDLOG(info) << "Processing TableDefine: " << tableDefine->name()
                                       << ", vars size: " << tableDefine->varDefines().size();
+                    /*1.拆表*/
+                    for (auto &varDef : tableDefine->varDefines()) {
+                        const auto &varDefine = varDef.var().varDefine();
+                        std::string varName = varDefine.nodeName() + "_" + varDefine.name(); //保证和发布端一致
+                        uint64_t varHash = fast_hash(varName);
+                        size_t bucketIdx = BucketManager::CalculateBucketIndexFromHash(varHash); // Reuse hash
+                        VarMetadata meta;
+                        meta.varHash = varHash;
+                        meta.currentFreq = 0xFFFFFFFF;
+                        meta.activeFreqCount = 0;
+                        meta.bucketIndex = bucketIdx;
+                        meta.varDefine = std::make_shared<DSF::Var::Define>(varDefine);
+                        auto it = varIndex_.find(varHash);
+                        if (it != varIndex_.end()) {
+                            ONDEMANDLOG(warning) << "Variable already exists: " << varName;
+                            continue;
+                        }
+                        meta.varId = varStore_.register_var(
+                            varHash, 32); //todo   这里应该按照真实大小分配内存
+                        varIndex_.emplace(varHash, std::move(meta)); 
+                        totalReceived_.fetch_add(1);   //记录收到的总数
+                        ONDEMANDLOG(debug) << "Registered var: " << varName;
+                    }
                 }
             } else {
                 std::this_thread::sleep_for(std::chrono::milliseconds(10));
             }
         }
     }
+
 
     bool OnDemandSub::init(const std::string &nodeName)
     {
@@ -158,7 +185,6 @@ namespace ondemand
 
         totalReceived_.store(0);
 
-       
         std::shared_ptr<DSF::Var::PubTableDefine> dummy;
         while (pubTableDefineQueue_.try_dequeue(dummy)) {
             // Dequeue and discard remaining items
@@ -166,39 +192,20 @@ namespace ondemand
         ONDEMANDLOG(info) << "OnDemandSub stopped";
     }
 
-    // bool OnDemandSub::subscribe(const std::string &varName, const std::string &tableName,
-    //                                      uint32_t frequency)
-    // {
-    //     SubscriptionItem item(varName, tableName, frequency);
-
-    //     std::unique_lock lock(subMutex_);
-
-    //     if (subscriptions_.find(item.varHash) != subscriptions_.end()) {
-    //         ONDEMANDLOG(WARNING) << "Already subscribed: " << varName;
-    //         return false;
-    //     }
-
-    //     subscriptions_[item.varHash] = item;
-
-    //     ONDEMANDLOG(info) << "Subscribed: " << varName << " @ " << frequency << "ms";
-    //     return true;
-    // }
-
-    // size_t OnDemandSub::batchSubscribe(const std::vector<SubscriptionItem> &items)
-    // {
-    //     size_t successCount = 0;
-
-    //     std::unique_lock lock(subMutex_);
-    //     for (const auto &item : items) {
-    //         if (subscriptions_.find(item.varHash) == subscriptions_.end()) {
-    //             subscriptions_[item.varHash] = item;
-    //             successCount++;
-    //         }
-    //     }
-
-    //     ONDEMANDLOG(info) << "Batch subscribed " << successCount << "/" << items.size() << " vars";
-    //     return successCount;
-    // }
+    size_t OnDemandSub::subscribe(const char *node_name, const std::vector<SubscriptionItem> &items)
+    {
+        if (!initialized_) {
+            ONDEMANDLOG(error) << "OnDemandSub not initialized";
+            return 0;
+        }
+        /*1.计算点hash*/
+        for (const auto &item : items) {
+            uint64_t varHash = fast_hash(item.varName.c_str());
+            ONDEMANDLOG(debug) << "Subscribing to var: " << item.varName
+                               << " with hash: " << varHash;
+        }
+        return 0;
+    }
 
     // bool OnDemandSub::unsubscribe(const std::string &varName)
     // {

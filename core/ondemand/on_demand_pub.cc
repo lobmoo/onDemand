@@ -168,7 +168,8 @@ namespace ondemand
         varIndex_.reserve(varIndex_.size() + VarDefines.size());
 
         for (const auto &VarDefine : VarDefines) {
-            const auto &varName = VarDefine.name(); // Use const reference to avoid string copy
+            const auto &varName =
+                nodeName_ + "_" + VarDefine.name(); // 变量名统一用nodeName+varName格式
             uint64_t varHash = fast_hash(varName);
             size_t bucketIdx = BucketManager::CalculateBucketIndexFromHash(varHash); // Reuse hash
 
@@ -184,8 +185,8 @@ namespace ondemand
                 continue;
             }
             meta.varId = varStore_.register_var(varHash, 32); //todo   这里应该按照真实大小分配内存
-            varIndex_.emplace(varHash, std::move(meta)); // Use move semantics
-            bucketManager_.AddMember(varName, varHash);  // Pass pre-calculated hash
+            varIndex_.emplace(varHash, std::move(meta));
+            bucketManager_.AddMember(varName, varHash);
         }
 
         /*初始化内存*/
@@ -246,7 +247,7 @@ namespace ondemand
         std::unique_lock lock(varIndexMutex_);
 
         for (const auto &varName : varNames) {
-            uint64_t varHash = fast_hash(varName);
+            uint64_t varHash = fast_hash(nodeName_ + "_" + varName);
             auto it = varIndex_.find(varHash);
             if (it == varIndex_.end()) {
                 ONDEMANDLOG(warning) << "Variable not found: " << varName;
@@ -318,8 +319,6 @@ namespace ondemand
         return true;
     }
 
-
-    
     // void OnDemandPub::handleSubscribe(const std::string &nodeName,
     //                                   const std::vector<std::pair<std::string, uint32_t>> &vars)
     // {

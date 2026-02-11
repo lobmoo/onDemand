@@ -3,11 +3,18 @@
 
 #include "on_demand_common.h"
 #include "concurrentqueue.h"
-
+#include "variable_store.h"
 namespace dsf
 {
 namespace ondemand
 {
+
+    struct SubscriptionItem {
+        std::string varName; // 变量名称
+        uint32_t frequency;  // 订阅频率，单位Hz
+
+        SubscriptionItem(const std::string &var, uint32_t freq) : varName(var), frequency(freq) {}
+    };
 
     /**
  * @brief 数据回调函数
@@ -40,10 +47,12 @@ namespace ondemand
         void stop();
 
         /**
-     * @brief 订阅变量
-     */
-        bool subscribe(const std::string &varName, const std::string &tableName,
-                       uint32_t frequency);
+        * @brief 
+        * @param  node_name 节点名        
+        * @param  items      变量信息列表     
+        * @return size_t 
+        */
+        size_t subscribe(const char *node_name, const std::vector<SubscriptionItem> &items);
 
         /**
      * @brief 批量订阅变量
@@ -116,6 +125,12 @@ namespace ondemand
 
         /*处理线程*/
         std::thread processTableDefineThread_;
+
+        // 变量索引: hash -> 元数据
+        std::unordered_map<uint64_t, VarMetadata> varIndex_;
+        mutable std::shared_mutex varIndexMutex_;
+
+        VarStore varStore_; // 变量值存储
     };
 
 } // namespace ondemand
