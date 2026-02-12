@@ -168,8 +168,7 @@ namespace ondemand
         varIndex_.reserve(varIndex_.size() + VarDefines.size());
 
         for (const auto &VarDefine : VarDefines) {
-            const auto &varName =
-                nodeName_ + "_" + VarDefine.name(); // 变量名统一用nodeName+varName格式
+            const auto &varName = make_meta_varname(nodeName_, VarDefine.name());
             uint64_t varHash = fast_hash(varName);
             size_t bucketIdx = BucketManager::CalculateBucketIndexFromHash(varHash); // Reuse hash
 
@@ -203,7 +202,7 @@ namespace ondemand
             }
 
             DSF::Var::PubTableDefine pubTableDefine;
-            pubTableDefine.name("bucket_" + std::to_string(i));
+            pubTableDefine.name(make_bucket_name_by_id(i));
             pubTableDefine.nodeName(nodeName_);
             pubTableDefine.description("onDemandPub TableDefine");
 
@@ -247,7 +246,7 @@ namespace ondemand
         std::unique_lock lock(varIndexMutex_);
 
         for (const auto &varName : varNames) {
-            uint64_t varHash = fast_hash(nodeName_ + "_" + varName);
+            uint64_t varHash = fast_hash(make_meta_varname(nodeName_, varName));
             auto it = varIndex_.find(varHash);
             if (it == varIndex_.end()) {
                 ONDEMANDLOG(warning) << "Variable not found: " << varName;
@@ -262,7 +261,7 @@ namespace ondemand
         for (uint32_t i = 0; i < bucketCount; ++i) {
 
             DSF::Var::PubTableDefine pubTableDefine;
-            pubTableDefine.name("bucket_" + std::to_string(i));
+            pubTableDefine.name(make_bucket_name_by_id(i));
             pubTableDefine.nodeName(nodeName_);
             pubTableDefine.description("onDemandPub TableDefine");
 
@@ -301,7 +300,7 @@ namespace ondemand
 
     bool OnDemandPub::setVarData(const char *varName, const void *data, size_t size)
     {
-        uint64_t varHash = fast_hash(varName);
+        uint64_t varHash = fast_hash(make_meta_varname(nodeName_, varName));
         int32_t varId = -1;
         {
             std::shared_lock lock(varIndexMutex_);

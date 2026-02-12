@@ -25,7 +25,7 @@ void publish()
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
     LOG(info) << "create " << vars.size() << " vars, cost " << duration << " ms";
     pub.createVars(vars);
-    std::this_thread::sleep_for(std::chrono::seconds(2));
+    std::this_thread::sleep_for(std::chrono::seconds(10));
     std::vector<std::string> varDelNames;
     for (int i = 0; i < 1000000; ++i) {
         std::string varName = "var" + std::to_string(i);
@@ -41,8 +41,8 @@ void subscribe()
     dsf::ondemand::OnDemandSub sub;
     sub.init("subNode");
     sub.start();
-    std::this_thread::sleep_for(std::chrono::seconds(10));
-    sub.stop(); 
+    // std::this_thread::sleep_for(std::chrono::seconds(10));
+    // sub.stop(); 
     std::this_thread::sleep_for(std::chrono::seconds(1000000));
 }
 

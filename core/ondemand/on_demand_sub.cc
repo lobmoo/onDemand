@@ -91,12 +91,15 @@ namespace ondemand
                 if (tableDefine) {
                     ONDEMANDLOG(info) << "Processing TableDefine: " << tableDefine->name()
                                       << ", vars size: " << tableDefine->varDefines().size();
+                    std::unique_lock lock(varIndexMutex_);
                     /*1.拆表*/
                     for (auto &varDef : tableDefine->varDefines()) {
                         const auto &varDefine = varDef.var().varDefine();
-                        std::string varName = varDefine.nodeName() + "_" + varDefine.name(); //保证和发布端一致
+                        std::string varName = make_meta_varname(
+                            varDefine.nodeName(), varDefine.name()); // 构造全名 和发布端一致
                         uint64_t varHash = fast_hash(varName);
-                        size_t bucketIdx = BucketManager::CalculateBucketIndexFromHash(varHash); // Reuse hash
+                        size_t bucketIdx =
+                            BucketManager::CalculateBucketIndexFromHash(varHash); // Reuse hash
                         VarMetadata meta;
                         meta.varHash = varHash;
                         meta.currentFreq = 0xFFFFFFFF;
@@ -110,8 +113,8 @@ namespace ondemand
                         }
                         meta.varId = varStore_.register_var(
                             varHash, 32); //todo   这里应该按照真实大小分配内存
-                        varIndex_.emplace(varHash, std::move(meta)); 
-                        totalReceived_.fetch_add(1);   //记录收到的总数
+                        varIndex_.emplace(varHash, std::move(meta));
+                        totalReceived_.fetch_add(1); //记录收到的总数
                         ONDEMANDLOG(debug) << "Registered var: " << varName;
                     }
                 }
@@ -120,7 +123,6 @@ namespace ondemand
             }
         }
     }
-
 
     bool OnDemandSub::init(const std::string &nodeName)
     {
@@ -194,17 +196,32 @@ namespace ondemand
 
     size_t OnDemandSub::subscribe(const char *node_name, const std::vector<SubscriptionItem> &items)
     {
-        if (!initialized_) {
-            ONDEMANDLOG(error) << "OnDemandSub not initialized";
-            return 0;
-        }
-        /*1.计算点hash*/
-        for (const auto &item : items) {
-            uint64_t varHash = fast_hash(item.varName.c_str());
-            ONDEMANDLOG(debug) << "Subscribing to var: " << item.varName
-                               << " with hash: " << varHash;
-        }
-        return 0;
+        // if (!initialized_) {
+        //     ONDEMANDLOG(error) << "OnDemandSub not initialized";
+        //     return 0;
+        // }
+        // std::shared_lock lock(varIndexMutex_);
+        // for (const auto &item : items) {
+        //     /*1.计算点hash*/
+        //     std::string metaVarName = make_meta_varname(node_name, item.varName);
+        //     uint64_t varHash = fast_hash(metaVarName);
+        //     ONDEMANDLOG(debug) << "Subscribing to var: " << item.varName
+        //                        << " with hash: " << varHash;
+
+        //     auto it = varIndex_.find(varHash);
+        //     std::string tableName = make_bucket_name_by_hash(varHash);
+        //     if (it == varIndex_.end()) {
+        //         ONDEMANDLOG(warning) << "Variable not found for subscription: " << item.varName;
+        //         // continue;  这里考虑到有可能订阅请求先于变量定义到达，所以不直接跳过
+        //     }
+        // }
+
+        // /*2.开始组包*/
+        // DSF::Message::SubTableRegister subReq;
+        // subReq.msgType(DSF::Message::MSGTYPE::SUB_TABLE_REGISTER);
+        // subReq.nodeName(node_name);
+        // subReq.tableName(tableName);
+        // return 0;
     }
 
     // bool OnDemandSub::unsubscribe(const std::string &varName)

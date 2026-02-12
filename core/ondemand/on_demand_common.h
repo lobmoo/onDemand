@@ -243,6 +243,33 @@ namespace ondemand
     inline uint64_t fast_hash(const std::string &str) { return fast_hash(str.c_str()); }
 
     /**
+     * @brief 生成全局唯一的变量名 (格式: nodeName_varName)
+     * @param nodeName 节点名
+     * @param varName 变量名
+     * @return 完整的变量名字符串
+     */
+    inline std::string make_meta_varname(const std::string &nodeName, const std::string &varName)
+    {
+        return nodeName + "_" + varName;
+    }
+
+    /**
+    * @brief 
+    * @param  varHash    hash值
+    * @return std::string 
+    */
+    inline std::string make_bucket_name_by_hash(uint64_t varHash)
+    {
+        BucketManager::BucketIndex i = BucketManager::CalculateBucketIndexFromHash(varHash);
+        return "bucket_" + std::to_string(i);
+    }
+
+    inline std::string make_bucket_name_by_id(uint32_t varId)
+    {
+        return "bucket_" + std::to_string(varId);
+    }
+
+    /**
     * @brief 变量元数据 
     */
     struct VarMetadata {
