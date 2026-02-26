@@ -58,7 +58,7 @@ namespace ondemand
          * @brief 获取总接收数量
          * @return uint64_t 
          */
-        uint64_t getTotalReceived() const { return totalReceived_.load(); }
+        uint64_t getTotalReceivedVars() const { return totalReceived_.load(); }
 
         
         
