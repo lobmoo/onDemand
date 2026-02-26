@@ -55,6 +55,15 @@ namespace ondemand
         size_t subscribe(const char *node_name, const std::vector<SubscriptionItem> &items);
 
         /**
+         * @brief 获取总接收数量
+         * @return uint64_t 
+         */
+        uint64_t getTotalReceived() const { return totalReceived_.load(); }
+
+        
+        
+
+        /**
      * @brief 批量订阅变量
      */
         size_t batchSubscribe();
