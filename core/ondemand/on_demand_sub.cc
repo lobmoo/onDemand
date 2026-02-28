@@ -21,10 +21,10 @@ namespace ondemand
             processFunc)
     {
 
-        constexpr uint32_t depth = 20;
+        constexpr uint32_t depth = 1;
         DdsWrapper::DataReaderQoSBuilder readerQosBuilder;
-        readerQosBuilder.setMaxSamples(256 * depth)
-            .setMaxInstances(256)
+        readerQosBuilder.setMaxSamples(32 * depth)
+            .setMaxInstances(32)
             .setMaxSamplesPerInstance(depth)
             .setDurabilityKind(DdsWrapper::DurabilityKind::TRANSIENT_LOCAL)
             .setReliabilityKind(DdsWrapper::ReliabilityKind::RELIABLE)
@@ -72,7 +72,7 @@ namespace ondemand
         return true;
     }
 
-    bool OnDemandSub::onReceiveTableDefine(const std::string &topicName,
+    bool OnDemandSub::onReceiveTableDefineCb(const std::string &topicName,
                                            std::shared_ptr<DSF::Var::PubTableDefine> data)
     {
         pubTableDefineQueue_.enqueue(data);
@@ -141,7 +141,7 @@ namespace ondemand
         }
 
         /*创建变量定义接收reader*/
-        if (!createTableDefineReader(std::bind(&OnDemandSub::onReceiveTableDefine, this,
+        if (!createTableDefineReader(std::bind(&OnDemandSub::onReceiveTableDefineCb, this,
                                                std::placeholders::_1, std::placeholders::_2))) {
             ONDEMANDLOG(error) << "Failed to create TableDefine reader";
             return false;
@@ -194,34 +194,52 @@ namespace ondemand
         ONDEMANDLOG(info) << "OnDemandSub stopped";
     }
 
-    size_t OnDemandSub::subscribe(const char *node_name, const std::vector<SubscriptionItem> &items)
+    bool OnDemandSub::subscribe(const char *node_name, const std::vector<SubscriptionItem> &items)
     {
-        // if (!initialized_) {
-        //     ONDEMANDLOG(error) << "OnDemandSub not initialized";
-        //     return 0;
-        // }
-        // std::shared_lock lock(varIndexMutex_);
-        // for (const auto &item : items) {
-        //     /*1.计算点hash*/
-        //     std::string metaVarName = make_meta_varname(node_name, item.varName);
-        //     uint64_t varHash = fast_hash(metaVarName);
-        //     ONDEMANDLOG(debug) << "Subscribing to var: " << item.varName
-        //                        << " with hash: " << varHash;
+        if (!initialized_) {
+            ONDEMANDLOG(error) << "OnDemandSub not initialized";
+            return false;
+        }
+        std::string tableName;
+        DSF::Message::SubTableRegister subReq;
+        {
+            std::shared_lock lock(varIndexMutex_);
 
-        //     auto it = varIndex_.find(varHash);
-        //     std::string tableName = make_bucket_name_by_hash(varHash);
-        //     if (it == varIndex_.end()) {
-        //         ONDEMANDLOG(warning) << "Variable not found for subscription: " << item.varName;
-        //         // continue;  这里考虑到有可能订阅请求先于变量定义到达，所以不直接跳过
-        //     }
-        // }
+            for (const auto &item : items) {
+                DSF::NamedValue varFreq;
+                /*1.计算点hash*/
+                std::string metaVarName = make_meta_varname(node_name, item.varName);
+                uint64_t varHash = fast_hash(metaVarName);
+                ONDEMANDLOG(debug)
+                    << "Subscribing to var: " << item.varName << " with hash: " << varHash;
+                auto it = varIndex_.find(varHash);
+                tableName = make_bucket_name_by_hash(varHash);
+                if (it == varIndex_.end()) {
+                    ONDEMANDLOG(warning) << "Variable not found for subscription: " << item.varName;
+                    // continue;  这里考虑到有可能订阅请求先于变量定义到达，所以不直接跳过
+                }
+                varFreq.name(metaVarName);
+                varFreq.value(std::to_string(item.frequency));
+                subReq.varFreqs().emplace_back(varFreq);
+            }
+        }
 
-        // /*2.开始组包*/
-        // DSF::Message::SubTableRegister subReq;
-        // subReq.msgType(DSF::Message::MSGTYPE::SUB_TABLE_REGISTER);
-        // subReq.nodeName(node_name);
-        // subReq.tableName(tableName);
-        // return 0;
+        /*2.开始组包*/
+        subReq.msgType(DSF::Message::MSGTYPE::SUB_TABLE_REGISTER);
+        subReq.nodeName(node_name);
+        subReq.tableName(tableName);
+        if (subReq.varFreqs().empty()) {
+            ONDEMANDLOG(warning) << "SubTableRegister has no variables for table: " << tableName;
+            return false;
+        }
+
+        /*发布注册信息*/
+        if (!subTableRegisterReqWriter_->writeMessage(subReq)) {
+            ONDEMANDLOG(error) << "Failed to publish SubTableRegister for table: " << tableName;
+            return false;
+        }
+
+        return true;
     }
 
     // bool OnDemandSub::unsubscribe(const std::string &varName)

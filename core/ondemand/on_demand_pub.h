@@ -107,11 +107,18 @@ namespace ondemand
     private:
         // 辅助函数
         bool createTableDefineWriter();
-        bool createSubTableRegisterReader();
+        bool createSubTableRegisterReader(
+            std::function<void(const std::string &, std::shared_ptr<DSF::Message::SubTableRegister>)>
+                processFunc);
         bool tableDefinePublish(const DSF::Var::PubTableDefine &pubTableDefine);
 
-        // 变量索引: hash -> 元数据
-        std::unordered_map<uint64_t, VarMetadata> varIndex_;
+        /*内部函数 */
+        bool onReceiveRegisterCb(const std::string &topicName,
+                                 std::shared_ptr<DSF::Message::SubTableRegister> data);
+        void processReceiveRegister();                        
+
+    private:
+        std::unordered_map<uint64_t, VarMetadata> varIndex_; // 变量索引: hash -> 元数据
         mutable std::shared_mutex varIndexMutex_;
 
         BucketManager bucketManager_;
@@ -119,9 +126,11 @@ namespace ondemand
         std::atomic<bool> initialized_;
         std::atomic<bool> running_;
 
-        /*交互dds节点*/
-        std::shared_ptr<DdsWrapper::DataNode> dataNode_;
-        std::string nodeName_;
+        std::shared_ptr<DdsWrapper::DataNode> dataNode_; //交互dds节点
+        std::string nodeName_;                           //节点名称
+
+        moodycamel::ConcurrentQueue<std::shared_ptr<DSF::Message::SubTableRegister>>
+            pubTableDefRegisterQueue_; // 频率请求队列
 
         /*数据读写器*/
         std::shared_ptr<DdsWrapper::DDSTopicWriter<DSF::Var::PubTableDefine>>
@@ -132,6 +141,9 @@ namespace ondemand
             subTableRegisterRespWriter_; // 频率回复数据写入器
 
         VarStore varStore_; // 变量值存储
+
+        std::thread registerProcessThread_; // 处理订阅请求的线程
+        
     };
 
 } // namespace ondemand

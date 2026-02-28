@@ -53,10 +53,10 @@ namespace ondemand
         }
 
         /*创建接收频率请求topic reader*/
-        if (!createSubTableRegisterReader()) {
+        if (!createSubTableRegisterReader(std::bind(&OnDemandPub::onReceiveRegisterCb, this, std::placeholders::_1, std::placeholders::_2))) {
             return false;
         }
-
+        
         ONDEMANDLOG(info) << "OnDemandPub initialized: " << nodeName;
         return true;
     } // namespace ondemand
@@ -68,6 +68,7 @@ namespace ondemand
             return false;
         }
 
+        registerProcessThread_ = std::thread(&OnDemandPub::processReceiveRegister, this);
         ONDEMANDLOG(info) << "OnDemandPub started";
         return true;
     }
@@ -77,6 +78,9 @@ namespace ondemand
         initialized_.store(false);
         if (!running_.exchange(false)) {
             return;
+        }
+        if(registerProcessThread_.joinable()) {
+            registerProcessThread_.join();
         }
 
         std::unique_lock lock(varIndexMutex_);
@@ -97,10 +101,10 @@ namespace ondemand
 
     bool OnDemandPub::createTableDefineWriter()
     {
-        constexpr uint32_t depth = 20;
+        constexpr uint32_t depth = 1;
         DdsWrapper::DataWriterQoSBuilder writerQosBuilder;
-        writerQosBuilder.setMaxSamples(256 * depth)
-            .setMaxInstances(256)
+        writerQosBuilder.setMaxSamples(32 * depth)
+            .setMaxInstances(32)
             .setMaxSamplesPerInstance(depth)
             .setDurabilityKind(DdsWrapper::DurabilityKind::TRANSIENT_LOCAL)
             .setReliabilityKind(DdsWrapper::ReliabilityKind::RELIABLE)
@@ -120,7 +124,9 @@ namespace ondemand
         return true;
     }
 
-    bool OnDemandPub::createSubTableRegisterReader()
+    bool OnDemandPub::createSubTableRegisterReader(
+        std::function<void(const std::string &, std::shared_ptr<DSF::Message::SubTableRegister>)>
+            processFunc)
     {
         constexpr uint32_t depth = 100;
         DdsWrapper::DataReaderQoSBuilder readerQosBuilder;
@@ -136,11 +142,7 @@ namespace ondemand
             != dsf::ondemand::registerNodeTopicReader<DSF::Message::SubTableRegister,
                                                       DSF::Message::SubTableRegisterPubSubType>(
                 dataNode_, subTableRegisterReqReader_,
-                DSF::Message::MESSAGE_COMMAND_REQUEST_SUB_TABLE_REGISTER_TOPIC_NAME,
-                [this](const std::string &topic,
-                       std::shared_ptr<DSF::Message::SubTableRegister> msg) {
-                    // TODO: implement callback
-                },
+                DSF::Message::MESSAGE_COMMAND_REQUEST_SUB_TABLE_REGISTER_TOPIC_NAME, processFunc,
                 readerQosBuilder)) {
             ONDEMANDLOG(error)
                 << "Failed to register topic for SubTableRegister: "
@@ -158,6 +160,28 @@ namespace ondemand
         } else {
             ONDEMANDLOG(error) << "pubTableDefineWriter_ is nullptr";
             return false;
+        }
+    }
+
+    bool OnDemandPub::onReceiveRegisterCb(const std::string &topicName,
+                                          std::shared_ptr<DSF::Message::SubTableRegister> data)
+    {
+        pubTableDefRegisterQueue_.enqueue(data);
+        return true;
+    }
+
+    void OnDemandPub::processReceiveRegister()
+    {
+        while (running_.load()) {
+            std::shared_ptr<DSF::Message::SubTableRegister> data;
+            if (pubTableDefRegisterQueue_.try_dequeue(data)) {
+                if (data) {
+                    ONDEMANDLOG(info) << "Received subscription register from node: " << data->nodeName()
+                                      << " with " << data->varFreqs().size() << " variables";
+                }
+            } else {
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            }
         }
     }
 

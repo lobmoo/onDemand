@@ -50,18 +50,15 @@ namespace ondemand
         * @brief 
         * @param  node_name 节点名        
         * @param  items      变量信息列表     
-        * @return size_t 
+        * @return true 成功 / false 失败 
         */
-        size_t subscribe(const char *node_name, const std::vector<SubscriptionItem> &items);
+        bool subscribe(const char *node_name, const std::vector<SubscriptionItem> &items);
 
         /**
          * @brief 获取总接收数量
          * @return uint64_t 
          */
         uint64_t getTotalReceivedVars() const { return totalReceived_.load(); }
-
-        
-        
 
         /**
      * @brief 批量订阅变量
@@ -106,7 +103,7 @@ namespace ondemand
          * @return true 
          * @return false 
          */
-        bool onReceiveTableDefine(const std::string &topicName,
+        bool onReceiveTableDefineCb(const std::string &topicName,
                                   std::shared_ptr<DSF::Var::PubTableDefine> data);
 
         /**
@@ -122,11 +119,10 @@ namespace ondemand
             pubTableDefineReader_; // 变量定义数据读取器
 
         std::shared_ptr<DdsWrapper::DDSTopicWriter<DSF::Message::SubTableRegister>>
-            subTableRegisterReqWriter_; // 频率请求数据写入器
+            subTableRegisterReqWriter_;
 
         std::atomic<bool> initialized_;
         std::atomic<bool> running_;
-
         std::atomic<uint64_t> totalReceived_;
 
         /*变量定义队列*/

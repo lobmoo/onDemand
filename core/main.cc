@@ -14,7 +14,7 @@ void publish()
     pub.start();
     std::vector<DSF::Var::Define> vars;
     auto start = std::chrono::high_resolution_clock::now();
-    for (int i = 0; i < 1000000; ++i) {
+    for (int i = 0; i < 1000; ++i) {
         DSF::Var::Define var;
         var.name("var" + std::to_string(i));
         var.nodeName("pubNode");
@@ -27,11 +27,11 @@ void publish()
     pub.createVars(vars);
     std::this_thread::sleep_for(std::chrono::seconds(10));
     std::vector<std::string> varDelNames;
-    for (int i = 0; i < 1000000; ++i) {
+    for (int i = 0; i < 100; ++i) {
         std::string varName = "var" + std::to_string(i);
         varDelNames.push_back(varName);
     }
-    pub.deleteVars(varDelNames);
+   // pub.deleteVars(varDelNames);
 
     std::this_thread::sleep_for(std::chrono::seconds(100000));
 }
@@ -41,7 +41,16 @@ void subscribe()
     dsf::ondemand::OnDemandSub sub;
     sub.init("subNode");
     sub.start();
-    // std::this_thread::sleep_for(std::chrono::seconds(10));
+    std::this_thread::sleep_for(std::chrono::seconds(5));
+    LOG(critical) << "total received vars: " << sub.getTotalReceivedVars();
+   
+    
+    std::vector<dsf::ondemand::SubscriptionItem> items;
+    for (int i = 0; i < 100; ++i) {
+        std::string varName = "var" + std::to_string(i);
+        items.push_back({varName, 100});
+    }
+    sub.subscribe("pubNode", items);
     // sub.stop(); 
     std::this_thread::sleep_for(std::chrono::seconds(1000000));
 }
