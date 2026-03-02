@@ -73,7 +73,7 @@ namespace ondemand
     }
 
     bool OnDemandSub::onReceiveTableDefineCb(const std::string &topicName,
-                                           std::shared_ptr<DSF::Var::PubTableDefine> data)
+                                             std::shared_ptr<DSF::Var::PubTableDefine> data)
     {
         pubTableDefineQueue_.enqueue(data);
         return true;
@@ -226,7 +226,7 @@ namespace ondemand
 
         /*2.开始组包*/
         subReq.msgType(DSF::Message::MSGTYPE::SUB_TABLE_REGISTER);
-        subReq.nodeName(node_name);
+        subReq.nodeName(nodeName_);
         subReq.tableName(tableName);
         if (subReq.varFreqs().empty()) {
             ONDEMANDLOG(warning) << "SubTableRegister has no variables for table: " << tableName;
@@ -242,23 +242,52 @@ namespace ondemand
         return true;
     }
 
-    // bool OnDemandSub::unsubscribe(const std::string &varName)
-    // {
-    //     uint64_t varHash = fast_hash(varName);
+    bool OnDemandSub::unsubscribe(const char *node_name, const std::vector<std::string> &items)
+    {
+        if (!initialized_) {
+            ONDEMANDLOG(error) << "OnDemandSub not initialized";
+            return false;
+        }
+        std::string tableName;
+        DSF::Message::SubTableRegister subReq;
+        {
+            std::shared_lock lock(varIndexMutex_);
 
-    //     std::unique_lock lock(subMutex_);
+            for (const auto &item : items) {
+                DSF::NamedValue varFreq;
+                /*1.计算点hash*/
+                std::string metaVarName = make_meta_varname(node_name, item);
+                uint64_t varHash = fast_hash(metaVarName);
+                ONDEMANDLOG(debug) << "Subscribing to var: " << item << " with hash: " << varHash;
+                auto it = varIndex_.find(varHash);
+                tableName = make_bucket_name_by_hash(varHash);
+                if (it == varIndex_.end()) {
+                    ONDEMANDLOG(warning) << "Variable not found for subscription: " << item;
+                    // continue;  这里考虑到有可能订阅请求先于变量定义到达，所以不直接跳过
+                }
+                varFreq.name(metaVarName);
+                varFreq.value();
+                subReq.varFreqs().emplace_back(varFreq);
+            }
+        }
 
-    //     auto it = subscriptions_.find(varHash);
-    //     if (it == subscriptions_.end()) {
-    //         ONDEMANDLOG(WARNING) << "Not subscribed: " << varName;
-    //         return false;
-    //     }
+        /*2.开始组包*/
+        subReq.msgType(DSF::Message::MSGTYPE::SUB_TABLE_UNREGISTER);
+        subReq.nodeName(nodeName_);
+        subReq.tableName(tableName);
+        if (subReq.varFreqs().empty()) {
+            ONDEMANDLOG(warning) << "SubTableRegister has no variables for table: " << tableName;
+            return false;
+        }
 
-    //     subscriptions_.erase(it);
+        /*发布注销信息*/
+        if (!subTableRegisterReqWriter_->writeMessage(subReq)) {
+            ONDEMANDLOG(error) << "Failed to publish SubTableRegister for table: " << tableName;
+            return false;
+        }
 
-    //     ONDEMANDLOG(info) << "Unsubscribed: " << varName;
-    //     return true;
-    // }
+        return true;
+    }
 
     // size_t OnDemandSub::getSubscriptionCount() const
     // {

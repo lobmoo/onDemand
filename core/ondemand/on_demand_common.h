@@ -25,6 +25,8 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <condition_variable>
+#include <sstream>
+#include <iomanip>
 
 #include "dds_wrapper/dds_abstraction.h"
 #include "dds_wrapper/dds_idl_wrapper.h"
@@ -294,6 +296,54 @@ namespace ondemand
             : varHash(0), bucketIndex(0), varId(0), currentFreq(0xFFFFFFFF), freqSubs{},
               activeFreqCount(0)
         {
+        }
+
+        /**
+         * @brief 打印 VarMetadata 完整状态（调试用）
+         * @param varName 变量名（可选，方便日志定位）
+         */
+        void dump(const std::string &varName = "") const
+        {
+            std::ostringstream oss;
+            oss << "\n========== VarMetadata Dump ==========";
+            if (!varName.empty()) {
+                oss << "\n  varName      : " << varName;
+            }
+            oss << "\n  varHash      : 0x" << std::hex << varHash << std::dec;
+            oss << "\n  bucketIndex  : " << bucketIndex;
+            oss << "\n  varId        : " << varId;
+            if (currentFreq == 0xFFFFFFFF) {
+                oss << "\n  currentFreq  : NONE (no subscriber)";
+            } else {
+                oss << "\n  currentFreq  : " << currentFreq << " ms";
+            }
+            oss << "\n  activeFreqCount: " << static_cast<int>(activeFreqCount);
+            oss << "\n  freqSubs (" << freqSubs.size() << "):";
+            for (size_t i = 0; i < freqSubs.size(); ++i) {
+                const auto &fs = freqSubs[i];
+                oss << "\n    [" << i << "] freq=" << fs.freq << "ms"
+                    << ", subCount=" << fs.subCount
+                    << ", subMask=0b";
+                // 打印 subMask 二进制 (只打印有效位)
+                if (fs.subMask == 0) {
+                    oss << "0";
+                } else {
+                    bool leadingZero = true;
+                    for (int bit = 63; bit >= 0; --bit) {
+                        if (fs.subMask & (uint64_t(1) << bit)) {
+                            leadingZero = false;
+                            oss << "1";
+                        } else if (!leadingZero) {
+                            oss << "0";
+                        }
+                    }
+                }
+            }
+            if (freqSubs.empty()) {
+                oss << "\n    (empty - no subscribers)";
+            }
+            oss << "\n======================================";
+            ONDEMANDLOG(info) << oss.str();
         }
     };
 

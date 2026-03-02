@@ -3,6 +3,7 @@
 #include <vector>
 #include <thread>
 #include <filesystem>
+#include <unistd.h>
 #include "log/logger.h"
 #include "ondemand/on_demand_pub.h"
 #include "ondemand/on_demand_sub.h"
@@ -13,25 +14,22 @@ void publish()
     pub.init("pubNode");
     pub.start();
     std::vector<DSF::Var::Define> vars;
-    auto start = std::chrono::high_resolution_clock::now();
-    for (int i = 0; i < 1000; ++i) {
+    for (int i = 0; i < 10; ++i) {
         DSF::Var::Define var;
         var.name("var" + std::to_string(i));
         var.nodeName("pubNode");
         var.modelName("int");
         vars.push_back(std::move(var));
     }
-    auto end = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-    LOG(info) << "create " << vars.size() << " vars, cost " << duration << " ms";
     pub.createVars(vars);
+
     std::this_thread::sleep_for(std::chrono::seconds(10));
     std::vector<std::string> varDelNames;
-    for (int i = 0; i < 100; ++i) {
+    for (int i = 0; i < 10; ++i) {
         std::string varName = "var" + std::to_string(i);
         varDelNames.push_back(varName);
     }
-   // pub.deleteVars(varDelNames);
+    // pub.deleteVars(varDelNames);
 
     std::this_thread::sleep_for(std::chrono::seconds(100000));
 }
@@ -39,23 +37,30 @@ void publish()
 void subscribe()
 {
     dsf::ondemand::OnDemandSub sub;
-    sub.init("subNode");
+    std::string nodeName = "subNode" + std::to_string(getpid());
+    sub.init(nodeName);
     sub.start();
-    std::this_thread::sleep_for(std::chrono::seconds(5));
     LOG(critical) << "total received vars: " << sub.getTotalReceivedVars();
-   
-    
+
     std::vector<dsf::ondemand::SubscriptionItem> items;
-    for (int i = 0; i < 100; ++i) {
+     std::vector<std::string> unitems;
+    for (int i = 0; i < 5; ++i) {
         std::string varName = "var" + std::to_string(i);
-        items.push_back({varName, 100});
+        items.push_back({varName, 500});
+        unitems.push_back(varName);
     }
     sub.subscribe("pubNode", items);
-    // sub.stop(); 
+    std::this_thread::sleep_for(std::chrono::seconds(5));
+    sub.unsubscribe("pubNode", unitems);
+    // sub.subscribe("pubNode", items);
+    // std::this_thread::sleep_for(std::chrono::seconds(2));
+    // sub.subscribe("pubNode", items);
+    // std::this_thread::sleep_for(std::chrono::seconds(2));
+    // sub.stop();
     std::this_thread::sleep_for(std::chrono::seconds(1000000));
 }
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
     Logger::GetInstance()->Init("log/1.log", Logger::console, Logger::info, 10, 3);
     LOG(info) << "start on demand demo";

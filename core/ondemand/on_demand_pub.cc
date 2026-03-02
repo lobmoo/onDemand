@@ -15,6 +15,7 @@
  */
 
 #include "on_demand_pub.h"
+#include <charconv>
 
 namespace dsf
 {
@@ -53,10 +54,12 @@ namespace ondemand
         }
 
         /*创建接收频率请求topic reader*/
-        if (!createSubTableRegisterReader(std::bind(&OnDemandPub::onReceiveRegisterCb, this, std::placeholders::_1, std::placeholders::_2))) {
+        if (!createSubTableRegisterReader(std::bind(&OnDemandPub::onReceiveRegisterCb, this,
+                                                    std::placeholders::_1,
+                                                    std::placeholders::_2))) {
             return false;
         }
-        
+
         ONDEMANDLOG(info) << "OnDemandPub initialized: " << nodeName;
         return true;
     } // namespace ondemand
@@ -79,7 +82,7 @@ namespace ondemand
         if (!running_.exchange(false)) {
             return;
         }
-        if(registerProcessThread_.joinable()) {
+        if (registerProcessThread_.joinable()) {
             registerProcessThread_.join();
         }
 
@@ -176,8 +179,35 @@ namespace ondemand
             std::shared_ptr<DSF::Message::SubTableRegister> data;
             if (pubTableDefRegisterQueue_.try_dequeue(data)) {
                 if (data) {
-                    ONDEMANDLOG(info) << "Received subscription register from node: " << data->nodeName()
-                                      << " with " << data->varFreqs().size() << " variables";
+                    ONDEMANDLOG(info)
+                        << "Received subscription register from node: " << data->nodeName()
+                        << " with " << data->varFreqs().size() << " variables";
+
+                    // 处理订阅注册请求
+                    switch (data->msgType()) {
+                        case DSF::Message::MSGTYPE::SUB_TABLE_REGISTER:
+                            handleSubscribe(data->nodeName(), data->varFreqs());
+                            break;
+                        case DSF::Message::MSGTYPE::SUB_TABLE_UNREGISTER:
+                            handleUnsubscribe(data->nodeName(), data->varFreqs());
+                            break;
+                        default:
+                            LOG(error) << "Unknown registered type.";
+                            break;
+                    }
+
+                    // [DEBUG] 打印相关变量的 VarMetadata
+                    {
+                        std::shared_lock dumpLock(varIndexMutex_);
+                        for (const auto &varFreq : data->varFreqs()) {
+                            std::string metaName = varFreq.name();
+                            uint64_t varHash = fast_hash(metaName);
+                            auto it = varIndex_.find(varHash);
+                            if (it != varIndex_.end()) {
+                                it->second.dump(varFreq.name());
+                            }
+                        }
+                    }
                 }
             } else {
                 std::this_thread::sleep_for(std::chrono::milliseconds(10));
@@ -342,30 +372,160 @@ namespace ondemand
         return true;
     }
 
-    // void OnDemandPub::handleSubscribe(const std::string &nodeName,
-    //                                   const std::vector<std::pair<std::string, uint32_t>> &vars)
-    // {
-    //     uint64_t nodeHash = fast_hash(nodeName);
+    uint8_t OnDemandPub::getOrAssignNodeBit(uint64_t nodeHash)
+    {
+        auto it = nodeSlotMap_.find(nodeHash);
+        if (it != nodeSlotMap_.end()) {
+            return it->second;
+        }
+        if (nextNodeSlot_ >= 64) {
+            ONDEMANDLOG(error) << "Node slot overflow! Max 64 subscriber nodes supported.";
+            return 63; // 饱和处理，共享最后一个 bit
+        }
+        uint8_t slot = nextNodeSlot_++;
+        nodeSlotMap_.emplace(nodeHash, slot);
+        return slot;
+    }
 
-    //     std::unique_lock lock(varIndexMutex_);
-    //     for (const auto &[varName, freq] : vars) {
-    //         uint64_t varHash = fast_hash(varName);
+    void OnDemandPub::recalcCurrentFreq(VarMetadata &meta)
+    {
+        uint32_t minFreq = 0xFFFFFFFF;
+        for (const auto &fs : meta.freqSubs) {
+            if (fs.subCount > 0 && fs.freq < minFreq) {
+                minFreq = fs.freq;
+            }
+        }
+        meta.currentFreq = minFreq;
+    }
 
-    //         auto it = varIndex_.find(varHash);
-    //         if (it == varIndex_.end()) {
-    //             continue;
-    //         }
+    void OnDemandPub::handleSubscribe(const std::string &nodeName,
+                                      const std::vector<DSF::NamedValue> &varFreqs)
+    {
+        uint64_t nodeHash = fast_hash(nodeName);
 
-    //         auto &meta = it->second;
+        std::unique_lock lock(varIndexMutex_);
+        uint8_t nodeBit = getOrAssignNodeBit(nodeHash);
+        uint64_t nodeMask = uint64_t(1) << nodeBit;
 
-    //         // 更新频率
-    //         if (freq < meta.currentFreq) {
-    //             meta.currentFreq = freq;
-    //         }
-    //     }
+        for (const auto &varFreq : varFreqs) {
+            std::string metaName = varFreq.name(); // 这里注册请求已经是全名了，不需要再拼接一次了
+            uint64_t varHash = fast_hash(metaName);
+            auto it = varIndex_.find(varHash);
+            if (it == varIndex_.end()) {
+                LOG(warning) << "register var not found ! var name: " << varFreq.name()
+                             << " node name: " << nodeName;
+                continue;
+            }
 
-    //     ONDEMANDLOG(info) << "Node " << nodeName << " subscribed to " << vars.size() << " vars";
-    // }
+            auto &meta = it->second;
+
+            // 解析频率
+            uint32_t freq;
+            auto result = std::from_chars(varFreq.value().data(),
+                                          varFreq.value().data() + varFreq.value().size(), freq);
+            if (std::errc() != result.ec) {
+                ONDEMANDLOG(warning) << "Invalid frequency value for var: " << varFreq.name()
+                                     << " node: " << nodeName << " value: " << varFreq.value();
+                continue;
+            }
+
+            // 先从该节点已有的其他频率条目中移除（一个节点对一个变量只保留一个频率）
+            for (auto fsIt = meta.freqSubs.begin(); fsIt != meta.freqSubs.end();) {
+                if (fsIt->subMask & nodeMask) {
+                    fsIt->subMask &= ~nodeMask;
+                    fsIt->subCount--;
+                    if (fsIt->subCount == 0) {
+                        fsIt = meta.freqSubs.erase(fsIt);
+                    } else {
+                        ++fsIt;
+                    }
+                } else {
+                    ++fsIt;
+                }
+            }
+
+            // 在 freqSubs 中找到匹配 freq 的条目，或新建
+            VarMetadata::FreqSub *target = nullptr;
+            for (auto &fs : meta.freqSubs) {
+                if (fs.freq == freq) {
+                    target = &fs;
+                    break;
+                }
+            }
+            if (!target) {
+                meta.freqSubs.emplace_back();
+                target = &meta.freqSubs.back();
+                target->freq = freq;
+            }
+
+            // 设置该节点的订阅位
+            target->subMask |= nodeMask;
+            target->subCount++;
+
+            // 更新活跃频率数量
+            meta.activeFreqCount = static_cast<uint8_t>(meta.freqSubs.size());
+
+            // 重新计算最小发布频率
+            recalcCurrentFreq(meta);
+
+            ONDEMANDLOG(info) << "Var [" << varFreq.name() << "] subscribed by node [" << nodeName
+                              << "] at freq=" << freq << "ms, currentFreq=" << meta.currentFreq << "ms";
+        }
+    }
+
+    void OnDemandPub::handleUnsubscribe(const std::string &nodeName,
+                                        const std::vector<DSF::NamedValue> &varFreqs)
+    {
+        uint64_t nodeHash = fast_hash(nodeName);
+
+        std::unique_lock lock(varIndexMutex_);
+
+        // 查找该节点的 bit 位
+        auto slotIt = nodeSlotMap_.find(nodeHash);
+        if (slotIt == nodeSlotMap_.end()) {
+            ONDEMANDLOG(warning) << "Unsubscribe from unknown node: " << nodeName;
+            return;
+        }
+        uint64_t nodeMask = uint64_t(1) << slotIt->second;
+
+        for (const auto &varFreq : varFreqs) {
+            std::string metaName = varFreq.name();
+            uint64_t varHash = fast_hash(metaName);
+            auto it = varIndex_.find(varHash);
+            if (it == varIndex_.end()) {
+                LOG(warning) << "unregister var not found ! var name: " << varFreq.name()
+                             << " node name: " << nodeName;
+                continue;
+            }
+
+            auto &meta = it->second;
+
+            // 从 freqSubs 中移除该节点的订阅
+            for (auto fsIt = meta.freqSubs.begin(); fsIt != meta.freqSubs.end();) {
+                if (fsIt->subMask & nodeMask) {
+                    fsIt->subMask &= ~nodeMask;
+                    fsIt->subCount--;
+                    if (fsIt->subCount == 0) {
+                        fsIt = meta.freqSubs.erase(fsIt);
+                    } else {
+                        ++fsIt;
+                    }
+                } else {
+                    ++fsIt;
+                }
+            }
+
+            // 更新活跃频率数量
+            meta.activeFreqCount = static_cast<uint8_t>(meta.freqSubs.size());
+
+            // 重新计算最小频率（关键：退订后自动切换到下一个最小频率）
+            uint32_t oldFreq = meta.currentFreq;
+            recalcCurrentFreq(meta);
+
+            ONDEMANDLOG(info) << "Var [" << varFreq.name() << "] unsubscribed by node [" << nodeName
+                              << "], freq " << oldFreq << "ms -> " << meta.currentFreq << "ms";
+        }
+    }
 
     // void OnDemandPub::dumpState(std::ostream &os)
     // {

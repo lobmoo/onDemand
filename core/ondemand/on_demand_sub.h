@@ -68,7 +68,7 @@ namespace ondemand
         /**
      * @brief 取消订阅
      */
-        bool unsubscribe(const std::string &varName);
+        bool unsubscribe(const char *node_name, const std::vector<std::string> &items);
 
         /**
      * @brief 获取订阅数量
@@ -104,7 +104,7 @@ namespace ondemand
          * @return false 
          */
         bool onReceiveTableDefineCb(const std::string &topicName,
-                                  std::shared_ptr<DSF::Var::PubTableDefine> data);
+                                    std::shared_ptr<DSF::Var::PubTableDefine> data);
 
         /**
         * @brief 处理变量定义数据

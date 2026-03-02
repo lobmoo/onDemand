@@ -87,14 +87,6 @@ namespace ondemand
         bool setVarData(const char *varName, const void *data, size_t size);
 
         /**
-     * @brief 处理订阅请求
-     * @param nodeName 节点名称
-     * @param vars 变量列表 <变量名, 频率>
-     */
-        void handleSubscribe(const std::string &nodeName,
-                             const std::vector<std::pair<std::string, uint32_t>> &vars);
-
-        /**
      * @brief 导出状态
      */
         void dumpState(std::ostream &os);
@@ -108,17 +100,27 @@ namespace ondemand
         // 辅助函数
         bool createTableDefineWriter();
         bool createSubTableRegisterReader(
-            std::function<void(const std::string &, std::shared_ptr<DSF::Message::SubTableRegister>)>
+            std::function<void(const std::string &,
+                               std::shared_ptr<DSF::Message::SubTableRegister>)>
                 processFunc);
         bool tableDefinePublish(const DSF::Var::PubTableDefine &pubTableDefine);
 
         /*内部函数 */
         bool onReceiveRegisterCb(const std::string &topicName,
                                  std::shared_ptr<DSF::Message::SubTableRegister> data);
-        void processReceiveRegister();                        
+        void processReceiveRegister();
+        void handleSubscribe(const std::string &nodeName,
+                             const std::vector<DSF::NamedValue> &varFreqs);
+        void handleUnsubscribe(const std::string &nodeName,
+                               const std::vector<DSF::NamedValue> &varFreqs);
 
-    private:
-        std::unordered_map<uint64_t, VarMetadata> varIndex_; // 变量索引: hash -> 元数据
+        // 获取或分配节点的 bit 位索引 (用于 subMask)
+        uint8_t getOrAssignNodeBit(uint64_t nodeHash);
+        // 重新计算变量的最小发布频率
+        void recalcCurrentFreq(VarMetadata &meta);
+
+            private
+            : std::unordered_map<uint64_t, VarMetadata> varIndex_; // 变量索引: hash -> 元数据
         mutable std::shared_mutex varIndexMutex_;
 
         BucketManager bucketManager_;
@@ -142,8 +144,11 @@ namespace ondemand
 
         VarStore varStore_; // 变量值存储
 
+        // 节点 hash -> bit 位索引映射 (最多支持64个订阅节点)
+        std::unordered_map<uint64_t, uint8_t> nodeSlotMap_;
+        uint8_t nextNodeSlot_ = 0;
+
         std::thread registerProcessThread_; // 处理订阅请求的线程
-        
     };
 
 } // namespace ondemand
