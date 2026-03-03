@@ -77,18 +77,16 @@ namespace ondemand
         std::function<void(const std::string &, std::shared_ptr<DSF::Var::TableDataTransfer>)>
             processFunc)
     {
-        // 根据 varIndex_ 中的元数据，收集所有不同的 bucket 表名
-        std::unordered_set<std::string> tableNames;
+        // 根据 varIndex_ 中的元数据，收集所有不同的 bucket id
+        std::unordered_set<uint32_t> bucketIds;
         {
             std::shared_lock lock(varIndexMutex_);
             for (const auto &[hash, meta] : varIndex_) {
-                std::string tableName =
-                    make_bucket_name_by_id(static_cast<uint32_t>(meta.bucketIndex));
-                tableNames.insert(tableName);
+                bucketIds.insert(static_cast<uint32_t>(meta.bucketIndex));
             }
         }
 
-        if (tableNames.empty()) {
+        if (bucketIds.empty()) {
             ONDEMANDLOG(warning) << "No variables registered, no data transfer readers to create.";
             return false;
         }
@@ -105,13 +103,14 @@ namespace ondemand
 
         std::lock_guard<std::mutex> lock(dataTransferCtxMapMutex_);
 
-        for (const auto &tableName : tableNames) {
-            // 如果该表的 reader 已存在，跳过
-            if (dataTransferReaderMap_.find(tableName) != dataTransferReaderMap_.end()) {
-                ONDEMANDLOG(debug) << "DataTransfer reader already exists for table: " << tableName;
+        for (uint32_t bucketId : bucketIds) {
+            // 如果该 bucket 的 reader 已存在，跳过
+            if (dataTransferReaderMap_.find(bucketId) != dataTransferReaderMap_.end()) {
+                ONDEMANDLOG(debug) << "DataTransfer reader already exists for bucketId: " << bucketId;
                 continue;
             }
 
+            std::string tableName = make_bucket_name_by_id(bucketId);
             std::string topicName = DSF::Var::VAR_DATA_TRANSFER_TOPIC_PREFIX + tableName;
             std::shared_ptr<DdsWrapper::DDSTopicReader<DSF::Var::TableDataTransfer>> reader;
             if (0
@@ -122,8 +121,8 @@ namespace ondemand
                     << "Failed to create DataTransfer reader for topic: " << topicName;
                 return false;
             }
-            dataTransferReaderMap_.emplace(tableName, reader);
-            ONDEMANDLOG(info) << "Created DataTransfer reader for table: " << tableName
+            dataTransferReaderMap_.emplace(bucketId, reader);
+            ONDEMANDLOG(info) << "Created DataTransfer reader for bucketId: " << bucketId
                               << ", topic: " << topicName;
         }
 
@@ -183,11 +182,10 @@ namespace ondemand
                         }
 
                         // 检查该 bucket 的 reader 是否已存在
-                        std::string tableName =
-                            make_bucket_name_by_id(static_cast<uint32_t>(bucketIdx));
+                        uint32_t bucketId = static_cast<uint32_t>(bucketIdx);
                         {
                             std::lock_guard<std::mutex> mapLock(dataTransferCtxMapMutex_);
-                            if (dataTransferReaderMap_.find(tableName)
+                            if (dataTransferReaderMap_.find(bucketId)
                                 == dataTransferReaderMap_.end()) {
                                 hasNewBucket = true;
                             }

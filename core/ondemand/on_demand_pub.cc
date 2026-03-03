@@ -25,7 +25,7 @@ namespace ondemand
     OnDemandPub::OnDemandPub()
         : varIndex_(), varIndexMutex_(), bucketManager_(), initialized_(false), running_(false),
           dataNode_(nullptr), nodeName_(), pubTableDefineWriter_(nullptr),
-          subTableRegisterReqReader_(nullptr), subTableRegisterRespWriter_(nullptr)
+          subTableRegisterReqReader_(nullptr)
     {
     }
 
@@ -94,8 +94,10 @@ namespace ondemand
         pubTableDefineWriter_ = nullptr;
         subTableRegisterReqReader_.reset();
         subTableRegisterReqReader_ = nullptr;
-        subTableRegisterRespWriter_.reset();
-        subTableRegisterRespWriter_ = nullptr;
+        {
+            std::lock_guard<std::mutex> lock(DataTransferWriterMapMutex_);
+            dataTransferWriterMap_.clear();
+        }
         dataNode_.reset();
         dataNode_ = nullptr;
 
@@ -153,6 +155,62 @@ namespace ondemand
             return false;
         }
 
+        return true;
+    }
+
+    bool OnDemandPub::createDataTransferWriter()
+    {
+        // 根据 varIndex_ 中的元数据，收集所有不同的 bucket id
+        std::unordered_set<uint32_t> bucketIds;
+        {
+            std::shared_lock lock(varIndexMutex_);
+            for (const auto &[hash, meta] : varIndex_) {
+                bucketIds.insert(static_cast<uint32_t>(meta.bucketIndex));
+            }
+        }
+
+        if (bucketIds.empty()) {
+            ONDEMANDLOG(warning) << "No variables registered, no data transfer writers to create.";
+            return false;
+        }
+
+        constexpr uint32_t depth = 1;
+        DdsWrapper::DataWriterQoSBuilder writerQosBuilder;
+        // writerQosBuilder.setMaxSamples(32 * depth)
+        //     .setMaxInstances(32)
+        //     .setMaxSamplesPerInstance(depth)
+        //     .setDurabilityKind(DdsWrapper::DurabilityKind::TRANSIENT_LOCAL)
+        //     .setReliabilityKind(DdsWrapper::ReliabilityKind::RELIABLE)
+        //     .setHistoryKind(DdsWrapper::HistoryKind::KEEP_LAST)
+        //     .setHistoryDepth(depth);
+
+        std::lock_guard<std::mutex> lock(DataTransferWriterMapMutex_);
+
+        for (uint32_t bucketId : bucketIds) {
+            // 如果该 bucket 的 writer 已存在，跳过
+            if (dataTransferWriterMap_.find(bucketId) != dataTransferWriterMap_.end()) {
+                ONDEMANDLOG(debug) << "DataTransfer writer already exists for bucketId: " << bucketId;
+                continue;
+            }
+
+            std::string tableName = make_bucket_name_by_id(bucketId);
+            std::string topicName = DSF::Var::VAR_DATA_TRANSFER_TOPIC_PREFIX + tableName;
+            std::shared_ptr<DdsWrapper::DDSTopicWriter<DSF::Var::TableDataTransfer>> writer;
+            if (0
+                != dsf::ondemand::registerNodeTopicWriter<DSF::Var::TableDataTransfer,
+                                                          DSF::Var::TableDataTransferPubSubType>(
+                    dataNode_, writer, topicName, writerQosBuilder)) {
+                ONDEMANDLOG(error)
+                    << "Failed to create DataTransfer writer for topic: " << topicName;
+                return false;
+            }
+            dataTransferWriterMap_.emplace(bucketId, writer);
+            ONDEMANDLOG(info) << "Created DataTransfer writer for bucketId: " << bucketId
+                              << ", topic: " << topicName;
+        }
+
+        ONDEMANDLOG(info) << "Created " << dataTransferWriterMap_.size()
+                          << " DataTransfer writers in total.";
         return true;
     }
 
@@ -290,6 +348,12 @@ namespace ondemand
                 ONDEMANDLOG(info) << "Published bucket " << i + 1 << "/" << bucketCount << " with "
                                   << pubTableDefine.varDefines().size() << " variables";
             }
+        }
+
+        /*创建数据传输writer*/
+        if (!createDataTransferWriter()) {
+            ONDEMANDLOG(error) << "Failed to create DataTransfer writers";
+            return false;
         }
 
         return true;
@@ -469,7 +533,8 @@ namespace ondemand
             recalcCurrentFreq(meta);
 
             ONDEMANDLOG(info) << "Var [" << varFreq.name() << "] subscribed by node [" << nodeName
-                              << "] at freq=" << freq << "ms, currentFreq=" << meta.currentFreq << "ms";
+                              << "] at freq=" << freq << "ms, currentFreq=" << meta.currentFreq
+                              << "ms";
         }
     }
 

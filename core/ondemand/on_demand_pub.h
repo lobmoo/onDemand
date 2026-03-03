@@ -17,6 +17,7 @@
 
 #include <shared_mutex>
 #include <memory>
+#include <sys/types.h>
 #include "on_demand_common.h"
 #include "variable_store.h"
 
@@ -99,6 +100,7 @@ namespace ondemand
     private:
         // 辅助函数
         bool createTableDefineWriter();
+        bool createDataTransferWriter();
         bool createSubTableRegisterReader(
             std::function<void(const std::string &,
                                std::shared_ptr<DSF::Message::SubTableRegister>)>
@@ -119,8 +121,8 @@ namespace ondemand
         // 重新计算变量的最小发布频率
         void recalcCurrentFreq(VarMetadata &meta);
 
-            private
-            : std::unordered_map<uint64_t, VarMetadata> varIndex_; // 变量索引: hash -> 元数据
+    private:
+        std::unordered_map<uint64_t, VarMetadata> varIndex_; // 变量索引: hash -> 元数据
         mutable std::shared_mutex varIndexMutex_;
 
         BucketManager bucketManager_;
@@ -139,8 +141,10 @@ namespace ondemand
             pubTableDefineWriter_; // 变量定义数据写入器
         std::shared_ptr<DdsWrapper::DDSTopicReader<DSF::Message::SubTableRegister>>
             subTableRegisterReqReader_; // 频率请求数据读取器
-        std::shared_ptr<DdsWrapper::DDSTopicWriter<DSF::Message::SubTableRegister>>
-            subTableRegisterRespWriter_; // 频率回复数据写入器
+        std::mutex DataTransferWriterMapMutex_;
+        std::unordered_map<uint32_t,
+                           std::shared_ptr<DdsWrapper::DDSTopicWriter<DSF::Var::TableDataTransfer>>>
+            dataTransferWriterMap_; // 数据传输写入器map，key为bucket id
 
         VarStore varStore_; // 变量值存储
 
