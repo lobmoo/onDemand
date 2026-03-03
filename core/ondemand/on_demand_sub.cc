@@ -1,4 +1,5 @@
 #include <functional>
+#include <mutex>
 #include "on_demand_sub.h"
 #include "concurrentqueue.h"
 
@@ -72,10 +73,78 @@ namespace ondemand
         return true;
     }
 
+    bool OnDemandSub::createDataTransferReader(
+        std::function<void(const std::string &, std::shared_ptr<DSF::Var::TableDataTransfer>)>
+            processFunc)
+    {
+        // 根据 varIndex_ 中的元数据，收集所有不同的 bucket 表名
+        std::unordered_set<std::string> tableNames;
+        {
+            std::shared_lock lock(varIndexMutex_);
+            for (const auto &[hash, meta] : varIndex_) {
+                std::string tableName =
+                    make_bucket_name_by_id(static_cast<uint32_t>(meta.bucketIndex));
+                tableNames.insert(tableName);
+            }
+        }
+
+        if (tableNames.empty()) {
+            ONDEMANDLOG(warning) << "No variables registered, no data transfer readers to create.";
+            return false;
+        }
+
+        constexpr uint32_t depth = 10;
+        DdsWrapper::DataReaderQoSBuilder readerQosBuilder;
+        // readerQosBuilder.setMaxSamples(256 * depth)
+        //     .setMaxInstances(256)
+        //     .setMaxSamplesPerInstance(depth)
+        //     .setDurabilityKind(DdsWrapper::DurabilityKind::VOLATILE)
+        //     .setReliabilityKind(DdsWrapper::ReliabilityKind::RELIABLE)
+        //     .setHistoryKind(DdsWrapper::HistoryKind::KEEP_LAST)
+        //     .setHistoryDepth(depth);
+
+        std::lock_guard<std::mutex> lock(dataTransferCtxMapMutex_);
+
+        for (const auto &tableName : tableNames) {
+            // 如果该表的 reader 已存在，跳过
+            if (dataTransferReaderMap_.find(tableName) != dataTransferReaderMap_.end()) {
+                ONDEMANDLOG(debug) << "DataTransfer reader already exists for table: " << tableName;
+                continue;
+            }
+
+            std::string topicName = DSF::Var::VAR_DATA_TRANSFER_TOPIC_PREFIX + tableName;
+            std::shared_ptr<DdsWrapper::DDSTopicReader<DSF::Var::TableDataTransfer>> reader;
+            if (0
+                != dsf::ondemand::registerNodeTopicReader<DSF::Var::TableDataTransfer,
+                                                          DSF::Var::TableDataTransferPubSubType>(
+                    dataNode_, reader, topicName, processFunc, readerQosBuilder)) {
+                ONDEMANDLOG(error)
+                    << "Failed to create DataTransfer reader for topic: " << topicName;
+                return false;
+            }
+            dataTransferReaderMap_.emplace(tableName, reader);
+            ONDEMANDLOG(info) << "Created DataTransfer reader for table: " << tableName
+                              << ", topic: " << topicName;
+        }
+
+        ONDEMANDLOG(info) << "Created " << dataTransferReaderMap_.size()
+                          << " DataTransfer readers in total.";
+        return true;
+    }
+
     bool OnDemandSub::onReceiveTableDefineCb(const std::string &topicName,
                                              std::shared_ptr<DSF::Var::PubTableDefine> data)
     {
         pubTableDefineQueue_.enqueue(data);
+        return true;
+    }
+
+    bool OnDemandSub::onReceiveDataTransferCb(const std::string &topicName,
+                                              std::shared_ptr<DSF::Var::TableDataTransfer> data)
+    {
+        // 这里可以根据 topicName 解析出 bucketIndex，或者直接在 data 中携带 varHash 来定位
+        ONDEMANDLOG(debug) << "Received DataTransfer for topic: " << topicName;
+        dataTransferQueue_.enqueue(data);
         return true;
     }
 
@@ -93,6 +162,7 @@ namespace ondemand
                                       << ", vars size: " << tableDefine->varDefines().size();
                     std::unique_lock lock(varIndexMutex_);
                     /*1.拆表*/
+                    bool hasNewBucket = false;
                     for (auto &varDef : tableDefine->varDefines()) {
                         const auto &varDefine = varDef.var().varDefine();
                         std::string varName = make_meta_varname(
@@ -111,11 +181,31 @@ namespace ondemand
                             ONDEMANDLOG(warning) << "Variable already exists: " << varName;
                             continue;
                         }
+
+                        // 检查该 bucket 的 reader 是否已存在
+                        std::string tableName =
+                            make_bucket_name_by_id(static_cast<uint32_t>(bucketIdx));
+                        {
+                            std::lock_guard<std::mutex> mapLock(dataTransferCtxMapMutex_);
+                            if (dataTransferReaderMap_.find(tableName)
+                                == dataTransferReaderMap_.end()) {
+                                hasNewBucket = true;
+                            }
+                        }
+
                         meta.varId = varStore_.register_var(
                             varHash, 32); //todo   这里应该按照真实大小分配内存
                         varIndex_.emplace(varHash, std::move(meta));
                         totalReceived_.fetch_add(1); //记录收到的总数
                         ONDEMANDLOG(debug) << "Registered var: " << varName;
+                    }
+                    lock.unlock();
+
+                    // 仅在发现新 bucket 时才创建 data transfer reader，避免重复加锁遍历
+                    if (hasNewBucket) {
+                        createDataTransferReader(std::bind(
+                            &OnDemandSub::onReceiveDataTransferCb, this, std::placeholders::_1,
+                            std::placeholders::_2)); //TODO: 传入实际的数据处理回调函数
                     }
                 }
             } else {
@@ -182,6 +272,12 @@ namespace ondemand
         pubTableDefineReader_ = nullptr;
         subTableRegisterReqWriter_.reset();
         subTableRegisterReqWriter_ = nullptr;
+
+        {
+            std::lock_guard<std::mutex> lock(dataTransferCtxMapMutex_);
+            dataTransferReaderMap_.clear();
+        }
+
         dataNode_.reset();
         dataNode_ = nullptr;
 
@@ -189,6 +285,10 @@ namespace ondemand
 
         std::shared_ptr<DSF::Var::PubTableDefine> dummy;
         while (pubTableDefineQueue_.try_dequeue(dummy)) {
+            // Dequeue and discard remaining items
+        }
+        std::shared_ptr<DSF::Var::TableDataTransfer>    dummyData;
+        while(dataTransferQueue_.try_dequeue(dummyData)) {
             // Dequeue and discard remaining items
         }
         ONDEMANDLOG(info) << "OnDemandSub stopped";
@@ -234,7 +334,8 @@ namespace ondemand
         }
 
         /*发布注册信息*/
-        if (!subTableRegisterReqWriter_->writeMessage(subReq)) {
+        auto writer = subTableRegisterReqWriter_;
+        if (!writer || !writer->writeMessage(subReq)) {
             ONDEMANDLOG(error) << "Failed to publish SubTableRegister for table: " << tableName;
             return false;
         }
@@ -281,7 +382,8 @@ namespace ondemand
         }
 
         /*发布注销信息*/
-        if (!subTableRegisterReqWriter_->writeMessage(subReq)) {
+        auto writer = subTableRegisterReqWriter_;
+        if (!writer || !writer->writeMessage(subReq)) {
             ONDEMANDLOG(error) << "Failed to publish SubTableRegister for table: " << tableName;
             return false;
         }

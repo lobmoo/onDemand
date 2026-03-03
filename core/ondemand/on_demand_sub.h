@@ -96,6 +96,17 @@ namespace ondemand
           * @return false 
           */
         bool createSubTableRegisterWriter();
+
+        /**
+         * @brief Create a Data Transfer Reader object
+         * @param  processFuncstd   MyParamDoc
+         * @return true 
+         * @return false 
+         */
+        bool createDataTransferReader(
+            std::function<void(const std::string &, std::shared_ptr<DSF::Var::TableDataTransfer>)>
+                processFunc);
+
         /**
          * @brief 处理变量定义数据回调函数
          * @param  topicName        
@@ -105,6 +116,15 @@ namespace ondemand
          */
         bool onReceiveTableDefineCb(const std::string &topicName,
                                     std::shared_ptr<DSF::Var::PubTableDefine> data);
+        /**
+        * @brief 
+        * @param  topicName        MyParamDoc
+        * @param  data             MyParamDoc
+        * @return true 
+        * @return false 
+        */
+        bool onReceiveDataTransferCb(const std::string &topicName,
+                                     std::shared_ptr<DSF::Var::TableDataTransfer> data);        
 
         /**
         * @brief 处理变量定义数据
@@ -121,12 +141,18 @@ namespace ondemand
         std::shared_ptr<DdsWrapper::DDSTopicWriter<DSF::Message::SubTableRegister>>
             subTableRegisterReqWriter_;
 
+        std::mutex dataTransferCtxMapMutex_; // 互斥锁
+        std::unordered_map<std::string,
+                           std::shared_ptr<DdsWrapper::DDSTopicReader<DSF::Var::TableDataTransfer>>>
+            dataTransferReaderMap_; // 接收数据读取器map
+
         std::atomic<bool> initialized_;
         std::atomic<bool> running_;
         std::atomic<uint64_t> totalReceived_;
 
         /*变量定义队列*/
         moodycamel::ConcurrentQueue<std::shared_ptr<DSF::Var::PubTableDefine>> pubTableDefineQueue_;
+        moodycamel::ConcurrentQueue<std::shared_ptr<DSF::Var::TableDataTransfer>> dataTransferQueue_;
 
         /*处理线程*/
         std::thread processTableDefineThread_;
