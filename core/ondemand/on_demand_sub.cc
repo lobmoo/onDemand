@@ -2,6 +2,8 @@
 #include <mutex>
 #include "on_demand_sub.h"
 #include "concurrentqueue.h"
+#include "roaring/roaring64map.hh"
+#include <cstring>
 
 namespace dsf
 {
@@ -106,7 +108,8 @@ namespace ondemand
         for (uint32_t bucketId : bucketIds) {
             // 如果该 bucket 的 reader 已存在，跳过
             if (dataTransferReaderMap_.find(bucketId) != dataTransferReaderMap_.end()) {
-                ONDEMANDLOG(debug) << "DataTransfer reader already exists for bucketId: " << bucketId;
+                ONDEMANDLOG(debug)
+                    << "DataTransfer reader already exists for bucketId: " << bucketId;
                 continue;
             }
 
@@ -148,6 +151,79 @@ namespace ondemand
     }
 
     /**
+     * @brief 处理接收到的数据传输消息
+     *
+     * mask 编码: Roaring64Map 序列化字节流
+     *   - 反序列化后按升序迭代, 第 i 个 varHash 对应 varData[i]
+     *   - 通过 varHash 查找本地 varId, 写入 varStore_
+     */
+    void OnDemandSub::processDataTransfer()
+    {
+        pthread_setname_np(pthread_self(), "proc_data_transfer");
+
+        while (running_.load(std::memory_order_acquire)) {
+            std::shared_ptr<DSF::Var::TableDataTransfer> dataTransfer;
+            if (!dataTransferQueue_.try_dequeue(dataTransfer)) {
+                std::this_thread::sleep_for(std::chrono::milliseconds(1));
+                continue;
+            }
+            if (!dataTransfer) {
+                continue;
+            }
+
+            const auto &maskBytes = dataTransfer->mask();
+            const auto &varDataList = dataTransfer->varData();
+            if (maskBytes.empty() || varDataList.empty()) {
+                continue;
+            }
+
+            // 1. 反序列化 Roaring64Map
+            roaring::Roaring64Map roar;
+            try {
+                roar =
+                    roaring::Roaring64Map::read(reinterpret_cast<const char *>(maskBytes.data()));
+            } catch (const std::exception &e) {
+                ONDEMANDLOG(error) << "Failed to deserialize mask: " << e.what();
+                continue;
+            }
+
+            // 2. 迭代 Roaring64Map (升序), varData[i] 与第 i 个 hash 一一对应
+            size_t idx = 0;
+            size_t written = 0;
+            {
+                std::shared_lock lock(varIndexMutex_);
+                for (auto it = roar.begin(); it != roar.end() && idx < varDataList.size();
+                     ++it, ++idx) {
+                    uint64_t varHash = *it;
+                    const auto &blob = varDataList[idx];
+                    if (blob.empty()) {
+                        continue;
+                    }
+
+                    // 查找本地 varId
+                    auto vit = varIndex_.find(varHash);
+                    if (vit == varIndex_.end()) {
+                        continue; // 本节点未订阅该变量, 跳过
+                    }
+
+                    int32_t varId = vit->second.varId;
+                    if (varId < 0) {
+                        continue;
+                    }
+
+                    // 写入 varStore
+                    if (varStore_.write(varId, blob.data(), blob.size())) {
+                        ++written;
+                    }
+                }
+            }
+
+            ONDEMANDLOG_TIME(debug, 3000)
+                << "DataTransfer: received=" << varDataList.size() << " written=" << written;
+        }
+    }
+
+    /**
      * @brief 处理变量定义
      */
     void OnDemandSub::processTableDefine()
@@ -164,8 +240,9 @@ namespace ondemand
                     bool hasNewBucket = false;
                     for (auto &varDef : tableDefine->varDefines()) {
                         const auto &varDefine = varDef.var().varDefine();
-                        std::string varName = make_meta_varname(
-                            varDefine.nodeName(), varDefine.name()); // 构造全名 和发布端一致
+                        std::string varName =
+                            make_meta_varname(varDefine.nodeName(),
+                                              varDefine.name()); // 构造全名 和发布端一致
                         uint64_t varHash = fast_hash(varName);
                         size_t bucketIdx =
                             BucketManager::CalculateBucketIndexFromHash(varHash); // Reuse hash
@@ -221,8 +298,11 @@ namespace ondemand
         nodeName_ = nodeName;
 
         /*创建节点*/
+        DdsWrapper::ParticipantQoSBuilder qos_configurator;
+        qos_configurator.addUDPV4TransportInterfaces({"10.25.5.26"}).addFlowController();
         try {
-            dataNode_ = std::make_shared<DdsWrapper::DataNode>(DOMAIN_ID, nodeName);
+            dataNode_ =
+                std::make_shared<DdsWrapper::DataNode>(DOMAIN_ID, nodeName, qos_configurator);
         } catch (const std::exception &e) {
             ONDEMANDLOG(error) << "Failed to create DataNode: " << e.what();
             return false;
@@ -253,6 +333,7 @@ namespace ondemand
         }
 
         processTableDefineThread_ = std::thread(&OnDemandSub::processTableDefine, this);
+        processDataTransferThread_ = std::thread(&OnDemandSub::processDataTransfer, this);
         ONDEMANDLOG(info) << "OnDemandSub started";
         return true;
     }
@@ -265,6 +346,12 @@ namespace ondemand
         }
         if (processTableDefineThread_.joinable()) {
             processTableDefineThread_.join();
+        }
+        if (processDataTransferThread_.joinable()) {
+            processDataTransferThread_.join();
+        }
+        if (processDataTransferThread_.joinable()) {
+            processDataTransferThread_.join();
         }
         pubTableDefineReader_.reset();
         pubTableDefineReader_ = nullptr;
@@ -285,8 +372,8 @@ namespace ondemand
         while (pubTableDefineQueue_.try_dequeue(dummy)) {
             // Dequeue and discard remaining items
         }
-        std::shared_ptr<DSF::Var::TableDataTransfer>    dummyData;
-        while(dataTransferQueue_.try_dequeue(dummyData)) {
+        std::shared_ptr<DSF::Var::TableDataTransfer> dummyData;
+        while (dataTransferQueue_.try_dequeue(dummyData)) {
             // Dequeue and discard remaining items
         }
         ONDEMANDLOG(info) << "OnDemandSub stopped";

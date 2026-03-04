@@ -133,6 +133,8 @@ namespace ondemand
         */
         void processTableDefine();
 
+        void processDataTransfer();
+
     private:
         std::string nodeName_;
         std::shared_ptr<DdsWrapper::DataNode> dataNode_;
@@ -159,6 +161,7 @@ namespace ondemand
 
         /*处理线程*/
         std::thread processTableDefineThread_;
+        std::thread processDataTransferThread_;
 
         // 变量索引: hash -> 元数据
         std::unordered_map<uint64_t, VarMetadata> varIndex_;

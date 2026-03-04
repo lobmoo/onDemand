@@ -73,15 +73,17 @@ namespace ondemand
         struct PublishGroupKey {
             uint32_t bucketIndex;
             uint32_t freqMs;
-            bool operator==(const PublishGroupKey &o) const {
+            bool operator==(const PublishGroupKey &o) const
+            {
                 return bucketIndex == o.bucketIndex && freqMs == o.freqMs;
             }
         };
 
         struct PublishGroupKeyHash {
-            size_t operator()(const PublishGroupKey &k) const {
-                uint64_t combined = (static_cast<uint64_t>(k.bucketIndex) << 32)
-                                  | static_cast<uint64_t>(k.freqMs);
+            size_t operator()(const PublishGroupKey &k) const
+            {
+                uint64_t combined =
+                    (static_cast<uint64_t>(k.bucketIndex) << 32) | static_cast<uint64_t>(k.freqMs);
                 return std::hash<uint64_t>{}(combined);
             }
         };
@@ -118,8 +120,7 @@ namespace ondemand
             pubTableDefRegisterQueue_;
 
         // ---- DDS 读写器 ----
-        std::shared_ptr<DdsWrapper::DDSTopicWriter<DSF::Var::PubTableDefine>>
-            pubTableDefineWriter_;
+        std::shared_ptr<DdsWrapper::DDSTopicWriter<DSF::Var::PubTableDefine>> pubTableDefineWriter_;
         std::shared_ptr<DdsWrapper::DDSTopicReader<DSF::Message::SubTableRegister>>
             subTableRegisterReqReader_;
         std::mutex DataTransferWriterMapMutex_;
@@ -139,16 +140,14 @@ namespace ondemand
         // ---- 时间轮调度器 (增量 diff + 按组调度) ----
         std::unique_ptr<TimerScheduler> publishScheduler_;
         std::mutex publishGroupsMutex_;
-        std::unordered_map<PublishGroupKey,
-                           std::shared_ptr<TimerEventInterface>,
+        std::unordered_map<PublishGroupKey, std::shared_ptr<TimerEventInterface>,
                            PublishGroupKeyHash>
             publishGroupTimers_;
-        std::unordered_map<PublishGroupKey,
-                           std::shared_ptr<std::vector<GroupVarInfo>>,
+        std::unordered_map<PublishGroupKey, std::shared_ptr<std::vector<GroupVarInfo>>,
                            PublishGroupKeyHash>
             groupMembers_;
         std::thread publishSchedulerThread_;
-        std::atomic<bool> schedulerDirty_{true};  ///< varIndex_ 变更标记
+        std::atomic<bool> schedulerDirty_{true}; ///< varIndex_ 变更标记
     };
 
 } // namespace ondemand

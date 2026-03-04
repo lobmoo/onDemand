@@ -126,7 +126,7 @@ ParticipantQoSBuilder &ParticipantQoSBuilder::addFlowController()
     flow_controller->name = "reliable_flow_controller";
     flow_controller->scheduler = eprosima::fastdds::rtps::FlowControllerSchedulerPolicy::FIFO;
     // 1.2mbps | 150KBps, 系统默认udp缓存为213KB，留出余量给心跳及ACK，一发三收测试通过
-    flow_controller->max_bytes_per_period = 1500;
+    flow_controller->max_bytes_per_period = 1500 * 10;
     flow_controller->period_ms = 10;
     qos_.flow_controllers().push_back(flow_controller);
     return *this;
@@ -228,6 +228,14 @@ DataWriterQoSBuilder::setMaxSamplesPerInstance(int32_t max_samples_per_instance)
 DataWriterQoSBuilder &DataWriterQoSBuilder::disableDataSharing()
 {
     qos_.data_sharing().off();
+    return *this;
+}
+
+DataWriterQoSBuilder &
+DataWriterQoSBuilder::setFlowController(const std::string &flow_controller_name)
+{
+    qos_.publish_mode().kind = ASYNCHRONOUS_PUBLISH_MODE;
+    qos_.publish_mode().flow_controller_name = flow_controller_name;
     return *this;
 }
 
@@ -342,20 +350,11 @@ const eprosima::fastdds::dds::DataReaderQos &DataReaderQoSBuilder::getQos() cons
 namespace QoSPresets
 {
 
-    ParticipantQoSBuilder defaultParticipant()
-    {
-        return ParticipantQoSBuilder();
-    }
+    ParticipantQoSBuilder defaultParticipant() { return ParticipantQoSBuilder(); }
 
-    DataWriterQoSBuilder defaultWriter()
-    {
-        return DataWriterQoSBuilder();
-    }
+    DataWriterQoSBuilder defaultWriter() { return DataWriterQoSBuilder(); }
 
-    DataReaderQoSBuilder defaultReader()
-    {
-        return DataReaderQoSBuilder();
-    }
+    DataReaderQoSBuilder defaultReader() { return DataReaderQoSBuilder(); }
 
     DataWriterQoSBuilder reliableWriter()
     {

@@ -420,7 +420,7 @@ namespace ondemand
             return -1;
         }
 
-        LOG(info) << "Topic [" << dsfTopicName << "] writer created.";
+        LOG(debug) << "Topic [" << dsfTopicName << "] writer created.";
         return 0;
     }
 

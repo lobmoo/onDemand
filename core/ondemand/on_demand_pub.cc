@@ -26,15 +26,9 @@ namespace ondemand
 {
 
     OnDemandPub::OnDemandPub()
-        : varIndex_()
-        , varIndexMutex_()
-        , bucketManager_()
-        , initialized_(false)
-        , running_(false)
-        , dataNode_(nullptr)
-        , nodeName_()
-        , pubTableDefineWriter_(nullptr)
-        , subTableRegisterReqReader_(nullptr)
+        : varIndex_(), varIndexMutex_(), bucketManager_(), initialized_(false), running_(false),
+          dataNode_(nullptr), nodeName_(), pubTableDefineWriter_(nullptr),
+          subTableRegisterReqReader_(nullptr)
     {
     }
 
@@ -49,9 +43,12 @@ namespace ondemand
 
         nodeName_ = nodeName;
 
+        DdsWrapper::ParticipantQoSBuilder qos_configurator;
+        qos_configurator.addUDPV4TransportInterfaces({"10.25.5.26"}).addFlowController();
         /*创建节点*/
         try {
-            dataNode_ = std::make_shared<DdsWrapper::DataNode>(DOMAIN_ID, nodeName);
+            dataNode_ =
+                std::make_shared<DdsWrapper::DataNode>(DOMAIN_ID, nodeName, qos_configurator);
         } catch (const std::exception &e) {
             ONDEMANDLOG(error) << "Failed to create DataNode: " << e.what();
             initialized_.store(false);
@@ -142,7 +139,8 @@ namespace ondemand
             .setDurabilityKind(DdsWrapper::DurabilityKind::TRANSIENT_LOCAL)
             .setReliabilityKind(DdsWrapper::ReliabilityKind::RELIABLE)
             .setHistoryKind(DdsWrapper::HistoryKind::KEEP_LAST)
-            .setHistoryDepth(depth);
+            .setHistoryDepth(depth)
+            .setFlowController("reliable_flow_controller");
 
         if (0
             != dsf::ondemand::registerNodeTopicWriter<DSF::Var::PubTableDefine,
@@ -281,18 +279,18 @@ namespace ondemand
                             break;
                     }
 
-                    // [DEBUG] 打印相关变量的 VarMetadata
-                    {
-                        std::shared_lock dumpLock(varIndexMutex_);
-                        for (const auto &varFreq : data->varFreqs()) {
-                            std::string metaName = varFreq.name();
-                            uint64_t varHash = fast_hash(metaName);
-                            auto it = varIndex_.find(varHash);
-                            if (it != varIndex_.end()) {
-                                it->second.dump(varFreq.name());
-                            }
-                        }
-                    }
+                    // // [DEBUG] 打印相关变量的 VarMetadata
+                    // {
+                    //     std::shared_lock dumpLock(varIndexMutex_);
+                    //     for (const auto &varFreq : data->varFreqs()) {
+                    //         std::string metaName = varFreq.name();
+                    //         uint64_t varHash = fast_hash(metaName);
+                    //         auto it = varIndex_.find(varHash);
+                    //         if (it != varIndex_.end()) {
+                    //             it->second.dump(varFreq.name());
+                    //         }
+                    //     }
+                    // }
                 }
             } else {
                 std::this_thread::sleep_for(std::chrono::milliseconds(10));
@@ -532,7 +530,14 @@ namespace ondemand
             }
         } // 释放写锁
 
-        // Phase 2: 发布 TableDefine (读锁, 不阻塞 setVarData 等热路径)
+        // // Phase 2: 创建 DataTransfer writers (在发布 TableDefine 之前准备好)
+        // std::this_thread::sleep_for(std::chrono::milliseconds(200));
+        // if (!createDataTransferWriter()) {
+        //     ONDEMANDLOG(error) << "Failed to create DataTransfer writers";
+        //     return false;
+        // }
+
+        // Phase 3: 发布 TableDefine (读锁, 不阻塞 setVarData 等热路径)
         uint32_t bucketCount = bucketManager_.GetBucketCount();
         for (uint32_t i = 0; i < bucketCount; ++i) {
             if (bucketManager_.GetBucketSize(i) == 0) {
@@ -575,12 +580,6 @@ namespace ondemand
                 ONDEMANDLOG(info) << "Published bucket " << i + 1 << "/" << bucketCount << " with "
                                   << pubTableDefine.varDefines().size() << " variables";
             }
-        }
-
-        // Phase 3: 创建 DataTransfer writers
-        if (!createDataTransferWriter()) {
-            ONDEMANDLOG(error) << "Failed to create DataTransfer writers";
-            return false;
         }
 
         schedulerDirty_.store(true, std::memory_order_release);
