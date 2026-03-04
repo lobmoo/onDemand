@@ -277,8 +277,9 @@ namespace ondemand
     struct VarMetadata {
         uint64_t varHash;                            // 变量名 hash (唯一标识)
         BucketManager::BucketIndex bucketIndex;      // 所属桶索引 (0-19)
-        uint16_t varId;                              // 变量ID (桶内唯一)
+        uint32_t varId;                              // 变量ID (全局唯一，递增分配)
         uint32_t currentFreq;                        // 当前发布频率 (ms)
+        uint32_t dataSize;                           // 变量数据大小 (字节)
         std::shared_ptr<DSF::Var::Define> varDefine; // 变量定义 (包含结构信息等)
 
         // 订阅频率信息 (紧凑存储)
@@ -293,7 +294,7 @@ namespace ondemand
         uint8_t activeFreqCount;       // 活跃频率数量
 
         VarMetadata()
-            : varHash(0), bucketIndex(0), varId(0), currentFreq(0xFFFFFFFF), freqSubs{},
+            : varHash(0), bucketIndex(0), varId(0), currentFreq(0xFFFFFFFF), dataSize(0), freqSubs{},
               activeFreqCount(0)
         {
         }

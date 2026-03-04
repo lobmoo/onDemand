@@ -16,6 +16,9 @@
 
 #include "on_demand_pub.h"
 #include <charconv>
+#include <numeric>
+
+#include "roaring/roaring64map.hh"
 
 namespace dsf
 {
@@ -71,8 +74,15 @@ namespace ondemand
             return false;
         }
 
+        /*创建时间轮调度器: 1ms tick 精度*/
+        const size_t poolSize = 8;
+        publishScheduler_ = std::make_unique<TimerScheduler>(1, poolSize);
+
         registerProcessThread_ = std::thread(&OnDemandPub::processReceiveRegister, this);
-        ONDEMANDLOG(info) << "OnDemandPub started";
+        publishSchedulerThread_ = std::thread(&OnDemandPub::processPublishTaskScheduler, this);
+
+        ONDEMANDLOG(info) << "OnDemandPub started (TimerScheduler: 1ms tick, pool=" << poolSize
+                          << ")";
         return true;
     }
 
@@ -82,8 +92,20 @@ namespace ondemand
         if (!running_.exchange(false)) {
             return;
         }
+
+        /*等待线程退出*/
         if (registerProcessThread_.joinable()) {
             registerProcessThread_.join();
+        }
+        if (publishSchedulerThread_.joinable()) {
+            publishSchedulerThread_.join();
+        }
+
+        /*清理所有发布定时器和调度器*/
+        cancelAllPublishTimers();
+        if (publishScheduler_) {
+            publishScheduler_->Stop();
+            publishScheduler_.reset();
         }
 
         std::unique_lock lock(varIndexMutex_);
@@ -189,7 +211,8 @@ namespace ondemand
         for (uint32_t bucketId : bucketIds) {
             // 如果该 bucket 的 writer 已存在，跳过
             if (dataTransferWriterMap_.find(bucketId) != dataTransferWriterMap_.end()) {
-                ONDEMANDLOG(debug) << "DataTransfer writer already exists for bucketId: " << bucketId;
+                ONDEMANDLOG(debug)
+                    << "DataTransfer writer already exists for bucketId: " << bucketId;
                 continue;
             }
 
@@ -273,6 +296,210 @@ namespace ondemand
         }
     }
 
+    /**
+     * @brief 发布调度监控线程
+     *
+     * 增量策略:
+     *   - 频率未变 → 定时器不动，仅刷新组成员列表
+     *   - 新增分组 → 创建定时器
+     *   - 移除分组 → 取消定时器
+     *   - 10w 变量同频 →  20 bucket 天然分散, 无需额外分片
+     */
+    void OnDemandPub::processPublishTaskScheduler()
+    {
+        pthread_setname_np(pthread_self(), "PubScheduler");
+        constexpr auto kScanInterval = std::chrono::milliseconds(50);
+
+        while (running_.load(std::memory_order_acquire)) {
+
+            //1: 从 varIndex_ 构建期望分组
+            using DesiredMap =
+                std::unordered_map<PublishGroupKey, std::shared_ptr<std::vector<GroupVarInfo>>,
+                                   PublishGroupKeyHash>;
+
+            DesiredMap desired;
+            {
+                std::shared_lock lock(varIndexMutex_);
+                for (const auto &[varHash, meta] : varIndex_) {
+                    /*没有订阅则不处理*/
+                    if (meta.currentFreq == 0xFFFFFFFF || meta.activeFreqCount == 0) {
+                        continue;
+                    }
+                    PublishGroupKey key{static_cast<uint32_t>(meta.bucketIndex), meta.currentFreq};
+                    auto &vec = desired[key];
+                    if (!vec) {
+                        vec = std::make_shared<std::vector<GroupVarInfo>>();
+                    }
+                    /*<id+freq, varInfo>*/
+                    vec->push_back(GroupVarInfo{varHash, meta.varId, meta.dataSize});
+                }
+            }
+
+            //增量 diff ----
+            {
+                std::lock_guard<std::mutex> lock(publishGroupsMutex_);
+                // 新的一轮扫描发现分配的key在原来的时间轮分组里面没有，移除不再需要的分组
+                for (auto it = publishGroupTimers_.begin(); it != publishGroupTimers_.end();) {
+                    if (desired.find(it->first) == desired.end()) {
+                        if (publishScheduler_) {
+                            publishScheduler_->Cancel(it->second);
+                        }
+                        groupMembers_.erase(it->first);
+                        ONDEMANDLOG(debug)
+                            << "Removed publish group: bucket=" << it->first.bucketIndex
+                            << " freq=" << it->first.freqMs << "ms";
+                        it = publishGroupTimers_.erase(it);
+                    } else {
+                        ++it;
+                    }
+                }
+
+                for (auto &[key, members] : desired) {
+                    // 始终刷新成员列表
+                    groupMembers_[key] = std::move(members);
+
+                    // 仅为新增分组创建定时器，已有分组的定时器保持不变
+                    if (publishGroupTimers_.find(key) == publishGroupTimers_.end()) {
+                        uint32_t bucketIdx = key.bucketIndex;
+                        uint32_t freqMs = key.freqMs;
+                        Tick intervalTicks = static_cast<Tick>(freqMs);
+                        auto timer = publishScheduler_->ScheduleRecurring(
+                            [this, bucketIdx, freqMs]() { publishGroupData(bucketIdx, freqMs); },
+                            intervalTicks, // 首次延迟
+                            intervalTicks  // 周期
+                        );
+                        publishGroupTimers_[key] = timer;
+                        ONDEMANDLOG(debug)
+                            << "Created publish group: bucket=" << bucketIdx << " freq=" << freqMs
+                            << "ms, members=" << groupMembers_[key]->size();
+                    }
+                }
+            }
+
+            std::this_thread::sleep_for(kScanInterval);
+        }
+    }
+
+    /**
+     * @brief 批量发布组内变量数据 (定时器回调, 线程池执行)
+     *
+     * @param bucketIndex  桶索引 (映射到 DDS topic)
+     * @param freqMs       频率 (ms), 用于定位分组
+     */
+    void OnDemandPub::publishGroupData(uint32_t bucketIndex, uint32_t freqMs)
+    {
+        // 获取组成员快照
+        std::shared_ptr<std::vector<GroupVarInfo>> members;
+        {
+            std::lock_guard<std::mutex> lock(publishGroupsMutex_);
+            PublishGroupKey key{bucketIndex, freqMs};
+            auto it = groupMembers_.find(key);
+            if (it == groupMembers_.end() || !it->second || it->second->empty()) {
+                return;
+            }
+            members = it->second;
+        }
+
+        std::vector<std::pair<uint64_t, std::vector<uint8_t>>> varDataList;
+        varDataList.reserve(members->size());
+
+        for (const auto &info : *members) {
+            if (info.dataSize == 0)
+                continue;
+
+            std::vector<uint8_t> buf(info.dataSize);
+            if (!varStore_.read(info.varId, buf.data())) {
+                continue;
+            }
+            varDataList.emplace_back(info.varHash, std::move(buf));
+        }
+
+        if (!varDataList.empty()) {
+            if (!sendBatchTableDataTransfer(bucketIndex, varDataList)) {
+                ONDEMANDLOG(error) << "Failed to send batch data transfer for bucket "
+                                   << bucketIndex << " freq " << freqMs << "ms";
+            }
+        }
+    }
+
+    /**
+     * @brief 构建 TableDataTransfer (批量) 并通过 DDS 发送
+     * @param bucketIndex  桶索引
+     * @param varDataList  [(varHash, data)] 列表
+     */
+    bool OnDemandPub::sendBatchTableDataTransfer(
+        uint32_t bucketIndex,
+        const std::vector<std::pair<uint64_t, std::vector<uint8_t>>> &varDataList)
+    {
+        if (varDataList.empty()) {
+            return false;
+        }
+
+        // 按 varHash 升序排列, 保证与 Roaring64Map 迭代顺序一致
+        std::vector<size_t> sortedIdx(varDataList.size());
+        std::iota(sortedIdx.begin(), sortedIdx.end(), 0);
+        std::sort(sortedIdx.begin(), sortedIdx.end(), [&varDataList](size_t a, size_t b) {
+            return varDataList[a].first < varDataList[b].first;
+        });
+
+        // 构建 Roaring64Map 并按排序顺序填充 varData
+        DSF::Var::TableDataTransfer msg;
+        roaring::Roaring64Map roar;
+
+        const size_t N = varDataList.size();
+        msg.varData().reserve(N);
+
+        for (size_t idx : sortedIdx) {
+            const auto &[varHash, data] = varDataList[idx];
+            roar.add(varHash);
+            msg.varData().emplace_back(data.begin(), data.end());
+        }
+
+        // 压缩优化后再序列化, 减小 mask 体积
+        roar.runOptimize();
+        roar.shrinkToFit();
+        size_t roarBytes = roar.getSizeInBytes();
+        msg.mask().resize(roarBytes);
+        roar.write(reinterpret_cast<char *>(msg.mask().data()));
+
+        // 时间戳
+        auto now = std::chrono::system_clock::now();
+        auto epoch = now.time_since_epoch();
+        auto sec = std::chrono::duration_cast<std::chrono::seconds>(epoch);
+        auto nsec = std::chrono::duration_cast<std::chrono::nanoseconds>(epoch) - sec;
+        msg.timestamp().tv_sec(static_cast<int32_t>(sec.count()));
+        msg.timestamp().tv_nsec(static_cast<uint32_t>(nsec.count()));
+        msg.blobType(DSF::Var::BLOB_TYPE::STRUCTS);
+
+        // 发送
+        std::lock_guard<std::mutex> lock(DataTransferWriterMapMutex_);
+        auto writerIt = dataTransferWriterMap_.find(bucketIndex);
+        if (writerIt == dataTransferWriterMap_.end() || !writerIt->second) {
+            ONDEMANDLOG_TIME(warning, 5000) << "No writer for bucketIndex=" << bucketIndex;
+            return false;
+        }
+
+        return writerIt->second->writeMessage(msg);
+    }
+
+    /**
+     * @brief 取消所有发布分组定时器并清空组成员索引
+     */
+    void OnDemandPub::cancelAllPublishTimers()
+    {
+        std::lock_guard<std::mutex> lock(publishGroupsMutex_);
+
+        for (auto &[key, timer] : publishGroupTimers_) {
+            if (publishScheduler_) {
+                publishScheduler_->Cancel(timer);
+            }
+        }
+        publishGroupTimers_.clear();
+        groupMembers_.clear();
+
+        ONDEMANDLOG(info) << "All publish group timers canceled";
+    }
+
     bool OnDemandPub::createVars(const std::vector<DSF::Var::Define> &VarDefines)
     {
         std::unique_lock lock(varIndexMutex_);
@@ -295,7 +522,9 @@ namespace ondemand
                 ONDEMANDLOG(warning) << "Variable already exists: " << varName;
                 continue;
             }
-            meta.varId = varStore_.register_var(varHash, 32); //todo   这里应该按照真实大小分配内存
+            constexpr uint32_t kDefaultVarSize = 32; //todo 这里应该按照真实大小分配内存
+            meta.dataSize = kDefaultVarSize;
+            meta.varId = varStore_.register_var(varHash, kDefaultVarSize);
             varIndex_.emplace(varHash, std::move(meta));
             bucketManager_.AddMember(varName, varHash);
         }

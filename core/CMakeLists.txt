@@ -12,6 +12,8 @@ set(OBJ_CPP_INCLUDE
     ${CMAKE_SOURCE_DIR}/core/ondemand/.gensrc
     ${CMAKE_SOURCE_DIR}/thirdparty/spdlog/include
     ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/include
+    ${CMAKE_SOURCE_DIR}/thirdparty/CRoaring/include
+
 )
 
 
@@ -48,6 +50,7 @@ if(BUILD_LIBRARY)
         ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib/libfastdds.so
         ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib/libfastcdr.so
         ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib/libfoonathan_memory-0.7.3.so
+        ${CMAKE_SOURCE_DIR}/thirdparty/CRoaring/lib/libroaring.a
         pthread 
         rt
         log::log 
@@ -68,6 +71,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib/libfastdds.so
     ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib/libfastcdr.so
     ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib/libfoonathan_memory-0.7.3.so
+    ${CMAKE_SOURCE_DIR}/thirdparty/CRoaring/lib/libroaring.a
     pthread 
     rt
     log::log 

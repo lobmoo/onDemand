@@ -9,7 +9,7 @@
  * - 时间轮调度器，高效频率管理
  * - Zero-Copy 环形缓冲区
  * - 无锁队列设计
- * - 批量操作优化
+ * - 按 (bucket, freq) 分组批量发布，增量 diff 驱动
  */
 
 #ifndef ON_DEMAND_PUB_H
@@ -20,6 +20,7 @@
 #include <sys/types.h>
 #include "on_demand_common.h"
 #include "variable_store.h"
+#include "timer_wheel/timer_scheduler.h"
 
 namespace dsf
 {
@@ -32,73 +33,21 @@ namespace ondemand
         OnDemandPub();
         ~OnDemandPub();
 
-        /**
-         * @brief 
-         * @param  nodeName  节点名称
-         * @return true 
-         * @return false 
-         */
         bool init(const std::string &nodeName);
-
-        /**
-        * @brief 启动发布器
-        * @return true 
-        * @return false 
-        */
         bool start();
-
-        /**
-        * @brief 停止发布器
-        */
         void stop();
-
-        /**
-         * @brief 暂停发布器
-         */
         void pause();
-
-        /**
-          * @brief 恢复发布器
-          */
         void resume();
 
-        /**
-         * @brief 批量创建变量
-         * @param  VarDefines     变量定义数组  
-         * @return size_t 
-         */
         bool createVars(const std::vector<DSF::Var::Define> &VarDefines);
-
-        /**
-         * @brief 批量删除变量
-         * @param  varNames   变量名称数组
-         * @return true 
-         * @return false 
-         */
         bool deleteVars(const std::vector<std::string> &varNames);
-
-        /**
-         * @brief Set the Var Data object
-         * @param  varName          MyParamDoc
-         * @param  data             MyParamDoc
-         * @param  size             MyParamDoc
-         * @return true 
-         * @return false 
-         */
         bool setVarData(const char *varName, const void *data, size_t size);
 
-        /**
-     * @brief 导出状态
-     */
         void dumpState(std::ostream &os);
-
-        /**
-     * @brief 获取内存使用 (字节)
-     */
         size_t getMemoryUsage() const;
 
     private:
-        // 辅助函数
+        // ---- DDS topic 创建 ----
         bool createTableDefineWriter();
         bool createDataTransferWriter();
         bool createSubTableRegisterReader(
@@ -107,7 +56,7 @@ namespace ondemand
                 processFunc);
         bool tableDefinePublish(const DSF::Var::PubTableDefine &pubTableDefine);
 
-        /*内部函数 */
+        // ---- 订阅处理 ----
         bool onReceiveRegisterCb(const std::string &topicName,
                                  std::shared_ptr<DSF::Message::SubTableRegister> data);
         void processReceiveRegister();
@@ -116,43 +65,99 @@ namespace ondemand
         void handleUnsubscribe(const std::string &nodeName,
                                const std::vector<DSF::NamedValue> &varFreqs);
 
-        // 获取或分配节点的 bit 位索引 (用于 subMask)
         uint8_t getOrAssignNodeBit(uint64_t nodeHash);
-        // 重新计算变量的最小发布频率
         void recalcCurrentFreq(VarMetadata &meta);
 
-    private:
-        std::unordered_map<uint64_t, VarMetadata> varIndex_; // 变量索引: hash -> 元数据
-        mutable std::shared_mutex varIndexMutex_;
+        // ---- 分组发布调度 (增量 diff + 分片发送) ----
 
+        /**
+         * @brief 发布分组键 = (bucketIndex, freqMs)
+         * 
+         * 同一 bucket (DDS topic) 内、同一频率的变量归为一组，
+         * 共享一个时间轮定时器，一次触发批量发布组内所有变量。
+         */
+        struct PublishGroupKey {
+            uint32_t bucketIndex;
+            uint32_t freqMs;
+            bool operator==(const PublishGroupKey &o) const {
+                return bucketIndex == o.bucketIndex && freqMs == o.freqMs;
+            }
+        };
+
+        struct PublishGroupKeyHash {
+            size_t operator()(const PublishGroupKey &k) const {
+                uint64_t combined = (static_cast<uint64_t>(k.bucketIndex) << 32)
+                                  | static_cast<uint64_t>(k.freqMs);
+                return std::hash<uint64_t>{}(combined);
+            }
+        };
+
+        /**
+         * @brief 分组成员信息 (轻量，避免回调时查 varIndex_)
+         */
+        struct GroupVarInfo {
+            uint64_t varHash;
+            uint32_t varId;
+            uint32_t dataSize;
+        };
+
+        // 调度主循环 (增量 diff 驱动)
+        void processPublishTaskScheduler();
+        // 批量发布组内数据 (定时器回调)
+        void publishGroupData(uint32_t bucketIndex, uint32_t freqMs);
+        // 取消所有发布定时器
+        void cancelAllPublishTimers();
+        // 构建并发送 TableDataTransfer (批量)
+        bool sendBatchTableDataTransfer(
+            uint32_t bucketIndex,
+            const std::vector<std::pair<uint64_t, std::vector<uint8_t>>> &varDataList);
+
+    private:
+        // ---- 核心数据 ----
+        std::unordered_map<uint64_t, VarMetadata> varIndex_;
+        mutable std::shared_mutex varIndexMutex_;
         BucketManager bucketManager_;
 
         std::atomic<bool> initialized_;
         std::atomic<bool> running_;
+        std::shared_ptr<DdsWrapper::DataNode> dataNode_;
+        std::string nodeName_;
 
-        std::shared_ptr<DdsWrapper::DataNode> dataNode_; //交互dds节点
-        std::string nodeName_;                           //节点名称
-
+        // ---- 队列 ----
         moodycamel::ConcurrentQueue<std::shared_ptr<DSF::Message::SubTableRegister>>
-            pubTableDefRegisterQueue_; // 频率请求队列
+            pubTableDefRegisterQueue_;
 
-        /*数据读写器*/
+        // ---- DDS 读写器 ----
         std::shared_ptr<DdsWrapper::DDSTopicWriter<DSF::Var::PubTableDefine>>
-            pubTableDefineWriter_; // 变量定义数据写入器
+            pubTableDefineWriter_;
         std::shared_ptr<DdsWrapper::DDSTopicReader<DSF::Message::SubTableRegister>>
-            subTableRegisterReqReader_; // 频率请求数据读取器
+            subTableRegisterReqReader_;
         std::mutex DataTransferWriterMapMutex_;
         std::unordered_map<uint32_t,
                            std::shared_ptr<DdsWrapper::DDSTopicWriter<DSF::Var::TableDataTransfer>>>
-            dataTransferWriterMap_; // 数据传输写入器map，key为bucket id
+            dataTransferWriterMap_;
 
-        VarStore varStore_; // 变量值存储
+        VarStore varStore_;
 
-        // 节点 hash -> bit 位索引映射 (最多支持64个订阅节点)
+        // ---- 订阅者 slot ----
         std::unordered_map<uint64_t, uint8_t> nodeSlotMap_;
         uint8_t nextNodeSlot_ = 0;
 
-        std::thread registerProcessThread_; // 处理订阅请求的线程
+        // ---- 线程 ----
+        std::thread registerProcessThread_;
+
+        // ---- 时间轮调度器 (增量 diff + 按组调度) ----
+        std::unique_ptr<TimerScheduler> publishScheduler_;
+        std::mutex publishGroupsMutex_;
+        std::unordered_map<PublishGroupKey,
+                           std::shared_ptr<TimerEventInterface>,
+                           PublishGroupKeyHash>
+            publishGroupTimers_;
+        std::unordered_map<PublishGroupKey,
+                           std::shared_ptr<std::vector<GroupVarInfo>>,
+                           PublishGroupKeyHash>
+            groupMembers_;
+        std::thread publishSchedulerThread_;
     };
 
 } // namespace ondemand
