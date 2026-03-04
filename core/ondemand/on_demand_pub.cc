@@ -57,6 +57,7 @@ namespace ondemand
 
         /*创建变量通知topic writer*/
         if (!createTableDefineWriter()) {
+            ONDEMANDLOG(error) << "Failed to create PubTableDefine writer";
             initialized_.store(false);
             return false;
         }
@@ -65,6 +66,7 @@ namespace ondemand
         if (!createSubTableRegisterReader(std::bind(&OnDemandPub::onReceiveRegisterCb, this,
                                                     std::placeholders::_1,
                                                     std::placeholders::_2))) {
+            ONDEMANDLOG(error) << "Failed to create SubTableRegister reader";
             initialized_.store(false);
             return false;
         }

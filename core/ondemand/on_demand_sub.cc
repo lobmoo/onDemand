@@ -305,6 +305,7 @@ namespace ondemand
                 std::make_shared<DdsWrapper::DataNode>(DOMAIN_ID, nodeName, qos_configurator);
         } catch (const std::exception &e) {
             ONDEMANDLOG(error) << "Failed to create DataNode: " << e.what();
+            initialized_.store(false);
             return false;
         }
 
@@ -312,12 +313,14 @@ namespace ondemand
         if (!createTableDefineReader(std::bind(&OnDemandSub::onReceiveTableDefineCb, this,
                                                std::placeholders::_1, std::placeholders::_2))) {
             ONDEMANDLOG(error) << "Failed to create TableDefine reader";
+            initialized_.store(false);
             return false;
         }
 
         /*定义变量注册writer*/
         if (!createSubTableRegisterWriter()) {
             ONDEMANDLOG(error) << "Failed to create SubTableRegister writer";
+            initialized_.store(false);
             return false;
         }
 
