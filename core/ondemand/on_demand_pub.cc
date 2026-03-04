@@ -15,8 +15,8 @@
  */
 
 #include "on_demand_pub.h"
+#include <algorithm>
 #include <charconv>
-#include <numeric>
 
 #include "roaring/roaring64map.hh"
 
@@ -54,11 +54,13 @@ namespace ondemand
             dataNode_ = std::make_shared<DdsWrapper::DataNode>(DOMAIN_ID, nodeName);
         } catch (const std::exception &e) {
             ONDEMANDLOG(error) << "Failed to create DataNode: " << e.what();
+            initialized_.store(false);
             return false;
         }
 
         /*创建变量通知topic writer*/
         if (!createTableDefineWriter()) {
+            initialized_.store(false);
             return false;
         }
 
@@ -66,6 +68,7 @@ namespace ondemand
         if (!createSubTableRegisterReader(std::bind(&OnDemandPub::onReceiveRegisterCb, this,
                                                     std::placeholders::_1,
                                                     std::placeholders::_2))) {
+            initialized_.store(false);
             return false;
         }
 
@@ -313,6 +316,12 @@ namespace ondemand
 
         while (running_.load(std::memory_order_acquire)) {
 
+            // 只在 varIndex_ 有变更时才重建分组 (dirty flag)
+            if (!schedulerDirty_.exchange(false, std::memory_order_acq_rel)) {
+                std::this_thread::sleep_for(kScanInterval);
+                continue;
+            }
+
             //1: 从 varIndex_ 构建期望分组
             using DesiredMap =
                 std::unordered_map<PublishGroupKey, std::shared_ptr<std::vector<GroupVarInfo>>,
@@ -333,6 +342,16 @@ namespace ondemand
                     }
                     /*<id+freq, varInfo>*/
                     vec->push_back(GroupVarInfo{varHash, meta.varId, meta.dataSize});
+                }
+            }
+
+            // 预排序: 按 varHash 升序, 与 Roaring64Map 迭代顺序一致
+            for (auto &[gkey, vec] : desired) {
+                if (vec) {
+                    std::sort(vec->begin(), vec->end(),
+                              [](const GroupVarInfo &a, const GroupVarInfo &b) {
+                                  return a.varHash < b.varHash;
+                              });
                 }
             }
 
@@ -384,12 +403,17 @@ namespace ondemand
     /**
      * @brief 批量发布组内变量数据 (定时器回调, 线程池执行)
      *
+     * 性能优化:
+     *   - groupMembers_ 已按 varHash 预排序, 无需发送时再排序
+     *   - 直接构建 msg, 省去中间 varDataList 容器分配
+     *   - Roaring64Map 压缩 mask
+     *
      * @param bucketIndex  桶索引 (映射到 DDS topic)
      * @param freqMs       频率 (ms), 用于定位分组
      */
     void OnDemandPub::publishGroupData(uint32_t bucketIndex, uint32_t freqMs)
     {
-        // 获取组成员快照
+        // 获取组成员快照 (已按 varHash 升序预排序)
         std::shared_ptr<std::vector<GroupVarInfo>> members;
         {
             std::lock_guard<std::mutex> lock(publishGroupsMutex_);
@@ -401,8 +425,10 @@ namespace ondemand
             members = it->second;
         }
 
-        std::vector<std::pair<uint64_t, std::vector<uint8_t>>> varDataList;
-        varDataList.reserve(members->size());
+        // 直接构建消息, 避免中间 varDataList 分配
+        DSF::Var::TableDataTransfer msg;
+        roaring::Roaring64Map roar;
+        msg.varData().reserve(members->size());
 
         for (const auto &info : *members) {
             if (info.dataSize == 0)
@@ -412,51 +438,15 @@ namespace ondemand
             if (!varStore_.read(info.varId, buf.data())) {
                 continue;
             }
-            varDataList.emplace_back(info.varHash, std::move(buf));
+            roar.add(info.varHash);
+            msg.varData().emplace_back(std::move(buf));
         }
 
-        if (!varDataList.empty()) {
-            if (!sendBatchTableDataTransfer(bucketIndex, varDataList)) {
-                ONDEMANDLOG(error) << "Failed to send batch data transfer for bucket "
-                                   << bucketIndex << " freq " << freqMs << "ms";
-            }
-        }
-    }
-
-    /**
-     * @brief 构建 TableDataTransfer (批量) 并通过 DDS 发送
-     * @param bucketIndex  桶索引
-     * @param varDataList  [(varHash, data)] 列表
-     */
-    bool OnDemandPub::sendBatchTableDataTransfer(
-        uint32_t bucketIndex,
-        const std::vector<std::pair<uint64_t, std::vector<uint8_t>>> &varDataList)
-    {
-        if (varDataList.empty()) {
-            return false;
+        if (msg.varData().empty()) {
+            return;
         }
 
-        // 按 varHash 升序排列, 保证与 Roaring64Map 迭代顺序一致
-        std::vector<size_t> sortedIdx(varDataList.size());
-        std::iota(sortedIdx.begin(), sortedIdx.end(), 0);
-        std::sort(sortedIdx.begin(), sortedIdx.end(), [&varDataList](size_t a, size_t b) {
-            return varDataList[a].first < varDataList[b].first;
-        });
-
-        // 构建 Roaring64Map 并按排序顺序填充 varData
-        DSF::Var::TableDataTransfer msg;
-        roaring::Roaring64Map roar;
-
-        const size_t N = varDataList.size();
-        msg.varData().reserve(N);
-
-        for (size_t idx : sortedIdx) {
-            const auto &[varHash, data] = varDataList[idx];
-            roar.add(varHash);
-            msg.varData().emplace_back(data.begin(), data.end());
-        }
-
-        // 压缩优化后再序列化, 减小 mask 体积
+        // 序列化 Roaring64Map -> mask
         roar.runOptimize();
         roar.shrinkToFit();
         size_t roarBytes = roar.getSizeInBytes();
@@ -473,14 +463,18 @@ namespace ondemand
         msg.blobType(DSF::Var::BLOB_TYPE::STRUCTS);
 
         // 发送
-        std::lock_guard<std::mutex> lock(DataTransferWriterMapMutex_);
-        auto writerIt = dataTransferWriterMap_.find(bucketIndex);
-        if (writerIt == dataTransferWriterMap_.end() || !writerIt->second) {
-            ONDEMANDLOG_TIME(warning, 5000) << "No writer for bucketIndex=" << bucketIndex;
-            return false;
+        {
+            std::lock_guard<std::mutex> lock(DataTransferWriterMapMutex_);
+            auto writerIt = dataTransferWriterMap_.find(bucketIndex);
+            if (writerIt == dataTransferWriterMap_.end() || !writerIt->second) {
+                ONDEMANDLOG_TIME(warning, 5000) << "No writer for bucketIndex=" << bucketIndex;
+                return;
+            }
+            if (!writerIt->second->writeMessage(msg)) {
+                ONDEMANDLOG(error) << "Failed to send batch data for bucket=" << bucketIndex
+                                   << " freq=" << freqMs << "ms";
+            }
         }
-
-        return writerIt->second->writeMessage(msg);
     }
 
     /**
@@ -503,42 +497,44 @@ namespace ondemand
 
     bool OnDemandPub::createVars(const std::vector<DSF::Var::Define> &VarDefines)
     {
-        std::unique_lock lock(varIndexMutex_);
-        // Reserve space to avoid multiple reallocations
-        varIndex_.reserve(varIndex_.size() + VarDefines.size());
+        // Phase 1: 注册变量 + 初始化存储 (写锁, 快速完成)
+        {
+            std::unique_lock lock(varIndexMutex_);
+            varIndex_.reserve(varIndex_.size() + VarDefines.size());
 
-        for (const auto &VarDefine : VarDefines) {
-            const auto &varName = make_meta_varname(nodeName_, VarDefine.name());
-            uint64_t varHash = fast_hash(varName);
-            size_t bucketIdx = BucketManager::CalculateBucketIndexFromHash(varHash); // Reuse hash
+            for (const auto &VarDefine : VarDefines) {
+                const auto &varName = make_meta_varname(nodeName_, VarDefine.name());
+                uint64_t varHash = fast_hash(varName);
+                size_t bucketIdx = BucketManager::CalculateBucketIndexFromHash(varHash);
 
-            VarMetadata meta;
-            meta.varHash = varHash;
-            meta.currentFreq = 0xFFFFFFFF;
-            meta.activeFreqCount = 0;
-            meta.bucketIndex = bucketIdx;
-            meta.varDefine = std::make_shared<DSF::Var::Define>(VarDefine);
-            auto it = varIndex_.find(varHash);
-            if (it != varIndex_.end()) {
-                ONDEMANDLOG(warning) << "Variable already exists: " << varName;
-                continue;
+                auto it = varIndex_.find(varHash);
+                if (it != varIndex_.end()) {
+                    ONDEMANDLOG(warning) << "Variable already exists: " << varName;
+                    continue;
+                }
+
+                VarMetadata meta;
+                meta.varHash = varHash;
+                meta.currentFreq = 0xFFFFFFFF;
+                meta.activeFreqCount = 0;
+                meta.bucketIndex = bucketIdx;
+                meta.varDefine = std::make_shared<DSF::Var::Define>(VarDefine);
+                constexpr uint32_t kDefaultVarSize = 32; // TODO: 按真实大小分配
+                meta.dataSize = kDefaultVarSize;
+                meta.varId = varStore_.register_var(varHash, kDefaultVarSize);
+                varIndex_.emplace(varHash, std::move(meta));
+                bucketManager_.AddMember(varName, varHash);
             }
-            constexpr uint32_t kDefaultVarSize = 32; //todo 这里应该按照真实大小分配内存
-            meta.dataSize = kDefaultVarSize;
-            meta.varId = varStore_.register_var(varHash, kDefaultVarSize);
-            varIndex_.emplace(varHash, std::move(meta));
-            bucketManager_.AddMember(varName, varHash);
-        }
 
-        /*初始化内存*/
-        if (!varStore_.finalize()) {
-            ONDEMANDLOG(error) << "Failed to finalize variable store";
-            return false;
-        }
+            if (!varStore_.finalize()) {
+                ONDEMANDLOG(error) << "Failed to finalize variable store";
+                return false;
+            }
+        } // 释放写锁
 
+        // Phase 2: 发布 TableDefine (读锁, 不阻塞 setVarData 等热路径)
         uint32_t bucketCount = bucketManager_.GetBucketCount();
         for (uint32_t i = 0; i < bucketCount; ++i) {
-            // Skip empty buckets
             if (bucketManager_.GetBucketSize(i) == 0) {
                 continue;
             }
@@ -548,26 +544,27 @@ namespace ondemand
             pubTableDefine.nodeName(nodeName_);
             pubTableDefine.description("onDemandPub TableDefine");
 
-            /*给每个表下面的每个变量赋值*/
             const auto members = bucketManager_.GetBucketMembers(i);
-            // Reserve space to avoid multiple reallocations
             pubTableDefine.varDefines().reserve(members.size());
 
-            for (const auto &varName : members) {
-                uint64_t varHash = fast_hash(varName);
-                auto it = varIndex_.find(varHash);
-                if (it == varIndex_.end()) {
-                    continue;
-                }
-                const auto &meta = it->second;
+            {
+                std::shared_lock lock(varIndexMutex_);
+                for (const auto &varName : members) {
+                    uint64_t varHash = fast_hash(varName);
+                    auto it = varIndex_.find(varHash);
+                    if (it == varIndex_.end()) {
+                        continue;
+                    }
+                    const auto &meta = it->second;
 
-                DSF::Var::PubTableVarDefine pubTableVarDefine;
-                DSF::Var::VarRequest varRequest;
-                DSF::Var::Define varDefine;
-                varDefine = *(meta.varDefine);
-                varRequest.varDefine(varDefine);
-                pubTableVarDefine.var(std::move(varRequest));
-                pubTableDefine.varDefines().push_back(std::move(pubTableVarDefine));
+                    DSF::Var::PubTableVarDefine pubTableVarDefine;
+                    DSF::Var::VarRequest varRequest;
+                    DSF::Var::Define varDefine;
+                    varDefine = *(meta.varDefine);
+                    varRequest.varDefine(varDefine);
+                    pubTableVarDefine.var(std::move(varRequest));
+                    pubTableDefine.varDefines().push_back(std::move(pubTableVarDefine));
+                }
             }
 
             ONDEMANDLOG(info) << "Publishing table define for bucket " << i << " with "
@@ -580,63 +577,67 @@ namespace ondemand
             }
         }
 
-        /*创建数据传输writer*/
+        // Phase 3: 创建 DataTransfer writers
         if (!createDataTransferWriter()) {
             ONDEMANDLOG(error) << "Failed to create DataTransfer writers";
             return false;
         }
 
+        schedulerDirty_.store(true, std::memory_order_release);
         return true;
     }
-
     bool OnDemandPub::deleteVars(const std::vector<std::string> &varNames)
     {
-        std::unique_lock lock(varIndexMutex_);
-
-        for (const auto &varName : varNames) {
-            uint64_t varHash = fast_hash(make_meta_varname(nodeName_, varName));
-            auto it = varIndex_.find(varHash);
-            if (it == varIndex_.end()) {
-                ONDEMANDLOG(warning) << "Variable not found: " << varName;
-                continue;
+        // Phase 1: 注销被删变量 (写锁)
+        {
+            std::unique_lock lock(varIndexMutex_);
+            for (const auto &varName : varNames) {
+                uint64_t varHash = fast_hash(make_meta_varname(nodeName_, varName));
+                auto it = varIndex_.find(varHash);
+                if (it == varIndex_.end()) {
+                    ONDEMANDLOG(warning) << "Variable not found: " << varName;
+                    continue;
+                }
+                varStore_.unregister_var(varHash);
+                varIndex_.erase(it);
+                bucketManager_.RemoveMember(varName, varHash);
             }
+        } // 释放写锁
 
-            varIndex_.erase(it);
-            bucketManager_.RemoveMember(varName, varHash);
-        }
+        schedulerDirty_.store(true, std::memory_order_release);
 
+        // Phase 2: 发布更新后的 TableDefine (读锁, 不阻塞热路径)
         uint32_t bucketCount = bucketManager_.GetBucketCount();
         for (uint32_t i = 0; i < bucketCount; ++i) {
-
             DSF::Var::PubTableDefine pubTableDefine;
             pubTableDefine.name(make_bucket_name_by_id(i));
             pubTableDefine.nodeName(nodeName_);
             pubTableDefine.description("onDemandPub TableDefine");
 
-            /*给每个表下面的每个变量赋值*/
             const auto members = bucketManager_.GetBucketMembers(i);
-            // Reserve space to avoid multiple reallocations
             pubTableDefine.varDefines().reserve(members.size());
 
-            for (const auto &varName : members) {
-                uint64_t varHash = fast_hash(varName);
-                varStore_.unregister_var(varHash);
-                auto it = varIndex_.find(varHash);
-                if (it == varIndex_.end()) {
-                    continue;
-                }
-                const auto &meta = it->second;
+            {
+                std::shared_lock lock(varIndexMutex_);
+                for (const auto &varName : members) {
+                    uint64_t varHash = fast_hash(varName);
+                    auto it = varIndex_.find(varHash);
+                    if (it == varIndex_.end()) {
+                        continue;
+                    }
+                    const auto &meta = it->second;
 
-                DSF::Var::PubTableVarDefine pubTableVarDefine;
-                DSF::Var::VarRequest varRequest;
-                DSF::Var::Define varDefine;
-                varDefine = *(meta.varDefine);
-                varRequest.varDefine(varDefine);
-                pubTableVarDefine.var(std::move(varRequest));
-                pubTableDefine.varDefines().push_back(std::move(pubTableVarDefine));
+                    DSF::Var::PubTableVarDefine pubTableVarDefine;
+                    DSF::Var::VarRequest varRequest;
+                    DSF::Var::Define varDefine;
+                    varDefine = *(meta.varDefine);
+                    varRequest.varDefine(varDefine);
+                    pubTableVarDefine.var(std::move(varRequest));
+                    pubTableDefine.varDefines().push_back(std::move(pubTableVarDefine));
+                }
             }
 
-            // 差分删除：即使是空表也要发布，通知订阅者该表已清空
+            // 差分删除: 即使是空表也要发布, 通知订阅者该表已清空
             tableDefinePublish(pubTableDefine);
             std::this_thread::sleep_for(std::chrono::milliseconds(50));
             ONDEMANDLOG(info) << "Published bucket " << i + 1 << "/" << bucketCount << " with "
@@ -645,7 +646,6 @@ namespace ondemand
 
         return true;
     }
-
     bool OnDemandPub::setVarData(const char *varName, const void *data, size_t size)
     {
         uint64_t varHash = fast_hash(make_meta_varname(nodeName_, varName));
@@ -761,6 +761,7 @@ namespace ondemand
 
             // 重新计算最小发布频率
             recalcCurrentFreq(meta);
+            schedulerDirty_.store(true, std::memory_order_release);
 
             ONDEMANDLOG(info) << "Var [" << varFreq.name() << "] subscribed by node [" << nodeName
                               << "] at freq=" << freq << "ms, currentFreq=" << meta.currentFreq
@@ -816,6 +817,7 @@ namespace ondemand
             // 重新计算最小频率（关键：退订后自动切换到下一个最小频率）
             uint32_t oldFreq = meta.currentFreq;
             recalcCurrentFreq(meta);
+            schedulerDirty_.store(true, std::memory_order_release);
 
             ONDEMANDLOG(info) << "Var [" << varFreq.name() << "] unsubscribed by node [" << nodeName
                               << "], freq " << oldFreq << "ms -> " << meta.currentFreq << "ms";

@@ -101,10 +101,6 @@ namespace ondemand
         void publishGroupData(uint32_t bucketIndex, uint32_t freqMs);
         // 取消所有发布定时器
         void cancelAllPublishTimers();
-        // 构建并发送 TableDataTransfer (批量)
-        bool sendBatchTableDataTransfer(
-            uint32_t bucketIndex,
-            const std::vector<std::pair<uint64_t, std::vector<uint8_t>>> &varDataList);
 
     private:
         // ---- 核心数据 ----
@@ -152,6 +148,7 @@ namespace ondemand
                            PublishGroupKeyHash>
             groupMembers_;
         std::thread publishSchedulerThread_;
+        std::atomic<bool> schedulerDirty_{true};  ///< varIndex_ 变更标记
     };
 
 } // namespace ondemand
