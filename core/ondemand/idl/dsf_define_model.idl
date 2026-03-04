@@ -26,8 +26,8 @@ module DSF {
         // ============  DSF 模型 ===
         // 模型定义 key联合起作用
         struct Define {
-            @key string name;      // 模型名称
-            @key string version;   // 模型版本（哈希值）
+            string name;      // 模型名称
+            string version;   // 模型版本（哈希值）
             string nodeName;      // 模型节点名称
             string description;     // 模型描述
             string dataSchema; // 模型数据结构定义（XML）

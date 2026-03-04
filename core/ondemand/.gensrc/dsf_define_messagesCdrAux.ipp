@@ -699,11 +699,17 @@ void serialize_key(
     static_cast<void>(data);
                         scdr << data.messageId();
 
+                        serialize_key(scdr, data.currentTime());
 
+                        scdr << data.msgType();
 
+                        scdr << data.vars();
 
+                        scdr << data.srcNode();
 
+                        scdr << data.write_tokens();
 
+                        scdr << data.user();
 
 }
 
@@ -1536,10 +1542,18 @@ void serialize_key(
     static_cast<void>(data);
                         scdr << data.messageId();
 
+                        if (data.nodeInfo().has_value())
+                        {
+                            serialize_key(scdr, data.nodeInfo().value());
+                        }
 
+                        scdr << data.retCode();
 
+                        scdr << data.nativeRetcode();
 
+                        scdr << data.statusVMessage();
 
+                        scdr << data.controlRet();
 
 }
 

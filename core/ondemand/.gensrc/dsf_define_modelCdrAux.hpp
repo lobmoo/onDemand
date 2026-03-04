@@ -69,7 +69,7 @@ constexpr uint32_t DSF_Model_Undefine_max_key_cdr_typesize {0UL};
 
 
 constexpr uint32_t DSF_Model_Define_max_cdr_typesize {1888UL};
-constexpr uint32_t DSF_Model_Define_max_key_cdr_typesize {520UL};
+constexpr uint32_t DSF_Model_Define_max_key_cdr_typesize {0UL};
 
 
 

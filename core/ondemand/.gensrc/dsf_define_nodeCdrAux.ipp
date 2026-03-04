@@ -405,13 +405,27 @@ void serialize_key(
     static_cast<void>(data);
                         scdr << data.nodeName();
 
+                        scdr << data.processId();
 
+                        scdr << data.hostName();
 
+                        scdr << data.execPath();
 
+                        serialize_key(scdr, data.execTimestamp());
 
+                        scdr << data.userName();
 
+                        scdr << data.publicAddress();
 
+                        if (data.properities().has_value())
+                        {
+                            scdr << data.properities().value();
+                        }
 
+                        if (data.networkInterfaces().has_value())
+                        {
+                            scdr << data.networkInterfaces().value();
+                        }
 
 }
 

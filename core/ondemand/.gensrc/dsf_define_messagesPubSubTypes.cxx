@@ -767,7 +767,7 @@ namespace DSF {
             uint32_t type_size = DSF_Message_Control_max_cdr_typesize;
             type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
             max_serialized_type_size = type_size + 4; /*encapsulation*/
-            is_compute_key_provided = true;
+            is_compute_key_provided = false;
             uint32_t key_length = DSF_Message_Control_max_key_cdr_typesize > 16 ? DSF_Message_Control_max_key_cdr_typesize : 16;
             key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
             memset(key_buffer_, 0, key_length);
@@ -1677,7 +1677,7 @@ namespace DSF {
             uint32_t type_size = DSF_Message_CommandResponse_max_cdr_typesize;
             type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
             max_serialized_type_size = type_size + 4; /*encapsulation*/
-            is_compute_key_provided = true;
+            is_compute_key_provided = false;
             uint32_t key_length = DSF_Message_CommandResponse_max_key_cdr_typesize > 16 ? DSF_Message_CommandResponse_max_key_cdr_typesize : 16;
             key_buffer_ = reinterpret_cast<unsigned char*>(malloc(key_length));
             memset(key_buffer_, 0, key_length);

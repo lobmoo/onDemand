@@ -51,7 +51,7 @@ module DSF {
 
         // 变量配置
         struct Define {
-            @key string name;       // 变量名称
+            string name;       // 变量名称
             string modelName;       // 模型名称
             string modelVersion;    // 模型版本
             string description;     // 描述
@@ -92,12 +92,13 @@ module DSF {
             UNKNOWN,
             NGVS, 
             YAS,
-            STRUCTS
+            STRUCTS,
+            TX
         };
 
         // 变量传输类型
         struct DataTransfer {
-            @key string name; // 名称
+            string name; // 名称
             string nodeName;        // 节点名称
             DSF::Timespec timestamp; // 数据发布时间
             DSF::DT_BLOB varData; // data和length，根据模型传输定义进行解析
@@ -119,7 +120,7 @@ module DSF {
         };
 
         struct PubTableVarDefine {
-            @key uint16 id; // 变量在表中的ID
+            uint16 id; // 变量在表中的ID
             VarRequest var; // 变量创建及删除请求
         };
 
@@ -133,7 +134,7 @@ module DSF {
 
         // 表数据传输类型定义
         struct TableDataTransfer {
-            @key DSF::DT_BLOB mask; // 表中变量ID掩码
+            DSF::DT_BLOB mask; // 表中变量ID掩码
             DSF::Timespec timestamp; // 数据发布时间
             sequence<DSF::DT_BLOB> varData; // 变量数据数组，根据模型传输定义进行解析
             BLOB_TYPE blobType; // blob类型，用于标识blob序列化方法

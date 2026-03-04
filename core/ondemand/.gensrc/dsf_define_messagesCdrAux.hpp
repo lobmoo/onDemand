@@ -67,14 +67,14 @@ constexpr uint32_t DSF_Message_NamedRetcode_max_cdr_typesize {532UL};
 constexpr uint32_t DSF_Message_NamedRetcode_max_key_cdr_typesize {0UL};
 
 constexpr uint32_t DSF_Message_Control_max_cdr_typesize {568UL};
-constexpr uint32_t DSF_Message_Control_max_key_cdr_typesize {16UL};
+constexpr uint32_t DSF_Message_Control_max_key_cdr_typesize {0UL};
 
 
 
 
 
 constexpr uint32_t DSF_Message_CommandResponse_max_cdr_typesize {1920UL};
-constexpr uint32_t DSF_Message_CommandResponse_max_key_cdr_typesize {16UL};
+constexpr uint32_t DSF_Message_CommandResponse_max_key_cdr_typesize {0UL};
 
 
 

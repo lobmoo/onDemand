@@ -44,7 +44,7 @@ constexpr uint32_t DSF_Node_BasicInfo_max_key_cdr_typesize {0UL};
 
 
 constexpr uint32_t DSF_Node_RuntimeInfo_max_cdr_typesize {1612UL};
-constexpr uint32_t DSF_Node_RuntimeInfo_max_key_cdr_typesize {260UL};
+constexpr uint32_t DSF_Node_RuntimeInfo_max_key_cdr_typesize {0UL};
 
 
 

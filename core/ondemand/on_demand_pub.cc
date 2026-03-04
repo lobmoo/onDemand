@@ -26,9 +26,15 @@ namespace ondemand
 {
 
     OnDemandPub::OnDemandPub()
-        : varIndex_(), varIndexMutex_(), bucketManager_(), initialized_(false), running_(false),
-          dataNode_(nullptr), nodeName_(), pubTableDefineWriter_(nullptr),
-          subTableRegisterReqReader_(nullptr)
+        : varIndex_()
+        , varIndexMutex_()
+        , bucketManager_()
+        , initialized_(false)
+        , running_(false)
+        , dataNode_(nullptr)
+        , nodeName_()
+        , pubTableDefineWriter_(nullptr)
+        , subTableRegisterReqReader_(nullptr)
     {
     }
 
@@ -65,7 +71,7 @@ namespace ondemand
 
         ONDEMANDLOG(info) << "OnDemandPub initialized: " << nodeName;
         return true;
-    } // namespace ondemand
+    }
 
     bool OnDemandPub::start()
     {
@@ -113,15 +119,12 @@ namespace ondemand
         bucketManager_.Clear();
 
         pubTableDefineWriter_.reset();
-        pubTableDefineWriter_ = nullptr;
         subTableRegisterReqReader_.reset();
-        subTableRegisterReqReader_ = nullptr;
         {
             std::lock_guard<std::mutex> lock(DataTransferWriterMapMutex_);
             dataTransferWriterMap_.clear();
         }
         dataNode_.reset();
-        dataNode_ = nullptr;
 
         ONDEMANDLOG(info) << "OnDemandPub stopped";
     }
@@ -196,15 +199,13 @@ namespace ondemand
             return false;
         }
 
-        constexpr uint32_t depth = 1;
         DdsWrapper::DataWriterQoSBuilder writerQosBuilder;
-        // writerQosBuilder.setMaxSamples(32 * depth)
-        //     .setMaxInstances(32)
-        //     .setMaxSamplesPerInstance(depth)
-        //     .setDurabilityKind(DdsWrapper::DurabilityKind::TRANSIENT_LOCAL)
-        //     .setReliabilityKind(DdsWrapper::ReliabilityKind::RELIABLE)
-        //     .setHistoryKind(DdsWrapper::HistoryKind::KEEP_LAST)
-        //     .setHistoryDepth(depth);
+        // TODO: 配置 DataTransfer writer QoS
+        // writerQosBuilder.setMaxSamples(...)
+        //     .setDurabilityKind(...)
+        //     .setReliabilityKind(...)
+        //     .setHistoryKind(...)
+        //     .setHistoryDepth(...);
 
         std::lock_guard<std::mutex> lock(DataTransferWriterMapMutex_);
 
@@ -247,7 +248,7 @@ namespace ondemand
         }
     }
 
-    bool OnDemandPub::onReceiveRegisterCb(const std::string &topicName,
+    bool OnDemandPub::onReceiveRegisterCb(const std::string & /*topicName*/,
                                           std::shared_ptr<DSF::Message::SubTableRegister> data)
     {
         pubTableDefRegisterQueue_.enqueue(data);
@@ -820,26 +821,6 @@ namespace ondemand
                               << "], freq " << oldFreq << "ms -> " << meta.currentFreq << "ms";
         }
     }
-
-    // void OnDemandPub::dumpState(std::ostream &os)
-    // {
-    //     os << "========== OnDemandPub State ==========\n";
-    //     os << "Node: " << nodeName_ << "\n";
-    //     os << "Running: " << (running_ ? "Yes" : "No") << "\n";
-
-    //     std::shared_lock lock(varIndexMutex_);
-    //     os << "Total Variables: " << varIndex_.size() << "\n";
-
-    //     os << "==============================================\n";
-    // }
-
-    // size_t OnDemandPub::getMemoryUsage() const
-    // {
-    //     std::shared_lock lock(varIndexMutex_);
-    //     size_t total = varIndex_.size() * sizeof(VarMetadata);
-    //     total += varIndex_.size() * (sizeof(uint64_t) + sizeof(void *));
-    //     return total;
-    // }
 
 } // namespace ondemand
 } // namespace dsf

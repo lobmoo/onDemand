@@ -183,12 +183,31 @@ void serialize_key(
 
                         scdr << data.version();
 
+                        scdr << data.nodeName();
 
+                        scdr << data.description();
 
+                        scdr << data.dataSchema();
 
+                        if (data.defaultValue().has_value())
+                        {
+                            scdr << data.defaultValue().value();
+                        }
 
+                        if (data.referenceValue().has_value())
+                        {
+                            scdr << data.referenceValue().value();
+                        }
 
+                        if (data.events().has_value())
+                        {
+                            scdr << data.events().value();
+                        }
 
+                        if (data.alarms().has_value())
+                        {
+                            scdr << data.alarms().value();
+                        }
 
 }
 

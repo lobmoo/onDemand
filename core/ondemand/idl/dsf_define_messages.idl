@@ -118,7 +118,7 @@ module DSF {
 
         @nested
         struct Control {
-            @key DSF::GUID_t messageId;
+            DSF::GUID_t messageId;
             DSF::Timespec currentTime; // 发送时间
             MSGTYPE msgType;
             sequence<ControlVar> vars;
@@ -184,7 +184,7 @@ module DSF {
         /* CommandResponse */
         @appendable
         struct CommandResponse {
-            @key DSF::GUID_t messageId;
+            DSF::GUID_t messageId;
             @optional DSF::Node::RuntimeInfo nodeInfo;
             CommandResponseRetcode retCode;
             int32 nativeRetcode;

@@ -1249,7 +1249,7 @@ void register_Control_type_identifier(
                 DSF::register_GUID_t_type_identifier(type_ids_messageId);
             }
             StructMemberFlag member_flags_messageId = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
-                    false, false, true, false);
+                    false, false, false, false);
             MemberId member_id_messageId = 0x00000000;
             bool common_messageId_ec {false};
             CommonStructMember common_messageId {TypeObjectUtils::build_common_struct_member(member_id_messageId, member_flags_messageId, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_messageId, common_messageId_ec))};
@@ -1261,19 +1261,6 @@ void register_Control_type_identifier(
             MemberName name_messageId = "messageId";
             eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_messageId;
             ann_custom_Control.reset();
-            AppliedAnnotationSeq tmp_ann_custom_messageId;
-            eprosima::fastcdr::optional<std::string> unit_messageId;
-            eprosima::fastcdr::optional<AnnotationParameterValue> min_messageId;
-            eprosima::fastcdr::optional<AnnotationParameterValue> max_messageId;
-            eprosima::fastcdr::optional<std::string> hash_id_messageId;
-            if (unit_messageId.has_value() || min_messageId.has_value() || max_messageId.has_value() || hash_id_messageId.has_value())
-            {
-                member_ann_builtin_messageId = TypeObjectUtils::build_applied_builtin_member_annotations(unit_messageId, min_messageId, max_messageId, hash_id_messageId);
-            }
-            if (!tmp_ann_custom_messageId.empty())
-            {
-                ann_custom_Control = tmp_ann_custom_messageId;
-            }
             CompleteMemberDetail detail_messageId = TypeObjectUtils::build_complete_member_detail(name_messageId, member_ann_builtin_messageId, ann_custom_Control);
             CompleteStructMember member_messageId = TypeObjectUtils::build_complete_struct_member(common_messageId, detail_messageId);
             TypeObjectUtils::add_complete_struct_member(member_seq_Control, member_messageId);
@@ -2762,7 +2749,7 @@ void register_CommandResponse_type_identifier(
                 DSF::register_GUID_t_type_identifier(type_ids_messageId);
             }
             StructMemberFlag member_flags_messageId = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
-                    false, false, true, false);
+                    false, false, false, false);
             MemberId member_id_messageId = 0x00000000;
             bool common_messageId_ec {false};
             CommonStructMember common_messageId {TypeObjectUtils::build_common_struct_member(member_id_messageId, member_flags_messageId, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_messageId, common_messageId_ec))};
@@ -2774,19 +2761,6 @@ void register_CommandResponse_type_identifier(
             MemberName name_messageId = "messageId";
             eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_messageId;
             ann_custom_CommandResponse.reset();
-            AppliedAnnotationSeq tmp_ann_custom_messageId;
-            eprosima::fastcdr::optional<std::string> unit_messageId;
-            eprosima::fastcdr::optional<AnnotationParameterValue> min_messageId;
-            eprosima::fastcdr::optional<AnnotationParameterValue> max_messageId;
-            eprosima::fastcdr::optional<std::string> hash_id_messageId;
-            if (unit_messageId.has_value() || min_messageId.has_value() || max_messageId.has_value() || hash_id_messageId.has_value())
-            {
-                member_ann_builtin_messageId = TypeObjectUtils::build_applied_builtin_member_annotations(unit_messageId, min_messageId, max_messageId, hash_id_messageId);
-            }
-            if (!tmp_ann_custom_messageId.empty())
-            {
-                ann_custom_CommandResponse = tmp_ann_custom_messageId;
-            }
             CompleteMemberDetail detail_messageId = TypeObjectUtils::build_complete_member_detail(name_messageId, member_ann_builtin_messageId, ann_custom_CommandResponse);
             CompleteStructMember member_messageId = TypeObjectUtils::build_complete_struct_member(common_messageId, detail_messageId);
             TypeObjectUtils::add_complete_struct_member(member_seq_CommandResponse, member_messageId);

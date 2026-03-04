@@ -7,4 +7,4 @@ struct FCVType {
     boolean isopen; //开 or 关
     float openvalue; //开度
     float healthlevel; //健康度
-};
+};1

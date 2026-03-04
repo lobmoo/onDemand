@@ -17,7 +17,6 @@
 
 #include <shared_mutex>
 #include <memory>
-#include <sys/types.h>
 #include "on_demand_common.h"
 #include "variable_store.h"
 #include "timer_wheel/timer_scheduler.h"
@@ -36,15 +35,10 @@ namespace ondemand
         bool init(const std::string &nodeName);
         bool start();
         void stop();
-        void pause();
-        void resume();
 
         bool createVars(const std::vector<DSF::Var::Define> &VarDefines);
         bool deleteVars(const std::vector<std::string> &varNames);
         bool setVarData(const char *varName, const void *data, size_t size);
-
-        void dumpState(std::ostream &os);
-        size_t getMemoryUsage() const;
 
     private:
         // ---- DDS topic 创建 ----

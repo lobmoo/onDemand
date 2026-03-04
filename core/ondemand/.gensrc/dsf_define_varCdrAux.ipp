@@ -305,16 +305,42 @@ void serialize_key(
     static_cast<void>(data);
                         scdr << data.name();
 
+                        scdr << data.modelName();
 
+                        scdr << data.modelVersion();
 
+                        scdr << data.description();
 
+                        scdr << data.nodeName();
 
+                        scdr << data.isReadonly();
 
+                        scdr << data.publishMask();
 
+                        if (data.events().has_value())
+                        {
+                            scdr << data.events().value();
+                        }
 
+                        if (data.alarms().has_value())
+                        {
+                            scdr << data.alarms().value();
+                        }
 
+                        if (data.initialValues().has_value())
+                        {
+                            scdr << data.initialValues().value();
+                        }
 
+                        if (data.startIndexes().has_value())
+                        {
+                            scdr << data.startIndexes().value();
+                        }
 
+                        if (data.permission().has_value())
+                        {
+                            serialize_key(scdr, data.permission().value());
+                        }
 
 }
 
@@ -758,9 +784,13 @@ void serialize_key(
     static_cast<void>(data);
                         scdr << data.name();
 
+                        scdr << data.nodeName();
 
+                        serialize_key(scdr, data.timestamp());
 
+                        scdr << data.varData();
 
+                        scdr << data.blobType();
 
 }
 
@@ -1114,6 +1144,7 @@ void serialize_key(
     static_cast<void>(data);
                         scdr << data.id();
 
+                        scdr << data.var();
 
 }
 
@@ -1345,8 +1376,11 @@ void serialize_key(
     static_cast<void>(data);
                         scdr << data.mask();
 
+                        serialize_key(scdr, data.timestamp());
 
+                        scdr << data.varData();
 
+                        scdr << data.blobType();
 
 }
 

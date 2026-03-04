@@ -83,7 +83,7 @@ void register_Define_type_identifier(
                 }
             }
             StructMemberFlag member_flags_name = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
-                    false, false, true, false);
+                    false, false, false, false);
             MemberId member_id_name = 0x00000000;
             bool common_name_ec {false};
             CommonStructMember common_name {TypeObjectUtils::build_common_struct_member(member_id_name, member_flags_name, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_name, common_name_ec))};
@@ -95,19 +95,6 @@ void register_Define_type_identifier(
             MemberName name_name = "name";
             eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_name;
             ann_custom_Define.reset();
-            AppliedAnnotationSeq tmp_ann_custom_name;
-            eprosima::fastcdr::optional<std::string> unit_name;
-            eprosima::fastcdr::optional<AnnotationParameterValue> min_name;
-            eprosima::fastcdr::optional<AnnotationParameterValue> max_name;
-            eprosima::fastcdr::optional<std::string> hash_id_name;
-            if (unit_name.has_value() || min_name.has_value() || max_name.has_value() || hash_id_name.has_value())
-            {
-                member_ann_builtin_name = TypeObjectUtils::build_applied_builtin_member_annotations(unit_name, min_name, max_name, hash_id_name);
-            }
-            if (!tmp_ann_custom_name.empty())
-            {
-                ann_custom_Define = tmp_ann_custom_name;
-            }
             CompleteMemberDetail detail_name = TypeObjectUtils::build_complete_member_detail(name_name, member_ann_builtin_name, ann_custom_Define);
             CompleteStructMember member_name = TypeObjectUtils::build_complete_struct_member(common_name, detail_name);
             TypeObjectUtils::add_complete_struct_member(member_seq_Define, member_name);
@@ -134,7 +121,7 @@ void register_Define_type_identifier(
                 }
             }
             StructMemberFlag member_flags_version = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
-                    false, false, true, false);
+                    false, false, false, false);
             MemberId member_id_version = 0x00000001;
             bool common_version_ec {false};
             CommonStructMember common_version {TypeObjectUtils::build_common_struct_member(member_id_version, member_flags_version, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_version, common_version_ec))};
@@ -146,19 +133,6 @@ void register_Define_type_identifier(
             MemberName name_version = "version";
             eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_version;
             ann_custom_Define.reset();
-            AppliedAnnotationSeq tmp_ann_custom_version;
-            eprosima::fastcdr::optional<std::string> unit_version;
-            eprosima::fastcdr::optional<AnnotationParameterValue> min_version;
-            eprosima::fastcdr::optional<AnnotationParameterValue> max_version;
-            eprosima::fastcdr::optional<std::string> hash_id_version;
-            if (unit_version.has_value() || min_version.has_value() || max_version.has_value() || hash_id_version.has_value())
-            {
-                member_ann_builtin_version = TypeObjectUtils::build_applied_builtin_member_annotations(unit_version, min_version, max_version, hash_id_version);
-            }
-            if (!tmp_ann_custom_version.empty())
-            {
-                ann_custom_Define = tmp_ann_custom_version;
-            }
             CompleteMemberDetail detail_version = TypeObjectUtils::build_complete_member_detail(name_version, member_ann_builtin_version, ann_custom_Define);
             CompleteStructMember member_version = TypeObjectUtils::build_complete_struct_member(common_version, detail_version);
             TypeObjectUtils::add_complete_struct_member(member_seq_Define, member_version);

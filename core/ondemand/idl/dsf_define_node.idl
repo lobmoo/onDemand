@@ -42,7 +42,7 @@ module DSF {
         // 节点运行信息
         @appendable // 实例可扩展
         struct RuntimeInfo {
-            @key string nodeName;         // 节点名称
+            string nodeName;         // 节点名称
             string processId;             // 节点PID
             string hostName;              // 主机名称
             string execPath;              // 应用程序名称及路径

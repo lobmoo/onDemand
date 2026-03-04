@@ -301,7 +301,7 @@ void register_Define_type_identifier(
                 }
             }
             StructMemberFlag member_flags_name = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
-                    false, false, true, false);
+                    false, false, false, false);
             MemberId member_id_name = 0x00000000;
             bool common_name_ec {false};
             CommonStructMember common_name {TypeObjectUtils::build_common_struct_member(member_id_name, member_flags_name, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_name, common_name_ec))};
@@ -313,19 +313,6 @@ void register_Define_type_identifier(
             MemberName name_name = "name";
             eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_name;
             ann_custom_Define.reset();
-            AppliedAnnotationSeq tmp_ann_custom_name;
-            eprosima::fastcdr::optional<std::string> unit_name;
-            eprosima::fastcdr::optional<AnnotationParameterValue> min_name;
-            eprosima::fastcdr::optional<AnnotationParameterValue> max_name;
-            eprosima::fastcdr::optional<std::string> hash_id_name;
-            if (unit_name.has_value() || min_name.has_value() || max_name.has_value() || hash_id_name.has_value())
-            {
-                member_ann_builtin_name = TypeObjectUtils::build_applied_builtin_member_annotations(unit_name, min_name, max_name, hash_id_name);
-            }
-            if (!tmp_ann_custom_name.empty())
-            {
-                ann_custom_Define = tmp_ann_custom_name;
-            }
             CompleteMemberDetail detail_name = TypeObjectUtils::build_complete_member_detail(name_name, member_ann_builtin_name, ann_custom_Define);
             CompleteStructMember member_name = TypeObjectUtils::build_complete_struct_member(common_name, detail_name);
             TypeObjectUtils::add_complete_struct_member(member_seq_Define, member_name);
@@ -1327,7 +1314,7 @@ void register_DataTransfer_type_identifier(
                 }
             }
             StructMemberFlag member_flags_name = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
-                    false, false, true, false);
+                    false, false, false, false);
             MemberId member_id_name = 0x00000000;
             bool common_name_ec {false};
             CommonStructMember common_name {TypeObjectUtils::build_common_struct_member(member_id_name, member_flags_name, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_name, common_name_ec))};
@@ -1339,19 +1326,6 @@ void register_DataTransfer_type_identifier(
             MemberName name_name = "name";
             eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_name;
             ann_custom_DataTransfer.reset();
-            AppliedAnnotationSeq tmp_ann_custom_name;
-            eprosima::fastcdr::optional<std::string> unit_name;
-            eprosima::fastcdr::optional<AnnotationParameterValue> min_name;
-            eprosima::fastcdr::optional<AnnotationParameterValue> max_name;
-            eprosima::fastcdr::optional<std::string> hash_id_name;
-            if (unit_name.has_value() || min_name.has_value() || max_name.has_value() || hash_id_name.has_value())
-            {
-                member_ann_builtin_name = TypeObjectUtils::build_applied_builtin_member_annotations(unit_name, min_name, max_name, hash_id_name);
-            }
-            if (!tmp_ann_custom_name.empty())
-            {
-                ann_custom_DataTransfer = tmp_ann_custom_name;
-            }
             CompleteMemberDetail detail_name = TypeObjectUtils::build_complete_member_detail(name_name, member_ann_builtin_name, ann_custom_DataTransfer);
             CompleteStructMember member_name = TypeObjectUtils::build_complete_struct_member(common_name, detail_name);
             TypeObjectUtils::add_complete_struct_member(member_seq_DataTransfer, member_name);
@@ -1920,7 +1894,7 @@ void register_PubTableVarDefine_type_identifier(
                 return;
             }
             StructMemberFlag member_flags_id = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
-                    false, false, true, false);
+                    false, false, false, false);
             MemberId member_id_id = 0x00000000;
             bool common_id_ec {false};
             CommonStructMember common_id {TypeObjectUtils::build_common_struct_member(member_id_id, member_flags_id, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_id, common_id_ec))};
@@ -1932,19 +1906,6 @@ void register_PubTableVarDefine_type_identifier(
             MemberName name_id = "id";
             eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_id;
             ann_custom_PubTableVarDefine.reset();
-            AppliedAnnotationSeq tmp_ann_custom_id;
-            eprosima::fastcdr::optional<std::string> unit_id;
-            eprosima::fastcdr::optional<AnnotationParameterValue> min_id;
-            eprosima::fastcdr::optional<AnnotationParameterValue> max_id;
-            eprosima::fastcdr::optional<std::string> hash_id_id;
-            if (unit_id.has_value() || min_id.has_value() || max_id.has_value() || hash_id_id.has_value())
-            {
-                member_ann_builtin_id = TypeObjectUtils::build_applied_builtin_member_annotations(unit_id, min_id, max_id, hash_id_id);
-            }
-            if (!tmp_ann_custom_id.empty())
-            {
-                ann_custom_PubTableVarDefine = tmp_ann_custom_id;
-            }
             CompleteMemberDetail detail_id = TypeObjectUtils::build_complete_member_detail(name_id, member_ann_builtin_id, ann_custom_PubTableVarDefine);
             CompleteStructMember member_id = TypeObjectUtils::build_complete_struct_member(common_id, detail_id);
             TypeObjectUtils::add_complete_struct_member(member_seq_PubTableVarDefine, member_id);
@@ -2247,7 +2208,7 @@ void register_TableDataTransfer_type_identifier(
                 DSF::register_DT_BLOB_type_identifier(type_ids_mask);
             }
             StructMemberFlag member_flags_mask = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
-                    false, false, true, false);
+                    false, false, false, false);
             MemberId member_id_mask = 0x00000000;
             bool common_mask_ec {false};
             CommonStructMember common_mask {TypeObjectUtils::build_common_struct_member(member_id_mask, member_flags_mask, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_mask, common_mask_ec))};
@@ -2259,19 +2220,6 @@ void register_TableDataTransfer_type_identifier(
             MemberName name_mask = "mask";
             eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_mask;
             ann_custom_TableDataTransfer.reset();
-            AppliedAnnotationSeq tmp_ann_custom_mask;
-            eprosima::fastcdr::optional<std::string> unit_mask;
-            eprosima::fastcdr::optional<AnnotationParameterValue> min_mask;
-            eprosima::fastcdr::optional<AnnotationParameterValue> max_mask;
-            eprosima::fastcdr::optional<std::string> hash_id_mask;
-            if (unit_mask.has_value() || min_mask.has_value() || max_mask.has_value() || hash_id_mask.has_value())
-            {
-                member_ann_builtin_mask = TypeObjectUtils::build_applied_builtin_member_annotations(unit_mask, min_mask, max_mask, hash_id_mask);
-            }
-            if (!tmp_ann_custom_mask.empty())
-            {
-                ann_custom_TableDataTransfer = tmp_ann_custom_mask;
-            }
             CompleteMemberDetail detail_mask = TypeObjectUtils::build_complete_member_detail(name_mask, member_ann_builtin_mask, ann_custom_TableDataTransfer);
             CompleteStructMember member_mask = TypeObjectUtils::build_complete_struct_member(common_mask, detail_mask);
             TypeObjectUtils::add_complete_struct_member(member_seq_TableDataTransfer, member_mask);
