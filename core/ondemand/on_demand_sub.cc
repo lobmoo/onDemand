@@ -2,6 +2,7 @@
 #include <mutex>
 #include "on_demand_sub.h"
 #include "concurrentqueue.h"
+#include "ondemand/on_demand_common.h"
 #include "roaring/roaring64map.hh"
 #include <cstring>
 
@@ -144,8 +145,6 @@ namespace ondemand
     bool OnDemandSub::onReceiveDataTransferCb(const std::string &topicName,
                                               std::shared_ptr<DSF::Var::TableDataTransfer> data)
     {
-        // 这里可以根据 topicName 解析出 bucketIndex，或者直接在 data 中携带 varHash 来定位
-        ONDEMANDLOG(debug) << "Received DataTransfer for topic: " << topicName;
         dataTransferQueue_.enqueue(data);
         return true;
     }
@@ -174,6 +173,7 @@ namespace ondemand
             const auto &maskBytes = dataTransfer->mask();
             const auto &varDataList = dataTransfer->varData();
             if (maskBytes.empty() || varDataList.empty()) {
+                ONDEMANDLOG(warning) << "Received empty mask or varData, skipping.";
                 continue;
             }
 
@@ -197,29 +197,38 @@ namespace ondemand
                     uint64_t varHash = *it;
                     const auto &blob = varDataList[idx];
                     if (blob.empty()) {
+                        ONDEMANDLOG(warning)
+                            << "Received empty data blob for varHash: " << varHash << ", skipping.";
                         continue;
                     }
 
                     // 查找本地 varId
                     auto vit = varIndex_.find(varHash);
                     if (vit == varIndex_.end()) {
+                        ONDEMANDLOG(warning)
+                            << "Received data for unknown varHash: " << varHash << ", skipping.";
                         continue; // 本节点未订阅该变量, 跳过
                     }
 
                     int32_t varId = vit->second.varId;
                     if (varId < 0) {
+                        ONDEMANDLOG(warning)
+                            << "Invalid varId for varHash: " << varHash << ", skipping.";
                         continue;
                     }
 
                     // 写入 varStore
                     if (varStore_.write(varId, blob.data(), blob.size())) {
                         ++written;
+                    } else {
+                        ONDEMANDLOG_TIME(error, 5)
+                            << "Failed to write varId: " << varId << " for varHash: " << varHash;
                     }
                 }
             }
 
-            ONDEMANDLOG_TIME(debug, 3000)
-                << "DataTransfer: received=" << varDataList.size() << " written=" << written;
+            ONDEMANDLOG(critical) << "DataTransfer: received=" << varDataList.size()
+                                  << " written=" << written;
         }
     }
 
@@ -299,9 +308,12 @@ namespace ondemand
 
         /*创建节点*/
         DdsWrapper::ParticipantQoSBuilder qos_configurator;
-        qos_configurator.addUDPV4TransportInterfaces({"10.25.5.26"}).addFlowController()
+        qos_configurator.addUDPV4TransportInterfaces({"10.25.5.26"})
+            .setDiscoveryMulticastLocator("239.255.0.1", 7400)
+            .setUserMulticastLocator("239.255.0.1", 7401)
+            .addFlowController()
             .setDiscoveryKeepAlive(2000, 500)
-            .setInitialAnnouncements(10, 100);  // 10次PDP公告, 100ms间隔
+            .setInitialAnnouncements(30, 100); // 10次PDP公告, 100ms间隔, 确保3秒内完成初始发现
         try {
             dataNode_ =
                 std::make_shared<DdsWrapper::DataNode>(DOMAIN_ID, nodeName, qos_configurator);

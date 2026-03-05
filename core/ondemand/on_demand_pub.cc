@@ -44,9 +44,12 @@ namespace ondemand
         nodeName_ = nodeName;
 
         DdsWrapper::ParticipantQoSBuilder qos_configurator;
-        qos_configurator.addUDPV4TransportInterfaces({"10.25.5.26"}).addFlowController()
+        qos_configurator.addUDPV4TransportInterfaces({"10.25.5.26"})
+            .setDiscoveryMulticastLocator("239.255.0.1", 7400)
+            .setUserMulticastLocator("239.255.0.1", 7401)
+            .addFlowController()
             .setDiscoveryKeepAlive(2000, 500)
-            .setInitialAnnouncements(10, 100);  // 10次PDP公告, 100ms间隔, 确保1秒内完成初始发现
+            .setInitialAnnouncements(30, 100); // 10次PDP公告, 100ms间隔, 确保3秒内完成初始发现
         /*创建节点*/
         try {
             dataNode_ =
@@ -76,7 +79,7 @@ namespace ondemand
         /*确保 DDS endpoints 就绪: assertLiveliness 强制发送 PDP 心跳*/
         dataNode_->assertLiveliness();
         ONDEMANDLOG(info) << "OnDemandPub initialized: " << nodeName;
-        
+
         return true;
     }
 
@@ -147,7 +150,7 @@ namespace ondemand
             .setReliabilityKind(DdsWrapper::ReliabilityKind::RELIABLE)
             .setHistoryKind(DdsWrapper::HistoryKind::KEEP_LAST)
             .setHistoryDepth(depth);
-           // .setFlowController("reliable_flow_controller");
+        // .setFlowController("reliable_flow_controller");
 
         if (0
             != dsf::ondemand::registerNodeTopicWriter<DSF::Var::PubTableDefine,
@@ -479,6 +482,7 @@ namespace ondemand
                 ONDEMANDLOG(error) << "Failed to send batch data for bucket=" << bucketIndex
                                    << " freq=" << freqMs << "ms";
             }
+            LOG(critical) << "+++++++++++++++++++++++++pub success+++++++++++++++++++++";
         }
     }
 
@@ -832,8 +836,7 @@ namespace ondemand
     void OnDemandPub::onWriterDiscovery(const DdsWrapper::EndpointInfo &info)
     {
         ONDEMANDLOG(debug) << "Writer discovery: topic=" << info.topic_name
-                           << " type=" << info.type_name
-                           << " discovered=" << info.discovered;
+                           << " type=" << info.type_name << " discovered=" << info.discovered;
     }
 
 } // namespace ondemand
