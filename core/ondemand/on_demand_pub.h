@@ -26,7 +26,7 @@ namespace dsf
 namespace ondemand
 {
 
-    class OnDemandPub
+    class OnDemandPub : public DdsWrapper::ParticipantListener
     {
     public:
         OnDemandPub();
@@ -39,6 +39,12 @@ namespace ondemand
         bool createVars(const std::vector<DSF::Var::Define> &VarDefines);
         bool deleteVars(const std::vector<std::string> &varNames);
         bool setVarData(const char *varName, const void *data, size_t size);
+
+    private:
+        // ParticipantListener 回调
+        // void onReaderDiscovery(const DdsWrapper::EndpointInfo &info) override;
+        void onWriterDiscovery(const DdsWrapper::EndpointInfo &info) override;
+
 
     private:
         // ---- DDS topic 创建 ----

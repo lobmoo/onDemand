@@ -73,10 +73,10 @@ namespace ondemand
             return false;
         }
 
-        ONDEMANDLOG(info) << "OnDemandPub initialized: " << nodeName;
-
         /*确保 DDS endpoints 就绪: assertLiveliness 强制发送 PDP 心跳*/
         dataNode_->assertLiveliness();
+        ONDEMANDLOG(info) << "OnDemandPub initialized: " << nodeName;
+        
         return true;
     }
 
@@ -146,8 +146,8 @@ namespace ondemand
             .setDurabilityKind(DdsWrapper::DurabilityKind::TRANSIENT_LOCAL)
             .setReliabilityKind(DdsWrapper::ReliabilityKind::RELIABLE)
             .setHistoryKind(DdsWrapper::HistoryKind::KEEP_LAST)
-            .setHistoryDepth(depth)
-            .setFlowController("reliable_flow_controller");
+            .setHistoryDepth(depth);
+           // .setFlowController("reliable_flow_controller");
 
         if (0
             != dsf::ondemand::registerNodeTopicWriter<DSF::Var::PubTableDefine,
@@ -827,6 +827,13 @@ namespace ondemand
             ONDEMANDLOG(info) << "Var [" << varFreq.name() << "] unsubscribed by node [" << nodeName
                               << "], freq " << oldFreq << "ms -> " << meta.currentFreq << "ms";
         }
+    }
+
+    void OnDemandPub::onWriterDiscovery(const DdsWrapper::EndpointInfo &info)
+    {
+        ONDEMANDLOG(debug) << "Writer discovery: topic=" << info.topic_name
+                           << " type=" << info.type_name
+                           << " discovered=" << info.discovered;
     }
 
 } // namespace ondemand
