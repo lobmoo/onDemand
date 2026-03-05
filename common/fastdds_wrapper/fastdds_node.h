@@ -86,6 +86,16 @@ public:
      */
     bool isInitialized() const { return initialized_; }
 
+    /**
+     * @brief 强制发送 PDP 心跳，确保 participant 的存在已被通告
+     */
+    void assertLiveliness()
+    {
+        if (participant_) {
+            participant_->assert_liveliness();
+        }
+    }
+
     template <typename MESSAGE, typename PUBSUB_TYPE>
     std::shared_ptr<FastddsWrapper::FastDDSTopicWriter<MESSAGE>>
     createDataWriter(const std::string topicName, DDSDataWriterListener *listener = nullptr)

@@ -299,7 +299,9 @@ namespace ondemand
 
         /*创建节点*/
         DdsWrapper::ParticipantQoSBuilder qos_configurator;
-        qos_configurator.addUDPV4TransportInterfaces({"10.25.5.26"}).addFlowController();
+        qos_configurator.addUDPV4TransportInterfaces({"10.25.5.26"}).addFlowController()
+            .setDiscoveryKeepAlive(2000, 500)
+            .setInitialAnnouncements(10, 100);  // 10次PDP公告, 100ms间隔
         try {
             dataNode_ =
                 std::make_shared<DdsWrapper::DataNode>(DOMAIN_ID, nodeName, qos_configurator);
@@ -325,6 +327,8 @@ namespace ondemand
         }
 
         ONDEMANDLOG(info) << "OnDemandSub initialized: " << nodeName;
+        /*确保 DDS endpoints 就绪: assertLiveliness 强制发送 PDP 心跳*/
+        dataNode_->assertLiveliness();
         return true;
     }
 

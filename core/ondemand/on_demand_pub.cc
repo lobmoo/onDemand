@@ -44,7 +44,9 @@ namespace ondemand
         nodeName_ = nodeName;
 
         DdsWrapper::ParticipantQoSBuilder qos_configurator;
-        qos_configurator.addUDPV4TransportInterfaces({"10.25.5.26"}).addFlowController();
+        qos_configurator.addUDPV4TransportInterfaces({"10.25.5.26"}).addFlowController()
+            .setDiscoveryKeepAlive(2000, 500)
+            .setInitialAnnouncements(10, 100);  // 10次PDP公告, 100ms间隔, 确保1秒内完成初始发现
         /*创建节点*/
         try {
             dataNode_ =
@@ -72,6 +74,9 @@ namespace ondemand
         }
 
         ONDEMANDLOG(info) << "OnDemandPub initialized: " << nodeName;
+
+        /*确保 DDS endpoints 就绪: assertLiveliness 强制发送 PDP 心跳*/
+        dataNode_->assertLiveliness();
         return true;
     }
 
@@ -532,12 +537,11 @@ namespace ondemand
             }
         } // 释放写锁
 
-        // // Phase 2: 创建 DataTransfer writers (在发布 TableDefine 之前准备好)
-        // std::this_thread::sleep_for(std::chrono::milliseconds(200));
-        // if (!createDataTransferWriter()) {
-        //     ONDEMANDLOG(error) << "Failed to create DataTransfer writers";
-        //     return false;
-        // }
+        // Phase 2: 创建 DataTransfer writers (在发布 TableDefine 之前准备好)
+        if (!createDataTransferWriter()) {
+            ONDEMANDLOG(error) << "Failed to create DataTransfer writers";
+            return false;
+        }
 
         // Phase 3: 发布 TableDefine (读锁, 不阻塞 setVarData 等热路径)
         uint32_t bucketCount = bucketManager_.GetBucketCount();

@@ -64,6 +64,15 @@ ParticipantQoSBuilder &ParticipantQoSBuilder::setDiscoveryKeepAlive(uint32_t lea
     return *this;
 }
 
+ParticipantQoSBuilder &ParticipantQoSBuilder::setInitialAnnouncements(uint32_t count, uint32_t period_ms)
+{
+    qos_.wire_protocol().builtin.discovery_config.initial_announcements.count = count;
+    qos_.wire_protocol().builtin.discovery_config.initial_announcements.period =
+        eprosima::fastdds::dds::Duration_t(period_ms / 1000,
+                                           (period_ms % 1000) * 1000000);
+    return *this;
+}
+
 ParticipantQoSBuilder &ParticipantQoSBuilder::addUDPV4TransportInterfaces(
     const std::vector<std::string> &network_interfaces)
 {

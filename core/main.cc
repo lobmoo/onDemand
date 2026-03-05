@@ -7,11 +7,13 @@
 #include "log/logger.h"
 #include "ondemand/on_demand_pub.h"
 #include "ondemand/on_demand_sub.h"
+#include <fastdds/dds/log/Log.hpp>
 
 void publish()
 {
     dsf::ondemand::OnDemandPub pub;
     pub.init("pubNode");
+    std::this_thread::sleep_for(std::chrono::seconds(2));
     pub.start();
     std::vector<DSF::Var::Define> vars;
     for (int i = 0; i < 10; ++i) {
@@ -42,16 +44,16 @@ void subscribe()
     sub.start();
     LOG(critical) << "total received vars: " << sub.getTotalReceivedVars();
 
-    std::vector<dsf::ondemand::SubscriptionItem> items;
-     std::vector<std::string> unitems;
-    for (int i = 0; i < 5; ++i) {
-        std::string varName = "var" + std::to_string(i);
-        items.push_back({varName, 500});
-        unitems.push_back(varName);
-    }
-    sub.subscribe("pubNode", items);
-    std::this_thread::sleep_for(std::chrono::seconds(5));
-    sub.unsubscribe("pubNode", unitems);
+    // std::vector<dsf::ondemand::SubscriptionItem> items;
+    //  std::vector<std::string> unitems;
+    // for (int i = 0; i < 5; ++i) {
+    //     std::string varName = "var" + std::to_string(i);
+    //     items.push_back({varName, 500});
+    //     unitems.push_back(varName);
+    // }
+    // sub.subscribe("pubNode", items);
+    // std::this_thread::sleep_for(std::chrono::seconds(5));
+    // sub.unsubscribe("pubNode", unitems);
     // sub.subscribe("pubNode", items);
     // std::this_thread::sleep_for(std::chrono::seconds(2));
     // sub.subscribe("pubNode", items);
@@ -62,6 +64,7 @@ void subscribe()
 
 int main(int argc, char **argv)
 {
+    eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Info);
     Logger::GetInstance()->Init("log/1.log", Logger::console, Logger::info, 10, 3);
     LOG(info) << "start on demand demo";
 

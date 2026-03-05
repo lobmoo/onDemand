@@ -64,6 +64,7 @@ public:
     // 扩展方法以支持更多配置
     ParticipantQoSBuilder &setDiscoveryKeepAlive(uint32_t lease_duration_ms,
                                                  uint32_t announcement_period_ms);
+    ParticipantQoSBuilder &setInitialAnnouncements(uint32_t count, uint32_t period_ms);
     ParticipantQoSBuilder &
     addUDPV4TransportInterfaces(const std::vector<std::string> &network_interfaces);
     ParticipantQoSBuilder &addUDPV4TransportCoreId(int core_id);
