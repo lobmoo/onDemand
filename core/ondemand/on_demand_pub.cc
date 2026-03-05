@@ -50,7 +50,7 @@ namespace ondemand
         /*创建节点*/
         try {
             dataNode_ =
-                std::make_shared<DdsWrapper::DataNode>(DOMAIN_ID, nodeName, qos_configurator);
+                std::make_shared<DdsWrapper::DataNode>(DOMAIN_ID, nodeName, qos_configurator, this);
         } catch (const std::exception &e) {
             ONDEMANDLOG(error) << "Failed to create DataNode: " << e.what();
             initialized_.store(false);
