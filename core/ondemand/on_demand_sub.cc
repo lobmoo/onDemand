@@ -1,3 +1,19 @@
+/**
+ * @file on_demand_sub.cc
+ * @brief 
+ * @author wwk (1162431386@qq.com)
+ * @version 1.0
+ * @date 2026-03-05
+ * 
+ * @copyright Copyright (c) 2026  by  wwk : wwk.lobmo@gmail.com
+ * 
+ * @par 修改日志:
+ * <table>
+ * <tr><th>Date       <th>Version <th>Author  <th>Description
+ * <tr><td>2026-03-05     <td>1.0     <td>wwk   <td>修改?
+ * </table>
+ */
+ 
 #include <functional>
 #include <mutex>
 #include "on_demand_sub.h"
@@ -20,6 +36,12 @@ namespace ondemand
 
     OnDemandSub::~OnDemandSub() { stop(); }
 
+    /**
+     * @brief 创建变量定义数据读取器
+     * @param  processFunc 数据处理回调函数
+     * @return true 成功
+     * @return false 失败
+     */
     bool OnDemandSub::createTableDefineReader(
         std::function<void(const std::string &, std::shared_ptr<DSF::Var::PubTableDefine>)>
             processFunc)
@@ -50,6 +72,11 @@ namespace ondemand
         return true;
     }
 
+    /**
+     * @brief 创建频率请求数据写入器
+     * @return true 成功
+     * @return false 失败
+     */
     bool OnDemandSub::createSubTableRegisterWriter()
     {
         constexpr uint32_t depth = 100;
@@ -76,11 +103,17 @@ namespace ondemand
         return true;
     }
 
+    /**
+     * @brief 创建数据传输读取器
+     * @param  processFunc 数据处理回调函数
+     * @return true 成功
+     * @return false 失败
+     */
     bool OnDemandSub::createDataTransferReader(
         std::function<void(const std::string &, std::shared_ptr<DSF::Var::TableDataTransfer>)>
             processFunc)
     {
-        // 根据 varIndex_ 中的元数据，收集所有不同的 bucket id
+        /*根据 varIndex_ 中的元数据，收集所有不同的 bucket id*/
         std::unordered_set<uint32_t> bucketIds;
         {
             std::shared_lock lock(varIndexMutex_);
@@ -135,6 +168,13 @@ namespace ondemand
         return true;
     }
 
+    /**
+     * @brief 处理变量定义数据回调函数
+     * @param  topicName 主题名称
+     * @param  data 变量定义数据
+     * @return true 成功
+     * @return false 失败
+     */
     bool OnDemandSub::onReceiveTableDefineCb(const std::string &topicName,
                                              std::shared_ptr<DSF::Var::PubTableDefine> data)
     {
@@ -142,6 +182,13 @@ namespace ondemand
         return true;
     }
 
+    /**
+     * @brief 处理接收数据传输回调函数
+     * @param  topicName 主题名称
+     * @param  data 数据传输数据
+     * @return true 成功
+     * @return false 失败
+     */
     bool OnDemandSub::onReceiveDataTransferCb(const std::string &topicName,
                                               std::shared_ptr<DSF::Var::TableDataTransfer> data)
     {
@@ -177,7 +224,7 @@ namespace ondemand
                 continue;
             }
 
-            // 1. 反序列化 Roaring64Map
+            /*1. 反序列化 Roaring64Map*/
             roaring::Roaring64Map roar;
             try {
                 roar =
@@ -202,7 +249,7 @@ namespace ondemand
                         continue;
                     }
 
-                    // 查找本地 varId
+                    /*查找本地 varId*/
                     auto vit = varIndex_.find(varHash);
                     if (vit == varIndex_.end()) {
                         ONDEMANDLOG(warning)
@@ -217,7 +264,7 @@ namespace ondemand
                         continue;
                     }
 
-                    // 写入 varStore
+                    /*写入 varStore*/
                     if (varStore_.write(varId, blob.data(), blob.size())) {
                         ++written;
                     } else {
@@ -238,7 +285,7 @@ namespace ondemand
     void OnDemandSub::processTableDefine()
     {
         pthread_setname_np(pthread_self(), "proc_tab_def");
-        while (running_) {
+        while (running_.load(std::memory_order_acquire)) {
             std::shared_ptr<DSF::Var::PubTableDefine> tableDefine;
             if (pubTableDefineQueue_.try_dequeue(tableDefine)) {
                 if (tableDefine) {
@@ -246,7 +293,7 @@ namespace ondemand
                                       << ", vars size: " << tableDefine->varDefines().size();
                     std::unique_lock lock(varIndexMutex_);
                     /*1.拆表*/
-                    bool hasNewBucket = false;
+                    std::unordered_set<uint32_t> newBucketIds;
                     for (auto &varDef : tableDefine->varDefines()) {
                         const auto &varDefine = varDef.var().varDefine();
                         std::string varName =
@@ -256,15 +303,13 @@ namespace ondemand
                         size_t bucketIdx =
                             BucketManager::CalculateBucketIndexFromHash(varHash); // Reuse hash
 
-                        // 检查该 bucket 的 datatansfor reader 是否已存在
-                        uint32_t bucketId = static_cast<uint32_t>(bucketIdx);
-                        {
-                            std::lock_guard<std::mutex> mapLock(dataTransferCtxMapMutex_);
-                            if (dataTransferReaderMap_.find(bucketId)
-                                == dataTransferReaderMap_.end()) {
-                                hasNewBucket = true;
-                            }
+                        /*先检查是否已存在，避免重复 register_var*/
+                        auto it = varIndex_.find(varHash);
+                        if (it != varIndex_.end()) {
+                            ONDEMANDLOG(warning) << "Variable already exists: " << varName;
+                            continue;
                         }
+
                         /*组内部结构*/
                         VarMetadata meta;
                         meta.varHash = varHash;
@@ -273,24 +318,29 @@ namespace ondemand
                         meta.bucketIndex = bucketIdx;
                         meta.varId = varStore_.register_var(varHash, 32);
 
-                        auto it = varIndex_.find(varHash);
-                        if (it != varIndex_.end()) {
-                            ONDEMANDLOG(warning) << "Variable already exists: " << varName;
-                            continue;
-                        }
-
                         varIndex_.emplace(varHash, std::move(meta));
-                        totalReceived_.fetch_add(1); //记录收到的总数
+                        newBucketIds.insert(static_cast<uint32_t>(bucketIdx));
+                        totalReceived_.fetch_add(1); // 记录收到的总数
                         ONDEMANDLOG(debug) << "Registered var: " << varName;
                     }
                     lock.unlock();
 
-                    /*初始化内存*/
+                    /*初始化内存: register_var 只写元数据，必须 finalize 才分配 arena/dirty_flags*/
                     if (!varStore_.finalize()) {
                         ONDEMANDLOG(error) << "Failed to finalize VarStore after TableDefine";
                     }
 
-                    // 仅在发现新 bucket 时才创建 data transfer reader，避免重复加锁遍历
+                    /*统一检查是否有新 bucket 需要创建 reader，避免循环内逐次加锁*/
+                    bool hasNewBucket = false;
+                    if (!newBucketIds.empty()) {
+                        std::lock_guard<std::mutex> mapLock(dataTransferCtxMapMutex_);
+                        for (uint32_t bid : newBucketIds) {
+                            if (dataTransferReaderMap_.find(bid) == dataTransferReaderMap_.end()) {
+                                hasNewBucket = true;
+                                break;
+                            }
+                        }
+                    }
                     if (hasNewBucket) {
                         createDataTransferReader(std::bind(
                             &OnDemandSub::onReceiveDataTransferCb, this, std::placeholders::_1,
@@ -303,6 +353,12 @@ namespace ondemand
         }
     }
 
+    /**
+     * @brief 初始化订阅器
+     * @param  nodeName 节点名称
+     * @return true 成功
+     * @return false 失败
+     */
     bool OnDemandSub::init(const std::string &nodeName)
     {
         if (initialized_.exchange(true)) {
@@ -349,6 +405,11 @@ namespace ondemand
         return true;
     }
 
+    /**
+     * @brief 启动订阅器
+     * @return true 成功
+     * @return false 失败
+     */
     bool OnDemandSub::start()
     {
         if (running_.exchange(true)) {
@@ -362,6 +423,9 @@ namespace ondemand
         return true;
     }
 
+    /**
+     * @brief 停止订阅器
+     */
     void OnDemandSub::stop()
     {
         initialized_.store(false);
@@ -370,9 +434,6 @@ namespace ondemand
         }
         if (processTableDefineThread_.joinable()) {
             processTableDefineThread_.join();
-        }
-        if (processDataTransferThread_.joinable()) {
-            processDataTransferThread_.join();
         }
         if (processDataTransferThread_.joinable()) {
             processDataTransferThread_.join();
@@ -394,15 +455,22 @@ namespace ondemand
 
         std::shared_ptr<DSF::Var::PubTableDefine> dummy;
         while (pubTableDefineQueue_.try_dequeue(dummy)) {
-            // Dequeue and discard remaining items
+            // Dequeue 
         }
         std::shared_ptr<DSF::Var::TableDataTransfer> dummyData;
         while (dataTransferQueue_.try_dequeue(dummyData)) {
-            // Dequeue and discard remaining items
+            // Dequeue 
         }
         ONDEMANDLOG(info) << "OnDemandSub stopped";
     }
 
+    /**
+     * @brief 订阅变量
+     * @param  node_name 节点名
+     * @param  items 变量信息列表
+     * @return true 成功
+     * @return false 失败
+     */
     bool OnDemandSub::subscribe(const char *node_name, const std::vector<SubscriptionItem> &items)
     {
         if (!initialized_) {
@@ -454,6 +522,13 @@ namespace ondemand
         return true;
     }
 
+    /**
+     * @brief 取消订阅
+     * @param  node_name 节点名
+     * @param  items 变量名列表
+     * @return true 成功
+     * @return false 失败
+     */
     bool OnDemandSub::unsubscribe(const char *node_name, const std::vector<std::string> &items)
     {
         if (!initialized_) {
@@ -506,25 +581,6 @@ namespace ondemand
     // {
     //     std::shared_lock lock(subMutex_);
     //     return subscriptions_.size();
-    // }
-
-    // void OnDemandSub::dumpState(std::ostream &os)
-    // {
-    //     os << "========== OnDemandSub State ==========\n";
-    //     os << "Node: " << nodeName_ << "\n";
-    //     os << "Running: " << (running_ ? "Yes" : "No") << "\n";
-    //     os << "Total Received: " << totalReceived_.load() << "\n";
-
-    //     std::shared_lock lock(subMutex_);
-    //     os << "Active Subscriptions: " << subscriptions_.size() << "\n\n";
-
-    //     os << "=== Subscriptions ===\n";
-    //     for (const auto &[hash, item] : subscriptions_) {
-    //         os << "  " << item.varName << " [" << item.tableName << "]"
-    //            << " @ " << item.frequency << "ms\n";
-    //     }
-
-    //     os << "==============================================\n";
     // }
 
 } // namespace ondemand

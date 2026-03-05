@@ -1,19 +1,19 @@
 /**
- * @file on_demand_pub_v2.cpp
+ * @file on_demand_pub.cc
  * @brief 
  * @author wwk (1162431386@qq.com)
  * @version 1.0
- * @date 2026-02-05
+ * @date 2026-03-05
  * 
  * @copyright Copyright (c) 2026  by  wwk : wwk.lobmo@gmail.com
  * 
  * @par 修改日志:
  * <table>
  * <tr><th>Date       <th>Version <th>Author  <th>Description
- * <tr><td>2026-02-05     <td>1.0     <td>wwk   <td>修改?
+ * <tr><td>2026-03-05     <td>1.0     <td>wwk   <td>修改?
  * </table>
  */
-
+ 
 #include "on_demand_pub.h"
 #include <algorithm>
 #include <charconv>
@@ -34,6 +34,12 @@ namespace ondemand
 
     OnDemandPub::~OnDemandPub() { stop(); }
 
+    /**
+     * @brief 初始化发布者节点
+     * @param  nodeName 节点名称，需全局唯一
+     * @return true 成功
+     * @return false 失败
+     */
     bool OnDemandPub::init(const std::string &nodeName)
     {
         if (initialized_.exchange(true)) {
@@ -83,6 +89,11 @@ namespace ondemand
         return true;
     }
 
+    /**
+     * @brief 启动发布者节点，开始处理订阅请求和发布数据
+     * @return true 成功
+     * @return false 失败
+     */
     bool OnDemandPub::start()
     {
         if (running_.exchange(true)) {
@@ -102,32 +113,39 @@ namespace ondemand
         return true;
     }
 
+    /**
+     * @brief 停止发布者节点，清理资源，停止所有定时器和线程
+     */
     void OnDemandPub::stop()
     {
         initialized_.store(false);
-        if (!running_.exchange(false)) {
-            return;
+        bool wasRunning = running_.exchange(false);
+
+        if (wasRunning) {
+            /*等待线程退出*/
+            if (registerProcessThread_.joinable()) {
+                registerProcessThread_.join();
+            }
+            if (publishSchedulerThread_.joinable()) {
+                publishSchedulerThread_.join();
+            }
+
+            /*清理所有发布定时器和调度器*/
+            cancelAllPublishTimers();
+            if (publishScheduler_) {
+                publishScheduler_->Stop();
+                publishScheduler_.reset();
+            }
         }
 
-        /*等待线程退出*/
-        if (registerProcessThread_.joinable()) {
-            registerProcessThread_.join();
-        }
-        if (publishSchedulerThread_.joinable()) {
-            publishSchedulerThread_.join();
-        }
-
-        /*清理所有发布定时器和调度器*/
-        cancelAllPublishTimers();
-        if (publishScheduler_) {
-            publishScheduler_->Stop();
-            publishScheduler_.reset();
+        /*清理 varIndex_ 和 bucketManager_ (受 varIndexMutex_ 保护)*/
+        {
+            std::unique_lock lock(varIndexMutex_);
+            varIndex_.clear();
+            bucketManager_.Clear();
         }
 
-        std::unique_lock lock(varIndexMutex_);
-        varIndex_.clear();
-        bucketManager_.Clear();
-
+        /*清理 DDS 读写器和节点*/
         pubTableDefineWriter_.reset();
         subTableRegisterReqReader_.reset();
         {
@@ -139,6 +157,11 @@ namespace ondemand
         ONDEMANDLOG(info) << "OnDemandPub stopped";
     }
 
+    /**
+     * @brief 创建 DDS 读写器，设置回调函数
+     * @return true 成功
+     * @return false 失败
+     */
     bool OnDemandPub::createTableDefineWriter()
     {
         constexpr uint32_t depth = 1;
@@ -165,6 +188,12 @@ namespace ondemand
         return true;
     }
 
+    /**
+     * @brief 创建订阅注册读取器，设置回调函数处理订阅者注册请求
+     * @param  processFunc 数据处理回调函数
+     * @return true 成功
+     * @return false 失败
+     */
     bool OnDemandPub::createSubTableRegisterReader(
         std::function<void(const std::string &, std::shared_ptr<DSF::Message::SubTableRegister>)>
             processFunc)
@@ -194,9 +223,14 @@ namespace ondemand
         return true;
     }
 
+    /**
+     * @brief 创建数据传输写入器，按 bucket 分配，支持分片发布
+     * @return true 成功
+     * @return false 失败
+     */
     bool OnDemandPub::createDataTransferWriter()
     {
-        // 根据 varIndex_ 中的元数据，收集所有不同的 bucket id
+        /*根据 varIndex_ 中的元数据，收集所有不同的 bucket id*/
         std::unordered_set<uint32_t> bucketIds;
         {
             std::shared_lock lock(varIndexMutex_);
@@ -221,7 +255,7 @@ namespace ondemand
         std::lock_guard<std::mutex> lock(DataTransferWriterMapMutex_);
 
         for (uint32_t bucketId : bucketIds) {
-            // 如果该 bucket 的 writer 已存在，跳过
+            /*如果该 bucket 的 writer 已存在，跳过*/
             if (dataTransferWriterMap_.find(bucketId) != dataTransferWriterMap_.end()) {
                 ONDEMANDLOG(debug)
                     << "DataTransfer writer already exists for bucketId: " << bucketId;
@@ -249,6 +283,12 @@ namespace ondemand
         return true;
     }
 
+    /**
+     * @brief 发布表定义，包含变量定义和频率信息，支持增量更新
+     * @param  pubTableDefine 发布的表定义信息，包含变量列表和频率等元数据
+     * @return true 成功
+     * @return false 失败
+     */
     bool OnDemandPub::tableDefinePublish(const DSF::Var::PubTableDefine &pubTableDefine)
     {
         if (pubTableDefineWriter_ != nullptr) {
@@ -259,6 +299,13 @@ namespace ondemand
         }
     }
 
+    /**
+     * @brief 处理订阅者注册请求，更新订阅者信息和变量频率，触发发布调度
+     * @param  topicName 订阅者注册的 DDS 主题名称
+     * @param  data 数据
+     * @return true 成功
+     * @return false 失败
+     */
     bool OnDemandPub::onReceiveRegisterCb(const std::string & /*topicName*/,
                                           std::shared_ptr<DSF::Message::SubTableRegister> data)
     {
@@ -266,9 +313,12 @@ namespace ondemand
         return true;
     }
 
+    /**
+     * @brief 处理订阅者注册请求
+     */
     void OnDemandPub::processReceiveRegister()
     {
-        while (running_.load()) {
+        while (running_.load(std::memory_order_acquire)) {
             std::shared_ptr<DSF::Message::SubTableRegister> data;
             if (pubTableDefRegisterQueue_.try_dequeue(data)) {
                 if (data) {
@@ -504,6 +554,12 @@ namespace ondemand
         ONDEMANDLOG(info) << "All publish group timers canceled";
     }
 
+    /**
+     * @brief 创建变量并发布表定义，支持增量更新
+     * @param  VarDefines 变量定义列表，包含变量名称、类型、频率等信息
+     * @return true 成功
+     * @return false 失败
+     */
     bool OnDemandPub::createVars(const std::vector<DSF::Var::Define> &VarDefines)
     {
         // Phase 1: 注册变量 + 初始化存储 (写锁, 快速完成)
@@ -595,6 +651,12 @@ namespace ondemand
         schedulerDirty_.store(true, std::memory_order_release);
         return true;
     }
+    /**
+     * @brief 删除变量并发布更新的表定义，支持增量更新
+     * @param  varNames 变量名称列表，指定要删除的变量
+     * @return true 成功
+     * @return false 失败
+     */
     bool OnDemandPub::deleteVars(const std::vector<std::string> &varNames)
     {
         // Phase 1: 注销被删变量 (写锁)
@@ -655,6 +717,14 @@ namespace ondemand
 
         return true;
     }
+    /**
+     * @brief 设置变量数据，支持增量更新和分片发布
+     * @param  varName 变量名称，必须已创建
+     * @param  data 变量数据指针，指向外部数据源
+     * @param  size 数据大小，单位字节
+     * @return true 成功
+     * @return false 失败
+     */
     bool OnDemandPub::setVarData(const char *varName, const void *data, size_t size)
     {
         uint64_t varHash = fast_hash(make_meta_varname(nodeName_, varName));
@@ -675,6 +745,11 @@ namespace ondemand
         return true;
     }
 
+    /**
+     * @brief 获取或分配订阅者节点的位图位置，支持最多 256 个订阅者
+     * @param  nodeHash 订阅者节点名称的 hash 值
+     * @return uint8_t 节点位图位置
+     */
     uint8_t OnDemandPub::getOrAssignNodeBit(uint64_t nodeHash)
     {
         auto it = nodeSlotMap_.find(nodeHash);
@@ -701,6 +776,11 @@ namespace ondemand
         meta.currentFreq = minFreq;
     }
 
+    /**
+     * @brief 处理订阅者注册请求，更新订阅者信息和变量频率，触发发布调度
+     * @param  nodeName 变量名
+     * @param  varFreqs 周期
+     */
     void OnDemandPub::handleSubscribe(const std::string &nodeName,
                                       const std::vector<DSF::NamedValue> &varFreqs)
     {
@@ -778,6 +858,11 @@ namespace ondemand
         }
     }
 
+    /**
+     * @brief 处理订阅者取消订阅请求，更新订阅者信息和变量频率，触发发布调度
+     * @param  nodeName 变量名
+     * @param  varFreqs 周期
+     */
     void OnDemandPub::handleUnsubscribe(const std::string &nodeName,
                                         const std::vector<DSF::NamedValue> &varFreqs)
     {
@@ -833,6 +918,10 @@ namespace ondemand
         }
     }
 
+    /**
+     * @brief 订阅者发现回调，处理新订阅者的注册信息，更新内部状态
+     * @param  info 订阅者端点信息，包含节点名称、订阅的变量和频率等
+     */
     void OnDemandPub::onWriterDiscovery(const DdsWrapper::EndpointInfo &info)
     {
         ONDEMANDLOG(debug) << "Writer discovery: topic=" << info.topic_name

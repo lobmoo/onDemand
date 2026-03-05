@@ -1,3 +1,19 @@
+/**
+ * @file variable_store.h
+ * @brief 
+ * @author wwk (1162431386@qq.com)
+ * @version 1.0
+ * @date 2026-03-05
+ * 
+ * @copyright Copyright (c) 2026  by  wwk : wwk.lobmo@gmail.com
+ * 
+ * @par 修改日志:
+ * <table>
+ * <tr><th>Date       <th>Version <th>Author  <th>Description
+ * <tr><td>2026-03-05     <td>1.0     <td>wwk   <td>修改?
+ * </table>
+ */
+ 
 #ifndef VARIABLE_STORE_H
 #define VARIABLE_STORE_H
 

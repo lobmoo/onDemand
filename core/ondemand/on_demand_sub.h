@@ -1,3 +1,19 @@
+/**
+ * @file on_demand_sub.h
+ * @brief 
+ * @author wwk (1162431386@qq.com)
+ * @version 1.0
+ * @date 2026-03-05
+ * 
+ * @copyright Copyright (c) 2026  by  wwk : wwk.lobmo@gmail.com
+ * 
+ * @par 修改日志:
+ * <table>
+ * <tr><th>Date       <th>Version <th>Author  <th>Description
+ * <tr><td>2026-03-05     <td>1.0     <td>wwk   <td>修改?
+ * </table>
+ */
+ 
 #ifndef ON_DEMAND_SUB_H
 #define ON_DEMAND_SUB_H
 
@@ -10,10 +26,9 @@ namespace dsf
 {
 namespace ondemand
 {
-
     struct SubscriptionItem {
         std::string varName; // 变量名称
-        uint32_t frequency;  // 订阅频率，单位Hz
+        uint32_t frequency;  // 订阅频率，单位ms
 
         SubscriptionItem(const std::string &var, uint32_t freq) : varName(var), frequency(freq) {}
     };
@@ -34,18 +49,18 @@ namespace ondemand
         ~OnDemandSub();
 
         /**
-     * @brief 初始化订阅器
-     */
+        * @brief 初始化订阅器
+        */
         bool init(const std::string &nodeName);
 
         /**
-     * @brief 启动订阅器
-     */
+        * @brief 启动订阅器
+        */
         bool start();
 
         /**
-     * @brief 停止订阅器
-     */
+        * @brief 停止订阅器
+        */
         void stop();
 
         /**
@@ -63,29 +78,19 @@ namespace ondemand
         uint64_t getTotalReceivedVars() const { return totalReceived_.load(); }
 
         /**
-     * @brief 批量订阅变量
-     */
-        size_t batchSubscribe();
-
-        /**
-     * @brief 取消订阅
-     */
+        * @brief 取消订阅
+        */
         bool unsubscribe(const char *node_name, const std::vector<std::string> &items);
 
         /**
-     * @brief 获取订阅数量
-     */
+        * @brief 获取订阅数量
+        */
         size_t getSubscriptionCount() const;
-
-        /**
-     * @brief 导出状态
-     */
-        void dumpState(std::ostream &os);
 
     private:
         /**
        * @brief 创建变量定义数据读取器
-       * @param  processFunc      MyParamDoc
+       * @param  processFunc      
        * @return true 
        * @return false 
        */
@@ -100,8 +105,8 @@ namespace ondemand
         bool createSubTableRegisterWriter();
 
         /**
-         * @brief Create a Data Transfer Reader object
-         * @param  processFuncstd   MyParamDoc
+         * @brief 创建数据传输读取器
+         * @param  processFuncstd   
          * @return true 
          * @return false 
          */
@@ -133,23 +138,26 @@ namespace ondemand
         */
         void processTableDefine();
 
+        /**
+        * @brief 处理接收数据
+        */
         void processDataTransfer();
 
     private:
         std::string nodeName_;
         std::shared_ptr<DdsWrapper::DataNode> dataNode_;
 
+        /*通信writer/reader*/
         std::shared_ptr<DdsWrapper::DDSTopicReader<DSF::Var::PubTableDefine>>
             pubTableDefineReader_; // 变量定义数据读取器
-
         std::shared_ptr<DdsWrapper::DDSTopicWriter<DSF::Message::SubTableRegister>>
             subTableRegisterReqWriter_;
-
         std::mutex dataTransferCtxMapMutex_; // 互斥锁
         std::unordered_map<uint32_t,
                            std::shared_ptr<DdsWrapper::DDSTopicReader<DSF::Var::TableDataTransfer>>>
             dataTransferReaderMap_; // 接收数据读取器map，key为bucket id
 
+        /*线程相关*/
         std::atomic<bool> initialized_;
         std::atomic<bool> running_;
         std::atomic<uint64_t> totalReceived_;
@@ -163,7 +171,7 @@ namespace ondemand
         std::thread processTableDefineThread_;
         std::thread processDataTransferThread_;
 
-        // 变量索引: hash -> 元数据
+        /*变量索引: hash -> 元数据*/
         std::unordered_map<uint64_t, VarMetadata> varIndex_;
         mutable std::shared_mutex varIndexMutex_;
 
