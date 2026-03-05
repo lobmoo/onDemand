@@ -255,19 +255,8 @@ namespace ondemand
                         uint64_t varHash = fast_hash(varName);
                         size_t bucketIdx =
                             BucketManager::CalculateBucketIndexFromHash(varHash); // Reuse hash
-                        VarMetadata meta;
-                        meta.varHash = varHash;
-                        meta.currentFreq = 0xFFFFFFFF;
-                        meta.activeFreqCount = 0;
-                        meta.bucketIndex = bucketIdx;
-                        meta.varDefine = std::make_shared<DSF::Var::Define>(varDefine);
-                        auto it = varIndex_.find(varHash);
-                        if (it != varIndex_.end()) {
-                            ONDEMANDLOG(warning) << "Variable already exists: " << varName;
-                            continue;
-                        }
 
-                        // 检查该 bucket 的 reader 是否已存在
+                        // 检查该 bucket 的 datatansfor reader 是否已存在
                         uint32_t bucketId = static_cast<uint32_t>(bucketIdx);
                         {
                             std::lock_guard<std::mutex> mapLock(dataTransferCtxMapMutex_);
@@ -276,14 +265,30 @@ namespace ondemand
                                 hasNewBucket = true;
                             }
                         }
+                        /*组内部结构*/
+                        VarMetadata meta;
+                        meta.varHash = varHash;
+                        meta.currentFreq = 0xFFFFFFFF;
+                        meta.activeFreqCount = 0;
+                        meta.bucketIndex = bucketIdx;
+                        meta.varId = varStore_.register_var(varHash, 32);
 
-                        meta.varId = varStore_.register_var(
-                            varHash, 32); //todo   这里应该按照真实大小分配内存
+                        auto it = varIndex_.find(varHash);
+                        if (it != varIndex_.end()) {
+                            ONDEMANDLOG(warning) << "Variable already exists: " << varName;
+                            continue;
+                        }
+
                         varIndex_.emplace(varHash, std::move(meta));
                         totalReceived_.fetch_add(1); //记录收到的总数
                         ONDEMANDLOG(debug) << "Registered var: " << varName;
                     }
                     lock.unlock();
+
+                    /*初始化内存*/
+                    if (!varStore_.finalize()) {
+                        ONDEMANDLOG(error) << "Failed to finalize VarStore after TableDefine";
+                    }
 
                     // 仅在发现新 bucket 时才创建 data transfer reader，避免重复加锁遍历
                     if (hasNewBucket) {
@@ -410,7 +415,6 @@ namespace ondemand
             std::shared_lock lock(varIndexMutex_);
 
             for (const auto &item : items) {
-                DSF::NamedValue varFreq;
                 /*1.计算点hash*/
                 std::string metaVarName = make_meta_varname(node_name, item.varName);
                 uint64_t varHash = fast_hash(metaVarName);
@@ -422,6 +426,9 @@ namespace ondemand
                     ONDEMANDLOG(warning) << "Variable not found for subscription: " << item.varName;
                     // continue;  这里考虑到有可能订阅请求先于变量定义到达，所以不直接跳过
                 }
+
+                /*组包*/
+                DSF::NamedValue varFreq;
                 varFreq.name(metaVarName);
                 varFreq.value(std::to_string(item.frequency));
                 subReq.varFreqs().emplace_back(varFreq);
