@@ -20,6 +20,7 @@
 #include "on_demand_common.h"
 #include "concurrentqueue.h"
 #include "variable_store.h"
+#include "timer_wheel/timer_scheduler.h"
 #include <bits/stdint-uintn.h>
 #include <sys/types.h>
 namespace dsf
@@ -64,12 +65,14 @@ namespace ondemand
         void stop();
 
         /**
-        * @brief 
+        * @brief 订阅变量并注册回调
         * @param  node_name 节点名        
         * @param  items      变量信息列表     
+        * @param  callback   数据回调函数，在时间轮定时器触发时被调用
         * @return true 成功 / false 失败 
         */
-        bool subscribe(const char *node_name, const std::vector<SubscriptionItem> &items);
+        bool subscribe(const char *node_name, const std::vector<SubscriptionItem> &items,
+                        DataCallback callback = nullptr);
 
         /**
          * @brief 获取总接收数量
@@ -152,6 +155,63 @@ namespace ondemand
         */
         void processDataTransfer();
 
+        /**
+         * @brief 回调分组键 = freqMs
+         * 
+         * 相同频率的所有回调变量归为一组，
+         * 共享一个时间轮定时器，一次触发批量回调组内所有变量。
+         */
+        struct CallbackGroupKey {
+            uint32_t freqMs;
+            bool operator==(const CallbackGroupKey &o) const
+            {
+                return freqMs == o.freqMs;
+            }
+        };
+
+        struct CallbackGroupKeyHash {
+            size_t operator()(const CallbackGroupKey &k) const
+            {
+                return std::hash<uint32_t>{}(k.freqMs);
+            }
+        };
+
+        /**
+         * @brief 回调分组成员信息
+         */
+        struct CallbackVarInfo {
+            uint64_t varHash;
+            int32_t varId;
+            uint32_t dataSize;
+            std::string varName;
+            DataCallback callback;
+        };
+
+        /**
+         * @brief 订阅回调信息 (用户调用 subscribe 时存储)
+         */
+        struct SubCallbackInfo {
+            uint32_t freqMs;
+            DataCallback callback;
+            std::string varName;
+        };
+
+        /**
+         * @brief 回调调度器主循环，扫描订阅回调信息，构建分组并管理定时器
+         */
+        void processCallbackScheduler();
+
+        /**
+         * @brief 回调分组数据，读取 VarStore 并调用用户回调
+         * @param  freqMs 回调频率，单位毫秒
+         */
+        void callbackGroupData(uint32_t freqMs);
+
+        /**
+         * @brief 取消所有回调定时器并清空分组
+         */
+        void cancelAllCallbackTimers();
+
     private:
         std::string nodeName_;
         std::shared_ptr<DdsWrapper::DataNode> dataNode_;
@@ -185,6 +245,22 @@ namespace ondemand
         mutable std::shared_mutex varIndexMutex_;
 
         VarStore varStore_; // 变量值存储
+
+        /*订阅回调存储: varHash -> 回调信息*/
+        std::unordered_map<uint64_t, SubCallbackInfo> subscriptionCallbacks_;
+        std::mutex subscriptionCallbacksMutex_;
+
+        /*时间轮回调调度器*/
+        std::unique_ptr<TimerScheduler> callbackScheduler_;
+        std::mutex callbackGroupsMutex_;
+        std::unordered_map<CallbackGroupKey, std::shared_ptr<TimerEventInterface>,
+                           CallbackGroupKeyHash>
+            callbackGroupTimers_;
+        std::unordered_map<CallbackGroupKey, std::shared_ptr<std::vector<CallbackVarInfo>>,
+                           CallbackGroupKeyHash>
+            callbackGroupMembers_;
+        std::thread callbackSchedulerThread_;
+        std::atomic<bool> callbackDirty_{false};
     };
 
 } // namespace ondemand

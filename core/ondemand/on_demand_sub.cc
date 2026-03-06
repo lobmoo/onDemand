@@ -419,6 +419,12 @@ namespace ondemand
 
         processTableDefineThread_ = std::thread(&OnDemandSub::processTableDefine, this);
         processDataTransferThread_ = std::thread(&OnDemandSub::processDataTransfer, this);
+
+        /*启动回调调度器 (tick 精度 10ms, 线程池 2 线程)*/
+        callbackScheduler_ = std::make_unique<TimerScheduler>(10, 2);
+        callbackSchedulerThread_ =
+            std::thread(&OnDemandSub::processCallbackScheduler, this);
+
         ONDEMANDLOG(info) << "OnDemandSub started";
         return true;
     }
@@ -432,12 +438,26 @@ namespace ondemand
         if (!running_.exchange(false)) {
             return;
         }
+
+        /*先取消所有回调定时器*/
+        cancelAllCallbackTimers();
+
         if (processTableDefineThread_.joinable()) {
             processTableDefineThread_.join();
         }
         if (processDataTransferThread_.joinable()) {
             processDataTransferThread_.join();
         }
+        if (callbackSchedulerThread_.joinable()) {
+            callbackSchedulerThread_.join();
+        }
+
+        /*停止回调调度器*/
+        if (callbackScheduler_) {
+            callbackScheduler_->Stop();
+            callbackScheduler_.reset();
+        }
+
         pubTableDefineReader_.reset();
         pubTableDefineReader_ = nullptr;
         subTableRegisterReqWriter_.reset();
@@ -461,17 +481,25 @@ namespace ondemand
         while (dataTransferQueue_.try_dequeue(dummyData)) {
             // Dequeue
         }
+
+        {
+            std::lock_guard<std::mutex> lock(subscriptionCallbacksMutex_);
+            subscriptionCallbacks_.clear();
+        }
+
         ONDEMANDLOG(info) << "OnDemandSub stopped";
     }
 
     /**
-     * @brief 订阅变量
+     * @brief 订阅变量并注册回调
      * @param  node_name 节点名
      * @param  items 变量信息列表
+     * @param  callback 数据回调函数，在时间轮定时器触发时被调用
      * @return true 成功
      * @return false 失败
      */
-    bool OnDemandSub::subscribe(const char *node_name, const std::vector<SubscriptionItem> &items)
+    bool OnDemandSub::subscribe(const char *node_name, const std::vector<SubscriptionItem> &items,
+                                DataCallback callback)
     {
         if (!initialized_) {
             ONDEMANDLOG(error) << "OnDemandSub not initialized";
@@ -517,6 +545,23 @@ namespace ondemand
         if (!writer || !writer->writeMessage(subReq)) {
             ONDEMANDLOG(error) << "Failed to publish SubTableRegister for table: " << tableName;
             return false;
+        }
+
+        /*3. 存储回调信息到本地, 供时间轮调度器使用*/
+        if (callback) {
+            std::lock_guard<std::mutex> lock(subscriptionCallbacksMutex_);
+            for (const auto &item : items) {
+                std::string metaVarName = make_meta_varname(node_name, item.varName);
+                uint64_t varHash = fast_hash(metaVarName);
+                SubCallbackInfo info;
+                info.freqMs = item.frequency;
+                info.callback = callback;
+                info.varName = item.varName;
+                subscriptionCallbacks_[varHash] = std::move(info);
+            }
+            callbackDirty_.store(true, std::memory_order_release);
+            ONDEMANDLOG(info) << "Registered " << items.size()
+                              << " callback subscriptions for node: " << node_name;
         }
 
         return true;
@@ -574,7 +619,185 @@ namespace ondemand
             return false;
         }
 
+        /*3. 移除本地回调信息*/
+        {
+            std::lock_guard<std::mutex> lock(subscriptionCallbacksMutex_);
+            for (const auto &item : items) {
+                std::string metaVarName = make_meta_varname(node_name, item);
+                uint64_t varHash = fast_hash(metaVarName);
+                subscriptionCallbacks_.erase(varHash);
+            }
+            callbackDirty_.store(true, std::memory_order_release);
+            ONDEMANDLOG(info) << "Removed " << items.size()
+                              << " callback subscriptions for node: " << node_name;
+        }
+
         return true;
+    }
+
+    /**
+     * @brief 回调调度器主循环，扫描订阅回调信息并管理时间轮定时器
+     *
+     * 工作流程:
+     *   1. 当 callbackDirty_ 被置位时，从 subscriptionCallbacks_ 构建期望分组
+     *   2. 查找 varIndex_ 解析 varId/dataSize
+     *   3. 增量 diff: 移除不再需要的定时器，为新分组创建定时器
+     */
+    void OnDemandSub::processCallbackScheduler()
+    {
+        pthread_setname_np(pthread_self(), "SubCbScheduler");
+        constexpr auto kScanInterval = std::chrono::milliseconds(50);
+
+        while (running_.load(std::memory_order_acquire)) {
+
+            /* 只在订阅信息有变更时才重建分组 (dirty flag) */
+            if (!callbackDirty_.exchange(false, std::memory_order_acq_rel)) {
+                std::this_thread::sleep_for(kScanInterval);
+                continue;
+            }
+
+            /* 1: 从 subscriptionCallbacks_ + varIndex_ 构建期望分组 */
+            using DesiredMap =
+                std::unordered_map<CallbackGroupKey, std::shared_ptr<std::vector<CallbackVarInfo>>,
+                                   CallbackGroupKeyHash>;
+
+            DesiredMap desired;
+            {
+                std::lock_guard<std::mutex> cbLock(subscriptionCallbacksMutex_);
+                std::shared_lock varLock(varIndexMutex_);
+                for (const auto &[varHash, cbInfo] : subscriptionCallbacks_) {
+                    /* 查找 varIndex_ 获取 varId 和 dataSize */
+                    auto vit = varIndex_.find(varHash);
+                    if (vit == varIndex_.end()) {
+                        /* 变量定义尚未到达, 暂时跳过, 下次 dirty 时再重试 */
+                        callbackDirty_.store(true, std::memory_order_release);
+                        continue;
+                    }
+                    int32_t varId = vit->second.varId;
+                    if (varId < 0) {
+                        continue;
+                    }
+
+                    CallbackGroupKey key{cbInfo.freqMs};
+                    auto &vec = desired[key];
+                    if (!vec) {
+                        vec = std::make_shared<std::vector<CallbackVarInfo>>();
+                    }
+                    CallbackVarInfo vi;
+                    vi.varHash = varHash;
+                    vi.varId = varId;
+                    vi.dataSize = vit->second.dataSize;
+                    vi.varName = cbInfo.varName;
+                    vi.callback = cbInfo.callback;
+                    vec->push_back(std::move(vi));
+                }
+            }
+
+            /* 2: 增量 diff */
+            {
+                std::lock_guard<std::mutex> lock(callbackGroupsMutex_);
+
+                /* 移除不再需要的分组 */
+                for (auto it = callbackGroupTimers_.begin(); it != callbackGroupTimers_.end();) {
+                    if (desired.find(it->first) == desired.end()) {
+                        if (callbackScheduler_) {
+                            callbackScheduler_->Cancel(it->second);
+                        }
+                        callbackGroupMembers_.erase(it->first);
+                        ONDEMANDLOG(debug) << "Removed callback group: freq=" << it->first.freqMs
+                                           << "ms";
+                        it = callbackGroupTimers_.erase(it);
+                    } else {
+                        ++it;
+                    }
+                }
+
+                /* 新增或更新分组 */
+                for (auto &[key, members] : desired) {
+                    /* 始终刷新成员列表 */
+                    callbackGroupMembers_[key] = std::move(members);
+
+                    /* 仅为新增分组创建定时器，已有分组的定时器保持不变 */
+                    if (callbackGroupTimers_.find(key) == callbackGroupTimers_.end()) {
+                        uint32_t freqMs = key.freqMs;
+                        Tick intervalTicks = static_cast<Tick>(freqMs);
+                        auto timer = callbackScheduler_->ScheduleRecurring(
+                            [this, freqMs]() { callbackGroupData(freqMs); },
+                            intervalTicks, /* 首次延迟 */
+                            intervalTicks  /* 周期 */
+                        );
+                        callbackGroupTimers_[key] = timer;
+                        ONDEMANDLOG(debug)
+                            << "Created callback group: freq=" << freqMs
+                            << "ms, members=" << callbackGroupMembers_[key]->size();
+                    }
+                }
+            }
+
+            std::this_thread::sleep_for(kScanInterval);
+        }
+    }
+
+    /**
+     * @brief 回调分组数据: 读取 VarStore 并调用用户注册的 DataCallback
+     *
+     * 性能说明:
+     *   - 获取组成员快照 (shared_ptr), 回调期间不持有 callbackGroupsMutex_
+     *   - 每个变量独立读取 VarStore, 失败不影响后续变量
+     *
+     * @param freqMs 回调频率 (ms), 用于定位分组
+     */
+    void OnDemandSub::callbackGroupData(uint32_t freqMs)
+    {
+        /* 获取组成员快照 */
+        std::shared_ptr<std::vector<CallbackVarInfo>> members;
+        {
+            std::lock_guard<std::mutex> lock(callbackGroupsMutex_);
+            CallbackGroupKey key{freqMs};
+            auto it = callbackGroupMembers_.find(key);
+            if (it == callbackGroupMembers_.end() || !it->second || it->second->empty()) {
+                return;
+            }
+            members = it->second;
+        }
+
+        /* 遍历组成员, 读取数据并回调 */
+        for (const auto &info : *members) {
+            if (info.dataSize == 0 || !info.callback) {
+                continue;
+            }
+
+            std::vector<uint8_t> buf(info.dataSize);
+            if (!varStore_.read(info.varId, buf.data())) {
+                continue; /* 数据尚未写入, 跳过 */
+            }
+
+            /* 调用用户回调 */
+            try {
+                info.callback(info.varName, buf.data(), buf.size());
+            } catch (const std::exception &e) {
+                ONDEMANDLOG_TIME(error, 5000)
+                    << "Callback exception for var: " << info.varName << " err: " << e.what();
+            }
+        }
+    }
+
+    /**
+     * @brief 取消所有回调分组定时器并清空分组成员索引
+     */
+    void OnDemandSub::cancelAllCallbackTimers()
+    {
+        std::lock_guard<std::mutex> lock(callbackGroupsMutex_);
+
+        for (auto &[key, timer] : callbackGroupTimers_) {
+            if (callbackScheduler_) {
+                callbackScheduler_->Cancel(timer);
+            }
+        }
+        callbackGroupTimers_.clear();
+        callbackGroupMembers_.clear();
+
+        ONDEMANDLOG(info) << "All callback group timers canceled";
     }
 
     void OnDemandSub::onWriterDiscovery(const DdsWrapper::EndpointInfo &info)
@@ -582,12 +805,6 @@ namespace ondemand
         ONDEMANDLOG(debug) << "[sub node]Writer discovery: topic=" << info.topic_name
                            << " type=" << info.type_name << " discovered=" << info.discovered;
     }
-
-    // size_t OnDemandSub::getSubscriptionCount() const
-    // {
-    //     std::shared_lock lock(subMutex_);
-    //     return subscriptions_.size();
-    // }
 
 } // namespace ondemand
 } // namespace dsf
