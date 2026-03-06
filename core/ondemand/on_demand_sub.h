@@ -13,7 +13,7 @@
  * <tr><td>2026-03-05     <td>1.0     <td>wwk   <td>修改?
  * </table>
  */
- 
+
 #ifndef ON_DEMAND_SUB_H
 #define ON_DEMAND_SUB_H
 
@@ -42,7 +42,7 @@ namespace ondemand
     /**
  * @brief 按需订阅器 V2 - 重构版本
  */
-    class OnDemandSub
+    class OnDemandSub : public DdsWrapper::ParticipantListener
     {
     public:
         OnDemandSub();
@@ -86,6 +86,15 @@ namespace ondemand
         * @brief 获取订阅数量
         */
         size_t getSubscriptionCount() const;
+
+    private:
+        // ParticipantListener 回调
+        // void onReaderDiscovery(const DdsWrapper::EndpointInfo &info) override;
+        /**
+         * @brief 订阅者发现回调，处理新订阅者的注册信息，更新内部状态
+         * @param  info             订阅者端点信息，包含节点名称、订阅的变量和频率等
+         */
+        void onWriterDiscovery(const DdsWrapper::EndpointInfo &info) override;
 
     private:
         /**

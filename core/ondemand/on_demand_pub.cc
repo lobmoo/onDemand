@@ -13,7 +13,7 @@
  * <tr><td>2026-03-05     <td>1.0     <td>wwk   <td>修改?
  * </table>
  */
- 
+
 #include "on_demand_pub.h"
 #include <algorithm>
 #include <charconv>
@@ -924,7 +924,7 @@ namespace ondemand
      */
     void OnDemandPub::onWriterDiscovery(const DdsWrapper::EndpointInfo &info)
     {
-        ONDEMANDLOG(debug) << "Writer discovery: topic=" << info.topic_name
+        ONDEMANDLOG(debug) << "[pub node]Writer discovery: topic=" << info.topic_name
                            << " type=" << info.type_name << " discovered=" << info.discovered;
     }
 

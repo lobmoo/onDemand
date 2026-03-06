@@ -13,7 +13,7 @@
  * <tr><td>2026-03-05     <td>1.0     <td>wwk   <td>修改?
  * </table>
  */
- 
+
 #include <functional>
 #include <mutex>
 #include "on_demand_sub.h"
@@ -35,6 +35,58 @@ namespace ondemand
     }
 
     OnDemandSub::~OnDemandSub() { stop(); }
+
+    /**
+     * @brief 初始化订阅器
+     * @param  nodeName 节点名称
+     * @return true 成功
+     * @return false 失败
+     */
+    bool OnDemandSub::init(const std::string &nodeName)
+    {
+        if (initialized_.exchange(true)) {
+            ONDEMANDLOG(warning) << "Already initialized";
+            return false;
+        }
+        nodeName_ = nodeName;
+
+        /*创建节点*/
+        DdsWrapper::ParticipantQoSBuilder qos_configurator;
+        qos_configurator.addUDPV4TransportInterfaces({"10.25.5.26"})
+            .setDiscoveryMulticastLocator("239.255.0.1", 7400)
+            .setUserMulticastLocator("239.255.0.1", 7401)
+            .addFlowController()
+            .setDiscoveryKeepAlive(2000, 500)
+            .setInitialAnnouncements(30, 100); // 10次PDP公告, 100ms间隔, 确保3秒内完成初始发现
+        try {
+            dataNode_ =
+                std::make_shared<DdsWrapper::DataNode>(DOMAIN_ID, nodeName, qos_configurator, this);
+        } catch (const std::exception &e) {
+            ONDEMANDLOG(error) << "Failed to create DataNode: " << e.what();
+            initialized_.store(false);
+            return false;
+        }
+
+        /*创建变量定义接收reader*/
+        if (!createTableDefineReader(std::bind(&OnDemandSub::onReceiveTableDefineCb, this,
+                                               std::placeholders::_1, std::placeholders::_2))) {
+            ONDEMANDLOG(error) << "Failed to create TableDefine reader";
+            initialized_.store(false);
+            return false;
+        }
+
+        /*定义变量注册writer*/
+        if (!createSubTableRegisterWriter()) {
+            ONDEMANDLOG(error) << "Failed to create SubTableRegister writer";
+            initialized_.store(false);
+            return false;
+        }
+
+        ONDEMANDLOG(info) << "OnDemandSub initialized: " << nodeName;
+        /*确保 DDS endpoints 就绪: assertLiveliness 强制发送 PDP 心跳*/
+        dataNode_->assertLiveliness();
+        return true;
+    }
 
     /**
      * @brief 创建变量定义数据读取器
@@ -354,58 +406,6 @@ namespace ondemand
     }
 
     /**
-     * @brief 初始化订阅器
-     * @param  nodeName 节点名称
-     * @return true 成功
-     * @return false 失败
-     */
-    bool OnDemandSub::init(const std::string &nodeName)
-    {
-        if (initialized_.exchange(true)) {
-            ONDEMANDLOG(warning) << "Already initialized";
-            return false;
-        }
-        nodeName_ = nodeName;
-
-        /*创建节点*/
-        DdsWrapper::ParticipantQoSBuilder qos_configurator;
-        qos_configurator.addUDPV4TransportInterfaces({"10.25.5.26"})
-            .setDiscoveryMulticastLocator("239.255.0.1", 7400)
-            .setUserMulticastLocator("239.255.0.1", 7401)
-            .addFlowController()
-            .setDiscoveryKeepAlive(2000, 500)
-            .setInitialAnnouncements(30, 100); // 10次PDP公告, 100ms间隔, 确保3秒内完成初始发现
-        try {
-            dataNode_ =
-                std::make_shared<DdsWrapper::DataNode>(DOMAIN_ID, nodeName, qos_configurator);
-        } catch (const std::exception &e) {
-            ONDEMANDLOG(error) << "Failed to create DataNode: " << e.what();
-            initialized_.store(false);
-            return false;
-        }
-
-        /*创建变量定义接收reader*/
-        if (!createTableDefineReader(std::bind(&OnDemandSub::onReceiveTableDefineCb, this,
-                                               std::placeholders::_1, std::placeholders::_2))) {
-            ONDEMANDLOG(error) << "Failed to create TableDefine reader";
-            initialized_.store(false);
-            return false;
-        }
-
-        /*定义变量注册writer*/
-        if (!createSubTableRegisterWriter()) {
-            ONDEMANDLOG(error) << "Failed to create SubTableRegister writer";
-            initialized_.store(false);
-            return false;
-        }
-
-        ONDEMANDLOG(info) << "OnDemandSub initialized: " << nodeName;
-        /*确保 DDS endpoints 就绪: assertLiveliness 强制发送 PDP 心跳*/
-        dataNode_->assertLiveliness();
-        return true;
-    }
-
-    /**
      * @brief 启动订阅器
      * @return true 成功
      * @return false 失败
@@ -455,11 +455,11 @@ namespace ondemand
 
         std::shared_ptr<DSF::Var::PubTableDefine> dummy;
         while (pubTableDefineQueue_.try_dequeue(dummy)) {
-            // Dequeue 
+            // Dequeue
         }
         std::shared_ptr<DSF::Var::TableDataTransfer> dummyData;
         while (dataTransferQueue_.try_dequeue(dummyData)) {
-            // Dequeue 
+            // Dequeue
         }
         ONDEMANDLOG(info) << "OnDemandSub stopped";
     }
@@ -575,6 +575,12 @@ namespace ondemand
         }
 
         return true;
+    }
+
+    void OnDemandSub::onWriterDiscovery(const DdsWrapper::EndpointInfo &info)
+    {
+        ONDEMANDLOG(debug) << "[sub node]Writer discovery: topic=" << info.topic_name
+                           << " type=" << info.type_name << " discovered=" << info.discovered;
     }
 
     // size_t OnDemandSub::getSubscriptionCount() const

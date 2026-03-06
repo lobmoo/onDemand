@@ -35,14 +35,14 @@ void publish()
     }
     // pub.deleteVars(varDelNames);
 
-    while (true) {
-        for (int i = 0; i < count; ++i) {
-            std::string varName = "var" + std::to_string(i);
-            pub.setVarData(varName.c_str(), &i, sizeof(i));
-        }
+    // while (true) {
+    //     for (int i = 0; i < count; ++i) {
+    //         std::string varName = "var" + std::to_string(i);
+    //         pub.setVarData(varName.c_str(), &i, sizeof(i));
+    //     }
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    }
+    //     std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    // }
     std::this_thread::sleep_for(std::chrono::seconds(100000));
 }
 
@@ -58,9 +58,33 @@ void subscribe()
     }
     std::vector<dsf::ondemand::SubscriptionItem> items;
     std::vector<std::string> unitems;
-    for (int i = 0; i < 100000; ++i) {
+    for (int i = 0; i < 50000; ++i) {
         std::string varName = "var" + std::to_string(i);
-        items.push_back({varName, 100});
+        items.push_back({varName, 1000});
+        unitems.push_back(varName);
+    }
+    sub.subscribe("pubNode", items);
+    std::this_thread::sleep_for(std::chrono::seconds(10));
+    // sub.unsubscribe("pubNode", unitems);
+    //sub.stop();
+    std::this_thread::sleep_for(std::chrono::seconds(1000000));
+}
+
+void subscribe2()
+{
+    dsf::ondemand::OnDemandSub sub;
+    std::string nodeName = "subNode" + std::to_string(getpid());
+    sub.init(nodeName);
+    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+    sub.start();
+    while (sub.getTotalReceivedVars() < 5) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+    std::vector<dsf::ondemand::SubscriptionItem> items;
+    std::vector<std::string> unitems;
+    for (int i = 0; i < 50000; ++i) {
+        std::string varName = "var" + std::to_string(i);
+        items.push_back({varName, 500});
         unitems.push_back(varName);
     }
     sub.subscribe("pubNode", items);
@@ -83,6 +107,8 @@ int main(int argc, char **argv)
 
     if (strcmp(argv[1], "sub") == 0) {
         subscribe();
+    } else if (strcmp(argv[1], "sub2") == 0) {
+        subscribe2();
     } else if (strcmp(argv[1], "pub") == 0) {
         publish();
     } else {
