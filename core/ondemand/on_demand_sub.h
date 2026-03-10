@@ -22,6 +22,8 @@
 #include "variable_store.h"
 #include "timer_wheel/timer_scheduler.h"
 #include <bits/stdint-uintn.h>
+#include <string_view>
+#include <string_view>
 #include <sys/types.h>
 namespace dsf
 {
@@ -35,10 +37,20 @@ namespace ondemand
     };
 
     /**
- * @brief 数据回调函数
- */
+     * @brief 单个变量的回调数据
+     */
+    struct VarCallbackData {
+        std::string_view varName;
+        const void *data;
+        size_t size;
+        uint64_t timestampNs;
+    };
+
+    /**
+     * @brief 批量数据回调函数 (同频同源的一批变量一次性回调)
+     */
     using DataCallback =
-        std::function<void(const std::string &varName, const void *data, size_t size, uint64_t timestampNs)>;
+        std::function<void(const std::vector<VarCallbackData> &vars)>;
 
     /**
  * @brief 按需订阅器 V2 - 重构版本

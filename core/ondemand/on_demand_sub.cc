@@ -335,9 +335,6 @@ namespace ondemand
                     }
                 }
             }
-
-            // ONDEMANDLOG(critical) << "DataTransfer: received=" << varDataList.size()
-            //                       << " written=" << written;
         }
     }
 
@@ -549,7 +546,7 @@ namespace ondemand
                 auto it = varIndex_.find(varHash);
                 tableName = make_bucket_name_by_hash(varHash);
                 if (it == varIndex_.end()) {
-                    ONDEMANDLOG(warning) << "Variable not found for subscription: " << item.varName;
+                   // ONDEMANDLOG(warning) << "Variable not found for subscription: " << item.varName;
                     // continue;  这里考虑到有可能订阅请求先于变量定义到达，所以不直接跳过
                 }
 
@@ -777,8 +774,6 @@ namespace ondemand
      */
     void OnDemandSub::callbackGroupData(uint32_t freqMs)
     {
-        std::string threadName = "SubCb" + std::to_string(freqMs) + "ms";
-        pthread_setname_np(pthread_self(), threadName.c_str());
         /* 获取组成员快照 */
         std::shared_ptr<std::vector<CallbackVarInfo>> members;
         {
@@ -791,36 +786,44 @@ namespace ondemand
             members = it->second;
         }
 
-        /* 遍历组成员, 读取数据并回调 */
-        for (auto &info : *members) {
-            if (info.dataSize == 0 || !info.callback) {
-                continue;
-            }
+        /* 预分配 flat buffer, 避免逐变量分配 */
+        size_t totalBufSize = 0;
+        for (const auto &info : *members) totalBufSize += info.dataSize;
+        std::vector<uint8_t> dataBuf(totalBufSize);
+        size_t offset = 0;
 
-            /* 检测数据时效: writeCount 未变说明数据未更新, 跳过回调 */
+        DataCallback *groupCallback = nullptr;
+        std::vector<VarCallbackData> batch;
+        batch.reserve(members->size());
+
+        for (auto &info : *members) {
+            if (info.dataSize == 0 || !info.callback) continue;
+
+            /* 检测数据时效 */
             uint32_t curWriteCount = 0;
             uint64_t tsNs = 0;
             if (static_cast<uint32_t>(info.varId) < varWriteStampCount_) {
                 curWriteCount = varWriteStamps_[info.varId].writeCount.load(std::memory_order_acquire);
-                if (curWriteCount == info.lastSeenWriteCount) {
-                    continue; /* 数据未更新, 跳过 */
-                }
+                if (curWriteCount == info.lastSeenWriteCount) continue;
                 tsNs = varWriteStamps_[info.varId].timestampNs.load(std::memory_order_acquire);
             }
 
-            std::vector<uint8_t> buf(info.dataSize);
-            if (!varStore_.read(info.varId, buf.data())) {
-                continue; /* 数据尚未写入, 跳过 */
-            }
+            uint8_t *ptr = dataBuf.data() + offset;
+            if (!varStore_.read(info.varId, ptr)) continue;
 
-            /* 更新已见计数, 调用用户回调 */
             info.lastSeenWriteCount = curWriteCount;
-            try {
-                info.callback(info.varName, buf.data(), buf.size(), tsNs);
-            } catch (const std::exception &e) {
-                ONDEMANDLOG_TIME(error, 5000)
-                    << "Callback exception for var: " << info.varName << " err: " << e.what();
-            }
+            if (!groupCallback) groupCallback = &info.callback;
+            batch.push_back({info.varName, ptr, info.dataSize, tsNs});
+            offset += info.dataSize;
+        }
+
+        if (batch.empty() || !groupCallback) return;
+        try {
+            (*groupCallback)(batch);
+        } catch (const std::exception &e) {
+            ONDEMANDLOG_TIME(error, 5000)
+                << "Batch callback exception for freq=" << freqMs
+                << "ms, vars=" << batch.size() << " err: " << e.what();
         }
     }
 
