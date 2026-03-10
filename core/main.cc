@@ -63,7 +63,9 @@ void subscribe()
         items.push_back({varName, 1000});
         unitems.push_back(varName);
     }
-    sub.subscribe("pubNode", items);
+    sub.subscribe("pubNode", items, [](const std::string &varName, const void *data, size_t size) {
+        LOG(info) << "Callback: var=" << varName << " size=" << size;
+    });
     std::this_thread::sleep_for(std::chrono::seconds(10));
     // sub.unsubscribe("pubNode", unitems);
     //sub.stop();
@@ -87,7 +89,9 @@ void subscribe2()
         items.push_back({varName, 500});
         unitems.push_back(varName);
     }
-    sub.subscribe("pubNode", items);
+    sub.subscribe("pubNode", items, [](const std::string &varName, const void *data, size_t size) {
+        LOG(info) << "Callback2: var=" << varName << " size=" << size;
+    });
     std::this_thread::sleep_for(std::chrono::seconds(10));
     // sub.unsubscribe("pubNode", unitems);
     //sub.stop();
