@@ -38,7 +38,7 @@ namespace ondemand
  * @brief 数据回调函数
  */
     using DataCallback =
-        std::function<void(const std::string &varName, const void *data, size_t size)>;
+        std::function<void(const std::string &varName, const void *data, size_t size, uint64_t timestampNs)>;
 
     /**
  * @brief 按需订阅器 V2 - 重构版本
@@ -185,6 +185,7 @@ namespace ondemand
             uint32_t dataSize;
             std::string varName;
             DataCallback callback;
+            uint32_t lastSeenWriteCount{0}; // 上次回调时的写入计数
         };
 
         /**
@@ -246,6 +247,15 @@ namespace ondemand
 
         VarStore varStore_; // 变量值存储
 
+        /*写入时间戳/计数，用于回调侧检测数据时效 (lock-free, 单写多读)*/
+        struct VarWriteStamp {
+            std::atomic<uint64_t> timestampNs{0};
+            std::atomic<uint32_t> writeCount{0};
+        };
+        std::unique_ptr<VarWriteStamp[]> varWriteStamps_;
+        uint32_t varWriteStampCount_{0};
+
+        
         /*订阅回调存储: varHash -> 回调信息*/
         std::unordered_map<uint64_t, SubCallbackInfo> subscriptionCallbacks_;
         std::mutex subscriptionCallbacksMutex_;

@@ -318,6 +318,7 @@ namespace ondemand
      */
     void OnDemandPub::processReceiveRegister()
     {
+        pthread_setname_np(pthread_self(), "PubRegProc");
         while (running_.load(std::memory_order_acquire)) {
             std::shared_ptr<DSF::Message::SubTableRegister> data;
             if (pubTableDefRegisterQueue_.try_dequeue(data)) {
@@ -471,6 +472,8 @@ namespace ondemand
      */
     void OnDemandPub::publishGroupData(uint32_t bucketIndex, uint32_t freqMs)
     {
+        std::string threadName = "PubCb" + std::to_string(freqMs) + "ms";
+        pthread_setname_np(pthread_self(), threadName.c_str());
         // 获取组成员快照 (已按 varHash 升序预排序)
         std::shared_ptr<std::vector<GroupVarInfo>> members;
         {
@@ -532,7 +535,6 @@ namespace ondemand
                 ONDEMANDLOG(error) << "Failed to send batch data for bucket=" << bucketIndex
                                    << " freq=" << freqMs << "ms";
             }
-            LOG(critical) << "+++++++++++++++++++++++++pub success+++++++++++++++++++++";
         }
     }
 

@@ -21,6 +21,7 @@
 #include "ondemand/on_demand_common.h"
 #include "roaring/roaring64map.hh"
 #include <cstring>
+#include <chrono>
 
 namespace dsf
 {
@@ -271,6 +272,8 @@ namespace ondemand
 
             const auto &maskBytes = dataTransfer->mask();
             const auto &varDataList = dataTransfer->varData();
+            const auto &timeStamp = dataTransfer->timestamp();
+
             if (maskBytes.empty() || varDataList.empty()) {
                 ONDEMANDLOG(warning) << "Received empty mask or varData, skipping.";
                 continue;
@@ -318,6 +321,13 @@ namespace ondemand
 
                     /*写入 varStore*/
                     if (varStore_.write(varId, blob.data(), blob.size())) {
+                        /*更新写入时间戳和计数, 供回调侧检测时效*/
+                        if (static_cast<uint32_t>(varId) < varWriteStampCount_) {
+                            uint64_t pubTsNs = static_cast<uint64_t>(timeStamp.tv_sec()) * 1000000000ULL
+                                             + timeStamp.tv_nsec();
+                            varWriteStamps_[varId].timestampNs.store(pubTsNs, std::memory_order_release);
+                            varWriteStamps_[varId].writeCount.fetch_add(1, std::memory_order_release);
+                        }
                         ++written;
                     } else {
                         ONDEMANDLOG_TIME(error, 5)
@@ -326,8 +336,8 @@ namespace ondemand
                 }
             }
 
-            ONDEMANDLOG(critical) << "DataTransfer: received=" << varDataList.size()
-                                  << " written=" << written;
+            // ONDEMANDLOG(critical) << "DataTransfer: received=" << varDataList.size()
+            //                       << " written=" << written;
         }
     }
 
@@ -367,6 +377,7 @@ namespace ondemand
                         meta.varHash = varHash;
                         meta.currentFreq = 0xFFFFFFFF;
                         meta.activeFreqCount = 0;
+                        meta.dataSize = 32;
                         meta.bucketIndex = bucketIdx;
                         meta.varId = varStore_.register_var(varHash, 32);
 
@@ -380,6 +391,24 @@ namespace ondemand
                     /*初始化内存: register_var 只写元数据，必须 finalize 才分配 arena/dirty_flags*/
                     if (!varStore_.finalize()) {
                         ONDEMANDLOG(error) << "Failed to finalize VarStore after TableDefine";
+                    }
+
+                    /*同步扩容写入时间戳数组  暂时用一个单独数据记录时间戳，为了检测变化*/
+                    {
+                        uint32_t newCount = varStore_.var_count();
+                        if (newCount > varWriteStampCount_) {
+                            auto newStamps = std::make_unique<VarWriteStamp[]>(newCount);
+                            for (uint32_t i = 0; i < varWriteStampCount_; ++i) {
+                                newStamps[i].timestampNs.store(
+                                    varWriteStamps_[i].timestampNs.load(std::memory_order_relaxed),
+                                    std::memory_order_relaxed);
+                                newStamps[i].writeCount.store(
+                                    varWriteStamps_[i].writeCount.load(std::memory_order_relaxed),
+                                    std::memory_order_relaxed);
+                            }
+                            varWriteStamps_ = std::move(newStamps);
+                            varWriteStampCount_ = newCount;
+                        }
                     }
 
                     /*统一检查是否有新 bucket 需要创建 reader，避免循环内逐次加锁*/
@@ -423,8 +452,7 @@ namespace ondemand
         /*启动回调调度器 (tick 精度 1ms, 线程池 8 线程)*/
         callbackScheduler_ = std::make_unique<TimerScheduler>(1, 8);
         /*调度函数*/
-        callbackSchedulerThread_ =
-            std::thread(&OnDemandSub::processCallbackScheduler, this);
+        callbackSchedulerThread_ = std::thread(&OnDemandSub::processCallbackScheduler, this);
 
         ONDEMANDLOG(info) << "OnDemandSub started";
         return true;
@@ -488,6 +516,7 @@ namespace ondemand
             subscriptionCallbacks_.clear();
         }
 
+        varWriteStamps_.reset();
         ONDEMANDLOG(info) << "OnDemandSub stopped";
     }
 
@@ -555,8 +584,8 @@ namespace ondemand
             for (const auto &item : items) {
                 if (item.frequency == 0 || item.frequency == 0xFFFFFFFF) {
                     ONDEMANDLOG(warning)
-                        << "Invalid frequency (" << item.frequency
-                        << ") for var: " << item.varName << ", skipping callback registration";
+                        << "Invalid frequency (" << item.frequency << ") for var: " << item.varName
+                        << ", skipping callback registration";
                     continue;
                 }
                 std::string metaVarName = make_meta_varname(node_name, item.varName);
@@ -709,8 +738,8 @@ namespace ondemand
                             callbackScheduler_->Cancel(it->second);
                         }
                         callbackGroupMembers_.erase(it->first);
-                        ONDEMANDLOG(debug) << "Removed callback group: freq=" << it->first.freqMs
-                                           << "ms";
+                        ONDEMANDLOG(debug)
+                            << "Removed callback group: freq=" << it->first.freqMs << "ms";
                         it = callbackGroupTimers_.erase(it);
                     } else {
                         ++it;
@@ -732,9 +761,8 @@ namespace ondemand
                             intervalTicks  /* 周期 */
                         );
                         callbackGroupTimers_[key] = timer;
-                        ONDEMANDLOG(debug)
-                            << "Created callback group: freq=" << freqMs
-                            << "ms, members=" << callbackGroupMembers_[key]->size();
+                        ONDEMANDLOG(debug) << "Created callback group: freq=" << freqMs
+                                           << "ms, members=" << callbackGroupMembers_[key]->size();
                     }
                 }
             }
@@ -749,6 +777,8 @@ namespace ondemand
      */
     void OnDemandSub::callbackGroupData(uint32_t freqMs)
     {
+        std::string threadName = "SubCb" + std::to_string(freqMs) + "ms";
+        pthread_setname_np(pthread_self(), threadName.c_str());
         /* 获取组成员快照 */
         std::shared_ptr<std::vector<CallbackVarInfo>> members;
         {
@@ -762,9 +792,20 @@ namespace ondemand
         }
 
         /* 遍历组成员, 读取数据并回调 */
-        for (const auto &info : *members) {
+        for (auto &info : *members) {
             if (info.dataSize == 0 || !info.callback) {
                 continue;
+            }
+
+            /* 检测数据时效: writeCount 未变说明数据未更新, 跳过回调 */
+            uint32_t curWriteCount = 0;
+            uint64_t tsNs = 0;
+            if (static_cast<uint32_t>(info.varId) < varWriteStampCount_) {
+                curWriteCount = varWriteStamps_[info.varId].writeCount.load(std::memory_order_acquire);
+                if (curWriteCount == info.lastSeenWriteCount) {
+                    continue; /* 数据未更新, 跳过 */
+                }
+                tsNs = varWriteStamps_[info.varId].timestampNs.load(std::memory_order_acquire);
             }
 
             std::vector<uint8_t> buf(info.dataSize);
@@ -772,9 +813,10 @@ namespace ondemand
                 continue; /* 数据尚未写入, 跳过 */
             }
 
-            /* 调用用户回调 */
+            /* 更新已见计数, 调用用户回调 */
+            info.lastSeenWriteCount = curWriteCount;
             try {
-                info.callback(info.varName, buf.data(), buf.size());
+                info.callback(info.varName, buf.data(), buf.size(), tsNs);
             } catch (const std::exception &e) {
                 ONDEMANDLOG_TIME(error, 5000)
                     << "Callback exception for var: " << info.varName << " err: " << e.what();
