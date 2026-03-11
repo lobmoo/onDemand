@@ -13,7 +13,7 @@
  * <tr><td>2026-03-05     <td>1.0     <td>wwk   <td>修改?
  * </table>
  */
- 
+
 #ifndef ON_DEMAND_PUB_H
 #define ON_DEMAND_PUB_H
 
@@ -31,14 +31,18 @@ namespace ondemand
     class OnDemandPub : public DdsWrapper::ParticipantListener
     {
     public:
+        // varName: 变量全名, newFreqMs: 新的发送周期(ms), 0xFFFFFFFF 表示无订阅者
+        using FreqChangeCallback =
+            std::function<void(const std::string &varName, uint32_t newFreqMs)>;
+
         OnDemandPub();
         ~OnDemandPub();
 
         /**
          * @brief 初始化发布者节点
-         * @param  nodeName   节点名称，需全局唯一    
-         * @return true 
-         * @return false 
+         * @param  nodeName   节点名称，需全局唯一
+         * @return true
+         * @return false
          */
         bool init(const std::string &nodeName);
 
@@ -79,6 +83,12 @@ namespace ondemand
          * @return false 
          */
         bool setVarData(const char *varName, const void *data, size_t size);
+
+        /**
+         * @brief 设置变量频率变化回调，当变量的发送周期发生改变时触发
+         * @param  cb 回调函数，参数为变量全名和新的发送周期(ms)
+         */
+        void setFreqChangeCallback(FreqChangeCallback cb);
 
     private:
         // ParticipantListener 回调
@@ -208,6 +218,11 @@ namespace ondemand
         */
         void cancelAllPublishTimers();
 
+        /**
+         * @brief 频率变化回调派发线程，从队列消费并调用用户回调，与注册处理线程解耦
+         */
+        void processFreqChangeCallback();
+
     private:
         /*变量索引: hash -> 元数据*/
         std::unordered_map<uint64_t, VarMetadata> varIndex_;
@@ -223,6 +238,7 @@ namespace ondemand
         // ---- 队列 ----
         moodycamel::ConcurrentQueue<std::shared_ptr<DSF::Message::SubTableRegister>>
             pubTableDefRegisterQueue_;
+        moodycamel::ConcurrentQueue<std::pair<std::string, uint32_t>> freqChangeQueue_;
 
         // ---- DDS 读写器 ----
         std::shared_ptr<DdsWrapper::DDSTopicWriter<DSF::Var::PubTableDefine>> pubTableDefineWriter_;
@@ -239,8 +255,11 @@ namespace ondemand
         std::unordered_map<uint64_t, uint8_t> nodeSlotMap_;
         uint8_t nextNodeSlot_ = 0;
 
+        FreqChangeCallback freqChangeCb_;
+
         /*注册请求处理线程 */
         std::thread registerProcessThread_;
+        std::thread freqChangeCbThread_;
 
         /*时间轮调度器 */
         std::unique_ptr<TimerScheduler> publishScheduler_;

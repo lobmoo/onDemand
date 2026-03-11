@@ -29,6 +29,9 @@ void publish()
     }
     pub.createVars(vars);
 
+    pub.setFreqChangeCallback([](const std::string &varName, uint32_t freq) {
+        LOG(info) << "FreqChangeCallback: var=" << varName << " newFreq=" << freq;
+    });
     std::this_thread::sleep_for(std::chrono::seconds(10));
     std::vector<std::string> varDelNames;
     for (int i = 0; i < count; ++i) {

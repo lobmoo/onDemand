@@ -28,9 +28,11 @@ namespace ondemand
     OnDemandPub::OnDemandPub()
         : varIndex_(), varIndexMutex_(), bucketManager_(), initialized_(false), running_(false),
           dataNode_(nullptr), nodeName_(), pubTableDefineWriter_(nullptr),
-          subTableRegisterReqReader_(nullptr)
+          subTableRegisterReqReader_(nullptr), freqChangeCb_(nullptr)
     {
     }
+
+    void OnDemandPub::setFreqChangeCallback(FreqChangeCallback cb) { freqChangeCb_ = std::move(cb); }
 
     OnDemandPub::~OnDemandPub() { stop(); }
 
@@ -107,6 +109,7 @@ namespace ondemand
 
         registerProcessThread_ = std::thread(&OnDemandPub::processReceiveRegister, this);
         publishSchedulerThread_ = std::thread(&OnDemandPub::processPublishTaskScheduler, this);
+        freqChangeCbThread_ = std::thread(&OnDemandPub::processFreqChangeCallback, this);
 
         ONDEMANDLOG(info) << "OnDemandPub started (TimerScheduler: 1ms tick, pool=" << poolSize
                           << ")";
@@ -128,6 +131,9 @@ namespace ondemand
             }
             if (publishSchedulerThread_.joinable()) {
                 publishSchedulerThread_.join();
+            }
+            if (freqChangeCbThread_.joinable()) {
+                freqChangeCbThread_.join();
             }
 
             /*清理所有发布定时器和调度器*/
@@ -559,6 +565,24 @@ namespace ondemand
     }
 
     /**
+     * @brief 频率变化回调派发线程，从队列消费并调用用户回调，与注册处理线程解耦
+     */
+    void OnDemandPub::processFreqChangeCallback()
+    {
+        pthread_setname_np(pthread_self(), "FreqChangeCb");
+        while (running_.load(std::memory_order_acquire)) {
+            std::pair<std::string, uint32_t> item;
+            if (freqChangeQueue_.try_dequeue(item)) {
+                if (freqChangeCb_) {
+                    freqChangeCb_(item.first, item.second);
+                }
+            } else {
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            }
+        }
+    }
+
+    /**
      * @brief 创建变量并发布表定义，支持增量更新
      * @param  VarDefines 变量定义列表，包含变量名称、类型、频率等信息
      * @return true 成功
@@ -790,6 +814,8 @@ namespace ondemand
     {
         uint64_t nodeHash = fast_hash(nodeName);
 
+        std::vector<std::pair<std::string, uint32_t>> freqChanges; // 锁外触发回调
+
         std::unique_lock lock(varIndexMutex_);
         uint8_t nodeBit = getOrAssignNodeBit(nodeHash);
         uint64_t nodeMask = uint64_t(1) << nodeBit;
@@ -853,12 +879,22 @@ namespace ondemand
             meta.activeFreqCount = static_cast<uint8_t>(meta.freqSubs.size());
 
             // 重新计算最小发布频率
+            uint32_t oldFreq = meta.currentFreq;
             recalcCurrentFreq(meta);
             schedulerDirty_.store(true, std::memory_order_release);
+
+            if (meta.currentFreq != oldFreq) {
+                freqChanges.emplace_back(metaName, meta.currentFreq);
+            }
 
             ONDEMANDLOG(info) << "Var [" << varFreq.name() << "] subscribed by node [" << nodeName
                               << "] at freq=" << freq << "ms, currentFreq=" << meta.currentFreq
                               << "ms";
+        }
+
+        lock.unlock();
+        for (const auto &[varName, newFreq] : freqChanges) {
+            freqChangeQueue_.enqueue({varName, newFreq});
         }
     }
 
@@ -871,6 +907,8 @@ namespace ondemand
                                         const std::vector<DSF::NamedValue> &varFreqs)
     {
         uint64_t nodeHash = fast_hash(nodeName);
+
+        std::vector<std::pair<std::string, uint32_t>> freqChanges; // 锁外触发回调
 
         std::unique_lock lock(varIndexMutex_);
 
@@ -917,8 +955,17 @@ namespace ondemand
             recalcCurrentFreq(meta);
             schedulerDirty_.store(true, std::memory_order_release);
 
+            if (meta.currentFreq != oldFreq) {
+                freqChanges.emplace_back(metaName, meta.currentFreq);
+            }
+
             ONDEMANDLOG(info) << "Var [" << varFreq.name() << "] unsubscribed by node [" << nodeName
                               << "], freq " << oldFreq << "ms -> " << meta.currentFreq << "ms";
+        }
+
+        lock.unlock();
+        for (const auto &[varName, newFreq] : freqChanges) {
+            freqChangeQueue_.enqueue({varName, newFreq});
         }
     }
 
