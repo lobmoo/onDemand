@@ -385,6 +385,16 @@ namespace ondemand
                     }
                     lock.unlock();
 
+                    // 通知外层同步 define 到 Var::state
+                    if (tableDefineCb_) {
+                        std::vector<DSF::Var::Define> defines;
+                        defines.reserve(tableDefine->varDefines().size());
+                        for (const auto &varDef : tableDefine->varDefines()) {
+                            defines.push_back(varDef.var().varDefine());
+                        }
+                        tableDefineCb_(defines);
+                    }
+
                     /*初始化内存: register_var 只写元数据，必须 finalize 才分配 arena/dirty_flags*/
                     if (!varStore_.finalize()) {
                         ONDEMANDLOG(error) << "Failed to finalize VarStore after TableDefine";
@@ -422,7 +432,7 @@ namespace ondemand
                     if (hasNewBucket) {
                         createDataTransferReader(std::bind(
                             &OnDemandSub::onReceiveDataTransferCb, this, std::placeholders::_1,
-                            std::placeholders::_2)); //TODO: 传入实际的数据处理回调函数
+                            std::placeholders::_2)); 
                     }
                 }
             } else {

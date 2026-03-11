@@ -53,6 +53,12 @@ namespace ondemand
         std::function<void(const std::vector<VarCallbackData> &vars)>;
 
     /**
+     * @brief TableDefine 回调，收到 pub 端广播的变量定义时触发
+     */
+    using TableDefineCallback =
+        std::function<void(const std::vector<DSF::Var::Define> &defines)>;
+
+    /**
  * @brief 按需订阅器 V2 - 重构版本
  */
     class OnDemandSub : public DdsWrapper::ParticipantListener
@@ -101,6 +107,9 @@ namespace ondemand
         * @brief 获取订阅数量
         */
         size_t getSubscriptionCount() const;
+
+        /** 注册 TableDefine 回调，收到 pub 端变量定义时触发 */
+        void setTableDefineCallback(TableDefineCallback cb) { tableDefineCb_ = std::move(cb); }
 
     private:
         // ParticipantListener 回调
@@ -227,6 +236,7 @@ namespace ondemand
 
     private:
         std::string nodeName_;
+        TableDefineCallback tableDefineCb_;
         std::shared_ptr<DdsWrapper::DataNode> dataNode_;
 
         /*通信writer/reader*/
