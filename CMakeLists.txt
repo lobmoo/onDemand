@@ -17,7 +17,6 @@ endif()
 
 add_subdirectory(common/log)
 add_subdirectory(core)
-add_subdirectory(tools/monitor)
 
 
 option(ENABLE_TESTS "Enable unit tests" ON)
@@ -29,8 +28,6 @@ endif()
 option(SAMPLE "Build example" ON)
 if(SAMPLE)
     add_subdirectory(sample/node_example)
-    add_subdirectory(sample/request_reply_example)
-    add_subdirectory(sample/shm_example)
     add_subdirectory(sample/data_memory_manger)
 endif()
 
