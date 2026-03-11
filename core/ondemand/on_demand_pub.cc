@@ -399,12 +399,12 @@ namespace ondemand
                     if (!vec) {
                         vec = std::make_shared<std::vector<GroupVarInfo>>();
                     }
-                    /*<id+freq, varInfo>*/
+                    /*<id+freq, varInfo>  这里面存的就是所有的点按照索引 + 周期相同的放一起*/
                     vec->push_back(GroupVarInfo{varHash, meta.varId, meta.dataSize});
                 }
             }
 
-            // 预排序: 按 varHash 升序, 与 Roaring64Map 迭代顺序一致
+            /*预排序: 按 varHash 升序, 与 Roaring64Map 迭代顺序一致*/
             for (auto &[gkey, vec] : desired) {
                 if (vec) {
                     std::sort(vec->begin(), vec->end(),
@@ -414,10 +414,9 @@ namespace ondemand
                 }
             }
 
-            //增量 diff ----
             {
                 std::lock_guard<std::mutex> lock(publishGroupsMutex_);
-                // 新的一轮扫描发现分配的key在原来的时间轮分组里面没有，移除不再需要的分组
+                /*新的一轮扫描发现分配的key分配了定时器，但是现在整个变量都没有这种id或者频率了 就把该定时器干掉*/
                 for (auto it = publishGroupTimers_.begin(); it != publishGroupTimers_.end();) {
                     if (desired.find(it->first) == desired.end()) {
                         if (publishScheduler_) {
@@ -428,11 +427,14 @@ namespace ondemand
                             << "Removed publish group: bucket=" << it->first.bucketIndex
                             << " freq=" << it->first.freqMs << "ms";
                         it = publishGroupTimers_.erase(it);
-                    } else {
+                    } 
+                    /*如果这里有，就不用管了，继续调度就好了*/
+                    else {
                         ++it;
                     }
                 }
 
+                /*遍历所有的点，保存全局副本，然后找一下有没有该周期的时间轮，没有的话，就创建一个，有的话也不用管*/
                 for (auto &[key, members] : desired) {
                     // 始终刷新成员列表
                     groupMembers_[key] = std::move(members);
