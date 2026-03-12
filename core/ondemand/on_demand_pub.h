@@ -85,6 +85,12 @@ namespace ondemand
         bool setVarData(const char *varName, const void *data, size_t size);
 
         /**
+         * @brief 设置该发布节点的数据序列化类型，影响所有变量的发布，默认 STRUCTS
+         * @param  blobType 序列化类型
+         */
+        void setBlobType(DSF::Var::BLOB_TYPE blobType) { blobType_ = blobType; }
+
+        /**
          * @brief 设置变量频率变化回调，当变量的发送周期发生改变时触发
          * @param  cb 回调函数，参数为变量全名和新的发送周期(ms)
          */
@@ -251,7 +257,7 @@ namespace ondemand
 
         VarStore varStore_;
 
-        /*订阅者相关信息 */
+        DSF::Var::BLOB_TYPE blobType_{DSF::Var::BLOB_TYPE::STRUCTS}; // 全局序列化类型
         std::unordered_map<uint64_t, uint8_t> nodeSlotMap_;
         uint8_t nextNodeSlot_ = 0;
 

@@ -529,7 +529,7 @@ namespace ondemand
         auto nsec = std::chrono::duration_cast<std::chrono::nanoseconds>(epoch) - sec;
         msg.timestamp().tv_sec(static_cast<int32_t>(sec.count()));
         msg.timestamp().tv_nsec(static_cast<uint32_t>(nsec.count()));
-        msg.blobType(DSF::Var::BLOB_TYPE::STRUCTS);
+        msg.blobType(blobType_);
 
         // 发送
         {

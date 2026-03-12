@@ -273,6 +273,7 @@ namespace ondemand
             const auto &maskBytes = dataTransfer->mask();
             const auto &varDataList = dataTransfer->varData();
             const auto &timeStamp = dataTransfer->timestamp();
+            const auto blobType = dataTransfer->blobType();
 
             if (maskBytes.empty() || varDataList.empty()) {
                 ONDEMANDLOG(warning) << "Received empty mask or varData, skipping.";
@@ -321,11 +322,12 @@ namespace ondemand
 
                     /*写入 varStore*/
                     if (varStore_.write(varId, blob.data(), blob.size())) {
-                        /*更新写入时间戳和计数, 供回调侧检测时效*/
+                        /*更新写入时间戳、计数和 blobType, 供回调侧检测时效*/
                         if (static_cast<uint32_t>(varId) < varWriteStampCount_) {
                             uint64_t pubTsNs = static_cast<uint64_t>(timeStamp.tv_sec()) * 1000000000ULL
                                              + timeStamp.tv_nsec();
                             varWriteStamps_[varId].timestampNs.store(pubTsNs, std::memory_order_release);
+                            varWriteStamps_[varId].blobType.store(static_cast<uint32_t>(blobType), std::memory_order_release);
                             varWriteStamps_[varId].writeCount.fetch_add(1, std::memory_order_release);
                         }
                         ++written;
@@ -812,10 +814,13 @@ namespace ondemand
             /* 检测数据时效 */
             uint32_t curWriteCount = 0;
             uint64_t tsNs = 0;
+            DSF::Var::BLOB_TYPE blobType = DSF::Var::BLOB_TYPE::UNKNOWN;
             if (static_cast<uint32_t>(info.varId) < varWriteStampCount_) {
                 curWriteCount = varWriteStamps_[info.varId].writeCount.load(std::memory_order_acquire);
                 if (curWriteCount == info.lastSeenWriteCount) continue;
                 tsNs = varWriteStamps_[info.varId].timestampNs.load(std::memory_order_acquire);
+                blobType = static_cast<DSF::Var::BLOB_TYPE>(
+                    varWriteStamps_[info.varId].blobType.load(std::memory_order_acquire));
             }
 
             uint8_t *ptr = dataBuf.data() + offset;
@@ -823,7 +828,7 @@ namespace ondemand
 
             info.lastSeenWriteCount = curWriteCount;
             if (!groupCallback) groupCallback = &info.callback;
-            batch.push_back({info.varName, ptr, info.dataSize, tsNs});
+            batch.push_back({info.varName, ptr, info.dataSize, tsNs, blobType});
             offset += info.dataSize;
         }
 

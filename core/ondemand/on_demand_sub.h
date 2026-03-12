@@ -44,6 +44,7 @@ namespace ondemand
         const void *data;
         size_t size;
         uint64_t timestampNs;
+        DSF::Var::BLOB_TYPE blobType{DSF::Var::BLOB_TYPE::UNKNOWN};
     };
 
     /**
@@ -273,6 +274,7 @@ namespace ondemand
         struct VarWriteStamp {
             std::atomic<uint64_t> timestampNs{0};
             std::atomic<uint32_t> writeCount{0};
+            std::atomic<uint32_t> blobType{static_cast<uint32_t>(DSF::Var::BLOB_TYPE::UNKNOWN)};
         };
         std::unique_ptr<VarWriteStamp[]> varWriteStamps_;
         uint32_t varWriteStampCount_{0};
