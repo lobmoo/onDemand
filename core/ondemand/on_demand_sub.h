@@ -109,7 +109,11 @@ namespace ondemand
         */
         size_t getSubscriptionCount() const;
 
-        /** 注册 TableDefine 回调，收到 pub 端变量定义时触发 */
+
+        /**
+         * @brief 注册 TableDefine 回调，收到 pub 端变量定义时触发 
+         * @param  cb  外部可能需要提前得知对端发送的变量定义，此时应当提前拿到数据定义回调并注册，以免错过第一次的定义广播
+         */
         void setTableDefineCallback(TableDefineCallback cb) { tableDefineCb_ = std::move(cb); }
 
     private:
