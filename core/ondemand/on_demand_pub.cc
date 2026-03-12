@@ -666,8 +666,6 @@ namespace ondemand
                 }
             }
 
-            ONDEMANDLOG(info) << "Publishing table define for bucket " << i << " with "
-                              << pubTableDefine.varDefines().size() << " variables";
             if (!pubTableDefine.varDefines().empty()) {
                 tableDefinePublish(pubTableDefine);
                 std::this_thread::sleep_for(std::chrono::milliseconds(50));
