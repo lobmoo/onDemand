@@ -977,5 +977,72 @@ namespace ondemand
                            << " type=" << info.type_name << " discovered=" << info.discovered;
     }
 
+    void OnDemandPub::onParticipantDiscovery(const DdsWrapper::ParticipantInfo &info)
+    {
+        if (info.status != DdsWrapper::ParticipantStatus::REMOVED &&
+            info.status != DdsWrapper::ParticipantStatus::DROPPED) {
+            return;
+        }
+
+        const std::string &nodeName = info.participant_name;
+        uint64_t nodeHash = fast_hash(nodeName);
+
+        std::unique_lock lock(varIndexMutex_);
+
+        auto slotIt = nodeSlotMap_.find(nodeHash);
+        if (slotIt == nodeSlotMap_.end()) {
+            return;
+        }
+        uint64_t nodeMask = uint64_t(1) << slotIt->second;
+
+        auto freqChanges = forceUnsubscribeNode(nodeMask);
+
+        nodeSlotMap_.erase(slotIt);
+
+        lock.unlock();
+
+        ONDEMANDLOG(info) << "Participant offline: " << nodeName
+                          << ", force-unsubscribed " << freqChanges.size() << " vars";
+
+        for (const auto &[varName, newFreq] : freqChanges) {
+            freqChangeQueue_.enqueue({varName, newFreq});
+        }
+    }
+
+    std::vector<std::pair<std::string, uint32_t>> OnDemandPub::forceUnsubscribeNode(uint64_t nodeMask)
+    {
+        std::vector<std::pair<std::string, uint32_t>> freqChanges;
+
+        for (auto &[varHash, meta] : varIndex_) {
+            bool changed = false;
+            for (auto fsIt = meta.freqSubs.begin(); fsIt != meta.freqSubs.end();) {
+                if (fsIt->subMask & nodeMask) {
+                    fsIt->subMask &= ~nodeMask;
+                    fsIt->subCount--;
+                    if (fsIt->subCount == 0) {
+                        fsIt = meta.freqSubs.erase(fsIt);
+                    } else {
+                        ++fsIt;
+                    }
+                    changed = true;
+                } else {
+                    ++fsIt;
+                }
+            }
+            if (changed) {
+                meta.activeFreqCount = static_cast<uint8_t>(meta.freqSubs.size());
+                uint32_t oldFreq = meta.currentFreq;
+                recalcCurrentFreq(meta);
+                schedulerDirty_.store(true, std::memory_order_release);
+                if (meta.currentFreq != oldFreq && meta.varDefine) {
+                    std::string metaName = make_meta_varname(nodeName_, meta.varDefine->name());
+                    freqChanges.emplace_back(metaName, meta.currentFreq);
+                }
+            }
+        }
+
+        return freqChanges;
+    }
+
 } // namespace ondemand
 } // namespace dsf

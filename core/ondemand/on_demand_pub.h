@@ -105,6 +105,12 @@ namespace ondemand
          */
         void onWriterDiscovery(const DdsWrapper::EndpointInfo &info) override;
 
+        /**
+         * @brief Participant 掉线回调，sub 异常掉线时强制清除其所有订阅
+         * @param  info  participant 信息，包含节点名称和状态
+         */
+        void onParticipantDiscovery(const DdsWrapper::ParticipantInfo &info) override;
+
     private:
         /**
         * @brief 创建 DDS 读写器，设置回调函数
@@ -173,6 +179,14 @@ namespace ondemand
          */
         uint8_t getOrAssignNodeBit(uint64_t nodeHash);
         void recalcCurrentFreq(VarMetadata &meta);
+
+        /**
+         * @brief 按 nodeMask 强制清除所有变量的订阅，用于节点掉线场景
+         * @param  nodeMask  节点位掩码
+         * @return 频率发生变化的变量列表 (varName, newFreq)，供调用方入队回调
+         * @note   调用方须持有 varIndexMutex_ 写锁
+         */
+        std::vector<std::pair<std::string, uint32_t>> forceUnsubscribeNode(uint64_t nodeMask);
 
         /**
          * @brief 发布分组键 = (bucketIndex, freqMs)
