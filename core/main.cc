@@ -63,7 +63,7 @@ void subscribe()
     }
     std::vector<dsf::ondemand::SubscriptionItem> items;
     std::vector<std::string> unitems;
-    for (int i = 0; i < 50000; ++i) {
+    for (int i = 0; i < 100000; ++i) {
         std::string varName = "var" + std::to_string(i);
         items.push_back({varName, 250});
         unitems.push_back(varName);

@@ -13,7 +13,7 @@
  * <tr><td>2026-03-05     <td>1.0     <td>wwk   <td>修改?
  * </table>
  */
- 
+
 #ifndef VARIABLE_STORE_H
 #define VARIABLE_STORE_H
 
@@ -37,7 +37,9 @@ namespace ondemand
     inline constexpr uint32_t align64(uint32_t n) { return (n + 63u) & ~63u; }
 
     struct VarMeta {
-        uint32_t id, offset, size;
+        uint32_t id;
+        uint32_t offset;
+        uint32_t size;
     };
 
     struct alignas(64) Slot {
@@ -59,12 +61,16 @@ namespace ondemand
         {
             ConfigGuard g(this);
             auto it = table_.find(hash);
+            /*防止重复创建*/
             if (it != table_.end())
                 return (it->second < metas_.size() && metas_[it->second].size == size) ? it->second
                                                                                        : kInvalidId;
             uint32_t id = metas_.size();
             table_[hash] = id;
             metas_.push_back({id, arena_size_, size});
+            /*提高内存访问效率，减少伪共享和cache line冲突，适配现代CPU缓存（cache line一般为64字节）。
+                保证Slot结构和数据在多线程环境下原子操作时不会跨cache line，避免false sharing。
+                有些SIMD/原子操作要求对齐，防止未对齐访问导致性能下降或异常。*/
             arena_size_ += align64(sizeof(Slot) + size);
             return id;
         }
@@ -94,18 +100,21 @@ namespace ondemand
         {
             ConfigGuard g(this);
             uint32_t new_count = metas_.size();
+            /*防止越界*/
             if (new_count <= var_count_)
                 return true;
 
             arena_size_ = align64(arena_size_);
             uint32_t old_size = var_count_
                                     ? metas_[var_count_ - 1].offset
-                                          + align64(sizeof(Slot) + metas_[var_count_ - 1].size)
+                                          + align64(sizeof(Slot) + metas_[var_count_ - 1].size)  /*偏移 + 头 + 真实长度*/
                                     : 0;
 
-            void *new_arena = std::aligned_alloc(64, arena_size_);
+            void *new_arena = std::aligned_alloc(64, arena_size_); /*申请总长*/
             if (!new_arena)
                 return false;
+
+            /*这里支持动态扩容*/
             if (old_size)
                 std::memcpy(new_arena, arena_, old_size);
             if (arena_size_ > old_size)
@@ -113,9 +122,12 @@ namespace ondemand
             std::free(arena_);
             arena_ = (std::byte *)new_arena;
 
+
             auto *new_flags = new (std::nothrow) std::atomic<bool>[new_count];
             if (!new_flags)
                 return false;
+
+            /*扩容脏队列*/
             for (uint32_t i = 0; i < var_count_; ++i)
                 new_flags[i].store(dirty_flags_[i].load(std::memory_order_relaxed),
                                    std::memory_order_relaxed);
@@ -138,6 +150,7 @@ namespace ondemand
             std::memcpy(slot->data, src, metas_[id].size);
             slot->seq.fetch_add(1, std::memory_order_release);
 
+            /*脏队列标志，每次读取端拿掉数据才会进队列*/
             if (!dirty_flags_[id].exchange(true, std::memory_order_acq_rel))
                 dirty_queue_.enqueue(id);
             return true;
@@ -169,6 +182,7 @@ namespace ondemand
             if (!arena_ || id >= var_count_)
                 return false;
             auto *slot = (const Slot *)(arena_ + metas_[id].offset);
+            /*单写双读*/
             for (int retry = 0; retry < 10; ++retry) {
                 uint32_t s1 = slot->seq.load(std::memory_order_acquire);
                 if (s1 & 1)
@@ -257,8 +271,11 @@ namespace ondemand
 
         void config_begin()
         {
+            /*该锁是为了防止多线程同时配置或者扩容等操作*/
             config_mu_.lock();
+            /*原子变量通知其他线程当前配置状态*/
             reconfig_.store(true, std::memory_order_release);
+            /*正在读写操作时，让出cpu*/
             while (active_ops_.load(std::memory_order_acquire))
                 std::this_thread::yield();
         }
