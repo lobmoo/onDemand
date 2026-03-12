@@ -79,10 +79,25 @@ namespace ondemand
          * @param  varName          变量名称，必须已创建
          * @param  data             变量数据指针，指向外部数据源，发布时零拷贝
          * @param  size             数据大小，单位字节，支持分片发布
-         * @return true 
-         * @return false 
+         * @return true
+         * @return false
          */
         bool setVarData(const char *varName, const void *data, size_t size);
+
+        /**
+         * @brief 通过变量名预先查询并缓存 varId，用于后续 setVarData(id, ...) 热路径
+         * @param  varName  变量名称
+         * @return varId，未找到返回 UINT32_MAX
+         */
+        uint32_t getVarId(const char *varName) const;
+
+        /**
+         * @brief 通过预缓存的 varId 直接写入，无锁无哈希查找，适合极高频场景
+         * @param  varId  由 getVarId() 返回的 id
+         * @param  data   数据指针
+         * @param  size   数据大小
+         */
+        void setVarData(uint32_t varId, const void *data, size_t size);
 
         /**
          * @brief 设置该发布节点的数据序列化类型，影响所有变量的发布，默认 STRUCTS

@@ -32,7 +32,10 @@ namespace ondemand
     {
     }
 
-    void OnDemandPub::setFreqChangeCallback(FreqChangeCallback cb) { freqChangeCb_ = std::move(cb); }
+    void OnDemandPub::setFreqChangeCallback(FreqChangeCallback cb)
+    {
+        freqChangeCb_ = std::move(cb);
+    }
 
     OnDemandPub::~OnDemandPub() { stop(); }
 
@@ -433,7 +436,7 @@ namespace ondemand
                             << "Removed publish group: bucket=" << it->first.bucketIndex
                             << " freq=" << it->first.freqMs << "ms";
                         it = publishGroupTimers_.erase(it);
-                    } 
+                    }
                     /*如果这里有，就不用管了，继续调度就好了*/
                     else {
                         ++it;
@@ -771,6 +774,19 @@ namespace ondemand
         return true;
     }
 
+    uint32_t OnDemandPub::getVarId(const char *varName) const
+    {
+        uint64_t varHash = fast_hash(make_meta_varname(nodeName_, varName));
+        std::shared_lock lock(varIndexMutex_);
+        auto it = varIndex_.find(varHash);
+        return (it != varIndex_.end()) ? it->second.varId : UINT32_MAX;
+    }
+
+    void OnDemandPub::setVarData(uint32_t varId, const void *data, size_t size)
+    {
+        varStore_.write(varId, data, static_cast<uint32_t>(size));
+    }
+
     /**
      * @brief 获取或分配订阅者节点的位图位置，支持最多 256 个订阅者
      * @param  nodeHash 订阅者节点名称的 hash 值
@@ -979,8 +995,8 @@ namespace ondemand
 
     void OnDemandPub::onParticipantDiscovery(const DdsWrapper::ParticipantInfo &info)
     {
-        if (info.status != DdsWrapper::ParticipantStatus::REMOVED &&
-            info.status != DdsWrapper::ParticipantStatus::DROPPED) {
+        if (info.status != DdsWrapper::ParticipantStatus::REMOVED
+            && info.status != DdsWrapper::ParticipantStatus::DROPPED) {
             return;
         }
 
@@ -1001,15 +1017,16 @@ namespace ondemand
 
         lock.unlock();
 
-        ONDEMANDLOG(info) << "Participant offline: " << nodeName
-                          << ", force-unsubscribed " << freqChanges.size() << " vars";
+        ONDEMANDLOG(info) << "Participant offline: " << nodeName << ", force-unsubscribed "
+                          << freqChanges.size() << " vars";
 
         for (const auto &[varName, newFreq] : freqChanges) {
             freqChangeQueue_.enqueue({varName, newFreq});
         }
     }
 
-    std::vector<std::pair<std::string, uint32_t>> OnDemandPub::forceUnsubscribeNode(uint64_t nodeMask)
+    std::vector<std::pair<std::string, uint32_t>>
+    OnDemandPub::forceUnsubscribeNode(uint64_t nodeMask)
     {
         std::vector<std::pair<std::string, uint32_t>> freqChanges;
 
