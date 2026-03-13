@@ -40,24 +40,23 @@ void publish()
     }
     // pub.deleteVars(varDelNames);
 
-    // 预缓存 varId，热循环无锁无哈希
-    // std::vector<uint32_t> varIds(count);
-    // for (int i = 0; i < count; ++i) {
-    //     varIds[i] = pub.getVarId(("var" + std::to_string(i)).c_str());
-    // }
-    // while (true) {
-    //     for (int i = 0; i < count; ++i) {
-    //         pub.setVarData(varIds[i], &i, sizeof(i));
-    //     }
+    // 预缓存 varId
+    std::vector<uint32_t> varIds(count);
+    for (int i = 0; i < count; ++i)
+        varIds[i] = pub.getVarId(("var" + std::to_string(i)).c_str());
 
-    //     std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    // }
+    // 预分配 batch items，热循环只更新 data 指针
+    std::vector<dsf::ondemand::OnDemandPub::VarWriteItem> batchItems(count);
+    std::vector<int> vals(count);
+    for (int i = 0; i < count; ++i) {
+        vals[i]              = i;
+        batchItems[i].id     = varIds[i];
+        batchItems[i].data   = &vals[i];
+        batchItems[i].size   = sizeof(int);
+    }
 
     while (true) {
-        for (int i = 0; i < count; ++i) {
-            std::string varName = "var" + std::to_string(i);
-            pub.setVarData(varName.c_str(), &i, sizeof(i));
-        }
+        pub.setVarDataBatch(batchItems.data(), count);
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
 
@@ -76,13 +75,15 @@ void subscribe()
     }
     std::vector<dsf::ondemand::SubscriptionItem> items;
     std::vector<std::string> unitems;
-    for (int i = 0; i < count; ++i) {
+    const int subscribedCount = 100000;
+    for (int i = 0; i < subscribedCount; ++i) {
         std::string varName = "var" + std::to_string(i);
-        items.push_back({varName, 1000});
+        items.push_back({varName, 500});
         unitems.push_back(varName);
     }
+  
     /*延迟/丢包统计*/
-    constexpr int64_t kPeriodMs = 1000;                                // 订阅周期 500ms
+    constexpr int64_t kPeriodMs = 500;                                // 订阅周期 500ms
     constexpr int64_t kPrintIntervalMs = 1000;                        // 打印间隔 1s
     constexpr uint64_t kExpectedBatch = kPrintIntervalMs / kPeriodMs; // 期望批次数
     struct CallbackStats {
@@ -117,15 +118,17 @@ void subscribe()
                   });
 
     /*定期打印统计*/
-    for (int round = 0; round < 20; ++round) {
+    const uint64_t kExpectedVars = (uint64_t)subscribedCount * kExpectedBatch; // 每秒期望收到的变量总数
+    for (int round = 0; round < 200000; ++round) {
         std::this_thread::sleep_for(std::chrono::seconds(1));
         uint64_t total = stats->totalCount.exchange(0, std::memory_order_relaxed);
         uint64_t batch = stats->batchCount.exchange(0, std::memory_order_relaxed);
-        uint64_t loss = (batch < kExpectedBatch) ? (kExpectedBatch - batch) : 0;
+        uint64_t loss = (total < kExpectedVars) ? (kExpectedVars - total) : 0;
         int64_t sumMs = stats->latencySumMs.exchange(0, std::memory_order_relaxed);
         int64_t maxMs = stats->latencyMaxMs.exchange(0, std::memory_order_relaxed);
         int64_t avgMs = batch > 0 ? sumMs / static_cast<int64_t>(batch) : 0;
-        LOG(info) << "[Stats] vars=" << total << " batch=" << batch << "/" << kExpectedBatch
+        LOG(info) << "[Stats] vars=" << total << "/" << kExpectedVars
+                  << " batch=" << batch << "/" << kExpectedBatch
                   << " loss=" << loss << " avgLatency=" << avgMs << "ms"
                   << " maxLatency=" << maxMs << "ms";
     }

@@ -147,11 +147,21 @@ namespace ondemand
             }
         }
 
-        /*清理 varIndex_ 和 bucketManager_ (受 varIndexMutex_ 保护)*/
+        /*清理 varIndex_、bucketManager_、nodeSlotMap_ (受 varIndexMutex_ 保护)*/
         {
             std::unique_lock lock(varIndexMutex_);
             varIndex_.clear();
             bucketManager_.Clear();
+            nodeSlotMap_.clear();
+            nextNodeSlot_ = 0;
+        }
+
+        /*清理发布分组相关数据*/
+        {
+            std::lock_guard<std::mutex> lock(publishGroupsMutex_);
+            publishGroupTimers_.clear();
+            groupMembers_.clear();
+            groupFlatBufs_.clear();
         }
 
         /*清理 DDS 读写器和节点*/
@@ -497,21 +507,41 @@ namespace ondemand
             members = it->second;
         }
 
-        // 直接构建消息, 避免中间 varDataList 分配
+        // 计算 flat buffer 总大小
+        uint32_t totalSize = 0;
+        for (const auto &info : *members)
+            totalSize += info.dataSize;
+
+        // 获取/扩容 flat buffer（按 key 复用，避免每次堆分配）
+        std::vector<uint8_t> *flatBuf = nullptr;
+        {
+            std::lock_guard<std::mutex> lock(publishGroupsMutex_);
+            PublishGroupKey key{bucketIndex, freqMs};
+            auto &buf = groupFlatBufs_[key];
+            if (buf.size() < totalSize)
+                buf.resize(totalSize);
+            flatBuf = &buf;
+        }
+
         DSF::Var::TableDataTransfer msg;
         roaring::Roaring64Map roar;
         msg.varData().reserve(members->size());
 
+        uint32_t offset = 0;
         for (const auto &info : *members) {
             if (info.dataSize == 0)
                 continue;
 
-            std::vector<uint8_t> buf(info.dataSize);
-            if (!varStore_.read(info.varId, buf.data())) {
+            auto handle = varStore_.read_zero_copy(info.varId);
+            if (!handle)
                 continue;
-            }
+
+            std::memcpy(flatBuf->data() + offset, handle.ptr(), info.dataSize);
             roar.add(info.varHash);
-            msg.varData().emplace_back(std::move(buf));
+            msg.varData().push_back(
+                std::vector<uint8_t>(flatBuf->data() + offset,
+                                     flatBuf->data() + offset + info.dataSize));
+            offset += info.dataSize;
         }
 
         if (msg.varData().empty()) {
@@ -786,6 +816,31 @@ namespace ondemand
     {
         varStore_.write(varId, data, static_cast<uint32_t>(size));
     }
+
+    void OnDemandPub::setVarDataBatch(const VarWriteItem *items, size_t count)
+    {
+        constexpr size_t kStackMax = 256;
+        auto run = [&](uint32_t *ids, const void **datas, uint32_t *sizes) {
+            for (size_t i = 0; i < count; ++i) {
+                ids[i]   = items[i].id;
+                datas[i] = items[i].data;
+                sizes[i] = static_cast<uint32_t>(items[i].size);
+            }
+            varStore_.write_batch(ids, datas, sizes, count);
+        };
+        if (count <= kStackMax) {
+            uint32_t    ids[kStackMax];
+            const void *datas[kStackMax];
+            uint32_t    sizes[kStackMax];
+            run(ids, datas, sizes);
+        } else {
+            std::vector<uint32_t>    ids(count);
+            std::vector<const void*> datas(count);
+            std::vector<uint32_t>    sizes(count);
+            run(ids.data(), datas.data(), sizes.data());
+        }
+    }
+
 
     /**
      * @brief 获取或分配订阅者节点的位图位置，支持最多 256 个订阅者

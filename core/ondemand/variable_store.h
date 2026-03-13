@@ -1,12 +1,12 @@
 /**
  * @file variable_store.h
- * @brief 
+ * @brief
  * @author wwk (1162431386@qq.com)
  * @version 1.0
  * @date 2026-03-05
- * 
+ *
  * @copyright Copyright (c) 2026  by  wwk : wwk.lobmo@gmail.com
- * 
+ *
  * @par 修改日志:
  * <table>
  * <tr><th>Date       <th>Version <th>Author  <th>Description
@@ -42,9 +42,19 @@ namespace ondemand
         uint32_t size;
     };
 
+    /**
+     * @brief 双缓冲 Slot
+     *
+     * 内存布局（arena 内）:
+     *   [seq(4B) + committed(1B) + pad(59B)] [buf0: size B] [buf1: size B]
+     *
+     * 写端始终写 1-committed 的那份，写完后原子翻转 committed。
+     * 读端读 committed 指向的那份，用 seqlock 验证读取期间无翻转。
+     */
     struct alignas(64) Slot {
-        std::atomic<uint32_t> seq{0};
-        std::byte data[];
+        std::atomic<uint32_t> seq{0};       // seqlock 计数器，奇数=写入中
+        std::atomic<uint8_t>  committed{0}; // 当前可读缓冲区索引 (0 或 1)
+        std::byte data[];                   // [buf0: size B][buf1: size B]
     };
 
     class VarStore
@@ -61,7 +71,6 @@ namespace ondemand
         {
             ConfigGuard g(this);
             auto it = table_.find(hash);
-            /*防止重复创建*/
             if (it != table_.end())
                 return (it->second < metas_.size() && metas_[it->second].size == size) ? it->second
                                                                                        : kInvalidId;
@@ -107,10 +116,10 @@ namespace ondemand
             arena_size_ = align64(arena_size_);
             uint32_t old_size = var_count_
                                     ? metas_[var_count_ - 1].offset
-                                          + align64(sizeof(Slot) + metas_[var_count_ - 1].size)  /*偏移 + 头 + 真实长度*/
+                                          + align64(sizeof(Slot) + 2 * metas_[var_count_ - 1].size)
                                     : 0;
 
-            void *new_arena = std::aligned_alloc(64, arena_size_); /*申请总长*/
+            void *new_arena = std::aligned_alloc(64, arena_size_);
             if (!new_arena)
                 return false;
 
@@ -121,7 +130,6 @@ namespace ondemand
                 std::memset((std::byte *)new_arena + old_size, 0, arena_size_ - old_size);
             std::free(arena_);
             arena_ = (std::byte *)new_arena;
-
 
             auto *new_flags = new (std::nothrow) std::atomic<bool>[new_count];
             if (!new_flags)
@@ -139,18 +147,22 @@ namespace ondemand
             return true;
         }
 
+        // ---- 写接口 ----
+
         bool write(uint32_t id, const void *src)
         {
             OpGuard g(this);
             if (!arena_ || !dirty_flags_ || id >= var_count_)
                 return false;
             auto *slot = (Slot *)(arena_ + metas_[id].offset);
+            uint32_t size = metas_[id].size;
 
             slot->seq.fetch_add(1, std::memory_order_acquire);
-            std::memcpy(slot->data, src, metas_[id].size);
+            uint8_t write_idx = 1u - slot->committed.load(std::memory_order_relaxed);
+            std::memcpy(slot->data + write_idx * size, src, size);
+            slot->committed.store(write_idx, std::memory_order_release);
             slot->seq.fetch_add(1, std::memory_order_release);
 
-            /*脏队列标志，每次读取端拿掉数据才会进队列*/
             if (!dirty_flags_[id].exchange(true, std::memory_order_acq_rel))
                 dirty_queue_.enqueue(id);
             return true;
@@ -161,14 +173,15 @@ namespace ondemand
             OpGuard g(this);
             if (!arena_ || !dirty_flags_ || id >= var_count_ || metas_[id].size == 0)
                 return false;
-
             if (actual_size > metas_[id].size)
                 return false;
-
             auto *slot = (Slot *)(arena_ + metas_[id].offset);
+            uint32_t size = metas_[id].size;
 
             slot->seq.fetch_add(1, std::memory_order_acquire);
-            std::memcpy(slot->data, src, actual_size); // ← 使用实际大小
+            uint8_t write_idx = 1u - slot->committed.load(std::memory_order_relaxed);
+            std::memcpy(slot->data + write_idx * size, src, actual_size);
+            slot->committed.store(write_idx, std::memory_order_release);
             slot->seq.fetch_add(1, std::memory_order_release);
 
             if (!dirty_flags_[id].exchange(true, std::memory_order_acq_rel))
@@ -176,52 +189,107 @@ namespace ondemand
             return true;
         }
 
+        /**
+         * @brief 批量写，一次 op_enter 覆盖所有变量，热路径首选
+         * @param ids   变量 id 数组
+         * @param datas 对应数据指针数组
+         * @param sizes 对应数据大小数组
+         * @param count 数量
+         */
+        void write_batch(const uint32_t *ids, const void *const *datas,
+                         const uint32_t *sizes, size_t count)
+        {
+            OpGuard g(this);
+            if (!arena_ || !dirty_flags_) return;
+            for (size_t i = 0; i < count; ++i) {
+                uint32_t id = ids[i];
+                if (id >= var_count_ || metas_[id].size == 0) continue;
+                auto *slot = (Slot *)(arena_ + metas_[id].offset);
+                uint32_t size = metas_[id].size;
+                uint32_t actual = sizes[i] <= size ? sizes[i] : size;
+
+                slot->seq.fetch_add(1, std::memory_order_acquire);
+                uint8_t write_idx = 1u - slot->committed.load(std::memory_order_relaxed);
+                std::memcpy(slot->data + write_idx * size, datas[i], actual);
+                slot->committed.store(write_idx, std::memory_order_release);
+                slot->seq.fetch_add(1, std::memory_order_release);
+
+                if (!dirty_flags_[id].exchange(true, std::memory_order_acq_rel))
+                    dirty_queue_.enqueue(id);
+            }
+        }
+
+        // ---- 读接口 ----
+
+        /**
+         * @brief 带 memcpy 的安全读（兼容旧接口）
+         */
         bool read(uint32_t id, void *dst) const
         {
             OpGuard g(this);
             if (!arena_ || id >= var_count_)
                 return false;
             auto *slot = (const Slot *)(arena_ + metas_[id].offset);
-            /*单写双读*/
+            uint32_t size = metas_[id].size;
             for (int retry = 0; retry < 10; ++retry) {
                 uint32_t s1 = slot->seq.load(std::memory_order_acquire);
-                if (s1 & 1)
-                    continue;
-                std::memcpy(dst, slot->data, metas_[id].size);
+                if (s1 & 1) continue;
+                uint8_t idx = slot->committed.load(std::memory_order_acquire);
+                std::memcpy(dst, slot->data + idx * size, size);
                 if (s1 == slot->seq.load(std::memory_order_acquire))
                     return true;
             }
             return false;
         }
 
-        class ScopedPtr
+        /**
+         * @brief 零拷贝读句柄
+         *
+         * 构造时验证 seqlock，成功后持有 op_enter() 防止 arena 重分配。
+         * ptr() 直接指向 arena 内 committed 缓冲区，无 memcpy。
+         * 析构时释放 op_exit()。
+         */
+        class ZeroCopyReadHandle
         {
-            const VarStore *s_;
-            const void *ptr_;
+            const VarStore  *s_;
+            const std::byte *ptr_;
+            uint32_t         size_;
 
         public:
-            ScopedPtr(const VarStore *s, uint32_t id) : s_(s), ptr_(nullptr)
+            ZeroCopyReadHandle(const VarStore *s, uint32_t id) : s_(s), ptr_(nullptr), size_(0)
             {
-                if (!s_)
-                    return;
+                if (!s_) return;
                 s_->op_enter();
-                if (s_->arena_ && id < s_->var_count_) {
-                    auto *slot = (const Slot *)(s_->arena_ + s_->metas_[id].offset);
-                    ptr_ = slot->data;
+                if (!s_->arena_ || id >= s_->var_count_) return;
+
+                auto *slot = (const Slot *)(s_->arena_ + s_->metas_[id].offset);
+                uint32_t size = s_->metas_[id].size;
+
+                for (int retry = 0; retry < 10; ++retry) {
+                    uint32_t s1 = slot->seq.load(std::memory_order_acquire);
+                    if (s1 & 1) continue;
+                    uint8_t idx = slot->committed.load(std::memory_order_acquire);
+                    std::atomic_thread_fence(std::memory_order_acquire);
+                    if (s1 == slot->seq.load(std::memory_order_acquire)) {
+                        ptr_  = slot->data + idx * size;
+                        size_ = size;
+                        return;
+                    }
                 }
             }
-            ~ScopedPtr()
-            {
-                if (s_)
-                    s_->op_exit();
-            }
-            ScopedPtr(ScopedPtr &&o) noexcept : s_(o.s_), ptr_(o.ptr_) { o.s_ = nullptr; }
-            ScopedPtr(const ScopedPtr &) = delete;
-            const void *get() const { return ptr_; }
-            explicit operator bool() const { return ptr_; }
+
+            ~ZeroCopyReadHandle() { if (s_) s_->op_exit(); }
+
+            ZeroCopyReadHandle(ZeroCopyReadHandle &&o) noexcept
+                : s_(o.s_), ptr_(o.ptr_), size_(o.size_) { o.s_ = nullptr; }
+            ZeroCopyReadHandle(const ZeroCopyReadHandle &) = delete;
+
+            const std::byte *ptr()  const { return ptr_; }
+            uint32_t         size() const { return size_; }
+            explicit operator bool() const { return ptr_ != nullptr; }
         };
 
-        ScopedPtr read_ptr(uint32_t id) const { return {this, id}; }
+        ZeroCopyReadHandle read_zero_copy(uint32_t id) const { return {this, id}; }
 
         template <typename Fn>
         void for_each_dirty(Fn &&fn, size_t batch = 1000)
@@ -271,11 +339,8 @@ namespace ondemand
 
         void config_begin()
         {
-            /*该锁是为了防止多线程同时配置或者扩容等操作*/
             config_mu_.lock();
-            /*原子变量通知其他线程当前配置状态*/
             reconfig_.store(true, std::memory_order_release);
-            /*正在读写操作时，让出cpu*/
             while (active_ops_.load(std::memory_order_acquire))
                 std::this_thread::yield();
         }

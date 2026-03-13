@@ -99,6 +99,19 @@ namespace ondemand
          */
         void setVarData(uint32_t varId, const void *data, size_t size);
 
+        struct VarWriteItem {
+            uint32_t    id;
+            const void *data;
+            size_t      size;
+        };
+
+        /**
+         * @brief 批量写入，一次调用覆盖多个变量，热路径首选
+         * @param  items  VarWriteItem 数组，每项包含 id/data/size
+         * @param  count  数量
+         */
+        void setVarDataBatch(const VarWriteItem *items, size_t count);
+
         /**
          * @brief 设置该发布节点的数据序列化类型，影响所有变量的发布，默认 STRUCTS
          * @param  blobType 序列化类型
@@ -305,6 +318,10 @@ namespace ondemand
         std::unordered_map<PublishGroupKey, std::shared_ptr<std::vector<GroupVarInfo>>,
                            PublishGroupKeyHash>
             groupMembers_;
+            
+        std::unordered_map<PublishGroupKey, std::vector<uint8_t>,
+                           PublishGroupKeyHash>
+            groupFlatBufs_; // 预分配 flat buffer，避免 per-var 堆分配
         std::thread publishSchedulerThread_;
         std::atomic<bool> schedulerDirty_{true}; // varIndex_ 变更标记
     };
