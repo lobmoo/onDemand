@@ -324,11 +324,15 @@ namespace ondemand
                     if (varStore_.write(varId, blob.data(), blob.size())) {
                         /*更新写入时间戳、计数和 blobType, 供回调侧检测时效*/
                         if (static_cast<uint32_t>(varId) < varWriteStampCount_) {
-                            uint64_t pubTsNs = static_cast<uint64_t>(timeStamp.tv_sec()) * 1000000000ULL
-                                             + timeStamp.tv_nsec();
-                            varWriteStamps_[varId].timestampNs.store(pubTsNs, std::memory_order_release);
-                            varWriteStamps_[varId].blobType.store(static_cast<uint32_t>(blobType), std::memory_order_release);
-                            varWriteStamps_[varId].writeCount.fetch_add(1, std::memory_order_release);
+                            uint64_t pubTsNs =
+                                static_cast<uint64_t>(timeStamp.tv_sec()) * 1000000000ULL
+                                + timeStamp.tv_nsec();
+                            varWriteStamps_[varId].timestampNs.store(pubTsNs,
+                                                                     std::memory_order_release);
+                            varWriteStamps_[varId].blobType.store(static_cast<uint32_t>(blobType),
+                                                                  std::memory_order_release);
+                            varWriteStamps_[varId].writeCount.fetch_add(1,
+                                                                        std::memory_order_release);
                         }
                         ++written;
                     } else {
@@ -432,9 +436,9 @@ namespace ondemand
                         }
                     }
                     if (hasNewBucket) {
-                        createDataTransferReader(std::bind(
-                            &OnDemandSub::onReceiveDataTransferCb, this, std::placeholders::_1,
-                            std::placeholders::_2)); 
+                        createDataTransferReader(std::bind(&OnDemandSub::onReceiveDataTransferCb,
+                                                           this, std::placeholders::_1,
+                                                           std::placeholders::_2));
                     }
                 }
             } else {
@@ -558,7 +562,7 @@ namespace ondemand
                 auto it = varIndex_.find(varHash);
                 tableName = make_bucket_name_by_hash(varHash);
                 if (it == varIndex_.end()) {
-                   // ONDEMANDLOG(warning) << "Variable not found for subscription: " << item.varName;
+                    // ONDEMANDLOG(warning) << "Variable not found for subscription: " << item.varName;
                     // continue;  这里考虑到有可能订阅请求先于变量定义到达，所以不直接跳过
                 }
 
@@ -800,7 +804,8 @@ namespace ondemand
 
         /* 预分配 flat buffer, 避免逐变量分配 */
         size_t totalBufSize = 0;
-        for (const auto &info : *members) totalBufSize += info.dataSize;
+        for (const auto &info : *members)
+            totalBufSize += info.dataSize;
         std::vector<uint8_t> dataBuf(totalBufSize);
         size_t offset = 0;
 
@@ -809,36 +814,41 @@ namespace ondemand
         batch.reserve(members->size());
 
         for (auto &info : *members) {
-            if (info.dataSize == 0 || !info.callback) continue;
+            if (info.dataSize == 0 || !info.callback)
+                continue;
 
             /* 检测数据时效 */
             uint32_t curWriteCount = 0;
             uint64_t tsNs = 0;
             DSF::Var::BLOB_TYPE blobType = DSF::Var::BLOB_TYPE::UNKNOWN;
             if (static_cast<uint32_t>(info.varId) < varWriteStampCount_) {
-                curWriteCount = varWriteStamps_[info.varId].writeCount.load(std::memory_order_acquire);
-                if (curWriteCount == info.lastSeenWriteCount) continue;
+                curWriteCount =
+                    varWriteStamps_[info.varId].writeCount.load(std::memory_order_acquire);
+                if (curWriteCount == info.lastSeenWriteCount)
+                    continue;
                 tsNs = varWriteStamps_[info.varId].timestampNs.load(std::memory_order_acquire);
                 blobType = static_cast<DSF::Var::BLOB_TYPE>(
                     varWriteStamps_[info.varId].blobType.load(std::memory_order_acquire));
             }
 
             uint8_t *ptr = dataBuf.data() + offset;
-            if (!varStore_.read(info.varId, ptr)) continue;
+            if (!varStore_.read(info.varId, ptr))
+                continue;
 
             info.lastSeenWriteCount = curWriteCount;
-            if (!groupCallback) groupCallback = &info.callback;
+            if (!groupCallback)
+                groupCallback = &info.callback;
             batch.push_back({info.varName, ptr, info.dataSize, tsNs, blobType});
             offset += info.dataSize;
         }
 
-        if (batch.empty() || !groupCallback) return;
+        if (batch.empty() || !groupCallback)
+            return;
         try {
             (*groupCallback)(batch);
         } catch (const std::exception &e) {
-            ONDEMANDLOG_TIME(error, 5000)
-                << "Batch callback exception for freq=" << freqMs
-                << "ms, vars=" << batch.size() << " err: " << e.what();
+            ONDEMANDLOG_TIME(error, 5000) << "Batch callback exception for freq=" << freqMs
+                                          << "ms, vars=" << batch.size() << " err: " << e.what();
         }
     }
 
