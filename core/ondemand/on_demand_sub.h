@@ -209,9 +209,10 @@ namespace ondemand
             uint64_t varHash;
             int32_t varId;
             uint32_t dataSize;
+            uint32_t bucketIndex;
             std::string varName;
             DataCallback callback;
-            uint32_t lastSeenWriteCount{0}; // 上次回调时的写入计数
+            uint32_t lastSeenWriteCount{0}; // 上次回调时对应 bucket 的写入计数
         };
 
         /**
@@ -274,14 +275,13 @@ namespace ondemand
 
         VarStore varStore_; // 变量值存储
 
-        /*写入时间戳/计数，用于回调侧检测数据时效 (lock-free, 单写多读)*/
+        /*写入时间戳/计数，按 bucket 粒度跟踪 (lock-free, 单写多读)*/
         struct VarWriteStamp {
             std::atomic<uint64_t> timestampNs{0};
             std::atomic<uint32_t> writeCount{0};
             std::atomic<uint32_t> blobType{static_cast<uint32_t>(DSF::Var::BLOB_TYPE::UNKNOWN)};
         };
-        std::unique_ptr<VarWriteStamp[]> varWriteStamps_;
-        uint32_t varWriteStampCount_{0};
+        VarWriteStamp varWriteStamps_[ONDEMAND_BUCKET_SIZE];
 
         
         /*订阅回调存储: varHash -> 回调信息*/
@@ -294,8 +294,11 @@ namespace ondemand
         std::unordered_map<CallbackGroupKey, std::shared_ptr<TimerEventInterface>,
                            CallbackGroupKeyHash>
             callbackGroupTimers_;
-        std::unordered_map<CallbackGroupKey, std::shared_ptr<std::vector<CallbackVarInfo>>,
-                           CallbackGroupKeyHash>
+        struct CallbackGroupEntry {
+            std::shared_ptr<std::vector<CallbackVarInfo>> members;
+            std::shared_ptr<std::atomic<bool>> running{std::make_shared<std::atomic<bool>>(false)};
+        };
+        std::unordered_map<CallbackGroupKey, CallbackGroupEntry, CallbackGroupKeyHash>
             callbackGroupMembers_;
         std::thread callbackSchedulerThread_;
         std::atomic<bool> callbackDirty_{false};

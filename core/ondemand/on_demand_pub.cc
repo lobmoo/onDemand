@@ -455,23 +455,25 @@ namespace ondemand
 
                 /*遍历所有的点，保存全局副本，然后找一下有没有该周期的时间轮，没有的话，就创建一个，有的话也不用管*/
                 for (auto &[key, members] : desired) {
-                    // 始终刷新成员列表
-                    groupMembers_[key] = std::move(members);
+                    // 始终刷新成员列表，保留已有的 running flag
+                    groupMembers_[key].members = std::move(members);
 
                     // 仅为新增分组创建定时器，已有分组的定时器保持不变
                     if (publishGroupTimers_.find(key) == publishGroupTimers_.end()) {
                         uint32_t bucketIdx = key.bucketIndex;
                         uint32_t freqMs = key.freqMs;
                         Tick intervalTicks = static_cast<Tick>(freqMs);
+                        // 按 bucket 错开初始延迟，避免 20 个 bucket 同时触发挤爆线程池
+                        Tick jitter = static_cast<Tick>(bucketIdx * (freqMs / ONDEMAND_BUCKET_SIZE));
                         auto timer = publishScheduler_->ScheduleRecurring(
                             [this, bucketIdx, freqMs]() { publishGroupData(bucketIdx, freqMs); },
-                            intervalTicks, // 首次延迟
-                            intervalTicks  // 周期
+                            intervalTicks + jitter, // 首次延迟错开
+                            intervalTicks           // 周期
                         );
                         publishGroupTimers_[key] = timer;
                         ONDEMANDLOG(debug)
                             << "Created publish group: bucket=" << bucketIdx << " freq=" << freqMs
-                            << "ms, members=" << groupMembers_[key]->size();
+                            << "ms, members=" << groupMembers_[key].members->size();
                     }
                 }
             }
@@ -495,17 +497,28 @@ namespace ondemand
     {
         std::string threadName = "PubCb" + std::to_string(freqMs) + "ms";
         pthread_setname_np(pthread_self(), threadName.c_str());
-        // 获取组成员快照 (已按 varHash 升序预排序)
+        // 获取组成员快照 + running flag
         std::shared_ptr<std::vector<GroupVarInfo>> members;
+        std::shared_ptr<std::atomic<bool>> running;
         {
             std::lock_guard<std::mutex> lock(publishGroupsMutex_);
             PublishGroupKey key{bucketIndex, freqMs};
             auto it = groupMembers_.find(key);
-            if (it == groupMembers_.end() || !it->second || it->second->empty()) {
+            if (it == groupMembers_.end() || !it->second.members || it->second.members->empty()) {
                 return;
             }
-            members = it->second;
+            members = it->second.members;
+            running = it->second.running;
         }
+
+        /* 防止并发执行：上次还没发完则跳过本次 */
+        if (!running || running->exchange(true, std::memory_order_acq_rel)) {
+            return;
+        }
+        struct RunningGuard {
+            std::atomic<bool> &flag;
+            ~RunningGuard() { flag.store(false, std::memory_order_release); }
+        } guard{*running};
 
         // 计算 flat buffer 总大小
         uint32_t totalSize = 0;

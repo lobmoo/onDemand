@@ -277,7 +277,7 @@ inline void TimerScheduler::TimerLoop()
                 std::lock_guard<std::mutex> lock(mutex_);
 
                 // 限制每次tick最多处理的定时器数量，避免阻塞过久
-                constexpr size_t kMaxExecutePerTick = 10;
+                constexpr size_t kMaxExecutePerTick = 20;
                 timer_wheel_.advance(1, kMaxExecutePerTick);
             }
 
@@ -339,15 +339,15 @@ inline void TimerScheduler::RecurringCallbackTimer::execute()
     }
 
     auto self = shared_from_this();
-    
-    // 执行回调并重新调度（原子操作，避免中间被取消导致不一致）
-    scheduler_.Post([callback = callback_, &is_canceled = is_canceled_, self]() {
-        if (!is_canceled.load(std::memory_order_acquire)) {
-            callback();
-        }
-        // 执行完后重新调度下一次（无论回调是否执行）
+
+
+    scheduler_.Post([self, callback = callback_, &is_canceled = is_canceled_]() {
+        // 先重排，保证下一次触发时间不受本次回调耗时影响（fixed-rate 语义）
         if (!is_canceled.load(std::memory_order_acquire)) {
             self->scheduler_.RescheduleRecurring(self, self->interval_ticks_);
+        }
+        if (!is_canceled.load(std::memory_order_acquire)) {
+            callback();
         }
     });
 }

@@ -315,8 +315,11 @@ namespace ondemand
         std::unordered_map<PublishGroupKey, std::shared_ptr<TimerEventInterface>,
                            PublishGroupKeyHash>
             publishGroupTimers_;
-        std::unordered_map<PublishGroupKey, std::shared_ptr<std::vector<GroupVarInfo>>,
-                           PublishGroupKeyHash>
+        struct PublishGroupEntry {
+            std::shared_ptr<std::vector<GroupVarInfo>> members;
+            std::shared_ptr<std::atomic<bool>> running{std::make_shared<std::atomic<bool>>(false)};
+        };
+        std::unordered_map<PublishGroupKey, PublishGroupEntry, PublishGroupKeyHash>
             groupMembers_;
             
         std::unordered_map<PublishGroupKey, std::vector<uint8_t>,

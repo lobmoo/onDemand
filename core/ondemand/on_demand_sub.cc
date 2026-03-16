@@ -31,7 +31,7 @@ namespace ondemand
     OnDemandSub::OnDemandSub()
         : nodeName_(), dataNode_(nullptr), pubTableDefineReader_(nullptr),
           subTableRegisterReqWriter_(nullptr), initialized_(false), running_(false),
-          totalReceived_(0)
+          totalReceived_(0), varWriteStamps_{}
     {
     }
 
@@ -293,6 +293,7 @@ namespace ondemand
             // 2. 迭代 Roaring64Map (升序), varData[i] 与第 i 个 hash 一一对应
             size_t idx = 0;
             size_t written = 0;
+            size_t bucketIdx = SIZE_MAX;
             {
                 std::shared_lock lock(varIndexMutex_);
                 for (auto it = roar.begin(); it != roar.end() && idx < varDataList.size();
@@ -305,41 +306,37 @@ namespace ondemand
                         continue;
                     }
 
-                    /*查找本地 varId*/
                     auto vit = varIndex_.find(varHash);
                     if (vit == varIndex_.end()) {
                         ONDEMANDLOG(warning)
                             << "Received data for unknown varHash: " << varHash << ", skipping.";
-                        continue; // 本节点未订阅该变量, 跳过
-                    }
-
-                    int32_t varId = vit->second.varId;
-                    if (varId < 0) {
-                        ONDEMANDLOG(warning)
-                            << "Invalid varId for varHash: " << varHash << ", skipping.";
                         continue;
                     }
 
-                    /*写入 varStore*/
+                    int32_t varId = vit->second.varId;
+                    if (varId < 0)
+                        continue;
+
+                    if (bucketIdx == SIZE_MAX)
+                        bucketIdx = vit->second.bucketIndex;
+
                     if (varStore_.write(varId, blob.data(), blob.size())) {
-                        /*更新写入时间戳、计数和 blobType, 供回调侧检测时效*/
-                        if (static_cast<uint32_t>(varId) < varWriteStampCount_) {
-                            uint64_t pubTsNs =
-                                static_cast<uint64_t>(timeStamp.tv_sec()) * 1000000000ULL
-                                + timeStamp.tv_nsec();
-                            varWriteStamps_[varId].timestampNs.store(pubTsNs,
-                                                                     std::memory_order_release);
-                            varWriteStamps_[varId].blobType.store(static_cast<uint32_t>(blobType),
-                                                                  std::memory_order_release);
-                            varWriteStamps_[varId].writeCount.fetch_add(1,
-                                                                        std::memory_order_release);
-                        }
                         ++written;
                     } else {
                         ONDEMANDLOG_TIME(error, 5)
                             << "Failed to write varId: " << varId << " for varHash: " << varHash;
                     }
                 }
+            }
+
+            /*整张表写完后统一更新 bucket stamp，避免定时器读到半张表*/
+            if (written > 0 && bucketIdx < ONDEMAND_BUCKET_SIZE) {
+                uint64_t pubTsNs =
+                    static_cast<uint64_t>(timeStamp.tv_sec()) * 1000000000ULL + timeStamp.tv_nsec();
+                varWriteStamps_[bucketIdx].timestampNs.store(pubTsNs, std::memory_order_release);
+                varWriteStamps_[bucketIdx].blobType.store(static_cast<uint32_t>(blobType),
+                                                          std::memory_order_release);
+                varWriteStamps_[bucketIdx].writeCount.fetch_add(1, std::memory_order_release);
             }
         }
     }
@@ -404,24 +401,6 @@ namespace ondemand
                     /*初始化内存: register_var 只写元数据，必须 finalize 才分配 arena/dirty_flags*/
                     if (!varStore_.finalize()) {
                         ONDEMANDLOG(error) << "Failed to finalize VarStore after TableDefine";
-                    }
-
-                    /*同步扩容写入时间戳数组  暂时用一个单独数据记录时间戳，为了检测变化*/
-                    {
-                        uint32_t newCount = varStore_.var_count();
-                        if (newCount > varWriteStampCount_) {
-                            auto newStamps = std::make_unique<VarWriteStamp[]>(newCount);
-                            for (uint32_t i = 0; i < varWriteStampCount_; ++i) {
-                                newStamps[i].timestampNs.store(
-                                    varWriteStamps_[i].timestampNs.load(std::memory_order_relaxed),
-                                    std::memory_order_relaxed);
-                                newStamps[i].writeCount.store(
-                                    varWriteStamps_[i].writeCount.load(std::memory_order_relaxed),
-                                    std::memory_order_relaxed);
-                            }
-                            varWriteStamps_ = std::move(newStamps);
-                            varWriteStampCount_ = newCount;
-                        }
                     }
 
                     /*统一检查是否有新 bucket 需要创建 reader，避免循环内逐次加锁*/
@@ -529,7 +508,10 @@ namespace ondemand
             subscriptionCallbacks_.clear();
         }
 
-        varWriteStamps_.reset();
+        for (auto &s : varWriteStamps_) {
+            s.writeCount.store(0);
+            s.timestampNs.store(0);
+        }
         ONDEMANDLOG(info) << "OnDemandSub stopped";
     }
 
@@ -734,6 +716,7 @@ namespace ondemand
                     vi.varHash = varHash;
                     vi.varId = varId;
                     vi.dataSize = vit->second.dataSize;
+                    vi.bucketIndex = static_cast<uint32_t>(vit->second.bucketIndex);
                     vi.varName = cbInfo.varName;
                     vi.callback = cbInfo.callback;
                     vec->push_back(std::move(vi));
@@ -761,11 +744,16 @@ namespace ondemand
 
                 /* 新增或更新分组 */
                 for (auto &[key, members] : desired) {
-                    /* 始终刷新成员列表 */
-                    callbackGroupMembers_[key] = std::move(members);
+                    /* 始终刷新成员列表，保留已有的 running flag */
+                    callbackGroupMembers_[key].members = std::move(members);
 
                     /* 仅为新增分组创建定时器，已有分组的定时器保持不变 */
                     if (callbackGroupTimers_.find(key) == callbackGroupTimers_.end()) {
+                        /* 确保新分组有 running flag */
+                        if (!callbackGroupMembers_[key].running) {
+                            callbackGroupMembers_[key].running =
+                                std::make_shared<std::atomic<bool>>(false);
+                        }
                         uint32_t freqMs = key.freqMs;
                         Tick intervalTicks = static_cast<Tick>(freqMs);
                         auto timer = callbackScheduler_->ScheduleRecurring(
@@ -774,8 +762,9 @@ namespace ondemand
                             intervalTicks  /* 周期 */
                         );
                         callbackGroupTimers_[key] = timer;
-                        ONDEMANDLOG(debug) << "Created callback group: freq=" << freqMs
-                                           << "ms, members=" << callbackGroupMembers_[key]->size();
+                        ONDEMANDLOG(debug)
+                            << "Created callback group: freq=" << freqMs
+                            << "ms, members=" << callbackGroupMembers_[key].members->size();
                     }
                 }
             }
@@ -790,17 +779,31 @@ namespace ondemand
      */
     void OnDemandSub::callbackGroupData(uint32_t freqMs)
     {
-        /* 获取组成员快照 */
+
+        /* 获取组成员快照 + running flag */
         std::shared_ptr<std::vector<CallbackVarInfo>> members;
+        std::shared_ptr<std::atomic<bool>> running;
         {
             std::lock_guard<std::mutex> lock(callbackGroupsMutex_);
             CallbackGroupKey key{freqMs};
             auto it = callbackGroupMembers_.find(key);
-            if (it == callbackGroupMembers_.end() || !it->second || it->second->empty()) {
+            if (it == callbackGroupMembers_.end() || !it->second.members
+                || it->second.members->empty()) {
                 return;
             }
-            members = it->second;
+            members = it->second.members;
+            running = it->second.running;
         }
+
+        /* 防止并发执行：上次还没执行完则跳过本次 */
+        if (!running || running->exchange(true, std::memory_order_acq_rel)) {
+            return;
+        }
+        /* RAII 确保退出时清除 running flag */
+        struct RunningGuard {
+            std::atomic<bool> &flag;
+            ~RunningGuard() { flag.store(false, std::memory_order_release); }
+        } guard{*running};
 
         /* 预分配 flat buffer, 避免逐变量分配 */
         size_t totalBufSize = 0;
@@ -817,23 +820,26 @@ namespace ondemand
             if (info.dataSize == 0 || !info.callback)
                 continue;
 
-            /* 检测数据时效 */
+            /* 检测数据时效：按 bucket 粒度，整张表写完后才更新 writeCount */
             uint32_t curWriteCount = 0;
             uint64_t tsNs = 0;
             DSF::Var::BLOB_TYPE blobType = DSF::Var::BLOB_TYPE::UNKNOWN;
-            if (static_cast<uint32_t>(info.varId) < varWriteStampCount_) {
+            if (info.bucketIndex < ONDEMAND_BUCKET_SIZE) {
                 curWriteCount =
-                    varWriteStamps_[info.varId].writeCount.load(std::memory_order_acquire);
+                    varWriteStamps_[info.bucketIndex].writeCount.load(std::memory_order_acquire);
                 if (curWriteCount == info.lastSeenWriteCount)
                     continue;
-                tsNs = varWriteStamps_[info.varId].timestampNs.load(std::memory_order_acquire);
+                tsNs =
+                    varWriteStamps_[info.bucketIndex].timestampNs.load(std::memory_order_acquire);
                 blobType = static_cast<DSF::Var::BLOB_TYPE>(
-                    varWriteStamps_[info.varId].blobType.load(std::memory_order_acquire));
+                    varWriteStamps_[info.bucketIndex].blobType.load(std::memory_order_acquire));
             }
 
             uint8_t *ptr = dataBuf.data() + offset;
-            if (!varStore_.read(info.varId, ptr))
+            if (!varStore_.read(info.varId, ptr)) {
+                ONDEMANDLOG(error) << "Failed to read varId: " << info.varId << " for callback, varName: " << info.varName;
                 continue;
+            }
 
             info.lastSeenWriteCount = curWriteCount;
             if (!groupCallback)
@@ -850,6 +856,7 @@ namespace ondemand
             ONDEMANDLOG_TIME(error, 5000) << "Batch callback exception for freq=" << freqMs
                                           << "ms, vars=" << batch.size() << " err: " << e.what();
         }
+
     }
 
     /**
