@@ -707,7 +707,8 @@ namespace ondemand
                         continue;
                     }
 
-                    CallbackGroupKey key{cbInfo.freqMs};
+                    CallbackGroupKey key{static_cast<uint32_t>(vit->second.bucketIndex),
+                                         cbInfo.freqMs};
                     auto &vec = desired[key];
                     if (!vec) {
                         vec = std::make_shared<std::vector<CallbackVarInfo>>();
@@ -754,16 +755,19 @@ namespace ondemand
                             callbackGroupMembers_[key].running =
                                 std::make_shared<std::atomic<bool>>(false);
                         }
+                        uint32_t bucketIdx = key.bucketIndex;
                         uint32_t freqMs = key.freqMs;
                         Tick intervalTicks = static_cast<Tick>(freqMs);
+                        /* jitter 与 pub 一致，确保 sub 在 pub 发完该 bucket 后触发 */
+                        Tick jitter = static_cast<Tick>(bucketIdx * (freqMs / ONDEMAND_BUCKET_SIZE));
                         auto timer = callbackScheduler_->ScheduleRecurring(
-                            [this, freqMs]() { callbackGroupData(freqMs); },
-                            intervalTicks, /* 首次延迟 */
-                            intervalTicks  /* 周期 */
+                            [this, bucketIdx, freqMs]() { callbackGroupData(bucketIdx, freqMs); },
+                            intervalTicks + jitter, /* 首次延迟，与 pub 对齐 */
+                            intervalTicks           /* 周期 */
                         );
                         callbackGroupTimers_[key] = timer;
                         ONDEMANDLOG(debug)
-                            << "Created callback group: freq=" << freqMs
+                            << "Created callback group: bucket=" << bucketIdx << " freq=" << freqMs
                             << "ms, members=" << callbackGroupMembers_[key].members->size();
                     }
                 }
@@ -775,9 +779,10 @@ namespace ondemand
 
     /**
      * @brief 回调分组数据: 读取 VarStore 并调用用户注册的 DataCallback
+     * @param bucketIndex bucket 索引
      * @param freqMs 回调频率 (ms), 用于定位分组
      */
-    void OnDemandSub::callbackGroupData(uint32_t freqMs)
+    void OnDemandSub::callbackGroupData(uint32_t bucketIndex, uint32_t freqMs)
     {
 
         /* 获取组成员快照 + running flag */
@@ -785,7 +790,7 @@ namespace ondemand
         std::shared_ptr<std::atomic<bool>> running;
         {
             std::lock_guard<std::mutex> lock(callbackGroupsMutex_);
-            CallbackGroupKey key{freqMs};
+            CallbackGroupKey key{bucketIndex, freqMs};
             auto it = callbackGroupMembers_.find(key);
             if (it == callbackGroupMembers_.end() || !it->second.members
                 || it->second.members->empty()) {
@@ -820,19 +825,12 @@ namespace ondemand
             if (info.dataSize == 0 || !info.callback)
                 continue;
 
-            /* 检测数据时效：按 bucket 粒度，整张表写完后才更新 writeCount */
-            uint32_t curWriteCount = 0;
             uint64_t tsNs = 0;
             DSF::Var::BLOB_TYPE blobType = DSF::Var::BLOB_TYPE::UNKNOWN;
-            if (info.bucketIndex < ONDEMAND_BUCKET_SIZE) {
-                curWriteCount =
-                    varWriteStamps_[info.bucketIndex].writeCount.load(std::memory_order_acquire);
-                if (curWriteCount == info.lastSeenWriteCount)
-                    continue;
-                tsNs =
-                    varWriteStamps_[info.bucketIndex].timestampNs.load(std::memory_order_acquire);
+            if (bucketIndex < ONDEMAND_BUCKET_SIZE) {
+                tsNs = varWriteStamps_[bucketIndex].timestampNs.load(std::memory_order_acquire);
                 blobType = static_cast<DSF::Var::BLOB_TYPE>(
-                    varWriteStamps_[info.bucketIndex].blobType.load(std::memory_order_acquire));
+                    varWriteStamps_[bucketIndex].blobType.load(std::memory_order_acquire));
             }
 
             uint8_t *ptr = dataBuf.data() + offset;
@@ -841,7 +839,6 @@ namespace ondemand
                 continue;
             }
 
-            info.lastSeenWriteCount = curWriteCount;
             if (!groupCallback)
                 groupCallback = &info.callback;
             batch.push_back({info.varName, ptr, info.dataSize, tsNs, blobType});

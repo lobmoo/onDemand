@@ -182,23 +182,26 @@ namespace ondemand
         void processDataTransfer();
 
         /**
-         * @brief 回调分组键 = freqMs
-         * 
-         * 相同频率的所有回调变量归为一组，
-         * 共享一个时间轮定时器，一次触发批量回调组内所有变量。
+         * @brief 回调分组键 = (bucketIndex, freqMs)，与 pub 端 PublishGroupKey 对齐
+         *
+         * 同一 bucket、同一频率的变量归为一组，共享一个时间轮定时器，
+         * jitter 与 pub 一致，确保 sub 回调在 pub 发完该 bucket 后触发。
          */
         struct CallbackGroupKey {
+            uint32_t bucketIndex;
             uint32_t freqMs;
             bool operator==(const CallbackGroupKey &o) const
             {
-                return freqMs == o.freqMs;
+                return bucketIndex == o.bucketIndex && freqMs == o.freqMs;
             }
         };
 
         struct CallbackGroupKeyHash {
             size_t operator()(const CallbackGroupKey &k) const
             {
-                return std::hash<uint32_t>{}(k.freqMs);
+                uint64_t combined =
+                    (static_cast<uint64_t>(k.bucketIndex) << 32) | static_cast<uint64_t>(k.freqMs);
+                return std::hash<uint64_t>{}(combined);
             }
         };
 
@@ -212,7 +215,6 @@ namespace ondemand
             uint32_t bucketIndex;
             std::string varName;
             DataCallback callback;
-            uint32_t lastSeenWriteCount{0}; // 上次回调时对应 bucket 的写入计数
         };
 
         /**
@@ -231,9 +233,10 @@ namespace ondemand
 
         /**
          * @brief 回调分组数据，读取 VarStore 并调用用户回调
+         * @param  bucketIndex bucket 索引
          * @param  freqMs 回调频率，单位毫秒
          */
-        void callbackGroupData(uint32_t freqMs);
+        void callbackGroupData(uint32_t bucketIndex, uint32_t freqMs);
 
         /**
          * @brief 取消所有回调定时器并清空分组
