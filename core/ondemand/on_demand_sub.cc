@@ -331,9 +331,10 @@ namespace ondemand
 
             /*整张表写完后统一更新 bucket stamp，避免定时器读到半张表*/
             if (written > 0 && bucketIdx < ONDEMAND_BUCKET_SIZE) {
-                uint64_t pubTsNs =
-                    static_cast<uint64_t>(timeStamp.tv_sec()) * 1000000000ULL + timeStamp.tv_nsec();
-                varWriteStamps_[bucketIdx].timestampNs.store(pubTsNs, std::memory_order_release);
+                struct timespec ts;
+                clock_gettime(CLOCK_REALTIME, &ts);
+                uint64_t recvTsNs = static_cast<uint64_t>(ts.tv_sec) * 1000000000ULL + ts.tv_nsec;
+                varWriteStamps_[bucketIdx].timestampNs.store(recvTsNs, std::memory_order_release);
                 varWriteStamps_[bucketIdx].blobType.store(static_cast<uint32_t>(blobType),
                                                           std::memory_order_release);
                 varWriteStamps_[bucketIdx].writeCount.fetch_add(1, std::memory_order_release);
@@ -758,11 +759,11 @@ namespace ondemand
                         uint32_t bucketIdx = key.bucketIndex;
                         uint32_t freqMs = key.freqMs;
                         Tick intervalTicks = static_cast<Tick>(freqMs);
-                        /* jitter 与 pub 一致，确保 sub 在 pub 发完该 bucket 后触发 */
-                        Tick jitter = static_cast<Tick>(bucketIdx * (freqMs / ONDEMAND_BUCKET_SIZE));
+                        /* jitter 与 pub 对齐，再加 5ms 确保 pub 已发完并写入 varStore */
+                        Tick jitter = static_cast<Tick>(bucketIdx * (freqMs / ONDEMAND_BUCKET_SIZE)) + 5;
                         auto timer = callbackScheduler_->ScheduleRecurring(
                             [this, bucketIdx, freqMs]() { callbackGroupData(bucketIdx, freqMs); },
-                            intervalTicks + jitter, /* 首次延迟，与 pub 对齐 */
+                            intervalTicks + jitter, /* 首次延迟，比 pub 晚 5ms */
                             intervalTicks           /* 周期 */
                         );
                         callbackGroupTimers_[key] = timer;

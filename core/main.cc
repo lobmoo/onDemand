@@ -8,12 +8,33 @@
 #include <unistd.h>
 #include <iomanip>
 #include <atomic>
+#include <charconv>
+#include <mutex>
+#include <string_view>
+#include <cstdlib>
 #include "log/logger.h"
 #include "ondemand/on_demand_pub.h"
 #include "ondemand/on_demand_sub.h"
 #include <fastdds/dds/log/Log.hpp>
 
 uint32_t count = 100000;
+
+static int parse_var_index(std::string_view varName)
+{
+    constexpr std::string_view kPrefix = "var";
+    if (varName.size() <= kPrefix.size() || varName.compare(0, kPrefix.size(), kPrefix) != 0) {
+        return -1;
+    }
+
+    int idx = -1;
+    const char *begin = varName.data() + kPrefix.size();
+    const char *end = varName.data() + varName.size();
+    auto [ptr, ec] = std::from_chars(begin, end, idx);
+    if (ec != std::errc() || ptr != end || idx < 0) {
+        return -1;
+    }
+    return idx;
+}
 void publish()
 {
     dsf::ondemand::OnDemandPub pub;
@@ -57,7 +78,7 @@ void publish()
 
     while (true) {
         pub.setVarDataBatch(batchItems.data(), count);
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
     }
 
     std::this_thread::sleep_for(std::chrono::seconds(100000));
@@ -73,35 +94,49 @@ void subscribe()
     while (sub.getTotalReceivedVars() < 5) {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
+
     std::vector<dsf::ondemand::SubscriptionItem> items;
     std::vector<std::string> unitems;
     const int subscribedCount = 100000;
+
+    /* 延迟/丢包统计参数 */
+    constexpr int64_t kPeriodMs = 200;      // 订阅周期 200ms
+    constexpr int64_t kPrintIntervalMs = 1000; // 打印间隔 1s
+    constexpr int64_t kBucketSize = 20;     // bucket 数量，与 ONDEMAND_BUCKET_SIZE 一致
+    constexpr uint64_t kExpectedBatch = (kPrintIntervalMs / kPeriodMs) * kBucketSize;
+
     for (int i = 0; i < subscribedCount; ++i) {
         std::string varName = "var" + std::to_string(i);
-        items.push_back({varName, 500});
+        items.push_back({varName, static_cast<uint32_t>(kPeriodMs)});
         unitems.push_back(varName);
     }
-  
-    /*延迟/丢包统计*/
-    constexpr int64_t kPeriodMs = 500;                                // 订阅周期 500ms
-    constexpr int64_t kPrintIntervalMs = 1000;                        // 打印间隔 1s
-    constexpr uint64_t kExpectedBatch = kPrintIntervalMs / kPeriodMs; // 期望批次数
+
     struct CallbackStats {
-        std::atomic<uint64_t> totalCount{0}; // 回调变量总数
-        std::atomic<uint64_t> batchCount{0}; // 回调批次数
+        std::atomic<uint64_t> totalCount{0};
+        std::atomic<uint64_t> batchCount{0};
         std::atomic<int64_t> latencySumMs{0};
         std::atomic<int64_t> latencyMaxMs{0};
+
+        std::mutex gapMutex;
+        std::vector<uint64_t> lastSeenRecvNs;
+        uint64_t gapSampleCount{0};
+        uint64_t gapOverrunCount{0}; // gap > 1.5x period
+        int64_t gapSumMs{0};
+        int64_t gapDevSumMs{0};
+        int64_t gapDevMaxMs{0};
+
+        explicit CallbackStats(size_t n) : lastSeenRecvNs(n, 0) {}
     };
-    auto stats = std::make_shared<CallbackStats>();
+    auto stats = std::make_shared<CallbackStats>(subscribedCount);
 
     sub.subscribe("pubNode", items,
-                  [stats](const std::vector<dsf::ondemand::VarCallbackData> &vars) {
+                  [stats, subscribedCount, kPeriodMs](const std::vector<dsf::ondemand::VarCallbackData> &vars) {
                       if (vars.empty())
                           return;
+
                       stats->totalCount.fetch_add(vars.size(), std::memory_order_relaxed);
                       stats->batchCount.fetch_add(1, std::memory_order_relaxed);
 
-                      /* 延迟: 当前时间 - pub 时间戳 */
                       int64_t ts = static_cast<int64_t>(vars[0].timestampNs);
                       struct timespec now;
                       clock_gettime(CLOCK_REALTIME, &now);
@@ -112,13 +147,43 @@ void subscribe()
                       int64_t curMax = stats->latencyMaxMs.load(std::memory_order_relaxed);
                       while (latencyMs > curMax) {
                           if (stats->latencyMaxMs.compare_exchange_weak(curMax, latencyMs,
-                                                                        std::memory_order_relaxed))
+                                                                        std::memory_order_relaxed)) {
                               break;
+                          }
+                      }
+
+                      const uint64_t recvNowNs = static_cast<uint64_t>(
+                          std::chrono::duration_cast<std::chrono::nanoseconds>(
+                              std::chrono::steady_clock::now().time_since_epoch())
+                              .count());
+                      std::lock_guard<std::mutex> lk(stats->gapMutex);
+                      for (const auto &v : vars) {
+                          int idx = parse_var_index(v.varName);
+                          if (idx < 0 || idx >= subscribedCount) {
+                              continue;
+                          }
+
+                          uint64_t &lastNs = stats->lastSeenRecvNs[static_cast<size_t>(idx)];
+                          if (lastNs != 0 && recvNowNs >= lastNs) {
+                              int64_t gapMs = static_cast<int64_t>((recvNowNs - lastNs) / 1000000ULL);
+                              int64_t devMs = std::llabs(gapMs - kPeriodMs);
+                              stats->gapSampleCount++;
+                              stats->gapSumMs += gapMs;
+                              stats->gapDevSumMs += devMs;
+                              if (devMs > stats->gapDevMaxMs) {
+                                  stats->gapDevMaxMs = devMs;
+                              }
+                              if (gapMs > (kPeriodMs * 3) / 2) {
+                                  stats->gapOverrunCount++;
+                              }
+                          }
+                          lastNs = recvNowNs;
                       }
                   });
 
-    /*定期打印统计*/
-    const uint64_t kExpectedVars = (uint64_t)subscribedCount * kExpectedBatch; // 每秒期望收到的变量总数
+    const uint64_t kExpectedVars =
+        static_cast<uint64_t>(subscribedCount) * static_cast<uint64_t>(kPrintIntervalMs / kPeriodMs);
+
     for (int round = 0; round < 200000; ++round) {
         std::this_thread::sleep_for(std::chrono::seconds(1));
         uint64_t total = stats->totalCount.exchange(0, std::memory_order_relaxed);
@@ -127,10 +192,39 @@ void subscribe()
         int64_t sumMs = stats->latencySumMs.exchange(0, std::memory_order_relaxed);
         int64_t maxMs = stats->latencyMaxMs.exchange(0, std::memory_order_relaxed);
         int64_t avgMs = batch > 0 ? sumMs / static_cast<int64_t>(batch) : 0;
+
+        uint64_t gapSampleCount = 0;
+        uint64_t gapOverrunCount = 0;
+        int64_t gapSumMs = 0;
+        int64_t gapDevSumMs = 0;
+        int64_t gapDevMaxMs = 0;
+        {
+            std::lock_guard<std::mutex> lk(stats->gapMutex);
+            gapSampleCount = stats->gapSampleCount;
+            gapOverrunCount = stats->gapOverrunCount;
+            gapSumMs = stats->gapSumMs;
+            gapDevSumMs = stats->gapDevSumMs;
+            gapDevMaxMs = stats->gapDevMaxMs;
+            stats->gapSampleCount = 0;
+            stats->gapOverrunCount = 0;
+            stats->gapSumMs = 0;
+            stats->gapDevSumMs = 0;
+            stats->gapDevMaxMs = 0;
+        }
+
+        int64_t avgGapMs = gapSampleCount > 0 ? gapSumMs / static_cast<int64_t>(gapSampleCount) : 0;
+        int64_t avgGapDevMs = gapSampleCount > 0 ? gapDevSumMs / static_cast<int64_t>(gapSampleCount) : 0;
+
         LOG(info) << "[Stats] vars=" << total << "/" << kExpectedVars
                   << " batch=" << batch << "/" << kExpectedBatch
-                  << " loss=" << loss << " avgLatency=" << avgMs << "ms"
-                  << " maxLatency=" << maxMs << "ms";
+                  << " loss=" << loss
+                  << " avgLatency=" << avgMs << "ms"
+                  << " maxLatency=" << maxMs << "ms"
+                  << " gapSamples=" << gapSampleCount
+                  << " avgGap=" << avgGapMs << "ms"
+                  << " avgGapDev=" << avgGapDevMs << "ms"
+                  << " maxGapDev=" << gapDevMaxMs << "ms"
+                  << " gapOver1.5x=" << gapOverrunCount;
     }
 
     sub.unsubscribe("pubNode", unitems);
@@ -148,6 +242,7 @@ void subscribe2()
     while (sub.getTotalReceivedVars() < 5) {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
+
     std::vector<dsf::ondemand::SubscriptionItem> items;
     std::vector<std::string> unitems;
     for (int i = 0; i < count; ++i) {
@@ -156,11 +251,11 @@ void subscribe2()
         unitems.push_back(varName);
     }
     sub.subscribe("pubNode", items, [](const std::vector<dsf::ondemand::VarCallbackData> &vars) {
-        //LOG(info) << "Callback2: batch size=" << vars.size();
+        // LOG(info) << "Callback2: batch size=" << vars.size();
     });
     std::this_thread::sleep_for(std::chrono::seconds(10));
     // sub.unsubscribe("pubNode", unitems);
-    //sub.stop();
+    // sub.stop();
     std::this_thread::sleep_for(std::chrono::seconds(1000000));
 }
 
