@@ -12,6 +12,7 @@
 #include <mutex>
 #include <string_view>
 #include <cstdlib>
+#include <pthread.h>
 #include "log/logger.h"
 #include "ondemand/on_demand_pub.h"
 #include "ondemand/on_demand_sub.h"
@@ -76,10 +77,16 @@ void publish()
         batchItems[i].size   = sizeof(int);
     }
 
-    while (true) {
-        pub.setVarDataBatch(batchItems.data(), count);
-        std::this_thread::sleep_for(std::chrono::milliseconds(200));
-    }
+    std::thread setVarThread([&pub, &batchItems]() {
+#if defined(__linux__)
+        pthread_setname_np(pthread_self(), "setvar");
+#endif
+        while (true) {
+            pub.setVarDataBatch(batchItems.data(), count);
+            std::this_thread::sleep_for(std::chrono::milliseconds(200));
+        }
+    });
+    setVarThread.join();
 
     std::this_thread::sleep_for(std::chrono::seconds(100000));
 }

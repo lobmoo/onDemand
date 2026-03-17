@@ -162,6 +162,7 @@ namespace ondemand
             publishGroupTimers_.clear();
             groupMembers_.clear();
             groupFlatBufs_.clear();
+            groupMaskBufs_.clear();
         }
 
         /*清理 DDS 读写器和节点*/
@@ -442,6 +443,8 @@ namespace ondemand
                             publishScheduler_->Cancel(it->second);
                         }
                         groupMembers_.erase(it->first);
+                        groupFlatBufs_.erase(it->first);
+                        groupMaskBufs_.erase(it->first);
                         ONDEMANDLOG(debug)
                             << "Removed publish group: bucket=" << it->first.bucketIndex
                             << " freq=" << it->first.freqMs << "ms";
@@ -457,6 +460,22 @@ namespace ondemand
                 for (auto &[key, members] : desired) {
                     // 始终刷新成员列表，保留已有的 running flag
                     groupMembers_[key].members = std::move(members);
+
+                    auto &entryMembers = groupMembers_[key].members;
+                    if (entryMembers && !entryMembers->empty()) {
+                        roaring::Roaring64Map roar;
+                        for (const auto &info : *entryMembers) {
+                            roar.add(info.varHash);
+                        }
+                        roar.runOptimize();
+                        roar.shrinkToFit();
+                        auto &maskBuf = groupMaskBufs_[key];
+                        maskBuf.resize(roar.getSizeInBytes());
+                        roar.write(reinterpret_cast<char *>(maskBuf.data()));
+                    } else {
+                        groupMaskBufs_.erase(key);
+                    }
+
 
                     // 仅为新增分组创建定时器，已有分组的定时器保持不变
                     if (publishGroupTimers_.find(key) == publishGroupTimers_.end()) {
@@ -495,11 +514,10 @@ namespace ondemand
      */
     void OnDemandPub::publishGroupData(uint32_t bucketIndex, uint32_t freqMs)
     {
-        std::string threadName = "PubCb" + std::to_string(freqMs) + "ms";
-        pthread_setname_np(pthread_self(), threadName.c_str());
-        // 获取组成员快照 + running flag
+        // 获取组成员快照 + running flag + 预计算 mask 快照
         std::shared_ptr<std::vector<GroupVarInfo>> members;
         std::shared_ptr<std::atomic<bool>> running;
+        std::vector<uint8_t> maskBuf;
         {
             std::lock_guard<std::mutex> lock(publishGroupsMutex_);
             PublishGroupKey key{bucketIndex, freqMs};
@@ -509,6 +527,11 @@ namespace ondemand
             }
             members = it->second.members;
             running = it->second.running;
+
+            auto maskIt = groupMaskBufs_.find(key);
+            if (maskIt != groupMaskBufs_.end()) {
+                maskBuf = maskIt->second;
+            }
         }
 
         /* 防止并发执行：上次还没发完则跳过本次 */
@@ -520,27 +543,9 @@ namespace ondemand
             ~RunningGuard() { flag.store(false, std::memory_order_release); }
         } guard{*running};
 
-        // 计算 flat buffer 总大小
-        uint32_t totalSize = 0;
-        for (const auto &info : *members)
-            totalSize += info.dataSize;
-
-        // 获取/扩容 flat buffer（按 key 复用，避免每次堆分配）
-        std::vector<uint8_t> *flatBuf = nullptr;
-        {
-            std::lock_guard<std::mutex> lock(publishGroupsMutex_);
-            PublishGroupKey key{bucketIndex, freqMs};
-            auto &buf = groupFlatBufs_[key];
-            if (buf.size() < totalSize)
-                buf.resize(totalSize);
-            flatBuf = &buf;
-        }
-
         DSF::Var::TableDataTransfer msg;
-        roaring::Roaring64Map roar;
         msg.varData().reserve(members->size());
 
-        uint32_t offset = 0;
         for (const auto &info : *members) {
             if (info.dataSize == 0)
                 continue;
@@ -549,24 +554,30 @@ namespace ondemand
             if (!handle)
                 continue;
 
-            std::memcpy(flatBuf->data() + offset, handle.ptr(), info.dataSize);
-            roar.add(info.varHash);
-            msg.varData().push_back(
-                std::vector<uint8_t>(flatBuf->data() + offset,
-                                     flatBuf->data() + offset + info.dataSize));
-            offset += info.dataSize;
+            auto &dst = msg.varData().emplace_back();
+            dst.resize(info.dataSize);
+            std::memcpy(dst.data(), handle.ptr(), info.dataSize);
         }
 
         if (msg.varData().empty()) {
             return;
         }
 
-        // 序列化 Roaring64Map -> mask
-        roar.runOptimize();
-        roar.shrinkToFit();
-        size_t roarBytes = roar.getSizeInBytes();
-        msg.mask().resize(roarBytes);
-        roar.write(reinterpret_cast<char *>(msg.mask().data()));
+        if (!maskBuf.empty()) {
+            msg.mask() = std::move(maskBuf);
+        } else {
+            // 兜底：理论上 scheduler 已预计算，避免异常路径空 mask
+            roaring::Roaring64Map roar;
+            for (const auto &info : *members) {
+                if (info.dataSize != 0) {
+                    roar.add(info.varHash);
+                }
+            }
+            roar.runOptimize();
+            roar.shrinkToFit();
+            msg.mask().resize(roar.getSizeInBytes());
+            roar.write(reinterpret_cast<char *>(msg.mask().data()));
+        }
 
         // 时间戳
         auto now = std::chrono::system_clock::now();
@@ -606,6 +617,8 @@ namespace ondemand
         }
         publishGroupTimers_.clear();
         groupMembers_.clear();
+        groupFlatBufs_.clear();
+        groupMaskBufs_.clear();
 
         ONDEMANDLOG(info) << "All publish group timers canceled";
     }
