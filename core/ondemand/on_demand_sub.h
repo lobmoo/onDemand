@@ -50,14 +50,12 @@ namespace ondemand
     /**
      * @brief 批量数据回调函数 (同频同源的一批变量一次性回调)
      */
-    using DataCallback =
-        std::function<void(const std::vector<VarCallbackData> &vars)>;
+    using DataCallback = std::function<void(const std::vector<VarCallbackData> &vars)>;
 
     /**
      * @brief TableDefine 回调，收到 pub 端广播的变量定义时触发
      */
-    using TableDefineCallback =
-        std::function<void(const std::vector<DSF::Var::Define> &defines)>;
+    using TableDefineCallback = std::function<void(const std::vector<DSF::Var::Define> &defines)>;
 
     /**
  * @brief 按需订阅器 V2 - 重构版本
@@ -91,13 +89,19 @@ namespace ondemand
         * @return true 成功 / false 失败 
         */
         bool subscribe(const char *node_name, const std::vector<SubscriptionItem> &items,
-                        DataCallback callback = nullptr);
+                       DataCallback callback = nullptr);
 
         /**
          * @brief 获取总接收数量
          * @return uint64_t 
          */
         uint64_t getTotalReceivedVars() const { return totalReceived_.load(); }
+
+        /**
+         * @brief 获取当前已收到定义的所有可订阅变量，按节点名分组
+         * @return nodeName -> varName 列表
+         */
+        std::unordered_map<std::string, std::vector<std::string>> getAvailableVars() const;
 
         /**
         * @brief 取消订阅
@@ -108,7 +112,6 @@ namespace ondemand
         * @brief 获取订阅数量
         */
         size_t getSubscriptionCount() const;
-
 
         /**
          * @brief 注册 TableDefine 回调，收到 pub 端变量定义时触发 
@@ -286,7 +289,6 @@ namespace ondemand
         };
         VarWriteStamp varWriteStamps_[ONDEMAND_BUCKET_SIZE];
 
-        
         /*订阅回调存储: varHash -> 回调信息*/
         std::unordered_map<uint64_t, SubCallbackInfo> subscriptionCallbacks_;
         std::mutex subscriptionCallbacksMutex_;

@@ -375,7 +375,6 @@ namespace ondemand
 
                         /*组内部结构*/
 
-
                         VarMetadata meta;
                         meta.varHash = varHash;
                         meta.currentFreq = 0xFFFFFFFF;
@@ -383,6 +382,7 @@ namespace ondemand
                         uint32_t kVarSize = varDefine.size();
                         meta.dataSize = kVarSize;
                         meta.bucketIndex = bucketIdx;
+                        meta.varDefine = std::make_shared<DSF::Var::Define>(varDefine);
                         meta.varId = varStore_.register_var(varHash, kVarSize);
 
                         varIndex_.emplace(varHash, std::move(meta));
@@ -765,7 +765,8 @@ namespace ondemand
                         uint32_t freqMs = key.freqMs;
                         Tick intervalTicks = static_cast<Tick>(freqMs);
                         /* jitter 与 pub 对齐，再加 5ms 确保 pub 已发完并写入 varStore */
-                        Tick jitter = static_cast<Tick>(bucketIdx * (freqMs / ONDEMAND_BUCKET_SIZE)) + 5;
+                        Tick jitter =
+                            static_cast<Tick>(bucketIdx * (freqMs / ONDEMAND_BUCKET_SIZE)) + 5;
                         auto timer = callbackScheduler_->ScheduleRecurring(
                             [this, bucketIdx, freqMs]() { callbackGroupData(bucketIdx, freqMs); },
                             intervalTicks + jitter, /* 首次延迟，比 pub 晚 5ms */
@@ -850,7 +851,8 @@ namespace ondemand
 
             uint8_t *ptr = dataBuf.data() + offset;
             if (!varStore_.read(info.varId, ptr)) {
-                ONDEMANDLOG(error) << "Failed to read varId: " << info.varId << " for callback, varName: " << info.varName;
+                ONDEMANDLOG(error) << "Failed to read varId: " << info.varId
+                                   << " for callback, varName: " << info.varName;
                 continue;
             }
 
@@ -869,7 +871,6 @@ namespace ondemand
             ONDEMANDLOG_TIME(error, 5000) << "Batch callback exception for freq=" << freqMs
                                           << "ms, vars=" << batch.size() << " err: " << e.what();
         }
-
     }
 
     /**
@@ -896,5 +897,19 @@ namespace ondemand
                            << " type=" << info.type_name << " discovered=" << info.discovered;
     }
 
+    std::unordered_map<std::string, std::vector<std::string>> OnDemandSub::getAvailableVars() const
+    {
+        std::unordered_map<std::string, std::vector<std::string>> result;
+        std::shared_lock lock(varIndexMutex_);
+        for (const auto &[hash, meta] : varIndex_) {
+            if (!meta.varDefine) {
+                LOG(critical) << "Variable with hash " << hash << " has no definition, skipping.";
+                continue;
+            }
+
+            result[meta.varDefine->nodeName()].push_back(meta.varDefine->name());
+        }
+        return result;
+    }
 } // namespace ondemand
 } // namespace dsf
