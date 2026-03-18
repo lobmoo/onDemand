@@ -705,6 +705,8 @@ namespace ondemand
 
                     int32_t varId = vit->second.varId;
                     if (varId < 0) {
+                        /* varStore 尚未 finalize，稍后重试 */
+                        callbackDirty_.store(true, std::memory_order_release);
                         continue;
                     }
 
