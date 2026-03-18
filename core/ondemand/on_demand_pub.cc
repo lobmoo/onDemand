@@ -671,9 +671,9 @@ namespace ondemand
                 meta.activeFreqCount = 0;
                 meta.bucketIndex = bucketIdx;
                 meta.varDefine = std::make_shared<DSF::Var::Define>(VarDefine);
-                constexpr uint32_t kDefaultVarSize = 32; // TODO: 按真实大小分配
-                meta.dataSize = kDefaultVarSize;
-                meta.varId = varStore_.register_var(varHash, kDefaultVarSize);
+                uint32_t kVarSize = VarDefine.size() > 0 ? static_cast<uint32_t>(VarDefine.size()) : 32u;
+                meta.dataSize = kVarSize;
+                meta.varId = varStore_.register_var(varHash, kVarSize);
                 varIndex_.emplace(varHash, std::move(meta));
                 bucketManager_.AddMember(varName, varHash);
             }

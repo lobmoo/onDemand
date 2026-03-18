@@ -47,6 +47,7 @@ void publish()
         var.name("var" + std::to_string(i));
         var.nodeName("pubNode");
         var.modelName("int");
+        var.size(sizeof(int));
         vars.push_back(std::move(var));
     }
     pub.createVars(vars);
@@ -107,9 +108,9 @@ void subscribe()
     const int subscribedCount = 100000;
 
     /* 延迟/丢包统计参数 */
-    constexpr int64_t kPeriodMs = 500;      // 订阅周期 200ms
-    constexpr int64_t kPrintIntervalMs = 1000; // 打印间隔 1s
-    constexpr int64_t kBucketSize = 20;     // bucket 数量，与 ONDEMAND_BUCKET_SIZE 一致
+    constexpr int64_t kPeriodMs = 500;          // 订阅周期 200ms
+    constexpr int64_t kPrintIntervalMs = 1000;  // 打印间隔 1s
+    constexpr int64_t kBucketSize = 20;         // bucket 数量，与 ONDEMAND_BUCKET_SIZE 一致
     constexpr uint64_t kExpectedBatch = (kPrintIntervalMs / kPeriodMs) * kBucketSize;
 
     for (int i = 0; i < subscribedCount; ++i) {

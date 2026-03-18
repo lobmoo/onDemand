@@ -374,13 +374,16 @@ namespace ondemand
                         }
 
                         /*组内部结构*/
+
+
                         VarMetadata meta;
                         meta.varHash = varHash;
                         meta.currentFreq = 0xFFFFFFFF;
                         meta.activeFreqCount = 0;
-                        meta.dataSize = 32;
+                        uint32_t kVarSize = varDefine.size();
+                        meta.dataSize = kVarSize;
                         meta.bucketIndex = bucketIdx;
-                        meta.varId = varStore_.register_var(varHash, 32);
+                        meta.varId = varStore_.register_var(varHash, kVarSize);
 
                         varIndex_.emplace(varHash, std::move(meta));
                         newBucketIds.insert(static_cast<uint32_t>(bucketIdx));
