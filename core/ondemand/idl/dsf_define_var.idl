@@ -52,6 +52,7 @@ module DSF {
         // 变量配置
         struct Define {
             string name;       // 变量名称
+            int32 size;        // 变量大小
             string modelName;       // 模型名称
             string modelVersion;    // 模型版本
             string description;     // 描述
