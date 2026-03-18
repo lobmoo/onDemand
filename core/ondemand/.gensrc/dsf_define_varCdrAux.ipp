@@ -152,36 +152,39 @@ eProsima_user_DllExport size_t calculate_serialized_size(
                 data.name(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
-                data.modelName(), current_alignment);
+                data.size(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
-                data.modelVersion(), current_alignment);
+                data.modelName(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(3),
-                data.description(), current_alignment);
+                data.modelVersion(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(4),
-                data.nodeName(), current_alignment);
+                data.description(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(5),
-                data.isReadonly(), current_alignment);
+                data.nodeName(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(6),
-                data.publishMask(), current_alignment);
+                data.isReadonly(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(7),
-                data.events(), current_alignment);
+                data.publishMask(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(8),
-                data.alarms(), current_alignment);
+                data.events(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(9),
-                data.initialValues(), current_alignment);
+                data.alarms(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(10),
-                data.startIndexes(), current_alignment);
+                data.initialValues(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(11),
+                data.startIndexes(), current_alignment);
+
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(12),
                 data.permission(), current_alignment);
 
 
@@ -205,17 +208,18 @@ eProsima_user_DllExport void serialize(
 
     scdr
         << eprosima::fastcdr::MemberId(0) << data.name()
-        << eprosima::fastcdr::MemberId(1) << data.modelName()
-        << eprosima::fastcdr::MemberId(2) << data.modelVersion()
-        << eprosima::fastcdr::MemberId(3) << data.description()
-        << eprosima::fastcdr::MemberId(4) << data.nodeName()
-        << eprosima::fastcdr::MemberId(5) << data.isReadonly()
-        << eprosima::fastcdr::MemberId(6) << data.publishMask()
-        << eprosima::fastcdr::MemberId(7) << data.events()
-        << eprosima::fastcdr::MemberId(8) << data.alarms()
-        << eprosima::fastcdr::MemberId(9) << data.initialValues()
-        << eprosima::fastcdr::MemberId(10) << data.startIndexes()
-        << eprosima::fastcdr::MemberId(11) << data.permission()
+        << eprosima::fastcdr::MemberId(1) << data.size()
+        << eprosima::fastcdr::MemberId(2) << data.modelName()
+        << eprosima::fastcdr::MemberId(3) << data.modelVersion()
+        << eprosima::fastcdr::MemberId(4) << data.description()
+        << eprosima::fastcdr::MemberId(5) << data.nodeName()
+        << eprosima::fastcdr::MemberId(6) << data.isReadonly()
+        << eprosima::fastcdr::MemberId(7) << data.publishMask()
+        << eprosima::fastcdr::MemberId(8) << data.events()
+        << eprosima::fastcdr::MemberId(9) << data.alarms()
+        << eprosima::fastcdr::MemberId(10) << data.initialValues()
+        << eprosima::fastcdr::MemberId(11) << data.startIndexes()
+        << eprosima::fastcdr::MemberId(12) << data.permission()
 ;
     scdr.end_serialize_type(current_state);
 }
@@ -240,46 +244,50 @@ eProsima_user_DllExport void deserialize(
                                             break;
 
                                         case 1:
-                                                dcdr >> data.modelName();
+                                                dcdr >> data.size();
                                             break;
 
                                         case 2:
-                                                dcdr >> data.modelVersion();
+                                                dcdr >> data.modelName();
                                             break;
 
                                         case 3:
-                                                dcdr >> data.description();
+                                                dcdr >> data.modelVersion();
                                             break;
 
                                         case 4:
-                                                dcdr >> data.nodeName();
+                                                dcdr >> data.description();
                                             break;
 
                                         case 5:
-                                                dcdr >> data.isReadonly();
+                                                dcdr >> data.nodeName();
                                             break;
 
                                         case 6:
-                                                dcdr >> data.publishMask();
+                                                dcdr >> data.isReadonly();
                                             break;
 
                                         case 7:
-                                                dcdr >> data.events();
+                                                dcdr >> data.publishMask();
                                             break;
 
                                         case 8:
-                                                dcdr >> data.alarms();
+                                                dcdr >> data.events();
                                             break;
 
                                         case 9:
-                                                dcdr >> data.initialValues();
+                                                dcdr >> data.alarms();
                                             break;
 
                                         case 10:
-                                                dcdr >> data.startIndexes();
+                                                dcdr >> data.initialValues();
                                             break;
 
                                         case 11:
+                                                dcdr >> data.startIndexes();
+                                            break;
+
+                                        case 12:
                                                 dcdr >> data.permission();
                                             break;
 
@@ -304,6 +312,8 @@ void serialize_key(
     static_cast<void>(scdr);
     static_cast<void>(data);
                         scdr << data.name();
+
+                        scdr << data.size();
 
                         scdr << data.modelName();
 

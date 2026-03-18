@@ -318,6 +318,36 @@ void register_Define_type_identifier(
             TypeObjectUtils::add_complete_struct_member(member_seq_Define, member_name);
         }
         {
+            TypeIdentifierPair type_ids_size;
+            ReturnCode_t return_code_size {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_size =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_int32_t", type_ids_size);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_size)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "size Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_size = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_size = 0x00000001;
+            bool common_size_ec {false};
+            CommonStructMember common_size {TypeObjectUtils::build_common_struct_member(member_id_size, member_flags_size, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_size, common_size_ec))};
+            if (!common_size_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure size member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_size = "size";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_size;
+            ann_custom_Define.reset();
+            CompleteMemberDetail detail_size = TypeObjectUtils::build_complete_member_detail(name_size, member_ann_builtin_size, ann_custom_Define);
+            CompleteStructMember member_size = TypeObjectUtils::build_complete_struct_member(common_size, detail_size);
+            TypeObjectUtils::add_complete_struct_member(member_seq_Define, member_size);
+        }
+        {
             TypeIdentifierPair type_ids_modelName;
             ReturnCode_t return_code_modelName {eprosima::fastdds::dds::RETCODE_OK};
             return_code_modelName =
@@ -340,7 +370,7 @@ void register_Define_type_identifier(
             }
             StructMemberFlag member_flags_modelName = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            MemberId member_id_modelName = 0x00000001;
+            MemberId member_id_modelName = 0x00000002;
             bool common_modelName_ec {false};
             CommonStructMember common_modelName {TypeObjectUtils::build_common_struct_member(member_id_modelName, member_flags_modelName, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_modelName, common_modelName_ec))};
             if (!common_modelName_ec)
@@ -378,7 +408,7 @@ void register_Define_type_identifier(
             }
             StructMemberFlag member_flags_modelVersion = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            MemberId member_id_modelVersion = 0x00000002;
+            MemberId member_id_modelVersion = 0x00000003;
             bool common_modelVersion_ec {false};
             CommonStructMember common_modelVersion {TypeObjectUtils::build_common_struct_member(member_id_modelVersion, member_flags_modelVersion, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_modelVersion, common_modelVersion_ec))};
             if (!common_modelVersion_ec)
@@ -416,7 +446,7 @@ void register_Define_type_identifier(
             }
             StructMemberFlag member_flags_description = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            MemberId member_id_description = 0x00000003;
+            MemberId member_id_description = 0x00000004;
             bool common_description_ec {false};
             CommonStructMember common_description {TypeObjectUtils::build_common_struct_member(member_id_description, member_flags_description, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_description, common_description_ec))};
             if (!common_description_ec)
@@ -454,7 +484,7 @@ void register_Define_type_identifier(
             }
             StructMemberFlag member_flags_nodeName = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            MemberId member_id_nodeName = 0x00000004;
+            MemberId member_id_nodeName = 0x00000005;
             bool common_nodeName_ec {false};
             CommonStructMember common_nodeName {TypeObjectUtils::build_common_struct_member(member_id_nodeName, member_flags_nodeName, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_nodeName, common_nodeName_ec))};
             if (!common_nodeName_ec)
@@ -484,7 +514,7 @@ void register_Define_type_identifier(
             }
             StructMemberFlag member_flags_isReadonly = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            MemberId member_id_isReadonly = 0x00000005;
+            MemberId member_id_isReadonly = 0x00000006;
             bool common_isReadonly_ec {false};
             CommonStructMember common_isReadonly {TypeObjectUtils::build_common_struct_member(member_id_isReadonly, member_flags_isReadonly, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_isReadonly, common_isReadonly_ec))};
             if (!common_isReadonly_ec)
@@ -512,7 +542,7 @@ void register_Define_type_identifier(
             }
             StructMemberFlag member_flags_publishMask = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            MemberId member_id_publishMask = 0x00000006;
+            MemberId member_id_publishMask = 0x00000007;
             bool common_publishMask_ec {false};
             CommonStructMember common_publishMask {TypeObjectUtils::build_common_struct_member(member_id_publishMask, member_flags_publishMask, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_publishMask, common_publishMask_ec))};
             if (!common_publishMask_ec)
@@ -572,7 +602,7 @@ void register_Define_type_identifier(
             }
             StructMemberFlag member_flags_events = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     true, false, false, false);
-            MemberId member_id_events = 0x00000007;
+            MemberId member_id_events = 0x00000008;
             bool common_events_ec {false};
             CommonStructMember common_events {TypeObjectUtils::build_common_struct_member(member_id_events, member_flags_events, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_events, common_events_ec))};
             if (!common_events_ec)
@@ -645,7 +675,7 @@ void register_Define_type_identifier(
             }
             StructMemberFlag member_flags_alarms = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     true, false, false, false);
-            MemberId member_id_alarms = 0x00000008;
+            MemberId member_id_alarms = 0x00000009;
             bool common_alarms_ec {false};
             CommonStructMember common_alarms {TypeObjectUtils::build_common_struct_member(member_id_alarms, member_flags_alarms, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_alarms, common_alarms_ec))};
             if (!common_alarms_ec)
@@ -718,7 +748,7 @@ void register_Define_type_identifier(
             }
             StructMemberFlag member_flags_initialValues = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     true, false, false, false);
-            MemberId member_id_initialValues = 0x00000009;
+            MemberId member_id_initialValues = 0x0000000a;
             bool common_initialValues_ec {false};
             CommonStructMember common_initialValues {TypeObjectUtils::build_common_struct_member(member_id_initialValues, member_flags_initialValues, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_initialValues, common_initialValues_ec))};
             if (!common_initialValues_ec)
@@ -791,7 +821,7 @@ void register_Define_type_identifier(
             }
             StructMemberFlag member_flags_startIndexes = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     true, false, false, false);
-            MemberId member_id_startIndexes = 0x0000000a;
+            MemberId member_id_startIndexes = 0x0000000b;
             bool common_startIndexes_ec {false};
             CommonStructMember common_startIndexes {TypeObjectUtils::build_common_struct_member(member_id_startIndexes, member_flags_startIndexes, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_startIndexes, common_startIndexes_ec))};
             if (!common_startIndexes_ec)
@@ -832,7 +862,7 @@ void register_Define_type_identifier(
             }
             StructMemberFlag member_flags_permission = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     true, false, false, false);
-            MemberId member_id_permission = 0x0000000b;
+            MemberId member_id_permission = 0x0000000c;
             bool common_permission_ec {false};
             CommonStructMember common_permission {TypeObjectUtils::build_common_struct_member(member_id_permission, member_flags_permission, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_permission, common_permission_ec))};
             if (!common_permission_ec)

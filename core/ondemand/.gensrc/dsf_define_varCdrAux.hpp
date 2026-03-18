@@ -24,7 +24,7 @@
 
 #include "dsf_define_var.hpp"
 
-constexpr uint32_t DSF_Var_VarRequestEnvelope_max_cdr_typesize {1436UL};
+constexpr uint32_t DSF_Var_VarRequestEnvelope_max_cdr_typesize {1440UL};
 constexpr uint32_t DSF_Var_VarRequestEnvelope_max_key_cdr_typesize {0UL};
 
 
@@ -42,11 +42,11 @@ constexpr uint32_t DSF_Var_DataTransfer_max_key_cdr_typesize {0UL};
 
 
 
-constexpr uint32_t DSF_Var_PubTableVarDefine_max_cdr_typesize {1440UL};
+constexpr uint32_t DSF_Var_PubTableVarDefine_max_cdr_typesize {1444UL};
 constexpr uint32_t DSF_Var_PubTableVarDefine_max_key_cdr_typesize {0UL};
 
 
-constexpr uint32_t DSF_Var_Define_max_cdr_typesize {1424UL};
+constexpr uint32_t DSF_Var_Define_max_cdr_typesize {1428UL};
 constexpr uint32_t DSF_Var_Define_max_key_cdr_typesize {0UL};
 
 

@@ -290,6 +290,8 @@ public:
     {
                     m_name = x.m_name;
 
+                    m_size = x.m_size;
+
                     m_modelName = x.m_modelName;
 
                     m_modelVersion = x.m_modelVersion;
@@ -322,6 +324,7 @@ public:
             Define&& x) noexcept
     {
         m_name = std::move(x.m_name);
+        m_size = x.m_size;
         m_modelName = std::move(x.m_modelName);
         m_modelVersion = std::move(x.m_modelVersion);
         m_description = std::move(x.m_description);
@@ -344,6 +347,8 @@ public:
     {
 
                     m_name = x.m_name;
+
+                    m_size = x.m_size;
 
                     m_modelName = x.m_modelName;
 
@@ -379,6 +384,7 @@ public:
     {
 
         m_name = std::move(x.m_name);
+        m_size = x.m_size;
         m_modelName = std::move(x.m_modelName);
         m_modelVersion = std::move(x.m_modelVersion);
         m_description = std::move(x.m_description);
@@ -401,6 +407,7 @@ public:
             const Define& x) const
     {
         return (m_name == x.m_name &&
+           m_size == x.m_size &&
            m_modelName == x.m_modelName &&
            m_modelVersion == x.m_modelVersion &&
            m_description == x.m_description &&
@@ -460,6 +467,35 @@ public:
     eProsima_user_DllExport std::string& name()
     {
         return m_name;
+    }
+
+
+    /*!
+     * @brief This function sets a value in member size
+     * @param _size New value for member size
+     */
+    eProsima_user_DllExport void size(
+            int32_t _size)
+    {
+        m_size = _size;
+    }
+
+    /*!
+     * @brief This function returns the value of member size
+     * @return Value of member size
+     */
+    eProsima_user_DllExport int32_t size() const
+    {
+        return m_size;
+    }
+
+    /*!
+     * @brief This function returns a reference to member size
+     * @return Reference to member size
+     */
+    eProsima_user_DllExport int32_t& size()
+    {
+        return m_size;
     }
 
 
@@ -886,6 +922,7 @@ public:
 private:
 
     std::string m_name;
+    int32_t m_size{0};
     std::string m_modelName;
     std::string m_modelVersion;
     std::string m_description;
