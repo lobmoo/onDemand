@@ -822,17 +822,26 @@ namespace ondemand
         std::vector<VarCallbackData> batch;
         batch.reserve(members->size());
 
+        /* 在循环外检查 bucket 是否有数据，避免逐变量重复读原子变量 */
+        if (bucketIndex < ONDEMAND_BUCKET_SIZE) {
+            uint32_t curWriteCount =
+                varWriteStamps_[bucketIndex].writeCount.load(std::memory_order_acquire);
+            /* 该 bucket 从未收到过数据，跳过 */
+            if (curWriteCount == 0)
+                return;
+        }
+
+        uint64_t tsNs = 0;
+        DSF::Var::BLOB_TYPE blobType = DSF::Var::BLOB_TYPE::UNKNOWN;
+        if (bucketIndex < ONDEMAND_BUCKET_SIZE) {
+            tsNs = varWriteStamps_[bucketIndex].timestampNs.load(std::memory_order_acquire);
+            blobType = static_cast<DSF::Var::BLOB_TYPE>(
+                varWriteStamps_[bucketIndex].blobType.load(std::memory_order_acquire));
+        }
+
         for (auto &info : *members) {
             if (info.dataSize == 0 || !info.callback)
                 continue;
-
-            uint64_t tsNs = 0;
-            DSF::Var::BLOB_TYPE blobType = DSF::Var::BLOB_TYPE::UNKNOWN;
-            if (bucketIndex < ONDEMAND_BUCKET_SIZE) {
-                tsNs = varWriteStamps_[bucketIndex].timestampNs.load(std::memory_order_acquire);
-                blobType = static_cast<DSF::Var::BLOB_TYPE>(
-                    varWriteStamps_[bucketIndex].blobType.load(std::memory_order_acquire));
-            }
 
             uint8_t *ptr = dataBuf.data() + offset;
             if (!varStore_.read(info.varId, ptr)) {
@@ -848,6 +857,7 @@ namespace ondemand
 
         if (batch.empty() || !groupCallback)
             return;
+
         try {
             (*groupCallback)(batch);
         } catch (const std::exception &e) {

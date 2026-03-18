@@ -52,7 +52,7 @@ inline ThreadPool::ThreadPool(size_t threads) : stop(false)
 {
     for (size_t i = 0; i < threads; ++i)
         workers.emplace_back([this, i] {
-            std::string name = "pool_" + std::to_string(i);
+            std::string name = "ondemand_pl_" + std::to_string(i);
 #if defined(_WIN32) || defined(_WIN64)
             HRESULT hr = SetThreadDescription(GetCurrentThread(),
                                               std::wstring(name.begin(), name.end()).c_str());
