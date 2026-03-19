@@ -258,7 +258,7 @@ namespace ondemand
      */
     void OnDemandSub::processDataTransfer()
     {
-        pthread_setname_np(pthread_self(), "proc_data_transfer");
+        pthread_setname_np(pthread_self(), "proc_data_tx");
 
         while (running_.load(std::memory_order_acquire)) {
             std::shared_ptr<DSF::Var::TableDataTransfer> dataTransfer;
