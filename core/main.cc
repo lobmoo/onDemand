@@ -18,7 +18,7 @@
 #include "ondemand/on_demand_sub.h"
 #include <fastdds/dds/log/Log.hpp>
 
-uint32_t count = 100000;
+uint32_t count = 5000;
 
 static int parse_var_index(std::string_view varName)
 {
@@ -94,15 +94,18 @@ void publish()
 
 void subscribe()
 {
+#if defined(__linux__)
+    pthread_setname_np(pthread_self(), "submain");
+#endif
     dsf::ondemand::OnDemandSub sub;
     std::string nodeName = "subNode" + std::to_string(getpid());
     sub.init(nodeName);
     std::this_thread::sleep_for(std::chrono::milliseconds(2000));
     sub.start();
 
-    while (sub.getTotalReceivedVars() < count - 1) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    }
+    // while (sub.getTotalReceivedVars() < count - 1) {
+    //     std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    // }
 
     LOG(critical) << "Waiting for vars... received=" << sub.getTotalReceivedVars();
     std::vector<dsf::ondemand::SubscriptionItem> items;
@@ -254,12 +257,15 @@ void subscribe()
 
 void subscribe2()
 {
+#if defined(__linux__)
+    pthread_setname_np(pthread_self(), "submain2");
+#endif
     dsf::ondemand::OnDemandSub sub;
     std::string nodeName = "subNode" + std::to_string(getpid());
     sub.init(nodeName);
     std::this_thread::sleep_for(std::chrono::milliseconds(2000));
     sub.start();
-    while (sub.getTotalReceivedVars() < 5) {
+    while (sub.getTotalReceivedVars() < count - 1) {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 
