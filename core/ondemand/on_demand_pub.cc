@@ -356,7 +356,7 @@ namespace ondemand
                             handleUnsubscribe(data->nodeName(), data->varFreqs());
                             break;
                         default:
-                            LOG(error) << "Unknown registered type.";
+                            ONDEMANDLOG(error) << "Unknown registered type.";
                             break;
                     }
 
@@ -920,7 +920,7 @@ namespace ondemand
             uint64_t varHash = fast_hash(metaName);
             auto it = varIndex_.find(varHash);
             if (it == varIndex_.end()) {
-                LOG(warning) << "register var not found ! var name: " << varFreq.name()
+                ONDEMANDLOG(warning) << "register var not found ! var name: " << varFreq.name()
                              << " node name: " << nodeName;
                 continue;
             }
@@ -1020,7 +1020,7 @@ namespace ondemand
             uint64_t varHash = fast_hash(metaName);
             auto it = varIndex_.find(varHash);
             if (it == varIndex_.end()) {
-                LOG(warning) << "unregister var not found ! var name: " << varFreq.name()
+                ONDEMANDLOG(warning) << "unregister var not found ! var name: " << varFreq.name()
                              << " node name: " << nodeName;
                 continue;
             }

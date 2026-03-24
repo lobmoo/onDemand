@@ -416,11 +416,11 @@ namespace ondemand
         dataWriter = node->template createDataWriter<TopicType, TopicPubSubType>(
             dsfTopicName, writer_qos, listener);
         if (!dataWriter) {
-            LOG(error) << "Failed to create topic writer for topic [" << dsfTopicName << "].";
+            ONDEMANDLOG(error) << "Failed to create topic writer for topic [" << dsfTopicName << "].";
             return -1;
         }
 
-        LOG(debug) << "Topic [" << dsfTopicName << "] writer created.";
+        ONDEMANDLOG(debug) << "Topic [" << dsfTopicName << "] writer created.";
         return 0;
     }
 
@@ -437,11 +437,11 @@ namespace ondemand
         dataReader = node->template createDataReader<TopicType, TopicPubSubType>(
             dsfTopicName, processFunc, reader_qos, listener);
         if (!dataReader) {
-            LOG(error) << "Failed to create topic reader for topic [" << dsfTopicName << "].";
+            ONDEMANDLOG(error) << "Failed to create topic reader for topic [" << dsfTopicName << "].";
             return -1;
         }
 
-        LOG(debug) << "Topic [" << dsfTopicName << "] reader created.";
+        ONDEMANDLOG(debug) << "Topic [" << dsfTopicName << "] reader created.";
         return 0;
     }
 

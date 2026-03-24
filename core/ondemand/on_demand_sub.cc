@@ -904,7 +904,7 @@ namespace ondemand
         std::shared_lock lock(varIndexMutex_);
         for (const auto &[hash, meta] : varIndex_) {
             if (!meta.varDefine) {
-                LOG(critical) << "Variable with hash " << hash << " has no definition, skipping.";
+                ONDEMANDLOG(critical) << "Variable with hash " << hash << " has no definition, skipping.";
                 continue;
             }
 
