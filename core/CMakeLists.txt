@@ -50,7 +50,7 @@ if(BUILD_LIBRARY)
         ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib/libfastdds.so
         ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib/libfastcdr.so
         ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib/libfoonathan_memory-0.7.3.so
-        ${CMAKE_SOURCE_DIR}/thirdparty/CRoaring/lib/libroaring.a
+        ${CMAKE_SOURCE_DIR}/thirdparty/CRoaring/lib/libroaring.so
         pthread 
         rt
         log::log 
