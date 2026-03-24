@@ -18,7 +18,7 @@
 #define DDS_IDL_WRAPPER_H
 
 #ifdef USE_FASTDDS
-// FastDDS
+// FastDDS (use .hpp files)
 #include "dsf_define_datatypes.hpp"
 #include "dsf_define_node.hpp"
 #include "dsf_define_nodePubSubTypes.hpp"
@@ -29,7 +29,7 @@
 #include "dsf_define_model.hpp"
 #include "dsf_define_modelPubSubTypes.hpp"
 #elif defined(USE_TXDDS)
-// TXDDS
+// TXDDS (use .h files)
 #include "dsf_define_datatypes.h"
 #include "dsf_define_node.h"
 #include "dsf_define_nodePubSubTypes.h"

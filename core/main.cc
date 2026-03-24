@@ -16,7 +16,7 @@
 #include "log/logger.h"
 #include "ondemand/on_demand_pub.h"
 #include "ondemand/on_demand_sub.h"
-#include <fastdds/dds/log/Log.hpp>
+
 
 uint32_t count = 5000;
 
@@ -287,7 +287,6 @@ void subscribe2()
 
 int main(int argc, char **argv)
 {
-    // eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Info);
     Logger::GetInstance()->Init("log/1.log", Logger::console, Logger::info, 10, 3);
     LOG(info) << "start on demand demo";
 

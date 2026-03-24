@@ -21,6 +21,7 @@
 #include "ondemand/on_demand_common.h"
 #include "roaring/roaring64map.hh"
 #include <cstring>
+#include <shared_mutex>
 #include <chrono>
 
 namespace dsf
@@ -100,7 +101,7 @@ namespace ondemand
             processFunc)
     {
 
-        constexpr uint32_t depth = 1;
+        constexpr uint32_t depth = 20;
         DdsWrapper::DataReaderQoSBuilder readerQosBuilder;
         readerQosBuilder.setMaxSamples(32 * depth)
             .setMaxInstances(32)

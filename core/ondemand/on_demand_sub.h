@@ -21,6 +21,7 @@
 #include "concurrentqueue.h"
 #include "variable_store.h"
 #include "timer_wheel/timer_scheduler.h"
+#include <shared_mutex>
 #include <bits/stdint-uintn.h>
 #include <string_view>
 #include <string_view>

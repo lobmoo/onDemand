@@ -71,6 +71,14 @@ ParticipantQoSBuilder &ParticipantQoSBuilder::setDiscoveryKeepAlive(uint32_t lea
     return *this;
 }
 
+ParticipantQoSBuilder &ParticipantQoSBuilder::setInitialAnnouncements(uint32_t count, uint32_t period_ms)
+{
+    // TXDDS does not expose FastDDS initial_announcements directly.
+    // Approximate behavior by keeping the same announcement period and scaling lease duration.
+    const uint32_t lease_ms = (count == 0) ? period_ms : count * period_ms;
+    return setDiscoveryKeepAlive(lease_ms, period_ms);
+}
+
 ParticipantQoSBuilder &ParticipantQoSBuilder::addUDPV4TransportInterfaces(
     const std::vector<std::string> &network_interfaces)
 {

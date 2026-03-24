@@ -3,19 +3,67 @@ cmake_minimum_required(VERSION 3.16)
 project(demo_exec  LANGUAGES  CXX)
 set(LIBRARY_OUTPUT_NAME  demo)
 
-
+# 根据 DDS 实现类型选择生成文件目录
+if(DDS_IMPL STREQUAL "FASTDDS")
+    set(IDL_GEN_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ondemand/.gensrc")
+    message(STATUS "Using FastDDS IDL gen dir: ${IDL_GEN_DIR}")
+elseif(DDS_IMPL STREQUAL "TXDDS")
+    set(IDL_GEN_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ondemand/.gensrctx")
+    message(STATUS "Using TXDDS IDL gen dir: ${IDL_GEN_DIR}")
+else()
+    message(FATAL_ERROR "Invalid DDS_IMPL: ${DDS_IMPL}")
+endif()
 
 #头文件
 set(OBJ_CPP_INCLUDE
     ${CMAKE_SOURCE_DIR}/common
     ${CMAKE_SOURCE_DIR}/core
-    ${CMAKE_SOURCE_DIR}/core/ondemand/.gensrc
+    ${IDL_GEN_DIR}
     ${CMAKE_SOURCE_DIR}/thirdparty/spdlog/include
-    ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/include
     ${CMAKE_SOURCE_DIR}/thirdparty/CRoaring/include
-
 )
 
+# DDS 实现特定的头文件路径和库
+if(DDS_IMPL STREQUAL "FASTDDS")
+    list(APPEND OBJ_CPP_INCLUDE ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/include)
+    
+    # FastDDS wrapper源文件
+    set(SOURCES_CC_FOR_DDS_WRAPPER
+        ${CMAKE_SOURCE_DIR}/common/fastdds_wrapper/fastdds_node.cc
+        ${CMAKE_SOURCE_DIR}/common/fastdds_wrapper/fastdds_qos_config.cc
+    )
+    
+    # FastDDS 库链接
+    set(DDS_LIBS
+        ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib/libfastdds.so
+        ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib/libfastcdr.so
+        ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib/libfoonathan_memory-0.7.3.so
+    )
+    
+    message(STATUS "FastDDS wrapper will be compiled")
+    
+elseif(DDS_IMPL STREQUAL "TXDDS")
+    list(APPEND OBJ_CPP_INCLUDE ${CMAKE_SOURCE_DIR}/thirdparty/txdds/include)
+    
+    # TXDDS wrapper源文件
+    set(SOURCES_CC_FOR_DDS_WRAPPER
+        ${CMAKE_SOURCE_DIR}/common/txdds_wrapper/txdds_node.cc
+        ${CMAKE_SOURCE_DIR}/common/txdds_wrapper/txdds_qos_config.cc
+    )
+    
+    # TXDDS 库链接
+    set(DDS_LIBS
+        ${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libTXDDS.so
+        ${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libTXCDR.so
+        ${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libTXRuntimeLog.so
+        ${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libssl.so
+        ${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libcrypto.so
+    )
+    
+    message(STATUS "TXDDS wrapper will be compiled")
+else()
+    message(FATAL_ERROR "Invalid DDS_IMPL: ${DDS_IMPL}")
+endif()
 
 # set(SOURCES_CC_FOR_NET_WORK
 #     "${CMAKE_CURRENT_SOURCE_DIR}/net_interface.cc"
@@ -24,17 +72,11 @@ set(OBJ_CPP_INCLUDE
 file(GLOB SOURCES_CC_FOR_ONDEMAND "${CMAKE_CURRENT_SOURCE_DIR}/ondemand/*.cc")
 file(GLOB SOURCES_CC_FOR_MAIN "${CMAKE_CURRENT_SOURCE_DIR}/main.cc")
 
-# FastDDS wrapper源文件
-set(SOURCES_CC_FOR_FASTDDS_WRAPPER
-    ${CMAKE_SOURCE_DIR}/common/fastdds_wrapper/fastdds_node.cc
-    ${CMAKE_SOURCE_DIR}/common/fastdds_wrapper/fastdds_qos_config.cc
-)
-
-# IDL生成的源文件
-file(GLOB SOURCES_CXX_FOR_IDL "${CMAKE_CURRENT_SOURCE_DIR}/ondemand/.gensrc/*.cxx")
+# IDL生成的源文件（根据 IDL_GEN_DIR）
+file(GLOB SOURCES_CXX_FOR_IDL "${IDL_GEN_DIR}/*.cxx")
 
 # 合并所有查找到的文件列表
-set(MAIN_SOURCES ${SOURCES_CC_FOR_MAIN} ${SOURCES_CC_FOR_ONDEMAND} ${SOURCES_CC_FOR_FASTDDS_WRAPPER} ${SOURCES_CXX_FOR_IDL})
+set(MAIN_SOURCES ${SOURCES_CC_FOR_MAIN} ${SOURCES_CC_FOR_ONDEMAND} ${SOURCES_CC_FOR_DDS_WRAPPER} ${SOURCES_CXX_FOR_IDL})
 
 
 option(BUILD_LIBRARY "Build library" OFF)
@@ -47,9 +89,7 @@ if(BUILD_LIBRARY)
     
     # 库也需要链接依赖
     target_link_libraries(${LIBRARY_OUTPUT_NAME} PRIVATE 
-        ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib/libfastdds.so
-        ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib/libfastcdr.so
-        ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib/libfoonathan_memory-0.7.3.so
+        ${DDS_LIBS}
         ${CMAKE_SOURCE_DIR}/thirdparty/CRoaring/lib/libroaring.so
         pthread 
         rt
@@ -68,10 +108,8 @@ target_include_directories(${PROJECT_NAME} PRIVATE  ${OBJ_CPP_INCLUDE})
 
 
 target_link_libraries(${PROJECT_NAME} PRIVATE 
-    ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib/libfastdds.so
-    ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib/libfastcdr.so
-    ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib/libfoonathan_memory-0.7.3.so
-    ${CMAKE_SOURCE_DIR}/thirdparty/CRoaring/lib/libroaring.a
+    ${DDS_LIBS}
+    ${CMAKE_SOURCE_DIR}/thirdparty/CRoaring/lib/libroaring.so
     pthread 
     rt
     log::log 
@@ -86,19 +124,11 @@ if(BUILD_LIBRARY)
         ${CMAKE_CURRENT_SOURCE_DIR}/concurrentqueue.h
     )
     
-    
     install(TARGETS ${LIBRARY_OUTPUT_NAME}
-            EXPORT ${LIBRARY_OUTPUT_NAME}Targets  # 支持find_package
             ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
             LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
             RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
             PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${LIBRARY_OUTPUT_NAME})  # 头文件
-    
-    
-    install(EXPORT ${LIBRARY_OUTPUT_NAME}Targets
-            FILE ${LIBRARY_OUTPUT_NAME}Targets.cmake
-            NAMESPACE ${LIBRARY_OUTPUT_NAME}::
-            DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${LIBRARY_OUTPUT_NAME})
             
     message(STATUS "Library will be installed to: ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
 endif()

@@ -184,7 +184,7 @@ namespace ondemand
      */
     bool OnDemandPub::createTableDefineWriter()
     {
-        constexpr uint32_t depth = 1;
+        constexpr uint32_t depth = 20;
         DdsWrapper::DataWriterQoSBuilder writerQosBuilder;
         writerQosBuilder.setMaxSamples(32 * depth)
             .setMaxInstances(32)
@@ -845,7 +845,7 @@ namespace ondemand
 
     void OnDemandPub::setVarDataBatch(const VarWriteItem *items, size_t count)
     {
-        constexpr size_t kStackMax = 256;
+        constexpr size_t kStackMax = 4096;
         auto run = [&](uint32_t *ids, const void **datas, uint32_t *sizes) {
             for (size_t i = 0; i < count; ++i) {
                 ids[i]   = items[i].id;

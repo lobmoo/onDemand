@@ -90,6 +90,12 @@ public:
      */
     bool isInitialized() const { return initialized_; }
 
+    /**
+     *  Compatibility method with FastDDS wrapper call sites.
+     * TXDDS participant liveliness assertion hook is currently a no-op.
+     */
+    void assertLiveliness() {}
+
     template <typename MESSAGE, typename PUBSUB_TYPE>
     std::shared_ptr<TxddsWrapper::TXDDSTopicWriter<MESSAGE>>
     createDataWriter(const std::string topicName, DDSDataWriterListener *listener = nullptr)
