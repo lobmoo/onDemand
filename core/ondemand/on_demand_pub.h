@@ -119,10 +119,28 @@ namespace ondemand
         void setBlobType(DSF::Var::BLOB_TYPE blobType) { blobType_ = blobType; }
 
         /**
+         * @brief 暂停数据发布
+         */
+        void pausePublish() { paused_.store(true, std::memory_order_release); }
+
+        /**
+         * @brief 恢复数据发布
+         */
+        void resumePublish() { paused_.store(false, std::memory_order_release); }
+
+        /**
          * @brief 设置变量频率变化回调，当变量的发送周期发生改变时触发
          * @param  cb 回调函数，参数为变量全名和新的发送周期(ms)
          */
         void setFreqChangeCallback(FreqChangeCallback cb);
+
+        /**
+         *  手动清理指定 participant 的全部订阅关系（用于外部参与者或非继承场景）
+         *  participantName participant 名称
+         *  true  找到并清理成功
+         *  false 未找到该 participant 或参数无效
+         */
+        bool cleanupParticipantSubscriptions(const std::string &participantName);
 
     private:
         // ParticipantListener 回调
@@ -300,6 +318,7 @@ namespace ondemand
         VarStore varStore_;
 
         DSF::Var::BLOB_TYPE blobType_{DSF::Var::BLOB_TYPE::STRUCTS}; // 全局序列化类型
+        std::atomic<bool> paused_{false};                            // 暂停发布标志
         std::unordered_map<uint64_t, uint8_t> nodeSlotMap_;
         uint8_t nextNodeSlot_ = 0;
 

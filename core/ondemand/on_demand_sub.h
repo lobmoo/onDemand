@@ -41,7 +41,10 @@ namespace ondemand
      * @brief 单个变量的回调数据
      */
     struct VarCallbackData {
+        std::string_view nodeName;
         std::string_view varName;
+        std::string_view varType;
+        std::string_view type_verson;
         const void *data;
         size_t size;
         uint64_t timestampNs;
@@ -217,7 +220,10 @@ namespace ondemand
             int32_t varId;
             uint32_t dataSize;
             uint32_t bucketIndex;
+            std::string nodeName;
             std::string varName;
+            std::string varType;
+            std::string typeVersion;
             DataCallback callback;
         };
 

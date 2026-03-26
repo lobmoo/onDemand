@@ -323,6 +323,8 @@ namespace ondemand
 
                     if (varStore_.write(varId, blob.data(), blob.size())) {
                         ++written;
+                        // 更新实际数据大小，回调时传给用户正确的大小
+                        vit->second.dataSize = static_cast<uint32_t>(blob.size());
                     } else {
                         ONDEMANDLOG_TIME(error, 5)
                             << "Failed to write varId: " << varId << " for varHash: " << varHash;
@@ -725,6 +727,11 @@ namespace ondemand
                     vi.varId = varId;
                     vi.dataSize = vit->second.dataSize;
                     vi.bucketIndex = static_cast<uint32_t>(vit->second.bucketIndex);
+                    if (vit->second.varDefine) {
+                        vi.nodeName = vit->second.varDefine->nodeName();
+                        vi.varType = vit->second.varDefine->modelName();
+                        vi.typeVersion = vit->second.varDefine->modelVersion();
+                    }
                     vi.varName = cbInfo.varName;
                     vi.callback = cbInfo.callback;
                     vec->push_back(std::move(vi));
@@ -859,7 +866,8 @@ namespace ondemand
 
             if (!groupCallback)
                 groupCallback = &info.callback;
-            batch.push_back({info.varName, ptr, info.dataSize, tsNs, blobType});
+            batch.push_back({info.nodeName, info.varName, info.varType, info.typeVersion, ptr,
+                             info.dataSize, tsNs, blobType});
             offset += info.dataSize;
         }
 

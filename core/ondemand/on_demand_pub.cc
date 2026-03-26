@@ -514,6 +514,10 @@ namespace ondemand
      */
     void OnDemandPub::publishGroupData(uint32_t bucketIndex, uint32_t freqMs)
     {
+        // 暂停时跳过发布
+        if (paused_.load(std::memory_order_acquire))
+            return;
+
         // 获取组成员快照 + running flag + 预计算 mask 快照
         std::shared_ptr<std::vector<GroupVarInfo>> members;
         std::shared_ptr<std::atomic<bool>> running;
@@ -1081,29 +1085,42 @@ namespace ondemand
             return;
         }
 
-        const std::string &nodeName = info.participant_name;
-        uint64_t nodeHash = fast_hash(nodeName);
+        (void)cleanupParticipantSubscriptions(info.participant_name);
+    }
+
+    bool OnDemandPub::cleanupParticipantSubscriptions(const std::string &participantName)
+    {
+        if (participantName.empty()) {
+            ONDEMANDLOG(warning) << "cleanupParticipantSubscriptions failed: empty participant name";
+            return false;
+        }
+
+        uint64_t nodeHash = fast_hash(participantName);
 
         std::unique_lock lock(varIndexMutex_);
 
         auto slotIt = nodeSlotMap_.find(nodeHash);
         if (slotIt == nodeSlotMap_.end()) {
-            return;
+            ONDEMANDLOG(debug) << "cleanupParticipantSubscriptions skipped: participant not found: "
+                              << participantName;
+            return false;
         }
-        uint64_t nodeMask = uint64_t(1) << slotIt->second;
 
+        uint64_t nodeMask = uint64_t(1) << slotIt->second;
         auto freqChanges = forceUnsubscribeNode(nodeMask);
 
         nodeSlotMap_.erase(slotIt);
 
         lock.unlock();
 
-        ONDEMANDLOG(info) << "Participant offline: " << nodeName << ", force-unsubscribed "
+        ONDEMANDLOG(info) << "Participant cleanup: " << participantName << ", force-unsubscribed "
                           << freqChanges.size() << " vars";
 
         for (const auto &[varName, newFreq] : freqChanges) {
             freqChangeQueue_.enqueue({varName, newFreq});
         }
+
+        return true;
     }
 
     std::vector<std::pair<std::string, uint32_t>>
@@ -1141,6 +1158,9 @@ namespace ondemand
 
         return freqChanges;
     }
+
+    
+
 
 } // namespace ondemand
 } // namespace dsf
