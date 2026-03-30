@@ -323,8 +323,6 @@ namespace ondemand
 
                     if (varStore_.write(varId, blob.data(), blob.size())) {
                         ++written;
-                        // 更新实际数据大小，回调时传给用户正确的大小
-                        vit->second.dataSize = static_cast<uint32_t>(blob.size());
                     } else {
                         ONDEMANDLOG_TIME(error, 5)
                             << "Failed to write varId: " << varId << " for varHash: " << varHash;
@@ -383,7 +381,6 @@ namespace ondemand
                         meta.currentFreq = 0xFFFFFFFF;
                         meta.activeFreqCount = 0;
                         uint32_t kVarSize = varDefine.size();
-                        meta.dataSize = kVarSize;
                         meta.bucketIndex = bucketIdx;
                         meta.varDefine = std::make_shared<DSF::Var::Define>(varDefine);
                         meta.varId = varStore_.register_var(varHash, kVarSize);
@@ -725,7 +722,7 @@ namespace ondemand
                     CallbackVarInfo vi;
                     vi.varHash = varHash;
                     vi.varId = varId;
-                    vi.dataSize = vit->second.dataSize;
+                    vi.dataSize = varStore_.slot_size(static_cast<uint32_t>(varId));
                     vi.bucketIndex = static_cast<uint32_t>(vit->second.bucketIndex);
                     if (vit->second.varDefine) {
                         vi.nodeName = vit->second.varDefine->nodeName();
@@ -825,14 +822,7 @@ namespace ondemand
             ~RunningGuard() { flag.store(false, std::memory_order_release); }
         } guard{*running};
 
-        /* 预分配 flat buffer, 避免逐变量分配 */
-        size_t totalBufSize = 0;
-        for (const auto &info : *members)
-            totalBufSize += info.dataSize;
-        std::vector<uint8_t> dataBuf(totalBufSize);
-        size_t offset = 0;
-
-        DataCallback *groupCallback = nullptr;
+        const DataCallback *groupCallback = nullptr;
         std::vector<VarCallbackData> batch;
         batch.reserve(members->size());
 
@@ -853,32 +843,60 @@ namespace ondemand
                 varWriteStamps_[bucketIndex].blobType.load(std::memory_order_acquire));
         }
 
-        for (auto &info : *members) {
-            if (info.dataSize == 0 || !info.callback)
+        struct PendingItem {
+            const CallbackVarInfo *info;
+            VarStore::ZeroCopyReadHandle handle;
+            uint32_t size;
+        };
+
+        std::vector<PendingItem> pending;
+        pending.reserve(members->size());
+        size_t totalBufSize = 0;
+
+        for (const auto &info : *members) {
+            if (!info.callback)
                 continue;
 
-            uint8_t *ptr = dataBuf.data() + offset;
-            if (!varStore_.read(info.varId, ptr)) {
-                ONDEMANDLOG(error) << "Failed to read varId: " << info.varId
-                                   << " for callback, varName: " << info.varName;
+            auto handle = varStore_.read_zero_copy(static_cast<uint32_t>(info.varId));
+            if (!handle || handle.size() == 0) {
+                ONDEMANDLOG_TIME(error, 5000) << "Failed to read varId: " << info.varId
+                                              << " for callback, varName: " << info.varName;
                 continue;
             }
 
             if (!groupCallback)
                 groupCallback = &info.callback;
-            batch.push_back({info.nodeName, info.varName, info.varType, info.typeVersion, ptr,
-                             info.dataSize, tsNs, blobType});
-            offset += info.dataSize;
+
+            totalBufSize += handle.size();
+            pending.push_back(PendingItem{&info, std::move(handle), handle.size()});
         }
 
-        if (batch.empty() || !groupCallback)
+        if (pending.empty() || !groupCallback)
+            return;
+
+        /* 按真实长度一次性分配，再拷贝到连续缓冲区供用户回调读取 */
+        std::vector<uint8_t> dataBuf(totalBufSize);
+        size_t offset = 0;
+
+        for (auto &item : pending) {
+            uint8_t *ptr = dataBuf.data() + offset;
+            std::memcpy(ptr, item.handle.ptr(), item.size);
+
+            const auto &info = *item.info;
+            batch.push_back({info.nodeName, info.varName, info.varType, info.typeVersion, ptr,
+                             item.size, tsNs, blobType});
+            offset += item.size;
+        }
+
+        if (batch.empty())
             return;
 
         try {
             (*groupCallback)(batch);
         } catch (const std::exception &e) {
             ONDEMANDLOG_TIME(error, 5000) << "Batch callback exception for freq=" << freqMs
-                                          << "ms, vars=" << batch.size() << " err: " << e.what();
+                                          << "ms, vars=" << batch.size() << " err: "
+                                          << e.what();
         }
     }
 

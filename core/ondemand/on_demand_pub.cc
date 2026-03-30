@@ -420,7 +420,11 @@ namespace ondemand
                         vec = std::make_shared<std::vector<GroupVarInfo>>();
                     }
                     /*<id+freq, varInfo>  这里面存的就是所有的点按照索引 + 周期相同的放一起*/
-                    vec->push_back(GroupVarInfo{varHash, meta.varId, meta.dataSize});
+                    uint32_t runtimeSize = varStore_.slot_size(meta.varId);
+                    if (runtimeSize == 0) {
+                        continue;
+                    }
+                    vec->push_back(GroupVarInfo{varHash, meta.varId, runtimeSize});
                 }
             }
 
@@ -551,16 +555,13 @@ namespace ondemand
         msg.varData().reserve(members->size());
 
         for (const auto &info : *members) {
-            if (info.dataSize == 0)
-                continue;
-
             auto handle = varStore_.read_zero_copy(info.varId);
-            if (!handle)
+            if (!handle || handle.size() == 0)
                 continue;
 
             auto &dst = msg.varData().emplace_back();
-            dst.resize(info.dataSize);
-            std::memcpy(dst.data(), handle.ptr(), info.dataSize);
+            dst.resize(handle.size());
+            std::memcpy(dst.data(), handle.ptr(), handle.size());
         }
 
         if (msg.varData().empty()) {
@@ -676,7 +677,6 @@ namespace ondemand
                 meta.bucketIndex = bucketIdx;
                 meta.varDefine = std::make_shared<DSF::Var::Define>(VarDefine);
                 uint32_t kVarSize = VarDefine.size() > 0 ? static_cast<uint32_t>(VarDefine.size()) : 32u;
-                meta.dataSize = kVarSize;
                 meta.varId = varStore_.register_var(varHash, kVarSize);
                 varIndex_.emplace(varHash, std::move(meta));
                 bucketManager_.AddMember(varName, varHash);

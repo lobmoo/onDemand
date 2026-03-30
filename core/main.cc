@@ -18,7 +18,7 @@
 #include "ondemand/on_demand_sub.h"
 
 
-uint32_t count = 5000;
+uint32_t count = 10000;
 
 static int parse_var_index(std::string_view varName)
 {

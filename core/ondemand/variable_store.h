@@ -54,8 +54,14 @@ namespace ondemand
     struct alignas(64) Slot {
         std::atomic<uint32_t> seq{0};       // seqlock 计数器，奇数=写入中
         std::atomic<uint8_t>  committed{0}; // 当前可读缓冲区索引 (0 或 1)
+        uint32_t valid_size[2]{0, 0};       // 每个缓冲区的有效数据长度
         std::byte data[];                   // [buf0: size B][buf1: size B]
     };
+
+    inline constexpr uint32_t slot_bytes(uint32_t payload_size)
+    {
+        return align64(static_cast<uint32_t>(sizeof(Slot)) + 2u * payload_size);
+    }
 
     class VarStore
     {
@@ -72,15 +78,16 @@ namespace ondemand
             ConfigGuard g(this);
             auto it = table_.find(hash);
             if (it != table_.end())
-                return (it->second < metas_.size() && metas_[it->second].size == size) ? it->second
-                                                                                       : kInvalidId;
+                return (it->second < metas_.size() && metas_[it->second].size == size)
+                           ? it->second
+                           : kInvalidId;
             uint32_t id = metas_.size();
             table_[hash] = id;
             metas_.push_back({id, arena_size_, size});
             /*提高内存访问效率，减少伪共享和cache line冲突，适配现代CPU缓存（cache line一般为64字节）。
                 保证Slot结构和数据在多线程环境下原子操作时不会跨cache line，避免false sharing。
                 有些SIMD/原子操作要求对齐，防止未对齐访问导致性能下降或异常。*/
-            arena_size_ += align64(sizeof(Slot) + size);
+            arena_size_ += slot_bytes(size);
             return id;
         }
 
@@ -108,15 +115,14 @@ namespace ondemand
         bool finalize()
         {
             ConfigGuard g(this);
-            uint32_t new_count = metas_.size();
+            uint32_t new_count = static_cast<uint32_t>(metas_.size());
             /*防止越界*/
             if (new_count <= var_count_)
                 return true;
 
             arena_size_ = align64(arena_size_);
             uint32_t old_size = var_count_
-                                    ? metas_[var_count_ - 1].offset
-                                          + align64(sizeof(Slot) + 2 * metas_[var_count_ - 1].size)
+                                    ? metas_[var_count_ - 1].offset + slot_bytes(metas_[var_count_ - 1].size)
                                     : 0;
 
             void *new_arena = std::aligned_alloc(64, arena_size_);
@@ -152,7 +158,7 @@ namespace ondemand
         bool write(uint32_t id, const void *src)
         {
             OpGuard g(this);
-            if (!arena_ || !dirty_flags_ || id >= var_count_)
+            if (!arena_ || !dirty_flags_ || id >= var_count_ || metas_[id].size == 0 || !src)
                 return false;
             auto *slot = (Slot *)(arena_ + metas_[id].offset);
             uint32_t size = metas_[id].size;
@@ -160,6 +166,7 @@ namespace ondemand
             slot->seq.fetch_add(1, std::memory_order_acquire);
             uint8_t write_idx = 1u - slot->committed.load(std::memory_order_relaxed);
             std::memcpy(slot->data + write_idx * size, src, size);
+            slot->valid_size[write_idx] = size;
             slot->committed.store(write_idx, std::memory_order_release);
             slot->seq.fetch_add(1, std::memory_order_release);
 
@@ -170,23 +177,34 @@ namespace ondemand
 
         bool write(uint32_t id, const void *src, uint32_t actual_size)
         {
-            OpGuard g(this);
-            if (!arena_ || !dirty_flags_ || id >= var_count_ || metas_[id].size == 0)
+            if (!src || actual_size == 0)
                 return false;
-            if (actual_size > metas_[id].size)
-                return false;
-            auto *slot = (Slot *)(arena_ + metas_[id].offset);
-            uint32_t size = metas_[id].size;
 
-            slot->seq.fetch_add(1, std::memory_order_acquire);
-            uint8_t write_idx = 1u - slot->committed.load(std::memory_order_relaxed);
-            std::memcpy(slot->data + write_idx * size, src, actual_size);
-            slot->committed.store(write_idx, std::memory_order_release);
-            slot->seq.fetch_add(1, std::memory_order_release);
+            for (;;) {
+                {
+                    OpGuard g(this);
+                    if (!arena_ || !dirty_flags_ || id >= var_count_ || metas_[id].size == 0)
+                        return false;
 
-            if (!dirty_flags_[id].exchange(true, std::memory_order_acq_rel))
-                dirty_queue_.enqueue(id);
-            return true;
+                    uint32_t size = metas_[id].size;
+                    if (actual_size <= size) {
+                        auto *slot = (Slot *)(arena_ + metas_[id].offset);
+                        slot->seq.fetch_add(1, std::memory_order_acquire);
+                        uint8_t write_idx = 1u - slot->committed.load(std::memory_order_relaxed);
+                        std::memcpy(slot->data + write_idx * size, src, actual_size);
+                        slot->valid_size[write_idx] = actual_size;
+                        slot->committed.store(write_idx, std::memory_order_release);
+                        slot->seq.fetch_add(1, std::memory_order_release);
+
+                        if (!dirty_flags_[id].exchange(true, std::memory_order_acq_rel))
+                            dirty_queue_.enqueue(id);
+                        return true;
+                    }
+                }
+
+                if (!ensure_capacity(id, actual_size))
+                    return false;
+            }
         }
 
         /**
@@ -199,11 +217,35 @@ namespace ondemand
         void write_batch(const uint32_t *ids, const void *const *datas,
                          const uint32_t *sizes, size_t count)
         {
-            OpGuard g(this);
-            if (!arena_ || !dirty_flags_) return;
+            if (!ids || !datas || !sizes)
+                return;
+
+            // 先按需扩容，避免在持有 OpGuard 时重配置导致死锁。
             for (size_t i = 0; i < count; ++i) {
                 uint32_t id = ids[i];
-                if (id >= var_count_ || metas_[id].size == 0) continue;
+                if (id == kInvalidId || !datas[i])
+                    continue;
+
+                bool need_expand = false;
+                {
+                    OpGuard g(this);
+                    if (!arena_ || id >= var_count_ || metas_[id].size == 0)
+                        continue;
+                    need_expand = sizes[i] > metas_[id].size;
+                }
+
+                if (need_expand) {
+                    (void)ensure_capacity(id, sizes[i]);
+                }
+            }
+
+            OpGuard g(this);
+            if (!arena_ || !dirty_flags_)
+                return;
+            for (size_t i = 0; i < count; ++i) {
+                uint32_t id = ids[i];
+                if (id >= var_count_ || metas_[id].size == 0 || !datas[i])
+                    continue;
                 auto *slot = (Slot *)(arena_ + metas_[id].offset);
                 uint32_t size = metas_[id].size;
                 uint32_t actual = sizes[i] <= size ? sizes[i] : size;
@@ -211,6 +253,7 @@ namespace ondemand
                 slot->seq.fetch_add(1, std::memory_order_acquire);
                 uint8_t write_idx = 1u - slot->committed.load(std::memory_order_relaxed);
                 std::memcpy(slot->data + write_idx * size, datas[i], actual);
+                slot->valid_size[write_idx] = actual;
                 slot->committed.store(write_idx, std::memory_order_release);
                 slot->seq.fetch_add(1, std::memory_order_release);
 
@@ -233,9 +276,13 @@ namespace ondemand
             uint32_t size = metas_[id].size;
             for (int retry = 0; retry < 10; ++retry) {
                 uint32_t s1 = slot->seq.load(std::memory_order_acquire);
-                if (s1 & 1) continue;
+                if (s1 & 1)
+                    continue;
                 uint8_t idx = slot->committed.load(std::memory_order_acquire);
-                std::memcpy(dst, slot->data + idx * size, size);
+                uint32_t actual = slot->valid_size[idx];
+                if (actual == 0 || actual > size)
+                    actual = size;
+                std::memcpy(dst, slot->data + idx * size, actual);
                 if (s1 == slot->seq.load(std::memory_order_acquire))
                     return true;
             }
@@ -258,34 +305,47 @@ namespace ondemand
         public:
             ZeroCopyReadHandle(const VarStore *s, uint32_t id) : s_(s), ptr_(nullptr), size_(0)
             {
-                if (!s_) return;
+                if (!s_)
+                    return;
                 s_->op_enter();
-                if (!s_->arena_ || id >= s_->var_count_) return;
+                if (!s_->arena_ || id >= s_->var_count_)
+                    return;
 
                 auto *slot = (const Slot *)(s_->arena_ + s_->metas_[id].offset);
                 uint32_t size = s_->metas_[id].size;
 
                 for (int retry = 0; retry < 10; ++retry) {
                     uint32_t s1 = slot->seq.load(std::memory_order_acquire);
-                    if (s1 & 1) continue;
+                    if (s1 & 1)
+                        continue;
                     uint8_t idx = slot->committed.load(std::memory_order_acquire);
                     std::atomic_thread_fence(std::memory_order_acquire);
                     if (s1 == slot->seq.load(std::memory_order_acquire)) {
-                        ptr_  = slot->data + idx * size;
-                        size_ = size;
+                        uint32_t actual = slot->valid_size[idx];
+                        if (actual == 0 || actual > size)
+                            actual = size;
+                        ptr_ = slot->data + idx * size;
+                        size_ = actual;
                         return;
                     }
                 }
             }
 
-            ~ZeroCopyReadHandle() { if (s_) s_->op_exit(); }
+            ~ZeroCopyReadHandle()
+            {
+                if (s_)
+                    s_->op_exit();
+            }
 
             ZeroCopyReadHandle(ZeroCopyReadHandle &&o) noexcept
-                : s_(o.s_), ptr_(o.ptr_), size_(o.size_) { o.s_ = nullptr; }
+                : s_(o.s_), ptr_(o.ptr_), size_(o.size_)
+            {
+                o.s_ = nullptr;
+            }
             ZeroCopyReadHandle(const ZeroCopyReadHandle &) = delete;
 
-            const std::byte *ptr()  const { return ptr_; }
-            uint32_t         size() const { return size_; }
+            const std::byte *ptr() const { return ptr_; }
+            uint32_t size() const { return size_; }
             explicit operator bool() const { return ptr_ != nullptr; }
         };
 
@@ -311,7 +371,79 @@ namespace ondemand
         uint32_t total_size() const { return arena_size_; }
         size_t queue_size_approx() const { return dirty_queue_.size_approx(); }
 
+        uint32_t slot_size(uint32_t id) const
+        {
+            OpGuard g(this);
+            if (!arena_ || id >= var_count_)
+                return 0;
+            return metas_[id].size;
+        }
+
     private:
+        bool ensure_capacity(uint32_t id, uint32_t required)
+        {
+            if (required == 0 || id >= metas_.size())
+                return false;
+
+            ConfigGuard g(this);
+            if (id >= metas_.size() || metas_[id].size == 0)
+                return false;
+
+            uint32_t old_size = metas_[id].size;
+            if (required <= old_size)
+                return true;
+
+            uint32_t new_size = required;
+            uint32_t doubled = old_size > (UINT32_MAX / 2u) ? old_size : old_size * 2u;
+            if (doubled > new_size)
+                new_size = doubled;
+
+            std::vector<uint32_t> new_offsets(metas_.size(), 0u);
+            uint32_t new_arena_size = 0;
+            for (size_t i = 0; i < metas_.size(); ++i) {
+                new_offsets[i] = new_arena_size;
+                uint32_t sz = (static_cast<uint32_t>(i) == id) ? new_size : metas_[i].size;
+                new_arena_size += slot_bytes(sz);
+            }
+            new_arena_size = align64(new_arena_size);
+
+            void *new_arena = std::aligned_alloc(64, new_arena_size);
+            if (!new_arena)
+                return false;
+            std::memset(new_arena, 0, new_arena_size);
+
+            if (arena_) {
+                for (size_t i = 0; i < metas_.size(); ++i) {
+                    uint32_t src_size = metas_[i].size;
+                    uint32_t dst_size = (static_cast<uint32_t>(i) == id) ? new_size : src_size;
+                    uint32_t copy_size = src_size < dst_size ? src_size : dst_size;
+
+                    auto *src_slot = reinterpret_cast<Slot *>(arena_ + metas_[i].offset);
+                    auto *dst_slot = reinterpret_cast<Slot *>(reinterpret_cast<std::byte *>(new_arena)
+                                                              + new_offsets[i]);
+
+                    dst_slot->seq.store(src_slot->seq.load(std::memory_order_relaxed),
+                                        std::memory_order_relaxed);
+                    dst_slot->committed.store(src_slot->committed.load(std::memory_order_relaxed),
+                                              std::memory_order_relaxed);
+                    dst_slot->valid_size[0] = src_slot->valid_size[0];
+                    dst_slot->valid_size[1] = src_slot->valid_size[1];
+                    if (copy_size > 0) {
+                        std::memcpy(dst_slot->data, src_slot->data, copy_size * 2u);
+                    }
+                }
+            }
+
+            std::free(arena_);
+            arena_ = reinterpret_cast<std::byte *>(new_arena);
+            metas_[id].size = new_size;
+            for (size_t i = 0; i < metas_.size(); ++i) {
+                metas_[i].offset = new_offsets[i];
+            }
+            arena_size_ = new_arena_size;
+            return true;
+        }
+
         struct OpGuard {
             const VarStore *s_;
             OpGuard(const VarStore *s) : s_(s) { s_->op_enter(); }
@@ -335,6 +467,7 @@ namespace ondemand
                 active_ops_.fetch_sub(1, std::memory_order_acq_rel);
             }
         }
+
         void op_exit() const { active_ops_.fetch_sub(1, std::memory_order_acq_rel); }
 
         void config_begin()
@@ -344,6 +477,7 @@ namespace ondemand
             while (active_ops_.load(std::memory_order_acquire))
                 std::this_thread::yield();
         }
+
         void config_end()
         {
             reconfig_.store(false, std::memory_order_release);
