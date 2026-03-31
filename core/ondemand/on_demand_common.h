@@ -280,6 +280,7 @@ namespace ondemand
         uint32_t varId;                              // 变量ID (全局唯一，递增分配)
         uint32_t currentFreq;                        // 当前发布频率 (ms)
         std::shared_ptr<DSF::Var::Define> varDefine; // 变量定义 (包含结构信息等)
+        std::string realVarName;                    // 真实变量名 (不含节点名前缀)
 
         // 订阅频率信息 (紧凑存储)
         struct FreqSub {
@@ -293,8 +294,8 @@ namespace ondemand
         uint8_t activeFreqCount;       // 活跃频率数量
 
         VarMetadata()
-            : varHash(0), bucketIndex(0), varId(0), currentFreq(0xFFFFFFFF), freqSubs{},
-              activeFreqCount(0)
+            : varHash(0), bucketIndex(0), varId(0), currentFreq(0xFFFFFFFF), varDefine(nullptr),
+              realVarName(), freqSubs{}, activeFreqCount(0)
         {
         }
 
@@ -312,6 +313,9 @@ namespace ondemand
             oss << "\n  varHash      : 0x" << std::hex << varHash << std::dec;
             oss << "\n  bucketIndex  : " << bucketIndex;
             oss << "\n  varId        : " << varId;
+            if (!realVarName.empty()) {
+                oss << "\n  realVarName : " << realVarName;
+            }
             if (currentFreq == 0xFFFFFFFF) {
                 oss << "\n  currentFreq  : NONE (no subscriber)";
             } else {

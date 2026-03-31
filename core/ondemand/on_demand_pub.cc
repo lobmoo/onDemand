@@ -101,6 +101,10 @@ namespace ondemand
      */
     bool OnDemandPub::start()
     {
+        if (!initialized_.load(std::memory_order_acquire)) {
+            ONDEMANDLOG(error) << "OnDemandPub not initialized";
+            return false;
+        }
         if (running_.exchange(true)) {
             ONDEMANDLOG(warning) << "Already running";
             return false;
@@ -128,6 +132,12 @@ namespace ondemand
         bool wasRunning = running_.exchange(false);
 
         if (wasRunning) {
+            /*先阻止新增定时发布，缩小 stop 后继续发包窗口*/
+            cancelAllPublishTimers();
+            if (publishScheduler_) {
+                publishScheduler_->Stop();
+            }
+
             /*等待线程退出*/
             if (registerProcessThread_.joinable()) {
                 registerProcessThread_.join();
@@ -139,10 +149,7 @@ namespace ondemand
                 freqChangeCbThread_.join();
             }
 
-            /*清理所有发布定时器和调度器*/
-            cancelAllPublishTimers();
             if (publishScheduler_) {
-                publishScheduler_->Stop();
                 publishScheduler_.reset();
             }
         }
@@ -395,9 +402,9 @@ namespace ondemand
 
         while (running_.load(std::memory_order_acquire)) {
 
+            std::this_thread::sleep_for(kScanInterval);
             // 只在 varIndex_ 有变更时才重建分组 (dirty flag)
             if (!schedulerDirty_.exchange(false, std::memory_order_acq_rel)) {
-                std::this_thread::sleep_for(kScanInterval);
                 continue;
             }
 
@@ -480,14 +487,14 @@ namespace ondemand
                         groupMaskBufs_.erase(key);
                     }
 
-
                     // 仅为新增分组创建定时器，已有分组的定时器保持不变
                     if (publishGroupTimers_.find(key) == publishGroupTimers_.end()) {
                         uint32_t bucketIdx = key.bucketIndex;
                         uint32_t freqMs = key.freqMs;
                         Tick intervalTicks = static_cast<Tick>(freqMs);
                         // 按 bucket 错开初始延迟，避免 20 个 bucket 同时触发挤爆线程池
-                        Tick jitter = static_cast<Tick>(bucketIdx * (freqMs / ONDEMAND_BUCKET_SIZE));
+                        Tick jitter =
+                            static_cast<Tick>(bucketIdx * (freqMs / ONDEMAND_BUCKET_SIZE));
                         auto timer = publishScheduler_->ScheduleRecurring(
                             [this, bucketIdx, freqMs]() { publishGroupData(bucketIdx, freqMs); },
                             intervalTicks + jitter, // 首次延迟错开
@@ -500,8 +507,6 @@ namespace ondemand
                     }
                 }
             }
-
-            std::this_thread::sleep_for(kScanInterval);
         }
     }
 
@@ -518,6 +523,9 @@ namespace ondemand
      */
     void OnDemandPub::publishGroupData(uint32_t bucketIndex, uint32_t freqMs)
     {
+        if (!running_.load(std::memory_order_acquire))
+            return;
+
         // 暂停时跳过发布
         if (paused_.load(std::memory_order_acquire))
             return;
@@ -554,18 +562,28 @@ namespace ondemand
         DSF::Var::TableDataTransfer msg;
         msg.varData().reserve(members->size());
 
+        constexpr char kUnreadableAscii[] = "??";
+        constexpr size_t kUnreadableAsciiLen = sizeof(kUnreadableAscii) - 1;
+
         for (const auto &info : *members) {
-            auto handle = varStore_.read_zero_copy(info.varId);
-            if (!handle || handle.size() == 0)
-                continue;
-
             auto &dst = msg.varData().emplace_back();
-            dst.resize(handle.size());
-            std::memcpy(dst.data(), handle.ptr(), handle.size());
-        }
+            auto handle = varStore_.read_zero_copy(info.varId);
+            if (handle && handle.size() > 0) {
+                dst.resize(handle.size());
+                std::memcpy(dst.data(), handle.ptr(), handle.size());
+                continue;
+            }
 
-        if (msg.varData().empty()) {
-            return;
+            const uint32_t fallbackSize =
+                (info.dataSize > 0) ? info.dataSize : static_cast<uint32_t>(kUnreadableAsciiLen);
+            dst.assign(fallbackSize, static_cast<uint8_t>(0));
+            const size_t copySize = std::min<size_t>(fallbackSize, kUnreadableAsciiLen);
+            if (copySize > 0) {
+                std::memcpy(dst.data(), kUnreadableAscii, copySize);
+            }
+            ONDEMANDLOG_TIME(warning, 3000)
+                << "Read failed for varHash=" << info.varHash
+                << ", fill fallback ASCII payload, size=" << fallbackSize;
         }
 
         if (!maskBuf.empty()) {
@@ -591,7 +609,7 @@ namespace ondemand
         auto nsec = std::chrono::duration_cast<std::chrono::nanoseconds>(epoch) - sec;
         msg.timestamp().tv_sec(static_cast<int32_t>(sec.count()));
         msg.timestamp().tv_nsec(static_cast<uint32_t>(nsec.count()));
-        msg.blobType(blobType_);
+        msg.blobType(static_cast<DSF::Var::BLOB_TYPE>(blobType_.load(std::memory_order_acquire)));
 
         // 发送
         {
@@ -676,7 +694,9 @@ namespace ondemand
                 meta.activeFreqCount = 0;
                 meta.bucketIndex = bucketIdx;
                 meta.varDefine = std::make_shared<DSF::Var::Define>(VarDefine);
-                uint32_t kVarSize = VarDefine.size() > 0 ? static_cast<uint32_t>(VarDefine.size()) : 32u;
+                meta.realVarName = VarDefine.name();
+                uint32_t kVarSize =
+                    VarDefine.size() > 0 ? static_cast<uint32_t>(VarDefine.size()) : 32u;
                 meta.varId = varStore_.register_var(varHash, kVarSize);
                 varIndex_.emplace(varHash, std::move(meta));
                 bucketManager_.AddMember(varName, varHash);
@@ -870,25 +890,24 @@ namespace ondemand
         constexpr size_t kStackMax = 4096;
         auto run = [&](uint32_t *ids, const void **datas, uint32_t *sizes) {
             for (size_t i = 0; i < count; ++i) {
-                ids[i]   = items[i].id;
+                ids[i] = items[i].id;
                 datas[i] = items[i].data;
                 sizes[i] = static_cast<uint32_t>(items[i].size);
             }
             varStore_.write_batch(ids, datas, sizes, count);
         };
         if (count <= kStackMax) {
-            uint32_t    ids[kStackMax];
+            uint32_t ids[kStackMax];
             const void *datas[kStackMax];
-            uint32_t    sizes[kStackMax];
+            uint32_t sizes[kStackMax];
             run(ids, datas, sizes);
         } else {
-            std::vector<uint32_t>    ids(count);
-            std::vector<const void*> datas(count);
-            std::vector<uint32_t>    sizes(count);
+            std::vector<uint32_t> ids(count);
+            std::vector<const void *> datas(count);
+            std::vector<uint32_t> sizes(count);
             run(ids.data(), datas.data(), sizes.data());
         }
     }
-
 
     /**
      * @brief 获取或分配订阅者节点的位图位置，支持最多 256 个订阅者
@@ -943,7 +962,7 @@ namespace ondemand
             auto it = varIndex_.find(varHash);
             if (it == varIndex_.end()) {
                 ONDEMANDLOG(warning) << "register var not found ! var name: " << varFreq.name()
-                             << " node name: " << nodeName;
+                                     << " node name: " << nodeName;
                 continue;
             }
 
@@ -1001,7 +1020,7 @@ namespace ondemand
             schedulerDirty_.store(true, std::memory_order_release);
 
             if (meta.currentFreq != oldFreq) {
-                freqChanges.emplace_back(metaName, meta.currentFreq);
+                freqChanges.emplace_back(meta.realVarName, meta.currentFreq);
             }
 
             ONDEMANDLOG(info) << "Var [" << varFreq.name() << "] subscribed by node [" << nodeName
@@ -1043,7 +1062,7 @@ namespace ondemand
             auto it = varIndex_.find(varHash);
             if (it == varIndex_.end()) {
                 ONDEMANDLOG(warning) << "unregister var not found ! var name: " << varFreq.name()
-                             << " node name: " << nodeName;
+                                     << " node name: " << nodeName;
                 continue;
             }
 
@@ -1073,7 +1092,7 @@ namespace ondemand
             schedulerDirty_.store(true, std::memory_order_release);
 
             if (meta.currentFreq != oldFreq) {
-                freqChanges.emplace_back(metaName, meta.currentFreq);
+                freqChanges.emplace_back(meta.realVarName, meta.currentFreq);
             }
 
             ONDEMANDLOG(info) << "Var [" << varFreq.name() << "] unsubscribed by node [" << nodeName
@@ -1109,7 +1128,8 @@ namespace ondemand
     bool OnDemandPub::cleanupParticipantSubscriptions(const std::string &participantName)
     {
         if (participantName.empty()) {
-            ONDEMANDLOG(warning) << "cleanupParticipantSubscriptions failed: empty participant name";
+            ONDEMANDLOG(warning)
+                << "cleanupParticipantSubscriptions failed: empty participant name";
             return false;
         }
 
@@ -1120,7 +1140,7 @@ namespace ondemand
         auto slotIt = nodeSlotMap_.find(nodeHash);
         if (slotIt == nodeSlotMap_.end()) {
             ONDEMANDLOG(debug) << "cleanupParticipantSubscriptions skipped: participant not found: "
-                              << participantName;
+                               << participantName;
             return false;
         }
 
@@ -1168,17 +1188,16 @@ namespace ondemand
                 recalcCurrentFreq(meta);
                 schedulerDirty_.store(true, std::memory_order_release);
                 if (meta.currentFreq != oldFreq && meta.varDefine) {
-                    std::string metaName = make_meta_varname(nodeName_, meta.varDefine->name());
-                    freqChanges.emplace_back(metaName, meta.currentFreq);
+                    const std::string fallbackName =
+                        meta.varDefine ? make_meta_varname(nodeName_, meta.varDefine->name())
+                                       : std::string();
+                    freqChanges.emplace_back(meta.realVarName, meta.currentFreq);
                 }
             }
         }
 
         return freqChanges;
     }
-
-    
-
 
 } // namespace ondemand
 } // namespace dsf

@@ -383,6 +383,7 @@ namespace ondemand
                         uint32_t kVarSize = varDefine.size();
                         meta.bucketIndex = bucketIdx;
                         meta.varDefine = std::make_shared<DSF::Var::Define>(varDefine);
+                        meta.realVarName = varDefine.name();
                         meta.varId = varStore_.register_var(varHash, kVarSize);
 
                         varIndex_.emplace(varHash, std::move(meta));
@@ -440,6 +441,10 @@ namespace ondemand
      */
     bool OnDemandSub::start()
     {
+        if (!initialized_.load(std::memory_order_acquire)) {
+            ONDEMANDLOG(error) << "OnDemandSub not initialized";
+            return false;
+        }
         if (running_.exchange(true)) {
             ONDEMANDLOG(warning) << "Already running";
             return false;
@@ -690,9 +695,10 @@ namespace ondemand
 
         while (running_.load(std::memory_order_acquire)) {
 
+            std::this_thread::sleep_for(kScanInterval);
+
             /* 只在订阅信息有变更时才重建分组 (dirty flag) */
             if (!callbackDirty_.exchange(false, std::memory_order_acq_rel)) {
-                std::this_thread::sleep_for(kScanInterval);
                 continue;
             }
 
@@ -792,8 +798,6 @@ namespace ondemand
                     }
                 }
             }
-
-            std::this_thread::sleep_for(kScanInterval);
         }
     }
 

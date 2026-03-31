@@ -301,13 +301,16 @@ namespace ondemand
             const VarStore  *s_;
             const std::byte *ptr_;
             uint32_t         size_;
+            bool             held_;
 
         public:
-            ZeroCopyReadHandle(const VarStore *s, uint32_t id) : s_(s), ptr_(nullptr), size_(0)
+            ZeroCopyReadHandle(const VarStore *s, uint32_t id)
+                : s_(s), ptr_(nullptr), size_(0), held_(false)
             {
                 if (!s_)
                     return;
                 s_->op_enter();
+                held_ = true;
                 if (!s_->arena_ || id >= s_->var_count_)
                     return;
 
@@ -333,14 +336,15 @@ namespace ondemand
 
             ~ZeroCopyReadHandle()
             {
-                if (s_ && ptr_)
+                if (s_ && held_)
                     s_->op_exit();
             }
 
             ZeroCopyReadHandle(ZeroCopyReadHandle &&o) noexcept
-                : s_(o.s_), ptr_(o.ptr_), size_(o.size_)
+                : s_(o.s_), ptr_(o.ptr_), size_(o.size_), held_(o.held_)
             {
                 o.ptr_ = nullptr;  // 标记原对象已失效，析构时不 op_exit
+                o.held_ = false;
             }
             ZeroCopyReadHandle(const ZeroCopyReadHandle &) = delete;
 

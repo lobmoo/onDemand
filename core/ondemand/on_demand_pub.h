@@ -108,9 +108,9 @@ namespace ondemand
         void setVarData(uint32_t varId, const void *data, size_t size);
 
         struct VarWriteItem {
-            uint32_t    id;
+            uint32_t id;
             const void *data;
-            size_t      size;
+            size_t size;
         };
 
         /**
@@ -124,7 +124,10 @@ namespace ondemand
          * @brief 设置该发布节点的数据序列化类型，影响所有变量的发布，默认 STRUCTS
          * @param  blobType 序列化类型
          */
-        void setBlobType(DSF::Var::BLOB_TYPE blobType) { blobType_ = blobType; }
+        void setBlobType(DSF::Var::BLOB_TYPE blobType)
+        {
+            blobType_.store(static_cast<uint32_t>(blobType), std::memory_order_release);
+        }
 
         /**
          * @brief 暂停数据发布
@@ -325,8 +328,9 @@ namespace ondemand
 
         VarStore varStore_;
 
-        DSF::Var::BLOB_TYPE blobType_{DSF::Var::BLOB_TYPE::STRUCTS}; // 全局序列化类型
-        std::atomic<bool> paused_{false};                            // 暂停发布标志
+        std::atomic<uint32_t> blobType_{
+            static_cast<uint32_t>(DSF::Var::BLOB_TYPE::STRUCTS)}; // 全局序列化类型
+        std::atomic<bool> paused_{false};                         // 暂停发布标志
         std::unordered_map<uint64_t, uint8_t> nodeSlotMap_;
         uint8_t nextNodeSlot_ = 0;
 
@@ -346,9 +350,8 @@ namespace ondemand
             std::shared_ptr<std::vector<GroupVarInfo>> members;
             std::shared_ptr<std::atomic<bool>> running{std::make_shared<std::atomic<bool>>(false)};
         };
-        std::unordered_map<PublishGroupKey, PublishGroupEntry, PublishGroupKeyHash>
-            groupMembers_;
-            
+        std::unordered_map<PublishGroupKey, PublishGroupEntry, PublishGroupKeyHash> groupMembers_;
+
         std::unordered_map<PublishGroupKey, std::vector<uint8_t>,
                            PublishGroupKeyHash>
             groupFlatBufs_; // 预分配 flat buffer，避免 per-var 堆分配

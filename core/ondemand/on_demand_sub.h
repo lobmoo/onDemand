@@ -121,13 +121,14 @@ namespace ondemand
          * @brief 注册 TableDefine 回调，收到 pub 端变量定义时触发
          * @param  cb  外部可能需要提前得知对端发送的变量定义，此时应当提前拿到数据定义回调并注册，以免错过第一次的定义广播
          */
-        void setTableDefineCallback(TableDefineCallback cb) {
+        void setTableDefineCallback(TableDefineCallback cb)
+        {
             std::lock_guard<std::mutex> lock(tableDefineCbMutex_);
             tableDefineCb_ = std::move(cb);
         }
 
-
-        DSF::Var::BLOB_TYPE getBlobType() const {
+        DSF::Var::BLOB_TYPE getBlobType() const
+        {
             return static_cast<DSF::Var::BLOB_TYPE>(blobType_.load(std::memory_order_acquire));
         }
 
@@ -264,7 +265,7 @@ namespace ondemand
     private:
         std::string nodeName_;
         TableDefineCallback tableDefineCb_;
-        std::mutex tableDefineCbMutex_;  // 保护 tableDefineCb_
+        std::mutex tableDefineCbMutex_; // 保护 tableDefineCb_
         std::shared_ptr<DdsWrapper::DataNode> dataNode_;
 
         /*通信writer/reader*/
