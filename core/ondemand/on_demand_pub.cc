@@ -859,7 +859,11 @@ namespace ondemand
         uint64_t varHash = fast_hash(make_meta_varname(nodeName_, varName));
         std::shared_lock lock(varIndexMutex_);
         auto it = varIndex_.find(varHash);
-        return (it != varIndex_.end()) ? it->second.varId : UINT32_MAX;
+        if (it == varIndex_.end()) {
+            ONDEMANDLOG(warning) << "Variable not found: " << (varName ? varName : "nullptr");
+            return UINT32_MAX;
+        }
+        return it->second.varId;
     }
 
     void OnDemandPub::getVarIds(const char *const *names, uint32_t *ids, size_t count) const
@@ -888,6 +892,18 @@ namespace ondemand
     void OnDemandPub::setVarDataBatch(const VarWriteItem *items, size_t count)
     {
         constexpr size_t kStackMax = 4096;
+        
+        // Validate: count invalid IDs
+        uint32_t invalid_count = 0;
+        for (size_t i = 0; i < count; ++i) {
+            if (items[i].id == UINT32_MAX) {
+                invalid_count++;
+            }
+        }
+        if (invalid_count > 0) {
+            ONDEMANDLOG_TIME(warning, 5000) << "setVarDataBatch: " << invalid_count << " / " << count << " items have invalid varId (UINT32_MAX)";
+        }
+        
         auto run = [&](uint32_t *ids, const void **datas, uint32_t *sizes) {
             for (size_t i = 0; i < count; ++i) {
                 ids[i] = items[i].id;
@@ -961,7 +977,7 @@ namespace ondemand
             uint64_t varHash = fast_hash(metaName);
             auto it = varIndex_.find(varHash);
             if (it == varIndex_.end()) {
-                ONDEMANDLOG(warning) << "register var not found ! var name: " << varFreq.name()
+                ONDEMANDLOG(debug) << "register var not found ! var name: " << varFreq.name()
                                      << " node name: " << nodeName;
                 continue;
             }
