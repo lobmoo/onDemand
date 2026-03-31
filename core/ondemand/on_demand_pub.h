@@ -92,6 +92,14 @@ namespace ondemand
         uint32_t getVarId(const char *varName) const;
 
         /**
+         * @brief 批量查询 varId，一次加锁完成全部查找，避免逐个加锁开销
+         * @param  names   变量名数组
+         * @param  ids     输出 varId 数组，未找到填 UINT32_MAX
+         * @param  count   数量
+         */
+        void getVarIds(const char *const *names, uint32_t *ids, size_t count) const;
+
+        /**
          * @brief 通过预缓存的 varId 直接写入，无锁无哈希查找，适合极高频场景
          * @param  varId  由 getVarId() 返回的 id
          * @param  data   数据指针

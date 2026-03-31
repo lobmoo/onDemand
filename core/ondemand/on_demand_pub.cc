@@ -842,6 +842,24 @@ namespace ondemand
         return (it != varIndex_.end()) ? it->second.varId : UINT32_MAX;
     }
 
+    void OnDemandPub::getVarIds(const char *const *names, uint32_t *ids, size_t count) const
+    {
+        if (ids == nullptr || names == nullptr) {
+            return;
+        }
+
+        std::shared_lock lock(varIndexMutex_);
+        for (size_t i = 0; i < count; ++i) {
+            if (names[i] == nullptr) {
+                ids[i] = UINT32_MAX;
+                continue;
+            }
+            uint64_t varHash = fast_hash(make_meta_varname(nodeName_, names[i]));
+            auto it = varIndex_.find(varHash);
+            ids[i] = (it != varIndex_.end()) ? it->second.varId : UINT32_MAX;
+        }
+    }
+
     void OnDemandPub::setVarData(uint32_t varId, const void *data, size_t size)
     {
         varStore_.write(varId, data, static_cast<uint32_t>(size));

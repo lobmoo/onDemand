@@ -302,14 +302,14 @@ namespace ondemand
                     uint64_t varHash = *it;
                     const auto &blob = varDataList[idx];
                     if (blob.empty()) {
-                        ONDEMANDLOG(warning)
+                        ONDEMANDLOG_TIME(warning, 3000)
                             << "Received empty data blob for varHash: " << varHash << ", skipping.";
                         continue;
                     }
 
                     auto vit = varIndex_.find(varHash);
                     if (vit == varIndex_.end()) {
-                        ONDEMANDLOG(warning)
+                        ONDEMANDLOG_TIME(warning, 3000)
                             << "Received data for unknown varHash: " << varHash << ", skipping.";
                         continue;
                     }
@@ -332,13 +332,13 @@ namespace ondemand
 
             /*整张表写完后统一更新 bucket stamp，避免定时器读到半张表*/
             if (written > 0 && bucketIdx < ONDEMAND_BUCKET_SIZE) {
-                struct timespec ts;
-                clock_gettime(CLOCK_REALTIME, &ts);
-                uint64_t recvTsNs = static_cast<uint64_t>(ts.tv_sec) * 1000000000ULL + ts.tv_nsec;
-                varWriteStamps_[bucketIdx].timestampNs.store(recvTsNs, std::memory_order_release);
+                uint64_t pubTsNs = static_cast<uint64_t>(timeStamp.tv_sec()) * 1000000000ULL
+                                   + static_cast<uint64_t>(timeStamp.tv_nsec());
+                varWriteStamps_[bucketIdx].timestampNs.store(pubTsNs, std::memory_order_release);
                 varWriteStamps_[bucketIdx].blobType.store(static_cast<uint32_t>(blobType),
                                                           std::memory_order_release);
                 varWriteStamps_[bucketIdx].writeCount.fetch_add(1, std::memory_order_release);
+                blobType_.store(static_cast<uint32_t>(blobType), std::memory_order_release);
             }
         }
     }
@@ -356,7 +356,7 @@ namespace ondemand
                     ONDEMANDLOG(info) << "Processing TableDefine: " << tableDefine->name()
                                       << ", vars size: " << tableDefine->varDefines().size();
                     std::unique_lock lock(varIndexMutex_);
-                    /*1.拆表*/
+                    /*拆表*/
                     std::unordered_set<uint32_t> newBucketIds;
                     for (auto &varDef : tableDefine->varDefines()) {
                         const auto &varDefine = varDef.var().varDefine();
@@ -393,13 +393,16 @@ namespace ondemand
                     lock.unlock();
 
                     // 通知外层同步 define 到 Var::state
-                    if (tableDefineCb_) {
-                        std::vector<DSF::Var::Define> defines;
-                        defines.reserve(tableDefine->varDefines().size());
-                        for (const auto &varDef : tableDefine->varDefines()) {
-                            defines.push_back(varDef.var().varDefine());
+                    {
+                        std::lock_guard<std::mutex> cbLock(tableDefineCbMutex_);
+                        if (tableDefineCb_) {
+                            std::vector<DSF::Var::Define> defines;
+                            defines.reserve(tableDefine->varDefines().size());
+                            for (const auto &varDef : tableDefine->varDefines()) {
+                                defines.push_back(varDef.var().varDefine());
+                            }
+                            tableDefineCb_(defines);
                         }
-                        tableDefineCb_(defines);
                     }
 
                     /*初始化内存: register_var 只写元数据，必须 finalize 才分配 arena/dirty_flags*/
@@ -464,9 +467,15 @@ namespace ondemand
             return;
         }
 
-        /*先取消所有回调定时器*/
+        /*先停止回调调度器（停止时间轮线程池）*/
+        if (callbackScheduler_) {
+            callbackScheduler_->Stop();
+        }
+
+        /*再取消所有回调定时器*/
         cancelAllCallbackTimers();
 
+        /*等待所有线程退出*/
         if (processTableDefineThread_.joinable()) {
             processTableDefineThread_.join();
         }
@@ -477,9 +486,8 @@ namespace ondemand
             callbackSchedulerThread_.join();
         }
 
-        /*停止回调调度器*/
+        /*最后清理调度器对象*/
         if (callbackScheduler_) {
-            callbackScheduler_->Stop();
             callbackScheduler_.reset();
         }
 
@@ -895,8 +903,7 @@ namespace ondemand
             (*groupCallback)(batch);
         } catch (const std::exception &e) {
             ONDEMANDLOG_TIME(error, 5000) << "Batch callback exception for freq=" << freqMs
-                                          << "ms, vars=" << batch.size() << " err: "
-                                          << e.what();
+                                          << "ms, vars=" << batch.size() << " err: " << e.what();
         }
     }
 
@@ -930,7 +937,8 @@ namespace ondemand
         std::shared_lock lock(varIndexMutex_);
         for (const auto &[hash, meta] : varIndex_) {
             if (!meta.varDefine) {
-                ONDEMANDLOG(critical) << "Variable with hash " << hash << " has no definition, skipping.";
+                ONDEMANDLOG(critical)
+                    << "Variable with hash " << hash << " has no definition, skipping.";
                 continue;
             }
 

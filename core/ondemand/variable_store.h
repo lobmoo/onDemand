@@ -333,14 +333,14 @@ namespace ondemand
 
             ~ZeroCopyReadHandle()
             {
-                if (s_)
+                if (s_ && ptr_)
                     s_->op_exit();
             }
 
             ZeroCopyReadHandle(ZeroCopyReadHandle &&o) noexcept
                 : s_(o.s_), ptr_(o.ptr_), size_(o.size_)
             {
-                o.s_ = nullptr;
+                o.ptr_ = nullptr;  // 标记原对象已失效，析构时不 op_exit
             }
             ZeroCopyReadHandle(const ZeroCopyReadHandle &) = delete;
 
@@ -416,7 +416,6 @@ namespace ondemand
                 for (size_t i = 0; i < metas_.size(); ++i) {
                     uint32_t src_size = metas_[i].size;
                     uint32_t dst_size = (static_cast<uint32_t>(i) == id) ? new_size : src_size;
-                    uint32_t copy_size = src_size < dst_size ? src_size : dst_size;
 
                     auto *src_slot = reinterpret_cast<Slot *>(arena_ + metas_[i].offset);
                     auto *dst_slot = reinterpret_cast<Slot *>(reinterpret_cast<std::byte *>(new_arena)
@@ -428,8 +427,12 @@ namespace ondemand
                                               std::memory_order_relaxed);
                     dst_slot->valid_size[0] = src_slot->valid_size[0];
                     dst_slot->valid_size[1] = src_slot->valid_size[1];
+
+                    // 分别拷贝两个缓冲区，避免越界
+                    uint32_t copy_size = src_size < dst_size ? src_size : dst_size;
                     if (copy_size > 0) {
-                        std::memcpy(dst_slot->data, src_slot->data, copy_size * 2u);
+                        std::memcpy(dst_slot->data, src_slot->data, copy_size);  // buf0
+                        std::memcpy(dst_slot->data + dst_size, src_slot->data + src_size, copy_size);  // buf1
                     }
                 }
             }
