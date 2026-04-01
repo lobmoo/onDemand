@@ -71,6 +71,7 @@ public:
     ParticipantQoSBuilder &setUserMulticastLocator(const std::string &address, uint16_t port);
     ParticipantQoSBuilder &setDiscoveryMulticastLocator(const std::string &address, uint16_t port);
     ParticipantQoSBuilder &addFlowController();
+    ParticipantQoSBuilder &setIgnoreLocalEndpoints();
     ParticipantQoSBuilder &setParticipantQosProperties(const std::string &name,
                                                        const std::string &value, bool propagate);
 

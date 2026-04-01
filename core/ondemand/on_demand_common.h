@@ -448,6 +448,123 @@ namespace ondemand
         return 0;
     }
 
+    /**
+     * @brief DDS 节点单例工厂类，确保同一进程只有一个 DDS 节点
+     */
+    class DdsNodeFactory {
+    public:
+        // 禁止拷贝和赋值
+        DdsNodeFactory(const DdsNodeFactory&) = delete;
+        DdsNodeFactory& operator=(const DdsNodeFactory&) = delete;
+
+        /**
+         * @brief 获取或创建 DDS 节点（使用默认配置）
+         * @param nodeName 节点名称
+         * @param listener 节点监听器（可选，仅首次创建时有效）
+         * @return 节点智能指针，失败返回 nullptr
+         * @note 如果节点已存在，nodeName 和 listener 参数会被忽略
+         */
+        static inline std::shared_ptr<DdsWrapper::DataNode> getInstance(
+            const std::string& nodeName = "DefaultNode",
+            DdsWrapper::ParticipantListener* listener = nullptr)
+        {
+            std::lock_guard<std::mutex> lock(getMutex());
+
+            auto& instance = getInstancePtr();
+            if (!instance) {
+                auto qosConfigurator = createDefaultQoS();
+                instance = createNodeInternal(nodeName, qosConfigurator, listener);
+            } else {
+                ONDEMANDLOG(debug) << "DDS node already exists, returning existing instance";
+            }
+
+            return instance;
+        }
+
+        /**
+         * @brief 销毁单例节点
+         * @note 调用后，下次 getInstance 会创建新节点
+         */
+        static inline void destroyInstance()
+        {
+            std::lock_guard<std::mutex> lock(getMutex());
+            auto& instance = getInstancePtr();
+            if (instance) {
+                ONDEMANDLOG(info) << "Destroying DDS node singleton";
+                instance.reset();
+            }
+        }
+
+        /**
+         * @brief 检查节点是否已创建
+         * @return true 如果节点已存在
+         */
+        static inline bool hasInstance()
+        {
+            std::lock_guard<std::mutex> lock(getMutex());
+            return getInstancePtr() != nullptr;
+        }
+
+    private:
+        /**
+         * @brief 获取单例指针的引用（线程安全）
+         */
+        static inline std::shared_ptr<DdsWrapper::DataNode>& getInstancePtr()
+        {
+            static std::shared_ptr<DdsWrapper::DataNode> instance;
+            return instance;
+        }
+
+        /**
+         * @brief 获取互斥锁（线程安全）
+         */
+        static inline std::mutex& getMutex()
+        {
+            static std::mutex mutex;
+            return mutex;
+        }
+
+        /**
+         * @brief 内部创建节点的实现
+         */
+        static inline std::shared_ptr<DdsWrapper::DataNode> createNodeInternal(
+            const std::string& nodeName,
+            const DdsWrapper::ParticipantQoSBuilder& qosConfigurator,
+            DdsWrapper::ParticipantListener* listener)
+        {
+            try {
+                auto dataNode = std::make_shared<DdsWrapper::DataNode>(
+                    DOMAIN_ID, nodeName, qosConfigurator, listener);
+
+                ONDEMANDLOG(info) << "Successfully created DDS node singleton: " << nodeName;
+                return dataNode;
+
+            } catch (const std::exception& e) {
+                ONDEMANDLOG(error) << "Failed to create DDS node '" << nodeName
+                                   << "': " << e.what();
+                return nullptr;
+            }
+        }
+
+        /**
+         * @brief 创建默认的 QoS 配置
+         * @return QoS 配置器
+         */
+        static inline DdsWrapper::ParticipantQoSBuilder createDefaultQoS()
+        {
+            DdsWrapper::ParticipantQoSBuilder qos_configurator;
+            qos_configurator.addUDPV4TransportInterfaces({"10.25.5.26"})
+                .setDiscoveryMulticastLocator("239.255.0.1", 7400)
+                .setUserMulticastLocator("239.255.0.1", 7401)
+                .addFlowController()
+                .setDiscoveryKeepAlive(2000, 500)
+                .setIgnoreLocalEndpoints()  // 忽略同一 participant 发布的数据，避免自循环
+                .setInitialAnnouncements(30, 100); // 30次PDP公告, 100ms间隔, 确保3秒内完成初始发现
+
+            return qos_configurator;
+        }
+    };
+
 } // namespace ondemand
 } // namespace dsf
 #endif // ON_DEMAND_COMMON_H

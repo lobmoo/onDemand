@@ -54,19 +54,10 @@ namespace ondemand
 
         nodeName_ = nodeName;
 
-        DdsWrapper::ParticipantQoSBuilder qos_configurator;
-        qos_configurator.addUDPV4TransportInterfaces({"10.25.5.26"})
-            .setDiscoveryMulticastLocator("239.255.0.1", 7400)
-            .setUserMulticastLocator("239.255.0.1", 7401)
-            .addFlowController()
-            .setDiscoveryKeepAlive(2000, 500)
-            .setInitialAnnouncements(30, 100); // 10次PDP公告, 100ms间隔, 确保3秒内完成初始发现
-        /*创建节点*/
-        try {
-            dataNode_ =
-                std::make_shared<DdsWrapper::DataNode>(DOMAIN_ID, nodeName, qos_configurator, this);
-        } catch (const std::exception &e) {
-            ONDEMANDLOG(error) << "Failed to create DataNode: " << e.what();
+        /*创建节点（单例模式）*/
+        dataNode_ = DdsNodeFactory::getInstance(nodeName, this);
+        if (!dataNode_) {
+            ONDEMANDLOG(error) << "Failed to create DataNode";
             initialized_.store(false);
             return false;
         }
@@ -180,6 +171,9 @@ namespace ondemand
             dataTransferWriterMap_.clear();
         }
         dataNode_.reset();
+
+        /*销毁 DDS 节点单例*/
+        DdsNodeFactory::destroyInstance();
 
         ONDEMANDLOG(info) << "OnDemandPub stopped";
     }
@@ -562,45 +556,46 @@ namespace ondemand
         DSF::Var::TableDataTransfer msg;
         msg.varData().reserve(members->size());
 
-        constexpr char kUnreadableAscii[] = "??";
-        constexpr size_t kUnreadableAsciiLen = sizeof(kUnreadableAscii) - 1;
+        // 用于记录实际发送的变量 hash（只包含有数据的变量）
+        roaring::Roaring64Map actualMask;
+        size_t skippedCount = 0;
 
         for (const auto &info : *members) {
-            auto &dst = msg.varData().emplace_back();
             auto handle = varStore_.read_zero_copy(info.varId);
-            if (handle && handle.size() > 0) {
-                dst.resize(handle.size());
-                std::memcpy(dst.data(), handle.ptr(), handle.size());
+            if (!handle || handle.size() == 0) {
+                // 跳过没有数据的变量，避免无效发送和 CPU 浪费
+                ++skippedCount;
                 continue;
             }
 
-            const uint32_t fallbackSize =
-                (info.dataSize > 0) ? info.dataSize : static_cast<uint32_t>(kUnreadableAsciiLen);
-            dst.assign(fallbackSize, static_cast<uint8_t>(0));
-            const size_t copySize = std::min<size_t>(fallbackSize, kUnreadableAsciiLen);
-            if (copySize > 0) {
-                std::memcpy(dst.data(), kUnreadableAscii, copySize);
-            }
-            ONDEMANDLOG_TIME(warning, 3000)
-                << "Read failed for varHash=" << info.varHash
-                << ", fill fallback ASCII payload, size=" << fallbackSize;
+            // 只发送有数据的变量
+            auto &dst = msg.varData().emplace_back();
+            dst.resize(handle.size());
+            std::memcpy(dst.data(), handle.ptr(), handle.size());
+            actualMask.add(info.varHash);
         }
 
-        if (!maskBuf.empty()) {
-            msg.mask() = std::move(maskBuf);
-        } else {
-            // 兜底：理论上 scheduler 已预计算，避免异常路径空 mask
-            roaring::Roaring64Map roar;
-            for (const auto &info : *members) {
-                if (info.dataSize != 0) {
-                    roar.add(info.varHash);
-                }
-            }
-            roar.runOptimize();
-            roar.shrinkToFit();
-            msg.mask().resize(roar.getSizeInBytes());
-            roar.write(reinterpret_cast<char *>(msg.mask().data()));
+        // 如果所有变量都没数据，跳过本次发送
+        if (msg.varData().empty()) {
+            ONDEMANDLOG_TIME(warning, 30000) // 30秒打印一次，避免日志刷屏
+                << "All " << members->size() << " variables in bucket=" << bucketIndex
+                << " freq=" << freqMs << "ms have no data, skipping publish";
+            return;
         }
+
+        // 如果有部分变量被跳过，打印一次警告
+        if (skippedCount > 0) {
+            ONDEMANDLOG_TIME(warning, 30000) // 30秒打印一次
+                << "Skipped " << skippedCount << "/" << members->size()
+                << " variables without data in bucket=" << bucketIndex << " freq=" << freqMs
+                << "ms";
+        }
+
+        // 使用实际发送的变量构建 mask
+        actualMask.runOptimize();
+        actualMask.shrinkToFit();
+        msg.mask().resize(actualMask.getSizeInBytes());
+        actualMask.write(reinterpret_cast<char *>(msg.mask().data()));
 
         // 时间戳
         auto now = std::chrono::system_clock::now();
@@ -892,7 +887,7 @@ namespace ondemand
     void OnDemandPub::setVarDataBatch(const VarWriteItem *items, size_t count)
     {
         constexpr size_t kStackMax = 4096;
-        
+
         // Validate: count invalid IDs
         uint32_t invalid_count = 0;
         for (size_t i = 0; i < count; ++i) {
@@ -901,9 +896,10 @@ namespace ondemand
             }
         }
         if (invalid_count > 0) {
-            ONDEMANDLOG_TIME(warning, 5000) << "setVarDataBatch: " << invalid_count << " / " << count << " items have invalid varId (UINT32_MAX)";
+            ONDEMANDLOG_TIME(warning, 5000) << "setVarDataBatch: " << invalid_count << " / "
+                                            << count << " items have invalid varId (UINT32_MAX)";
         }
-        
+
         auto run = [&](uint32_t *ids, const void **datas, uint32_t *sizes) {
             for (size_t i = 0; i < count; ++i) {
                 ids[i] = items[i].id;
@@ -978,7 +974,7 @@ namespace ondemand
             auto it = varIndex_.find(varHash);
             if (it == varIndex_.end()) {
                 ONDEMANDLOG(debug) << "register var not found ! var name: " << varFreq.name()
-                                     << " node name: " << nodeName;
+                                   << " node name: " << nodeName;
                 continue;
             }
 

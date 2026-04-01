@@ -52,19 +52,10 @@ namespace ondemand
         }
         nodeName_ = nodeName;
 
-        /*创建节点*/
-        DdsWrapper::ParticipantQoSBuilder qos_configurator;
-        qos_configurator.addUDPV4TransportInterfaces({"10.25.5.26"})
-            .setDiscoveryMulticastLocator("239.255.0.1", 7400)
-            .setUserMulticastLocator("239.255.0.1", 7401)
-            .addFlowController()
-            .setDiscoveryKeepAlive(2000, 500)
-            .setInitialAnnouncements(30, 100); // 10次PDP公告, 100ms间隔, 确保3秒内完成初始发现
-        try {
-            dataNode_ =
-                std::make_shared<DdsWrapper::DataNode>(DOMAIN_ID, nodeName, qos_configurator, this);
-        } catch (const std::exception &e) {
-            ONDEMANDLOG(error) << "Failed to create DataNode: " << e.what();
+        /*创建节点（单例模式）*/
+        dataNode_ = DdsNodeFactory::getInstance(nodeName, this);
+        if (!dataNode_) {
+            ONDEMANDLOG(error) << "Failed to create DataNode";
             initialized_.store(false);
             return false;
         }
@@ -232,6 +223,9 @@ namespace ondemand
     bool OnDemandSub::onReceiveTableDefineCb(const std::string &topicName,
                                              std::shared_ptr<DSF::Var::PubTableDefine> data)
     {
+        // ONDEMANDLOG(critical) << "Received PubTableDefine for topic: " << topicName
+        //                   << ", table name: " << data->name()
+        //                   << ", vars size: " << data->varDefines().size();
         pubTableDefineQueue_.enqueue(data);
         return true;
     }
@@ -508,6 +502,9 @@ namespace ondemand
 
         dataNode_.reset();
         dataNode_ = nullptr;
+
+        /*销毁 DDS 节点单例*/
+        DdsNodeFactory::destroyInstance();
 
         totalReceived_.store(0);
 

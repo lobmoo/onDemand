@@ -71,7 +71,8 @@ ParticipantQoSBuilder &ParticipantQoSBuilder::setDiscoveryKeepAlive(uint32_t lea
     return *this;
 }
 
-ParticipantQoSBuilder &ParticipantQoSBuilder::setInitialAnnouncements(uint32_t count, uint32_t period_ms)
+ParticipantQoSBuilder &ParticipantQoSBuilder::setInitialAnnouncements(uint32_t count,
+                                                                      uint32_t period_ms)
 {
     // TXDDS does not expose FastDDS initial_announcements directly.
     // Approximate behavior by keeping the same announcement period and scaling lease duration.
@@ -97,6 +98,12 @@ ParticipantQoSBuilder &ParticipantQoSBuilder::addUDPV4TransportInterfaces(
         udp_config->mLocalIP = network_interfaces;
     }
     BaoSky::rtps::TransportStack::GetInstance()->AddConfig(udp_config);
+    return *this;
+}
+
+ParticipantQoSBuilder &ParticipantQoSBuilder::setIgnoreLocalEndpoints()
+{
+    //qos_.properties().properties().emplace_back("fastdds.ignore_local_endpoints", "true");
     return *this;
 }
 

@@ -64,12 +64,12 @@ ParticipantQoSBuilder &ParticipantQoSBuilder::setDiscoveryKeepAlive(uint32_t lea
     return *this;
 }
 
-ParticipantQoSBuilder &ParticipantQoSBuilder::setInitialAnnouncements(uint32_t count, uint32_t period_ms)
+ParticipantQoSBuilder &ParticipantQoSBuilder::setInitialAnnouncements(uint32_t count,
+                                                                      uint32_t period_ms)
 {
     qos_.wire_protocol().builtin.discovery_config.initial_announcements.count = count;
     qos_.wire_protocol().builtin.discovery_config.initial_announcements.period =
-        eprosima::fastdds::dds::Duration_t(period_ms / 1000,
-                                           (period_ms % 1000) * 1000000);
+        eprosima::fastdds::dds::Duration_t(period_ms / 1000, (period_ms % 1000) * 1000000);
     return *this;
 }
 
@@ -101,6 +101,12 @@ ParticipantQoSBuilder &ParticipantQoSBuilder::addUDPV4TransportCoreId(int core_i
 
     auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
     udp_transport->default_reception_threads(threadSetting);
+    return *this;
+}
+
+ParticipantQoSBuilder &ParticipantQoSBuilder::setIgnoreLocalEndpoints()
+{
+    qos_.properties().properties().emplace_back("fastdds.ignore_local_endpoints", "true");
     return *this;
 }
 
