@@ -324,16 +324,12 @@ namespace ondemand
      * @brief 处理订阅者注册请求，更新订阅者信息和变量频率，触发发布调度
      * @param  topicName 订阅者注册的 DDS 主题名称
      * @param  data 数据
-     * @return true 成功
-     * @return false 失败
      */
-    bool OnDemandPub::onReceiveRegisterCb(const std::string & /*topicName*/,
+    void OnDemandPub::onReceiveRegisterCb(const std::string & /*topicName*/,
                                           std::shared_ptr<DSF::Message::SubTableRegister> data)
     {
         pubTableDefRegisterQueue_.enqueue(data);
-        return true;
     }
-
     /**
      * @brief 处理订阅者注册请求
      */
@@ -486,9 +482,13 @@ namespace ondemand
                         uint32_t bucketIdx = key.bucketIndex;
                         uint32_t freqMs = key.freqMs;
                         Tick intervalTicks = static_cast<Tick>(freqMs);
-                        // 按 bucket 错开初始延迟，避免 20 个 bucket 同时触发挤爆线程池
-                        Tick jitter =
-                            static_cast<Tick>(bucketIdx * (freqMs / ONDEMAND_BUCKET_SIZE));
+                        // 按 bucket 错开初始延迟；小频率时最小错峰步长为 5 ticks (5ms)
+                        Tick staggerStep = static_cast<Tick>(freqMs / ONDEMAND_BUCKET_SIZE);
+                        constexpr Tick kMinStaggerTicks = 5;
+                        if (staggerStep < kMinStaggerTicks) {
+                            staggerStep = kMinStaggerTicks;
+                        }
+                        Tick jitter = static_cast<Tick>(bucketIdx) * staggerStep;
                         auto timer = publishScheduler_->ScheduleRecurring(
                             [this, bucketIdx, freqMs]() { publishGroupData(bucketIdx, freqMs); },
                             intervalTicks + jitter, // 首次延迟错开

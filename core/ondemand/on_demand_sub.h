@@ -172,19 +172,15 @@ namespace ondemand
          * @brief 处理变量定义数据回调函数
          * @param  topicName        
          * @param  data             
-         * @return true 
-         * @return false 
          */
-        bool onReceiveTableDefineCb(const std::string &topicName,
+        void onReceiveTableDefineCb(const std::string &topicName,
                                     std::shared_ptr<DSF::Var::PubTableDefine> data);
         /**
         * @brief 
         * @param  topicName        MyParamDoc
         * @param  data             MyParamDoc
-        * @return true 
-        * @return false 
         */
-        bool onReceiveDataTransferCb(const std::string &topicName,
+        void onReceiveDataTransferCb(const std::string &topicName,
                                      std::shared_ptr<DSF::Var::TableDataTransfer> data);
 
         /**

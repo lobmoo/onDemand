@@ -204,10 +204,8 @@ namespace ondemand
          * @brief 处理订阅者注册请求，更新订阅者信息和变量频率，触发发布调度
          * @param  topicName       订阅者注册的 DDS 主题名称
          * @param  data           数据
-         * @return true 
-         * @return false 
          */
-        bool onReceiveRegisterCb(const std::string &topicName,
+        void onReceiveRegisterCb(const std::string &topicName,
                                  std::shared_ptr<DSF::Message::SubTableRegister> data);
         /**
          * @brief 处理订阅者注册请求

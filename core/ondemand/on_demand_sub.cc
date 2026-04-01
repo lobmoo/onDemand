@@ -217,28 +217,28 @@ namespace ondemand
      * @brief 处理变量定义数据回调函数
      * @param  topicName 主题名称
      * @param  data 变量定义数据
-     * @return true 成功
-     * @return false 失败
      */
-    bool OnDemandSub::onReceiveTableDefineCb(const std::string &topicName,
+    void OnDemandSub::onReceiveTableDefineCb(const std::string &topicName,
                                              std::shared_ptr<DSF::Var::PubTableDefine> data)
     {
         pubTableDefineQueue_.enqueue(data);
-        return true;
     }
 
     /**
      * @brief 处理接收数据传输回调函数
      * @param  topicName 主题名称
      * @param  data 数据传输数据
-     * @return true 成功
-     * @return false 失败
      */
-    bool OnDemandSub::onReceiveDataTransferCb(const std::string &topicName,
+    void OnDemandSub::onReceiveDataTransferCb(const std::string &topicName,
                                               std::shared_ptr<DSF::Var::TableDataTransfer> data)
     {
+        if (dataTransferQueue_.size_approx() > 100) {
+            ONDEMANDLOG_TIME(warning, 1000)
+                << "DataTransfer queue size is large: " << dataTransferQueue_.size_approx()
+                << ", dropping current data transfer";
+            return;
+        }
         dataTransferQueue_.enqueue(data);
-        return true;
     }
 
     /**
@@ -261,7 +261,6 @@ namespace ondemand
             if (!dataTransfer) {
                 continue;
             }
-
             const auto &maskBytes = dataTransfer->mask();
             const auto &varDataList = dataTransfer->varData();
             const auto &timeStamp = dataTransfer->timestamp();
@@ -401,6 +400,10 @@ namespace ondemand
                     if (!varStore_.finalize()) {
                         ONDEMANDLOG(error) << "Failed to finalize VarStore after TableDefine";
                     }
+
+                    /* varIndex_ 已更新，通知回调调度器重新扫描建立定时器
+                     * 解决 sub 先启动时 callbackDirty_ 已被消费但定时器未建立的问题 */
+                    callbackDirty_.store(true, std::memory_order_release);
 
                     /*统一检查是否有新 bucket 需要创建 reader，避免循环内逐次加锁*/
                     bool hasNewBucket = false;
@@ -775,9 +778,13 @@ namespace ondemand
                         uint32_t bucketIdx = key.bucketIndex;
                         uint32_t freqMs = key.freqMs;
                         Tick intervalTicks = static_cast<Tick>(freqMs);
-                        /* jitter 与 pub 对齐，再加 5ms 确保 pub 已发完并写入 varStore */
-                        Tick jitter =
-                            static_cast<Tick>(bucketIdx * (freqMs / ONDEMAND_BUCKET_SIZE)) + 5;
+                        /* 与 pub 保持同样错峰；最小步长 5 ticks，再加 5ms 确保 pub 已写完 */
+                        Tick staggerStep = static_cast<Tick>(freqMs / ONDEMAND_BUCKET_SIZE);
+                        constexpr Tick kMinStaggerTicks = 5;
+                        if (staggerStep < kMinStaggerTicks) {
+                            staggerStep = kMinStaggerTicks;
+                        }
+                        Tick jitter = static_cast<Tick>(bucketIdx) * staggerStep + 5;
                         auto timer = callbackScheduler_->ScheduleRecurring(
                             [this, bucketIdx, freqMs]() { callbackGroupData(bucketIdx, freqMs); },
                             intervalTicks + jitter, /* 首次延迟，比 pub 晚 5ms */
@@ -838,7 +845,6 @@ namespace ondemand
             if (curWriteCount == 0)
                 return;
         }
-
         uint64_t tsNs = 0;
         DSF::Var::BLOB_TYPE blobType = DSF::Var::BLOB_TYPE::UNKNOWN;
         if (bucketIndex < ONDEMAND_BUCKET_SIZE) {
