@@ -702,7 +702,6 @@ namespace ondemand
                                    CallbackGroupKeyHash>;
 
             DesiredMap desired;
-            bool hasUnresolvedVars = false;  // 标记是否有未解析的变量
             {
                 std::lock_guard<std::mutex> cbLock(subscriptionCallbacksMutex_);
                 std::shared_lock varLock(varIndexMutex_);
@@ -710,15 +709,13 @@ namespace ondemand
                     /* 查找 varIndex_ 获取 varId 和 dataSize */
                     auto vit = varIndex_.find(varHash);
                     if (vit == varIndex_.end()) {
-                        /* 变量定义尚未到达, 标记但不立即重试 */
-                        hasUnresolvedVars = true;
+                        /* 变量定义尚未到达, 跳过 */
                         continue;
                     }
 
                     int32_t varId = vit->second.varId;
                     if (varId < 0) {
-                        /* varStore 尚未 finalize，标记但不立即重试 */
-                        hasUnresolvedVars = true;
+                        /* varStore 尚未 finalize，跳过 */
                         continue;
                     }
 
@@ -742,12 +739,6 @@ namespace ondemand
                     vi.callback = cbInfo.callback;
                     vec->push_back(std::move(vi));
                 }
-            }
-
-            /* 如果有未解析的变量，延迟 500ms 后重试，避免 CPU 空转 */
-            if (hasUnresolvedVars) {
-                std::this_thread::sleep_for(std::chrono::milliseconds(500));
-                callbackDirty_.store(true, std::memory_order_release);
             }
 
             /* 2: 增量 diff */
