@@ -223,9 +223,6 @@ namespace ondemand
     bool OnDemandSub::onReceiveTableDefineCb(const std::string &topicName,
                                              std::shared_ptr<DSF::Var::PubTableDefine> data)
     {
-        // ONDEMANDLOG(critical) << "Received PubTableDefine for topic: " << topicName
-        //                   << ", table name: " << data->name()
-        //                   << ", vars size: " << data->varDefines().size();
         pubTableDefineQueue_.enqueue(data);
         return true;
     }

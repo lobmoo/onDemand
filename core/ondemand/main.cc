@@ -16,7 +16,7 @@
 #include "ondemand/on_demand_pub.h"
 #include "ondemand/on_demand_sub.h"
 
-uint32_t count = 5000;
+uint32_t count = 5000;  // 每个节点发布5000个变量
 
 void dataNodeA()
 {
@@ -38,7 +38,7 @@ void dataNodeA()
     }
     pub.createVars(vars);
     pub.setFreqChangeCallback([](const std::string &varName, uint32_t freq) {
-        LOG(info) << "FreqChangeCallback: var=" << varName << " newFreq=" << freq;
+        LOG(info) << "NodeA FreqChangeCallback: var=" << varName << " newFreq=" << freq;
     });
 
     // 预缓存 varId
@@ -50,43 +50,52 @@ void dataNodeA()
     std::vector<dsf::ondemand::OnDemandPub::VarWriteItem> batchItems(count);
     std::vector<int> vals(count);
     for (int i = 0; i < count; ++i) {
-        vals[i] = i;
+        vals[i] = i * 100;  
         batchItems[i].id = varIds[i];
         batchItems[i].data = &vals[i];
         batchItems[i].size = sizeof(int);
     }
 
-    std::thread setVarThread([&pub, &batchItems]() {
+    std::thread setVarThread([&pub, &batchItems, &vals]() {
 #if defined(__linux__)
-        pthread_setname_np(pthread_self(), "setvar");
+        pthread_setname_np(pthread_self(), "setvar_A");
 #endif
         while (true) {
+            // 每次递增值
+            for (int i = 0; i < count; ++i) {
+                vals[i]++;
+            }
             pub.setVarDataBatch(batchItems.data(), count);
             std::this_thread::sleep_for(std::chrono::milliseconds(200));
         }
     });
 
+    
     std::vector<dsf::ondemand::SubscriptionItem> items;
-    std::vector<std::string> unitems;
-
-    const int subscribedCount = 5000;
-
-    for (int i = 0; i < subscribedCount; ++i) {
-        std::string varName = "var" + std::to_string(i + 5000);
+    for (int i = 0; i < count; ++i) {
+        std::string varName = "var" + std::to_string(i + count);  // var3, var4, var5
         items.push_back({varName, static_cast<uint32_t>(10)});
-        unitems.push_back(varName);
     }
 
     sub.subscribe("pubNodeB", items, [](const std::vector<dsf::ondemand::VarCallbackData> &vars) {
         if (vars.empty())
             return;
 
-        LOG(info) << "Callback: batch size=" << vars.size();
+        LOG(info) << "NodeA received from B: batch size=" << vars.size();
+        for (const auto &var : vars) {
+            if (var.size == sizeof(int)) {
+                int value = *reinterpret_cast<const int*>(var.data);
+                LOG(info) << "  " << var.varName << " = " << value;
+            }
+        }
     });
 
-    setVarThread.join();
+    setVarThread.detach();  // 让线程在后台运行
 
-    std::this_thread::sleep_for(std::chrono::seconds(100000));
+    // 保持节点运行
+    while (true) {
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
 }
 
 void dataNodeB()
@@ -101,7 +110,7 @@ void dataNodeB()
     std::vector<DSF::Var::Define> vars;
     for (int i = 0; i < count; ++i) {
         DSF::Var::Define var;
-        var.name("var" + std::to_string(i + 5000));
+        var.name("var" + std::to_string(i + count));  // var3, var4, var5
         var.nodeName("pubNodeB");
         var.modelName("int");
         var.size(sizeof(int));
@@ -109,55 +118,64 @@ void dataNodeB()
     }
     pub.createVars(vars);
     pub.setFreqChangeCallback([](const std::string &varName, uint32_t freq) {
-        LOG(info) << "FreqChangeCallback: var=" << varName << " newFreq=" << freq;
+        LOG(info) << "NodeB FreqChangeCallback: var=" << varName << " newFreq=" << freq;
     });
 
     // 预缓存 varId
     std::vector<uint32_t> varIds(count);
     for (int i = 0; i < count; ++i)
-        varIds[i] = pub.getVarId(("var" + std::to_string(i + 5000)).c_str());
+        varIds[i] = pub.getVarId(("var" + std::to_string(i + count)).c_str());
 
     // 预分配 batch items，热循环只更新 data 指针
     std::vector<dsf::ondemand::OnDemandPub::VarWriteItem> batchItems(count);
     std::vector<int> vals(count);
     for (int i = 0; i < count; ++i) {
-        vals[i] = i;
+        vals[i] = (i + count) * 100;  // var3=300, var4=400, var5=500
         batchItems[i].id = varIds[i];
         batchItems[i].data = &vals[i];
         batchItems[i].size = sizeof(int);
     }
 
-    std::thread setVarThread([&pub, &batchItems]() {
+    std::thread setVarThread([&pub, &batchItems, &vals]() {
 #if defined(__linux__)
-        pthread_setname_np(pthread_self(), "setvar");
+        pthread_setname_np(pthread_self(), "setvar_B");
 #endif
         while (true) {
+            // 每次递增值
+            for (int i = 0; i < count; ++i) {
+                vals[i]++;
+            }
             pub.setVarDataBatch(batchItems.data(), count);
-            std::this_thread::sleep_for(std::chrono::milliseconds(200));
+            std::this_thread::sleep_for(std::chrono::milliseconds(5));
         }
     });
 
+
     std::vector<dsf::ondemand::SubscriptionItem> items;
-    std::vector<std::string> unitems;
-
-    const int subscribedCount = 5000;
-
-    for (int i = 0; i < subscribedCount; ++i) {
-        std::string varName = "var" + std::to_string(i);
+    for (int i = 0; i < count; ++i) {
+        std::string varName = "var" + std::to_string(i);  // var0, var1, var2
         items.push_back({varName, static_cast<uint32_t>(10)});
-        unitems.push_back(varName);
     }
 
     sub.subscribe("pubNodeA", items, [](const std::vector<dsf::ondemand::VarCallbackData> &vars) {
         if (vars.empty())
             return;
 
-        LOG(info) << "Callback: batch size=" << vars.size();
+        LOG(info) << "NodeB received from A: batch size=" << vars.size();
+        for (const auto &var : vars) {
+            if (var.size == sizeof(int)) {
+                int value = *reinterpret_cast<const int*>(var.data);
+                LOG(info) << "  " << var.varName << " = " << value;
+            }
+        }
     });
 
-    setVarThread.join();
+    setVarThread.detach();  // 让线程在后台运行
 
-    std::this_thread::sleep_for(std::chrono::seconds(100000));
+    // 保持节点运行
+    while (true) {
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
 }
 
 int main(int argc, char **argv)
@@ -178,8 +196,5 @@ int main(int argc, char **argv)
         std::cerr << "unknown command: " << argv[1] << std::endl;
     }
 
-    while (true) {
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-    }
     return 0;
 }
