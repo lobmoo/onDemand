@@ -18,7 +18,7 @@
 #include "ondemand/on_demand_sub.h"
 
 
-uint32_t count = 10000;
+uint32_t count = 10;
 
 static int parse_var_index(std::string_view varName)
 {
@@ -120,7 +120,7 @@ void subscribe()
     //     }
     // }
 
-    const int subscribedCount = 10000;
+    const int subscribedCount = 10;
 
     /* 延迟/丢包统计参数 */
     constexpr int64_t kPeriodMs = 10;         // 订阅周期 200ms
@@ -265,9 +265,6 @@ void subscribe2()
     sub.init(nodeName);
     std::this_thread::sleep_for(std::chrono::milliseconds(2000));
     sub.start();
-    while (sub.getTotalReceivedVars() < count - 1) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    }
 
     std::vector<dsf::ondemand::SubscriptionItem> items;
     std::vector<std::string> unitems;

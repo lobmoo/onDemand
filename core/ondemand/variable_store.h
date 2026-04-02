@@ -46,20 +46,26 @@ namespace ondemand
      * @brief 双缓冲 Slot
      *
      * 内存布局（arena 内）:
-     *   [seq(4B) + committed(1B) + pad(59B)] [buf0: size B] [buf1: size B]
+     *   [seq(4B) + committed(1B) + valid_size(8B) + pad(51B)] = 64B header
+     *   [buf0: size B][buf1: size B]
      *
      * 写端始终写 1-committed 的那份，写完后原子翻转 committed。
      * 读端读 committed 指向的那份，用 seqlock 验证读取期间无翻转。
+     *
+     * Seqlock 内存序协议（P0-1 修复）：
+     *   写开始: fetch_add(relaxed) + fence(release) — 阻止后续 memcpy 上移到 seq++ 之前
+     *   写结束: fetch_add(release)                  — 让读端 acquire-load 可见 memcpy 结果
+     *   读端:   seq.load(acquire)                   — 与写结束 release 配对
      */
     struct alignas(64) Slot {
         std::atomic<uint32_t> seq{0};       // seqlock 计数器，奇数=写入中
         std::atomic<uint8_t>  committed{0}; // 当前可读缓冲区索引 (0 或 1)
-        std::uint32_t pad_{0};              // Padding for alignment (4B)
         uint32_t valid_size[2]{0, 0};       // 每个缓冲区的有效数据长度 (8B)
-        // FAM: [buf0: size B][buf1: size B] at (Slot header size = 24B, aligned to 64B)
-        std::byte data[];  
+        uint8_t pad_[48]{};
+        std::byte data[];
     };
     static_assert(alignof(Slot) >= 64, "Slot alignment insufficient");
+    static_assert(sizeof(Slot) == 64, "Slot header must be exactly 64 bytes");
 
     inline constexpr uint32_t slot_bytes(uint32_t payload_size) {
         return align64(static_cast<uint32_t>(sizeof(Slot)) + 2u * payload_size);
@@ -138,12 +144,16 @@ namespace ondemand
                 std::memcpy(new_arena, arena_, old_size);
             if (arena_size_ > old_size)
                 std::memset((std::byte *)new_arena + old_size, 0, arena_size_ - old_size);
-            std::free(arena_);
-            arena_ = (std::byte *)new_arena;
 
             auto *new_flags = new (std::nothrow) std::atomic<bool>[new_count];
-            if (!new_flags)
+            if (!new_flags) {
+                /* 分配 dirty_flags 失败：new_arena 尚未赋给 arena_，直接释放，保持原状态一致 */
+                std::free(new_arena);
                 return false;
+            }
+
+            std::free(arena_);
+            arena_ = (std::byte *)new_arena;
 
             /*扩容脏队列*/
             for (uint32_t i = 0; i < var_count_; ++i)
@@ -168,7 +178,9 @@ namespace ondemand
             auto *slot = (Slot *)(arena_ + metas_[id].offset);
             uint32_t size = metas_[id].size;
 
-            slot->seq.fetch_add(1, std::memory_order_acquire);
+            // [P0-1] 写开始: relaxed fetch_add + release fence，阻止 memcpy 上移到 seq++ 之前
+            slot->seq.fetch_add(1, std::memory_order_relaxed);
+            std::atomic_thread_fence(std::memory_order_release);
             uint8_t write_idx = 1u - slot->committed.load(std::memory_order_relaxed);
             std::memcpy(slot->data + write_idx * size, src, size);
             slot->valid_size[write_idx] = size;
@@ -194,7 +206,8 @@ namespace ondemand
                     uint32_t size = metas_[id].size;
                     if (actual_size <= size) {
                         auto *slot = (Slot *)(arena_ + metas_[id].offset);
-                        slot->seq.fetch_add(1, std::memory_order_acquire);
+                        slot->seq.fetch_add(1, std::memory_order_relaxed);
+                        std::atomic_thread_fence(std::memory_order_release);
                         uint8_t write_idx = 1u - slot->committed.load(std::memory_order_relaxed);
                         std::memcpy(slot->data + write_idx * size, src, actual_size);
                         slot->valid_size[write_idx] = actual_size;
@@ -225,7 +238,9 @@ namespace ondemand
             if (!ids || !datas || !sizes)
                 return;
 
-            // 先按需扩容，避免在持有 OpGuard 时重配置导致死锁。
+            /* 先按需扩容（不持 OpGuard，避免与 config_begin 死锁），
+             * 扩容后在单次 OpGuard 内完成所有写入，消除两次 OpGuard 之间
+             * offset 被其他线程扩容改变的窗口。*/
             for (size_t i = 0; i < count; ++i) {
                 uint32_t id = ids[i];
                 if (id == kInvalidId || !datas[i])
@@ -239,9 +254,8 @@ namespace ondemand
                     need_expand = sizes[i] > metas_[id].size;
                 }
 
-                if (need_expand) {
+                if (need_expand)
                     (void)ensure_capacity(id, sizes[i]);
-                }
             }
 
             OpGuard g(this);
@@ -251,11 +265,13 @@ namespace ondemand
                 uint32_t id = ids[i];
                 if (id >= var_count_ || metas_[id].size == 0 || !datas[i])
                     continue;
+                /* 在同一个 OpGuard 内读取 offset，保证与扩容后的 metas_ 一致 */
                 auto *slot = (Slot *)(arena_ + metas_[id].offset);
                 uint32_t size = metas_[id].size;
                 uint32_t actual = sizes[i] <= size ? sizes[i] : size;
 
-                slot->seq.fetch_add(1, std::memory_order_acquire);
+                slot->seq.fetch_add(1, std::memory_order_relaxed);
+                std::atomic_thread_fence(std::memory_order_release);
                 uint8_t write_idx = 1u - slot->committed.load(std::memory_order_relaxed);
                 std::memcpy(slot->data + write_idx * size, datas[i], actual);
                 slot->valid_size[write_idx] = actual;
@@ -279,10 +295,13 @@ namespace ondemand
                 return false;
             auto *slot = (const Slot *)(arena_ + metas_[id].offset);
             uint32_t size = metas_[id].size;
-            for (int retry = 0; retry < 10; ++retry) {
+            /* op_enter() 已防止 arena 重分配，writer 必然完成，可安全自旋 */
+            for (;;) {
                 uint32_t s1 = slot->seq.load(std::memory_order_acquire);
-                if (s1 & 1)
+                if (s1 & 1) {
+                    std::this_thread::yield();
                     continue;
+                }
                 uint8_t idx = slot->committed.load(std::memory_order_acquire);
                 uint32_t actual = slot->valid_size[idx];
                 if (actual == 0 || actual > size)
@@ -291,7 +310,6 @@ namespace ondemand
                 if (s1 == slot->seq.load(std::memory_order_acquire))
                     return true;
             }
-            return false;
         }
 
         /**
@@ -490,14 +508,26 @@ namespace ondemand
         void config_begin()
         {
             config_mu_.lock();
-            reconfig_.store(true, std::memory_order_release);
+            /* 必须在持有 reconfig_mu_ 的情况下设置 reconfig_=true，
+             * 否则与 op_enter() 之间存在 TOCTOU：
+             *   op_enter 检查 reconfig_=false → config_begin 设置 true → op_enter 递增 active_ops
+             * 此时 config_begin 等 active_ops==0 永远不会满足，死锁。
+             * 持有 reconfig_mu_ 后，op_enter 要么在设置前完成递增，
+             * 要么在设置后阻塞在 reconfig_cv_.wait，两种情况都安全。*/
+            {
+                std::lock_guard<std::mutex> lock(reconfig_mu_);
+                reconfig_.store(true, std::memory_order_release);
+            }
             while (active_ops_.load(std::memory_order_acquire))
                 std::this_thread::yield();
         }
 
         void config_end()
         {
-            reconfig_.store(false, std::memory_order_release);
+            {
+                std::lock_guard<std::mutex> lock(reconfig_mu_);
+                reconfig_.store(false, std::memory_order_release);
+            }
             config_mu_.unlock();
             reconfig_cv_.notify_all();
         }

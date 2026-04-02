@@ -333,6 +333,7 @@ namespace ondemand
         uint8_t nextNodeSlot_ = 0;
 
         FreqChangeCallback freqChangeCb_;
+        mutable std::mutex freqChangeCbMutex_;
 
         /*注册请求处理线程 */
         std::thread registerProcessThread_;
@@ -352,7 +353,7 @@ namespace ondemand
 
         std::unordered_map<PublishGroupKey, std::vector<uint8_t>,
                            PublishGroupKeyHash>
-            groupFlatBufs_; // 预分配 flat buffer，避免 per-var 堆分配
+            groupFlatBufs_; // 预分配 flat buffer，避免 堆分配
         std::unordered_map<PublishGroupKey, std::vector<uint8_t>,
                            PublishGroupKeyHash>
             groupMaskBufs_; // 预计算 mask，避免每次 publish 重建 Roaring

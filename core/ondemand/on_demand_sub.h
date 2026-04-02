@@ -67,11 +67,7 @@ namespace ondemand
     {
     public:
         OnDemandSub();
-        virtual         // DTOR SAFETY: Guarantees no exceptions; logs failures instead
-        // Stops all internal threads, closes DDS subscriptions, releases timers
-                // DTOR SAFETY: Guarantees no exceptions; logs failures instead
-        // Stops all internal threads, closes DDS subscriptions, releases timers
-        ~OnDemandSub();
+        virtual ~OnDemandSub();
 
         /**
         * @brief 初始化订阅器

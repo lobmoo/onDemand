@@ -311,12 +311,19 @@ namespace ondemand
                         continue;
                     }
 
-                    int32_t varId = vit->second.varId;
-                    if (varId < 0)
+                    uint32_t varId = vit->second.varId;
+                    if (varId == VarStore::kInvalidId)
                         continue;
 
-                    if (bucketIdx == SIZE_MAX)
+                    if (bucketIdx == SIZE_MAX) {
                         bucketIdx = vit->second.bucketIndex;
+                    } else if (bucketIdx != vit->second.bucketIndex) {
+                        ONDEMANDLOG_TIME(warning, 2000)
+                            << "Mixed bucket data in one TableDataTransfer message, expected="
+                            << bucketIdx << ", got=" << vit->second.bucketIndex
+                            << ", varHash=" << varHash << ", skipping this entry";
+                        continue;
+                    }
 
                     if (varStore_.write(varId, blob.data(), blob.size())) {
                         ++written;
@@ -389,7 +396,7 @@ namespace ondemand
                     }
                     lock.unlock();
 
-                    // 通知外层同步 define 到 Var::state
+                    /*通知外层同步 define 到 Var::state*/
                     {
                         std::lock_guard<std::mutex> cbLock(tableDefineCbMutex_);
                         if (tableDefineCb_) {
@@ -407,7 +414,7 @@ namespace ondemand
                         ONDEMANDLOG(error) << "Failed to finalize VarStore after TableDefine";
                     }
 
-                    /* varIndex_ 已更新，通知回调调度器重新扫描建立定时器
+                    /* 这里很重要哦！！！！ varIndex_ 已更新，通知回调调度器重新扫描建立定时器
                      * 解决 sub 先启动时 callbackDirty_ 已被消费但定时器未建立的问题 */
                     callbackDirty_.store(true, std::memory_order_release);
 
@@ -491,7 +498,7 @@ namespace ondemand
     bool OnDemandSub::subscribe(const char *node_name, const std::vector<SubscriptionItem> &items,
                                 DataCallback callback)
     {
-        if (!initialized_) {
+        if (!initialized_.load(std::memory_order_acquire)) {
             ONDEMANDLOG(error) << "OnDemandSub not initialized";
             return false;
         }
@@ -521,7 +528,7 @@ namespace ondemand
             }
         }
 
-        /*2.开始组包*/
+        /*开始组包*/
         subReq.msgType(DSF::Message::MSGTYPE::SUB_TABLE_REGISTER);
         subReq.nodeName(nodeName_);
         subReq.tableName(tableName);
@@ -537,7 +544,7 @@ namespace ondemand
             return false;
         }
 
-        /*3. 存储回调信息到本地, 供时间轮调度器使用*/
+        /*存储回调信息到本地, 供时间轮调度器使用*/
         if (callback) {
             std::lock_guard<std::mutex> lock(subscriptionCallbacksMutex_);
             size_t registered = 0;
@@ -574,7 +581,7 @@ namespace ondemand
      */
     bool OnDemandSub::unsubscribe(const char *node_name, const std::vector<std::string> &items)
     {
-        if (!initialized_) {
+        if (!initialized_.load(std::memory_order_acquire)) {
             ONDEMANDLOG(error) << "OnDemandSub not initialized";
             return false;
         }
@@ -585,10 +592,10 @@ namespace ondemand
 
             for (const auto &item : items) {
                 DSF::NamedValue varFreq;
-                /*1.计算点hash*/
+                /*计算点hash*/
                 std::string metaVarName = make_meta_varname(node_name, item);
                 uint64_t varHash = fast_hash(metaVarName);
-                ONDEMANDLOG(debug) << "Subscribing to var: " << item << " with hash: " << varHash;
+                ONDEMANDLOG(debug) << "Unsubscribing from var: " << item << " with hash: " << varHash;
                 auto it = varIndex_.find(varHash);
                 tableName = make_bucket_name_by_hash(varHash);
                 if (it == varIndex_.end()) {
@@ -601,7 +608,7 @@ namespace ondemand
             }
         }
 
-        /*2.开始组包*/
+        /*开始组包*/
         subReq.msgType(DSF::Message::MSGTYPE::SUB_TABLE_UNREGISTER);
         subReq.nodeName(nodeName_);
         subReq.tableName(tableName);
@@ -617,7 +624,7 @@ namespace ondemand
             return false;
         }
 
-        /*3. 移除本地回调信息*/
+        /*移除本地回调信息*/
         {
             std::lock_guard<std::mutex> lock(subscriptionCallbacksMutex_);
             for (const auto &item : items) {
@@ -645,12 +652,12 @@ namespace ondemand
 
             std::this_thread::sleep_for(kScanInterval);
 
-            /* 只在订阅信息有变更时才重建分组 (dirty flag) */
+            /* 只在订阅信息有变更时才重建分组 */
             if (!callbackDirty_.exchange(false, std::memory_order_acq_rel)) {
                 continue;
             }
 
-            /* 1: 从 subscriptionCallbacks_ + varIndex_ 构建期望分组 */
+            /* 从 subscriptionCallbacks_ + varIndex_ 构建期望分组 */
             using DesiredMap =
                 std::unordered_map<CallbackGroupKey, std::shared_ptr<std::vector<CallbackVarInfo>>,
                                    CallbackGroupKeyHash>;
@@ -668,8 +675,8 @@ namespace ondemand
                     }
 
                     int32_t varId = vit->second.varId;
-                    if (varId < 0) {
-                        /* varStore 尚未 finalize，跳过 */
+                    if (varId < 0 || static_cast<uint32_t>(varId) == VarStore::kInvalidId) {
+                        /* varStore 尚未 finalize 或注册失败，跳过 */
                         continue;
                     }
 
@@ -688,6 +695,9 @@ namespace ondemand
                         vi.nodeName = vit->second.varDefine->nodeName();
                         vi.varType = vit->second.varDefine->modelName();
                         vi.typeVersion = vit->second.varDefine->modelVersion();
+                    } else {
+                        ONDEMANDLOG(warning) << "varDefine is null for varHash=" << varHash
+                                             << ", callback will receive empty nodeName/varType";
                     }
                     vi.varName = cbInfo.varName;
                     vi.callback = cbInfo.callback;
@@ -695,7 +705,7 @@ namespace ondemand
                 }
             }
 
-            /* 2: 增量 diff */
+            /* 增量*/
             {
                 std::lock_guard<std::mutex> lock(callbackGroupsMutex_);
 
@@ -793,24 +803,38 @@ namespace ondemand
         std::vector<VarCallbackData> batch;
         batch.reserve(members->size());
 
-        /* 在循环外检查 bucket 是否有数据，避免逐变量重复读原子变量 */
-        if (bucketIndex < ONDEMAND_BUCKET_SIZE) {
-            uint32_t curWriteCount =
-                varWriteStamps_[bucketIndex].writeCount.load(std::memory_order_acquire);
-            /* 该 bucket 从未收到过数据，跳过 */
-            if (curWriteCount == 0) {
-                return;
-            }
-        }
         uint64_t tsNs = 0;
         DSF::Var::BLOB_TYPE blobType = DSF::Var::BLOB_TYPE::UNKNOWN;
         if (bucketIndex < ONDEMAND_BUCKET_SIZE) {
-            tsNs = varWriteStamps_[bucketIndex].timestampNs.load(std::memory_order_acquire);
-            blobType = static_cast<DSF::Var::BLOB_TYPE>(
-                varWriteStamps_[bucketIndex].blobType.load(std::memory_order_acquire));
+            // 通过前后两次 writeCount 快照，避免读到跨写入周期的时间戳/类型组合
+            bool hasStableStamp = false;
+            for (int retry = 0; retry < 3; ++retry) {
+                uint32_t beginCount =
+                    varWriteStamps_[bucketIndex].writeCount.load(std::memory_order_acquire);
+                if (beginCount == 0) {
+                    return;
+                }
+                uint64_t snapshotTs =
+                    varWriteStamps_[bucketIndex].timestampNs.load(std::memory_order_acquire);
+                uint32_t snapshotBlob =
+                    varWriteStamps_[bucketIndex].blobType.load(std::memory_order_acquire);
+                uint32_t endCount =
+                    varWriteStamps_[bucketIndex].writeCount.load(std::memory_order_acquire);
+                if (beginCount == endCount) {
+                    tsNs = snapshotTs;
+                    blobType = static_cast<DSF::Var::BLOB_TYPE>(snapshotBlob);
+                    hasStableStamp = true;
+                    break;
+                }
+            }
+            if (!hasStableStamp) {
+                tsNs = varWriteStamps_[bucketIndex].timestampNs.load(std::memory_order_acquire);
+                blobType = static_cast<DSF::Var::BLOB_TYPE>(
+                    varWriteStamps_[bucketIndex].blobType.load(std::memory_order_acquire));
+            }
         }
 
-        /* 逐个读取并立即释放 handle，避免同时持有多个 handle 导致与 finalize()
+        /*ai修复死锁问题 逐个读取并立即释放 handle，避免同时持有多个 handle 导致与 finalize()
          * 的 config_begin() 死锁（finalize 等 active_ops==0，而多个 handle
          * 同时存活会让 active_ops 无法归零）。
          * 用 (offset, size) 记录位置，循环结束后再统一修正 batch 指针。*/
@@ -822,7 +846,11 @@ namespace ondemand
         std::vector<CopiedItem> copied;
         copied.reserve(members->size());
         std::vector<uint8_t> dataBuf;
-        dataBuf.reserve(members->size() * 64);
+        /* 用 dataSize 做预估，避免固定 *64 在大变量场景下频繁 realloc */
+        size_t reserveBytes = 0;
+        for (const auto &info : *members)
+            reserveBytes += info.dataSize > 0 ? info.dataSize : 64u;
+        dataBuf.reserve(reserveBytes);
 
         for (const auto &info : *members) {
             if (!info.callback)

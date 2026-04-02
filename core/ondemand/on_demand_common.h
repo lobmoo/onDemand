@@ -279,8 +279,8 @@ namespace ondemand
         BucketManager::BucketIndex bucketIndex;      // 所属桶索引 (0-19)
         uint32_t varId;                              // 变量ID (全局唯一，递增分配)
         uint32_t currentFreq;                        // 当前发布频率 (ms)
-        std::shared_ptr<DSF::Var::Define> varDefine; // 变量定义 (包含结构信息等)
-        std::string realVarName;                    // 真实变量名 (不含节点名前缀)
+        std::shared_ptr<DSF::Var::Define> varDefine; // 变量定义 (idl)
+        std::string realVarName;                     // 变量名 
 
         // 订阅频率信息 (紧凑存储)
         struct FreqSub {
@@ -301,7 +301,7 @@ namespace ondemand
 
         /**
          * @brief 打印 VarMetadata 完整状态（调试用）
-         * @param varName 变量名（可选，方便日志定位）
+         * @param varName 变量名
          */
         void dump(const std::string &varName = "") const
         {

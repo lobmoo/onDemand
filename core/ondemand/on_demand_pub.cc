@@ -34,6 +34,7 @@ namespace ondemand
 
     void OnDemandPub::setFreqChangeCallback(FreqChangeCallback cb)
     {
+        std::lock_guard<std::mutex> lock(freqChangeCbMutex_);
         freqChangeCb_ = std::move(cb);
     }
 
@@ -380,10 +381,10 @@ namespace ondemand
      * @brief 发布调度监控线程
      *
      * 增量策略:
-     *   - 频率未变 → 定时器不动，仅刷新组成员列表
-     *   - 新增分组 → 创建定时器
-     *   - 移除分组 → 取消定时器
-     *   - 10w 变量同频 →  20 bucket 天然分散, 无需额外分片
+     *  频率未变 → 定时器不动，仅刷新组成员列表
+     *  新增分组 → 创建定时器
+     *  移除分组 → 取消定时器
+     *  10w 变量同频 →  20 bucket 天然分散, 无需额外分片
      */
     void OnDemandPub::processPublishTaskScheduler()
     {
@@ -398,7 +399,7 @@ namespace ondemand
                 continue;
             }
 
-            //1: 从 varIndex_ 构建期望分组
+            //从 varIndex_ 构建期望分组
             using DesiredMap =
                 std::unordered_map<PublishGroupKey, std::shared_ptr<std::vector<GroupVarInfo>>,
                                    PublishGroupKeyHash>;
@@ -459,7 +460,7 @@ namespace ondemand
 
                 /*遍历所有的点，保存全局副本，然后找一下有没有该周期的时间轮，没有的话，就创建一个，有的话也不用管*/
                 for (auto &[key, members] : desired) {
-                    // 始终刷新成员列表，保留已有的 running flag
+                     /*始终刷新成员列表，保留已有的 running flag*/
                     groupMembers_[key].members = std::move(members);
 
                     auto &entryMembers = groupMembers_[key].members;
@@ -477,12 +478,12 @@ namespace ondemand
                         groupMaskBufs_.erase(key);
                     }
 
-                    // 仅为新增分组创建定时器，已有分组的定时器保持不变
+                    /*新增分组创建定时器，已有分组的定时器保持不变*/
                     if (publishGroupTimers_.find(key) == publishGroupTimers_.end()) {
                         uint32_t bucketIdx = key.bucketIndex;
                         uint32_t freqMs = key.freqMs;
                         Tick intervalTicks = static_cast<Tick>(freqMs);
-                        // 按 bucket 错开初始延迟；小频率时最小错峰步长为 5 ticks (5ms)
+                        /*按 bucket 错开初始延迟；小频率时最小错峰步长为 5 ticks (5ms)*/
                         Tick staggerStep = static_cast<Tick>(freqMs / ONDEMAND_BUCKET_SIZE);
                         constexpr Tick kMinStaggerTicks = 5;
                         if (staggerStep < kMinStaggerTicks) {
@@ -508,9 +509,9 @@ namespace ondemand
      * @brief 批量发布组内变量数据 (定时器回调, 线程池执行)
      *
      * 性能优化:
-     *   - groupMembers_ 已按 varHash 预排序, 无需发送时再排序
-     *   - 直接构建 msg, 省去中间 varDataList 容器分配
-     *   - Roaring64Map 压缩 mask
+     *  groupMembers_ 已按 varHash 预排序, 无需发送时再排序
+     *  直接构建 msg, 省去中间 varDataList 容器分配
+     *  Roaring64Map 压缩 mask
      *
      * @param bucketIndex  桶索引 (映射到 DDS topic)
      * @param freqMs       频率 (ms), 用于定位分组
@@ -520,11 +521,11 @@ namespace ondemand
         if (!running_.load(std::memory_order_acquire))
             return;
 
-        // 暂停时跳过发布
+        /*暂停时跳过发布*/
         if (paused_.load(std::memory_order_acquire))
             return;
 
-        // 获取组成员快照 + running flag + 预计算 mask 快照
+        /*获取组成员快照 + running flag + 预计算 mask 快照*/
         std::shared_ptr<std::vector<GroupVarInfo>> members;
         std::shared_ptr<std::atomic<bool>> running;
         std::vector<uint8_t> maskBuf;
@@ -556,26 +557,26 @@ namespace ondemand
         DSF::Var::TableDataTransfer msg;
         msg.varData().reserve(members->size());
 
-        // 用于记录实际发送的变量 hash（只包含有数据的变量）
+        /*用于记录实际发送的变量 hash（只包含有数据的变量）*/
         roaring::Roaring64Map actualMask;
         size_t skippedCount = 0;
 
         for (const auto &info : *members) {
             auto handle = varStore_.read_zero_copy(info.varId);
             if (!handle || handle.size() == 0) {
-                // 跳过没有数据的变量，避免无效发送和 CPU 浪费
+                /*跳过没有数据的变量，避免无效发送和 CPU 浪费*/
                 ++skippedCount;
                 continue;
             }
 
-            // 只发送有数据的变量
+            /*只发送有数据的变量*/
             auto &dst = msg.varData().emplace_back();
             dst.resize(handle.size());
             std::memcpy(dst.data(), handle.ptr(), handle.size());
             actualMask.add(info.varHash);
         }
 
-        // 如果所有变量都没数据，跳过本次发送
+        /*如果所有变量都没数据，跳过本次发送*/
         if (msg.varData().empty()) {
             ONDEMANDLOG_TIME(warning, 30000) // 30秒打印一次，避免日志刷屏
                 << "All " << members->size() << " variables in bucket=" << bucketIndex
@@ -583,7 +584,7 @@ namespace ondemand
             return;
         }
 
-        // 如果有部分变量被跳过，打印一次警告
+        /* 如果有部分变量被跳过，打印一次警告*/
         if (skippedCount > 0) {
             ONDEMANDLOG_TIME(warning, 30000) // 30秒打印一次
                 << "Skipped " << skippedCount << "/" << members->size()
@@ -591,13 +592,13 @@ namespace ondemand
                 << "ms";
         }
 
-        // 使用实际发送的变量构建 mask
+        /*使用实际发送的变量构建 mask*/
         actualMask.runOptimize();
         actualMask.shrinkToFit();
         msg.mask().resize(actualMask.getSizeInBytes());
         actualMask.write(reinterpret_cast<char *>(msg.mask().data()));
 
-        // 时间戳
+    
         auto now = std::chrono::system_clock::now();
         auto epoch = now.time_since_epoch();
         auto sec = std::chrono::duration_cast<std::chrono::seconds>(epoch);
@@ -606,7 +607,7 @@ namespace ondemand
         msg.timestamp().tv_nsec(static_cast<uint32_t>(nsec.count()));
         msg.blobType(static_cast<DSF::Var::BLOB_TYPE>(blobType_.load(std::memory_order_acquire)));
 
-        // 发送
+        /*发送*/
         {
             std::lock_guard<std::mutex> lock(DataTransferWriterMapMutex_);
             auto writerIt = dataTransferWriterMap_.find(bucketIndex);
@@ -650,8 +651,19 @@ namespace ondemand
         while (running_.load(std::memory_order_acquire)) {
             std::pair<std::string, uint32_t> item;
             if (freqChangeQueue_.try_dequeue(item)) {
-                if (freqChangeCb_) {
-                    freqChangeCb_(item.first, item.second);
+                FreqChangeCallback cb;
+                {
+                    std::lock_guard<std::mutex> lock(freqChangeCbMutex_);
+                    cb = freqChangeCb_;
+                }
+                if (cb) {
+                    try {
+                        cb(item.first, item.second);
+                    } catch (const std::exception &e) {
+                        ONDEMANDLOG(error) << "freqChange callback threw exception: " << e.what();
+                    } catch (...) {
+                        ONDEMANDLOG(error) << "freqChange callback threw unknown exception";
+                    }
                 }
             } else {
                 std::this_thread::sleep_for(std::chrono::milliseconds(10));
@@ -667,7 +679,7 @@ namespace ondemand
      */
     bool OnDemandPub::createVars(const std::vector<DSF::Var::Define> &VarDefines)
     {
-        // Phase 1: 注册变量 + 初始化存储 (写锁, 快速完成)
+        /*注册变量 + 初始化存储*/
         {
             std::unique_lock lock(varIndexMutex_);
             varIndex_.reserve(varIndex_.size() + VarDefines.size());
@@ -696,20 +708,21 @@ namespace ondemand
                 varIndex_.emplace(varHash, std::move(meta));
                 bucketManager_.AddMember(varName, varHash);
             }
+        } // 先释放写锁，再 finalize，避免 finalize 内 config_begin 等 active_ops==0
+          // 时与持有 OpGuard 的 publishGroupData 形成死锁
 
-            if (!varStore_.finalize()) {
-                ONDEMANDLOG(error) << "Failed to finalize variable store";
-                return false;
-            }
-        } // 释放写锁
+        if (!varStore_.finalize()) {
+            ONDEMANDLOG(error) << "Failed to finalize variable store";
+            return false;
+        } 
 
-        // Phase 2: 创建 DataTransfer writers (在发布 TableDefine 之前准备好)
+       /*创建 DataTransfer writers */
         if (!createDataTransferWriter()) {
             ONDEMANDLOG(error) << "Failed to create DataTransfer writers";
             return false;
         }
 
-        // Phase 3: 发布 TableDefine (读锁, 不阻塞 setVarData 等热路径)
+        /*发布 TableDefine */
         uint32_t bucketCount = bucketManager_.GetBucketCount();
         for (uint32_t i = 0; i < bucketCount; ++i) {
             if (bucketManager_.GetBucketSize(i) == 0) {
@@ -763,7 +776,7 @@ namespace ondemand
      */
     bool OnDemandPub::deleteVars(const std::vector<std::string> &varNames)
     {
-        // Phase 1: 注销被删变量 (写锁)
+        /*注销被删变量  这里直接差分删除 */
         {
             std::unique_lock lock(varIndexMutex_);
             for (const auto &varName : varNames) {
@@ -777,11 +790,11 @@ namespace ondemand
                 varIndex_.erase(it);
                 bucketManager_.RemoveMember(varName, varHash);
             }
-        } // 释放写锁
+        } 
 
         schedulerDirty_.store(true, std::memory_order_release);
 
-        // Phase 2: 发布更新后的 TableDefine (读锁, 不阻塞热路径)
+        /*发布更新后的 TableDefine*/
         uint32_t bucketCount = bucketManager_.GetBucketCount();
         for (uint32_t i = 0; i < bucketCount; ++i) {
             DSF::Var::PubTableDefine pubTableDefine;
@@ -812,7 +825,7 @@ namespace ondemand
                 }
             }
 
-            // 差分删除: 即使是空表也要发布, 通知订阅者该表已清空
+            /*差分删除: 即使是空表也要发布, 通知订阅者该表已清空*/
             tableDefinePublish(pubTableDefine);
             std::this_thread::sleep_for(std::chrono::milliseconds(50));
             ONDEMANDLOG(info) << "Published bucket " << i + 1 << "/" << bucketCount << " with "
@@ -832,7 +845,8 @@ namespace ondemand
     bool OnDemandPub::setVarData(const char *varName, const void *data, size_t size)
     {
         uint64_t varHash = fast_hash(make_meta_varname(nodeName_, varName));
-        int32_t varId = -1;
+    
+        uint32_t varId = VarStore::kInvalidId;
         {
             std::shared_lock lock(varIndexMutex_);
             auto it = varIndex_.find(varHash);
@@ -881,33 +895,47 @@ namespace ondemand
 
     void OnDemandPub::setVarData(uint32_t varId, const void *data, size_t size)
     {
-        varStore_.write(varId, data, static_cast<uint32_t>(size));
+        if (data == nullptr || size == 0) {
+            return;
+        }
+        uint32_t writeSize = static_cast<uint32_t>(size > static_cast<size_t>(UINT32_MAX)
+                                                       ? UINT32_MAX
+                                                       : size);
+        if (size > static_cast<size_t>(UINT32_MAX)) {
+            ONDEMANDLOG_TIME(warning, 5000)
+                << "setVarData: size overflowed uint32_t and was clipped, varId=" << varId;
+        }
+        varStore_.write(varId, data, writeSize);
     }
 
     void OnDemandPub::setVarDataBatch(const VarWriteItem *items, size_t count)
     {
         constexpr size_t kStackMax = 4096;
 
-        // Validate: count invalid IDs
-        uint32_t invalid_count = 0;
-        for (size_t i = 0; i < count; ++i) {
-            if (items[i].id == UINT32_MAX) {
-                invalid_count++;
-            }
+        if (items == nullptr || count == 0) {
+            return;
         }
-        if (invalid_count > 0) {
-            ONDEMANDLOG_TIME(warning, 5000) << "setVarDataBatch: " << invalid_count << " / "
-                                            << count << " items have invalid varId (UINT32_MAX)";
-        }
+
+        uint32_t invalidCount = 0;
+        uint32_t clippedSizeCount = 0;
 
         auto run = [&](uint32_t *ids, const void **datas, uint32_t *sizes) {
             for (size_t i = 0; i < count; ++i) {
                 ids[i] = items[i].id;
                 datas[i] = items[i].data;
-                sizes[i] = static_cast<uint32_t>(items[i].size);
+                if (items[i].size > static_cast<size_t>(UINT32_MAX)) {
+                    sizes[i] = UINT32_MAX;
+                    ++clippedSizeCount;
+                } else {
+                    sizes[i] = static_cast<uint32_t>(items[i].size);
+                }
+                if (items[i].id == UINT32_MAX || items[i].data == nullptr) {
+                    ++invalidCount;
+                }
             }
             varStore_.write_batch(ids, datas, sizes, count);
         };
+
         if (count <= kStackMax) {
             uint32_t ids[kStackMax];
             const void *datas[kStackMax];
@@ -919,10 +947,21 @@ namespace ondemand
             std::vector<uint32_t> sizes(count);
             run(ids.data(), datas.data(), sizes.data());
         }
+
+        if (invalidCount > 0) {
+            ONDEMANDLOG_TIME(warning, 5000)
+                << "setVarDataBatch: " << invalidCount << " / " << count
+                << " items have invalid varId or null data";
+        }
+        if (clippedSizeCount > 0) {
+            ONDEMANDLOG_TIME(warning, 5000)
+                << "setVarDataBatch: " << clippedSizeCount
+                << " items size overflowed uint32_t and were clipped";
+        }
     }
 
     /**
-     * @brief 获取或分配订阅者节点的位图位置，支持最多 256 个订阅者
+     * @brief 获取或分配订阅者节点的位图位置，支持最多 64 个订阅者
      * @param  nodeHash 订阅者节点名称的 hash 值
      * @return uint8_t 节点位图位置
      */
@@ -933,8 +972,11 @@ namespace ondemand
             return it->second;
         }
         if (nextNodeSlot_ >= 64) {
-            ONDEMANDLOG(error) << "Node slot overflow! Max 64 subscriber nodes supported.";
-            return 63; // 饱和处理，共享最后一个 bit
+            /* 超过 64 个订阅节点：返回 kInvalidSlot，调用方需检查并拒绝该订阅，
+             * 避免多节点共享同一 bit 导致 unsubscribe 时错误清除其他节点的订阅 */
+            ONDEMANDLOG(error) << "Node slot overflow! Max 64 subscriber nodes supported."
+                               << " nodeHash=" << nodeHash;
+            return 0xFF; // kInvalidNodeSlot
         }
         uint8_t slot = nextNodeSlot_++;
         nodeSlotMap_.emplace(nodeHash, slot);
@@ -966,6 +1008,11 @@ namespace ondemand
 
         std::unique_lock lock(varIndexMutex_);
         uint8_t nodeBit = getOrAssignNodeBit(nodeHash);
+        if (nodeBit == 0xFF) {
+            ONDEMANDLOG(error) << "Rejecting subscribe from node=" << nodeName
+                               << ": exceeded max 64 subscriber nodes";
+            return;
+        }
         uint64_t nodeMask = uint64_t(1) << nodeBit;
 
         for (const auto &varFreq : varFreqs) {
@@ -980,7 +1027,7 @@ namespace ondemand
 
             auto &meta = it->second;
 
-            // 解析频率
+            /*解析频率*/
             uint32_t freq;
             auto result = std::from_chars(varFreq.value().data(),
                                           varFreq.value().data() + varFreq.value().size(), freq);
@@ -990,7 +1037,7 @@ namespace ondemand
                 continue;
             }
 
-            // 先从该节点已有的其他频率条目中移除（一个节点对一个变量只保留一个频率）
+            /*先从该节点已有的其他频率条目中移除*/
             for (auto fsIt = meta.freqSubs.begin(); fsIt != meta.freqSubs.end();) {
                 if (fsIt->subMask & nodeMask) {
                     fsIt->subMask &= ~nodeMask;
@@ -1005,7 +1052,7 @@ namespace ondemand
                 }
             }
 
-            // 在 freqSubs 中找到匹配 freq 的条目，或新建
+            /*在 freqSubs 中找到匹配 freq 的条目，或新建*/
             VarMetadata::FreqSub *target = nullptr;
             for (auto &fs : meta.freqSubs) {
                 if (fs.freq == freq) {
@@ -1019,14 +1066,14 @@ namespace ondemand
                 target->freq = freq;
             }
 
-            // 设置该节点的订阅位
+            /*设置该节点的订阅位*/
             target->subMask |= nodeMask;
             target->subCount++;
 
-            // 更新活跃频率数量
+            /*更新活跃频率数量*/
             meta.activeFreqCount = static_cast<uint8_t>(meta.freqSubs.size());
 
-            // 重新计算最小发布频率
+            /*重新计算最小发布频率*/
             uint32_t oldFreq = meta.currentFreq;
             recalcCurrentFreq(meta);
             schedulerDirty_.store(true, std::memory_order_release);
@@ -1060,7 +1107,7 @@ namespace ondemand
 
         std::unique_lock lock(varIndexMutex_);
 
-        // 查找该节点的 bit 位
+        /*查找该节点的 bit 位*/
         auto slotIt = nodeSlotMap_.find(nodeHash);
         if (slotIt == nodeSlotMap_.end()) {
             ONDEMANDLOG(warning) << "Unsubscribe from unknown node: " << nodeName;
@@ -1080,7 +1127,7 @@ namespace ondemand
 
             auto &meta = it->second;
 
-            // 从 freqSubs 中移除该节点的订阅
+            /*从 freqSubs 中移除该节点的订阅*/
             for (auto fsIt = meta.freqSubs.begin(); fsIt != meta.freqSubs.end();) {
                 if (fsIt->subMask & nodeMask) {
                     fsIt->subMask &= ~nodeMask;
@@ -1095,10 +1142,10 @@ namespace ondemand
                 }
             }
 
-            // 更新活跃频率数量
+            /*更新活跃频率数量*/
             meta.activeFreqCount = static_cast<uint8_t>(meta.freqSubs.size());
 
-            // 重新计算最小频率（关键：退订后自动切换到下一个最小频率）
+            /*重新计算最小频率*/
             uint32_t oldFreq = meta.currentFreq;
             recalcCurrentFreq(meta);
             schedulerDirty_.store(true, std::memory_order_release);
@@ -1199,10 +1246,8 @@ namespace ondemand
                 uint32_t oldFreq = meta.currentFreq;
                 recalcCurrentFreq(meta);
                 schedulerDirty_.store(true, std::memory_order_release);
-                if (meta.currentFreq != oldFreq && meta.varDefine) {
-                    const std::string fallbackName =
-                        meta.varDefine ? make_meta_varname(nodeName_, meta.varDefine->name())
-                                       : std::string();
+                if (meta.currentFreq != oldFreq) {
+                    // [P1-3] 直接使用 realVarName，移除从未使用的 fallbackName
                     freqChanges.emplace_back(meta.realVarName, meta.currentFreq);
                 }
             }
