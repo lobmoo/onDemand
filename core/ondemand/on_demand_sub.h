@@ -22,8 +22,7 @@
 #include "variable_store.h"
 #include "timer_wheel/timer_scheduler.h"
 #include <shared_mutex>
-#include <bits/stdint-uintn.h>
-#include <string_view>
+#include <cstdint>
 #include <string_view>
 #include <sys/types.h>
 namespace dsf
@@ -44,7 +43,7 @@ namespace ondemand
         std::string_view nodeName;
         std::string_view varName;
         std::string_view varType;
-        std::string_view type_verson;
+        std::string_view type_version;
         const void *data;
         size_t size;
         uint64_t timestampNs;
@@ -68,6 +67,10 @@ namespace ondemand
     {
     public:
         OnDemandSub();
+        virtual         // DTOR SAFETY: Guarantees no exceptions; logs failures instead
+        // Stops all internal threads, closes DDS subscriptions, releases timers
+                // DTOR SAFETY: Guarantees no exceptions; logs failures instead
+        // Stops all internal threads, closes DDS subscriptions, releases timers
         ~OnDemandSub();
 
         /**

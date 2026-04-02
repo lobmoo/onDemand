@@ -54,12 +54,14 @@ namespace ondemand
     struct alignas(64) Slot {
         std::atomic<uint32_t> seq{0};       // seqlock 计数器，奇数=写入中
         std::atomic<uint8_t>  committed{0}; // 当前可读缓冲区索引 (0 或 1)
-        uint32_t valid_size[2]{0, 0};       // 每个缓冲区的有效数据长度
-        std::byte data[];                   // [buf0: size B][buf1: size B]
+        std::uint32_t pad_{0};              // Padding for alignment (4B)
+        uint32_t valid_size[2]{0, 0};       // 每个缓冲区的有效数据长度 (8B)
+        // FAM: [buf0: size B][buf1: size B] at (Slot header size = 24B, aligned to 64B)
+        std::byte data[];  
     };
+    static_assert(alignof(Slot) >= 64, "Slot alignment insufficient");
 
-    inline constexpr uint32_t slot_bytes(uint32_t payload_size)
-    {
+    inline constexpr uint32_t slot_bytes(uint32_t payload_size) {
         return align64(static_cast<uint32_t>(sizeof(Slot)) + 2u * payload_size);
     }
 
@@ -126,8 +128,10 @@ namespace ondemand
                                     : 0;
 
             void *new_arena = std::aligned_alloc(64, arena_size_);
-            if (!new_arena)
+            if (!new_arena) {
+                ONDEMANDLOG(error) << "Failed to allocate arena (aligned_alloc), size: " << arena_size_;
                 return false;
+            }
 
             /*这里支持动态扩容*/
             if (old_size)
@@ -147,9 +151,10 @@ namespace ondemand
                                    std::memory_order_relaxed);
             for (uint32_t i = var_count_; i < new_count; ++i)
                 new_flags[i].store(false, std::memory_order_relaxed);
-            delete[] dirty_flags_;
+            auto *old_flags = dirty_flags_;
             dirty_flags_ = new_flags;
             var_count_ = new_count;
+            delete[] old_flags;  // Safe: only after pointers updated
             return true;
         }
 
@@ -387,6 +392,9 @@ namespace ondemand
         }
 
     private:
+        mutable std::mutex reconfig_mu_;
+        mutable std::condition_variable reconfig_cv_;
+
         bool ensure_capacity(uint32_t id, uint32_t required)
         {
             if (required == 0 || id >= metas_.size())
@@ -468,14 +476,13 @@ namespace ondemand
 
         void op_enter() const
         {
-            for (;;) {
-                while (reconfig_.load(std::memory_order_acquire))
-                    std::this_thread::yield();
-                active_ops_.fetch_add(1, std::memory_order_acq_rel);
-                if (!reconfig_.load(std::memory_order_acquire))
-                    return;
-                active_ops_.fetch_sub(1, std::memory_order_acq_rel);
+            std::unique_lock<std::mutex> lock(reconfig_mu_);
+            while (reconfig_.load(std::memory_order_acquire)) {
+                reconfig_cv_.wait(lock, [this]() { 
+                    return !reconfig_.load(std::memory_order_acquire); 
+                });
             }
+            active_ops_.fetch_add(1, std::memory_order_acq_rel);
         }
 
         void op_exit() const { active_ops_.fetch_sub(1, std::memory_order_acq_rel); }
@@ -492,6 +499,7 @@ namespace ondemand
         {
             reconfig_.store(false, std::memory_order_release);
             config_mu_.unlock();
+            reconfig_cv_.notify_all();
         }
 
         void cleanup()

@@ -36,7 +36,7 @@ namespace ondemand
             std::function<void(const std::string &varName, uint32_t newFreqMs)>;
 
         OnDemandPub();
-        ~OnDemandPub();
+        virtual ~OnDemandPub();
 
         /**
          * @brief 初始化发布者节点
