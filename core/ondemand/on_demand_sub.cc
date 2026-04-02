@@ -988,9 +988,7 @@ namespace ondemand
         dataNode_.reset();
         dataNode_ = nullptr;
 
-        /*销毁 DDS 节点单例*/
-        DdsNodeFactory::destroyInstance();
-
+  
         totalReceived_.store(0);
 
         std::shared_ptr<DSF::Var::PubTableDefine> dummy;
@@ -1011,6 +1009,8 @@ namespace ondemand
             s.writeCount.store(0);
             s.timestampNs.store(0);
         }
+              /*销毁 DDS 节点单例*/
+        DdsNodeFactory::destroyInstance();
         ONDEMANDLOG(info) << "OnDemandSub stopped";
     }
 
