@@ -317,10 +317,13 @@ namespace ondemand
                 auto *slot = (const Slot *)(s_->arena_ + s_->metas_[id].offset);
                 uint32_t size = s_->metas_[id].size;
 
-                for (int retry = 0; retry < 10; ++retry) {
+                /* op_enter() 已防止 arena 重分配，writer 必然完成，可安全自旋 */
+                for (;;) {
                     uint32_t s1 = slot->seq.load(std::memory_order_acquire);
-                    if (s1 & 1)
+                    if (s1 & 1) {
+                        std::this_thread::yield();
                         continue;
+                    }
                     uint8_t idx = slot->committed.load(std::memory_order_acquire);
                     std::atomic_thread_fence(std::memory_order_acquire);
                     if (s1 == slot->seq.load(std::memory_order_acquire)) {
