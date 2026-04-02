@@ -16,7 +16,7 @@
 #include "ondemand/on_demand_pub.h"
 #include "ondemand/on_demand_sub.h"
 
-uint32_t count = 100000;  // 每个节点发布5000个变量
+uint32_t count = 1000;  // 每个节点发布5000个变量
 
 void dataNodeA()
 {
