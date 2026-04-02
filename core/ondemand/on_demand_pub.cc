@@ -329,6 +329,7 @@ namespace ondemand
     void OnDemandPub::onReceiveRegisterCb(const std::string & /*topicName*/,
                                           std::shared_ptr<DSF::Message::SubTableRegister> data)
     {
+
         pubTableDefRegisterQueue_.enqueue(data);
     }
     /**
@@ -341,9 +342,6 @@ namespace ondemand
             std::shared_ptr<DSF::Message::SubTableRegister> data;
             if (pubTableDefRegisterQueue_.try_dequeue(data)) {
                 if (data) {
-                    ONDEMANDLOG(info)
-                        << "Received subscription register from node: " << data->nodeName()
-                        << " with " << data->varFreqs().size() << " variables";
 
                     // 处理订阅注册请求
                     switch (data->msgType()) {
@@ -664,14 +662,22 @@ namespace ondemand
                     std::lock_guard<std::mutex> lock(freqChangeCbMutex_);
                     cb = freqChangeCb_;
                 }
-                if (cb) {
-                    try {
-                        cb(item.first, item.second);
-                    } catch (const std::exception &e) {
-                        ONDEMANDLOG(error) << "freqChange callback threw exception: " << e.what();
-                    } catch (...) {
-                        ONDEMANDLOG(error) << "freqChange callback threw unknown exception";
-                    }
+
+                // 回调尚未注册时不丢事件，避免 sub 先启动、pub 后注册回调导致首个频率变化丢失
+                if (!cb) {
+                    freqChangeQueue_.enqueue(item);
+                    ONDEMANDLOG(debug) << "FreqChangeCallback not set, re-enqueueing freq change event for node: " << item.first
+                                          << " freq: " << item.second << "ms";
+                    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                    continue;
+                }
+
+                try {
+                    cb(item.first, item.second);
+                } catch (const std::exception &e) {
+                    ONDEMANDLOG(error) << "freqChange callback threw exception: " << e.what();
+                } catch (...) {
+                    ONDEMANDLOG(error) << "freqChange callback threw unknown exception";
                 }
             } else {
                 std::this_thread::sleep_for(std::chrono::milliseconds(10));
