@@ -286,8 +286,7 @@ namespace ondemand
 
         /*处理线程*/
         std::thread processTableDefineThread_;
-        std::thread processDataTransferThread_;
-
+        std::vector<std::thread> processDataTransferThreads_;
         /*变量索引: hash -> 元数据*/
         std::unordered_map<uint64_t, VarMetadata> varIndex_;
         mutable std::shared_mutex varIndexMutex_;

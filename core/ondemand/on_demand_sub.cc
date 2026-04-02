@@ -233,10 +233,17 @@ namespace ondemand
                                               std::shared_ptr<DSF::Var::TableDataTransfer> data)
     {
         if (dataTransferQueue_.size_approx() > 100) {
-            ONDEMANDLOG_TIME(warning, 1000)
-                << "DataTransfer queue size is large: " << dataTransferQueue_.size_approx()
-                << ", dropping current data transfer";
-            return;
+            std::shared_ptr<DSF::Var::TableDataTransfer> dropped;
+            if (dataTransferQueue_.try_dequeue(dropped)) {
+                ONDEMANDLOG_TIME(warning, 1000)
+                    << "DataTransfer queue is full (" << dataTransferQueue_.size_approx()
+                    << "), dropped oldest message to keep latest";
+            } else {
+                ONDEMANDLOG_TIME(warning, 1000)
+                    << "DataTransfer queue is full (" << dataTransferQueue_.size_approx()
+                    << "), failed to dequeue oldest, dropping latest";
+                return;
+            }
         }
         dataTransferQueue_.enqueue(data);
     }
@@ -319,7 +326,6 @@ namespace ondemand
                     }
                 }
             }
-
             /*整张表写完后统一更新 bucket stamp，避免定时器读到半张表*/
             if (written > 0 && bucketIdx < ONDEMAND_BUCKET_SIZE) {
                 uint64_t pubTsNs = static_cast<uint64_t>(timeStamp.tv_sec()) * 1000000000ULL
@@ -445,7 +451,25 @@ namespace ondemand
         }
 
         processTableDefineThread_ = std::thread(&OnDemandSub::processTableDefine, this);
-        processDataTransferThread_ = std::thread(&OnDemandSub::processDataTransfer, this);
+        {
+            unsigned int hw = std::thread::hardware_concurrency();
+            size_t workerCount = 4;
+            if (hw > 0) {
+                workerCount = static_cast<size_t>(hw / 2);
+                if (workerCount < 2) {
+                    workerCount = 2;
+                }
+                if (workerCount > 8) {
+                    workerCount = 8;
+                }
+            }
+            processDataTransferThreads_.clear();
+            processDataTransferThreads_.reserve(workerCount);
+            for (size_t i = 0; i < workerCount; ++i) {
+                processDataTransferThreads_.emplace_back(&OnDemandSub::processDataTransfer, this);
+            }
+            ONDEMANDLOG(info) << "Started data transfer workers: " << workerCount;
+        }
 
         /*启动回调调度器 (tick 精度 1ms, 线程池 8 线程)*/
         callbackScheduler_ = std::make_unique<TimerScheduler>(1, 8);
@@ -454,79 +478,6 @@ namespace ondemand
 
         ONDEMANDLOG(info) << "OnDemandSub started";
         return true;
-    }
-
-    /**
-     * @brief 停止订阅器
-     */
-    void OnDemandSub::stop()
-    {
-        initialized_.store(false);
-        if (!running_.exchange(false)) {
-            return;
-        }
-
-        /*先停止回调调度器（停止时间轮线程池）*/
-        if (callbackScheduler_) {
-            callbackScheduler_->Stop();
-        }
-
-        /*再取消所有回调定时器*/
-        cancelAllCallbackTimers();
-
-        /*等待所有线程退出*/
-        if (processTableDefineThread_.joinable()) {
-            processTableDefineThread_.join();
-        }
-        if (processDataTransferThread_.joinable()) {
-            processDataTransferThread_.join();
-        }
-        if (callbackSchedulerThread_.joinable()) {
-            callbackSchedulerThread_.join();
-        }
-
-        /*最后清理调度器对象*/
-        if (callbackScheduler_) {
-            callbackScheduler_.reset();
-        }
-
-        pubTableDefineReader_.reset();
-        pubTableDefineReader_ = nullptr;
-        subTableRegisterReqWriter_.reset();
-        subTableRegisterReqWriter_ = nullptr;
-
-        {
-            std::lock_guard<std::mutex> lock(dataTransferCtxMapMutex_);
-            dataTransferReaderMap_.clear();
-        }
-
-        dataNode_.reset();
-        dataNode_ = nullptr;
-
-        /*销毁 DDS 节点单例*/
-        DdsNodeFactory::destroyInstance();
-
-        totalReceived_.store(0);
-
-        std::shared_ptr<DSF::Var::PubTableDefine> dummy;
-        while (pubTableDefineQueue_.try_dequeue(dummy)) {
-            // Dequeue
-        }
-        std::shared_ptr<DSF::Var::TableDataTransfer> dummyData;
-        while (dataTransferQueue_.try_dequeue(dummyData)) {
-            // Dequeue
-        }
-
-        {
-            std::lock_guard<std::mutex> lock(subscriptionCallbacksMutex_);
-            subscriptionCallbacks_.clear();
-        }
-
-        for (auto &s : varWriteStamps_) {
-            s.writeCount.store(0);
-            s.timestampNs.store(0);
-        }
-        ONDEMANDLOG(info) << "OnDemandSub stopped";
     }
 
     /**
@@ -824,10 +775,15 @@ namespace ondemand
         }
 
         /* 防止并发执行：上次还没执行完则跳过本次 */
-        if (!running || running->exchange(true, std::memory_order_acq_rel)) {
+        if (!running) {
             return;
         }
-        /* RAII 确保退出时清除 running flag */
+        if (running->exchange(true, std::memory_order_acq_rel)) {
+            ONDEMANDLOG_TIME(warning, 2000)
+                << "Skip callback group because previous invocation is still running: bucket="
+                << bucketIndex << " freq=" << freqMs << "ms";
+            return;
+        }
         struct RunningGuard {
             std::atomic<bool> &flag;
             ~RunningGuard() { flag.store(false, std::memory_order_release); }
@@ -842,8 +798,9 @@ namespace ondemand
             uint32_t curWriteCount =
                 varWriteStamps_[bucketIndex].writeCount.load(std::memory_order_acquire);
             /* 该 bucket 从未收到过数据，跳过 */
-            if (curWriteCount == 0)
+            if (curWriteCount == 0) {
                 return;
+            }
         }
         uint64_t tsNs = 0;
         DSF::Var::BLOB_TYPE blobType = DSF::Var::BLOB_TYPE::UNKNOWN;
@@ -853,49 +810,50 @@ namespace ondemand
                 varWriteStamps_[bucketIndex].blobType.load(std::memory_order_acquire));
         }
 
-        struct PendingItem {
+        /* 逐个读取并立即释放 handle，避免同时持有多个 handle 导致与 finalize()
+         * 的 config_begin() 死锁（finalize 等 active_ops==0，而多个 handle
+         * 同时存活会让 active_ops 无法归零）。
+         * 用 (offset, size) 记录位置，循环结束后再统一修正 batch 指针。*/
+        struct CopiedItem {
             const CallbackVarInfo *info;
-            VarStore::ZeroCopyReadHandle handle;
+            size_t offset;
             uint32_t size;
         };
-
-        std::vector<PendingItem> pending;
-        pending.reserve(members->size());
-        size_t totalBufSize = 0;
+        std::vector<CopiedItem> copied;
+        copied.reserve(members->size());
+        std::vector<uint8_t> dataBuf;
+        dataBuf.reserve(members->size() * 64);
 
         for (const auto &info : *members) {
             if (!info.callback)
                 continue;
 
-            auto handle = varStore_.read_zero_copy(static_cast<uint32_t>(info.varId));
-            if (!handle || handle.size() == 0) {
-                ONDEMANDLOG_TIME(error, 5000) << "Failed to read varId: " << info.varId
-                                              << " for callback, varName: " << info.varName;
-                continue;
-            }
-
-            if (!groupCallback)
-                groupCallback = &info.callback;
-
-            totalBufSize += handle.size();
-            pending.push_back(PendingItem{&info, std::move(handle), handle.size()});
+            size_t off = dataBuf.size();
+            uint32_t sz = 0;
+            {
+                auto handle = varStore_.read_zero_copy(static_cast<uint32_t>(info.varId));
+                if (!handle || handle.size() == 0) {
+                    ONDEMANDLOG_TIME(error, 5000) << "Failed to read varId: " << info.varId
+                                                  << " for callback, varName: " << info.varName;
+                    continue;
+                }
+                if (!groupCallback)
+                    groupCallback = &info.callback;
+                sz = handle.size();
+                const auto *src = reinterpret_cast<const uint8_t *>(handle.ptr());
+                dataBuf.insert(dataBuf.end(), src, src + sz);
+            } // handle 析构，op_exit()，active_ops 归零，finalize 可推进
+            copied.push_back({&info, off, sz});
         }
 
-        if (pending.empty() || !groupCallback)
+        if (copied.empty() || !groupCallback)
             return;
 
-        /* 按真实长度一次性分配，再拷贝到连续缓冲区供用户回调读取 */
-        std::vector<uint8_t> dataBuf(totalBufSize);
-        size_t offset = 0;
-
-        for (auto &item : pending) {
-            uint8_t *ptr = dataBuf.data() + offset;
-            std::memcpy(ptr, item.handle.ptr(), item.size);
-
+        /* dataBuf 不再增长，指针稳定，统一填 batch */
+        for (const auto &item : copied) {
             const auto &info = *item.info;
-            batch.push_back({info.nodeName, info.varName, info.varType, info.typeVersion, ptr,
-                             item.size, tsNs, blobType});
-            offset += item.size;
+            batch.push_back({info.nodeName, info.varName, info.varType, info.typeVersion,
+                             dataBuf.data() + item.offset, item.size, tsNs, blobType});
         }
 
         if (batch.empty())
@@ -906,6 +864,9 @@ namespace ondemand
         } catch (const std::exception &e) {
             ONDEMANDLOG_TIME(error, 5000) << "Batch callback exception for freq=" << freqMs
                                           << "ms, vars=" << batch.size() << " err: " << e.what();
+        } catch (...) {
+            ONDEMANDLOG_TIME(error, 5000) << "Batch callback unknown exception for freq=" << freqMs
+                                          << "ms, vars=" << batch.size();
         }
     }
 
@@ -948,5 +909,82 @@ namespace ondemand
         }
         return result;
     }
+
+    /**
+     * @brief 停止订阅器
+     */
+    void OnDemandSub::stop()
+    {
+        initialized_.store(false);
+        if (!running_.exchange(false)) {
+            return;
+        }
+
+        /*先停止回调调度器（停止时间轮线程池）*/
+        if (callbackScheduler_) {
+            callbackScheduler_->Stop();
+        }
+
+        /*再取消所有回调定时器*/
+        cancelAllCallbackTimers();
+
+        /*等待所有线程退出*/
+        if (processTableDefineThread_.joinable()) {
+            processTableDefineThread_.join();
+        }
+        for (auto &t : processDataTransferThreads_) {
+            if (t.joinable()) {
+                t.join();
+            }
+        }
+        processDataTransferThreads_.clear();
+        if (callbackSchedulerThread_.joinable()) {
+            callbackSchedulerThread_.join();
+        }
+
+        /*最后清理调度器对象*/
+        if (callbackScheduler_) {
+            callbackScheduler_.reset();
+        }
+
+        pubTableDefineReader_.reset();
+        pubTableDefineReader_ = nullptr;
+        subTableRegisterReqWriter_.reset();
+        subTableRegisterReqWriter_ = nullptr;
+
+        {
+            std::lock_guard<std::mutex> lock(dataTransferCtxMapMutex_);
+            dataTransferReaderMap_.clear();
+        }
+
+        dataNode_.reset();
+        dataNode_ = nullptr;
+
+        /*销毁 DDS 节点单例*/
+        DdsNodeFactory::destroyInstance();
+
+        totalReceived_.store(0);
+
+        std::shared_ptr<DSF::Var::PubTableDefine> dummy;
+        while (pubTableDefineQueue_.try_dequeue(dummy)) {
+            // Dequeue
+        }
+        std::shared_ptr<DSF::Var::TableDataTransfer> dummyData;
+        while (dataTransferQueue_.try_dequeue(dummyData)) {
+            // Dequeue
+        }
+
+        {
+            std::lock_guard<std::mutex> lock(subscriptionCallbacksMutex_);
+            subscriptionCallbacks_.clear();
+        }
+
+        for (auto &s : varWriteStamps_) {
+            s.writeCount.store(0);
+            s.timestampNs.store(0);
+        }
+        ONDEMANDLOG(info) << "OnDemandSub stopped";
+    }
+
 } // namespace ondemand
 } // namespace dsf
