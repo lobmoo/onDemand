@@ -347,9 +347,17 @@ namespace ondemand
 
                     // 处理订阅注册请求
                     switch (data->msgType()) {
-                        case DSF::Message::MSGTYPE::SUB_TABLE_REGISTER:
-                            handleSubscribe(data->nodeName(), data->varFreqs());
+                        case DSF::Message::MSGTYPE::SUB_TABLE_REGISTER: {
+                            uint32_t missing = handleSubscribe(data->nodeName(), data->varFreqs());
+                            if (missing > 0) {
+                                /* 有变量尚未创建（Sub 先于 createVars() 发来注册），
+                                 * 延迟后重新入队，等 createVars() 完成后再处理
+                                 这里的策略让数据全部入队可能导致队列膨胀，后续优化 */
+                                std::this_thread::sleep_for(std::chrono::milliseconds(50));
+                                pubTableDefRegisterQueue_.enqueue(data);
+                            }
                             break;
+                        }
                         case DSF::Message::MSGTYPE::SUB_TABLE_UNREGISTER:
                             handleUnsubscribe(data->nodeName(), data->varFreqs());
                             break;
@@ -999,19 +1007,20 @@ namespace ondemand
      * @param  nodeName 变量名
      * @param  varFreqs 周期
      */
-    void OnDemandPub::handleSubscribe(const std::string &nodeName,
+    uint32_t OnDemandPub::handleSubscribe(const std::string &nodeName,
                                       const std::vector<DSF::NamedValue> &varFreqs)
     {
         uint64_t nodeHash = fast_hash(nodeName);
 
         std::vector<std::pair<std::string, uint32_t>> freqChanges; // 锁外触发回调
+        uint32_t missingCount = 0;
 
         std::unique_lock lock(varIndexMutex_);
         uint8_t nodeBit = getOrAssignNodeBit(nodeHash);
         if (nodeBit == 0xFF) {
             ONDEMANDLOG(error) << "Rejecting subscribe from node=" << nodeName
                                << ": exceeded max 64 subscriber nodes";
-            return;
+            return 0;
         }
         uint64_t nodeMask = uint64_t(1) << nodeBit;
 
@@ -1020,8 +1029,10 @@ namespace ondemand
             uint64_t varHash = fast_hash(metaName);
             auto it = varIndex_.find(varHash);
             if (it == varIndex_.end()) {
-                ONDEMANDLOG(debug) << "register var not found ! var name: " << varFreq.name()
-                                   << " node name: " << nodeName;
+                // Sub 先 subscribe()、Pub 后 createVars() 的正常竞态，调用方会延迟重试
+                ONDEMANDLOG(debug) << "handleSubscribe: var not yet created, will retry"
+                                   << " var=" << varFreq.name() << " node=" << nodeName;
+                ++missingCount;
                 continue;
             }
 
@@ -1091,6 +1102,7 @@ namespace ondemand
         for (const auto &[varName, newFreq] : freqChanges) {
             freqChangeQueue_.enqueue({varName, newFreq});
         }
+        return missingCount;
     }
 
     /**

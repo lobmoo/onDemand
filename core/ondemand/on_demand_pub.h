@@ -216,8 +216,9 @@ namespace ondemand
          * @brief 处理订阅者注册请求，更新订阅者信息和变量频率，触发发布调度
          * @param  nodeName        变量名
          * @param  varFreqs       周期
+         * @return 未找到的变量数量（>0 表示有变量尚未创建，调用方应延迟重试）
          */
-        void handleSubscribe(const std::string &nodeName,
+        uint32_t handleSubscribe(const std::string &nodeName,
                              const std::vector<DSF::NamedValue> &varFreqs);
         /**
          * @brief 处理订阅者取消订阅请求，更新订阅者信息和变量频率，触发发布调度
