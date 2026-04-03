@@ -193,6 +193,14 @@ namespace ondemand
         void processDataTransfer();
 
         /**
+         * @brief Set the Partion 
+         * @param  name           subscriber name
+         * @param  partitionName    partition name
+         * @return true 
+         * @return false 
+         */
+        bool setPartition(std::string name, std::string partitionName);
+        /**
          * @brief 回调分组键 = (bucketIndex, freqMs)，与 pub 端 PublishGroupKey 对齐
          *
          * 同一 bucket、同一频率的变量归为一组，共享一个时间轮定时器，

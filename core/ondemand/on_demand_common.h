@@ -39,6 +39,9 @@ namespace ondemand
 #define ONDEMAND_BUCKET_SIZE 20
 #define DOMAIN_ID 66
 
+
+#define  DATA_TANSFER_PUB_SUB_NAME  "DataTransferPubSub"
+
 /*日志宏定义*/
 /************************************************************************************************ */
 #define ONDEMANDLOG(level)                                                                         \
@@ -482,7 +485,7 @@ namespace ondemand
         } catch (const std::exception &e) {
             ONDEMANDLOG(error) << "Failed to create DDS node '" << nodeName << "': " << e.what();
             return nullptr;
-        }
+        }   
     }
 
 } // namespace ondemand

@@ -114,6 +114,23 @@ public:
     bool createSubscriber(const std::string &name, const SubscriberQoSBuilder &qos);
 
     /**
+     * @brief 运行时更新 Publisher QoS（如 partition）
+     * @param name Publisher 名称
+     * @param qos 新的 QoS 配置
+     * @return true 成功，false 失败（不存在或 QoS 不可变）
+     * @note 并非所有 QoS 都可运行时修改，partition 可以，reliability 不行
+     */
+    bool updatePublisherQos(const std::string &name, const PublisherQoSBuilder &qos);
+
+    /**
+     * @brief 运行时更新 Subscriber QoS（如 partition）
+     * @param name Subscriber 名称
+     * @param qos 新的 QoS 配置
+     * @return true 成功，false 失败（不存在或 QoS 不可变）
+     */
+    bool updateSubscriberQos(const std::string &name, const SubscriberQoSBuilder &qos);
+
+    /**
      * @brief 强制发送 PDP 心跳，确保 participant 的存在已被通告
      */
     void assertLiveliness()

@@ -75,6 +75,11 @@ namespace ondemand
             return false;
         }
 
+        /*创建数据通信所需的subscriber*/
+        FastddsWrapper::SubscriberQoSBuilder subQos;
+        subQos.setAutoEnable(true);
+        dataNode_->createSubscriber(DATA_TANSFER_PUB_SUB_NAME, subQos);
+
         ONDEMANDLOG(info) << "OnDemandSub initialized: " << nodeName;
         /*确保 DDS endpoints 就绪: assertLiveliness 强制发送 PDP 心跳*/
         dataNode_->assertLiveliness();
@@ -183,7 +188,6 @@ namespace ondemand
         //     .setHistoryDepth(depth);
 
         std::lock_guard<std::mutex> lock(dataTransferCtxMapMutex_);
-
         for (uint32_t bucketId : bucketIds) {
             // 如果该 bucket 的 reader 已存在，跳过
             if (dataTransferReaderMap_.find(bucketId) != dataTransferReaderMap_.end()) {
@@ -195,14 +199,11 @@ namespace ondemand
             std::string tableName = make_bucket_name_by_id(bucketId);
             std::string topicName = DSF::Var::VAR_DATA_TRANSFER_TOPIC_PREFIX + tableName;
             std::shared_ptr<DdsWrapper::DDSTopicReader<DSF::Var::TableDataTransfer>> reader;
-            if (0
-                != dsf::ondemand::registerNodeTopicReader<DSF::Var::TableDataTransfer,
-                                                          DSF::Var::TableDataTransferPubSubType>(
-                    dataNode_, reader, topicName, processFunc, readerQosBuilder)) {
-                ONDEMANDLOG(error)
-                    << "Failed to create DataTransfer reader for topic: " << topicName;
-                return false;
-            }
+
+            reader = dataNode_->createDataReader<DSF::Var::TableDataTransfer,
+                                                 DSF::Var::TableDataTransferPubSubType>(
+                topicName, DATA_TANSFER_PUB_SUB_NAME, processFunc, readerQosBuilder);
+
             dataTransferReaderMap_.emplace(bucketId, reader);
             ONDEMANDLOG(info) << "Created DataTransfer reader for bucketId: " << bucketId
                               << ", topic: " << topicName;
@@ -307,7 +308,7 @@ namespace ondemand
                     auto vit = varIndex_.find(varHash);
                     if (vit == varIndex_.end()) {
                         ONDEMANDLOG(critical)
-                            << "Received data for unknown varHash: " << varHash  << ", skipping.";
+                            << "Received data for unknown varHash: " << varHash << ", skipping.";
                         continue;
                     }
 
@@ -488,6 +489,15 @@ namespace ondemand
         return true;
     }
 
+    bool OnDemandSub::setPartition(std::string name, std::string partitionName)
+    {
+        FastddsWrapper::SubscriberQoSBuilder subQos;
+        subQos.setAutoEnable(true);
+        subQos.setPartition(partitionName);
+        dataNode_->updateSubscriberQos(name, subQos);
+        return true;
+    }
+
     /**
      * @brief 订阅变量并注册回调
      * @param  node_name 节点名
@@ -570,6 +580,9 @@ namespace ondemand
                               << " callback subscriptions for node: " << node_name;
         }
 
+        /*打开相应的通道*/
+        setPartition(DATA_TANSFER_PUB_SUB_NAME,
+                     DSF::Var::VAR_DATA_TRANSFER_TOPIC_PREFIX + node_name);
         return true;
     }
 

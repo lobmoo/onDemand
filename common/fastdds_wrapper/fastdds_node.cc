@@ -222,6 +222,48 @@ bool FastDataNode::createSubscriber(const std::string &name, const SubscriberQoS
     return true;
 }
 
+bool FastDataNode::updatePublisherQos(const std::string &name, const PublisherQoSBuilder &qos)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+
+    auto it = publishers_.find(name);
+    if (it == publishers_.end()) {
+        LOG(error) << "Publisher '" << name << "' not found";
+        return false;
+    }
+
+    auto new_qos = qos.getQos();
+    if (it->second->set_qos(new_qos) != eprosima::fastdds::dds::RETCODE_OK) {
+        LOG(error) << "Failed to update Publisher QoS for '" << name
+                   << "' (some QoS policies are immutable)";
+        return false;
+    }
+
+    LOG(info) << "Updated Publisher QoS: " << name;
+    return true;
+}
+
+bool FastDataNode::updateSubscriberQos(const std::string &name, const SubscriberQoSBuilder &qos)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+
+    auto it = subscribers_.find(name);
+    if (it == subscribers_.end()) {
+        LOG(error) << "Subscriber '" << name << "' not found";
+        return false;
+    }
+
+    auto new_qos = qos.getQos();
+    if (it->second->set_qos(new_qos) != eprosima::fastdds::dds::RETCODE_OK) {
+        LOG(error) << "Failed to update Subscriber QoS for '" << name
+                   << "' (some QoS policies are immutable)";
+        return false;
+    }
+
+    LOG(info) << "Updated Subscriber QoS: " << name;
+    return true;
+}
+
 bool FastDataNode::createTopic(const std::string &topicName)
 {
     if (topics_.find(topicName) != topics_.end()) {

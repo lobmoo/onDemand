@@ -212,6 +212,12 @@ namespace ondemand
 
         std::lock_guard<std::mutex> lock(DataTransferWriterMapMutex_);
 
+        FastddsWrapper::PublisherQoSBuilder pubQos;
+        pubQos.setPartition(
+            DSF::Var::VAR_DATA_TRANSFER_TOPIC_PREFIX
+            + nodeName_); // 按 topicName + nodeName 分区，确保同一节点不同表间隔离，避免不相关的订阅者收到数据
+
+        dataNode_->createPublisher(DATA_TANSFER_PUB_SUB_NAME, pubQos);
         for (uint32_t bucketId : bucketIds) {
             /*如果该 bucket 的 writer 已存在，跳过*/
             if (dataTransferWriterMap_.find(bucketId) != dataTransferWriterMap_.end()) {
@@ -223,12 +229,13 @@ namespace ondemand
             std::string tableName = make_bucket_name_by_id(bucketId);
             std::string topicName = DSF::Var::VAR_DATA_TRANSFER_TOPIC_PREFIX + tableName;
             std::shared_ptr<DdsWrapper::DDSTopicWriter<DSF::Var::TableDataTransfer>> writer;
-            if (0
-                != dsf::ondemand::registerNodeTopicWriter<DSF::Var::TableDataTransfer,
-                                                          DSF::Var::TableDataTransferPubSubType>(
-                    dataNode_, writer, topicName, writerQosBuilder)) {
+
+            writer = dataNode_->createDataWriter<DSF::Var::TableDataTransfer,
+                                                 DSF::Var::TableDataTransferPubSubType>(
+                topicName, DATA_TANSFER_PUB_SUB_NAME, writerQosBuilder);
+            if (!writer) {
                 ONDEMANDLOG(error)
-                    << "Failed to create DataTransfer writer for topic: " << topicName;
+                    << "Failed to create topic writer for topic [" << topicName << "].";
                 return false;
             }
             dataTransferWriterMap_.emplace(bucketId, writer);
