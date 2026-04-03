@@ -59,12 +59,23 @@ public:
     /**
      * @brief 创建数据通信节点(使用自定义QoS)
      * @param domainId domainId
-     * @param participant_name participant_name  
+     * @param participant_name participant_name
      * @param participant_qos Participant QoS配置
      * @param listener 监听器
      */
     FastDataNode(int domainId, const std::string &participant_name,
                  const ParticipantQoSBuilder &participant_qos,
+                 ParticipantListener *listener = nullptr);
+
+    /**
+     * @brief 创建数据通信节点(使用 NodeQoSConfig 完整配置 Participant/Publisher/Subscriber QoS)
+     * @param domainId domainId
+     * @param participant_name participant_name
+     * @param config 节点级 QoS 聚合配置
+     * @param listener 监听器
+     */
+    FastDataNode(int domainId, const std::string &participant_name,
+                 const NodeQoSConfig &config,
                  ParticipantListener *listener = nullptr);
 
     /**
@@ -285,6 +296,8 @@ public:
 private:
     bool initDomainParticipant(const std::string &participant_name,
                                const ParticipantQoSBuilder *participant_qos,
+                               const PublisherQoSBuilder *publisher_qos,
+                               const SubscriberQoSBuilder *subscriber_qos,
                                ParticipantListener *listener);
     bool initDomainParticipantForXml(const std::string &qosXmlConfig,
                                      ParticipantListener *listener);

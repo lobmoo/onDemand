@@ -26,7 +26,7 @@ FastDataNode::FastDataNode(int domainId, const std::string &participant_name,
                            ParticipantListener *listener)
     : domain_id_(domainId), participant_name_(participant_name)
 {
-    initialized_ = initDomainParticipant(participant_name, nullptr, listener);
+    initialized_ = initDomainParticipant(participant_name, nullptr, nullptr, nullptr, listener);
 }
 
 FastDataNode::FastDataNode(int domainId, const std::string &participant_name,
@@ -34,7 +34,16 @@ FastDataNode::FastDataNode(int domainId, const std::string &participant_name,
                            ParticipantListener *listener)
     : domain_id_(domainId), participant_name_(participant_name)
 {
-    initialized_ = initDomainParticipant(participant_name, &participant_qos, listener);
+    initialized_ = initDomainParticipant(participant_name, &participant_qos, nullptr, nullptr, listener);
+}
+
+FastDataNode::FastDataNode(int domainId, const std::string &participant_name,
+                           const NodeQoSConfig &config,
+                           ParticipantListener *listener)
+    : domain_id_(domainId), participant_name_(participant_name)
+{
+    initialized_ = initDomainParticipant(participant_name, &config.participant,
+                                         &config.publisher, &config.subscriber, listener);
 }
 
 FastDataNode::FastDataNode(const std::string &qosXmlConfig, ParticipantListener *listener)
@@ -55,6 +64,8 @@ FastDataNode::~FastDataNode()
 
 bool FastDataNode::initDomainParticipant(const std::string &participant_name,
                                          const ParticipantQoSBuilder *participant_qos,
+                                         const PublisherQoSBuilder *publisher_qos,
+                                         const SubscriberQoSBuilder *subscriber_qos,
                                          ParticipantListener *listener)
 {
     try {
@@ -77,7 +88,8 @@ bool FastDataNode::initDomainParticipant(const std::string &participant_name,
         }
 
         // 创建Publisher
-        publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT, nullptr);
+        auto pub_qos = (publisher_qos != nullptr) ? publisher_qos->getQos() : PUBLISHER_QOS_DEFAULT;
+        publisher_ = participant_->create_publisher(pub_qos, nullptr);
         if (publisher_ == nullptr) {
             LOG(error) << "Failed to create Publisher";
             destroyParticipantResources();
@@ -85,7 +97,8 @@ bool FastDataNode::initDomainParticipant(const std::string &participant_name,
         }
 
         // 创建Subscriber
-        subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
+        auto sub_qos = (subscriber_qos != nullptr) ? subscriber_qos->getQos() : SUBSCRIBER_QOS_DEFAULT;
+        subscriber_ = participant_->create_subscriber(sub_qos, nullptr);
         if (subscriber_ == nullptr) {
             LOG(error) << "Failed to create Subscriber";
             destroyParticipantResources();

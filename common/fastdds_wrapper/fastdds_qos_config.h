@@ -23,7 +23,9 @@
 // 但公共接口不暴露这些类型给用户
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 
 namespace FastddsWrapper
 {
@@ -141,6 +143,57 @@ private:
 };
 
 /**
+ * @brief PublisherQoSBuilder — 控制 Publisher 实体级 QoS（partition、entity_factory）
+ */
+class PublisherQoSBuilder
+{
+public:
+    PublisherQoSBuilder();
+
+    /// 设置 partition 名称（空字符串表示默认 partition）
+    PublisherQoSBuilder &setPartition(const std::string &partition);
+    /// 是否自动 enable 新创建的 DataWriter（默认 true）
+    PublisherQoSBuilder &setAutoEnable(bool enable);
+
+private:
+    const eprosima::fastdds::dds::PublisherQos &getQos() const;
+
+    friend class FastDataNode;
+
+    eprosima::fastdds::dds::PublisherQos qos_;
+};
+
+/**
+ * @brief SubscriberQoSBuilder — 控制 Subscriber 实体级 QoS（partition、entity_factory）
+ */
+class SubscriberQoSBuilder
+{
+public:
+    SubscriberQoSBuilder();
+
+    /// 设置 partition 名称（空字符串表示默认 partition）
+    SubscriberQoSBuilder &setPartition(const std::string &partition);
+    /// 是否自动 enable 新创建的 DataReader（默认 true）
+    SubscriberQoSBuilder &setAutoEnable(bool enable);
+
+private:
+    const eprosima::fastdds::dds::SubscriberQos &getQos() const;
+
+    friend class FastDataNode;
+
+    eprosima::fastdds::dds::SubscriberQos qos_;
+};
+
+/**
+ * @brief 节点级 QoS 聚合配置，传给 FastDataNode 构造函数
+ */
+struct NodeQoSConfig {
+    ParticipantQoSBuilder participant;
+    PublisherQoSBuilder   publisher;
+    SubscriberQoSBuilder  subscriber;
+};
+
+/**
  * @brief QoS预设配置
  */
 namespace QoSPresets
@@ -155,6 +208,10 @@ namespace QoSPresets
     // Reader预设
     DataReaderQoSBuilder defaultReader();
     DataReaderQoSBuilder reliableReader();
+
+    // Publisher/Subscriber预设
+    PublisherQoSBuilder defaultPublisher();
+    SubscriberQoSBuilder defaultSubscriber();
 
 } // namespace QoSPresets
 

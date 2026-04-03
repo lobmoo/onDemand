@@ -362,6 +362,54 @@ const eprosima::fastdds::dds::DataReaderQos &DataReaderQoSBuilder::getQos() cons
     return qos_;
 }
 
+// ---- PublisherQoSBuilder ----
+
+PublisherQoSBuilder::PublisherQoSBuilder()
+{
+    qos_ = PUBLISHER_QOS_DEFAULT;
+}
+
+PublisherQoSBuilder &PublisherQoSBuilder::setPartition(const std::string &partition)
+{
+    qos_.partition().push_back(partition.c_str());
+    return *this;
+}
+
+PublisherQoSBuilder &PublisherQoSBuilder::setAutoEnable(bool enable)
+{
+    qos_.entity_factory().autoenable_created_entities = enable;
+    return *this;
+}
+
+const eprosima::fastdds::dds::PublisherQos &PublisherQoSBuilder::getQos() const
+{
+    return qos_;
+}
+
+// ---- SubscriberQoSBuilder ----
+
+SubscriberQoSBuilder::SubscriberQoSBuilder()
+{
+    qos_ = SUBSCRIBER_QOS_DEFAULT;
+}
+
+SubscriberQoSBuilder &SubscriberQoSBuilder::setPartition(const std::string &partition)
+{
+    qos_.partition().push_back(partition.c_str());
+    return *this;
+}
+
+SubscriberQoSBuilder &SubscriberQoSBuilder::setAutoEnable(bool enable)
+{
+    qos_.entity_factory().autoenable_created_entities = enable;
+    return *this;
+}
+
+const eprosima::fastdds::dds::SubscriberQos &SubscriberQoSBuilder::getQos() const
+{
+    return qos_;
+}
+
 namespace QoSPresets
 {
 
@@ -386,6 +434,10 @@ namespace QoSPresets
             .setReliabilityKind(ReliabilityKind::RELIABLE)
             .setHistoryKind(HistoryKind::KEEP_ALL);
     }
+
+    PublisherQoSBuilder defaultPublisher() { return PublisherQoSBuilder(); }
+
+    SubscriberQoSBuilder defaultSubscriber() { return SubscriberQoSBuilder(); }
 
 } // namespace QoSPresets
 
