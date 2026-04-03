@@ -16,7 +16,7 @@
 #include "ondemand/on_demand_pub.h"
 #include "ondemand/on_demand_sub.h"
 
-uint32_t count = 1000;  // 每个节点发布5000个变量
+uint32_t count = 10000;  // 每个节点发布5000个变量
 
 void dataNodeA()
 {
@@ -74,7 +74,7 @@ void dataNodeA()
     std::vector<dsf::ondemand::SubscriptionItem> items;
     for (int i = 0; i < count; ++i) {
         std::string varName = "var" + std::to_string(i + count);  // var3, var4, var5
-        items.push_back({varName, static_cast<uint32_t>(2000)});
+        items.push_back({varName, static_cast<uint32_t>(200)});
     }
 
     sub.subscribe("pubNodeB", items, [](const std::vector<dsf::ondemand::VarCallbackData> &vars) {
@@ -154,7 +154,7 @@ void dataNodeB()
     std::vector<dsf::ondemand::SubscriptionItem> items;
     for (int i = 0; i < count; ++i) {
         std::string varName = "var" + std::to_string(i);  // var0, var1, var2
-        items.push_back({varName, static_cast<uint32_t>(2000)});
+        items.push_back({varName, static_cast<uint32_t>(200)});
     }
 
     sub.subscribe("pubNodeA", items, [](const std::vector<dsf::ondemand::VarCallbackData> &vars) {
