@@ -87,23 +87,25 @@ bool FastDataNode::initDomainParticipant(const std::string &participant_name,
             return false;
         }
 
-        // 创建Publisher
+        // 创建默认 Publisher
         auto pub_qos = (publisher_qos != nullptr) ? publisher_qos->getQos() : PUBLISHER_QOS_DEFAULT;
-        publisher_ = participant_->create_publisher(pub_qos, nullptr);
-        if (publisher_ == nullptr) {
-            LOG(error) << "Failed to create Publisher";
+        auto publisher = participant_->create_publisher(pub_qos, nullptr);
+        if (publisher == nullptr) {
+            LOG(error) << "Failed to create default Publisher";
             destroyParticipantResources();
             return false;
         }
+        publishers_["default"] = publisher;
 
-        // 创建Subscriber
+        // 创建默认 Subscriber
         auto sub_qos = (subscriber_qos != nullptr) ? subscriber_qos->getQos() : SUBSCRIBER_QOS_DEFAULT;
-        subscriber_ = participant_->create_subscriber(sub_qos, nullptr);
-        if (subscriber_ == nullptr) {
-            LOG(error) << "Failed to create Subscriber";
+        auto subscriber = participant_->create_subscriber(sub_qos, nullptr);
+        if (subscriber == nullptr) {
+            LOG(error) << "Failed to create default Subscriber";
             destroyParticipantResources();
             return false;
         }
+        subscribers_["default"] = subscriber;
 
         LOG(info) << "FastDataNode initialized successfully with domain ID: " << domain_id_
                   << ", participant name: " << participant_name;
@@ -135,21 +137,23 @@ bool FastDataNode::initDomainParticipantForXml(const std::string &qosXmlConfig,
             return false;
         }
 
-        // 创建Publisher
-        publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT, nullptr);
-        if (publisher_ == nullptr) {
-            LOG(error) << "Failed to create Publisher";
+        // 创建默认 Publisher
+        auto publisher = participant_->create_publisher(PUBLISHER_QOS_DEFAULT, nullptr);
+        if (publisher == nullptr) {
+            LOG(error) << "Failed to create default Publisher";
             destroyParticipantResources();
             return false;
         }
+        publishers_["default"] = publisher;
 
-        // 创建Subscriber
-        subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
-        if (subscriber_ == nullptr) {
-            LOG(error) << "Failed to create Subscriber";
+        // 创建默认 Subscriber
+        auto subscriber = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
+        if (subscriber == nullptr) {
+            LOG(error) << "Failed to create default Subscriber";
             destroyParticipantResources();
             return false;
         }
+        subscribers_["default"] = subscriber;
 
         LOG(info) << "FastDataNode initialized from XML config: " << qosXmlConfig;
         return true;
@@ -164,6 +168,58 @@ void FastDataNode::addTopicDataTypeCreator(const std::string &topicName,
                                            TopicDataTypeCreator creator)
 {
     topic_types_[topicName] = creator;
+}
+
+bool FastDataNode::createPublisher(const std::string &name, const PublisherQoSBuilder &qos)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+
+    if (publishers_.find(name) != publishers_.end()) {
+        LOG(error) << "Publisher '" << name << "' already exists";
+        return false;
+    }
+
+    if (participant_ == nullptr) {
+        LOG(error) << "Participant not initialized";
+        return false;
+    }
+
+    auto pub_qos = qos.getQos();
+    auto publisher = participant_->create_publisher(pub_qos, nullptr);
+    if (publisher == nullptr) {
+        LOG(error) << "Failed to create Publisher '" << name << "'";
+        return false;
+    }
+
+    publishers_[name] = publisher;
+    LOG(info) << "Created Publisher: " << name;
+    return true;
+}
+
+bool FastDataNode::createSubscriber(const std::string &name, const SubscriberQoSBuilder &qos)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+
+    if (subscribers_.find(name) != subscribers_.end()) {
+        LOG(error) << "Subscriber '" << name << "' already exists";
+        return false;
+    }
+
+    if (participant_ == nullptr) {
+        LOG(error) << "Participant not initialized";
+        return false;
+    }
+
+    auto sub_qos = qos.getQos();
+    auto subscriber = participant_->create_subscriber(sub_qos, nullptr);
+    if (subscriber == nullptr) {
+        LOG(error) << "Failed to create Subscriber '" << name << "'";
+        return false;
+    }
+
+    subscribers_[name] = subscriber;
+    LOG(info) << "Created Subscriber: " << name;
+    return true;
 }
 
 bool FastDataNode::createTopic(const std::string &topicName)
@@ -260,14 +316,21 @@ void FastDataNode::destroyParticipantResources()
         return;
     }
 
-    if (publisher_ != nullptr) {
-        participant_->delete_publisher(publisher_);
-        publisher_ = nullptr;
+    // 删除所有 publishers
+    for (auto &pair : publishers_) {
+        if (pair.second != nullptr) {
+            participant_->delete_publisher(pair.second);
+        }
     }
-    if (subscriber_ != nullptr) {
-        participant_->delete_subscriber(subscriber_);
-        subscriber_ = nullptr;
+    publishers_.clear();
+
+    // 删除所有 subscribers
+    for (auto &pair : subscribers_) {
+        if (pair.second != nullptr) {
+            participant_->delete_subscriber(pair.second);
+        }
     }
+    subscribers_.clear();
 
     DomainParticipantFactory::get_instance()->delete_participant(participant_);
     participant_ = nullptr;

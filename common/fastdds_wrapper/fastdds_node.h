@@ -98,6 +98,22 @@ public:
     bool isInitialized() const { return initialized_; }
 
     /**
+     * @brief 创建额外的 Publisher（支持多 Publisher 场景）
+     * @param name Publisher 名称（唯一标识）
+     * @param qos Publisher QoS 配置
+     * @return true 成功，false 失败（名称冲突或创建失败）
+     */
+    bool createPublisher(const std::string &name, const PublisherQoSBuilder &qos);
+
+    /**
+     * @brief 创建额外的 Subscriber（支持多 Subscriber 场景）
+     * @param name Subscriber 名称（唯一标识）
+     * @param qos Subscriber QoS 配置
+     * @return true 成功，false 失败（名称冲突或创建失败）
+     */
+    bool createSubscriber(const std::string &name, const SubscriberQoSBuilder &qos);
+
+    /**
      * @brief 强制发送 PDP 心跳，确保 participant 的存在已被通告
      */
     void assertLiveliness()
@@ -111,50 +127,23 @@ public:
     std::shared_ptr<FastddsWrapper::FastDDSTopicWriter<MESSAGE>>
     createDataWriter(const std::string topicName, DDSDataWriterListener *listener = nullptr)
     {
-        if (!initialized_) {
-            LOG(error) << "FastDataNode not initialized";
-            return nullptr;
-        }
-
-        std::lock_guard<std::mutex> lock(mutex_);
-
-        // 检查是否存在有效的writer
-
-        auto it = writers_.find(topicName);
-
-        if (it != writers_.end() && !it->second.expired()) {
-
-            LOG(error) << "DataWriter for topic '" << topicName
-                       << "' already exists. Use a different topic name or destroy the existing "
-                          "writer first.";
-            return nullptr;
-        }
-
-        if (!isTopicTypeRegistered(topicName)) {
-            addTopicDataTypeCreator(topicName, []() { return new PUBSUB_TYPE(); });
-            LOG(debug) << "Auto-registered " << typeid(PUBSUB_TYPE).name()
-                       << "PubSubType for topic: " << topicName;
-        }
-
-        if (!createTopic(topicName)) {
-            LOG(error) << "Failed to create topic: " << topicName;
-            return nullptr;
-        }
-
-        auto writerQos = default_writer_qos_.getQos();
-        auto topic = topics_[topicName];
-
-        auto writer = std::make_shared<FastddsWrapper::FastDDSTopicWriter<MESSAGE>>(
-            publisher_, topic, writerQos, listener);
-        writers_[topicName] = writer;
-
-        LOG(info) << "Created DataWriter for topic: " << topicName;
-        return writer;
+        return createDataWriter<MESSAGE, PUBSUB_TYPE>(topicName, "default",
+                                                       default_writer_qos_, listener);
     }
 
     template <typename MESSAGE, typename PUBSUB_TYPE>
     std::shared_ptr<FastddsWrapper::FastDDSTopicWriter<MESSAGE>>
     createDataWriter(const std::string topicName, const DataWriterQoSBuilder &writer_qos,
+                     DDSDataWriterListener *listener = nullptr)
+    {
+        return createDataWriter<MESSAGE, PUBSUB_TYPE>(topicName, "default",
+                                                       writer_qos, listener);
+    }
+
+    template <typename MESSAGE, typename PUBSUB_TYPE>
+    std::shared_ptr<FastddsWrapper::FastDDSTopicWriter<MESSAGE>>
+    createDataWriter(const std::string topicName, const std::string &publisher_name,
+                     const DataWriterQoSBuilder &writer_qos,
                      DDSDataWriterListener *listener = nullptr)
     {
         if (!initialized_) {
@@ -163,15 +152,19 @@ public:
         }
 
         std::lock_guard<std::mutex> lock(mutex_);
-        // 检查是否存在有效的writer
 
         auto it = writers_.find(topicName);
-
         if (it != writers_.end() && !it->second.expired()) {
-
             LOG(error) << "DataWriter for topic '" << topicName
                        << "' already exists. Use a different topic name or destroy the existing "
                           "writer first.";
+            return nullptr;
+        }
+
+        // 查找指定的 publisher
+        auto pub_it = publishers_.find(publisher_name);
+        if (pub_it == publishers_.end()) {
+            LOG(error) << "Publisher '" << publisher_name << "' not found";
             return nullptr;
         }
 
@@ -187,14 +180,14 @@ public:
         }
 
         auto writerQos = writer_qos.getQos();
-
         auto topic = topics_[topicName];
 
         auto writer = std::make_shared<FastddsWrapper::FastDDSTopicWriter<MESSAGE>>(
-            publisher_, topic, writerQos, listener);
+            pub_it->second, topic, writerQos, listener);
         writers_[topicName] = writer;
 
-        LOG(info) << "Created DataWriter for topic: " << topicName;
+        LOG(info) << "Created DataWriter for topic: " << topicName
+                  << " on publisher: " << publisher_name;
         return writer;
     }
 
@@ -204,50 +197,24 @@ public:
                      std::function<void(const std::string &, std::shared_ptr<MESSAGE>)> callback,
                      DataReaderListener<MESSAGE> *listener = nullptr)
     {
-        if (!initialized_) {
-            LOG(error) << "FastDataNode not initialized";
-            return nullptr;
-        }
-
-        std::lock_guard<std::mutex> lock(mutex_);
-
-        auto it = readers_.find(topicName);
-
-        if (it != readers_.end() && !it->second.expired()) {
-            LOG(error) << "DataReader for topic '" << topicName
-                       << "' already exists. Use a different topic name or destroy the existing "
-                          "writer first.";
-
-            return nullptr;
-        }
-
-        if (!isTopicTypeRegistered(topicName)) {
-            addTopicDataTypeCreator(topicName, []() { return new PUBSUB_TYPE(); });
-            LOG(debug) << "Auto-registered " << typeid(PUBSUB_TYPE).name()
-                       << "PubSubType for topic: " << topicName;
-        }
-
-        if (!createTopic(topicName)) {
-            LOG(error) << "Failed to create topic: " << topicName;
-            return nullptr;
-        }
-
-        auto readerQos = default_reader_qos_.getQos();
-
-        auto topic = topics_[topicName];
-
-        auto reader = std::make_shared<FastddsWrapper::FastDDSTopicReader<MESSAGE>>(
-            subscriber_, topic, callback, readerQos, listener);
-
-        readers_[topicName] = reader;
-
-        LOG(info) << "Created DataReader for topic: " << topicName;
-        return reader;
+        return createDataReader<MESSAGE, PUBSUB_TYPE>(topicName, "default",
+                                                       callback, default_reader_qos_, listener);
     }
 
     template <typename MESSAGE, typename PUBSUB_TYPE>
     std::shared_ptr<FastddsWrapper::FastDDSTopicReader<MESSAGE>>
     createDataReader(const std::string topicName,
+                     std::function<void(const std::string &, std::shared_ptr<MESSAGE>)> callback,
+                     const DataReaderQoSBuilder &reader_qos,
+                     DataReaderListener<MESSAGE> *listener = nullptr)
+    {
+        return createDataReader<MESSAGE, PUBSUB_TYPE>(topicName, "default",
+                                                       callback, reader_qos, listener);
+    }
+
+    template <typename MESSAGE, typename PUBSUB_TYPE>
+    std::shared_ptr<FastddsWrapper::FastDDSTopicReader<MESSAGE>>
+    createDataReader(const std::string topicName, const std::string &subscriber_name,
                      std::function<void(const std::string &, std::shared_ptr<MESSAGE>)> callback,
                      const DataReaderQoSBuilder &reader_qos,
                      DataReaderListener<MESSAGE> *listener = nullptr)
@@ -260,12 +227,17 @@ public:
         std::lock_guard<std::mutex> lock(mutex_);
 
         auto it = readers_.find(topicName);
-
         if (it != readers_.end() && !it->second.expired()) {
             LOG(error) << "DataReader for topic '" << topicName
                        << "' already exists. Use a different topic name or destroy the existing "
-                          "writer first.";
+                          "reader first.";
+            return nullptr;
+        }
 
+        // 查找指定的 subscriber
+        auto sub_it = subscribers_.find(subscriber_name);
+        if (sub_it == subscribers_.end()) {
+            LOG(error) << "Subscriber '" << subscriber_name << "' not found";
             return nullptr;
         }
 
@@ -281,15 +253,15 @@ public:
         }
 
         auto readerQos = reader_qos.getQos();
-
         auto topic = topics_[topicName];
 
         auto reader = std::make_shared<FastddsWrapper::FastDDSTopicReader<MESSAGE>>(
-            subscriber_, topic, callback, readerQos, listener);
+            sub_it->second, topic, callback, readerQos, listener);
 
         readers_[topicName] = reader;
 
-        LOG(info) << "Created DataReader for topic: " << topicName;
+        LOG(info) << "Created DataReader for topic: " << topicName
+                  << " on subscriber: " << subscriber_name;
         return reader;
     }
 
@@ -330,8 +302,8 @@ private:
 
     // FastDDS核心对象
     eprosima::fastdds::dds::DomainParticipant *participant_ = nullptr;
-    eprosima::fastdds::dds::Publisher *publisher_ = nullptr;
-    eprosima::fastdds::dds::Subscriber *subscriber_ = nullptr;
+    std::unordered_map<std::string, eprosima::fastdds::dds::Publisher *> publishers_;
+    std::unordered_map<std::string, eprosima::fastdds::dds::Subscriber *> subscribers_;
 
     // Topic管理
     std::unordered_map<std::string, eprosima::fastdds::dds::Topic *> topics_;

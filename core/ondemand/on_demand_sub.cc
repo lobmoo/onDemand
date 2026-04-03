@@ -306,8 +306,8 @@ namespace ondemand
 
                     auto vit = varIndex_.find(varHash);
                     if (vit == varIndex_.end()) {
-                        ONDEMANDLOG_TIME(warning, 3000)
-                            << "Received data for unknown varHash: " << varHash << ", skipping.";
+                        ONDEMANDLOG(critical)
+                            << "Received data for unknown varHash: " << varHash  << ", skipping.";
                         continue;
                     }
 
@@ -435,6 +435,7 @@ namespace ondemand
                                                            std::placeholders::_2));
                     }
                 }
+                LOG(info) << "+++++++++++++++++totalReceived_ = " << totalReceived_.load();
             } else {
                 std::this_thread::sleep_for(std::chrono::milliseconds(10));
             }
@@ -790,7 +791,7 @@ namespace ondemand
             return;
         }
         if (running->exchange(true, std::memory_order_acq_rel)) {
-            ONDEMANDLOG_TIME(warning, 2000)
+            ONDEMANDLOG_TIME(debug, 2000)
                 << "Skip callback group because previous invocation is still running: bucket="
                 << bucketIndex << " freq=" << freqMs << "ms";
             return;
