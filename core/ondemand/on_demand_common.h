@@ -280,7 +280,7 @@ namespace ondemand
         uint32_t varId;                              // 变量ID (全局唯一，递增分配)
         uint32_t currentFreq;                        // 当前发布频率 (ms)
         std::shared_ptr<DSF::Var::Define> varDefine; // 变量定义 (idl)
-        std::string realVarName;                     // 变量名 
+        std::string realVarName;                     // 变量名
 
         // 订阅频率信息 (紧凑存储)
         struct FreqSub {
@@ -326,8 +326,7 @@ namespace ondemand
             for (size_t i = 0; i < freqSubs.size(); ++i) {
                 const auto &fs = freqSubs[i];
                 oss << "\n    [" << i << "] freq=" << fs.freq << "ms"
-                    << ", subCount=" << fs.subCount
-                    << ", subMask=0b";
+                    << ", subCount=" << fs.subCount << ", subMask=0b";
                 // 打印 subMask 二进制 (只打印有效位)
                 if (fs.subMask == 0) {
                     oss << "0";
@@ -419,7 +418,8 @@ namespace ondemand
         dataWriter = node->template createDataWriter<TopicType, TopicPubSubType>(
             dsfTopicName, writer_qos, listener);
         if (!dataWriter) {
-            ONDEMANDLOG(error) << "Failed to create topic writer for topic [" << dsfTopicName << "].";
+            ONDEMANDLOG(error) << "Failed to create topic writer for topic [" << dsfTopicName
+                               << "].";
             return -1;
         }
 
@@ -440,7 +440,8 @@ namespace ondemand
         dataReader = node->template createDataReader<TopicType, TopicPubSubType>(
             dsfTopicName, processFunc, reader_qos, listener);
         if (!dataReader) {
-            ONDEMANDLOG(error) << "Failed to create topic reader for topic [" << dsfTopicName << "].";
+            ONDEMANDLOG(error) << "Failed to create topic reader for topic [" << dsfTopicName
+                               << "].";
             return -1;
         }
 
@@ -449,121 +450,40 @@ namespace ondemand
     }
 
     /**
-     * @brief DDS 节点单例工厂类，确保同一进程只有一个 DDS 节点
+     * @brief 创建默认的节点 QoS 配置
      */
-    class DdsNodeFactory {
-    public:
-        // 禁止拷贝和赋值
-        DdsNodeFactory(const DdsNodeFactory&) = delete;
-        DdsNodeFactory& operator=(const DdsNodeFactory&) = delete;
+    inline DdsWrapper::ParticipantQoSBuilder createDefaultNodeQoS()
+    {
+        DdsWrapper::ParticipantQoSBuilder qos;
+        qos.addUDPV4TransportInterfaces({"10.25.5.26"})
+            .setDiscoveryMulticastLocator("239.255.0.1", 7400)
+            .setUserMulticastLocator("239.255.0.1", 7401)
+            .addFlowController()
+            .setDiscoveryKeepAlive(2000, 500)
+            .setIgnoreLocalEndpoints()
+            .setInitialAnnouncements(30, 100);
+        return qos;
+    }
 
-        /**
-         * @brief 获取或创建 DDS 节点（使用默认配置）
-         * @param nodeName 节点名称
-         * @param listener 节点监听器（可选，仅首次创建时有效）
-         * @return 节点智能指针，失败返回 nullptr
-         * @note 如果节点已存在，nodeName 和 listener 参数会被忽略
-         */
-        static inline std::shared_ptr<DdsWrapper::DataNode> getInstance(
-            const std::string& nodeName = "DefaultNode",
-            DdsWrapper::ParticipantListener* listener = nullptr)
-        {
-            std::lock_guard<std::mutex> lock(getMutex());
-
-            auto& instance = getInstancePtr();
-            if (!instance) {
-                auto qosConfigurator = createDefaultQoS();
-                instance = createNodeInternal(nodeName, qosConfigurator, listener);
-            } else {
-                ONDEMANDLOG(debug) << "DDS node already exists, returning existing instance";
-            }
-
-            return instance;
+    /**
+     * @brief 创建 DDS 节点
+     * @param nodeName 节点名称
+     * @param listener participant 监听器
+     * @return 节点智能指针，失败返回 nullptr
+     */
+    inline std::shared_ptr<DdsWrapper::DataNode>
+    createDataNode(const std::string &nodeName, DdsWrapper::ParticipantListener *listener = nullptr)
+    {
+        try {
+            auto qos = createDefaultNodeQoS();
+            auto node = std::make_shared<DdsWrapper::DataNode>(DOMAIN_ID, nodeName, qos, listener);
+            ONDEMANDLOG(info) << "Created DDS node: " << nodeName;
+            return node;
+        } catch (const std::exception &e) {
+            ONDEMANDLOG(error) << "Failed to create DDS node '" << nodeName << "': " << e.what();
+            return nullptr;
         }
-
-        /**
-         * @brief 销毁单例节点
-         * @note 调用后，下次 getInstance 会创建新节点
-         */
-        static inline void destroyInstance()
-        {
-            std::lock_guard<std::mutex> lock(getMutex());
-            auto& instance = getInstancePtr();
-            if (instance) {
-                ONDEMANDLOG(info) << "Destroying DDS node singleton";
-                instance.reset();
-            }
-        }
-
-        /**
-         * @brief 检查节点是否已创建
-         * @return true 如果节点已存在
-         */
-        static inline bool hasInstance()
-        {
-            std::lock_guard<std::mutex> lock(getMutex());
-            return getInstancePtr() != nullptr;
-        }
-
-    private:
-        /**
-         * @brief 获取单例指针的引用（线程安全）
-         */
-        static inline std::shared_ptr<DdsWrapper::DataNode>& getInstancePtr()
-        {
-            static std::shared_ptr<DdsWrapper::DataNode> instance;
-            return instance;
-        }
-
-        /**
-         * @brief 获取互斥锁（线程安全）
-         */
-        static inline std::mutex& getMutex()
-        {
-            static std::mutex mutex;
-            return mutex;
-        }
-
-        /**
-         * @brief 内部创建节点的实现
-         */
-        static inline std::shared_ptr<DdsWrapper::DataNode> createNodeInternal(
-            const std::string& nodeName,
-            const DdsWrapper::ParticipantQoSBuilder& qosConfigurator,
-            DdsWrapper::ParticipantListener* listener)
-        {
-            try {
-                auto dataNode = std::make_shared<DdsWrapper::DataNode>(
-                    DOMAIN_ID, nodeName, qosConfigurator, listener);
-
-                ONDEMANDLOG(info) << "Successfully created DDS node singleton: " << nodeName;
-                return dataNode;
-
-            } catch (const std::exception& e) {
-                ONDEMANDLOG(error) << "Failed to create DDS node '" << nodeName
-                                   << "': " << e.what();
-                return nullptr;
-            }
-        }
-
-        /**
-         * @brief 创建默认的 QoS 配置
-         * @return QoS 配置器
-         */
-        static inline DdsWrapper::ParticipantQoSBuilder createDefaultQoS()
-        {
-            DdsWrapper::ParticipantQoSBuilder qos_configurator;
-            qos_configurator.addUDPV4TransportInterfaces({"10.25.5.26"})
-                .setDiscoveryMulticastLocator("239.255.0.1", 7400)
-                .setUserMulticastLocator("239.255.0.1", 7401)
-                .addFlowController()
-                .setDiscoveryKeepAlive(2000, 500)
-                .setIgnoreLocalEndpoints()  // 忽略同一 participant 发布的数据，避免自循环
-                .setInitialAnnouncements(30, 100); // 30次PDP公告, 100ms间隔, 确保3秒内完成初始发现
-
-            return qos_configurator;
-        }
-    };
+    }
 
 } // namespace ondemand
 } // namespace dsf

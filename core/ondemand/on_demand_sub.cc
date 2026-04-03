@@ -52,8 +52,8 @@ namespace ondemand
         }
         nodeName_ = nodeName;
 
-        /*创建节点（单例模式）*/
-        dataNode_ = DdsNodeFactory::getInstance(nodeName, this);
+        /*创建节点*/
+        dataNode_ = createDataNode(nodeName, this);
         if (!dataNode_) {
             ONDEMANDLOG(error) << "Failed to create DataNode";
             initialized_.store(false);
@@ -595,7 +595,8 @@ namespace ondemand
                 /*计算点hash*/
                 std::string metaVarName = make_meta_varname(node_name, item);
                 uint64_t varHash = fast_hash(metaVarName);
-                ONDEMANDLOG(debug) << "Unsubscribing from var: " << item << " with hash: " << varHash;
+                ONDEMANDLOG(debug)
+                    << "Unsubscribing from var: " << item << " with hash: " << varHash;
                 auto it = varIndex_.find(varHash);
                 tableName = make_bucket_name_by_hash(varHash);
                 if (it == varIndex_.end()) {
@@ -985,10 +986,6 @@ namespace ondemand
             dataTransferReaderMap_.clear();
         }
 
-        dataNode_.reset();
-        dataNode_ = nullptr;
-
-  
         totalReceived_.store(0);
 
         std::shared_ptr<DSF::Var::PubTableDefine> dummy;
@@ -1009,8 +1006,9 @@ namespace ondemand
             s.writeCount.store(0);
             s.timestampNs.store(0);
         }
-              /*销毁 DDS 节点单例*/
-        DdsNodeFactory::destroyInstance();
+
+        dataNode_.reset();
+        dataNode_ = nullptr;
         ONDEMANDLOG(info) << "OnDemandSub stopped";
     }
 
