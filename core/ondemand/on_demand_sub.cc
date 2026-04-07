@@ -52,8 +52,8 @@ namespace ondemand
         }
         nodeName_ = nodeName;
 
-        /*创建节点（单例模式）*/
-        dataNode_ = DdsNodeFactory::getInstance(nodeName, this);
+        /*创建节点*/
+        dataNode_ = createDataNode(nodeName, this);
         if (!dataNode_) {
             ONDEMANDLOG(error) << "Failed to create DataNode";
             initialized_.store(false);
@@ -75,6 +75,11 @@ namespace ondemand
             return false;
         }
 
+        /*创建数据通信所需的subscriber*/
+        FastddsWrapper::SubscriberQoSBuilder subQos;
+        subQos.setAutoEnable(true);
+        dataNode_->createSubscriber(DATA_TANSFER_PUB_SUB_NAME, subQos);
+
         ONDEMANDLOG(info) << "OnDemandSub initialized: " << nodeName;
         /*确保 DDS endpoints 就绪: assertLiveliness 强制发送 PDP 心跳*/
         dataNode_->assertLiveliness();
@@ -92,7 +97,7 @@ namespace ondemand
             processFunc)
     {
 
-        constexpr uint32_t depth = 20;
+        constexpr uint32_t depth = 60;
         DdsWrapper::DataReaderQoSBuilder readerQosBuilder;
         readerQosBuilder.setMaxSamples(32 * depth)
             .setMaxInstances(32)
@@ -156,11 +161,14 @@ namespace ondemand
      */
     bool OnDemandSub::createDataTransferReader(
         std::function<void(const std::string &, std::shared_ptr<DSF::Var::TableDataTransfer>)>
-            processFunc)
+            processFunc,
+        const std::unordered_set<uint32_t> *targetBucketIds)
     {
-        /*根据 varIndex_ 中的元数据，收集所有不同的 bucket id*/
+        /*默认收集全部 bucket；若调用方提供增量 bucket，则只创建新增部分*/
         std::unordered_set<uint32_t> bucketIds;
-        {
+        if (targetBucketIds != nullptr) {
+            bucketIds = *targetBucketIds;
+        } else {
             std::shared_lock lock(varIndexMutex_);
             for (const auto &[hash, meta] : varIndex_) {
                 bucketIds.insert(static_cast<uint32_t>(meta.bucketIndex));
@@ -183,7 +191,6 @@ namespace ondemand
         //     .setHistoryDepth(depth);
 
         std::lock_guard<std::mutex> lock(dataTransferCtxMapMutex_);
-
         for (uint32_t bucketId : bucketIds) {
             // 如果该 bucket 的 reader 已存在，跳过
             if (dataTransferReaderMap_.find(bucketId) != dataTransferReaderMap_.end()) {
@@ -195,14 +202,11 @@ namespace ondemand
             std::string tableName = make_bucket_name_by_id(bucketId);
             std::string topicName = DSF::Var::VAR_DATA_TRANSFER_TOPIC_PREFIX + tableName;
             std::shared_ptr<DdsWrapper::DDSTopicReader<DSF::Var::TableDataTransfer>> reader;
-            if (0
-                != dsf::ondemand::registerNodeTopicReader<DSF::Var::TableDataTransfer,
-                                                          DSF::Var::TableDataTransferPubSubType>(
-                    dataNode_, reader, topicName, processFunc, readerQosBuilder)) {
-                ONDEMANDLOG(error)
-                    << "Failed to create DataTransfer reader for topic: " << topicName;
-                return false;
-            }
+
+            reader = dataNode_->createDataReader<DSF::Var::TableDataTransfer,
+                                                 DSF::Var::TableDataTransferPubSubType>(
+                topicName, DATA_TANSFER_PUB_SUB_NAME, processFunc, readerQosBuilder);
+
             dataTransferReaderMap_.emplace(bucketId, reader);
             ONDEMANDLOG(info) << "Created DataTransfer reader for bucketId: " << bucketId
                               << ", topic: " << topicName;
@@ -306,7 +310,7 @@ namespace ondemand
 
                     auto vit = varIndex_.find(varHash);
                     if (vit == varIndex_.end()) {
-                        ONDEMANDLOG_TIME(warning, 3000)
+                        ONDEMANDLOG(error)
                             << "Received data for unknown varHash: " << varHash << ", skipping.";
                         continue;
                     }
@@ -418,23 +422,15 @@ namespace ondemand
                      * 解决 sub 先启动时 callbackDirty_ 已被消费但定时器未建立的问题 */
                     callbackDirty_.store(true, std::memory_order_release);
 
-                    /*统一检查是否有新 bucket 需要创建 reader，避免循环内逐次加锁*/
-                    bool hasNewBucket = false;
+                    /*仅按本次新增 bucket 增量创建 reader，避免每次全量扫描 bucket*/
                     if (!newBucketIds.empty()) {
-                        std::lock_guard<std::mutex> mapLock(dataTransferCtxMapMutex_);
-                        for (uint32_t bid : newBucketIds) {
-                            if (dataTransferReaderMap_.find(bid) == dataTransferReaderMap_.end()) {
-                                hasNewBucket = true;
-                                break;
-                            }
-                        }
-                    }
-                    if (hasNewBucket) {
                         createDataTransferReader(std::bind(&OnDemandSub::onReceiveDataTransferCb,
                                                            this, std::placeholders::_1,
-                                                           std::placeholders::_2));
+                                                           std::placeholders::_2),
+                                                 &newBucketIds);
                     }
                 }
+                LOG(info) << "+++++++++++++++++totalReceived_ = " << totalReceived_.load();
             } else {
                 std::this_thread::sleep_for(std::chrono::milliseconds(10));
             }
@@ -484,6 +480,15 @@ namespace ondemand
         callbackSchedulerThread_ = std::thread(&OnDemandSub::processCallbackScheduler, this);
 
         ONDEMANDLOG(info) << "OnDemandSub started";
+        return true;
+    }
+
+    bool OnDemandSub::setPartition(std::string name, std::string partitionName)
+    {
+        FastddsWrapper::SubscriberQoSBuilder subQos;
+        subQos.setAutoEnable(true);
+        subQos.setPartition(partitionName);
+        dataNode_->updateSubscriberQos(name, subQos);
         return true;
     }
 
@@ -569,6 +574,9 @@ namespace ondemand
                               << " callback subscriptions for node: " << node_name;
         }
 
+        /*打开相应的通道*/
+        setPartition(DATA_TANSFER_PUB_SUB_NAME,
+                     DSF::Var::VAR_DATA_TRANSFER_TOPIC_PREFIX + node_name);
         return true;
     }
 
@@ -595,7 +603,8 @@ namespace ondemand
                 /*计算点hash*/
                 std::string metaVarName = make_meta_varname(node_name, item);
                 uint64_t varHash = fast_hash(metaVarName);
-                ONDEMANDLOG(debug) << "Unsubscribing from var: " << item << " with hash: " << varHash;
+                ONDEMANDLOG(debug)
+                    << "Unsubscribing from var: " << item << " with hash: " << varHash;
                 auto it = varIndex_.find(varHash);
                 tableName = make_bucket_name_by_hash(varHash);
                 if (it == varIndex_.end()) {
@@ -789,7 +798,7 @@ namespace ondemand
             return;
         }
         if (running->exchange(true, std::memory_order_acq_rel)) {
-            ONDEMANDLOG_TIME(warning, 2000)
+            ONDEMANDLOG_TIME(debug, 2000)
                 << "Skip callback group because previous invocation is still running: bucket="
                 << bucketIndex << " freq=" << freqMs << "ms";
             return;
@@ -985,10 +994,6 @@ namespace ondemand
             dataTransferReaderMap_.clear();
         }
 
-        dataNode_.reset();
-        dataNode_ = nullptr;
-
-  
         totalReceived_.store(0);
 
         std::shared_ptr<DSF::Var::PubTableDefine> dummy;
@@ -1009,8 +1014,9 @@ namespace ondemand
             s.writeCount.store(0);
             s.timestampNs.store(0);
         }
-              /*销毁 DDS 节点单例*/
-        DdsNodeFactory::destroyInstance();
+
+        dataNode_.reset();
+        dataNode_ = nullptr;
         ONDEMANDLOG(info) << "OnDemandSub stopped";
     }
 

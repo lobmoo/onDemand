@@ -165,7 +165,8 @@ namespace ondemand
          */
         bool createDataTransferReader(
             std::function<void(const std::string &, std::shared_ptr<DSF::Var::TableDataTransfer>)>
-                processFunc);
+                processFunc,
+            const std::unordered_set<uint32_t> *targetBucketIds = nullptr);
 
         /**
          * @brief 处理变量定义数据回调函数
@@ -192,6 +193,14 @@ namespace ondemand
         */
         void processDataTransfer();
 
+        /**
+         * @brief Set the Partion 
+         * @param  name           subscriber name
+         * @param  partitionName    partition name
+         * @return true 
+         * @return false 
+         */
+        bool setPartition(std::string name, std::string partitionName);
         /**
          * @brief 回调分组键 = (bucketIndex, freqMs)，与 pub 端 PublishGroupKey 对齐
          *

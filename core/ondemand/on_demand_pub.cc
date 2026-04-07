@@ -55,8 +55,8 @@ namespace ondemand
 
         nodeName_ = nodeName;
 
-        /*创建节点（单例模式）*/
-        dataNode_ = DdsNodeFactory::getInstance(nodeName, this);
+        /*创建节点*/
+        dataNode_ = createDataNode(nodeName, this);
         if (!dataNode_) {
             ONDEMANDLOG(error) << "Failed to create DataNode";
             initialized_.store(false);
@@ -113,70 +113,6 @@ namespace ondemand
         ONDEMANDLOG(info) << "OnDemandPub started (TimerScheduler: 1ms tick, pool=" << poolSize
                           << ")";
         return true;
-    }
-
-    /**
-     * @brief 停止发布者节点，清理资源，停止所有定时器和线程
-     */
-    void OnDemandPub::stop()
-    {
-        initialized_.store(false);
-        bool wasRunning = running_.exchange(false);
-
-        if (wasRunning) {
-            /*先阻止新增定时发布，缩小 stop 后继续发包窗口*/
-            cancelAllPublishTimers();
-            if (publishScheduler_) {
-                publishScheduler_->Stop();
-            }
-
-            /*等待线程退出*/
-            if (registerProcessThread_.joinable()) {
-                registerProcessThread_.join();
-            }
-            if (publishSchedulerThread_.joinable()) {
-                publishSchedulerThread_.join();
-            }
-            if (freqChangeCbThread_.joinable()) {
-                freqChangeCbThread_.join();
-            }
-
-            if (publishScheduler_) {
-                publishScheduler_.reset();
-            }
-        }
-
-        /*清理 varIndex_、bucketManager_、nodeSlotMap_ (受 varIndexMutex_ 保护)*/
-        {
-            std::unique_lock lock(varIndexMutex_);
-            varIndex_.clear();
-            bucketManager_.Clear();
-            nodeSlotMap_.clear();
-            nextNodeSlot_ = 0;
-        }
-
-        /*清理发布分组相关数据*/
-        {
-            std::lock_guard<std::mutex> lock(publishGroupsMutex_);
-            publishGroupTimers_.clear();
-            groupMembers_.clear();
-            groupFlatBufs_.clear();
-            groupMaskBufs_.clear();
-        }
-
-        /*清理 DDS 读写器和节点*/
-        pubTableDefineWriter_.reset();
-        subTableRegisterReqReader_.reset();
-        {
-            std::lock_guard<std::mutex> lock(DataTransferWriterMapMutex_);
-            dataTransferWriterMap_.clear();
-        }
-        dataNode_.reset();
-
-        /*销毁 DDS 节点单例*/
-        DdsNodeFactory::destroyInstance();
-
-        ONDEMANDLOG(info) << "OnDemandPub stopped";
     }
 
     /**
@@ -276,6 +212,12 @@ namespace ondemand
 
         std::lock_guard<std::mutex> lock(DataTransferWriterMapMutex_);
 
+        FastddsWrapper::PublisherQoSBuilder pubQos;
+        pubQos.setPartition(
+            DSF::Var::VAR_DATA_TRANSFER_TOPIC_PREFIX
+            + nodeName_); // 按 topicName + nodeName 分区，确保同一节点不同表间隔离，避免不相关的订阅者收到数据
+
+        dataNode_->createPublisher(DATA_TANSFER_PUB_SUB_NAME, pubQos);
         for (uint32_t bucketId : bucketIds) {
             /*如果该 bucket 的 writer 已存在，跳过*/
             if (dataTransferWriterMap_.find(bucketId) != dataTransferWriterMap_.end()) {
@@ -287,12 +229,13 @@ namespace ondemand
             std::string tableName = make_bucket_name_by_id(bucketId);
             std::string topicName = DSF::Var::VAR_DATA_TRANSFER_TOPIC_PREFIX + tableName;
             std::shared_ptr<DdsWrapper::DDSTopicWriter<DSF::Var::TableDataTransfer>> writer;
-            if (0
-                != dsf::ondemand::registerNodeTopicWriter<DSF::Var::TableDataTransfer,
-                                                          DSF::Var::TableDataTransferPubSubType>(
-                    dataNode_, writer, topicName, writerQosBuilder)) {
+
+            writer = dataNode_->createDataWriter<DSF::Var::TableDataTransfer,
+                                                 DSF::Var::TableDataTransferPubSubType>(
+                topicName, DATA_TANSFER_PUB_SUB_NAME, writerQosBuilder);
+            if (!writer) {
                 ONDEMANDLOG(error)
-                    << "Failed to create DataTransfer writer for topic: " << topicName;
+                    << "Failed to create topic writer for topic [" << topicName << "].";
                 return false;
             }
             dataTransferWriterMap_.emplace(bucketId, writer);
@@ -466,7 +409,7 @@ namespace ondemand
 
                 /*遍历所有的点，保存全局副本，然后找一下有没有该周期的时间轮，没有的话，就创建一个，有的话也不用管*/
                 for (auto &[key, members] : desired) {
-                     /*始终刷新成员列表，保留已有的 running flag*/
+                    /*始终刷新成员列表，保留已有的 running flag*/
                     groupMembers_[key].members = std::move(members);
 
                     auto &entryMembers = groupMembers_[key].members;
@@ -604,7 +547,6 @@ namespace ondemand
         msg.mask().resize(actualMask.getSizeInBytes());
         actualMask.write(reinterpret_cast<char *>(msg.mask().data()));
 
-    
         auto now = std::chrono::system_clock::now();
         auto epoch = now.time_since_epoch();
         auto sec = std::chrono::duration_cast<std::chrono::seconds>(epoch);
@@ -666,8 +608,9 @@ namespace ondemand
                 // 回调尚未注册时不丢事件，避免 sub 先启动、pub 后注册回调导致首个频率变化丢失
                 if (!cb) {
                     freqChangeQueue_.enqueue(item);
-                    ONDEMANDLOG(debug) << "FreqChangeCallback not set, re-enqueueing freq change event for node: " << item.first
-                                          << " freq: " << item.second << "ms";
+                    ONDEMANDLOG(debug)
+                        << "FreqChangeCallback not set, re-enqueueing freq change event for node: "
+                        << item.first << " freq: " << item.second << "ms";
                     std::this_thread::sleep_for(std::chrono::milliseconds(10));
                     continue;
                 }
@@ -728,9 +671,9 @@ namespace ondemand
         if (!varStore_.finalize()) {
             ONDEMANDLOG(error) << "Failed to finalize variable store";
             return false;
-        } 
+        }
 
-       /*创建 DataTransfer writers */
+        /*创建 DataTransfer writers */
         if (!createDataTransferWriter()) {
             ONDEMANDLOG(error) << "Failed to create DataTransfer writers";
             return false;
@@ -804,7 +747,7 @@ namespace ondemand
                 varIndex_.erase(it);
                 bucketManager_.RemoveMember(varName, varHash);
             }
-        } 
+        }
 
         schedulerDirty_.store(true, std::memory_order_release);
 
@@ -859,7 +802,7 @@ namespace ondemand
     bool OnDemandPub::setVarData(const char *varName, const void *data, size_t size)
     {
         uint64_t varHash = fast_hash(make_meta_varname(nodeName_, varName));
-    
+
         uint32_t varId = VarStore::kInvalidId;
         {
             std::shared_lock lock(varIndexMutex_);
@@ -912,9 +855,8 @@ namespace ondemand
         if (data == nullptr || size == 0) {
             return;
         }
-        uint32_t writeSize = static_cast<uint32_t>(size > static_cast<size_t>(UINT32_MAX)
-                                                       ? UINT32_MAX
-                                                       : size);
+        uint32_t writeSize =
+            static_cast<uint32_t>(size > static_cast<size_t>(UINT32_MAX) ? UINT32_MAX : size);
         if (size > static_cast<size_t>(UINT32_MAX)) {
             ONDEMANDLOG_TIME(warning, 5000)
                 << "setVarData: size overflowed uint32_t and was clipped, varId=" << varId;
@@ -963,14 +905,12 @@ namespace ondemand
         }
 
         if (invalidCount > 0) {
-            ONDEMANDLOG_TIME(warning, 5000)
-                << "setVarDataBatch: " << invalidCount << " / " << count
-                << " items have invalid varId or null data";
+            ONDEMANDLOG_TIME(warning, 5000) << "setVarDataBatch: " << invalidCount << " / " << count
+                                            << " items have invalid varId or null data";
         }
         if (clippedSizeCount > 0) {
-            ONDEMANDLOG_TIME(warning, 5000)
-                << "setVarDataBatch: " << clippedSizeCount
-                << " items size overflowed uint32_t and were clipped";
+            ONDEMANDLOG_TIME(warning, 5000) << "setVarDataBatch: " << clippedSizeCount
+                                            << " items size overflowed uint32_t and were clipped";
         }
     }
 
@@ -1014,7 +954,7 @@ namespace ondemand
      * @param  varFreqs 周期
      */
     uint32_t OnDemandPub::handleSubscribe(const std::string &nodeName,
-                                      const std::vector<DSF::NamedValue> &varFreqs)
+                                          const std::vector<DSF::NamedValue> &varFreqs)
     {
         uint64_t nodeHash = fast_hash(nodeName);
 
@@ -1272,6 +1212,67 @@ namespace ondemand
         }
 
         return freqChanges;
+    }
+
+    /**
+     * @brief 停止发布者节点，清理资源，停止所有定时器和线程
+     */
+    void OnDemandPub::stop()
+    {
+        initialized_.store(false);
+        bool wasRunning = running_.exchange(false);
+
+        if (wasRunning) {
+            /*先阻止新增定时发布，缩小 stop 后继续发包窗口*/
+            cancelAllPublishTimers();
+            if (publishScheduler_) {
+                publishScheduler_->Stop();
+            }
+
+            /*等待线程退出*/
+            if (registerProcessThread_.joinable()) {
+                registerProcessThread_.join();
+            }
+            if (publishSchedulerThread_.joinable()) {
+                publishSchedulerThread_.join();
+            }
+            if (freqChangeCbThread_.joinable()) {
+                freqChangeCbThread_.join();
+            }
+
+            if (publishScheduler_) {
+                publishScheduler_.reset();
+            }
+        }
+
+        /*清理 varIndex_、bucketManager_、nodeSlotMap_ (受 varIndexMutex_ 保护)*/
+        {
+            std::unique_lock lock(varIndexMutex_);
+            varIndex_.clear();
+            bucketManager_.Clear();
+            nodeSlotMap_.clear();
+            nextNodeSlot_ = 0;
+        }
+
+        /*清理发布分组相关数据*/
+        {
+            std::lock_guard<std::mutex> lock(publishGroupsMutex_);
+            publishGroupTimers_.clear();
+            groupMembers_.clear();
+            groupFlatBufs_.clear();
+            groupMaskBufs_.clear();
+        }
+
+        /*清理 DDS 读写器和节点*/
+        pubTableDefineWriter_.reset();
+        subTableRegisterReqReader_.reset();
+        {
+            std::lock_guard<std::mutex> lock(DataTransferWriterMapMutex_);
+            dataTransferWriterMap_.clear();
+        }
+        dataNode_.reset();
+        dataNode_ = nullptr;
+        ONDEMANDLOG(info) << "OnDemandPub stopped";
     }
 
 } // namespace ondemand
