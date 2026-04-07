@@ -107,6 +107,8 @@ ParticipantQoSBuilder &ParticipantQoSBuilder::addUDPV4TransportCoreId(int core_i
 ParticipantQoSBuilder &ParticipantQoSBuilder::setIgnoreLocalEndpoints()
 {
     qos_.properties().properties().emplace_back("fastdds.ignore_local_endpoints", "true");
+    qos_.wire_protocol().builtin.discovery_config.ignoreParticipantFlags =
+        eprosima::fastdds::rtps::ParticipantFilteringFlags::FILTER_SAME_PROCESS;
     return *this;
 }
 
