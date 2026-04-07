@@ -97,7 +97,7 @@ namespace ondemand
             processFunc)
     {
 
-        constexpr uint32_t depth = 20;
+        constexpr uint32_t depth = 60;
         DdsWrapper::DataReaderQoSBuilder readerQosBuilder;
         readerQosBuilder.setMaxSamples(32 * depth)
             .setMaxInstances(32)
@@ -161,11 +161,14 @@ namespace ondemand
      */
     bool OnDemandSub::createDataTransferReader(
         std::function<void(const std::string &, std::shared_ptr<DSF::Var::TableDataTransfer>)>
-            processFunc)
+            processFunc,
+        const std::unordered_set<uint32_t> *targetBucketIds)
     {
-        /*根据 varIndex_ 中的元数据，收集所有不同的 bucket id*/
+        /*默认收集全部 bucket；若调用方提供增量 bucket，则只创建新增部分*/
         std::unordered_set<uint32_t> bucketIds;
-        {
+        if (targetBucketIds != nullptr) {
+            bucketIds = *targetBucketIds;
+        } else {
             std::shared_lock lock(varIndexMutex_);
             for (const auto &[hash, meta] : varIndex_) {
                 bucketIds.insert(static_cast<uint32_t>(meta.bucketIndex));
@@ -307,7 +310,7 @@ namespace ondemand
 
                     auto vit = varIndex_.find(varHash);
                     if (vit == varIndex_.end()) {
-                        ONDEMANDLOG(critical)
+                        ONDEMANDLOG(error)
                             << "Received data for unknown varHash: " << varHash << ", skipping.";
                         continue;
                     }
@@ -419,21 +422,12 @@ namespace ondemand
                      * 解决 sub 先启动时 callbackDirty_ 已被消费但定时器未建立的问题 */
                     callbackDirty_.store(true, std::memory_order_release);
 
-                    /*统一检查是否有新 bucket 需要创建 reader，避免循环内逐次加锁*/
-                    bool hasNewBucket = false;
+                    /*仅按本次新增 bucket 增量创建 reader，避免每次全量扫描 bucket*/
                     if (!newBucketIds.empty()) {
-                        std::lock_guard<std::mutex> mapLock(dataTransferCtxMapMutex_);
-                        for (uint32_t bid : newBucketIds) {
-                            if (dataTransferReaderMap_.find(bid) == dataTransferReaderMap_.end()) {
-                                hasNewBucket = true;
-                                break;
-                            }
-                        }
-                    }
-                    if (hasNewBucket) {
                         createDataTransferReader(std::bind(&OnDemandSub::onReceiveDataTransferCb,
                                                            this, std::placeholders::_1,
-                                                           std::placeholders::_2));
+                                                           std::placeholders::_2),
+                                                 &newBucketIds);
                     }
                 }
                 LOG(info) << "+++++++++++++++++totalReceived_ = " << totalReceived_.load();

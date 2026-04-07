@@ -16,7 +16,7 @@
 #include "ondemand/on_demand_pub.h"
 #include "ondemand/on_demand_sub.h"
 
-uint32_t count = 10000;  // 每个节点发布5000个变量
+uint32_t count = 100; // 每个节点发布5000个变量
 
 void dataNodeA()
 {
@@ -50,7 +50,7 @@ void dataNodeA()
     std::vector<dsf::ondemand::OnDemandPub::VarWriteItem> batchItems(count);
     std::vector<int> vals(count);
     for (int i = 0; i < count; ++i) {
-        vals[i] = i * 100;  
+        vals[i] = i * 100;
         batchItems[i].id = varIds[i];
         batchItems[i].data = &vals[i];
         batchItems[i].size = sizeof(int);
@@ -70,27 +70,26 @@ void dataNodeA()
         }
     });
 
-    
     std::vector<dsf::ondemand::SubscriptionItem> items;
     for (int i = 0; i < count; ++i) {
-        std::string varName = "var" + std::to_string(i + count);  // var3, var4, var5
-        items.push_back({varName, static_cast<uint32_t>(200)});
+        std::string varName = "var" + std::to_string(i + count); // var3, var4, var5
+        items.push_back({varName, static_cast<uint32_t>(1000)});
     }
 
-    sub.subscribe("pubNodeB", items, [](const std::vector<dsf::ondemand::VarCallbackData> &vars) {
-        if (vars.empty())
-            return;
+    // sub.subscribe("pubNodeB", items, [](const std::vector<dsf::ondemand::VarCallbackData> &vars) {
+    //     if (vars.empty())
+    //         return;
 
-        LOG(info) << "NodeA received from B: batch size=" << vars.size();
-        // for (const auto &var : vars) {
-        //     if (var.size == sizeof(int)) {
-        //         int value = *reinterpret_cast<const int*>(var.data);
-        //         LOG(info) << "  " << var.varName << " = " << value;
-        //     }
-        // }
-    });
+    //     for (const auto &var : vars) {
+    //         if (var.varName == "var0") {
 
-    setVarThread.detach();  // 让线程在后台运行
+    //             LOG(info) << "NodeA received from B: " << var.varName << " vars size=" << var.size
+    //                       << "timestamp=" << var.timestampNs;
+    //         }
+    //     }
+    // });
+
+    setVarThread.detach(); // 让线程在后台运行
 
     // 保持节点运行
     while (true) {
@@ -110,7 +109,7 @@ void dataNodeB()
     std::vector<DSF::Var::Define> vars;
     for (int i = 0; i < count; ++i) {
         DSF::Var::Define var;
-        var.name("var" + std::to_string(i + count));  // var3, var4, var5
+        var.name("var" + std::to_string(i + count)); // var3, var4, var5
         var.nodeName("pubNodeB");
         var.modelName("int");
         var.size(sizeof(int));
@@ -130,7 +129,7 @@ void dataNodeB()
     std::vector<dsf::ondemand::OnDemandPub::VarWriteItem> batchItems(count);
     std::vector<int> vals(count);
     for (int i = 0; i < count; ++i) {
-        vals[i] = (i + count) * 100;  // var3=300, var4=400, var5=500
+        vals[i] = (i + count) * 100; // var3=300, var4=400, var5=500
         batchItems[i].id = varIds[i];
         batchItems[i].data = &vals[i];
         batchItems[i].size = sizeof(int);
@@ -150,27 +149,25 @@ void dataNodeB()
         }
     });
 
-
     std::vector<dsf::ondemand::SubscriptionItem> items;
     for (int i = 0; i < count; ++i) {
-        std::string varName = "var" + std::to_string(i);  // var0, var1, var2
-        items.push_back({varName, static_cast<uint32_t>(200)});
+        std::string varName = "var" + std::to_string(i); // var0, var1, var2
+        items.push_back({varName, static_cast<uint32_t>(1000)});
     }
 
-    sub.subscribe("pubNodeA", items, [](const std::vector<dsf::ondemand::VarCallbackData> &vars) {
-        if (vars.empty())
-            return;
+    // sub.subscribe("pubNodeA", items, [](const std::vector<dsf::ondemand::VarCallbackData> &vars) {
+    //     if (vars.empty())
+    //         return;
+    //     for (const auto &var : vars) {
+    //         if (var.varName == "var0") {
 
-        LOG(info) << "NodeB received from A: batch size=" << vars.size();
-        // for (const auto &var : vars) {
-        //     if (var.size == sizeof(int)) {
-        //         int value = *reinterpret_cast<const int*>(var.data);
-        //         LOG(info) << "  " << var.varName << " = " << value;
-        //     }
-        // }
-    });
+    //             LOG(info) << "NodeA received from A: " << var.varName << " vars size=" << var.size
+    //                       << "timestamp=" << var.timestampNs;
+    //         }
+    //     }
+    // });
 
-    setVarThread.detach();  // 让线程在后台运行
+    setVarThread.detach(); // 让线程在后台运行
 
     // 保持节点运行
     while (true) {

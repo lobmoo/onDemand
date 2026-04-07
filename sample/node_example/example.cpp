@@ -19,6 +19,8 @@ void run_dds_data_writer();
 void run_dds_data_reader();
 void run_dds_data_Multiwriter();
 void run_dds_data_Multireader();
+void test_partition_pub();
+void test_partition_sub();
 
 void processHelloWorldOne(const std::string &topic_name, std::shared_ptr<HelloWorldOne> data)
 {
@@ -39,6 +41,10 @@ void test_multi_sub_pub(int argc, char *argv[])
         run_dds_data_Multiwriter();
     } else if (strcmp(argv[1], "msub") == 0) {
         run_dds_data_Multireader();
+    } else if (strcmp(argv[1], "ppub") == 0) {
+        test_partition_pub();
+    } else if (strcmp(argv[1], "psub") == 0) {
+        test_partition_sub();
     } else {
         std::cerr << "unknown command: " << argv[1] << std::endl;
     }
@@ -118,6 +124,87 @@ void run_dds_data_reader()
         LOG(error) << "Failed to create DataReader";
         return;
     }
+
+    while (std::cin.get() != '\n') {
+    }
+}
+
+// 测试 setPartition + setAutoEnable
+// 运行方式: ./demo_exec ppub  (另一端跑 psub)
+// 只有 partition 匹配的 pub/sub 才能互相发现并收到数据
+void test_partition_pub()
+{
+    ParticipantQoSBuilder cfg;
+    cfg.setDiscoveryMulticastLocator("239.255.0.1", 7400)
+        .setUserMulticastLocator("239.255.0.1", 7401);
+    
+    FastDataNode node(10, "partition_pub", cfg);
+
+    PublisherQoSBuilder pQos;
+    pQos.setPartition("group_A").setAutoEnable(true);
+    node.createPublisher("group", pQos);
+    DataWriterQoSBuilder writer_qos;
+
+    auto writer =
+        node.createDataWriter<HelloWorldOne, HelloWorldOnePubSubType>("partition_topic", "group", writer_qos);
+    if (!writer) {
+        LOG(error) << "Failed to create DataWriter";
+        return;
+    }
+    LOG(info) << "[ppub] partition=group_A, autoEnable=true, start sending...";
+
+    bool running = true;
+    int idx = 0;
+    std::thread([&]() {
+        while (std::cin.get() != '\n') {
+        }
+        running = false;
+    }).detach();
+
+    while (running) {
+        HelloWorldOne msg;
+        msg.index(++idx);
+        msg.points(std::vector<uint8_t>(32));
+        if (writer->writeMessage(msg)) {
+            LOG(info) << "[ppub] sent index=" << idx;
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    }
+
+    while (std::cin.get() != '\n') {
+    }
+}
+
+void test_partition_sub()
+{
+    ParticipantQoSBuilder cfg;
+    cfg.setDiscoveryMulticastLocator("239.255.0.1", 7400)
+        .setUserMulticastLocator("239.255.0.1", 7401);
+    // 改成 "group_B" 则收不到 ppub 的数据，改成 "group_A" 则可以收到
+  
+    FastDataNode node(10, "partition_sub", cfg);
+
+    SubscriberQoSBuilder sQos;
+    // sQos.setPartition("group_").setAutoEnable(true);
+    node.createSubscriber("group", sQos);
+
+    DataReaderQoSBuilder reader_qos;
+    auto reader = node.createDataReader<HelloWorldOne, HelloWorldOnePubSubType>(
+        "partition_topic", "group",
+        [](const std::string &topic, std::shared_ptr<HelloWorldOne> data) {
+            LOG(info) << "[psub] recv topic=" << topic << " index=" << data->index();
+        }, reader_qos);
+
+    if (!reader) {
+        LOG(error) << "Failed to create DataReader";
+        return;
+    }
+    LOG(info) << "[psub] partition=group_A, autoEnable=true, waiting...";
+
+    std::this_thread::sleep_for(std::chrono::seconds(5)); // 等待一会让 ppub 先发送数据
+    SubscriberQoSBuilder upQos;
+    upQos.setPartition("group_A").setAutoEnable(true);
+    node.updateSubscriberQos("group", upQos);
 
     while (std::cin.get() != '\n') {
     }

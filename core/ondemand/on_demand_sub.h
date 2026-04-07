@@ -165,7 +165,8 @@ namespace ondemand
          */
         bool createDataTransferReader(
             std::function<void(const std::string &, std::shared_ptr<DSF::Var::TableDataTransfer>)>
-                processFunc);
+                processFunc,
+            const std::unordered_set<uint32_t> *targetBucketIds = nullptr);
 
         /**
          * @brief 处理变量定义数据回调函数

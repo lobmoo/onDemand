@@ -232,10 +232,37 @@ bool FastDataNode::updatePublisherQos(const std::string &name, const PublisherQo
         return false;
     }
 
+    if (it->second == nullptr) {
+        LOG(error) << "Publisher '" << name << "' is null";
+        return false;
+    }
+
+    PublisherQos current_qos;
+    auto get_rc = it->second->get_qos(current_qos);
+    if (get_rc != eprosima::fastdds::dds::RETCODE_OK) {
+        LOG(error) << "Failed to read current Publisher QoS for '" << name
+                   << "', ret=" << static_cast<int>(get_rc);
+        return false;
+    }
+
     auto new_qos = qos.getQos();
-    if (it->second->set_qos(new_qos) != eprosima::fastdds::dds::RETCODE_OK) {
+
+    // entity_factory().autoenable_created_entities is effectively creation-time.
+    // Keep current value so mutable policies (e.g., partition) can still be updated.
+    const bool current_auto_enable = current_qos.entity_factory().autoenable_created_entities;
+    const bool requested_auto_enable = new_qos.entity_factory().autoenable_created_entities;
+    if (requested_auto_enable != current_auto_enable) {
+        LOG(warning) << "Publisher '" << name
+                     << "' ignores runtime change of autoenable_created_entities (requested="
+                     << requested_auto_enable << ", current=" << current_auto_enable << ")";
+        new_qos.entity_factory().autoenable_created_entities = current_auto_enable;
+    }
+
+    auto set_rc = it->second->set_qos(new_qos);
+    if (set_rc != eprosima::fastdds::dds::RETCODE_OK) {
         LOG(error) << "Failed to update Publisher QoS for '" << name
-                   << "' (some QoS policies are immutable)";
+                   << "', ret=" << static_cast<int>(set_rc)
+                   << " (some QoS policies are immutable)";
         return false;
     }
 
@@ -253,10 +280,37 @@ bool FastDataNode::updateSubscriberQos(const std::string &name, const Subscriber
         return false;
     }
 
+    if (it->second == nullptr) {
+        LOG(error) << "Subscriber '" << name << "' is null";
+        return false;
+    }
+
+    SubscriberQos current_qos;
+    auto get_rc = it->second->get_qos(current_qos);
+    if (get_rc != eprosima::fastdds::dds::RETCODE_OK) {
+        LOG(error) << "Failed to read current Subscriber QoS for '" << name
+                   << "', ret=" << static_cast<int>(get_rc);
+        return false;
+    }
+
     auto new_qos = qos.getQos();
-    if (it->second->set_qos(new_qos) != eprosima::fastdds::dds::RETCODE_OK) {
+
+    // entity_factory().autoenable_created_entities is effectively creation-time.
+    // Keep current value so mutable policies (e.g., partition) can still be updated.
+    const bool current_auto_enable = current_qos.entity_factory().autoenable_created_entities;
+    const bool requested_auto_enable = new_qos.entity_factory().autoenable_created_entities;
+    if (requested_auto_enable != current_auto_enable) {
+        LOG(warning) << "Subscriber '" << name
+                     << "' ignores runtime change of autoenable_created_entities (requested="
+                     << requested_auto_enable << ", current=" << current_auto_enable << ")";
+        new_qos.entity_factory().autoenable_created_entities = current_auto_enable;
+    }
+
+    auto set_rc = it->second->set_qos(new_qos);
+    if (set_rc != eprosima::fastdds::dds::RETCODE_OK) {
         LOG(error) << "Failed to update Subscriber QoS for '" << name
-                   << "' (some QoS policies are immutable)";
+                   << "', ret=" << static_cast<int>(set_rc)
+                   << " (some QoS policies are immutable)";
         return false;
     }
 
