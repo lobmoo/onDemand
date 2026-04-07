@@ -16,7 +16,7 @@
 #include "ondemand/on_demand_pub.h"
 #include "ondemand/on_demand_sub.h"
 
-uint32_t count = 100; // 每个节点发布5000个变量
+uint32_t count = 100000; // 每个节点发布5000个变量
 
 void dataNodeA()
 {
@@ -76,18 +76,18 @@ void dataNodeA()
         items.push_back({varName, static_cast<uint32_t>(1000)});
     }
 
-    // sub.subscribe("pubNodeB", items, [](const std::vector<dsf::ondemand::VarCallbackData> &vars) {
-    //     if (vars.empty())
-    //         return;
+    sub.subscribe("pubNodeB", items, [](const std::vector<dsf::ondemand::VarCallbackData> &vars) {
+        if (vars.empty())
+            return;
 
-    //     for (const auto &var : vars) {
-    //         if (var.varName == "var0") {
+        for (const auto &var : vars) {
+            if (var.varName == std::string("var") + std::to_string(count)) { // var3
 
-    //             LOG(info) << "NodeA received from B: " << var.varName << " vars size=" << var.size
-    //                       << "timestamp=" << var.timestampNs;
-    //         }
-    //     }
-    // });
+                LOG(info) << "NodeA received from B: " << var.varName << " vars size=" << var.size
+                          << "timestamp=" << var.timestampNs;
+            }
+        }
+    });
 
     setVarThread.detach(); // 让线程在后台运行
 
@@ -155,17 +155,17 @@ void dataNodeB()
         items.push_back({varName, static_cast<uint32_t>(1000)});
     }
 
-    // sub.subscribe("pubNodeA", items, [](const std::vector<dsf::ondemand::VarCallbackData> &vars) {
-    //     if (vars.empty())
-    //         return;
-    //     for (const auto &var : vars) {
-    //         if (var.varName == "var0") {
+    sub.subscribe("pubNodeA", items, [](const std::vector<dsf::ondemand::VarCallbackData> &vars) {
+        if (vars.empty())
+            return;
+        for (const auto &var : vars) {
+            if (var.varName == "var0") {
 
-    //             LOG(info) << "NodeA received from A: " << var.varName << " vars size=" << var.size
-    //                       << "timestamp=" << var.timestampNs;
-    //         }
-    //     }
-    // });
+                LOG(info) << "NodeA received from A: " << var.varName << " vars size=" << var.size
+                          << "timestamp=" << var.timestampNs;
+            }
+        }
+    });
 
     setVarThread.detach(); // 让线程在后台运行
 
