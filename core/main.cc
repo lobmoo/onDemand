@@ -17,8 +17,7 @@
 #include "ondemand/on_demand_pub.h"
 #include "ondemand/on_demand_sub.h"
 
-
-uint32_t count = 1000000;
+uint32_t count = 1000;
 
 static int parse_var_index(std::string_view varName)
 {
@@ -120,10 +119,10 @@ void subscribe()
     //     }
     // }
 
-    const int subscribedCount = 10;
+    const int subscribedCount = 1000;
 
     /* 延迟/丢包统计参数 */
-    constexpr int64_t kPeriodMs = 10;         // 订阅周期 200ms
+    constexpr int64_t kPeriodMs = 10;          // 订阅周期
     constexpr int64_t kPrintIntervalMs = 1000; // 打印间隔 1s
     constexpr int64_t kBucketSize = 20;        // bucket 数量，与 ONDEMAND_BUCKET_SIZE 一致
     constexpr uint64_t kExpectedBatch = (kPrintIntervalMs / kPeriodMs) * kBucketSize;
@@ -152,106 +151,38 @@ void subscribe()
     };
     auto stats = std::make_shared<CallbackStats>(subscribedCount);
 
-    sub.subscribe(
-        "pubNode", items,
-        [stats, subscribedCount,
-         kPeriodMs](const std::vector<dsf::ondemand::VarCallbackData> &vars) {
-            if (vars.empty())
-                return;
+    auto nodeAObservedTsNs = std::make_shared<std::atomic<uint64_t>>(0);
+    constexpr uint64_t kExpectedIntervalNs = 10ULL * 1000ULL * 1000ULL;
+    constexpr uint64_t kToleranceNs = 2ULL * 1000ULL * 1000ULL;
 
-            stats->totalCount.fetch_add(vars.size(), std::memory_order_relaxed);
-            stats->batchCount.fetch_add(1, std::memory_order_relaxed);
+    constexpr uint64_t kWarnThresholdNs = kExpectedIntervalNs + kToleranceNs;
+    sub.subscribe("pubNode", items,
+                  [nodeAObservedTsNs](const std::vector<dsf::ondemand::VarCallbackData> &vars) {
+                      if (vars.empty())
+                          return;
+                      for (const auto &var : vars) {
+                          if (var.varName == "var0") {
+                              LOG(info) << "NodeA received " << var.varName
+                                        << "   timestamp=" << var.timestampNs;
+                              uint64_t currentTsNs = var.timestampNs;
+                              uint64_t prevTsNs = nodeAObservedTsNs->exchange(
+                                  currentTsNs, std::memory_order_acq_rel);
+                              if (prevTsNs != 0 && currentTsNs > prevTsNs) {
+                                  uint64_t deltaNs = currentTsNs - prevTsNs;
+                                  if (deltaNs > kWarnThresholdNs) {
+                                      LOG(warning)
+                                          << "NodeA observed " << var.varName << " timestamp gap "
+                                          << (deltaNs / 1000000ULL)
+                                          << "ms (threshold=" << (kWarnThresholdNs / 1000000ULL)
+                                          << "ms)";
+                                  }
+                              }
+                          }
+                      }
+                  });
 
-            int64_t ts = static_cast<int64_t>(vars[0].timestampNs);
-            struct timespec now;
-            clock_gettime(CLOCK_REALTIME, &now);
-            int64_t nowNs = static_cast<int64_t>(now.tv_sec) * 1000000000LL + now.tv_nsec;
-            int64_t latencyMs = (nowNs - ts) / 1000000;
-
-            stats->latencySumMs.fetch_add(latencyMs, std::memory_order_relaxed);
-            int64_t curMax = stats->latencyMaxMs.load(std::memory_order_relaxed);
-            while (latencyMs > curMax) {
-                if (stats->latencyMaxMs.compare_exchange_weak(curMax, latencyMs,
-                                                              std::memory_order_relaxed)) {
-                    break;
-                }
-            }
-
-            const uint64_t recvNowNs =
-                static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::nanoseconds>(
-                                          std::chrono::steady_clock::now().time_since_epoch())
-                                          .count());
-            std::lock_guard<std::mutex> lk(stats->gapMutex);
-            for (const auto &v : vars) {
-                int idx = parse_var_index(v.varName);
-                if (idx < 0 || idx >= subscribedCount) {
-                    continue;
-                }
-
-                uint64_t &lastNs = stats->lastSeenRecvNs[static_cast<size_t>(idx)];
-                if (lastNs != 0 && recvNowNs >= lastNs) {
-                    int64_t gapMs = static_cast<int64_t>((recvNowNs - lastNs) / 1000000ULL);
-                    int64_t devMs = std::llabs(gapMs - kPeriodMs);
-                    stats->gapSampleCount++;
-                    stats->gapSumMs += gapMs;
-                    stats->gapDevSumMs += devMs;
-                    if (devMs > stats->gapDevMaxMs) {
-                        stats->gapDevMaxMs = devMs;
-                    }
-                    if (gapMs > (kPeriodMs * 3) / 2) {
-                        stats->gapOverrunCount++;
-                    }
-                }
-                lastNs = recvNowNs;
-            }
-        });
-
-    const uint64_t kExpectedVars = static_cast<uint64_t>(subscribedCount)
-                                   * static_cast<uint64_t>(kPrintIntervalMs / kPeriodMs);
-
-    for (int round = 0; round < 200000; ++round) {
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-        uint64_t total = stats->totalCount.exchange(0, std::memory_order_relaxed);
-        uint64_t batch = stats->batchCount.exchange(0, std::memory_order_relaxed);
-        uint64_t loss = (total < kExpectedVars) ? (kExpectedVars - total) : 0;
-        int64_t sumMs = stats->latencySumMs.exchange(0, std::memory_order_relaxed);
-        int64_t maxMs = stats->latencyMaxMs.exchange(0, std::memory_order_relaxed);
-        int64_t avgMs = batch > 0 ? sumMs / static_cast<int64_t>(batch) : 0;
-
-        uint64_t gapSampleCount = 0;
-        uint64_t gapOverrunCount = 0;
-        int64_t gapSumMs = 0;
-        int64_t gapDevSumMs = 0;
-        int64_t gapDevMaxMs = 0;
-        {
-            std::lock_guard<std::mutex> lk(stats->gapMutex);
-            gapSampleCount = stats->gapSampleCount;
-            gapOverrunCount = stats->gapOverrunCount;
-            gapSumMs = stats->gapSumMs;
-            gapDevSumMs = stats->gapDevSumMs;
-            gapDevMaxMs = stats->gapDevMaxMs;
-            stats->gapSampleCount = 0;
-            stats->gapOverrunCount = 0;
-            stats->gapSumMs = 0;
-            stats->gapDevSumMs = 0;
-            stats->gapDevMaxMs = 0;
-        }
-
-        int64_t avgGapMs = gapSampleCount > 0 ? gapSumMs / static_cast<int64_t>(gapSampleCount) : 0;
-        int64_t avgGapDevMs =
-            gapSampleCount > 0 ? gapDevSumMs / static_cast<int64_t>(gapSampleCount) : 0;
-
-        LOG(info) << "[Stats] vars=" << total << "/" << kExpectedVars << " batch=" << batch << "/"
-                  << kExpectedBatch << " loss=" << loss << " avgLatency=" << avgMs << "ms"
-                  << " maxLatency=" << maxMs << "ms"
-                  << " gapSamples=" << gapSampleCount << " avgGap=" << avgGapMs << "ms"
-                  << " avgGapDev=" << avgGapDevMs << "ms"
-                  << " maxGapDev=" << gapDevMaxMs << "ms"
-                  << " gapOver1.5x=" << gapOverrunCount;
-    }
-
-    sub.unsubscribe("pubNode", unitems);
-    sub.stop();
+    // sub.unsubscribe("pubNode", unitems);
+    // sub.stop();
     std::this_thread::sleep_for(std::chrono::seconds(100000));
 }
 
