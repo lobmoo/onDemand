@@ -270,7 +270,7 @@ namespace ondemand
         while (running_.load(std::memory_order_acquire)) {
             std::shared_ptr<DSF::Var::TableDataTransfer> dataTransfer;
             if (!dataTransferQueue_.try_dequeue(dataTransfer)) {
-                std::this_thread::sleep_for(std::chrono::milliseconds(1));
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
                 continue;
             }
             if (!dataTransfer) {
@@ -436,7 +436,7 @@ namespace ondemand
                 }
                 LOG(info) << "+++++++++++++++++totalReceived_ = " << totalReceived_.load();
             } else {
-                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
             }
         }
     }
@@ -468,8 +468,9 @@ namespace ondemand
             ONDEMANDLOG(info) << "Started data transfer workers: " << workerCount;
         }
 
-        /*启动回调调度器 (tick 精度 1ms, 线程池 8 线程)*/
-        callbackScheduler_ = std::make_unique<TimerScheduler>(1, 8);
+        /*启动回调调度器 (tick 精度 1ms, 线程池 4 线程)*/
+
+        callbackScheduler_ = std::make_unique<TimerScheduler>(1, 4);
         /*调度函数*/
         callbackSchedulerThread_ = std::thread(&OnDemandSub::processCallbackScheduler, this);
 

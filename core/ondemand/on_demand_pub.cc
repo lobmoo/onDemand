@@ -114,8 +114,8 @@ namespace ondemand
             return false;
         }
 
-        /*创建时间轮调度器: 1ms tick 精度*/
-        const size_t poolSize = 8;
+        /*创建时间轮调度器: 1ms tick 精度，线程池 4 线程*/
+        const size_t poolSize = 4;
         publishScheduler_ = std::make_unique<TimerScheduler>(1, poolSize);
 
         registerProcessThread_ = std::thread(&OnDemandPub::processReceiveRegister, this);
@@ -326,7 +326,7 @@ namespace ondemand
                     // }
                 }
             } else {
-                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
             }
         }
     }
@@ -628,7 +628,7 @@ namespace ondemand
                     ONDEMANDLOG(error) << "freqChange callback threw unknown exception";
                 }
             } else {
-                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
             }
         }
     }
@@ -1277,6 +1277,16 @@ namespace ondemand
         }
         dataNode_.reset();
         dataNode_ = nullptr;
+
+        std::shared_ptr<DSF::Message::SubTableRegister> item;
+        while (pubTableDefRegisterQueue_.try_dequeue(item)) {
+        }
+
+        size_t drainedFreqChange = 0;
+        std::pair<std::string, uint32_t> freqChangeItem;
+        while (freqChangeQueue_.try_dequeue(freqChangeItem)) {
+        }
+
         ONDEMANDLOG(info) << "OnDemandPub stopped";
     }
 
