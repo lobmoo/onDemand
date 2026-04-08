@@ -355,9 +355,9 @@ namespace ondemand
         std::unordered_map<PublishGroupKey, std::vector<uint8_t>,
                            PublishGroupKeyHash>
             groupFlatBufs_; // 预分配 flat buffer，避免 堆分配
-        std::unordered_map<PublishGroupKey, std::vector<uint8_t>,
+        std::unordered_map<PublishGroupKey, std::shared_ptr<std::vector<uint8_t>>,
                            PublishGroupKeyHash>
-            groupMaskBufs_; // 预计算 mask，避免每次 publish 重建 Roaring
+            groupMaskBufs_; // 预计算 mask，shared_ptr 避免每次 publish 复制
         std::thread publishSchedulerThread_;
         std::atomic<bool> schedulerDirty_{true}; // varIndex_ 变更标记
     };

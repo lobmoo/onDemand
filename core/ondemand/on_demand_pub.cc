@@ -277,7 +277,9 @@ namespace ondemand
     void OnDemandPub::onReceiveRegisterCb(const std::string & /*topicName*/,
                                           std::shared_ptr<DSF::Message::SubTableRegister> data)
     {
-
+        if (!data) {
+            return;
+        }
         pubTableDefRegisterQueue_.enqueue(data);
     }
     /**
@@ -286,25 +288,51 @@ namespace ondemand
     void OnDemandPub::processReceiveRegister()
     {
         pthread_setname_np(pthread_self(), "PubRegProc");
+        std::unordered_map<std::string, uint32_t> retryBackoffMsByNode;
+        constexpr uint32_t kMinPartialRetryMs = 200;
+        constexpr uint32_t kMinAllMissingRetryMs = 800;
+        constexpr uint32_t kMaxRetryMs = 3000;
+
         while (running_.load(std::memory_order_acquire)) {
             std::shared_ptr<DSF::Message::SubTableRegister> data;
             if (pubTableDefRegisterQueue_.try_dequeue(data)) {
                 if (data) {
-
-                    // 处理订阅注册请求
                     switch (data->msgType()) {
                         case DSF::Message::MSGTYPE::SUB_TABLE_REGISTER: {
-                            uint32_t missing = handleSubscribe(data->nodeName(), data->varFreqs());
+                            const std::string nodeName = data->nodeName();
+                            uint32_t missing = handleSubscribe(nodeName, data->varFreqs());
                             if (missing > 0) {
-                                /* 有变量尚未创建（Sub 先于 createVars() 发来注册），
-                                 * 延迟后重新入队，等 createVars() 完成后再处理
-                                 这里的策略让数据全部入队可能导致队列膨胀，后续优化 */
-                                std::this_thread::sleep_for(std::chrono::milliseconds(50));
+                                /*但对同一 node 做指数退避，降低长期缺失时的 CPU 开销。*/
+                                const size_t total = data->varFreqs().size();
+                                const bool allMissing = (total > 0) && (missing >= total);
+
+                                uint32_t &backoffMs = retryBackoffMsByNode[nodeName];
+                                if (backoffMs == 0) {
+                                    backoffMs = allMissing ? kMinAllMissingRetryMs : kMinPartialRetryMs;
+                                } else {
+                                    const uint32_t minBase =
+                                        allMissing ? kMinAllMissingRetryMs : kMinPartialRetryMs;
+                                    if (backoffMs < minBase) {
+                                        backoffMs = minBase;
+                                    } else {
+                                        backoffMs = std::min(kMaxRetryMs, backoffMs * 2);
+                                    }
+                                }
+
+                                ONDEMANDLOG_TIME(warning, 5000)
+                                    << "SUB_TABLE_REGISTER retry: node=" << nodeName
+                                    << " missing=" << missing << "/" << total
+                                    << " delayMs=" << backoffMs;
+
+                                std::this_thread::sleep_for(std::chrono::milliseconds(backoffMs));
                                 pubTableDefRegisterQueue_.enqueue(data);
+                            } else {
+                                retryBackoffMsByNode.erase(nodeName);
                             }
                             break;
                         }
                         case DSF::Message::MSGTYPE::SUB_TABLE_UNREGISTER:
+                            retryBackoffMsByNode.erase(data->nodeName());
                             handleUnsubscribe(data->nodeName(), data->varFreqs());
                             break;
                         default:
@@ -425,9 +453,9 @@ namespace ondemand
                         }
                         roar.runOptimize();
                         roar.shrinkToFit();
-                        auto &maskBuf = groupMaskBufs_[key];
-                        maskBuf.resize(roar.getSizeInBytes());
-                        roar.write(reinterpret_cast<char *>(maskBuf.data()));
+                        auto buf = std::make_shared<std::vector<uint8_t>>(roar.getSizeInBytes());
+                        roar.write(reinterpret_cast<char *>(buf->data()));
+                        groupMaskBufs_[key] = std::move(buf);
                     } else {
                         groupMaskBufs_.erase(key);
                     }
@@ -482,7 +510,7 @@ namespace ondemand
         /*获取组成员快照 + running flag + 预计算 mask 快照*/
         std::shared_ptr<std::vector<GroupVarInfo>> members;
         std::shared_ptr<std::atomic<bool>> running;
-        std::vector<uint8_t> maskBuf;
+        std::shared_ptr<std::vector<uint8_t>> precomputedMask;
         {
             std::lock_guard<std::mutex> lock(publishGroupsMutex_);
             PublishGroupKey key{bucketIndex, freqMs};
@@ -495,7 +523,7 @@ namespace ondemand
 
             auto maskIt = groupMaskBufs_.find(key);
             if (maskIt != groupMaskBufs_.end()) {
-                maskBuf = maskIt->second;
+                precomputedMask = maskIt->second; // shared_ptr 引用，无复制
             }
         }
 
@@ -527,7 +555,10 @@ namespace ondemand
             auto &dst = msg.varData().emplace_back();
             dst.resize(handle.size());
             std::memcpy(dst.data(), handle.ptr(), handle.size());
-            actualMask.add(info.varHash);
+            if (skippedCount > 0) {
+                // 只有在有跳过时才需要重建 mask
+                actualMask.add(info.varHash);
+            }
         }
 
         /*如果所有变量都没数据，跳过本次发送*/
@@ -546,11 +577,16 @@ namespace ondemand
                 << "ms";
         }
 
-        /*使用实际发送的变量构建 mask*/
-        actualMask.runOptimize();
-        actualMask.shrinkToFit();
-        msg.mask().resize(actualMask.getSizeInBytes());
-        actualMask.write(reinterpret_cast<char *>(msg.mask().data()));
+        /*无跳过：直接用预计算 mask，避免重建 Roaring64Map（热路径优化）*/
+        if (skippedCount == 0 && precomputedMask && !precomputedMask->empty()) {
+            msg.mask() = *precomputedMask;
+        } else {
+            /*有跳过：用实际发送的变量重建 mask*/
+            actualMask.runOptimize();
+            actualMask.shrinkToFit();
+            msg.mask().resize(actualMask.getSizeInBytes());
+            actualMask.write(reinterpret_cast<char *>(msg.mask().data()));
+        }
 
         auto now = std::chrono::system_clock::now();
         auto epoch = now.time_since_epoch();
