@@ -459,17 +459,7 @@ namespace ondemand
 
         processTableDefineThread_ = std::thread(&OnDemandSub::processTableDefine, this);
         {
-            unsigned int hw = std::thread::hardware_concurrency();
             size_t workerCount = 4;
-            if (hw > 0) {
-                workerCount = static_cast<size_t>(hw / 2);
-                if (workerCount < 2) {
-                    workerCount = 2;
-                }
-                if (workerCount > 8) {
-                    workerCount = 8;
-                }
-            }
             processDataTransferThreads_.clear();
             processDataTransferThreads_.reserve(workerCount);
             for (size_t i = 0; i < workerCount; ++i) {

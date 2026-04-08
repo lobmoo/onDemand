@@ -16,7 +16,7 @@
 #include "ondemand/on_demand_pub.h"
 #include "ondemand/on_demand_sub.h"
 
-uint32_t count = 100; // 每个节点发布5000个变量
+uint32_t count = 1000; // 每个节点发布5000个变量
 
 void dataNodeA()
 {
@@ -66,19 +66,19 @@ void dataNodeA()
                 vals[i]++;
             }
             pub.setVarDataBatch(batchItems.data(), count);
-            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
     });
 
     std::vector<dsf::ondemand::SubscriptionItem> items;
     for (int i = 0; i < count; ++i) {
         std::string varName = "var" + std::to_string(i + count); // var3, var4, var5
-        items.push_back({varName, static_cast<uint32_t>(500)});
+        items.push_back({varName, static_cast<uint32_t>(10)});
     }
 
     auto nodeAObservedTsNs = std::make_shared<std::atomic<uint64_t>>(0);
-    constexpr uint64_t kExpectedIntervalNs = 500ULL * 1000ULL * 1000ULL;
-    constexpr uint64_t kToleranceNs = 10ULL * 1000ULL * 1000ULL;
+    constexpr uint64_t kExpectedIntervalNs = 10ULL * 1000ULL * 1000ULL;
+    constexpr uint64_t kToleranceNs = 2ULL * 1000ULL * 1000ULL;
     constexpr uint64_t kWarnThresholdNs = kExpectedIntervalNs + kToleranceNs;
 
     sub.subscribe("pubNodeB", items,
@@ -163,20 +163,20 @@ void dataNodeB()
                 vals[i]++;
             }
             pub.setVarDataBatch(batchItems.data(), count);
-            std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
     });
 
     std::vector<dsf::ondemand::SubscriptionItem> items;
     for (int i = 0; i < count; ++i) {
         std::string varName = "var" + std::to_string(i); // var0, var1, var2
-        items.push_back({varName, static_cast<uint32_t>(500)});
+        items.push_back({varName, static_cast<uint32_t>(10)});
     }
 
     auto nodeBObservedTsNs = std::make_shared<std::atomic<uint64_t>>(0);
 
-    constexpr uint64_t kExpectedIntervalNsB = 500ULL * 1000ULL * 1000ULL;
-    constexpr uint64_t kToleranceNsB = 10ULL * 1000ULL * 1000ULL;
+    constexpr uint64_t kExpectedIntervalNsB = 10ULL * 1000ULL * 1000ULL;
+    constexpr uint64_t kToleranceNsB = 2ULL * 1000ULL * 1000ULL;
     constexpr uint64_t kWarnThresholdNsB = kExpectedIntervalNsB + kToleranceNsB;
 
     sub.subscribe("pubNodeA", items,
