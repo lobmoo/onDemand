@@ -63,6 +63,18 @@ namespace ondemand
             return false;
         }
 
+        /*创建数据通信所需puiblisher*/
+        DdsWrapper::PublisherQoSBuilder pubQos;
+        pubQos.setPartition(
+            DSF::Var::VAR_DATA_TRANSFER_TOPIC_PREFIX
+            + nodeName_); // 按 topicName + nodeName 分区，确保同一节点不同表间隔离，避免不相关的订阅者收到数据
+
+        if (!dataNode_->createPublisher(DATA_TANSFER_PUB_SUB_NAME, pubQos)) {
+            ONDEMANDLOG(error)
+                << "Failed to create Publisher for DataTransfer writers with partition: ";
+            return false;
+        }
+
         /*创建变量通知topic writer*/
         if (!createTableDefineWriter()) {
             ONDEMANDLOG(error) << "Failed to create PubTableDefine writer";
@@ -211,13 +223,6 @@ namespace ondemand
         //     .setHistoryDepth(...);
 
         std::lock_guard<std::mutex> lock(DataTransferWriterMapMutex_);
-
-        FastddsWrapper::PublisherQoSBuilder pubQos;
-        pubQos.setPartition(
-            DSF::Var::VAR_DATA_TRANSFER_TOPIC_PREFIX
-            + nodeName_); // 按 topicName + nodeName 分区，确保同一节点不同表间隔离，避免不相关的订阅者收到数据
-
-        dataNode_->createPublisher(DATA_TANSFER_PUB_SUB_NAME, pubQos);
         for (uint32_t bucketId : bucketIds) {
             /*如果该 bucket 的 writer 已存在，跳过*/
             if (dataTransferWriterMap_.find(bucketId) != dataTransferWriterMap_.end()) {

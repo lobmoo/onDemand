@@ -76,9 +76,13 @@ namespace ondemand
         }
 
         /*创建数据通信所需的subscriber*/
-        FastddsWrapper::SubscriberQoSBuilder subQos;
+        DdsWrapper::SubscriberQoSBuilder subQos;
         subQos.setAutoEnable(true);
-        dataNode_->createSubscriber(DATA_TANSFER_PUB_SUB_NAME, subQos);
+        if (!dataNode_->createSubscriber(DATA_TANSFER_PUB_SUB_NAME, subQos)) {
+            ONDEMANDLOG(error) << "Failed to create subscriber: " << DATA_TANSFER_PUB_SUB_NAME;
+            initialized_.store(false);
+            return false;
+        }
 
         ONDEMANDLOG(info) << "OnDemandSub initialized: " << nodeName;
         /*确保 DDS endpoints 就绪: assertLiveliness 强制发送 PDP 心跳*/
@@ -485,10 +489,14 @@ namespace ondemand
 
     bool OnDemandSub::setPartition(std::string name, std::string partitionName)
     {
-        FastddsWrapper::SubscriberQoSBuilder subQos;
+        DdsWrapper::SubscriberQoSBuilder subQos;
         subQos.setAutoEnable(true);
         subQos.setPartition(partitionName);
-        dataNode_->updateSubscriberQos(name, subQos);
+        if (!dataNode_->updateSubscriberQos(name, subQos)) {
+            ONDEMANDLOG(error) << "Failed to set partition: " << partitionName
+                               << " for subscriber: " << name;
+            return false;
+        }
         return true;
     }
 

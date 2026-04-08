@@ -16,7 +16,7 @@
 #include "ondemand/on_demand_pub.h"
 #include "ondemand/on_demand_sub.h"
 
-uint32_t count = 100000; // 每个节点发布5000个变量
+uint32_t count = 100; // 每个节点发布5000个变量
 
 void dataNodeA()
 {
@@ -73,21 +73,39 @@ void dataNodeA()
     std::vector<dsf::ondemand::SubscriptionItem> items;
     for (int i = 0; i < count; ++i) {
         std::string varName = "var" + std::to_string(i + count); // var3, var4, var5
-        items.push_back({varName, static_cast<uint32_t>(1000)});
+        items.push_back({varName, static_cast<uint32_t>(500)});
     }
 
-    sub.subscribe("pubNodeB", items, [](const std::vector<dsf::ondemand::VarCallbackData> &vars) {
-        if (vars.empty())
-            return;
+    auto nodeAObservedTsNs = std::make_shared<std::atomic<uint64_t>>(0);
+    constexpr uint64_t kExpectedIntervalNs = 500ULL * 1000ULL * 1000ULL;
+    constexpr uint64_t kToleranceNs = 10ULL * 1000ULL * 1000ULL;
+    constexpr uint64_t kWarnThresholdNs = kExpectedIntervalNs + kToleranceNs;
 
-        for (const auto &var : vars) {
-            if (var.varName == std::string("var") + std::to_string(count)) { // var3
+    sub.subscribe("pubNodeB", items,
+                  [nodeAObservedTsNs](const std::vector<dsf::ondemand::VarCallbackData> &vars) {
+                      if (vars.empty())
+                          return;
 
-                LOG(info) << "NodeA received from B: " << var.varName << " vars size=" << var.size
-                          << "timestamp=" << var.timestampNs;
-            }
-        }
-    });
+                      for (const auto &var : vars) {
+                          if (var.varName == std::string("var") + std::to_string(count)) {
+                              LOG(info) << "NodeA received " << var.varName
+                                        << "   timestamp=" << var.timestampNs;
+                              uint64_t currentTsNs = var.timestampNs;
+                              uint64_t prevTsNs = nodeAObservedTsNs->exchange(
+                                  currentTsNs, std::memory_order_acq_rel);
+                              if (prevTsNs != 0 && currentTsNs > prevTsNs) {
+                                  uint64_t deltaNs = currentTsNs - prevTsNs;
+                                  if (deltaNs > kWarnThresholdNs) {
+                                      LOG(warning)
+                                          << "NodeA observed " << var.varName << " timestamp gap "
+                                          << (deltaNs / 1000000ULL)
+                                          << "ms (threshold=" << (kWarnThresholdNs / 1000000ULL)
+                                          << "ms)";
+                                  }
+                              }
+                          }
+                      }
+                  });
 
     setVarThread.detach(); // 让线程在后台运行
 
@@ -152,20 +170,39 @@ void dataNodeB()
     std::vector<dsf::ondemand::SubscriptionItem> items;
     for (int i = 0; i < count; ++i) {
         std::string varName = "var" + std::to_string(i); // var0, var1, var2
-        items.push_back({varName, static_cast<uint32_t>(1000)});
+        items.push_back({varName, static_cast<uint32_t>(500)});
     }
 
-    sub.subscribe("pubNodeA", items, [](const std::vector<dsf::ondemand::VarCallbackData> &vars) {
-        if (vars.empty())
-            return;
-        for (const auto &var : vars) {
-            if (var.varName == "var0") {
+    auto nodeBObservedTsNs = std::make_shared<std::atomic<uint64_t>>(0);
 
-                LOG(info) << "NodeA received from A: " << var.varName << " vars size=" << var.size
-                          << "timestamp=" << var.timestampNs;
-            }
-        }
-    });
+    constexpr uint64_t kExpectedIntervalNsB = 500ULL * 1000ULL * 1000ULL;
+    constexpr uint64_t kToleranceNsB = 10ULL * 1000ULL * 1000ULL;
+    constexpr uint64_t kWarnThresholdNsB = kExpectedIntervalNsB + kToleranceNsB;
+
+    sub.subscribe("pubNodeA", items,
+                  [nodeBObservedTsNs](const std::vector<dsf::ondemand::VarCallbackData> &vars) {
+                      if (vars.empty())
+                          return;
+                      for (const auto &var : vars) {
+                          if (var.varName == "var0") {
+                              LOG(info) << "NodeB received " << var.varName
+                                        << " timestamp=" << var.timestampNs;
+                              uint64_t currentTsNs = var.timestampNs;
+                              uint64_t prevTsNs = nodeBObservedTsNs->exchange(
+                                  currentTsNs, std::memory_order_acq_rel);
+                              if (prevTsNs != 0 && currentTsNs > prevTsNs) {
+                                  uint64_t deltaNs = currentTsNs - prevTsNs;
+                                  if (deltaNs > kWarnThresholdNsB) {
+                                      LOG(warning)
+                                          << "NodeB observed " << var.varName << " timestamp gap "
+                                          << (deltaNs / 1000000ULL)
+                                          << "ms (threshold=" << (kWarnThresholdNsB / 1000000ULL)
+                                          << "ms)";
+                                  }
+                              }
+                          }
+                      }
+                  });
 
     setVarThread.detach(); // 让线程在后台运行
 
