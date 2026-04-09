@@ -5,6 +5,7 @@ file(GLOB_RECURSE API_TEST_SOURCES
     ""
     "${CMAKE_CURRENT_SOURCE_DIR}/../test*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/../*_test.cc"
+    "${CMAKE_SOURCE_DIR}/core/ondemand/*_test.cc"
 )
 
 # 根据 DDS 实现选择 ondemand 所需源文件与库
