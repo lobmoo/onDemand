@@ -551,14 +551,11 @@ namespace ondemand
                 continue;
             }
 
-            /*只发送有数据的变量*/
+            /*只发送有数据的变量，始终记录 hash，保证 mask 与 varData 顺序一致*/
             auto &dst = msg.varData().emplace_back();
             dst.resize(handle.size());
             std::memcpy(dst.data(), handle.ptr(), handle.size());
-            if (skippedCount > 0) {
-                // 只有在有跳过时才需要重建 mask
-                actualMask.add(info.varHash);
-            }
+            actualMask.add(info.varHash);
         }
 
         /*如果所有变量都没数据，跳过本次发送*/
@@ -581,7 +578,7 @@ namespace ondemand
         if (skippedCount == 0 && precomputedMask && !precomputedMask->empty()) {
             msg.mask() = *precomputedMask;
         } else {
-            /*有跳过：用实际发送的变量重建 mask*/
+            /*有跳过：用实际发送的变量重建 mask（actualMask 已在循环中完整记录）*/
             actualMask.runOptimize();
             actualMask.shrinkToFit();
             msg.mask().resize(actualMask.getSizeInBytes());
@@ -774,7 +771,8 @@ namespace ondemand
      */
     bool OnDemandPub::deleteVars(const std::vector<std::string> &varNames)
     {
-        /*注销被删变量  这里直接差分删除 */
+        /*注销被删变量，记录受影响的 bucket，只重发这些 bucket 的 TableDefine*/
+        std::unordered_set<uint32_t> affectedBuckets;
         {
             std::unique_lock lock(varIndexMutex_);
             for (const auto &varName : varNames) {
@@ -784,17 +782,17 @@ namespace ondemand
                     ONDEMANDLOG(warning) << "Variable not found: " << varName;
                     continue;
                 }
+                affectedBuckets.insert(static_cast<uint32_t>(it->second.bucketIndex));
                 varStore_.unregister_var(varHash);
                 varIndex_.erase(it);
-                bucketManager_.RemoveMember(varName, varHash);
+                bucketManager_.RemoveMember(make_meta_varname(nodeName_, varName), varHash);
             }
         }
 
         schedulerDirty_.store(true, std::memory_order_release);
 
-        /*发布更新后的 TableDefine*/
-        uint32_t bucketCount = bucketManager_.GetBucketCount();
-        for (uint32_t i = 0; i < bucketCount; ++i) {
+        /*只重发受影响的 bucket 的 TableDefine，避免误触发其他 bucket 的差分删除*/
+        for (uint32_t i : affectedBuckets) {
             DSF::Var::PubTableDefine pubTableDefine;
             pubTableDefine.name(make_bucket_name_by_id(i));
             pubTableDefine.nodeName(nodeName_);
@@ -826,7 +824,7 @@ namespace ondemand
             /*差分删除: 即使是空表也要发布, 通知订阅者该表已清空*/
             tableDefinePublish(pubTableDefine);
             std::this_thread::sleep_for(std::chrono::milliseconds(50));
-            ONDEMANDLOG(info) << "Published bucket " << i + 1 << "/" << bucketCount << " with "
+            ONDEMANDLOG(info) << "Published bucket " << i << " with "
                               << pubTableDefine.varDefines().size() << " variables (delete mode)";
         }
 

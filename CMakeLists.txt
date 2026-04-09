@@ -5,8 +5,8 @@ project(DEMO  LANGUAGES  C CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-option(USE_FASTDDS "Use FastDDS implementation" ON)
-option(USE_TXDDS "Use TXDDS implementation" OFF)
+option(USE_FASTDDS "Use FastDDS implementation" OFF)
+option(USE_TXDDS "Use TXDDS implementation" ON)
 
 if(USE_FASTDDS AND USE_TXDDS)
     message(FATAL_ERROR "Cannot enable both USE_FASTDDS and USE_TXDDS")
@@ -28,7 +28,7 @@ add_subdirectory(common/log)
 add_subdirectory(core)
 
 
-option(ENABLE_TESTS "Enable unit tests" ON)
+option(ENABLE_TESTS "Enable unit tests" OFF)
 if(ENABLE_TESTS)
     add_subdirectory(tests)
 endif()

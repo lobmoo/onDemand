@@ -111,10 +111,6 @@ namespace ondemand
         */
         bool unsubscribe(const char *node_name, const std::vector<std::string> &items);
 
-        /**
-        * @brief 获取订阅数量
-        */
-        size_t getSubscriptionCount() const;
 
         /**
          * @brief 注册 TableDefine 回调，收到 pub 端变量定义时触发

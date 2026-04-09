@@ -351,6 +351,8 @@ namespace ondemand
                 varWriteStamps_[bucketIdx].writeCount.fetch_add(1, std::memory_order_release);
                 blobType_.store(static_cast<uint32_t>(blobType), std::memory_order_release);
             }
+
+            
         }
     }
 
@@ -367,7 +369,56 @@ namespace ondemand
                     ONDEMANDLOG(info) << "Processing TableDefine: " << tableDefine->name()
                                       << ", vars size: " << tableDefine->varDefines().size();
                     std::unique_lock lock(varIndexMutex_);
-                    /*拆表*/
+
+                    /*解析本次 TableDefine 所属 bucket（格式: bucket_N）*/
+                    uint32_t thisBucketId = UINT32_MAX;
+                    const std::string &tblName = tableDefine->name();
+                    const std::string prefix = "bucket_";
+                    if (tblName.size() > prefix.size() &&
+                        tblName.compare(0, prefix.size(), prefix) == 0) {
+                        try {
+                            thisBucketId = static_cast<uint32_t>(
+                                std::stoul(tblName.substr(prefix.size())));
+                        } catch (...) {
+                        }
+                    }
+
+                    /*收集本次 TableDefine 中所有变量的 hash，用于差分删除*/
+                    std::unordered_set<uint64_t> incomingHashes;
+                    incomingHashes.reserve(tableDefine->varDefines().size());
+                    for (const auto &varDef : tableDefine->varDefines()) {
+                        const auto &varDefine = varDef.var().varDefine();
+                        std::string varName =
+                            make_meta_varname(varDefine.nodeName(), varDefine.name());
+                        incomingHashes.insert(fast_hash(varName));
+                    }
+
+                    /*差分删除：varIndex_ 中属于该 bucket 但本次 TableDefine 里没有的变量*/
+                    if (thisBucketId != UINT32_MAX) {
+                        std::vector<uint64_t> toRemove;
+                        for (auto it = varIndex_.begin(); it != varIndex_.end();) {
+                            if (it->second.bucketIndex == thisBucketId &&
+                                incomingHashes.find(it->first) == incomingHashes.end()) {
+                                ONDEMANDLOG(info)
+                                    << "Removing deleted var: " << it->second.realVarName;
+                                toRemove.push_back(it->first);
+                                varStore_.unregister_var(it->first);
+                                totalReceived_.fetch_sub(1);
+                                it = varIndex_.erase(it);
+                            } else {
+                                ++it;
+                            }
+                        }
+                        /*同步清理对应的回调注册，避免调度器用已删除 varId 读 VarStore*/
+                        if (!toRemove.empty()) {
+                            std::lock_guard<std::mutex> cbLock(subscriptionCallbacksMutex_);
+                            for (uint64_t h : toRemove) {
+                                subscriptionCallbacks_.erase(h);
+                            }
+                        }
+                    }
+
+                    /*拆表：注册新增变量*/
                     std::unordered_set<uint32_t> newBucketIds;
                     for (auto &varDef : tableDefine->varDefines()) {
                         const auto &varDefine = varDef.var().varDefine();
@@ -386,7 +437,6 @@ namespace ondemand
                         }
 
                         /*组内部结构*/
-
                         VarMetadata meta;
                         meta.varHash = varHash;
                         meta.currentFreq = 0xFFFFFFFF;
@@ -399,7 +449,7 @@ namespace ondemand
 
                         varIndex_.emplace(varHash, std::move(meta));
                         newBucketIds.insert(static_cast<uint32_t>(bucketIdx));
-                        totalReceived_.fetch_add(1); // 记录收到的总数
+                        totalReceived_.fetch_add(1);
                         ONDEMANDLOG(debug) << "Registered var: " << varName;
                     }
                     lock.unlock();
@@ -678,7 +728,7 @@ namespace ondemand
                     /* 查找 varIndex_ 获取 varId 和 dataSize */
                     auto vit = varIndex_.find(varHash);
                     if (vit == varIndex_.end()) {
-                        /* 变量定义尚未到达, 跳过 */
+                        /* 变量定义尚未到达, 或者删除时 跳过 */
                         continue;
                     }
 
@@ -869,8 +919,8 @@ namespace ondemand
             {
                 auto handle = varStore_.read_zero_copy(static_cast<uint32_t>(info.varId));
                 if (!handle || handle.size() == 0) {
-                    ONDEMANDLOG_TIME(error, 5000) << "Failed to read varId: " << info.varId
-                                                  << " for callback, varName: " << info.varName;
+                    ONDEMANDLOG_TIME(debug, 5000) << "Skip unregistered varId: " << info.varId
+                                                  << " varName: " << info.varName;
                     continue;
                 }
                 if (!groupCallback)
