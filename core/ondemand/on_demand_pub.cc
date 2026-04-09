@@ -213,6 +213,7 @@ namespace ondemand
         }
 
         DdsWrapper::DataWriterQoSBuilder writerQosBuilder;
+        writerQosBuilder.setAsyncPublisherMode(true);
         // TODO: 配置 DataTransfer writer QoS
         // writerQosBuilder.setMaxSamples(...)
         //     .setDurabilityKind(...)

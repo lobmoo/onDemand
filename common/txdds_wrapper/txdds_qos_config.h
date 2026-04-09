@@ -82,6 +82,7 @@ public:
     DataWriterQoSBuilder &disableDataSharing();
     DataWriterQoSBuilder &writer_resource_limits(int32_t max_matched_readers);
     DataWriterQoSBuilder &setFlowController(const std::string &flow_controller_name);
+    DataWriterQoSBuilder &setAsyncPublisherMode(bool async);
 
 private:
     const BaoSky::dds::DataWriterQos &getQos() const;

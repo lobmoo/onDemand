@@ -240,6 +240,12 @@ DataWriterQoSBuilder &DataWriterQoSBuilder::disableDataSharing()
     return *this;
 }
 
+DataWriterQoSBuilder &DataWriterQoSBuilder::setAsyncPublisherMode(bool async)
+{
+    qos_.publish_mode().kind = async ? ASYNCHRONOUS_PUBLISH_MODE : SYNCHRONOUS_PUBLISH_MODE;
+    return *this;
+}
+
 DataWriterQoSBuilder &
 DataWriterQoSBuilder::setFlowController(const std::string &flow_controller_name)
 {
