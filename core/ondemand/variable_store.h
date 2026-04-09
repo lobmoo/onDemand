@@ -381,6 +381,42 @@ namespace ondemand
 
         ZeroCopyReadHandle read_zero_copy(uint32_t id) const { return {this, id}; }
 
+        /**
+         * @brief 批量零拷贝读，一次 op_enter 覆盖所有变量，减少锁开销
+         * @param ids    变量 id 数组
+         * @param count  数量
+         * @param fn     回调 fn(i, ptr, size)，ptr==nullptr 表示该变量无数据
+         */
+        template <typename Fn>
+        void read_batch(const uint32_t *ids, size_t count, Fn &&fn) const
+        {
+            OpGuard g(this);
+            if (!arena_ || !dirty_flags_)
+                return;
+            for (size_t i = 0; i < count; ++i) {
+                uint32_t id = ids[i];
+                if (id >= var_count_ || metas_[id].size == 0) {
+                    fn(i, nullptr, 0u);
+                    continue;
+                }
+                auto *slot = (const Slot *)(arena_ + metas_[id].offset);
+                uint32_t size = metas_[id].size;
+                /* seqlock 自旋读，op_enter 已防止 arena 重分配 */
+                for (;;) {
+                    uint32_t s1 = slot->seq.load(std::memory_order_acquire);
+                    if (s1 & 1) { std::this_thread::yield(); continue; }
+                    uint8_t idx = slot->committed.load(std::memory_order_acquire);
+                    std::atomic_thread_fence(std::memory_order_acquire);
+                    if (s1 == slot->seq.load(std::memory_order_acquire)) {
+                        uint32_t actual = slot->valid_size[idx];
+                        if (actual == 0 || actual > size) actual = size;
+                        fn(i, reinterpret_cast<const void *>(slot->data + idx * size), actual);
+                        break;
+                    }
+                }
+            }
+        }
+
         template <typename Fn>
         void for_each_dirty(Fn &&fn, size_t batch = 1000)
         {

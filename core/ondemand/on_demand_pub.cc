@@ -308,7 +308,8 @@ namespace ondemand
 
                                 uint32_t &backoffMs = retryBackoffMsByNode[nodeName];
                                 if (backoffMs == 0) {
-                                    backoffMs = allMissing ? kMinAllMissingRetryMs : kMinPartialRetryMs;
+                                    backoffMs =
+                                        allMissing ? kMinAllMissingRetryMs : kMinPartialRetryMs;
                                 } else {
                                     const uint32_t minBase =
                                         allMissing ? kMinAllMissingRetryMs : kMinPartialRetryMs;
@@ -543,24 +544,31 @@ namespace ondemand
         roaring::Roaring64Map actualMask;
         size_t skippedCount = 0;
 
-        for (const auto &info : *members) {
-            auto handle = varStore_.read_zero_copy(info.varId);
-            if (!handle || handle.size() == 0) {
-                /*跳过没有数据的变量，避免无效发送和 CPU 浪费*/
-                ++skippedCount;
-                continue;
-            }
-
-            /*只发送有数据的变量，始终记录 hash，保证 mask 与 varData 顺序一致*/
-            auto &dst = msg.varData().emplace_back();
-            dst.resize(handle.size());
-            std::memcpy(dst.data(), handle.ptr(), handle.size());
-            actualMask.add(info.varHash);
+        /*批量读：一次 op_enter 覆盖所有变量，避免 N 次独立锁开销*/
+        const size_t n = members->size();
+        std::vector<uint32_t> ids(n);
+        for (size_t i = 0; i < n; ++i) {
+            ids[i] = (*members)[i].varId;
         }
+        varStore_.read_batch(ids.data(), n, [&](size_t i, const void *ptr, uint32_t sz) {
+            if (!ptr || sz == 0) {
+                if (skippedCount == 0) {
+                    for (size_t j = 0; j < i; ++j)
+                        actualMask.add((*members)[j].varHash);
+                }
+                ++skippedCount;
+                return;
+            }
+            auto &dst = msg.varData().emplace_back();
+            dst.resize(sz);
+            std::memcpy(dst.data(), ptr, sz);
+            if (skippedCount > 0)
+                actualMask.add((*members)[i].varHash);
+        });
 
         /*如果所有变量都没数据，跳过本次发送*/
         if (msg.varData().empty()) {
-            ONDEMANDLOG_TIME(warning, 30000) // 30秒打印一次，避免日志刷屏
+            ONDEMANDLOG_TIME(warning, 30000)
                 << "All " << members->size() << " variables in bucket=" << bucketIndex
                 << " freq=" << freqMs << "ms have no data, skipping publish";
             return;
@@ -568,17 +576,16 @@ namespace ondemand
 
         /* 如果有部分变量被跳过，打印一次警告*/
         if (skippedCount > 0) {
-            ONDEMANDLOG_TIME(warning, 30000) // 30秒打印一次
-                << "Skipped " << skippedCount << "/" << members->size()
-                << " variables without data in bucket=" << bucketIndex << " freq=" << freqMs
-                << "ms";
+            ONDEMANDLOG_TIME(warning, 30000) << "Skipped " << skippedCount << "/" << members->size()
+                                             << " variables without data in bucket=" << bucketIndex
+                                             << " freq=" << freqMs << "ms";
         }
 
         /*无跳过：直接用预计算 mask，避免重建 Roaring64Map（热路径优化）*/
         if (skippedCount == 0 && precomputedMask && !precomputedMask->empty()) {
             msg.mask() = *precomputedMask;
         } else {
-            /*有跳过：用实际发送的变量重建 mask（actualMask 已在循环中完整记录）*/
+            /*有跳过：用实际发送的变量重建 mask*/
             actualMask.runOptimize();
             actualMask.shrinkToFit();
             msg.mask().resize(actualMask.getSizeInBytes());

@@ -314,7 +314,7 @@ namespace ondemand
 
                     auto vit = varIndex_.find(varHash);
                     if (vit == varIndex_.end()) {
-                        ONDEMANDLOG(error)
+                        ONDEMANDLOG_TIME(warning, 3000)
                             << "Received data for unknown varHash: " << varHash << ", skipping.";
                         continue;
                     }
@@ -351,8 +351,6 @@ namespace ondemand
                 varWriteStamps_[bucketIdx].writeCount.fetch_add(1, std::memory_order_release);
                 blobType_.store(static_cast<uint32_t>(blobType), std::memory_order_release);
             }
-
-            
         }
     }
 
@@ -374,11 +372,11 @@ namespace ondemand
                     uint32_t thisBucketId = UINT32_MAX;
                     const std::string &tblName = tableDefine->name();
                     const std::string prefix = "bucket_";
-                    if (tblName.size() > prefix.size() &&
-                        tblName.compare(0, prefix.size(), prefix) == 0) {
+                    if (tblName.size() > prefix.size()
+                        && tblName.compare(0, prefix.size(), prefix) == 0) {
                         try {
-                            thisBucketId = static_cast<uint32_t>(
-                                std::stoul(tblName.substr(prefix.size())));
+                            thisBucketId =
+                                static_cast<uint32_t>(std::stoul(tblName.substr(prefix.size())));
                         } catch (...) {
                         }
                     }
@@ -397,8 +395,8 @@ namespace ondemand
                     if (thisBucketId != UINT32_MAX) {
                         std::vector<uint64_t> toRemove;
                         for (auto it = varIndex_.begin(); it != varIndex_.end();) {
-                            if (it->second.bucketIndex == thisBucketId &&
-                                incomingHashes.find(it->first) == incomingHashes.end()) {
+                            if (it->second.bucketIndex == thisBucketId
+                                && incomingHashes.find(it->first) == incomingHashes.end()) {
                                 ONDEMANDLOG(info)
                                     << "Removing deleted var: " << it->second.realVarName;
                                 toRemove.push_back(it->first);
@@ -995,6 +993,56 @@ namespace ondemand
         }
         return result;
     }
+
+    void OnDemandSub::onParticipantDiscovery(const DdsWrapper::ParticipantInfo &info)
+    {
+        if (info.status != DdsWrapper::ParticipantStatus::REMOVED
+            && info.status != DdsWrapper::ParticipantStatus::DROPPED) {
+            return;
+        }
+
+        const std::string &pubNodeName = info.participant_name;
+        if (pubNodeName.empty()) {
+            return;
+        }
+
+        /* 找出所有属于该 pub 节点的变量并清除 */
+        std::vector<uint64_t> toRemove;
+        {
+            std::unique_lock lock(varIndexMutex_);
+            for (auto it = varIndex_.begin(); it != varIndex_.end();) {
+                const auto &meta = it->second;
+                if (meta.varDefine && meta.varDefine->nodeName() == pubNodeName) {
+                    toRemove.push_back(it->first);
+                    varStore_.unregister_var(it->first);
+                    totalReceived_.fetch_sub(1, std::memory_order_relaxed);
+                    it = varIndex_.erase(it);
+                } else {
+                    ++it;
+                }
+            }
+        }
+
+        if (toRemove.empty()) {
+            return;
+        }
+
+        /* 清除对应的订阅回调 */
+        {
+            std::lock_guard<std::mutex> cbLock(subscriptionCallbacksMutex_);
+            for (uint64_t h : toRemove) {
+                subscriptionCallbacks_.erase(h);
+            }
+        }
+
+        /* 触发调度器重建，取消已无成员的分组定时器 */
+        callbackDirty_.store(true, std::memory_order_release);
+
+        ONDEMANDLOG(info) << "Pub participant offline: " << pubNodeName
+                          << ", removed " << toRemove.size() << " vars";
+    }
+
+
 
     /**
      * @brief 停止订阅器

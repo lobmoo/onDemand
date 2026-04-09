@@ -129,7 +129,8 @@ namespace ondemand
 
     private:
         // ParticipantListener 回调
-        // void onReaderDiscovery(const DdsWrapper::EndpointInfo &info) override;
+         void onParticipantDiscovery(const DdsWrapper::ParticipantInfo &info) override;
+         
         /**
          * @brief 订阅者发现回调，处理新订阅者的注册信息，更新内部状态
          * @param  info             订阅者端点信息，包含节点名称、订阅的变量和频率等
