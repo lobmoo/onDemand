@@ -114,16 +114,14 @@ namespace ondemand
             return false;
         }
 
-        /*创建时间轮调度器: 1ms tick 精度，线程池 4 线程*/
-        const size_t poolSize = 4;
-        publishScheduler_ = std::make_unique<TimerScheduler>(1, poolSize);
-
+        /*创建时间轮调度器: 1ms tick，thread_pool_size=0 表示回调直接在 timer 线程执行
+         * publishGroupData 是纯 CPU（read_batch + DDS write），无用户代码，不需要线程池*/
+        publishScheduler_ = std::make_unique<TimerScheduler>(1, 0);
         registerProcessThread_ = std::thread(&OnDemandPub::processReceiveRegister, this);
         publishSchedulerThread_ = std::thread(&OnDemandPub::processPublishTaskScheduler, this);
         freqChangeCbThread_ = std::thread(&OnDemandPub::processFreqChangeCallback, this);
 
-        ONDEMANDLOG(info) << "OnDemandPub started (TimerScheduler: 1ms tick, pool=" << poolSize
-                          << ")";
+        ONDEMANDLOG(info) << "OnDemandPub started (TimerScheduler: 1ms tick, direct execute)";
         return true;
     }
 
