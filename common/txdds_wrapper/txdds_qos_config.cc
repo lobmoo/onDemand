@@ -336,6 +336,52 @@ const BaoSky::dds::DataReaderQos &DataReaderQoSBuilder::getQos() const
     return qos_;
 }
 
+PublisherQoSBuilder::PublisherQoSBuilder()
+{
+}
+
+PublisherQoSBuilder &PublisherQoSBuilder::setPartition(const std::string &partition)
+{
+    if (!partition.empty()) {
+        qos_.partition.mName.push_back(partition);
+    }
+    return *this;
+}
+
+PublisherQoSBuilder &PublisherQoSBuilder::setAutoEnable(bool enable)
+{
+    qos_.entity_factory.mAutoEnableCreatedEntities = enable;
+    return *this;
+}
+
+const BaoSky::dds::PublisherQos &PublisherQoSBuilder::getQos() const
+{
+    return qos_;
+}
+
+SubscriberQoSBuilder::SubscriberQoSBuilder()
+{
+}
+
+SubscriberQoSBuilder &SubscriberQoSBuilder::setPartition(const std::string &partition)
+{
+    if (!partition.empty()) {
+        qos_.partition.mName.push_back(partition);
+    }
+    return *this;
+}
+
+SubscriberQoSBuilder &SubscriberQoSBuilder::setAutoEnable(bool /*enable*/)
+{
+    // TXDDS SubscriberQos currently has no entity_factory equivalent; keep API compatibility.
+    return *this;
+}
+
+const BaoSky::dds::SubscriberQos &SubscriberQoSBuilder::getQos() const
+{
+    return qos_;
+}
+
 namespace QoSPresets
 {
     ParticipantQoSBuilder defaultParticipant()
@@ -370,6 +416,18 @@ namespace QoSPresets
             .setReliabilityKind(ReliabilityKind::RELIABLE)
             .setDurabilityKind(DurabilityKind::TRANSIENT_LOCAL)
             .setHistoryKind(HistoryKind::KEEP_ALL);
+    }
+
+    PublisherQoSBuilder defaultPublisher()
+    {
+        PublisherQoSBuilder builder;
+        return builder;
+    }
+
+    SubscriberQoSBuilder defaultSubscriber()
+    {
+        SubscriberQoSBuilder builder;
+        return builder;
     }
 } // namespace QoSPresets
 

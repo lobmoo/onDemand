@@ -20,8 +20,8 @@
 #endif
 
 #include "log/logger.h"
-#include "ondemand/on_demand_pub.h"
-#include "ondemand/on_demand_sub.h"
+#include "on_demand_pub.h"
+#include "on_demand_sub.h"
 
 namespace {
 

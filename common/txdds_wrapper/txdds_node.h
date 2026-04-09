@@ -1,27 +1,21 @@
 /**
  * @file txdds_node.h
- * @brief 
+ * @brief
  * @author wwk (1162431386@qq.com)
  * @version 1.0
  * @date 2025-11-21
- * 
- * @copyright Copyright (c) 2025  by  wwk : wwk.lobmo@gmail.com
- * 
- * @par 修改日志:
- * <table>
- * <tr><th>Date       <th>Version <th>Author  <th>Description
- * <tr><td>2025-11-21     <td>1.0     <td>wwk   <td>修改?
- * </table>
+ *
+ * @copyright Copyright (c) 2025 by wwk : wwk.lobmo@gmail.com
  */
 #ifndef TXDDS_NODE_H
 #define TXDDS_NODE_H
 
-#include <memory>
-#include <stdexcept>
-#include <unordered_map>
-#include <mutex>
 #include <functional>
+#include <memory>
+#include <mutex>
+#include <stdexcept>
 #include <typeinfo>
+#include <unordered_map>
 
 #include "txdds/DCPS/domain/DomainParticipantFactory.h"
 #include "txdds/DCPS/domain/qos/DomainParticipantQos.h"
@@ -49,31 +43,13 @@ public:
     using DDSDataWriterListener = TxddsWrapper::DataWriterListener;
     using DomainParticipantListener = TxddsWrapper::ParticipantListener;
 
-    /**
-     * @brief 创建数据通信节点(使用默认QoS和监听器)
-     * @param domainId domainId
-     * @param participant_name participant_name  
-     * @param listener 监听器
-     */
     TXDDSNode(int domainId, const std::string &participant_name,
               ParticipantListener *listener = nullptr);
 
-    /**
-     * @brief 创建数据通信节点(使用自定义QoS)
-     * @param domainId domainId
-     * @param participant_name participant_name  
-     * @param participant_qos Participant QoS配置
-     * @param listener 监听器
-     */
     TXDDSNode(int domainId, const std::string &participant_name,
               const ParticipantQoSBuilder &participant_qos,
               ParticipantListener *listener = nullptr);
 
-    /**
-     * @brief 依照配置文件创建数据通信节点（TXDDS暂不支持，保留接口保持结构一致）
-     * @param qosXmlConfig 配置文件路径
-     * @param listener 监听器
-     */
     TXDDSNode(const std::string &qosXmlConfig, ParticipantListener *listener = nullptr);
 
     ~TXDDSNode();
@@ -82,66 +58,46 @@ public:
     TXDDSNode &operator=(const TXDDSNode &) = delete;
     TXDDSNode(TXDDSNode &&) = delete;
     TXDDSNode &operator=(TXDDSNode &&) = delete;
-    void disableListener() { participant_->SetListener(nullptr, 0); }
-    /** 将所有 DataReader 的 listener 置空（TXDDS 若需可后续实现） */
+
+    void disableListener()
+    {
+        if (participant_ != nullptr) {
+            participant_->SetListener(nullptr, 0);
+        }
+    }
+
     void disableAllDataReaderListeners() {}
-    /**
-     * @brief 获取初始化状态
-     */
+
     bool isInitialized() const { return initialized_; }
 
-    /**
-     *  Compatibility method with FastDDS wrapper call sites.
-     * TXDDS participant liveliness assertion hook is currently a no-op.
-     */
     void assertLiveliness() {}
+
+    // FastDDS-compatible entity APIs
+    bool createPublisher(const std::string &name, const PublisherQoSBuilder &qos);
+    bool createSubscriber(const std::string &name, const SubscriberQoSBuilder &qos);
+    bool updatePublisherQos(const std::string &name, const PublisherQoSBuilder &qos);
+    bool updateSubscriberQos(const std::string &name, const SubscriberQoSBuilder &qos);
 
     template <typename MESSAGE, typename PUBSUB_TYPE>
     std::shared_ptr<TxddsWrapper::TXDDSTopicWriter<MESSAGE>>
     createDataWriter(const std::string topicName, DDSDataWriterListener *listener = nullptr)
     {
-        if (!initialized_) {
-            LOG(error) << "TXDDSNode not initialized";
-            return nullptr;
-        }
-
-        std::lock_guard<std::mutex> lock(mutex_);
-
-        if (writers_.find(topicName) != writers_.end()) {
-            if (writers_[topicName].use_count() > 0) {
-                LOG(error)
-                    << "DataWriter for topic '" << topicName
-                    << "' already exists. Use a different topic name or destroy the existing "
-                       "writer first.";
-                return nullptr;
-            }
-        }
-
-        if (!isTopicTypeRegistered(topicName)) {
-            addTopicDataTypeCreator(topicName, []() { return new PUBSUB_TYPE(); });
-            LOG(debug) << "Auto-registered " << typeid(PUBSUB_TYPE).name()
-                       << "PubSubType for topic: " << topicName;
-        }
-
-        if (!createTopic(topicName)) {
-            LOG(error) << "Failed to create topic: " << topicName;
-            return nullptr;
-        }
-
-        auto writerQos = default_writer_qos_.getQos();
-        auto topic = topics_[topicName];
-
-        auto writer = std::make_shared<TxddsWrapper::TXDDSTopicWriter<MESSAGE>>(
-            publisher_, topic, writerQos, listener);
-        writers_[topicName] = writer;
-
-        LOG(info) << "Created DataWriter for topic: " << topicName;
-        return writer;
+        return createDataWriter<MESSAGE, PUBSUB_TYPE>(topicName, "default", default_writer_qos_,
+                                                       listener);
     }
 
     template <typename MESSAGE, typename PUBSUB_TYPE>
     std::shared_ptr<TxddsWrapper::TXDDSTopicWriter<MESSAGE>>
     createDataWriter(const std::string topicName, const DataWriterQoSBuilder &writer_qos,
+                     DDSDataWriterListener *listener = nullptr)
+    {
+        return createDataWriter<MESSAGE, PUBSUB_TYPE>(topicName, "default", writer_qos, listener);
+    }
+
+    template <typename MESSAGE, typename PUBSUB_TYPE>
+    std::shared_ptr<TxddsWrapper::TXDDSTopicWriter<MESSAGE>>
+    createDataWriter(const std::string topicName, const std::string &publisher_name,
+                     const DataWriterQoSBuilder &writer_qos,
                      DDSDataWriterListener *listener = nullptr)
     {
         if (!initialized_) {
@@ -150,14 +106,20 @@ public:
         }
 
         std::lock_guard<std::mutex> lock(mutex_);
+
         if (writers_.find(topicName) != writers_.end()) {
             if (writers_[topicName].use_count() > 0) {
-                LOG(error)
-                    << "DataWriter for topic '" << topicName
-                    << "' already exists. Use a different topic name or destroy the existing "
-                       "writer first.";
+                LOG(error) << "DataWriter for topic '" << topicName
+                           << "' already exists. Use a different topic name or destroy the existing "
+                              "writer first.";
                 return nullptr;
             }
+        }
+
+        auto pub_it = publishers_.find(publisher_name);
+        if (pub_it == publishers_.end() || pub_it->second == nullptr) {
+            LOG(error) << "Publisher '" << publisher_name << "' not found";
+            return nullptr;
         }
 
         if (!isTopicTypeRegistered(topicName)) {
@@ -172,14 +134,14 @@ public:
         }
 
         auto writerQos = writer_qos.getQos();
-
         auto topic = topics_[topicName];
 
         auto writer = std::make_shared<TxddsWrapper::TXDDSTopicWriter<MESSAGE>>(
-            publisher_, topic, writerQos, listener);
+            pub_it->second, topic, writerQos, listener);
         writers_[topicName] = writer;
 
-        LOG(info) << "Created DataWriter for topic: " << topicName;
+        LOG(info) << "Created DataWriter for topic: " << topicName
+                  << " on publisher: " << publisher_name;
         return writer;
     }
 
@@ -189,50 +151,24 @@ public:
                      std::function<void(const std::string &, std::shared_ptr<MESSAGE>)> callback,
                      DataReaderListener<MESSAGE> *listener = nullptr)
     {
-        if (!initialized_) {
-            LOG(error) << "TXDDSNode not initialized";
-            return nullptr;
-        }
-
-        std::lock_guard<std::mutex> lock(mutex_);
-
-        if (readers_.find(topicName) != readers_.end()) {
-            if (readers_[topicName].use_count() > 0) {
-                LOG(error)
-                    << "DataReader for topic '" << topicName
-                    << "' already exists. Use a different topic name or destroy the existing "
-                       "reader first.";
-                return nullptr;
-            }
-        }
-
-        if (!isTopicTypeRegistered(topicName)) {
-            addTopicDataTypeCreator(topicName, []() { return new PUBSUB_TYPE(); });
-            LOG(debug) << "Auto-registered " << typeid(PUBSUB_TYPE).name()
-                       << "PubSubType for topic: " << topicName;
-        }
-
-        if (!createTopic(topicName)) {
-            LOG(error) << "Failed to create topic: " << topicName;
-            return nullptr;
-        }
-
-        auto readerQos = default_reader_qos_.getQos();
-
-        auto topic = topics_[topicName];
-
-        auto reader = std::make_shared<TxddsWrapper::TXDDSTopicReader<MESSAGE>>(
-            subscriber_, topic, callback, readerQos, listener);
-
-        readers_[topicName] = reader;
-
-        LOG(info) << "Created DataReader for topic: " << topicName;
-        return reader;
+        return createDataReader<MESSAGE, PUBSUB_TYPE>(topicName, "default", std::move(callback),
+                                                       default_reader_qos_, listener);
     }
 
     template <typename MESSAGE, typename PUBSUB_TYPE>
     std::shared_ptr<TxddsWrapper::TXDDSTopicReader<MESSAGE>>
     createDataReader(const std::string topicName,
+                     std::function<void(const std::string &, std::shared_ptr<MESSAGE>)> callback,
+                     const DataReaderQoSBuilder &reader_qos,
+                     DataReaderListener<MESSAGE> *listener = nullptr)
+    {
+        return createDataReader<MESSAGE, PUBSUB_TYPE>(topicName, "default", std::move(callback),
+                                                       reader_qos, listener);
+    }
+
+    template <typename MESSAGE, typename PUBSUB_TYPE>
+    std::shared_ptr<TxddsWrapper::TXDDSTopicReader<MESSAGE>>
+    createDataReader(const std::string topicName, const std::string &subscriber_name,
                      std::function<void(const std::string &, std::shared_ptr<MESSAGE>)> callback,
                      const DataReaderQoSBuilder &reader_qos,
                      DataReaderListener<MESSAGE> *listener = nullptr)
@@ -246,12 +182,17 @@ public:
 
         if (readers_.find(topicName) != readers_.end()) {
             if (readers_[topicName].use_count() > 0) {
-                LOG(error)
-                    << "DataReader for topic '" << topicName
-                    << "' already exists. Use a different topic name or destroy the existing "
-                       "reader first.";
+                LOG(error) << "DataReader for topic '" << topicName
+                           << "' already exists. Use a different topic name or destroy the existing "
+                              "reader first.";
                 return nullptr;
             }
+        }
+
+        auto sub_it = subscribers_.find(subscriber_name);
+        if (sub_it == subscribers_.end() || sub_it->second == nullptr) {
+            LOG(error) << "Subscriber '" << subscriber_name << "' not found";
+            return nullptr;
         }
 
         if (!isTopicTypeRegistered(topicName)) {
@@ -266,15 +207,15 @@ public:
         }
 
         auto readerQos = reader_qos.getQos();
-
         auto topic = topics_[topicName];
 
         auto reader = std::make_shared<TxddsWrapper::TXDDSTopicReader<MESSAGE>>(
-            subscriber_, topic, callback, readerQos, listener);
+            sub_it->second, topic, std::move(callback), readerQos, listener);
 
         readers_[topicName] = reader;
 
-        LOG(info) << "Created DataReader for topic: " << topicName;
+        LOG(info) << "Created DataReader for topic: " << topicName
+                  << " on subscriber: " << subscriber_name;
         return reader;
     }
 
@@ -286,44 +227,36 @@ private:
     template <typename T>
     void registerTopicType(const std::string &topicName)
     {
-        /*这里 new的裸指针会被TypeSupport构造包装成智能指针*/
         addTopicDataTypeCreator(topicName, []() { return new T(); });
     }
 
     void addTopicDataTypeCreator(const std::string &topicName, TopicDataTypeCreator creator);
 
-    // 核心方法
     bool createTopic(const std::string &topicName);
     BaoSky::dds::TopicDataType *getTopicDataType(const std::string &topicName);
     bool isTopicTypeRegistered(const std::string &topicName) const;
     void cleanup();
     void destroyParticipantResources();
 
-    // 配置相关
     int domain_id_ = 0;
     std::string participant_name_;
     std::string xml_config_path_;
     bool initialized_ = false;
 
-    // 默认QoS配置（可以通过setter修改）
     DataWriterQoSBuilder default_writer_qos_ = QoSPresets::defaultWriter();
     DataReaderQoSBuilder default_reader_qos_ = QoSPresets::defaultReader();
 
-    // TXDDS核心对象
     BaoSky::dds::IDomainParticipant *participant_ = nullptr;
-    BaoSky::dds::IPublisher *publisher_ = nullptr;
-    BaoSky::dds::ISubscriber *subscriber_ = nullptr;
+    std::unordered_map<std::string, BaoSky::dds::IPublisher *> publishers_;
+    std::unordered_map<std::string, BaoSky::dds::ISubscriber *> subscribers_;
 
-    // Topic管理
     std::unordered_map<std::string, BaoSky::dds::ITopic *> topics_;
     std::unordered_map<std::string, TopicDataTypeCreator> topic_types_;
     std::unordered_map<std::string, BaoSky::dds::TypeSupport> registered_topic_types_;
 
-    // 对象管理
     std::unordered_map<std::string, std::weak_ptr<void>> writers_;
     std::unordered_map<std::string, std::weak_ptr<void>> readers_;
 
-    // 线程安全
     mutable std::mutex mutex_;
 };
 } // namespace TxddsWrapper
