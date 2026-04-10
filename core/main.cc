@@ -1,40 +1,202 @@
 #include <bits/stdint-uintn.h>
 #include <chrono>
-#include <iostream>
-#include <string>
-#include <vector>
-#include <thread>
+#include <condition_variable>
+#include <cstdlib>
+#include <deque>
 #include <filesystem>
-#include <unistd.h>
 #include <iomanip>
+#include <iostream>
+#include <mutex>
+#include <string>
+#include <string_view>
+#include <thread>
+#include <unordered_map>
+#include <vector>
+#include <unistd.h>
 #include <atomic>
 #include <charconv>
-#include <mutex>
-#include <string_view>
-#include <cstdlib>
+#include <cstring>
 #include <pthread.h>
 #include "log/logger.h"
 #include "ondemand/on_demand_pub.h"
 #include "ondemand/on_demand_sub.h"
 
-uint32_t count = 1000;
+uint32_t count = 100000;
 
-static int parse_var_index(std::string_view varName)
+constexpr uint64_t kExpectedPeriodMs = 100ULL;
+constexpr uint64_t kTolerancePercent = 10ULL;
+constexpr uint64_t kToleranceMs = (kExpectedPeriodMs * kTolerancePercent) / 100ULL;
+constexpr uint64_t kUpperThresholdMs = kExpectedPeriodMs + kToleranceMs;
+constexpr uint64_t kLowerThresholdMs = kExpectedPeriodMs - kToleranceMs;
+constexpr uint32_t kStatsWindowRecv = 100U;
+
+struct BucketStats {
+    uint64_t last_ts_ms = 0;
+    uint32_t recv_count = 0;
+    uint32_t lost_count = 0;
+    uint32_t init_packet_count = 0; // Skip initial packets until stable
+    bool has_baseline = false;      // true after receiving 1st real packet
+};
+
+static std::unordered_map<std::string, uint32_t> g_repr_var_to_bucket = {
+    {"var9702", 0},  {"var9675", 1},  {"var9700", 2},  {"var9686", 3},  {"var9698", 4},
+    {"var9684", 5},  {"var9678", 6},  {"var9682", 7},  {"var9676", 8},  {"var9680", 9},
+    {"var9674", 10}, {"var9703", 11}, {"var9687", 12}, {"var9701", 13}, {"var9685", 14},
+    {"var9699", 15}, {"var9683", 16}, {"var9679", 17}, {"var9681", 18}, {"var9677", 19},
+};
+
+static std::unordered_map<uint32_t, BucketStats> g_bucket_stats;
+
+struct OwnedBatchItem {
+    std::string var_name;
+    std::string type_name;
+    std::string type_version;
+    std::vector<uint8_t> data;
+    uint32_t data_size = 0;
+    uint64_t timestamp_ms = 0;
+    int32_t blobType = 0;
+};
+
+struct BatchEvent {
+    std::string node_name;
+    std::vector<OwnedBatchItem> items;
+};
+
+static std::deque<BatchEvent> g_bucket_event_queue;
+static std::mutex g_bucket_event_mutex;
+static std::condition_variable g_bucket_event_cv;
+static std::atomic<bool> g_bucket_worker_started{false};
+
+static void processBucketSample(uint32_t bucket_id, uint64_t ts)
 {
-    constexpr std::string_view kPrefix = "var";
-    if (varName.size() <= kPrefix.size() || varName.compare(0, kPrefix.size(), kPrefix) != 0) {
-        return -1;
+    BucketStats &st = g_bucket_stats[bucket_id];
+
+    // Skip initial packets until system is stable
+    constexpr uint32_t kSkipInitPackets = 10U;
+    if (st.init_packet_count < kSkipInitPackets) {
+        st.init_packet_count++;
+        st.last_ts_ms = ts;
+        return;
     }
 
-    int idx = -1;
-    const char *begin = varName.data() + kPrefix.size();
-    const char *end = varName.data() + varName.size();
-    auto [ptr, ec] = std::from_chars(begin, end, idx);
-    if (ec != std::errc() || ptr != end || idx < 0) {
-        return -1;
+    // First real packet: just establish baseline, no delta calc
+    if (!st.has_baseline) {
+        st.last_ts_ms = ts;
+        st.has_baseline = true;
+        return;
     }
-    return idx;
+
+    // Second+ real packet: calculate delta
+    if (ts > st.last_ts_ms) {
+        uint64_t delta = ts - st.last_ts_ms;
+        uint32_t lost = 0;
+
+        // Only count as lost packet if delta > 100ms
+        if (delta > kExpectedPeriodMs) {
+            uint64_t expected_count = (delta + kToleranceMs / 2) / kExpectedPeriodMs;
+            lost = (expected_count <= 1) ? 0U : static_cast<uint32_t>(expected_count - 1U);
+        }
+
+        st.recv_count += 1;
+        st.lost_count += lost;
+        if (st.recv_count >= kStatsWindowRecv) {
+            uint32_t total = st.recv_count + st.lost_count;
+            double rate = (total == 0) ? 0.0 : (100.0 * st.lost_count / total);
+            LOG(critical) << "| bucket=" << bucket_id << " | recv=" << st.recv_count
+                          << " | lost=" << st.lost_count << " | total=" << total
+                          << " | loss_rate=" << rate << "%";
+            st.recv_count = 0;
+            st.lost_count = 0;
+        }
+    }
+
+    st.last_ts_ms = ts;
 }
+
+static void ensureBucketWorkerStarted()
+{
+    bool expected = false;
+    if (!g_bucket_worker_started.compare_exchange_strong(expected, true)) {
+        return;
+    }
+
+    std::thread([]() {
+        auto local_start = std::chrono::steady_clock::now();
+        constexpr uint64_t kWarmupMs = 5000ULL;
+
+        while (true) {
+            BatchEvent batch;
+            {
+                std::unique_lock<std::mutex> lock(g_bucket_event_mutex);
+                g_bucket_event_cv.wait(lock, []() { return !g_bucket_event_queue.empty(); });
+                batch = std::move(g_bucket_event_queue.front());
+                g_bucket_event_queue.pop_front();
+            }
+
+            auto now = std::chrono::steady_clock::now();
+            uint64_t elapsed_ms =
+                std::chrono::duration_cast<std::chrono::milliseconds>(now - local_start).count();
+            if (elapsed_ms < kWarmupMs) {
+                continue;
+            }
+
+            for (const auto &item : batch.items) {
+                auto it = g_repr_var_to_bucket.find(item.var_name);
+                if (it == g_repr_var_to_bucket.end()) {
+                    continue;
+                }
+                processBucketSample(it->second, item.timestamp_ms);
+            }
+        }
+    }).detach();
+}
+
+void dataCallback(const std::vector<dsf::ondemand::VarCallbackData> &vars)
+{
+    if (vars.empty()) {
+        return;
+    }
+
+    ensureBucketWorkerStarted();
+
+    BatchEvent batch;
+    if (!vars.front().nodeName.empty()) {
+        batch.node_name.assign(vars.front().nodeName.data(), vars.front().nodeName.size());
+    }
+    batch.items.reserve(vars.size());
+
+    for (const auto &src : vars) {
+        OwnedBatchItem dst;
+        if (!src.varName.empty()) {
+            dst.var_name.assign(src.varName.data(), src.varName.size());
+        }
+        if (!src.varType.empty()) {
+            dst.type_name.assign(src.varType.data(), src.varType.size());
+        }
+        if (!src.type_version.empty()) {
+            dst.type_version.assign(src.type_version.data(), src.type_version.size());
+        }
+        if (src.data != nullptr && src.size > 0) {
+            const uint8_t *ptr = static_cast<const uint8_t *>(src.data);
+            dst.data.assign(ptr, ptr + src.size);
+        }
+        dst.data_size = static_cast<uint32_t>(src.size);
+        dst.timestamp_ms = src.timestampNs / 1000000ULL;
+        dst.blobType = static_cast<int32_t>(src.blobType);
+        batch.items.push_back(std::move(dst));
+    }
+
+    if (batch.items.empty()) {
+        return;
+    }
+
+    {
+        std::lock_guard<std::mutex> lock(g_bucket_event_mutex);
+        g_bucket_event_queue.push_back(std::move(batch));
+    }
+    g_bucket_event_cv.notify_one();
+}
+
 void publish()
 {
     dsf::ondemand::OnDemandPub pub;
@@ -54,7 +216,6 @@ void publish()
     pub.setFreqChangeCallback([](const std::string &varName, uint32_t freq) {
         LOG(info) << "FreqChangeCallback: var=" << varName << " newFreq=" << freq;
     });
-    std::this_thread::sleep_for(std::chrono::seconds(10));
     std::vector<std::string> varDelNames;
     for (int i = 0; i < count; ++i) {
         std::string varName = "var" + std::to_string(i);
@@ -71,7 +232,7 @@ void publish()
     std::vector<dsf::ondemand::OnDemandPub::VarWriteItem> batchItems(count);
     std::vector<int> vals(count);
     for (int i = 0; i < count; ++i) {
-        vals[i] = i;
+        vals[i] = i + 30;
         batchItems[i].id = varIds[i];
         batchItems[i].data = &vals[i];
         batchItems[i].size = sizeof(int);
@@ -83,7 +244,7 @@ void publish()
 #endif
         while (true) {
             pub.setVarDataBatch(batchItems.data(), count);
-            std::this_thread::sleep_for(std::chrono::milliseconds(200));
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
     });
     setVarThread.join();
@@ -109,6 +270,12 @@ void subscribe()
     LOG(critical) << "Waiting for vars... received=" << sub.getTotalReceivedVars();
     std::vector<dsf::ondemand::SubscriptionItem> items;
     std::vector<std::string> unitems;
+    for (int i = 0; i < count; ++i) {
+        std::string varName = "var" + std::to_string(i);
+        items.push_back({varName, 100});
+        unitems.push_back(varName);
+    }
+    LOG(info) << "Subscribing representative vars for packet-loss stats, count=" << items.size();
 
     // auto varinfo = sub.getAvailableVars();
     // LOG(critical) << "Waiting for vars... received=" << varinfo.size() << " nodes";
@@ -119,67 +286,7 @@ void subscribe()
     //     }
     // }
 
-    const int subscribedCount = 1000;
-
-    /* 延迟/丢包统计参数 */
-    constexpr int64_t kPeriodMs = 10;          // 订阅周期
-    constexpr int64_t kPrintIntervalMs = 1000; // 打印间隔 1s
-    constexpr int64_t kBucketSize = 20;        // bucket 数量，与 ONDEMAND_BUCKET_SIZE 一致
-    constexpr uint64_t kExpectedBatch = (kPrintIntervalMs / kPeriodMs) * kBucketSize;
-
-    for (int i = 0; i < subscribedCount; ++i) {
-        std::string varName = "var" + std::to_string(i);
-        items.push_back({varName, static_cast<uint32_t>(kPeriodMs)});
-        unitems.push_back(varName);
-    }
-
-    struct CallbackStats {
-        std::atomic<uint64_t> totalCount{0};
-        std::atomic<uint64_t> batchCount{0};
-        std::atomic<int64_t> latencySumMs{0};
-        std::atomic<int64_t> latencyMaxMs{0};
-
-        std::mutex gapMutex;
-        std::vector<uint64_t> lastSeenRecvNs;
-        uint64_t gapSampleCount{0};
-        uint64_t gapOverrunCount{0}; // gap > 1.5x period
-        int64_t gapSumMs{0};
-        int64_t gapDevSumMs{0};
-        int64_t gapDevMaxMs{0};
-
-        explicit CallbackStats(size_t n) : lastSeenRecvNs(n, 0) {}
-    };
-    auto stats = std::make_shared<CallbackStats>(subscribedCount);
-
-    auto nodeAObservedTsNs = std::make_shared<std::atomic<uint64_t>>(0);
-    constexpr uint64_t kExpectedIntervalNs = 10ULL * 1000ULL * 1000ULL;
-    constexpr uint64_t kToleranceNs = 2ULL * 1000ULL * 1000ULL;
-
-    constexpr uint64_t kWarnThresholdNs = kExpectedIntervalNs + kToleranceNs;
-    sub.subscribe("pubNode", items,
-                  [nodeAObservedTsNs](const std::vector<dsf::ondemand::VarCallbackData> &vars) {
-                      if (vars.empty())
-                          return;
-                      for (const auto &var : vars) {
-                          if (var.varName == "var0") {
-                              LOG(info) << "NodeA received " << var.varName
-                                        << "   timestamp=" << var.timestampNs;
-                              uint64_t currentTsNs = var.timestampNs;
-                              uint64_t prevTsNs = nodeAObservedTsNs->exchange(
-                                  currentTsNs, std::memory_order_acq_rel);
-                              if (prevTsNs != 0 && currentTsNs > prevTsNs) {
-                                  uint64_t deltaNs = currentTsNs - prevTsNs;
-                                  if (deltaNs > kWarnThresholdNs) {
-                                      LOG(warning)
-                                          << "NodeA observed " << var.varName << " timestamp gap "
-                                          << (deltaNs / 1000000ULL)
-                                          << "ms (threshold=" << (kWarnThresholdNs / 1000000ULL)
-                                          << "ms)";
-                                  }
-                              }
-                          }
-                      }
-                  });
+    sub.subscribe("pubNode", items, dataCallback);
 
     // sub.unsubscribe("pubNode", unitems);
     // sub.stop();
