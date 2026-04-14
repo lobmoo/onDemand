@@ -122,6 +122,14 @@ namespace ondemand
             tableDefineCb_ = std::move(cb);
         }
 
+        /**
+         * @brief 手动清理指定 pub 节点的所有变量（用于外部检测到 pub 掉线的场景）
+         * @param  pubNodeName  pub 节点名称
+         * @return true  找到并清理成功
+         * @return false 未找到该节点或参数无效
+         */
+        bool cleanupParticipantPublish(const std::string &pubNodeName);
+
         DSF::Var::BLOB_TYPE getBlobType() const
         {
             return static_cast<DSF::Var::BLOB_TYPE>(blobType_.load(std::memory_order_acquire));

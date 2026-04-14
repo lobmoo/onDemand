@@ -1001,9 +1001,13 @@ namespace ondemand
             return;
         }
 
-        const std::string &pubNodeName = info.participant_name;
+        (void)cleanupParticipantPublish(info.participant_name);
+    }
+
+    bool OnDemandSub::cleanupParticipantPublish(const std::string &pubNodeName)
+    {
         if (pubNodeName.empty()) {
-            return;
+            return false;
         }
 
         /* 找出所有属于该 pub 节点的变量并清除 */
@@ -1024,7 +1028,7 @@ namespace ondemand
         }
 
         if (toRemove.empty()) {
-            return;
+            return false;
         }
 
         /* 清除对应的订阅回调 */
@@ -1040,6 +1044,7 @@ namespace ondemand
 
         ONDEMANDLOG(info) << "Pub participant offline: " << pubNodeName
                           << ", removed " << toRemove.size() << " vars";
+        return true;
     }
 
 
