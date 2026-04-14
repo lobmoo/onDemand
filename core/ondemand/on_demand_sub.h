@@ -242,7 +242,6 @@ namespace ondemand
             std::string varName;
             std::string varType;
             std::string typeVersion;
-            DataCallback callback;
         };
 
         /**
@@ -327,6 +326,7 @@ namespace ondemand
         struct CallbackGroupEntry {
             std::shared_ptr<std::vector<CallbackVarInfo>> members;
             std::shared_ptr<std::atomic<bool>> running{std::make_shared<std::atomic<bool>>(false)};
+            DataCallback callback; // 组级回调，不再从 members 逐个查找
         };
         std::unordered_map<CallbackGroupKey, CallbackGroupEntry, CallbackGroupKeyHash>
             callbackGroupMembers_;

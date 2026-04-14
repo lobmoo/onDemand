@@ -714,9 +714,12 @@ namespace ondemand
             }
 
             /* 从 subscriptionCallbacks_ + varIndex_ 构建期望分组 */
+            struct DesiredEntry {
+                std::shared_ptr<std::vector<CallbackVarInfo>> members;
+                DataCallback callback;
+            };
             using DesiredMap =
-                std::unordered_map<CallbackGroupKey, std::shared_ptr<std::vector<CallbackVarInfo>>,
-                                   CallbackGroupKeyHash>;
+                std::unordered_map<CallbackGroupKey, DesiredEntry, CallbackGroupKeyHash>;
 
             DesiredMap desired;
             {
@@ -743,9 +746,10 @@ namespace ondemand
 
                     CallbackGroupKey key{static_cast<uint32_t>(vit->second.bucketIndex),
                                          cbInfo.freqMs};
-                    auto &vec = desired[key];
-                    if (!vec) {
-                        vec = std::make_shared<std::vector<CallbackVarInfo>>();
+                    auto &entry = desired[key];
+                    if (!entry.members) {
+                        entry.members = std::make_shared<std::vector<CallbackVarInfo>>();
+                        entry.callback = cbInfo.callback; // 组级 callback，取第一个即可
                     }
                     CallbackVarInfo vi;
                     vi.varHash = varHash;
@@ -761,8 +765,7 @@ namespace ondemand
                                              << ", callback will receive empty nodeName/varType";
                     }
                     vi.varName = cbInfo.varName;
-                    vi.callback = cbInfo.callback;
-                    vec->push_back(std::move(vi));
+                    entry.members->push_back(std::move(vi));
                 }
             }
 
@@ -786,9 +789,10 @@ namespace ondemand
                 }
 
                 /* 新增或更新分组 */
-                for (auto &[key, members] : desired) {
-                    /* 始终刷新成员列表，保留已有的 running flag */
-                    callbackGroupMembers_[key].members = std::move(members);
+                for (auto &[key, entry] : desired) {
+                    /* 始终刷新成员列表和 callback，保留已有的 running flag */
+                    callbackGroupMembers_[key].members = std::move(entry.members);
+                    callbackGroupMembers_[key].callback = std::move(entry.callback);
 
                     /* 仅为新增分组创建定时器，已有分组的定时器保持不变 */
                     if (callbackGroupTimers_.find(key) == callbackGroupTimers_.end()) {
@@ -830,19 +834,21 @@ namespace ondemand
     void OnDemandSub::callbackGroupData(uint32_t bucketIndex, uint32_t freqMs)
     {
 
-        /* 获取组成员快照 + running flag */
+        /* 获取组成员快照 + running flag + callback */
         std::shared_ptr<std::vector<CallbackVarInfo>> members;
         std::shared_ptr<std::atomic<bool>> running;
+        DataCallback groupCallback;
         {
             std::lock_guard<std::mutex> lock(callbackGroupsMutex_);
             CallbackGroupKey key{bucketIndex, freqMs};
             auto it = callbackGroupMembers_.find(key);
             if (it == callbackGroupMembers_.end() || !it->second.members
-                || it->second.members->empty()) {
+                || it->second.members->empty() || !it->second.callback) {
                 return;
             }
             members = it->second.members;
             running = it->second.running;
+            groupCallback = it->second.callback;
         }
 
         /* 防止并发执行：上次还没执行完则跳过本次 */
@@ -860,7 +866,6 @@ namespace ondemand
             ~RunningGuard() { flag.store(false, std::memory_order_release); }
         } guard{*running};
 
-        const DataCallback *groupCallback = nullptr;
         std::vector<VarCallbackData> batch;
         batch.reserve(members->size());
 
@@ -914,9 +919,6 @@ namespace ondemand
         dataBuf.reserve(reserveBytes);
 
         for (const auto &info : *members) {
-            if (!info.callback)
-                continue;
-
             size_t off = dataBuf.size();
             uint32_t sz = 0;
             {
@@ -926,8 +928,6 @@ namespace ondemand
                                                   << " varName: " << info.varName;
                     continue;
                 }
-                if (!groupCallback)
-                    groupCallback = &info.callback;
                 sz = handle.size();
                 const auto *src = reinterpret_cast<const uint8_t *>(handle.ptr());
                 dataBuf.insert(dataBuf.end(), src, src + sz);
@@ -935,7 +935,7 @@ namespace ondemand
             copied.push_back({&info, off, sz});
         }
 
-        if (copied.empty() || !groupCallback)
+        if (copied.empty())
             return;
 
         /* dataBuf 不再增长，指针稳定，统一填 batch */
@@ -949,7 +949,7 @@ namespace ondemand
             return;
 
         try {
-            (*groupCallback)(batch);
+            groupCallback(batch);
         } catch (const std::exception &e) {
             ONDEMANDLOG_TIME(error, 5000) << "Batch callback exception for freq=" << freqMs
                                           << "ms, vars=" << batch.size() << " err: " << e.what();
