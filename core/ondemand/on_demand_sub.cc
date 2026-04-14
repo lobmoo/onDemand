@@ -726,12 +726,17 @@ namespace ondemand
                     /* 查找 varIndex_ 获取 varId 和 dataSize */
                     auto vit = varIndex_.find(varHash);
                     if (vit == varIndex_.end()) {
-                        /* 变量定义尚未到达, 或者删除时 跳过 */
+                        ONDEMANDLOG_TIME(warning, 5000)
+                            << "No varIndex entry for subscribed varHash: " << varHash
+                            << ", skipping callback registration";
                         continue;
                     }
 
                     int32_t varId = vit->second.varId;
                     if (varId < 0 || static_cast<uint32_t>(varId) == VarStore::kInvalidId) {
+                        ONDEMANDLOG_TIME(warning, 5000)
+                            << "Invalid varId for varHash: " << varHash
+                            << ", likely varStore not finalized or registration failed, skipping callback registration";
                         /* varStore 尚未 finalize 或注册失败，跳过 */
                         continue;
                     }
@@ -1031,15 +1036,9 @@ namespace ondemand
             return false;
         }
 
-        /* 清除对应的订阅回调 */
-        {
-            std::lock_guard<std::mutex> cbLock(subscriptionCallbacksMutex_);
-            for (uint64_t h : toRemove) {
-                subscriptionCallbacks_.erase(h);
-            }
-        }
-
         /* 触发调度器重建，取消已无成员的分组定时器 */
+        /* 注意：不清除 subscriptionCallbacks_，保留用户订阅意图，
+         * 待 pub 重新上线发 TableDefine 后可自动恢复 */
         callbackDirty_.store(true, std::memory_order_release);
 
         ONDEMANDLOG(info) << "Pub participant offline: " << pubNodeName
