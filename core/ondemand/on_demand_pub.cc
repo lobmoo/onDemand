@@ -1299,6 +1299,9 @@ namespace ondemand
             nextNodeSlot_ = 0;
         }
 
+        /*重置 varStore_，清空 table/metas/arena，避免重新注册时 id 冲突*/
+        varStore_.reset();
+
         /*清理发布分组相关数据*/
         {
             std::lock_guard<std::mutex> lock(publishGroupsMutex_);

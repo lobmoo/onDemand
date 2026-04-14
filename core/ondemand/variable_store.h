@@ -58,16 +58,17 @@ namespace ondemand
      *   读端:   seq.load(acquire)                   — 与写结束 release 配对
      */
     struct alignas(64) Slot {
-        std::atomic<uint32_t> seq{0};       // seqlock 计数器，奇数=写入中
-        std::atomic<uint8_t>  committed{0}; // 当前可读缓冲区索引 (0 或 1)
-        uint32_t valid_size[2]{0, 0};       // 每个缓冲区的有效数据长度 (8B)
+        std::atomic<uint32_t> seq{0};      // seqlock 计数器，奇数=写入中
+        std::atomic<uint8_t> committed{0}; // 当前可读缓冲区索引 (0 或 1)
+        uint32_t valid_size[2]{0, 0};      // 每个缓冲区的有效数据长度 (8B)
         uint8_t pad_[48]{};
         std::byte data[];
     };
     static_assert(alignof(Slot) >= 64, "Slot alignment insufficient");
     static_assert(sizeof(Slot) == 64, "Slot header must be exactly 64 bytes");
 
-    inline constexpr uint32_t slot_bytes(uint32_t payload_size) {
+    inline constexpr uint32_t slot_bytes(uint32_t payload_size)
+    {
         return align64(static_cast<uint32_t>(sizeof(Slot)) + 2u * payload_size);
     }
 
@@ -86,9 +87,8 @@ namespace ondemand
             ConfigGuard g(this);
             auto it = table_.find(hash);
             if (it != table_.end())
-                return (it->second < metas_.size() && metas_[it->second].size == size)
-                           ? it->second
-                           : kInvalidId;
+                return (it->second < metas_.size() && metas_[it->second].size == size) ? it->second
+                                                                                       : kInvalidId;
             uint32_t id = metas_.size();
             table_[hash] = id;
             metas_.push_back({id, arena_size_, size});
@@ -103,6 +103,19 @@ namespace ondemand
         {
             auto it = table_.find(hash);
             return (it != table_.end()) ? it->second : kInvalidId;
+        }
+
+        /**
+         * @brief 完全重置，释放 arena 并清空所有元数据，用于节点重新注册场景
+         */
+        void reset()
+        {
+            ConfigGuard g(this);
+            cleanup();
+            table_.clear();
+            metas_.clear();
+            var_count_ = 0;
+            arena_size_ = 0;
         }
 
         /*这里是软删除，不会真的删除，但是总大小可控，目前先这样*/
@@ -129,13 +142,14 @@ namespace ondemand
                 return true;
 
             arena_size_ = align64(arena_size_);
-            uint32_t old_size = var_count_
-                                    ? metas_[var_count_ - 1].offset + slot_bytes(metas_[var_count_ - 1].size)
-                                    : 0;
+            uint32_t old_size =
+                var_count_ ? metas_[var_count_ - 1].offset + slot_bytes(metas_[var_count_ - 1].size)
+                           : 0;
 
             void *new_arena = std::aligned_alloc(64, arena_size_);
             if (!new_arena) {
-                ONDEMANDLOG(error) << "Failed to allocate arena (aligned_alloc), size: " << arena_size_;
+                ONDEMANDLOG(error)
+                    << "Failed to allocate arena (aligned_alloc), size: " << arena_size_;
                 return false;
             }
 
@@ -164,7 +178,7 @@ namespace ondemand
             auto *old_flags = dirty_flags_;
             dirty_flags_ = new_flags;
             var_count_ = new_count;
-            delete[] old_flags;  // Safe: only after pointers updated
+            delete[] old_flags; // Safe: only after pointers updated
             return true;
         }
 
@@ -232,8 +246,8 @@ namespace ondemand
          * @param sizes 对应数据大小数组
          * @param count 数量
          */
-        void write_batch(const uint32_t *ids, const void *const *datas,
-                         const uint32_t *sizes, size_t count)
+        void write_batch(const uint32_t *ids, const void *const *datas, const uint32_t *sizes,
+                         size_t count)
         {
             if (!ids || !datas || !sizes)
                 return;
@@ -321,10 +335,10 @@ namespace ondemand
          */
         class ZeroCopyReadHandle
         {
-            const VarStore  *s_;
+            const VarStore *s_;
             const std::byte *ptr_;
-            uint32_t         size_;
-            bool             held_;
+            uint32_t size_;
+            bool held_;
 
         public:
             ZeroCopyReadHandle(const VarStore *s, uint32_t id)
@@ -369,7 +383,7 @@ namespace ondemand
             ZeroCopyReadHandle(ZeroCopyReadHandle &&o) noexcept
                 : s_(o.s_), ptr_(o.ptr_), size_(o.size_), held_(o.held_)
             {
-                o.ptr_ = nullptr;  // 标记原对象已失效，析构时不 op_exit
+                o.ptr_ = nullptr; // 标记原对象已失效，析构时不 op_exit
                 o.held_ = false;
             }
             ZeroCopyReadHandle(const ZeroCopyReadHandle &) = delete;
@@ -404,12 +418,16 @@ namespace ondemand
                 /* seqlock 自旋读，op_enter 已防止 arena 重分配 */
                 for (;;) {
                     uint32_t s1 = slot->seq.load(std::memory_order_acquire);
-                    if (s1 & 1) { std::this_thread::yield(); continue; }
+                    if (s1 & 1) {
+                        std::this_thread::yield();
+                        continue;
+                    }
                     uint8_t idx = slot->committed.load(std::memory_order_acquire);
                     std::atomic_thread_fence(std::memory_order_acquire);
                     if (s1 == slot->seq.load(std::memory_order_acquire)) {
                         uint32_t actual = slot->valid_size[idx];
-                        if (actual == 0 || actual > size) actual = size;
+                        if (actual == 0 || actual > size)
+                            actual = size;
                         fn(i, reinterpret_cast<const void *>(slot->data + idx * size), actual);
                         break;
                     }
@@ -487,8 +505,8 @@ namespace ondemand
                     uint32_t dst_size = (static_cast<uint32_t>(i) == id) ? new_size : src_size;
 
                     auto *src_slot = reinterpret_cast<Slot *>(arena_ + metas_[i].offset);
-                    auto *dst_slot = reinterpret_cast<Slot *>(reinterpret_cast<std::byte *>(new_arena)
-                                                              + new_offsets[i]);
+                    auto *dst_slot = reinterpret_cast<Slot *>(
+                        reinterpret_cast<std::byte *>(new_arena) + new_offsets[i]);
 
                     dst_slot->seq.store(src_slot->seq.load(std::memory_order_relaxed),
                                         std::memory_order_relaxed);
@@ -500,8 +518,9 @@ namespace ondemand
                     // 分别拷贝两个缓冲区，避免越界
                     uint32_t copy_size = src_size < dst_size ? src_size : dst_size;
                     if (copy_size > 0) {
-                        std::memcpy(dst_slot->data, src_slot->data, copy_size);  // buf0
-                        std::memcpy(dst_slot->data + dst_size, src_slot->data + src_size, copy_size);  // buf1
+                        std::memcpy(dst_slot->data, src_slot->data, copy_size); // buf0
+                        std::memcpy(dst_slot->data + dst_size, src_slot->data + src_size,
+                                    copy_size); // buf1
                     }
                 }
             }
@@ -532,9 +551,8 @@ namespace ondemand
         {
             std::unique_lock<std::mutex> lock(reconfig_mu_);
             while (reconfig_.load(std::memory_order_acquire)) {
-                reconfig_cv_.wait(lock, [this]() { 
-                    return !reconfig_.load(std::memory_order_acquire); 
-                });
+                reconfig_cv_.wait(lock,
+                                  [this]() { return !reconfig_.load(std::memory_order_acquire); });
             }
             active_ops_.fetch_add(1, std::memory_order_acq_rel);
         }

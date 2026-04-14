@@ -1112,6 +1112,14 @@ namespace ondemand
             subscriptionCallbacks_.clear();
         }
 
+        {
+            std::unique_lock lock(varIndexMutex_);
+            varIndex_.clear();
+        }
+
+        /*重置 varStore_，清空 table/metas/arena，避免重新 start 时 id 冲突*/
+        varStore_.reset();
+
         for (auto &s : varWriteStamps_) {
             s.writeCount.store(0);
             s.timestampNs.store(0);
