@@ -18,7 +18,7 @@
 #include <mutex>
 #include "on_demand_sub.h"
 #include "concurrentqueue.h"
-#include "ondemand/on_demand_common.h"
+#include "on_demand_common.h"
 #include "roaring/roaring64map.hh"
 #include <cstring>
 #include <shared_mutex>
@@ -391,12 +391,15 @@ namespace ondemand
                         incomingHashes.insert(fast_hash(varName));
                     }
 
-                    /*差分删除：varIndex_ 中属于该 bucket 但本次 TableDefine 里没有的变量*/
+                    /*差分删除：varIndex_ 中属于该 bucket 且属于同一 pub 节点但本次 TableDefine 里没有的变量*/
                     if (thisBucketId != UINT32_MAX) {
+                        const std::string &pubNodeName = tableDefine->nodeName();
                         std::vector<uint64_t> toRemove;
                         for (auto it = varIndex_.begin(); it != varIndex_.end();) {
                             if (it->second.bucketIndex == thisBucketId
-                                && incomingHashes.find(it->first) == incomingHashes.end()) {
+                                && incomingHashes.find(it->first) == incomingHashes.end()
+                                && it->second.varDefine
+                                && it->second.varDefine->nodeName() == pubNodeName) {
                                 ONDEMANDLOG(info)
                                     << "Removing deleted var: " << it->second.realVarName;
                                 toRemove.push_back(it->first);
@@ -530,7 +533,13 @@ namespace ondemand
     {
         DdsWrapper::SubscriberQoSBuilder subQos;
         subQos.setAutoEnable(true);
-        subQos.setPartition(partitionName);
+        {
+            std::lock_guard<std::mutex> lk(activePartitionsMutex_);
+            activePartitions_.insert(partitionName);
+            for (const auto &p : activePartitions_) {
+                subQos.setPartition(p);
+            }
+        }
         if (!dataNode_->updateSubscriberQos(name, subQos)) {
             ONDEMANDLOG(error) << "Failed to set partition: " << partitionName
                                << " for subscriber: " << name;
@@ -1109,6 +1118,11 @@ namespace ondemand
         {
             std::lock_guard<std::mutex> lock(subscriptionCallbacksMutex_);
             subscriptionCallbacks_.clear();
+        }
+
+        {
+            std::lock_guard<std::mutex> lk(activePartitionsMutex_);
+            activePartitions_.clear();
         }
 
         {

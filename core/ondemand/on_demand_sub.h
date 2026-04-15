@@ -25,6 +25,9 @@
 #include <cstdint>
 #include <string_view>
 #include <sys/types.h>
+#include <set>
+#include <shared_mutex>
+
 namespace dsf
 {
 namespace ondemand
@@ -285,6 +288,8 @@ namespace ondemand
         std::unordered_map<uint32_t,
                            std::shared_ptr<DdsWrapper::DDSTopicReader<DSF::Var::TableDataTransfer>>>
             dataTransferReaderMap_; // 接收数据读取器map，key为bucket id
+        std::set<std::string> activePartitions_; // 已激活的 DDS partition 集合
+        std::mutex activePartitionsMutex_;       // 保护 activePartitions_
 
         /*线程相关*/
         std::atomic<bool> initialized_;
