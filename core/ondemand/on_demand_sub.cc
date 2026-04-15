@@ -133,7 +133,7 @@ namespace ondemand
      */
     bool OnDemandSub::createSubTableRegisterWriter()
     {
-        constexpr uint32_t depth = 100;
+        constexpr uint32_t depth = 20;
         DdsWrapper::DataWriterQoSBuilder writerQosBuilder;
         writerQosBuilder.setMaxSamples(256 * depth)
             .setMaxInstances(256)
@@ -933,8 +933,8 @@ namespace ondemand
             {
                 auto handle = varStore_.read_zero_copy(static_cast<uint32_t>(info.varId));
                 if (!handle || handle.size() == 0) {
-                    ONDEMANDLOG_TIME(debug, 5000) << "Skip unregistered varId: " << info.varId
-                                                  << " varName: " << info.varName;
+                    ONDEMANDLOG_TIME(critical, 3000) << "Skip unregistered varId: " << info.varId
+                                                  << " varName: " << info.varName;           
                     continue;
                 }
                 sz = handle.size();
