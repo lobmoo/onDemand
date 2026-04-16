@@ -462,7 +462,7 @@ namespace ondemand
             .setDiscoveryMulticastLocator("239.255.0.1", 7400)
             .setUserMulticastLocator("239.255.0.1", 7401)
             .addFlowController()
-            .setDiscoveryKeepAlive(2000, 500)
+            .setDiscoveryKeepAlive(3000, 1000)
             .setIgnoreLocalEndpoints()
             .setInitialAnnouncements(30, 100);
         return qos;
