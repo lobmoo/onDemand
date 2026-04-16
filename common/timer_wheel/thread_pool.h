@@ -32,6 +32,7 @@ public:
     ThreadPool(size_t);
     template <class F, class... Args>
     auto enqueue(F &&f, Args &&...args) -> std::future<typename std::result_of<F(Args...)>::type>;
+    void enqueue_void(std::function<void()> task);
     size_t getQueueSize() const;
     ~ThreadPool();
 
@@ -102,6 +103,18 @@ auto ThreadPool::enqueue(F &&f, Args &&...args)
     }
     condition.notify_one();
     return res;
+}
+
+// 轻量版：无返回值，省去 packaged_task + std::bind 的两次堆分配
+inline void ThreadPool::enqueue_void(std::function<void()> task)
+{
+    {
+        std::unique_lock<std::mutex> lock(queue_mutex);
+        if (stop)
+            return;
+        tasks.push(std::move(task));
+    }
+    condition.notify_one();
 }
 
 

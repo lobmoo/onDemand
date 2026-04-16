@@ -114,16 +114,14 @@ namespace ondemand
             return false;
         }
 
-        /*创建时间轮调度器: 1ms tick 精度*/
-        const size_t poolSize = 8;
-        publishScheduler_ = std::make_unique<TimerScheduler>(1, poolSize);
-
+        /*创建时间轮调度器: 1ms tick，thread_pool_size=0 表示回调直接在 timer 线程执行
+         * publishGroupData 是纯 CPU（read_batch + DDS write），无用户代码，不需要线程池*/
+        publishScheduler_ = std::make_unique<TimerScheduler>(1, 0);
         registerProcessThread_ = std::thread(&OnDemandPub::processReceiveRegister, this);
         publishSchedulerThread_ = std::thread(&OnDemandPub::processPublishTaskScheduler, this);
         freqChangeCbThread_ = std::thread(&OnDemandPub::processFreqChangeCallback, this);
 
-        ONDEMANDLOG(info) << "OnDemandPub started (TimerScheduler: 1ms tick, pool=" << poolSize
-                          << ")";
+        ONDEMANDLOG(info) << "OnDemandPub started (TimerScheduler: 1ms tick, direct execute)";
         return true;
     }
 
@@ -168,7 +166,7 @@ namespace ondemand
         std::function<void(const std::string &, std::shared_ptr<DSF::Message::SubTableRegister>)>
             processFunc)
     {
-        constexpr uint32_t depth = 100;
+        constexpr uint32_t depth = 20;
         DdsWrapper::DataReaderQoSBuilder readerQosBuilder;
         readerQosBuilder.setMaxSamples(256 * depth)
             .setMaxInstances(256)
@@ -215,6 +213,7 @@ namespace ondemand
         }
 
         DdsWrapper::DataWriterQoSBuilder writerQosBuilder;
+        writerQosBuilder.setAsyncPublisherMode(true);
         // TODO: 配置 DataTransfer writer QoS
         // writerQosBuilder.setMaxSamples(...)
         //     .setDurabilityKind(...)
@@ -277,7 +276,9 @@ namespace ondemand
     void OnDemandPub::onReceiveRegisterCb(const std::string & /*topicName*/,
                                           std::shared_ptr<DSF::Message::SubTableRegister> data)
     {
-
+        if (!data) {
+            return;
+        }
         pubTableDefRegisterQueue_.enqueue(data);
     }
     /**
@@ -286,25 +287,52 @@ namespace ondemand
     void OnDemandPub::processReceiveRegister()
     {
         pthread_setname_np(pthread_self(), "PubRegProc");
+        std::unordered_map<std::string, uint32_t> retryBackoffMsByNode;
+        constexpr uint32_t kMinPartialRetryMs = 200;
+        constexpr uint32_t kMinAllMissingRetryMs = 800;
+        constexpr uint32_t kMaxRetryMs = 3000;
+
         while (running_.load(std::memory_order_acquire)) {
             std::shared_ptr<DSF::Message::SubTableRegister> data;
             if (pubTableDefRegisterQueue_.try_dequeue(data)) {
                 if (data) {
-
-                    // 处理订阅注册请求
                     switch (data->msgType()) {
                         case DSF::Message::MSGTYPE::SUB_TABLE_REGISTER: {
-                            uint32_t missing = handleSubscribe(data->nodeName(), data->varFreqs());
+                            const std::string nodeName = data->nodeName();
+                            uint32_t missing = handleSubscribe(nodeName, data->varFreqs());
                             if (missing > 0) {
-                                /* 有变量尚未创建（Sub 先于 createVars() 发来注册），
-                                 * 延迟后重新入队，等 createVars() 完成后再处理
-                                 这里的策略让数据全部入队可能导致队列膨胀，后续优化 */
-                                std::this_thread::sleep_for(std::chrono::milliseconds(50));
+                                /*但对同一 node 做指数退避，降低长期缺失时的 CPU 开销。*/
+                                const size_t total = data->varFreqs().size();
+                                const bool allMissing = (total > 0) && (missing >= total);
+
+                                uint32_t &backoffMs = retryBackoffMsByNode[nodeName];
+                                if (backoffMs == 0) {
+                                    backoffMs =
+                                        allMissing ? kMinAllMissingRetryMs : kMinPartialRetryMs;
+                                } else {
+                                    const uint32_t minBase =
+                                        allMissing ? kMinAllMissingRetryMs : kMinPartialRetryMs;
+                                    if (backoffMs < minBase) {
+                                        backoffMs = minBase;
+                                    } else {
+                                        backoffMs = std::min(kMaxRetryMs, backoffMs * 2);
+                                    }
+                                }
+
+                                ONDEMANDLOG_TIME(warning, 5000)
+                                    << "SUB_TABLE_REGISTER retry: node=" << nodeName
+                                    << " missing=" << missing << "/" << total
+                                    << " delayMs=" << backoffMs;
+
+                                std::this_thread::sleep_for(std::chrono::milliseconds(backoffMs));
                                 pubTableDefRegisterQueue_.enqueue(data);
+                            } else {
+                                retryBackoffMsByNode.erase(nodeName);
                             }
                             break;
                         }
                         case DSF::Message::MSGTYPE::SUB_TABLE_UNREGISTER:
+                            retryBackoffMsByNode.erase(data->nodeName());
                             handleUnsubscribe(data->nodeName(), data->varFreqs());
                             break;
                         default:
@@ -326,7 +354,7 @@ namespace ondemand
                     // }
                 }
             } else {
-                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
             }
         }
     }
@@ -425,9 +453,9 @@ namespace ondemand
                         }
                         roar.runOptimize();
                         roar.shrinkToFit();
-                        auto &maskBuf = groupMaskBufs_[key];
-                        maskBuf.resize(roar.getSizeInBytes());
-                        roar.write(reinterpret_cast<char *>(maskBuf.data()));
+                        auto buf = std::make_shared<std::vector<uint8_t>>(roar.getSizeInBytes());
+                        roar.write(reinterpret_cast<char *>(buf->data()));
+                        groupMaskBufs_[key] = std::move(buf);
                     } else {
                         groupMaskBufs_.erase(key);
                     }
@@ -482,7 +510,7 @@ namespace ondemand
         /*获取组成员快照 + running flag + 预计算 mask 快照*/
         std::shared_ptr<std::vector<GroupVarInfo>> members;
         std::shared_ptr<std::atomic<bool>> running;
-        std::vector<uint8_t> maskBuf;
+        std::shared_ptr<std::vector<uint8_t>> precomputedMask;
         {
             std::lock_guard<std::mutex> lock(publishGroupsMutex_);
             PublishGroupKey key{bucketIndex, freqMs};
@@ -495,7 +523,7 @@ namespace ondemand
 
             auto maskIt = groupMaskBufs_.find(key);
             if (maskIt != groupMaskBufs_.end()) {
-                maskBuf = maskIt->second;
+                precomputedMask = maskIt->second; // shared_ptr 引用，无复制
             }
         }
 
@@ -515,24 +543,31 @@ namespace ondemand
         roaring::Roaring64Map actualMask;
         size_t skippedCount = 0;
 
-        for (const auto &info : *members) {
-            auto handle = varStore_.read_zero_copy(info.varId);
-            if (!handle || handle.size() == 0) {
-                /*跳过没有数据的变量，避免无效发送和 CPU 浪费*/
-                ++skippedCount;
-                continue;
-            }
-
-            /*只发送有数据的变量*/
-            auto &dst = msg.varData().emplace_back();
-            dst.resize(handle.size());
-            std::memcpy(dst.data(), handle.ptr(), handle.size());
-            actualMask.add(info.varHash);
+        /*批量读：一次 op_enter 覆盖所有变量，避免 N 次独立锁开销*/
+        const size_t n = members->size();
+        std::vector<uint32_t> ids(n);
+        for (size_t i = 0; i < n; ++i) {
+            ids[i] = (*members)[i].varId;
         }
+        varStore_.read_batch(ids.data(), n, [&](size_t i, const void *ptr, uint32_t sz) {
+            if (!ptr || sz == 0) {
+                if (skippedCount == 0) {
+                    for (size_t j = 0; j < i; ++j)
+                        actualMask.add((*members)[j].varHash);
+                }
+                ++skippedCount;
+                return;
+            }
+            auto &dst = msg.varData().emplace_back();
+            dst.resize(sz);
+            std::memcpy(dst.data(), ptr, sz);
+            if (skippedCount > 0)
+                actualMask.add((*members)[i].varHash);
+        });
 
         /*如果所有变量都没数据，跳过本次发送*/
         if (msg.varData().empty()) {
-            ONDEMANDLOG_TIME(warning, 30000) // 30秒打印一次，避免日志刷屏
+            ONDEMANDLOG_TIME(warning, 30000)
                 << "All " << members->size() << " variables in bucket=" << bucketIndex
                 << " freq=" << freqMs << "ms have no data, skipping publish";
             return;
@@ -540,17 +575,21 @@ namespace ondemand
 
         /* 如果有部分变量被跳过，打印一次警告*/
         if (skippedCount > 0) {
-            ONDEMANDLOG_TIME(warning, 30000) // 30秒打印一次
-                << "Skipped " << skippedCount << "/" << members->size()
-                << " variables without data in bucket=" << bucketIndex << " freq=" << freqMs
-                << "ms";
+            ONDEMANDLOG_TIME(warning, 30000) << "Skipped " << skippedCount << "/" << members->size()
+                                             << " variables without data in bucket=" << bucketIndex
+                                             << " freq=" << freqMs << "ms";
         }
 
-        /*使用实际发送的变量构建 mask*/
-        actualMask.runOptimize();
-        actualMask.shrinkToFit();
-        msg.mask().resize(actualMask.getSizeInBytes());
-        actualMask.write(reinterpret_cast<char *>(msg.mask().data()));
+        /*无跳过：直接用预计算 mask，避免重建 Roaring64Map（热路径优化）*/
+        if (skippedCount == 0 && precomputedMask && !precomputedMask->empty()) {
+            msg.mask() = *precomputedMask;
+        } else {
+            /*有跳过：用实际发送的变量重建 mask*/
+            actualMask.runOptimize();
+            actualMask.shrinkToFit();
+            msg.mask().resize(actualMask.getSizeInBytes());
+            actualMask.write(reinterpret_cast<char *>(msg.mask().data()));
+        }
 
         auto now = std::chrono::system_clock::now();
         auto epoch = now.time_since_epoch();
@@ -628,7 +667,7 @@ namespace ondemand
                     ONDEMANDLOG(error) << "freqChange callback threw unknown exception";
                 }
             } else {
-                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
             }
         }
     }
@@ -738,7 +777,8 @@ namespace ondemand
      */
     bool OnDemandPub::deleteVars(const std::vector<std::string> &varNames)
     {
-        /*注销被删变量  这里直接差分删除 */
+        /*注销被删变量，记录受影响的 bucket，只重发这些 bucket 的 TableDefine*/
+        std::unordered_set<uint32_t> affectedBuckets;
         {
             std::unique_lock lock(varIndexMutex_);
             for (const auto &varName : varNames) {
@@ -748,17 +788,17 @@ namespace ondemand
                     ONDEMANDLOG(warning) << "Variable not found: " << varName;
                     continue;
                 }
+                affectedBuckets.insert(static_cast<uint32_t>(it->second.bucketIndex));
                 varStore_.unregister_var(varHash);
                 varIndex_.erase(it);
-                bucketManager_.RemoveMember(varName, varHash);
+                bucketManager_.RemoveMember(make_meta_varname(nodeName_, varName), varHash);
             }
         }
 
         schedulerDirty_.store(true, std::memory_order_release);
 
-        /*发布更新后的 TableDefine*/
-        uint32_t bucketCount = bucketManager_.GetBucketCount();
-        for (uint32_t i = 0; i < bucketCount; ++i) {
+        /*只重发受影响的 bucket 的 TableDefine，避免误触发其他 bucket 的差分删除*/
+        for (uint32_t i : affectedBuckets) {
             DSF::Var::PubTableDefine pubTableDefine;
             pubTableDefine.name(make_bucket_name_by_id(i));
             pubTableDefine.nodeName(nodeName_);
@@ -790,7 +830,7 @@ namespace ondemand
             /*差分删除: 即使是空表也要发布, 通知订阅者该表已清空*/
             tableDefinePublish(pubTableDefine);
             std::this_thread::sleep_for(std::chrono::milliseconds(50));
-            ONDEMANDLOG(info) << "Published bucket " << i + 1 << "/" << bucketCount << " with "
+            ONDEMANDLOG(info) << "Published bucket " << i << " with "
                               << pubTableDefine.varDefines().size() << " variables (delete mode)";
         }
 
@@ -962,6 +1002,7 @@ namespace ondemand
                                           const std::vector<DSF::NamedValue> &varFreqs)
     {
         uint64_t nodeHash = fast_hash(nodeName);
+        const std::string ownPrefix = nodeName_ + "_";
 
         std::vector<std::pair<std::string, uint32_t>> freqChanges; // 锁外触发回调
         uint32_t missingCount = 0;
@@ -977,6 +1018,12 @@ namespace ondemand
 
         for (const auto &varFreq : varFreqs) {
             std::string metaName = varFreq.name(); // 这里注册请求已经是全名了，不需要再拼接一次了
+
+            // 非本发布节点的变量请求直接忽略，不计入 missing，避免跨 pub 场景下无意义重试。
+            if (metaName.compare(0, ownPrefix.size(), ownPrefix) != 0) {
+                continue;
+            }
+
             uint64_t varHash = fast_hash(metaName);
             auto it = varIndex_.find(varHash);
             if (it == varIndex_.end()) {
@@ -1259,6 +1306,9 @@ namespace ondemand
             nextNodeSlot_ = 0;
         }
 
+        /*重置 varStore_，清空 table/metas/arena，避免重新注册时 id 冲突*/
+        varStore_.reset();
+
         /*清理发布分组相关数据*/
         {
             std::lock_guard<std::mutex> lock(publishGroupsMutex_);
@@ -1277,6 +1327,16 @@ namespace ondemand
         }
         dataNode_.reset();
         dataNode_ = nullptr;
+
+        std::shared_ptr<DSF::Message::SubTableRegister> item;
+        while (pubTableDefRegisterQueue_.try_dequeue(item)) {
+        }
+
+        size_t drainedFreqChange = 0;
+        std::pair<std::string, uint32_t> freqChangeItem;
+        while (freqChangeQueue_.try_dequeue(freqChangeItem)) {
+        }
+
         ONDEMANDLOG(info) << "OnDemandPub stopped";
     }
 

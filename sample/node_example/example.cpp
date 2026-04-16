@@ -97,7 +97,7 @@ void run_dds_data_writer()
         if (dataWriter->writeMessage(message)) {
             LOG(info) << "send message: " << message.index();
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
 }
 

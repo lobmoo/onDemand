@@ -76,8 +76,9 @@ ParticipantQoSBuilder &ParticipantQoSBuilder::setInitialAnnouncements(uint32_t c
 {
     // TXDDS does not expose FastDDS initial_announcements directly.
     // Approximate behavior by keeping the same announcement period and scaling lease duration.
-    const uint32_t lease_ms = (count == 0) ? period_ms : count * period_ms;
-    return setDiscoveryKeepAlive(lease_ms, period_ms);
+    // const uint32_t lease_ms = (count == 0) ? period_ms : count * period_ms;
+    // return setDiscoveryKeepAlive(lease_ms, period_ms);
+    return *this;
 }
 
 ParticipantQoSBuilder &ParticipantQoSBuilder::addUDPV4TransportInterfaces(
@@ -240,6 +241,12 @@ DataWriterQoSBuilder &DataWriterQoSBuilder::disableDataSharing()
     return *this;
 }
 
+DataWriterQoSBuilder &DataWriterQoSBuilder::setAsyncPublisherMode(bool async)
+{
+    qos_.publish_mode().kind = async ? ASYNCHRONOUS_PUBLISH_MODE : SYNCHRONOUS_PUBLISH_MODE;
+    return *this;
+}
+
 DataWriterQoSBuilder &
 DataWriterQoSBuilder::setFlowController(const std::string &flow_controller_name)
 {
@@ -336,6 +343,52 @@ const BaoSky::dds::DataReaderQos &DataReaderQoSBuilder::getQos() const
     return qos_;
 }
 
+PublisherQoSBuilder::PublisherQoSBuilder()
+{
+}
+
+PublisherQoSBuilder &PublisherQoSBuilder::setPartition(const std::string &partition)
+{
+    if (!partition.empty()) {
+        qos_.partition.mName.push_back(partition);
+    }
+    return *this;
+}
+
+PublisherQoSBuilder &PublisherQoSBuilder::setAutoEnable(bool enable)
+{
+    qos_.entity_factory.mAutoEnableCreatedEntities = enable;
+    return *this;
+}
+
+const BaoSky::dds::PublisherQos &PublisherQoSBuilder::getQos() const
+{
+    return qos_;
+}
+
+SubscriberQoSBuilder::SubscriberQoSBuilder()
+{
+}
+
+SubscriberQoSBuilder &SubscriberQoSBuilder::setPartition(const std::string &partition)
+{
+    if (!partition.empty()) {
+        qos_.partition.mName.push_back(partition);
+    }
+    return *this;
+}
+
+SubscriberQoSBuilder &SubscriberQoSBuilder::setAutoEnable(bool /*enable*/)
+{
+    // TXDDS SubscriberQos currently has no entity_factory equivalent; keep API compatibility.
+    return *this;
+}
+
+const BaoSky::dds::SubscriberQos &SubscriberQoSBuilder::getQos() const
+{
+    return qos_;
+}
+
 namespace QoSPresets
 {
     ParticipantQoSBuilder defaultParticipant()
@@ -370,6 +423,18 @@ namespace QoSPresets
             .setReliabilityKind(ReliabilityKind::RELIABLE)
             .setDurabilityKind(DurabilityKind::TRANSIENT_LOCAL)
             .setHistoryKind(HistoryKind::KEEP_ALL);
+    }
+
+    PublisherQoSBuilder defaultPublisher()
+    {
+        PublisherQoSBuilder builder;
+        return builder;
+    }
+
+    SubscriberQoSBuilder defaultSubscriber()
+    {
+        SubscriberQoSBuilder builder;
+        return builder;
     }
 } // namespace QoSPresets
 

@@ -26,31 +26,31 @@ set(OBJ_CPP_INCLUDE
 # DDS 实现特定的头文件路径和库
 if(DDS_IMPL STREQUAL "FASTDDS")
     list(APPEND OBJ_CPP_INCLUDE ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/include)
-    
+
     # FastDDS wrapper源文件
     set(SOURCES_CC_FOR_DDS_WRAPPER
         ${CMAKE_SOURCE_DIR}/common/fastdds_wrapper/fastdds_node.cc
         ${CMAKE_SOURCE_DIR}/common/fastdds_wrapper/fastdds_qos_config.cc
     )
-    
+
     # FastDDS 库链接
     set(DDS_LIBS
         ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib/libfastdds.so
         ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib/libfastcdr.so
         ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib/libfoonathan_memory-0.7.3.so
     )
-    
+
     message(STATUS "FastDDS wrapper will be compiled")
-    
+
 elseif(DDS_IMPL STREQUAL "TXDDS")
     list(APPEND OBJ_CPP_INCLUDE ${CMAKE_SOURCE_DIR}/thirdparty/txdds/include)
-    
+
     # TXDDS wrapper源文件
     set(SOURCES_CC_FOR_DDS_WRAPPER
         ${CMAKE_SOURCE_DIR}/common/txdds_wrapper/txdds_node.cc
         ${CMAKE_SOURCE_DIR}/common/txdds_wrapper/txdds_qos_config.cc
     )
-    
+
     # TXDDS 库链接
     set(DDS_LIBS
         ${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libTXDDS.so
@@ -59,7 +59,7 @@ elseif(DDS_IMPL STREQUAL "TXDDS")
         ${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libssl.so
         ${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libcrypto.so
     )
-    
+
     message(STATUS "TXDDS wrapper will be compiled")
 else()
     message(FATAL_ERROR "Invalid DDS_IMPL: ${DDS_IMPL}")
@@ -68,8 +68,10 @@ endif()
 # set(SOURCES_CC_FOR_NET_WORK
 #     "${CMAKE_CURRENT_SOURCE_DIR}/net_interface.cc"
 # )
-   
+
 file(GLOB SOURCES_CC_FOR_ONDEMAND "${CMAKE_CURRENT_SOURCE_DIR}/ondemand/*.cc")
+# 测试源不应参与 demo 目标，避免 gtest 符号被拉入非测试可执行文件。
+list(FILTER SOURCES_CC_FOR_ONDEMAND EXCLUDE REGEX ".*_test\\.cc$")
 file(GLOB SOURCES_CC_FOR_MAIN "${CMAKE_CURRENT_SOURCE_DIR}/main.cc")
 
 # IDL生成的源文件（根据 IDL_GEN_DIR）
@@ -84,18 +86,18 @@ option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
 
 
 if(BUILD_LIBRARY)
-    add_library(${LIBRARY_OUTPUT_NAME} ${SOURCES_CC_FOR_ONDEMAND})  # 添加源文件
+    add_library(${LIBRARY_OUTPUT_NAME} ${SOURCES_CC_FOR_ONDEMAND})  # 添加源 文件
     target_include_directories(${LIBRARY_OUTPUT_NAME} PRIVATE ${OBJ_CPP_INCLUDE})
-    
+
     # 库也需要链接依赖
-    target_link_libraries(${LIBRARY_OUTPUT_NAME} PRIVATE 
+    target_link_libraries(${LIBRARY_OUTPUT_NAME} PRIVATE
         ${DDS_LIBS}
         ${CMAKE_SOURCE_DIR}/thirdparty/CRoaring/lib/libroaring.so
-        pthread 
+        pthread
         rt
-        log::log 
+        log::log
     )
-    
+
     target_compile_options(${LIBRARY_OUTPUT_NAME} PRIVATE -fPIC -g)
 endif()
 
@@ -107,28 +109,28 @@ set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMA
 target_include_directories(${PROJECT_NAME} PRIVATE  ${OBJ_CPP_INCLUDE})
 
 
-target_link_libraries(${PROJECT_NAME} PRIVATE 
+target_link_libraries(${PROJECT_NAME} PRIVATE
     ${DDS_LIBS}
     ${CMAKE_SOURCE_DIR}/thirdparty/CRoaring/lib/libroaring.so
-    pthread 
+    pthread
     rt
-    log::log 
+    log::log
 )
 
 target_compile_options(${PROJECT_NAME}  PRIVATE  -g )
 
 if(BUILD_LIBRARY)
   include(GNUInstallDirs)  # ✅ 引入标准安装目录
-    
+
     set(PUBLIC_HEADERS
         ${CMAKE_CURRENT_SOURCE_DIR}/concurrentqueue.h
     )
-    
+
     install(TARGETS ${LIBRARY_OUTPUT_NAME}
             ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
             LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
             RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
             PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${LIBRARY_OUTPUT_NAME})  # 头文件
-            
+
     message(STATUS "Library will be installed to: ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
 endif()

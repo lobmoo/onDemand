@@ -105,6 +105,7 @@ public:
     DataWriterQoSBuilder &disableDataSharing();
     DataWriterQoSBuilder &writer_resource_limits(int32_t max_matched_readers);
     DataWriterQoSBuilder &setFlowController(const std::string &flow_controller_name);
+    DataWriterQoSBuilder &setAsyncPublisherMode(bool async);
 
 private:
     // 内部方法：获取原生 QoS（仅内部使用，友元访问）

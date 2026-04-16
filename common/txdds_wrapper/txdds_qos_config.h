@@ -10,7 +10,9 @@
 
 #include "txdds/DCPS/domain/qos/DomainParticipantQos.h"
 #include "txdds/DCPS/publisher/qos/DataWriterQos.h"
+#include "txdds/DCPS/publisher/qos/PublisherQos.h"
 #include "txdds/DCPS/subscriber/qos/DataReaderQos.h"
+#include "txdds/DCPS/subscriber/qos/SubscriberQos.h"
 #include "txdds/RTPS/common/Locator.h"
 #include "txdds/RTPS/common/Duration.h"
 #include "txdds/RTPS/utils/IPLocator.h"
@@ -80,6 +82,7 @@ public:
     DataWriterQoSBuilder &disableDataSharing();
     DataWriterQoSBuilder &writer_resource_limits(int32_t max_matched_readers);
     DataWriterQoSBuilder &setFlowController(const std::string &flow_controller_name);
+    DataWriterQoSBuilder &setAsyncPublisherMode(bool async);
 
 private:
     const BaoSky::dds::DataWriterQos &getQos() const;
@@ -110,6 +113,42 @@ private:
     BaoSky::dds::DataReaderQos qos_;
 };
 
+/**
+ * @brief Publisher QoS 构造器（兼容 fastdds_wrapper）
+ */
+class PublisherQoSBuilder
+{
+public:
+    PublisherQoSBuilder();
+
+    PublisherQoSBuilder &setPartition(const std::string &partition);
+    PublisherQoSBuilder &setAutoEnable(bool enable);
+
+private:
+    const BaoSky::dds::PublisherQos &getQos() const;
+    friend class TXDDSNode;
+
+    BaoSky::dds::PublisherQos qos_;
+};
+
+/**
+ * @brief Subscriber QoS 构造器（兼容 fastdds_wrapper）
+ */
+class SubscriberQoSBuilder
+{
+public:
+    SubscriberQoSBuilder();
+
+    SubscriberQoSBuilder &setPartition(const std::string &partition);
+    SubscriberQoSBuilder &setAutoEnable(bool enable);
+
+private:
+    const BaoSky::dds::SubscriberQos &getQos() const;
+    friend class TXDDSNode;
+
+    BaoSky::dds::SubscriberQos qos_;
+};
+
 namespace QoSPresets
 {
     ParticipantQoSBuilder defaultParticipant();
@@ -119,6 +158,9 @@ namespace QoSPresets
 
     DataReaderQoSBuilder defaultReader();
     DataReaderQoSBuilder reliableReader();
+
+    PublisherQoSBuilder defaultPublisher();
+    SubscriberQoSBuilder defaultSubscriber();
 } // namespace QoSPresets
 
 } // namespace TxddsWrapper

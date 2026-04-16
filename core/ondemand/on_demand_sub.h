@@ -25,6 +25,9 @@
 #include <cstdint>
 #include <string_view>
 #include <sys/types.h>
+#include <set>
+#include <shared_mutex>
+
 namespace dsf
 {
 namespace ondemand
@@ -111,10 +114,6 @@ namespace ondemand
         */
         bool unsubscribe(const char *node_name, const std::vector<std::string> &items);
 
-        /**
-        * @brief 获取订阅数量
-        */
-        size_t getSubscriptionCount() const;
 
         /**
          * @brief 注册 TableDefine 回调，收到 pub 端变量定义时触发
@@ -126,6 +125,14 @@ namespace ondemand
             tableDefineCb_ = std::move(cb);
         }
 
+        /**
+         * @brief 手动清理指定 pub 节点的所有变量（用于外部检测到 pub 掉线的场景）
+         * @param  pubNodeName  pub 节点名称
+         * @return true  找到并清理成功
+         * @return false 未找到该节点或参数无效
+         */
+        bool cleanupParticipantPublish(const std::string &pubNodeName);
+
         DSF::Var::BLOB_TYPE getBlobType() const
         {
             return static_cast<DSF::Var::BLOB_TYPE>(blobType_.load(std::memory_order_acquire));
@@ -133,7 +140,8 @@ namespace ondemand
 
     private:
         // ParticipantListener 回调
-        // void onReaderDiscovery(const DdsWrapper::EndpointInfo &info) override;
+         void onParticipantDiscovery(const DdsWrapper::ParticipantInfo &info) override;
+         
         /**
          * @brief 订阅者发现回调，处理新订阅者的注册信息，更新内部状态
          * @param  info             订阅者端点信息，包含节点名称、订阅的变量和频率等
@@ -237,7 +245,6 @@ namespace ondemand
             std::string varName;
             std::string varType;
             std::string typeVersion;
-            DataCallback callback;
         };
 
         /**
@@ -281,6 +288,8 @@ namespace ondemand
         std::unordered_map<uint32_t,
                            std::shared_ptr<DdsWrapper::DDSTopicReader<DSF::Var::TableDataTransfer>>>
             dataTransferReaderMap_; // 接收数据读取器map，key为bucket id
+        std::set<std::string> activePartitions_; // 已激活的 DDS partition 集合
+        std::mutex activePartitionsMutex_;       // 保护 activePartitions_
 
         /*线程相关*/
         std::atomic<bool> initialized_;
@@ -322,6 +331,7 @@ namespace ondemand
         struct CallbackGroupEntry {
             std::shared_ptr<std::vector<CallbackVarInfo>> members;
             std::shared_ptr<std::atomic<bool>> running{std::make_shared<std::atomic<bool>>(false)};
+            DataCallback callback; // 组级回调，不再从 members 逐个查找
         };
         std::unordered_map<CallbackGroupKey, CallbackGroupEntry, CallbackGroupKeyHash>
             callbackGroupMembers_;

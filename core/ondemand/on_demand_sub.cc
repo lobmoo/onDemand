@@ -18,7 +18,7 @@
 #include <mutex>
 #include "on_demand_sub.h"
 #include "concurrentqueue.h"
-#include "ondemand/on_demand_common.h"
+#include "on_demand_common.h"
 #include "roaring/roaring64map.hh"
 #include <cstring>
 #include <shared_mutex>
@@ -133,7 +133,7 @@ namespace ondemand
      */
     bool OnDemandSub::createSubTableRegisterWriter()
     {
-        constexpr uint32_t depth = 100;
+        constexpr uint32_t depth = 20;
         DdsWrapper::DataWriterQoSBuilder writerQosBuilder;
         writerQosBuilder.setMaxSamples(256 * depth)
             .setMaxInstances(256)
@@ -270,7 +270,7 @@ namespace ondemand
         while (running_.load(std::memory_order_acquire)) {
             std::shared_ptr<DSF::Var::TableDataTransfer> dataTransfer;
             if (!dataTransferQueue_.try_dequeue(dataTransfer)) {
-                std::this_thread::sleep_for(std::chrono::milliseconds(1));
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
                 continue;
             }
             if (!dataTransfer) {
@@ -314,7 +314,7 @@ namespace ondemand
 
                     auto vit = varIndex_.find(varHash);
                     if (vit == varIndex_.end()) {
-                        ONDEMANDLOG(error)
+                        ONDEMANDLOG_TIME(warning, 3000)
                             << "Received data for unknown varHash: " << varHash << ", skipping.";
                         continue;
                     }
@@ -367,7 +367,59 @@ namespace ondemand
                     ONDEMANDLOG(info) << "Processing TableDefine: " << tableDefine->name()
                                       << ", vars size: " << tableDefine->varDefines().size();
                     std::unique_lock lock(varIndexMutex_);
-                    /*拆表*/
+
+                    /*解析本次 TableDefine 所属 bucket（格式: bucket_N）*/
+                    uint32_t thisBucketId = UINT32_MAX;
+                    const std::string &tblName = tableDefine->name();
+                    const std::string prefix = "bucket_";
+                    if (tblName.size() > prefix.size()
+                        && tblName.compare(0, prefix.size(), prefix) == 0) {
+                        try {
+                            thisBucketId =
+                                static_cast<uint32_t>(std::stoul(tblName.substr(prefix.size())));
+                        } catch (...) {
+                        }
+                    }
+
+                    /*收集本次 TableDefine 中所有变量的 hash，用于差分删除*/
+                    std::unordered_set<uint64_t> incomingHashes;
+                    incomingHashes.reserve(tableDefine->varDefines().size());
+                    for (const auto &varDef : tableDefine->varDefines()) {
+                        const auto &varDefine = varDef.var().varDefine();
+                        std::string varName =
+                            make_meta_varname(varDefine.nodeName(), varDefine.name());
+                        incomingHashes.insert(fast_hash(varName));
+                    }
+
+                    /*差分删除：varIndex_ 中属于该 bucket 且属于同一 pub 节点但本次 TableDefine 里没有的变量*/
+                    if (thisBucketId != UINT32_MAX) {
+                        const std::string &pubNodeName = tableDefine->nodeName();
+                        std::vector<uint64_t> toRemove;
+                        for (auto it = varIndex_.begin(); it != varIndex_.end();) {
+                            if (it->second.bucketIndex == thisBucketId
+                                && incomingHashes.find(it->first) == incomingHashes.end()
+                                && it->second.varDefine
+                                && it->second.varDefine->nodeName() == pubNodeName) {
+                                ONDEMANDLOG(info)
+                                    << "Removing deleted var: " << it->second.realVarName;
+                                toRemove.push_back(it->first);
+                                varStore_.unregister_var(it->first);
+                                totalReceived_.fetch_sub(1);
+                                it = varIndex_.erase(it);
+                            } else {
+                                ++it;
+                            }
+                        }
+                        /*同步清理对应的回调注册，避免调度器用已删除 varId 读 VarStore*/
+                        if (!toRemove.empty()) {
+                            std::lock_guard<std::mutex> cbLock(subscriptionCallbacksMutex_);
+                            for (uint64_t h : toRemove) {
+                                subscriptionCallbacks_.erase(h);
+                            }
+                        }
+                    }
+
+                    /*拆表：注册新增变量*/
                     std::unordered_set<uint32_t> newBucketIds;
                     for (auto &varDef : tableDefine->varDefines()) {
                         const auto &varDefine = varDef.var().varDefine();
@@ -386,7 +438,6 @@ namespace ondemand
                         }
 
                         /*组内部结构*/
-
                         VarMetadata meta;
                         meta.varHash = varHash;
                         meta.currentFreq = 0xFFFFFFFF;
@@ -399,7 +450,7 @@ namespace ondemand
 
                         varIndex_.emplace(varHash, std::move(meta));
                         newBucketIds.insert(static_cast<uint32_t>(bucketIdx));
-                        totalReceived_.fetch_add(1); // 记录收到的总数
+                        totalReceived_.fetch_add(1);
                         ONDEMANDLOG(debug) << "Registered var: " << varName;
                     }
                     lock.unlock();
@@ -436,7 +487,7 @@ namespace ondemand
                 }
                 LOG(info) << "+++++++++++++++++totalReceived_ = " << totalReceived_.load();
             } else {
-                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
             }
         }
     }
@@ -459,17 +510,7 @@ namespace ondemand
 
         processTableDefineThread_ = std::thread(&OnDemandSub::processTableDefine, this);
         {
-            unsigned int hw = std::thread::hardware_concurrency();
             size_t workerCount = 4;
-            if (hw > 0) {
-                workerCount = static_cast<size_t>(hw / 2);
-                if (workerCount < 2) {
-                    workerCount = 2;
-                }
-                if (workerCount > 8) {
-                    workerCount = 8;
-                }
-            }
             processDataTransferThreads_.clear();
             processDataTransferThreads_.reserve(workerCount);
             for (size_t i = 0; i < workerCount; ++i) {
@@ -478,8 +519,9 @@ namespace ondemand
             ONDEMANDLOG(info) << "Started data transfer workers: " << workerCount;
         }
 
-        /*启动回调调度器 (tick 精度 1ms, 线程池 8 线程)*/
-        callbackScheduler_ = std::make_unique<TimerScheduler>(1, 8);
+        /*启动回调调度器 (tick 精度 1ms, 线程池 4 线程)*/
+
+        callbackScheduler_ = std::make_unique<TimerScheduler>(1, 4);
         /*调度函数*/
         callbackSchedulerThread_ = std::thread(&OnDemandSub::processCallbackScheduler, this);
 
@@ -491,7 +533,13 @@ namespace ondemand
     {
         DdsWrapper::SubscriberQoSBuilder subQos;
         subQos.setAutoEnable(true);
-        subQos.setPartition(partitionName);
+        {
+            std::lock_guard<std::mutex> lk(activePartitionsMutex_);
+            activePartitions_.insert(partitionName);
+            for (const auto &p : activePartitions_) {
+                subQos.setPartition(p);
+            }
+        }
         if (!dataNode_->updateSubscriberQos(name, subQos)) {
             ONDEMANDLOG(error) << "Failed to set partition: " << partitionName
                                << " for subscriber: " << name;
@@ -675,9 +723,12 @@ namespace ondemand
             }
 
             /* 从 subscriptionCallbacks_ + varIndex_ 构建期望分组 */
+            struct DesiredEntry {
+                std::shared_ptr<std::vector<CallbackVarInfo>> members;
+                DataCallback callback;
+            };
             using DesiredMap =
-                std::unordered_map<CallbackGroupKey, std::shared_ptr<std::vector<CallbackVarInfo>>,
-                                   CallbackGroupKeyHash>;
+                std::unordered_map<CallbackGroupKey, DesiredEntry, CallbackGroupKeyHash>;
 
             DesiredMap desired;
             {
@@ -687,21 +738,27 @@ namespace ondemand
                     /* 查找 varIndex_ 获取 varId 和 dataSize */
                     auto vit = varIndex_.find(varHash);
                     if (vit == varIndex_.end()) {
-                        /* 变量定义尚未到达, 跳过 */
+                        ONDEMANDLOG_TIME(warning, 5000)
+                            << "No varIndex entry for subscribed varHash: " << varHash
+                            << ", skipping callback registration";
                         continue;
                     }
 
                     int32_t varId = vit->second.varId;
                     if (varId < 0 || static_cast<uint32_t>(varId) == VarStore::kInvalidId) {
+                        ONDEMANDLOG_TIME(warning, 5000)
+                            << "Invalid varId for varHash: " << varHash
+                            << ", likely varStore not finalized or registration failed, skipping callback registration";
                         /* varStore 尚未 finalize 或注册失败，跳过 */
                         continue;
                     }
 
                     CallbackGroupKey key{static_cast<uint32_t>(vit->second.bucketIndex),
                                          cbInfo.freqMs};
-                    auto &vec = desired[key];
-                    if (!vec) {
-                        vec = std::make_shared<std::vector<CallbackVarInfo>>();
+                    auto &entry = desired[key];
+                    if (!entry.members) {
+                        entry.members = std::make_shared<std::vector<CallbackVarInfo>>();
+                        entry.callback = cbInfo.callback; // 组级 callback，取第一个即可
                     }
                     CallbackVarInfo vi;
                     vi.varHash = varHash;
@@ -717,8 +774,7 @@ namespace ondemand
                                              << ", callback will receive empty nodeName/varType";
                     }
                     vi.varName = cbInfo.varName;
-                    vi.callback = cbInfo.callback;
-                    vec->push_back(std::move(vi));
+                    entry.members->push_back(std::move(vi));
                 }
             }
 
@@ -742,9 +798,10 @@ namespace ondemand
                 }
 
                 /* 新增或更新分组 */
-                for (auto &[key, members] : desired) {
-                    /* 始终刷新成员列表，保留已有的 running flag */
-                    callbackGroupMembers_[key].members = std::move(members);
+                for (auto &[key, entry] : desired) {
+                    /* 始终刷新成员列表和 callback，保留已有的 running flag */
+                    callbackGroupMembers_[key].members = std::move(entry.members);
+                    callbackGroupMembers_[key].callback = std::move(entry.callback);
 
                     /* 仅为新增分组创建定时器，已有分组的定时器保持不变 */
                     if (callbackGroupTimers_.find(key) == callbackGroupTimers_.end()) {
@@ -786,19 +843,21 @@ namespace ondemand
     void OnDemandSub::callbackGroupData(uint32_t bucketIndex, uint32_t freqMs)
     {
 
-        /* 获取组成员快照 + running flag */
+        /* 获取组成员快照 + running flag + callback */
         std::shared_ptr<std::vector<CallbackVarInfo>> members;
         std::shared_ptr<std::atomic<bool>> running;
+        DataCallback groupCallback;
         {
             std::lock_guard<std::mutex> lock(callbackGroupsMutex_);
             CallbackGroupKey key{bucketIndex, freqMs};
             auto it = callbackGroupMembers_.find(key);
             if (it == callbackGroupMembers_.end() || !it->second.members
-                || it->second.members->empty()) {
+                || it->second.members->empty() || !it->second.callback) {
                 return;
             }
             members = it->second.members;
             running = it->second.running;
+            groupCallback = it->second.callback;
         }
 
         /* 防止并发执行：上次还没执行完则跳过本次 */
@@ -816,7 +875,6 @@ namespace ondemand
             ~RunningGuard() { flag.store(false, std::memory_order_release); }
         } guard{*running};
 
-        const DataCallback *groupCallback = nullptr;
         std::vector<VarCallbackData> batch;
         batch.reserve(members->size());
 
@@ -870,20 +928,15 @@ namespace ondemand
         dataBuf.reserve(reserveBytes);
 
         for (const auto &info : *members) {
-            if (!info.callback)
-                continue;
-
             size_t off = dataBuf.size();
             uint32_t sz = 0;
             {
                 auto handle = varStore_.read_zero_copy(static_cast<uint32_t>(info.varId));
                 if (!handle || handle.size() == 0) {
-                    ONDEMANDLOG_TIME(error, 5000) << "Failed to read varId: " << info.varId
-                                                  << " for callback, varName: " << info.varName;
+                    ONDEMANDLOG_TIME(critical, 3000) << "Skip unregistered varId: " << info.varId
+                                                  << " varName: " << info.varName;           
                     continue;
                 }
-                if (!groupCallback)
-                    groupCallback = &info.callback;
                 sz = handle.size();
                 const auto *src = reinterpret_cast<const uint8_t *>(handle.ptr());
                 dataBuf.insert(dataBuf.end(), src, src + sz);
@@ -891,7 +944,7 @@ namespace ondemand
             copied.push_back({&info, off, sz});
         }
 
-        if (copied.empty() || !groupCallback)
+        if (copied.empty())
             return;
 
         /* dataBuf 不再增长，指针稳定，统一填 batch */
@@ -905,7 +958,7 @@ namespace ondemand
             return;
 
         try {
-            (*groupCallback)(batch);
+            groupCallback(batch);
         } catch (const std::exception &e) {
             ONDEMANDLOG_TIME(error, 5000) << "Batch callback exception for freq=" << freqMs
                                           << "ms, vars=" << batch.size() << " err: " << e.what();
@@ -954,6 +1007,55 @@ namespace ondemand
         }
         return result;
     }
+
+    void OnDemandSub::onParticipantDiscovery(const DdsWrapper::ParticipantInfo &info)
+    {
+        if (info.status != DdsWrapper::ParticipantStatus::REMOVED
+            && info.status != DdsWrapper::ParticipantStatus::DROPPED) {
+            return;
+        }
+
+        (void)cleanupParticipantPublish(info.participant_name);
+    }
+
+    bool OnDemandSub::cleanupParticipantPublish(const std::string &pubNodeName)
+    {
+        if (pubNodeName.empty()) {
+            return false;
+        }
+
+        /* 找出所有属于该 pub 节点的变量并清除 */
+        std::vector<uint64_t> toRemove;
+        {
+            std::unique_lock lock(varIndexMutex_);
+            for (auto it = varIndex_.begin(); it != varIndex_.end();) {
+                const auto &meta = it->second;
+                if (meta.varDefine && meta.varDefine->nodeName() == pubNodeName) {
+                    toRemove.push_back(it->first);
+                    varStore_.unregister_var(it->first);
+                    totalReceived_.fetch_sub(1, std::memory_order_relaxed);
+                    it = varIndex_.erase(it);
+                } else {
+                    ++it;
+                }
+            }
+        }
+
+        if (toRemove.empty()) {
+            return false;
+        }
+
+        /* 触发调度器重建，取消已无成员的分组定时器 */
+        /* 注意：不清除 subscriptionCallbacks_，保留用户订阅意图，
+         * 待 pub 重新上线发 TableDefine 后可自动恢复 */
+        callbackDirty_.store(true, std::memory_order_release);
+
+        ONDEMANDLOG(info) << "Pub participant offline: " << pubNodeName
+                          << ", removed " << toRemove.size() << " vars";
+        return true;
+    }
+
+
 
     /**
      * @brief 停止订阅器
@@ -1017,6 +1119,19 @@ namespace ondemand
             std::lock_guard<std::mutex> lock(subscriptionCallbacksMutex_);
             subscriptionCallbacks_.clear();
         }
+
+        {
+            std::lock_guard<std::mutex> lk(activePartitionsMutex_);
+            activePartitions_.clear();
+        }
+
+        {
+            std::unique_lock lock(varIndexMutex_);
+            varIndex_.clear();
+        }
+
+        /*重置 varStore_，清空 table/metas/arena，避免重新 start 时 id 冲突*/
+        varStore_.reset();
 
         for (auto &s : varWriteStamps_) {
             s.writeCount.store(0);
