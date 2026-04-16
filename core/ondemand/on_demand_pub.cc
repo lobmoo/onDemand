@@ -1002,6 +1002,7 @@ namespace ondemand
                                           const std::vector<DSF::NamedValue> &varFreqs)
     {
         uint64_t nodeHash = fast_hash(nodeName);
+        const std::string ownPrefix = nodeName_ + "_";
 
         std::vector<std::pair<std::string, uint32_t>> freqChanges; // 锁外触发回调
         uint32_t missingCount = 0;
@@ -1017,6 +1018,12 @@ namespace ondemand
 
         for (const auto &varFreq : varFreqs) {
             std::string metaName = varFreq.name(); // 这里注册请求已经是全名了，不需要再拼接一次了
+
+            // 非本发布节点的变量请求直接忽略，不计入 missing，避免跨 pub 场景下无意义重试。
+            if (metaName.compare(0, ownPrefix.size(), ownPrefix) != 0) {
+                continue;
+            }
+
             uint64_t varHash = fast_hash(metaName);
             auto it = varIndex_.find(varHash);
             if (it == varIndex_.end()) {
