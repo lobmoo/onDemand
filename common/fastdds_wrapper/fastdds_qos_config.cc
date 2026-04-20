@@ -41,12 +41,6 @@ ParticipantQoSBuilder &ParticipantQoSBuilder::enableDiscovery(bool enable)
     return *this;
 }
 
-ParticipantQoSBuilder &ParticipantQoSBuilder::setMaxMessageSize(uint32_t size)
-{
-
-    return *this;
-}
-
 const eprosima::fastdds::dds::DomainParticipantQos &ParticipantQoSBuilder::getQos() const
 {
     return qos_;
@@ -74,7 +68,7 @@ ParticipantQoSBuilder &ParticipantQoSBuilder::setInitialAnnouncements(uint32_t c
 }
 
 ParticipantQoSBuilder &ParticipantQoSBuilder::addUDPV4TransportInterfaces(
-    const std::vector<std::string> &network_interfaces)
+    const std::vector<std::string> &network_interfaces, uint32_t maxMessageSize)
 {
     auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
     qos_.transport().use_builtin_transports = false;
@@ -83,6 +77,9 @@ ParticipantQoSBuilder &ParticipantQoSBuilder::addUDPV4TransportInterfaces(
         udp_transport->interfaceWhiteList.insert(udp_transport->interfaceWhiteList.end(),
                                                  network_interfaces.begin(),
                                                  network_interfaces.end());
+    }
+    if(maxMessageSize > 0) {
+        udp_transport->maxMessageSize = maxMessageSize;
     }
     udp_transport->interface_blocklist.push_back({"127.0.0.1"});
     qos_.transport().user_transports.push_back(udp_transport);

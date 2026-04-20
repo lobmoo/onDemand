@@ -82,7 +82,7 @@ ParticipantQoSBuilder &ParticipantQoSBuilder::setInitialAnnouncements(uint32_t c
 }
 
 ParticipantQoSBuilder &ParticipantQoSBuilder::addUDPV4TransportInterfaces(
-    const std::vector<std::string> &network_interfaces)
+    const std::vector<std::string> &network_interfaces,  uint32_t maxMessageSize)
 {
     BaoSky::rtps::ThreadConfig thread_config;
     BaoSky::rtps::TransportStack::GetInstance()->DeleteConfig("udp");
@@ -97,6 +97,9 @@ ParticipantQoSBuilder &ParticipantQoSBuilder::addUDPV4TransportInterfaces(
     } else {
         udp_config->mConfigName = "udp";
         udp_config->mLocalIP = network_interfaces;
+    }
+    if (maxMessageSize > 0) {
+        //udp_config->mMaxMessageSize = maxMessageSize;
     }
     BaoSky::rtps::TransportStack::GetInstance()->AddConfig(udp_config);
     return *this;
