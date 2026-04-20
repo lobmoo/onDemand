@@ -76,6 +76,7 @@ public:
     ParticipantQoSBuilder &setIgnoreLocalEndpoints();
     ParticipantQoSBuilder &setParticipantQosProperties(const std::string &name,
                                                        const std::string &value, bool propagate);
+    ParticipantQoSBuilder &setupLargeDataTransport();
 
 private:
     // 内部方法：获取原生 QoS（仅内部使用，友元访问）

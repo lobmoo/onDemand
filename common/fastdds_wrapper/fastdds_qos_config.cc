@@ -154,6 +154,12 @@ ParticipantQoSBuilder &ParticipantQoSBuilder::setParticipantQosProperties(const 
     return *this;
 }
 
+ParticipantQoSBuilder &ParticipantQoSBuilder::setupLargeDataTransport()
+{
+    qos_.setup_transports(eprosima::fastdds::rtps::BuiltinTransports::LARGE_DATA);
+    return *this;
+}
+
 DataWriterQoSBuilder::DataWriterQoSBuilder()
 {
     qos_ = DATAWRITER_QOS_DEFAULT;

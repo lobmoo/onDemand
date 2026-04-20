@@ -458,7 +458,7 @@ namespace ondemand
     inline DdsWrapper::ParticipantQoSBuilder createDefaultNodeQoS()
     {
         DdsWrapper::ParticipantQoSBuilder qos;
-        qos.addUDPV4TransportInterfaces({"10.25.5.26"})
+        qos.addUDPV4TransportInterfaces({"10.25.5.26"}, 1200)
             .setDiscoveryMulticastLocator("239.255.0.1", 7400)
             .setUserMulticastLocator("239.255.0.1", 7401)
             .addFlowController()
