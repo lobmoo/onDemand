@@ -1,14 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
-project(test_out LANGUAGES CXX)
 
-file(GLOB_RECURSE API_TEST_SOURCES
-    ""
-    "${CMAKE_CURRENT_SOURCE_DIR}/../test*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/../*_test.cc"
-    "${CMAKE_SOURCE_DIR}/core/ondemand/*_test.cc"
-)
-
-# 根据 DDS 实现选择 ondemand 所需源文件与库
+# 根据 DDS 实现选择源文件与库
 if(DDS_IMPL STREQUAL "FASTDDS")
     set(IDL_GEN_DIR "${CMAKE_SOURCE_DIR}/core/ondemand/.gensrc")
     set(DDS_WRAPPER_SOURCES
@@ -47,7 +39,7 @@ set(ONDEMAND_SOURCES
     "${CMAKE_SOURCE_DIR}/core/ondemand/on_demand_sub.cc"
 )
 
-set(API_TEST_INCLUDE
+set(COMMON_INCLUDE
     "${CMAKE_SOURCE_DIR}/common"
     "${CMAKE_SOURCE_DIR}/core"
     "${CMAKE_SOURCE_DIR}/core/ondemand"
@@ -57,21 +49,7 @@ set(API_TEST_INCLUDE
     "${DDS_INCLUDE_DIR}"
 )
 
-add_executable(${PROJECT_NAME}
-    ${API_TEST_SOURCES}
-    ${DDS_WRAPPER_SOURCES}
-    ${DDS_GEN_SOURCES_CPP}
-    ${ONDEMAND_SOURCES}
-    ${ONDEMAND_IDL_SOURCES}
-)
-
-set_target_properties(${PROJECT_NAME} PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/tests"
-)
-
-target_include_directories(${PROJECT_NAME} PRIVATE ${API_TEST_INCLUDE})
-
-target_link_libraries(${PROJECT_NAME} PRIVATE
+set(COMMON_LIBS
     ${DDS_LIBS}
     "${CMAKE_SOURCE_DIR}/thirdparty/CRoaring/lib/libroaring.so"
     log::log
@@ -81,4 +59,42 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     rt
 )
 
-target_compile_options(${PROJECT_NAME} PRIVATE -O2)
+# ── test_log ──────────────────────────────────────────────────────────────────
+add_executable(test_log
+    "${CMAKE_SOURCE_DIR}/common/log/logger_test.cc"
+    "${CMAKE_SOURCE_DIR}/common/timer_wheel/timer_scheduler_test.cc"
+)
+set_target_properties(test_log PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/tests"
+)
+target_include_directories(test_log PRIVATE ${COMMON_INCLUDE})
+target_link_libraries(test_log PRIVATE ${COMMON_LIBS})
+target_compile_options(test_log PRIVATE -O2)
+
+# ── test_ddswrapper ───────────────────────────────────────────────────────────
+add_executable(test_ddswrapper
+    "${CMAKE_SOURCE_DIR}/tests/fastdds_node_test.cc"
+    ${DDS_WRAPPER_SOURCES}
+    ${DDS_GEN_SOURCES_CPP}
+)
+set_target_properties(test_ddswrapper PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/tests"
+)
+target_include_directories(test_ddswrapper PRIVATE ${COMMON_INCLUDE})
+target_link_libraries(test_ddswrapper PRIVATE ${COMMON_LIBS})
+target_compile_options(test_ddswrapper PRIVATE -O2)
+
+# ── test_ondemand ─────────────────────────────────────────────────────────────
+add_executable(test_ondemand
+    "${CMAKE_SOURCE_DIR}/core/ondemand/ondemand_pubsub_test.cc"
+    ${DDS_WRAPPER_SOURCES}
+    ${DDS_GEN_SOURCES_CPP}
+    ${ONDEMAND_SOURCES}
+    ${ONDEMAND_IDL_SOURCES}
+)
+set_target_properties(test_ondemand PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/tests"
+)
+target_include_directories(test_ondemand PRIVATE ${COMMON_INCLUDE})
+target_link_libraries(test_ondemand PRIVATE ${COMMON_LIBS})
+target_compile_options(test_ondemand PRIVATE -O2)
