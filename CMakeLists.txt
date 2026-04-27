@@ -28,7 +28,7 @@ add_subdirectory(common/log)
 add_subdirectory(core)
 
 
-option(ENABLE_TESTS "Enable unit tests" OFF)
+option(ENABLE_TESTS "Enable unit tests" ON)
 if(ENABLE_TESTS)
     add_subdirectory(tests)
 endif()

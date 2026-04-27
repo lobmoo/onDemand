@@ -61,14 +61,14 @@ public:
 
     ParticipantQoSBuilder &setName(const std::string &name);
     ParticipantQoSBuilder &enableDiscovery(bool enable);
-    ParticipantQoSBuilder &setMaxMessageSize(uint32_t size);
+
 
     // 扩展方法以支持更多配置
     ParticipantQoSBuilder &setDiscoveryKeepAlive(uint32_t lease_duration_ms,
                                                  uint32_t announcement_period_ms);
     ParticipantQoSBuilder &setInitialAnnouncements(uint32_t count, uint32_t period_ms);
     ParticipantQoSBuilder &
-    addUDPV4TransportInterfaces(const std::vector<std::string> &network_interfaces);
+    addUDPV4TransportInterfaces(const std::vector<std::string> &network_interfaces ,uint32_t maxMessageSize = 0);
     ParticipantQoSBuilder &addUDPV4TransportCoreId(int core_id);
     ParticipantQoSBuilder &setUserMulticastLocator(const std::string &address, uint16_t port);
     ParticipantQoSBuilder &setDiscoveryMulticastLocator(const std::string &address, uint16_t port);
@@ -76,6 +76,7 @@ public:
     ParticipantQoSBuilder &setIgnoreLocalEndpoints();
     ParticipantQoSBuilder &setParticipantQosProperties(const std::string &name,
                                                        const std::string &value, bool propagate);
+    ParticipantQoSBuilder &setupLargeDataTransport();
 
 private:
     // 内部方法：获取原生 QoS（仅内部使用，友元访问）

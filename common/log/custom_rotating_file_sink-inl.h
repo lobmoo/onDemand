@@ -28,8 +28,8 @@ namespace sinks
     SPDLOG_INLINE custom_rotating_file_sink<Mutex>::custom_rotating_file_sink(
         filename_t base_filename, std::size_t max_size, std::size_t max_files, bool rotate_on_open,
         const file_event_handlers &event_handlers)
-        : base_filename_(std::move(base_filename)), max_size_(max_size), max_files_(max_files),
-          file_helper_{event_handlers}
+        : base_filename_(std::move(base_filename)), max_size_(max_size),
+          max_files_(max_files), file_helper_{event_handlers}
     {
         if (max_size == 0) {
             throw_spdlog_ex("rotating sink constructor: max_size arg cannot be zero");
@@ -148,15 +148,20 @@ namespace sinks
         // Split base filename into directory and filename parts
         std::filesystem::path base_path(base_filename_);
         filename_t dir = base_path.parent_path().native();
+        filename_t user_prefix_t = base_path.stem().native();
+        if (user_prefix_t.empty()) {
+            user_prefix_t = process_name_t;
+        }
         filename_t new_filename;
 
         if (dir.empty()) {
             new_filename =
-                fmt_lib::format(SPDLOG_FILENAME_T("{}_{}.log"), process_name_t, timestamp_t);
+                fmt_lib::format(SPDLOG_FILENAME_T("{}_{}.log"), user_prefix_t, timestamp_t);
         } else {
             new_filename =
-                std::filesystem::path(dir)
-                / fmt_lib::format(SPDLOG_FILENAME_T("{}_{}.log"), process_name_t, timestamp_t);
+                (std::filesystem::path(dir)
+                 / fmt_lib::format(SPDLOG_FILENAME_T("{}_{}.log"), user_prefix_t, timestamp_t))
+                    .native();
         }
 
         // Rename current file to new filename
@@ -172,7 +177,7 @@ namespace sinks
         try {
             std::filesystem::path dir_path(dir.empty() ? std::filesystem::current_path()
                                                        : std::filesystem::path(dir));
-            filename_t prefix = fmt_lib::format(SPDLOG_FILENAME_T("{}_"), process_name_t);
+            filename_t prefix = fmt_lib::format(SPDLOG_FILENAME_T("{}_"), user_prefix_t);
 
             for (const auto &entry : std::filesystem::directory_iterator(dir_path)) {
                 filename_t filename = entry.path().filename().native();

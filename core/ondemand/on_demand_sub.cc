@@ -433,7 +433,7 @@ namespace ondemand
                         /*先检查是否已存在，避免重复 register_var*/
                         auto it = varIndex_.find(varHash);
                         if (it != varIndex_.end()) {
-                            ONDEMANDLOG(warning) << "Variable already exists: " << varName;
+                            ONDEMANDLOG(debug) << "Variable already exists: " << varName;
                             continue;
                         }
 

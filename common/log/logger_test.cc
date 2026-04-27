@@ -16,11 +16,14 @@
 #include "logger.h"
 #include <atomic>
 #include <chrono>
+#include <climits>
 #include <filesystem>
 #include <fstream>
 #include <gtest/gtest.h>
 #include <nlohmann/json.hpp>
+#include <regex>
 #include <thread>
+#include <unistd.h>
 #include <vector>
 
 namespace fs = std::filesystem;
@@ -374,46 +377,20 @@ TEST_F(LoggerTest, MalformedConfigFileTest)
 
     testing::internal::CaptureStdout();
     bool result = Logger::GetInstance()->Init(test_config_file_);
-    std::string output = testing::internal::GetCapturedStdout();
 
-    // 应该回退到默认配置
+    // 应该回退到默认配置（console），初始化成功
     EXPECT_TRUE(result);
 
     LOG(info) << "Test with malformed config file";
     Logger::GetInstance()->Uninit();
+
+    // 默认配置是 console 输出，验证日志确实写到了 stdout
+    std::string output = testing::internal::GetCapturedStdout();
+    EXPECT_TRUE(output.find("Test with malformed config file") != std::string::npos)
+        << "Logger should fall back to console output on malformed config";
 }
 
-// 测试日志轮转
-TEST_F(LoggerTest, LogRotationTest)
-{
-    // 创建小文件大小以强制轮转
-    ASSERT_TRUE(Logger::GetInstance()->Init(test_log_file_, Logger::file, Logger::info, 1,
-                                            3)); // 1MB文件大小
 
-    // 写入大量日志以触发轮转
-    for (int i = 0; i < 1000; ++i) {
-        LOG(info) << "Log rotation test message " << i
-                  << " - This is a long message to fill up the log file quickly and trigger "
-                     "rotation mechanism for testing purposes.";
-    }
-
-    Logger::GetInstance()->Uninit();
-
-    // 检查是否创建了轮转文件
-    std::string base_name = test_log_file_;
-    bool rotation_occurred = false;
-
-    for (int i = 1; i <= 3; ++i) {
-        std::string rotated_file = base_name + "." + std::to_string(i);
-        if (fs::exists(rotated_file)) {
-            rotation_occurred = true;
-            break;
-        }
-    }
-
-    // 注意：根据实际的spdlog行为，这个测试可能需要调整
-    // EXPECT_TRUE(rotation_occurred) << "Log rotation did not occur as expected";
-}
 
 // 测试限流日志
 TEST_F(LoggerTest, RateLimitTest)
@@ -631,4 +608,89 @@ TEST_F(LoggerTest, AsyncWaitTest)
         EXPECT_LE(lines_before_uninit, lines_after_uninit);
     } catch (...) {
     }
+}
+
+// 辅助：在目录下找匹配正则的文件名
+static std::vector<std::string> FindMatchingFiles(const std::string &dir,
+                                                   const std::regex &pattern)
+{
+    std::vector<std::string> result;
+    for (const auto &entry : fs::directory_iterator(dir)) {
+        std::string name = entry.path().filename().string();
+        if (std::regex_match(name, pattern)) {
+            result.push_back(name);
+        }
+    }
+    return result;
+}
+
+// 轮转文件名格式：用户命名 → <stem>_YYYYMMDD_HHMMSS.log
+TEST_F(LoggerTest, RotationFilenameUsesUserPrefix)
+{
+    const std::string log_file = test_log_dir_ + "/myapp.log";
+    // max_size=1MB，写超过 1MB 的数据触发轮转
+    ASSERT_TRUE(Logger::GetInstance()->Init(log_file, Logger::file, Logger::info, 1, 5));
+
+    // 每条约 200 字节，写 6000 条 ≈ 1.2MB，确保触发至少一次轮转
+    for (int i = 0; i < 6000; ++i) {
+        LOG(info) << "RotationFilenameUsesUserPrefix message " << i
+                  << " padding padding padding padding padding padding padding padding padding";
+    }
+
+    Logger::GetInstance()->Uninit();
+
+    // 轮转后应存在 myapp_YYYYMMDD_HHMMSS.log
+    std::regex pattern(R"(myapp_\d{8}_\d{6}\.log)");
+    auto matches = FindMatchingFiles(test_log_dir_, pattern);
+    EXPECT_FALSE(matches.empty())
+        << "No rotated file matching myapp_YYYYMMDD_HHMMSS.log found in " << test_log_dir_;
+
+    // 不应出现以进程名开头的轮转文件（用户已命名）
+    std::string proc_name;
+    {
+        char buf[PATH_MAX];
+        ssize_t len = readlink("/proc/self/exe", buf, sizeof(buf) - 1);
+        if (len > 0) {
+            buf[len] = '\0';
+            proc_name = fs::path(buf).filename().string();
+        }
+    }
+    if (!proc_name.empty()) {
+        std::regex proc_pattern(proc_name + R"(_\d{8}_\d{6}\.log)");
+        auto proc_matches = FindMatchingFiles(test_log_dir_, proc_pattern);
+        EXPECT_TRUE(proc_matches.empty())
+            << "Rotated file should use user prefix, not process name";
+    }
+}
+
+// 轮转文件名格式：无用户命名（stem 为空）→ <进程名>_YYYYMMDD_HHMMSS.log
+// 通过 Logger 接口，以进程名为 stem 的文件名来验证轮转命名逻辑
+TEST_F(LoggerTest, RotationFilenameUsesProcessNameWhenNoUserPrefix)
+{
+    // 获取当前进程名（与 rotate_() 内部 get_process_name() 逻辑一致）
+    std::string proc_name;
+    {
+        char buf[PATH_MAX];
+        ssize_t len = readlink("/proc/self/exe", buf, sizeof(buf) - 1);
+        ASSERT_GT(len, 0) << "Cannot read /proc/self/exe";
+        buf[len] = '\0';
+        proc_name = fs::path(buf).filename().string();
+    }
+    ASSERT_FALSE(proc_name.empty());
+
+    // 用进程名作为文件 stem，触发轮转后验证文件名格式为 <proc_name>_YYYYMMDD_HHMMSS.log
+    const std::string proc_log = test_log_dir_ + "/" + proc_name + ".log";
+    ASSERT_TRUE(Logger::GetInstance()->Init(proc_log, Logger::file, Logger::info, 1, 5));
+
+    for (int i = 0; i < 6000; ++i) {
+        LOG(info) << "RotationFilenameUsesProcessName message " << i
+                  << " padding padding padding padding padding padding padding padding padding";
+    }
+
+    Logger::GetInstance()->Uninit();
+
+    std::regex pattern(proc_name + R"(_\d{8}_\d{6}\.log)");
+    auto matches = FindMatchingFiles(test_log_dir_, pattern);
+    EXPECT_FALSE(matches.empty())
+        << "No rotated file matching " << proc_name << "_YYYYMMDD_HHMMSS.log found";
 }
