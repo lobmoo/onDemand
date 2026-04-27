@@ -680,7 +680,8 @@ namespace ondemand
      */
     bool OnDemandPub::createVars(const std::vector<DSF::Var::Define> &VarDefines)
     {
-        /*注册变量 + 初始化存储*/
+        /*注册变量 + 初始化存储，同时收集受影响的 bucket*/
+        std::unordered_set<uint32_t> affectedBuckets;
         {
             std::unique_lock lock(varIndexMutex_);
             varIndex_.reserve(varIndex_.size() + VarDefines.size());
@@ -708,9 +709,14 @@ namespace ondemand
                 meta.varId = varStore_.register_var(varHash, kVarSize);
                 varIndex_.emplace(varHash, std::move(meta));
                 bucketManager_.AddMember(varName, varHash);
+                affectedBuckets.insert(static_cast<uint32_t>(bucketIdx));
             }
         } // 先释放写锁，再 finalize，避免 finalize 内 config_begin 等 active_ops==0
           // 时与持有 OpGuard 的 publishGroupData 形成死锁
+
+        if (affectedBuckets.empty()) {
+            return true; // 全部重复，无需后续操作
+        }
 
         if (!varStore_.finalize()) {
             ONDEMANDLOG(error) << "Failed to finalize variable store";
@@ -723,9 +729,8 @@ namespace ondemand
             return false;
         }
 
-        /*发布 TableDefine */
-        uint32_t bucketCount = bucketManager_.GetBucketCount();
-        for (uint32_t i = 0; i < bucketCount; ++i) {
+        /*只发布有新增变量的 bucket 的 TableDefine*/
+        for (uint32_t i : affectedBuckets) {
             if (bucketManager_.GetBucketSize(i) == 0) {
                 continue;
             }
@@ -761,7 +766,7 @@ namespace ondemand
             if (!pubTableDefine.varDefines().empty()) {
                 tableDefinePublish(pubTableDefine);
                 std::this_thread::sleep_for(std::chrono::milliseconds(50));
-                ONDEMANDLOG(info) << "Published bucket " << i + 1 << "/" << bucketCount << " with "
+                ONDEMANDLOG(info) << "Published bucket " << i << " with "
                                   << pubTableDefine.varDefines().size() << " variables";
             }
         }
