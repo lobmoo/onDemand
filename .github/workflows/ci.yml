@@ -17,53 +17,15 @@ on:
           - txdds
 
 jobs:
-  # ═══════════════════════════════════════════════════════════════════════════
-  # Job 1: Prepare - 准备阶段（检出代码、安装依赖）
-  # ═══════════════════════════════════════════════════════════════════════════
-  prepare:
-    name: 📦 Prepare
+  build-and-test:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 30
 
     steps:
-      - name: 📥 Checkout code
+      - name: Prepare - checkout
         uses: actions/checkout@v5
 
-      - name: 🔧 Update package manager
-        run: |
-          sudo apt-get update
-
-      - name: 📚 Install system dependencies
-        run: |
-          sudo apt-get install -y \
-            build-essential \
-            cmake \
-            git \
-            libgtest-dev \
-            libssl-dev \
-            libsndfile1-dev
-
-      - name: 🧪 Build and install Google Test
-        run: |
-          cd /usr/src/googletest
-          sudo cmake -B build -S .
-          sudo cmake --build build -j$(nproc)
-          sudo cmake --install build
-
-  # ═══════════════════════════════════════════════════════════════════════════
-  # Job 2: Configure - 配置阶段（CMake 配置）
-  # ═══════════════════════════════════════════════════════════════════════════
-  configure:
-    name: ⚙️ Configure
-    runs-on: ubuntu-latest
-    needs: prepare
-    timeout-minutes: 10
-
-    steps:
-      - name: 📥 Checkout code
-        uses: actions/checkout@v5
-
-      - name: 📚 Install system dependencies
+      - name: Prepare - install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y \
@@ -74,14 +36,14 @@ jobs:
             libssl-dev \
             libsndfile1-dev
 
-      - name: 🧪 Build and install Google Test
+      - name: Prepare - build googletest
         run: |
           cd /usr/src/googletest
           sudo cmake -B build -S .
-          sudo cmake --build build -j$(nproc)
+          sudo cmake --build build -j"$(nproc)"
           sudo cmake --install build
 
-      - name: ⚙️ Configure with CMake
+      - name: Configure - CMake
         env:
           DDS_IMPL: ${{ github.event.inputs.dds_impl || 'fastdds' }}
         run: |
@@ -89,119 +51,30 @@ jobs:
           cd build
           source ../.env
           if [ "$DDS_IMPL" = "txdds" ]; then
-            cmake .. -DUSE_TXDDS=ON -DENABLE_TESTS=ON -DCMAKE_BUILD_TYPE=Release
+            cmake .. -DUSE_TXDDS=ON -DENABLE_TESTS=ON
           else
-            cmake .. -DUSE_FASTDDS=ON -DENABLE_TESTS=ON -DCMAKE_BUILD_TYPE=Release
+            cmake .. -DUSE_FASTDDS=ON -DENABLE_TESTS=ON
           fi
 
-      - name: 📤 Upload CMake build directory
-        uses: actions/upload-artifact@v5
-        with:
-          name: cmake-build
-          path: build/
-          retention-days: 1
-
-  # ═══════════════════════════════════════════════════════════════════════════
-  # Job 3: Build - 编译阶段
-  # ═══════════════════════════════════════════════════════════════════════════
-  build:
-    name: 🔨 Build
-    runs-on: ubuntu-latest
-    needs: configure
-    timeout-minutes: 20
-
-    steps:
-      - name: 📥 Checkout code
-        uses: actions/checkout@v5
-
-      - name: 📚 Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            build-essential \
-            cmake \
-            git \
-            libgtest-dev \
-            libssl-dev \
-            libsndfile1-dev
-
-      - name: 🧪 Build and install Google Test
-        run: |
-          cd /usr/src/googletest
-          sudo cmake -B build -S .
-          sudo cmake --build build -j$(nproc)
-          sudo cmake --install build
-
-      - name: 📥 Download CMake build directory
-        uses: actions/download-artifact@v5
-        with:
-          name: cmake-build
-          path: build/
-
-      - name: 🔨 Compile project
+      - name: Build - compile
         run: |
           cd build
           source ../.env
-          make -j$(nproc) VERBOSE=1
+          make -j"$(nproc)"
 
-      - name: 📤 Upload build artifacts
-        uses: actions/upload-artifact@v5
-        with:
-          name: build-output
-          path: build/
-          retention-days: 1
-
-  # ═══════════════════════════════════════════════════════════════════════════
-  # Job 4: Test - 测试阶段
-  # ═══════════════════════════════════════════════════════════════════════════
-  test:
-    name: 🧪 Test
-    runs-on: ubuntu-latest
-    needs: build
-    timeout-minutes: 30
-
-    steps:
-      - name: 📥 Checkout code
-        uses: actions/checkout@v5
-
-      - name: 📚 Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            build-essential \
-            cmake \
-            git \
-            libgtest-dev \
-            libssl-dev \
-            libsndfile1-dev
-
-      - name: 🧪 Build and install Google Test
-        run: |
-          cd /usr/src/googletest
-          sudo cmake -B build -S .
-          sudo cmake --build build -j$(nproc)
-          sudo cmake --install build
-
-      - name: 📥 Download build artifacts
-        uses: actions/download-artifact@v5
-        with:
-          name: build-output
-          path: build/
-
-      - name: 🧪 Run unit tests
+      - name: Test - run unit tests
         run: |
           cd build
           source ../.env
-          echo "========== Running test_log =========="
-          ./tests/test_log --gtest_filter="*" 2>&1 | tail -20 || true
-          echo ""
-          echo "========== Running test_ddswrapper =========="
-          ./tests/test_ddswrapper --gtest_filter="*" 2>&1 | tail -20 || true
-          echo ""
-          echo "========== Running test_ondemand =========="
-          ./tests/test_ondemand --gtest_filter="OnDemandPubSub.Create20ThenAdd5ThenDelete10*" 2>&1 | tail -30
+          if command -v ctest >/dev/null 2>&1; then
+            ctest --output-on-failure --verbose
+          else
+            ./tests/test_log
+            ./tests/test_ddswrapper
+            ./tests/test_ondemand
+          fi
 
-      - name: 📤 Upload test results
+      - name: Test - upload results
         if: always()
         uses: actions/upload-artifact@v5
         with:
@@ -209,51 +82,11 @@ jobs:
           path: build/Testing/
           retention-days: 7
 
-  # ═══════════════════════════════════════════════════════════════════════════
-  # Job 5: Report - 生成报告
-  # ═══════════════════════════════════════════════════════════════════════════
-  report:
-    name: 📊 Report
-    runs-on: ubuntu-latest
-    needs: [ prepare, configure, build, test ]
-    if: always()
-    timeout-minutes: 5
-
-    steps:
-      - name: 📥 Download test results
-        uses: actions/download-artifact@v5
-        with:
-          name: test-results
-          path: test-results/
-
-      - name: 📋 Generate summary
+      - name: Report - summary
+        if: always()
         run: |
-          echo "# CI Pipeline Summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Stage | Status |" >> $GITHUB_STEP_SUMMARY
-          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
-          echo "| 📦 Prepare | ✅ Passed |" >> $GITHUB_STEP_SUMMARY
-          echo "| ⚙️ Configure | ✅ Passed |" >> $GITHUB_STEP_SUMMARY
-          echo "| 🔨 Build | ✅ Passed |" >> $GITHUB_STEP_SUMMARY
-          echo "| 🧪 Test | ✅ Passed |" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "All pipeline stages completed successfully! 🎉" >> $GITHUB_STEP_SUMMARY
-
-  # ═══════════════════════════════════════════════════════════════════════════
-  # Final status job
-  # ═══════════════════════════════════════════════════════════════════════════
-  status:
-    name: ✅ Status
-    runs-on: ubuntu-latest
-    needs: [ prepare, configure, build, test, report ]
-    if: always()
-
-    steps:
-      - name: ✅ Check pipeline status
-        run: |
-          echo "CI Pipeline Status: All stages completed!"
-          echo "- Prepare: Done"
-          echo "- Configure: Done"
-          echo "- Build: Done"
-          echo "- Test: Done"
-          echo "- Report: Done"
+          echo "## CI Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Prepare: done" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Configure: done" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Build: done" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Test: done" >> "$GITHUB_STEP_SUMMARY"
