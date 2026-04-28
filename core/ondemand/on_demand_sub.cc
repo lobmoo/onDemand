@@ -656,17 +656,16 @@ namespace ondemand
 
             for (const auto &item : items) {
                 DSF::NamedValue varFreq;
-                /*计算点hash*/
                 std::string metaVarName = make_meta_varname(node_name, item);
                 uint64_t varHash = fast_hash(metaVarName);
                 ONDEMANDLOG(debug)
                     << "Unsubscribing from var: " << item << " with hash: " << varHash;
                 auto it = varIndex_.find(varHash);
-                tableName = make_bucket_name_by_hash(varHash);
                 if (it == varIndex_.end()) {
-                    ONDEMANDLOG(warning) << "Variable not found for subscription: " << item;
-                    // continue;  这里考虑到有可能订阅请求先于变量定义到达，所以不直接跳过
+                    ONDEMANDLOG(warning) << "Variable not found for unsubscription: " << item;
+                    continue;
                 }
+                tableName = make_bucket_name_by_hash(varHash);
                 varFreq.name(metaVarName);
                 varFreq.value();
                 subReq.varFreqs().emplace_back(varFreq);

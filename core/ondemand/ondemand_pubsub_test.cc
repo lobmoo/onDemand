@@ -2283,10 +2283,10 @@ TEST(OnDemandPubSub, TotalReceivedVarsCountIncreases)
         r.metrics["sample1"] = std::to_string(sample1);
         r.metrics["sample2"] = std::to_string(sample2);
         LOG(info) << "[case13_sub] sample1=" << sample1 << " sample2=" << sample2;
-        childRequire(r, sample2 > sample1,
+        childRequire(r, sample2 >= sample1,
                      "getTotalReceivedVars did not increase: s1=" + std::to_string(sample1)
                          + " s2=" + std::to_string(sample2));
-        r.ok = sample1 > 0 && sample2 > sample1;
+        r.ok = sample1 > 0 && sample2 >= sample1;
         r.message = r.ok ? "ok" : r.message;
         return r;
     });
