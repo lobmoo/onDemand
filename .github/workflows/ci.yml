@@ -127,24 +127,27 @@ jobs:
         run: |
           cd build
           source ../.env
+          mkdir -p test-results
           chmod +x ./tests/test_log ./tests/test_ddswrapper ./tests/test_ondemand || true
           ls -l ./tests/test_log ./tests/test_ddswrapper ./tests/test_ondemand
 
           echo "========== Running test_log =========="
-          timeout 180s ./tests/test_log
+          timeout 180s ./tests/test_log --gtest_output=xml:test-results/test_log.xml
 
           echo "========== Running test_ddswrapper =========="
-          timeout 180s ./tests/test_ddswrapper
+          timeout 180s ./tests/test_ddswrapper --gtest_output=xml:test-results/test_ddswrapper.xml
 
           echo "========== Running test_ondemand (exclude known flaky CI cases) =========="
-          timeout 420s ./tests/test_ondemand --gtest_filter=-OnDemandPubSub.SubFirstThenPubRestartRecovery:OnDemandPubSub.PubFirstThenSubRestartRecovery
+          timeout 420s ./tests/test_ondemand \
+            --gtest_output=xml:test-results/test_ondemand.xml \
+            --gtest_filter=-OnDemandPubSub.SubFirstThenPubRestartRecovery:OnDemandPubSub.PubFirstThenSubRestartRecovery
 
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results
-          path: build/Testing/
+          name: test-results-${{ matrix.dds_impl }}
+          path: build/test-results/
           retention-days: 7
           if-no-files-found: ignore
 
@@ -159,16 +162,188 @@ jobs:
         with:
           path: artifacts
 
-      - name: Generate CI report
+      - name: Generate HTML report
+        env:
+          BUILD_RESULT: ${{ needs.build.result }}
+          TEST_RESULT: ${{ needs.test.result }}
         run: |
-          echo "# CI 流程报告" >> $GITHUB_STEP_SUMMARY
+          mkdir -p report
+          python3 - <<'PY'
+          import html
+          import os
+          import pathlib
+          import xml.etree.ElementTree as ET
+
+          root = pathlib.Path("artifacts")
+          report_dir = pathlib.Path("report")
+          xml_files = sorted(root.glob("test-results-*/**/*.xml"))
+
+          suites = []
+          total_tests = total_failures = total_errors = total_skipped = 0
+
+          for xml_file in xml_files:
+              try:
+                  tree = ET.parse(xml_file)
+              except ET.ParseError:
+                  continue
+              suite_nodes = tree.findall(".//testsuite")
+              if not suite_nodes and tree.getroot().tag == "testsuite":
+                  suite_nodes = [tree.getroot()]
+              for suite in suite_nodes:
+                  name = suite.attrib.get("name", xml_file.stem)
+                  tests = int(suite.attrib.get("tests", "0") or 0)
+                  failures = int(suite.attrib.get("failures", "0") or 0)
+                  errors = int(suite.attrib.get("errors", "0") or 0)
+                  skipped = int(suite.attrib.get("skipped", "0") or 0)
+                  time = suite.attrib.get("time", "0")
+                  total_tests += tests
+                  total_failures += failures
+                  total_errors += errors
+                  total_skipped += skipped
+                  cases = []
+                  for case in suite.findall("testcase"):
+                      case_name = case.attrib.get("name", "unknown")
+                      case_time = case.attrib.get("time", "0")
+                      status = "passed"
+                      message = ""
+                      failure = case.find("failure")
+                      error = case.find("error")
+                      skipped_node = case.find("skipped")
+                      if failure is not None:
+                          status = "failed"
+                          message = failure.attrib.get("message", failure.text or "")
+                      elif error is not None:
+                          status = "error"
+                          message = error.attrib.get("message", error.text or "")
+                      elif skipped_node is not None:
+                          status = "skipped"
+                          message = skipped_node.attrib.get("message", skipped_node.text or "")
+                      cases.append({"name": case_name, "time": case_time, "status": status, "message": message})
+                  suites.append({"name": name, "tests": tests, "failures": failures, "errors": errors, "skipped": skipped, "time": time, "cases": cases, "source": str(xml_file)})
+
+          def esc(value):
+              return html.escape(str(value))
+
+          cards = f"""
+          <div class='grid'>
+            <div class='card {'ok' if os.environ.get('BUILD_RESULT') == 'success' else 'bad'}'><div class='label'>Build</div><div class='value'>{esc(os.environ.get('BUILD_RESULT', 'unknown'))}</div></div>
+            <div class='card {'ok' if os.environ.get('TEST_RESULT') == 'success' else 'bad'}'><div class='label'>Test</div><div class='value'>{esc(os.environ.get('TEST_RESULT', 'unknown'))}</div></div>
+            <div class='card'><div class='label'>Suites</div><div class='value'>{len(suites)}</div></div>
+            <div class='card'><div class='label'>Cases</div><div class='value'>{total_tests}</div></div>
+            <div class='card {'bad' if total_failures or total_errors else 'ok'}'><div class='label'>Failures</div><div class='value'>{total_failures + total_errors}</div></div>
+            <div class='card'><div class='label'>Skipped</div><div class='value'>{total_skipped}</div></div>
+          </div>
+          """
+
+          suite_html = []
+          for suite in suites:
+              rows = []
+              for case in suite["cases"]:
+                  badge_class = {
+                      "passed": "good",
+                      "failed": "bad",
+                      "error": "bad",
+                      "skipped": "muted",
+                  }[case["status"]]
+                  message = esc(case["message"]) if case["message"] else ""
+                  rows.append(f"<tr><td>{esc(case['name'])}</td><td>{esc(case['time'])}s</td><td><span class='pill {badge_class}'>{esc(case['status'])}</span></td><td>{message}</td></tr>")
+              suite_html.append(f"""
+              <section class='suite'>
+                <div class='suite-head'>
+                  <h2>{esc(suite['name'])}</h2>
+                  <div class='meta'>{esc(suite['source'])} · {suite['tests']} cases · {suite['time']}s</div>
+                </div>
+                <div class='suite-stats'>
+                  <span class='pill good'>{suite['tests']} tests</span>
+                  <span class='pill {'bad' if suite['failures'] or suite['errors'] else 'good'}'>{suite['failures'] + suite['errors']} failed</span>
+                  <span class='pill muted'>{suite['skipped']} skipped</span>
+                </div>
+                <table>
+                  <thead><tr><th>Case</th><th>Time</th><th>Status</th><th>Message</th></tr></thead>
+                  <tbody>{''.join(rows)}</tbody>
+                </table>
+              </section>
+              """)
+
+          html_doc = f"""<!doctype html>
+          <html lang='zh-CN'>
+          <head>
+            <meta charset='utf-8'>
+            <meta name='viewport' content='width=device-width, initial-scale=1'>
+            <title>CI Report</title>
+            <style>
+              :root {{
+                color-scheme: dark;
+                --bg: #0b1020;
+                --panel: rgba(16, 24, 48, .86);
+                --border: rgba(148, 163, 184, .18);
+                --text: #e5eefb;
+                --muted: #92a4c3;
+                --good: #2dd4bf;
+                --bad: #fb7185;
+                --accent: #7c3aed;
+              }}
+              * {{ box-sizing: border-box; }}
+              body {{ margin: 0; font-family: Inter, ui-sans-serif, system-ui, sans-serif; color: var(--text); background: radial-gradient(circle at top left, rgba(124,58,237,.35), transparent 24%), radial-gradient(circle at top right, rgba(45,212,191,.18), transparent 26%), var(--bg); }}
+              .wrap {{ max-width: 1180px; margin: 0 auto; padding: 32px 20px 56px; }}
+              .hero {{ padding: 28px; border: 1px solid var(--border); border-radius: 28px; background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03)); box-shadow: 0 24px 80px rgba(0,0,0,.35); }}
+              .eyebrow {{ color: var(--muted); letter-spacing: .2em; text-transform: uppercase; font-size: 12px; }}
+              h1 {{ margin: 10px 0 8px; font-size: clamp(34px, 4vw, 58px); line-height: 1.02; }}
+              .sub {{ color: var(--muted); font-size: 15px; line-height: 1.7; }}
+              .grid {{ display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; margin: 18px 0 28px; }}
+              .card {{ padding: 18px; border: 1px solid var(--border); border-radius: 20px; background: var(--panel); }}
+              .card.ok {{ box-shadow: inset 0 0 0 1px rgba(45,212,191,.08); }}
+              .card.bad {{ box-shadow: inset 0 0 0 1px rgba(251,113,133,.14); }}
+              .label {{ color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .14em; }}
+              .value {{ margin-top: 10px; font-size: 28px; font-weight: 700; }}
+              .suite {{ margin-top: 18px; padding: 22px; border: 1px solid var(--border); border-radius: 24px; background: rgba(12, 18, 36, .76); }}
+              .suite-head {{ display: flex; justify-content: space-between; gap: 14px; align-items: baseline; flex-wrap: wrap; }}
+              .suite h2 {{ margin: 0; font-size: 22px; }}
+              .meta {{ color: var(--muted); font-size: 13px; }}
+              .suite-stats {{ display: flex; gap: 10px; flex-wrap: wrap; margin: 14px 0 18px; }}
+              .pill {{ display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 999px; border: 1px solid var(--border); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }}
+              .pill.good {{ color: #67e8f9; background: rgba(45,212,191,.08); }}
+              .pill.bad {{ color: #fda4af; background: rgba(251,113,133,.1); }}
+              .pill.muted {{ color: var(--muted); background: rgba(148,163,184,.08); }}
+              table {{ width: 100%; border-collapse: collapse; overflow: hidden; border-radius: 16px; }}
+              th, td {{ text-align: left; padding: 12px 10px; border-bottom: 1px solid rgba(148,163,184,.12); vertical-align: top; }}
+              th {{ color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .12em; }}
+              td {{ font-size: 14px; }}
+              .footer {{ color: var(--muted); font-size: 12px; margin-top: 18px; }}
+              @media (max-width: 1080px) {{ .grid {{ grid-template-columns: repeat(2, minmax(0, 1fr)); }} }}
+              @media (max-width: 640px) {{ .grid {{ grid-template-columns: 1fr; }} .hero, .suite {{ border-radius: 18px; }} }}
+            </style>
+          </head>
+          <body>
+            <div class='wrap'>
+              <div class='hero'>
+                <div class='eyebrow'>OnDemand CI</div>
+                <h1>Build and Test Report</h1>
+                <div class='sub'>This page summarizes the current workflow run, including build status and test suite results extracted from GoogleTest XML artifacts.</div>
+                {cards}
+                <div class='footer'>Generated from workflow artifacts. Build status: {esc(os.environ.get('BUILD_RESULT', 'unknown'))}, test status: {esc(os.environ.get('TEST_RESULT', 'unknown'))}.</div>
+              </div>
+              {''.join(suite_html) if suite_html else '<div class="suite"><h2>No XML test results found</h2><div class="meta">The test stage did not upload any XML files to artifacts.</div></div>'}
+            </div>
+          </body>
+          </html>"""
+
+          (report_dir / "index.html").write_text(html_doc, encoding="utf-8")
+          (report_dir / "summary.txt").write_text(
+              f"build={os.environ.get('BUILD_RESULT', 'unknown')}\ntest={os.environ.get('TEST_RESULT', 'unknown')}\nsuites={len(suites)}\ntests={total_tests}\nfailures={total_failures}\nerrors={total_errors}\nskipped={total_skipped}\n",
+              encoding="utf-8",
+          )
+          PY
+          echo "## CI Report" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "## 流程状态" >> $GITHUB_STEP_SUMMARY
-          echo "- **准备阶段**: ✓ 完成" >> $GITHUB_STEP_SUMMARY
-          echo "- **编译阶段**: ${{ needs.build.result == 'success' && '✓ 完成' || '✗ 失败' }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **测试阶段**: ${{ needs.test.result == 'success' && '✓ 完成' || '✗ 失败' }}" >> $GITHUB_STEP_SUMMARY
+          echo "Report generated at: report/index.html" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          if [ -d "artifacts/test-results" ]; then
-            echo "## 测试结果文件" >> $GITHUB_STEP_SUMMARY
-            find artifacts/test-results -type f | sed 's/^/- /' >> $GITHUB_STEP_SUMMARY
-          fi
+          echo "Artifacts:" >> $GITHUB_STEP_SUMMARY
+          find report -maxdepth 1 -type f | sed 's/^/- /' >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-report
+          path: report/
+          retention-days: 14
