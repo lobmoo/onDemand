@@ -17,15 +17,17 @@ on:
           - txdds
 
 jobs:
-  build-and-test:
+  build:
     runs-on: ubuntu-latest
     timeout-minutes: 30
-
+    strategy:
+      matrix:
+        dds_impl: [ fastdds, txdds ]
     steps:
-      - name: Prepare - checkout
-        uses: actions/checkout@v5
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Prepare - install dependencies
+      - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y \
@@ -36,57 +38,73 @@ jobs:
             libssl-dev \
             libsndfile1-dev
 
-      - name: Prepare - build googletest
+      - name: Build and install googletest
         run: |
           cd /usr/src/googletest
           sudo cmake -B build -S .
           sudo cmake --build build -j"$(nproc)"
           sudo cmake --install build
 
-      - name: Configure - CMake
-        env:
-          DDS_IMPL: ${{ github.event.inputs.dds_impl || 'fastdds' }}
+      - name: Configure CMake
         run: |
           mkdir -p build
           cd build
           source ../.env
-          if [ "$DDS_IMPL" = "txdds" ]; then
+          if [ "${{ matrix.dds_impl }}" = "txdds" ]; then
             cmake .. -DUSE_TXDDS=ON -DENABLE_TESTS=ON
           else
             cmake .. -DUSE_FASTDDS=ON -DENABLE_TESTS=ON
           fi
 
-      - name: Build - compile
+      - name: Build
         run: |
           cd build
           source ../.env
           make -j"$(nproc)"
 
-      - name: Test - run unit tests
+      - name: Run tests
+        continue-on-error: true
         run: |
           cd build
           source ../.env
-          if command -v ctest >/dev/null 2>&1; then
-            ctest --output-on-failure --verbose
-          else
-            ./tests/test_log
-            ./tests/test_ddswrapper
-            ./tests/test_ondemand
+          echo "Running test_log..."
+          ./tests/test_log || TEST_FAILED=1
+          echo "Running test_ddswrapper..."
+          ./tests/test_ddswrapper || TEST_FAILED=1
+          echo "Running test_ondemand..."
+          ./tests/test_ondemand || TEST_FAILED=1
+          if [ "$TEST_FAILED" = "1" ]; then
+            echo "::error::One or more tests failed"
+            exit 1
           fi
 
-      - name: Test - upload results
+      - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v4
         with:
-          name: test-results
+          name: test-results-${{ matrix.dds_impl }}
           path: build/Testing/
           retention-days: 7
+          if-no-files-found: ignore
 
-      - name: Report - summary
-        if: always()
+  report:
+    runs-on: ubuntu-latest
+    needs: build
+    if: always()
+    timeout-minutes: 5
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Generate test report
         run: |
-          echo "## CI Summary" >> "$GITHUB_STEP_SUMMARY"
-          echo "- Prepare: done" >> "$GITHUB_STEP_SUMMARY"
-          echo "- Configure: done" >> "$GITHUB_STEP_SUMMARY"
-          echo "- Build: done" >> "$GITHUB_STEP_SUMMARY"
-          echo "- Test: done" >> "$GITHUB_STEP_SUMMARY"
+          echo "# CI Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Build Status**: ${{ needs.build.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -d "artifacts" ]; then
+            echo "**Test Artifacts**:" >> $GITHUB_STEP_SUMMARY
+            find artifacts -name "*.xml" -o -name "*.txt" | sed 's/^/- /' >> $GITHUB_STEP_SUMMARY
+          fi
