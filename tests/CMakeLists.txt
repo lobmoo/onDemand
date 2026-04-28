@@ -1,5 +1,15 @@
 cmake_minimum_required(VERSION 3.16)
 
+# ── GoogleTest (via FetchContent, no system install required) ─────────────────
+include(FetchContent)
+FetchContent_Declare(
+    googletest
+    URL https://github.com/google/googletest/archive/refs/tags/v1.14.0.tar.gz
+    DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+)
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
+
 # 根据 DDS 实现选择源文件与库
 if(DDS_IMPL STREQUAL "FASTDDS")
     set(IDL_GEN_DIR "${CMAKE_SOURCE_DIR}/core/ondemand/.gensrc")

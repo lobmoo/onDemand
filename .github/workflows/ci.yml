@@ -27,36 +27,71 @@ jobs:
 
       - name: Install dependencies
         run: |
-          sudo apt-get update
+          echo "::group::apt-get update"
+          sudo apt-get update -q
+          echo "::endgroup::"
+          echo "::group::apt-get install"
           sudo apt-get install -y \
             build-essential \
             cmake \
+            ninja-build \
             git \
             libssl-dev \
             libsndfile1-dev
+          echo "::endgroup::"
 
-      - name: Configure with CMake
+      - name: Add GCC problem matcher
+        run: echo "::add-matcher::${{ github.workspace }}/.github/gcc-problem-matcher.json"
+
+      - name: Configure with CMake (Ninja)
         run: |
+          DDS_IMPL="${{ github.event.inputs.dds_impl || 'fastdds' }}"
+          echo "::notice::DDS implementation: ${DDS_IMPL}"
           mkdir -p build
           cd build
           source ../.env
-          if [ "${{ github.event.inputs.dds_impl || 'fastdds' }}" = "txdds" ]; then
-            cmake .. -DUSE_TXDDS=ON -DENABLE_TESTS=ON
+          if [ "${DDS_IMPL}" = "txdds" ]; then
+            cmake .. -GNinja -DUSE_TXDDS=ON -DENABLE_TESTS=ON \
+              -DCMAKE_BUILD_TYPE=Release
           else
-            cmake .. -DUSE_FASTDDS=ON -DENABLE_TESTS=ON
+            cmake .. -GNinja -DUSE_FASTDDS=ON -DENABLE_TESTS=ON \
+              -DCMAKE_BUILD_TYPE=Release
           fi
 
       - name: Build
         run: |
           cd build
           source ../.env
-          make -j$(nproc)
+          echo "::group::ninja build"
+          ninja -j$(nproc)
+          echo "::endgroup::"
 
       - name: Run tests
+        id: run_tests
         run: |
           cd build
           source ../.env
-          ctest --output-on-failure
+          echo "::group::ctest output"
+          ctest --output-on-failure --parallel $(nproc) 2>&1 | tee /tmp/ctest_output.txt
+          echo "::endgroup::"
+
+      - name: Write build summary
+        if: always()
+        run: |
+          echo "## 🔨 Build & Test Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Item | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Branch | \`${{ github.ref_name }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| DDS impl | \`${{ github.event.inputs.dds_impl || 'fastdds' }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Commit | \`${{ github.sha }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -f /tmp/ctest_output.txt ]; then
+            echo "### 🧪 Test Results" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            tail -20 /tmp/ctest_output.txt >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          fi
 
       - name: Upload test results
         if: always()
