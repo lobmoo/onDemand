@@ -2681,5 +2681,142 @@ TEST(OnDemandPubSub, BoundaryAndErrorCases)
     expectChildOk(proc, 15s);
 }
 
+// TC18 - setVarData(varId) 单 ID 写入正确性验证
+// 场景：pub 创建4个变量，通过 getVarId() 预查询 varId，分别用 setVarData(varId, ...) 和
+//       setVarData(varName, ...) 交替写入不同变量，每个变量的值固定为其序号。
+//       sub 订阅全部变量（100ms），收集回调中的最新值。
+// 验证：① setVarData(varId, ...) 写入的数据能被 sub 正确接收；
+//       ② 与 setVarData(varName, ...) 写入结果一致，两种接口语义等价；
+//       ③ sub 收到的每个变量值等于其序号，无数据串扰。
+TEST(OnDemandPubSub, SetVarDataByIdCorrectness)
+{
+    const auto root = std::filesystem::temp_directory_path() / uniqueName("ondemand_case18");
+    std::filesystem::create_directories(root);
+
+    const std::string pubNode = uniqueName("pub_case18");
+    const auto defs = makeDefines(pubNode, "v", 4);
+    const auto names = defineNames(defs);
+
+    const auto pubProc = spawnChild("case18_pub", root, [pubNode, defs, names]() {
+        dsf::ondemand::OnDemandPub pub;
+        ChildReport r;
+        if (!childRequire(r, pub.init(pubNode), "pub init failed")
+            || !childRequire(r, pub.start(), "pub start failed")
+            || !childRequire(r, pub.createVars(defs), "pub createVars failed")) {
+            return r;
+        }
+
+        // 预查询 varId
+        std::vector<uint32_t> ids(names.size());
+        for (size_t i = 0; i < names.size(); ++i) {
+            ids[i] = pub.getVarId(names[i].c_str());
+            if (!childRequire(r, ids[i] != UINT32_MAX,
+                              "getVarId failed for " + names[i])) {
+                pub.stop();
+                return r;
+            }
+        }
+        LOG(info) << "[case18_pub] all varIds resolved";
+
+        // v0/v2 用 setVarData(varId)，v1/v3 用 setVarData(varName)，值均固定为序号
+        std::atomic<bool> running{true};
+        std::thread th([&]() {
+            while (running.load(std::memory_order_acquire)) {
+                for (int i = 0; i < static_cast<int>(names.size()); ++i) {
+                    int32_t val = i;
+                    if (i % 2 == 0) {
+                        pub.setVarData(ids[i], &val, sizeof(val));
+                    } else {
+                        pub.setVarData(names[i].c_str(), &val, sizeof(val));
+                    }
+                }
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            }
+        });
+
+        std::this_thread::sleep_for(6s);
+        running.store(false, std::memory_order_release);
+        th.join();
+        pub.stop();
+        r.ok = true;
+        r.message = "ok";
+        return r;
+    });
+
+    const auto subProc = spawnChild("case18_sub", root, [pubNode, names]() {
+        dsf::ondemand::OnDemandSub sub;
+        ChildReport r;
+        if (!childRequire(r, sub.init(uniqueName("sub_case18")), "sub init failed")
+            || !childRequire(r, sub.start(), "sub start failed")) {
+            return r;
+        }
+        if (!childRequire(r,
+                          waitUntil([&]() { return countNodeVars(sub, pubNode) == names.size(); }, 8s),
+                          "sub did not receive defines")) {
+            sub.stop();
+            return r;
+        }
+
+        std::mutex mu;
+        std::map<std::string, int32_t> latestValues;
+        std::map<std::string, int> cbCount;
+
+        if (!childRequire(r,
+                          sub.subscribe(pubNode.c_str(), toSubscriptions(names, 100),
+                                        [&](const std::vector<dsf::ondemand::VarCallbackData> &vars) {
+                                            std::lock_guard<std::mutex> lk(mu);
+                                            for (const auto &v : vars) {
+                                                const std::string name(v.varName.data(), v.varName.size());
+                                                if (v.data && v.size >= sizeof(int32_t))
+                                                    latestValues[name] =
+                                                        *reinterpret_cast<const int32_t *>(v.data);
+                                                cbCount[name]++;
+                                                LOG(info) << "[case18_sub] cb: " << name
+                                                          << " val=" << latestValues[name];
+                                            }
+                                        }),
+                          "subscribe failed")) {
+            sub.stop();
+            return r;
+        }
+
+        if (!childRequire(r,
+                          waitUntil(
+                              [&]() {
+                                  std::lock_guard<std::mutex> lk(mu);
+                                  for (const auto &n : names)
+                                      if (cbCount[n] < 3)
+                                          return false;
+                                  return true;
+                              },
+                              8s),
+                          "not enough callbacks")) {
+            sub.stop();
+            return r;
+        }
+
+        sub.stop();
+
+        std::lock_guard<std::mutex> lk(mu);
+        for (int i = 0; i < static_cast<int>(names.size()); ++i) {
+            const std::string name = "v" + std::to_string(i);
+            if (!childRequire(r, latestValues.count(name) > 0, "no value for " + name))
+                return r;
+            if (!childRequire(r, latestValues[name] == i,
+                              "value mismatch for " + name + ": got "
+                                  + std::to_string(latestValues[name]) + " expected "
+                                  + std::to_string(i)))
+                return r;
+        }
+        LOG(info) << "[case18_sub] all values verified OK";
+        r.ok = true;
+        r.message = "ok";
+        return r;
+    });
+
+    expectChildOk(pubProc, 14s);
+    expectChildOk(subProc, 14s);
+}
+
 #endif
 
