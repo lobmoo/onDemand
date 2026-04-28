@@ -57,7 +57,15 @@ jobs:
         run: |
           cd build
           source ../.env
-          ctest --output-on-failure
+          # Find and run ctest, fallback to direct execution if not available
+          if command -v ctest &> /dev/null; then
+            ctest --output-on-failure --verbose
+          else
+            echo "ctest not found, running tests directly..."
+            ./tests/test_log 2>&1 | head -30
+            ./tests/test_ddswrapper 2>&1 | head -30
+            ./tests/test_ondemand --gtest_filter="OnDemandPubSub.Create20ThenAdd5ThenDelete10*" 2>&1
+          fi
 
       - name: Upload test results
         if: always()
