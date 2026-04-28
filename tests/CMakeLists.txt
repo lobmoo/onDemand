@@ -31,6 +31,8 @@ else()
     message(FATAL_ERROR "Invalid DDS_IMPL for tests: ${DDS_IMPL}")
 endif()
 
+find_package(GTest REQUIRED)
+
 file(GLOB DDS_GEN_SOURCES_CPP "${CMAKE_SOURCE_DIR}/tests/fastdds_wrapper_TEST/*.cxx")
 file(GLOB ONDEMAND_IDL_SOURCES "${IDL_GEN_DIR}/*.cxx")
 
@@ -53,8 +55,8 @@ set(COMMON_LIBS
     ${DDS_LIBS}
     "${CMAKE_SOURCE_DIR}/thirdparty/CRoaring/lib/libroaring.so"
     log::log
-    gtest
-    gtest_main
+    GTest::gtest
+    GTest::gtest_main
     pthread
     rt
 )

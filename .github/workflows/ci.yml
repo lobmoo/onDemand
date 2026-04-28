@@ -2,7 +2,7 @@ name: CI - Build and Test
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main, dev ]
   pull_request:
     branches: [ main ]
   workflow_dispatch:
@@ -32,6 +32,7 @@ jobs:
             build-essential \
             cmake \
             git \
+            libgtest-dev \
             libssl-dev \
             libsndfile1-dev
 
