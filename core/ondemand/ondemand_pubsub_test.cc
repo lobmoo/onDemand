@@ -2131,7 +2131,555 @@ TEST(OnDemandPubSub, PauseAndResumePublish)
     expectChildOk(subProc, 20s);
 }
 
+// TC12 - setTableDefineCallback 提前注册定义回调
+// 场景：sub 在调用 start() 之前注册 TableDefineCallback，随后 pub 上线并广播8个变量定义。
+//       由于回调在 start() 前注册，不会错过 pub 上线后的第一次广播。
+// 验证：① TableDefineCallback 至少被触发一次；
+//       ② 跨多次回调累积收到的变量名集合与 pub 创建的8个变量名完全一致。
+TEST(OnDemandPubSub, TableDefineCallbackRegisteredBeforeStart)
+{
+    const auto root = std::filesystem::temp_directory_path() / uniqueName("ondemand_case12");
+    std::filesystem::create_directories(root);
 
+    const std::string pubNode = uniqueName("pub_case12");
+    const auto defs = makeDefines(pubNode, "td", 8);
+    const auto names = defineNames(defs);
+
+    const auto pubProc = spawnChild("case12_pub", root, [pubNode, defs, names]() {
+        dsf::ondemand::OnDemandPub pub;
+        ChildReport r;
+        if (!childRequire(r, pub.init(pubNode), "pub init failed")
+            || !childRequire(r, pub.start(), "pub start failed")
+            || !childRequire(r, pub.createVars(defs), "pub createVars failed")) {
+            return r;
+        }
+        std::atomic<bool> running{true};
+        std::thread th([&]() { publishLoop(pub, names, running, 20); });
+        std::this_thread::sleep_for(6s);
+        running.store(false, std::memory_order_release);
+        th.join();
+        pub.stop();
+        r.ok = true;
+        r.message = "ok";
+        return r;
+    });
+
+    const auto subProc = spawnChild("case12_sub", root, [pubNode, names]() {
+        dsf::ondemand::OnDemandSub sub;
+        ChildReport r;
+
+        std::mutex mu;
+        std::set<std::string> receivedNames;
+        std::atomic<int> cbCount{0};
+
+        sub.setTableDefineCallback([&](const std::vector<DSF::Var::Define> &defines) {
+            std::lock_guard<std::mutex> lk(mu);
+            for (const auto &d : defines) {
+                if (d.nodeName() == pubNode)
+                    receivedNames.insert(d.name());
+            }
+            cbCount.fetch_add(1, std::memory_order_release);
+            LOG(info) << "[case12_sub] tableDefine cb: " << defines.size()
+                      << " vars, total=" << receivedNames.size();
+        });
+
+        if (!childRequire(r, sub.init(uniqueName("sub_case12")), "sub init failed")
+            || !childRequire(r, sub.start(), "sub start failed")) {
+            return r;
+        }
+
+        const std::set<std::string> expectedNames(names.begin(), names.end());
+        const bool gotAll = waitUntil(
+            [&]() {
+                std::lock_guard<std::mutex> lk(mu);
+                return receivedNames == expectedNames;
+            },
+            8s);
+
+        sub.stop();
+
+        r.metrics["cb_count"] = std::to_string(cbCount.load());
+        r.metrics["received_count"] = std::to_string(receivedNames.size());
+        childRequire(r, cbCount.load() > 0, "tableDefine callback never fired");
+        childRequire(r, gotAll,
+                     "not all var names in tableDefine callback: got "
+                         + std::to_string(receivedNames.size()) + " expected "
+                         + std::to_string(expectedNames.size()));
+        r.ok = cbCount.load() > 0 && gotAll;
+        r.message = r.ok ? "ok" : r.message;
+        return r;
+    });
+
+    expectChildOk(pubProc, 14s);
+    expectChildOk(subProc, 14s);
+}
+
+// TC13 - getTotalReceivedVars 接收计数验证
+// 场景：pub 创建6个变量并以10ms间隔持续写入，sub 订阅全部变量（100ms）后等待数据到达。
+//       在数据稳定流入后，分两次采样 getTotalReceivedVars() 的返回值，间隔2秒。
+// 验证：① 第一次采样值 > 0，说明 sub 已成功接收到数据；
+//       ② 第二次采样值 > 第一次，说明计数随时间持续递增，接收链路持续工作。
+TEST(OnDemandPubSub, TotalReceivedVarsCountIncreases)
+{
+    const auto root = std::filesystem::temp_directory_path() / uniqueName("ondemand_case13");
+    std::filesystem::create_directories(root);
+
+    const std::string pubNode = uniqueName("pub_case13");
+    const auto defs = makeDefines(pubNode, "v", 6);
+    const auto names = defineNames(defs);
+
+    const auto pubProc = spawnChild("case13_pub", root, [pubNode, defs, names]() {
+        dsf::ondemand::OnDemandPub pub;
+        ChildReport r;
+        if (!childRequire(r, pub.init(pubNode), "pub init failed")
+            || !childRequire(r, pub.start(), "pub start failed")
+            || !childRequire(r, pub.createVars(defs), "pub createVars failed")) {
+            return r;
+        }
+        std::atomic<bool> running{true};
+        std::thread th([&]() { publishLoop(pub, names, running, 10); });
+        std::this_thread::sleep_for(10s);
+        running.store(false, std::memory_order_release);
+        th.join();
+        pub.stop();
+        r.ok = true;
+        r.message = "ok";
+        return r;
+    });
+
+    const auto subProc = spawnChild("case13_sub", root, [pubNode, names]() {
+        dsf::ondemand::OnDemandSub sub;
+        ChildReport r;
+        if (!childRequire(r, sub.init(uniqueName("sub_case13")), "sub init failed")
+            || !childRequire(r, sub.start(), "sub start failed")) {
+            return r;
+        }
+        if (!childRequire(r,
+                          waitUntil([&]() { return countNodeVars(sub, pubNode) == names.size(); }, 8s),
+                          "sub did not receive defines")) {
+            sub.stop();
+            return r;
+        }
+        if (!childRequire(r,
+                          sub.subscribe(pubNode.c_str(), toSubscriptions(names, 100),
+                                        [](const std::vector<dsf::ondemand::VarCallbackData> &) {}),
+                          "subscribe failed")) {
+            sub.stop();
+            return r;
+        }
+
+        const bool gotFirst = waitUntil([&]() { return sub.getTotalReceivedVars() > 0; }, 6s);
+        if (!childRequire(r, gotFirst, "getTotalReceivedVars still 0 after 6s")) {
+            sub.stop();
+            return r;
+        }
+
+        const uint64_t sample1 = sub.getTotalReceivedVars();
+        std::this_thread::sleep_for(2s);
+        const uint64_t sample2 = sub.getTotalReceivedVars();
+
+        sub.stop();
+
+        r.metrics["sample1"] = std::to_string(sample1);
+        r.metrics["sample2"] = std::to_string(sample2);
+        LOG(info) << "[case13_sub] sample1=" << sample1 << " sample2=" << sample2;
+        childRequire(r, sample2 > sample1,
+                     "getTotalReceivedVars did not increase: s1=" + std::to_string(sample1)
+                         + " s2=" + std::to_string(sample2));
+        r.ok = sample1 > 0 && sample2 > sample1;
+        r.message = r.ok ? "ok" : r.message;
+        return r;
+    });
+
+    expectChildOk(pubProc, 18s);
+    expectChildOk(subProc, 18s);
+}
+
+// TC14 - setBlobType/getBlobType 序列化类型验证
+// 场景：pub 调用 setBlobType(NGVS) 后开始发布数据，sub 订阅4个变量（100ms）并接收回调。
+//       默认序列化类型为 STRUCTS，此处显式切换为 NGVS，验证类型信息能随数据一起传递到 sub 侧。
+// 验证：① sub 收到的 VarCallbackData.blobType 等于 NGVS；
+//       ② sub.getBlobType() 返回 NGVS，说明 sub 侧全局序列化类型已同步更新。
+TEST(OnDemandPubSub, BlobTypeSetAndReceivedCorrectly)
+{
+    const auto root = std::filesystem::temp_directory_path() / uniqueName("ondemand_case14");
+    std::filesystem::create_directories(root);
+
+    const std::string pubNode = uniqueName("pub_case14");
+    const auto defs = makeDefines(pubNode, "v", 4);
+    const auto names = defineNames(defs);
+
+    const auto pubProc = spawnChild("case14_pub", root, [pubNode, defs, names]() {
+        dsf::ondemand::OnDemandPub pub;
+        ChildReport r;
+        if (!childRequire(r, pub.init(pubNode), "pub init failed")
+            || !childRequire(r, pub.start(), "pub start failed")
+            || !childRequire(r, pub.createVars(defs), "pub createVars failed")) {
+            return r;
+        }
+        pub.setBlobType(DSF::Var::BLOB_TYPE::NGVS);
+        std::atomic<bool> running{true};
+        std::thread th([&]() { publishLoop(pub, names, running, 10); });
+        std::this_thread::sleep_for(6s);
+        running.store(false, std::memory_order_release);
+        th.join();
+        pub.stop();
+        r.ok = true;
+        r.message = "ok";
+        return r;
+    });
+
+    const auto subProc = spawnChild("case14_sub", root, [pubNode, names]() {
+        dsf::ondemand::OnDemandSub sub;
+        ChildReport r;
+        if (!childRequire(r, sub.init(uniqueName("sub_case14")), "sub init failed")
+            || !childRequire(r, sub.start(), "sub start failed")) {
+            return r;
+        }
+        if (!childRequire(r,
+                          waitUntil([&]() { return countNodeVars(sub, pubNode) == names.size(); }, 8s),
+                          "sub did not receive defines")) {
+            sub.stop();
+            return r;
+        }
+
+        std::atomic<bool> gotNgvsCb{false};
+        std::atomic<uint32_t> cbBlobTypeVal{0};
+
+        if (!childRequire(
+                r,
+                sub.subscribe(pubNode.c_str(), toSubscriptions(names, 100),
+                              [&](const std::vector<dsf::ondemand::VarCallbackData> &vars) {
+                                  for (const auto &v : vars) {
+                                      LOG(info) << "[case14_sub] blobType="
+                                                << static_cast<uint32_t>(v.blobType);
+                                      if (v.blobType == DSF::Var::BLOB_TYPE::NGVS) {
+                                          cbBlobTypeVal.store(
+                                              static_cast<uint32_t>(v.blobType),
+                                              std::memory_order_release);
+                                          gotNgvsCb.store(true, std::memory_order_release);
+                                      }
+                                  }
+                              }),
+                "subscribe failed")) {
+            sub.stop();
+            return r;
+        }
+
+        const bool gotCb = waitUntil([&]() { return gotNgvsCb.load(); }, 6s);
+        const auto subBlobType = sub.getBlobType();
+        sub.stop();
+
+        r.metrics["cb_blobType"] = std::to_string(cbBlobTypeVal.load());
+        r.metrics["sub_getBlobType"] = std::to_string(static_cast<uint32_t>(subBlobType));
+        childRequire(r, gotCb, "never received callback with NGVS blobType");
+        childRequire(r, subBlobType == DSF::Var::BLOB_TYPE::NGVS,
+                     "sub.getBlobType() != NGVS: got "
+                         + std::to_string(static_cast<uint32_t>(subBlobType)));
+        r.ok = gotCb && (subBlobType == DSF::Var::BLOB_TYPE::NGVS);
+        r.message = r.ok ? "ok" : r.message;
+        return r;
+    });
+
+    expectChildOk(pubProc, 14s);
+    expectChildOk(subProc, 14s);
+}
+
+// TC15 - getVarId 单个查询 + 未知变量返回 UINT32_MAX
+// 场景：pub 创建5个变量后，通过 getVarId() 分别查询已注册变量和一个不存在的变量名。
+//       getVarId 是热路径接口，用于预缓存 varId 以避免后续 setVarData 时的哈希查找开销。
+// 验证：① 对已创建的每个变量，getVarId() 返回有效 id（!= UINT32_MAX）；
+//       ② 对未创建的变量名，getVarId() 返回 UINT32_MAX，符合"未找到"语义。
+TEST(OnDemandPubSub, GetVarIdKnownAndUnknown)
+{
+    const auto root = std::filesystem::temp_directory_path() / uniqueName("ondemand_case15");
+    std::filesystem::create_directories(root);
+
+    const auto proc = spawnChild("case15", root, []() {
+        dsf::ondemand::OnDemandPub pub;
+        ChildReport r;
+        const std::string node = uniqueName("pub_case15");
+        const auto defs = makeDefines(node, "v", 5);
+        const auto names = defineNames(defs);
+
+        if (!childRequire(r, pub.init(node), "pub init failed")
+            || !childRequire(r, pub.start(), "pub start failed")
+            || !childRequire(r, pub.createVars(defs), "pub createVars failed")) {
+            return r;
+        }
+
+        bool allValid = true;
+        for (const auto &n : names) {
+            const uint32_t id = pub.getVarId(n.c_str());
+            LOG(info) << "[case15] getVarId(" << n << ")=" << id;
+            if (!childRequire(r, id != UINT32_MAX, "getVarId returned UINT32_MAX for: " + n)) {
+                allValid = false;
+                break;
+            }
+        }
+
+        const uint32_t unknownId = pub.getVarId("__nonexistent__");
+        LOG(info) << "[case15] getVarId(nonexistent)=" << unknownId;
+        childRequire(r, unknownId == UINT32_MAX,
+                     "getVarId should return UINT32_MAX for unknown var");
+
+        pub.stop();
+        r.ok = allValid && (unknownId == UINT32_MAX);
+        r.message = r.ok ? "ok" : r.message;
+        return r;
+    });
+
+    expectChildOk(proc, 10s);
+}
+
+// TC16 - cleanupParticipantPublish/Subscriptions 手动清理
+// 场景A：pub 上线并广播6个变量定义，sub 收到定义后主动调用 cleanupParticipantPublish(pubNode)，
+//        模拟外部检测到 pub 掉线后手动触发清理的场景。
+// 场景B：sub 以固定节点名订阅 pub 的6个变量（100ms），pub 感知到订阅后主动调用
+//        cleanupParticipantSubscriptions(subNode)，模拟外部强制踢掉某个订阅者的场景。
+// 验证A：cleanupParticipantPublish 返回 true，且调用后 getAvailableVars 中该节点变量立即清零。
+// 验证B：cleanupParticipantSubscriptions 返回 true，且调用后 pub 侧频率回调感知到
+//        所有变量频率变为 0xFFFFFFFF（无订阅者）。
+TEST(OnDemandPubSub, CleanupParticipantManually)
+{
+    // 场景A：sub 手动清理 pub 节点，getAvailableVars 中该节点变量消失
+    {
+        const auto root = std::filesystem::temp_directory_path() / uniqueName("ondemand_case16a");
+        std::filesystem::create_directories(root);
+
+        const std::string pubNode = uniqueName("pub_case16a");
+        const auto defs = makeDefines(pubNode, "v", 6);
+        const auto names = defineNames(defs);
+
+        const auto pubProc = spawnChild("case16a_pub", root, [pubNode, defs, names]() {
+            dsf::ondemand::OnDemandPub pub;
+            ChildReport r;
+            if (!childRequire(r, pub.init(pubNode), "pub init failed")
+                || !childRequire(r, pub.start(), "pub start failed")
+                || !childRequire(r, pub.createVars(defs), "pub createVars failed")) {
+                return r;
+            }
+            std::atomic<bool> running{true};
+            std::thread th([&]() { publishLoop(pub, names, running, 20); });
+            std::this_thread::sleep_for(8s);
+            running.store(false, std::memory_order_release);
+            th.join();
+            pub.stop();
+            r.ok = true;
+            r.message = "ok";
+            return r;
+        });
+
+        const auto subProc = spawnChild("case16a_sub", root, [pubNode]() {
+            dsf::ondemand::OnDemandSub sub;
+            ChildReport r;
+            if (!childRequire(r, sub.init(uniqueName("sub_case16a")), "sub init failed")
+                || !childRequire(r, sub.start(), "sub start failed")) {
+                return r;
+            }
+            if (!childRequire(r,
+                              waitUntil([&]() { return countNodeVars(sub, pubNode) > 0; }, 8s),
+                              "sub did not receive defines")) {
+                sub.stop();
+                return r;
+            }
+
+            const bool cleaned = sub.cleanupParticipantPublish(pubNode);
+            childRequire(r, cleaned, "cleanupParticipantPublish returned false");
+
+            const size_t remaining = countNodeVars(sub, pubNode);
+            r.metrics["remaining"] = std::to_string(remaining);
+            childRequire(r, remaining == 0,
+                         "vars still present after cleanup: " + std::to_string(remaining));
+
+            sub.stop();
+            r.ok = cleaned && (remaining == 0);
+            r.message = r.ok ? "ok" : r.message;
+            return r;
+        });
+
+        expectChildOk(pubProc, 14s);
+        expectChildOk(subProc, 14s);
+    }
+
+    // 场景B：pub 手动清理 sub 订阅关系，频率回退到 0xFFFFFFFF
+    {
+        const auto root = std::filesystem::temp_directory_path() / uniqueName("ondemand_case16b");
+        std::filesystem::create_directories(root);
+
+        const std::string pubNode = uniqueName("pub_case16b");
+        const std::string subNode = "sub_tc16b_" + std::to_string(getpid());
+        const auto defs = makeDefines(pubNode, "v", 6);
+        const auto names = defineNames(defs);
+
+        const auto pubProc =
+            spawnChild("case16b_pub", root, [pubNode, subNode, defs, names]() {
+                dsf::ondemand::OnDemandPub pub;
+                ChildReport r;
+                if (!childRequire(r, pub.init(pubNode), "pub init failed")
+                    || !childRequire(r, pub.start(), "pub start failed")
+                    || !childRequire(r, pub.createVars(defs), "pub createVars failed")) {
+                    return r;
+                }
+
+                std::mutex mu;
+                std::unordered_map<std::string, uint32_t> freqMap;
+                pub.setFreqChangeCallback([&](const std::string &varName, uint32_t freq) {
+                    std::lock_guard<std::mutex> lk(mu);
+                    freqMap[varName] = freq;
+                    LOG(info) << "[case16b_pub] freq: " << varName << " -> " << freq;
+                });
+
+                std::atomic<bool> running{true};
+                std::thread th([&]() { publishLoop(pub, names, running, 10); });
+
+                auto allAt = [&](uint32_t expected) {
+                    std::lock_guard<std::mutex> lk(mu);
+                    if (freqMap.size() < names.size())
+                        return false;
+                    for (const auto &n : names) {
+                        auto it = freqMap.find(n);
+                        if (it == freqMap.end() || it->second != expected)
+                            return false;
+                    }
+                    return true;
+                };
+
+                const bool saw100 = waitUntil([&]() { return allAt(100); }, 10s);
+                if (!childRequire(r, saw100, "did not see freq=100 after sub subscribed")) {
+                    running.store(false, std::memory_order_release);
+                    th.join();
+                    pub.stop();
+                    return r;
+                }
+
+                const bool cleaned = pub.cleanupParticipantSubscriptions(subNode);
+                childRequire(r, cleaned, "cleanupParticipantSubscriptions returned false");
+
+                const bool sawNone = waitUntil([&]() { return allAt(0xFFFFFFFF); }, 6s);
+                childRequire(r, sawNone, "freq did not go to 0xFFFFFFFF after cleanup");
+
+                running.store(false, std::memory_order_release);
+                th.join();
+                pub.stop();
+                r.ok = cleaned && sawNone;
+                r.message = r.ok ? "ok" : r.message;
+                return r;
+            });
+
+        const auto subProc =
+            spawnChild("case16b_sub", root, [pubNode, subNode, names]() {
+                dsf::ondemand::OnDemandSub sub;
+                ChildReport r;
+                if (!childRequire(r, sub.init(subNode), "sub init failed")
+                    || !childRequire(r, sub.start(), "sub start failed")) {
+                    return r;
+                }
+                if (!childRequire(r,
+                                  waitUntil([&]() { return countNodeVars(sub, pubNode) == names.size(); }, 8s),
+                                  "sub did not receive defines")) {
+                    sub.stop();
+                    return r;
+                }
+                if (!childRequire(r,
+                                  sub.subscribe(pubNode.c_str(), toSubscriptions(names, 100),
+                                                [](const std::vector<dsf::ondemand::VarCallbackData> &) {}),
+                                  "subscribe failed")) {
+                    sub.stop();
+                    return r;
+                }
+                std::this_thread::sleep_for(10s);
+                sub.stop();
+                r.ok = true;
+                r.message = "ok";
+                return r;
+            });
+
+        expectChildOk(pubProc, 22s);
+        expectChildOk(subProc, 18s);
+    }
+}
+
+// TC17 - 边界/异常 — init前start、空变量名、重复createVars、unsubscribe不存在变量
+// 场景：在单个子进程中依次执行四类边界操作，验证系统对非法或重复调用的容错能力。
+//       ① pub/sub 在未调用 init() 的情况下直接调用 start()；
+//       ② pub 调用 createVars 时传入 name 为空字符串的变量定义；
+//       ③ pub 对同一批变量连续调用两次 createVars（重复注册）；
+//       ④ sub 对从未订阅过的节点和变量名调用 unsubscribe()。
+// 验证：① start() 在 init() 之前返回 false（幂等保护）；
+//       ② 空名称 createVars 不崩溃（容错）；
+//       ③ 重复 createVars 不崩溃，第一次调用返回 true（幂等）；
+//       ④ unsubscribe 不存在的变量返回 false（明确失败语义）。
+TEST(OnDemandPubSub, BoundaryAndErrorCases)
+{
+    const auto root = std::filesystem::temp_directory_path() / uniqueName("ondemand_case17");
+    std::filesystem::create_directories(root);
+
+    const auto proc = spawnChild("case17", root, []() {
+        ChildReport r;
+        r.ok = true;
+        const std::string base = uniqueName("node17");
+
+        // ① start() 在 init() 之前应返回 false
+        {
+            dsf::ondemand::OnDemandPub pub;
+            const bool res = pub.start();
+            LOG(info) << "[case17] pub.start() before init=" << res;
+            childRequire(r, !res, "pub.start() before init() should return false");
+        }
+        {
+            dsf::ondemand::OnDemandSub sub;
+            const bool res = sub.start();
+            LOG(info) << "[case17] sub.start() before init=" << res;
+            childRequire(r, !res, "sub.start() before init() should return false");
+        }
+
+        // ② createVars 包含空名称不崩溃
+        {
+            dsf::ondemand::OnDemandPub pub;
+            if (pub.init(base + "_a") && pub.start()) {
+                DSF::Var::Define emptyDef;
+                emptyDef.nodeName(base + "_a");
+                emptyDef.name("");
+                emptyDef.modelName("int32");
+                emptyDef.size(sizeof(int32_t));
+                pub.createVars({emptyDef});
+                LOG(info) << "[case17] createVars with empty name: no crash";
+                pub.stop();
+            }
+        }
+
+        // ③ 重复 createVars 相同变量不崩溃
+        {
+            dsf::ondemand::OnDemandPub pub;
+            const std::string dupNode = base + "_b";
+            const auto defs = makeDefines(dupNode, "v", 3);
+            if (pub.init(dupNode) && pub.start()) {
+                const bool first = pub.createVars(defs);
+                const bool second = pub.createVars(defs);
+                LOG(info) << "[case17] createVars twice: first=" << first << " second=" << second;
+                childRequire(r, first, "first createVars failed");
+                pub.stop();
+            }
+        }
+
+        // ④ unsubscribe 不存在的变量返回 false
+        {
+            dsf::ondemand::OnDemandSub sub;
+            if (sub.init(base + "_c") && sub.start()) {
+                const bool res = sub.unsubscribe("nonexistent_pub", {"__no_such_var__"});
+                LOG(info) << "[case17] unsubscribe nonexistent=" << res;
+                childRequire(r, !res, "unsubscribe of nonexistent var should return false");
+                sub.stop();
+            }
+        }
+
+        r.message = r.ok ? "ok" : r.message;
+        return r;
+    });
+
+    expectChildOk(proc, 15s);
+}
 
 #endif
 
