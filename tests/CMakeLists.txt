@@ -32,6 +32,7 @@ else()
 endif()
 
 find_package(GTest REQUIRED)
+enable_testing()
 
 file(GLOB DDS_GEN_SOURCES_CPP "${CMAKE_SOURCE_DIR}/tests/fastdds_wrapper_TEST/*.cxx")
 file(GLOB ONDEMAND_IDL_SOURCES "${IDL_GEN_DIR}/*.cxx")
@@ -72,6 +73,8 @@ set_target_properties(test_log PROPERTIES
 target_include_directories(test_log PRIVATE ${COMMON_INCLUDE})
 target_link_libraries(test_log PRIVATE ${COMMON_LIBS})
 target_compile_options(test_log PRIVATE -O2)
+add_test(NAME test_log COMMAND test_log)
+set_tests_properties(test_log PROPERTIES WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/tests")
 
 # ── test_ddswrapper ───────────────────────────────────────────────────────────
 add_executable(test_ddswrapper
@@ -85,6 +88,8 @@ set_target_properties(test_ddswrapper PROPERTIES
 target_include_directories(test_ddswrapper PRIVATE ${COMMON_INCLUDE})
 target_link_libraries(test_ddswrapper PRIVATE ${COMMON_LIBS})
 target_compile_options(test_ddswrapper PRIVATE -O2)
+add_test(NAME test_ddswrapper COMMAND test_ddswrapper)
+set_tests_properties(test_ddswrapper PROPERTIES WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/tests")
 
 # ── test_ondemand ─────────────────────────────────────────────────────────────
 add_executable(test_ondemand
@@ -100,3 +105,5 @@ set_target_properties(test_ondemand PROPERTIES
 target_include_directories(test_ondemand PRIVATE ${COMMON_INCLUDE})
 target_link_libraries(test_ondemand PRIVATE ${COMMON_LIBS})
 target_compile_options(test_ondemand PRIVATE -O2)
+add_test(NAME test_ondemand COMMAND test_ondemand)
+set_tests_properties(test_ondemand PROPERTIES WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/tests")
