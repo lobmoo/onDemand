@@ -1,0 +1,67 @@
+name: CI - Build and Test
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      dds_impl:
+        description: DDS implementation
+        required: true
+        default: fastdds
+        type: choice
+        options:
+          - fastdds
+          - txdds
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential \
+            cmake \
+            git \
+            libssl-dev \
+            libsndfile1-dev
+
+      - name: Configure with CMake
+        run: |
+          mkdir -p build
+          cd build
+          source ../.env
+          if [ "${{ github.event.inputs.dds_impl || 'fastdds' }}" = "txdds" ]; then
+            cmake .. -DUSE_TXDDS=ON -DENABLE_TESTS=ON
+          else
+            cmake .. -DUSE_FASTDDS=ON -DENABLE_TESTS=ON
+          fi
+
+      - name: Build
+        run: |
+          cd build
+          source ../.env
+          make -j$(nproc)
+
+      - name: Run tests
+        run: |
+          cd build
+          source ../.env
+          ctest --output-on-failure
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: build/Testing/
+          retention-days: 7
