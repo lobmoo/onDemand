@@ -2,9 +2,19 @@ name: CI - Build and Test
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main, dev ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      dds_impl:
+        description: DDS implementation
+        required: true
+        default: fastdds
+        type: choice
+        options:
+          - fastdds
+          - txdds
 
 jobs:
   build-and-test:
@@ -12,57 +22,46 @@ jobs:
     timeout-minutes: 30
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Install dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y \
-          build-essential \
-          cmake \
-          git \
-          libssl-dev \
-          libsndfile1-dev
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential \
+            cmake \
+            git \
+            libssl-dev \
+            libsndfile1-dev
 
-    - name: Setup environment
-      run: |
-        cd ${{ github.workspace }}
-        source .env
+      - name: Configure with CMake
+        run: |
+          mkdir -p build
+          cd build
+          source ../.env
+          if [ "${{ github.event.inputs.dds_impl || 'fastdds' }}" = "txdds" ]; then
+            cmake .. -DUSE_TXDDS=ON -DENABLE_TESTS=ON
+          else
+            cmake .. -DUSE_FASTDDS=ON -DENABLE_TESTS=ON
+          fi
 
-    - name: Create build directory
-      run: mkdir -p build
+      - name: Build
+        run: |
+          cd build
+          source ../.env
+          make -j$(nproc)
 
-    - name: Configure with CMake (FastDDS)
-      run: |
-        cd build
-        source ../.env
-        cmake .. -DUSE_FASTDDS=ON -DENABLE_TESTS=ON
-      
-    - name: Build
-      run: |
-        cd build
-        source ../.env
-        make -j$(nproc)
+      - name: Run tests
+        run: |
+          cd build
+          source ../.env
+          ctest --output-on-failure
 
-    - name: Run tests
-      run: |
-        cd build
-        source ../.env
-        make test VERBOSE=1
-
-    - name: Upload test results
-      if: always()
-      uses: actions/upload-artifact@v3
-      with:
-        name: test-results
-        path: build/Testing/
-        retention-days: 7
-
-    - name: Generate test report
-      if: always()
-      run: |
-        echo "## Test Results" >> $GITHUB_STEP_SUMMARY
-        if [ -f build/Testing/TAG ]; then
-          echo "Tests completed. See artifacts for detailed results." >> $GITHUB_STEP_SUMMARY
-        fi
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: build/Testing/
+          retention-days: 7
