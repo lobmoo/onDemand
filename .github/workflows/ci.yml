@@ -334,12 +334,56 @@ jobs:
               encoding="utf-8",
           )
           PY
-          echo "## CI Report" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Report generated at: report/index.html" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Artifacts:" >> $GITHUB_STEP_SUMMARY
-          find report -maxdepth 1 -type f | sed 's/^/- /' >> $GITHUB_STEP_SUMMARY
+          summary_lines = [
+              "# CI Report",
+              "",
+              "## Overview",
+              "This run generated both a styled HTML artifact and a Markdown summary.",
+              "",
+              "| Item | Value |",
+              "| --- | --- |",
+              f"| Build | {esc(os.environ.get('BUILD_RESULT', 'unknown'))} |",
+              f"| Test | {esc(os.environ.get('TEST_RESULT', 'unknown'))} |",
+              f"| Suites | {len(suites)} |",
+              f"| Cases | {total_tests} |",
+              f"| Failures | {total_failures + total_errors} |",
+              f"| Skipped | {total_skipped} |",
+              "",
+              "## Artifacts",
+              "",
+              "- `report/index.html` - styled HTML report",
+              "- `report/summary.txt` - machine-readable summary",
+              "",
+              "## Suite Breakdown",
+          ]
+
+          if suites:
+              for suite in suites:
+                  summary_lines.extend([
+                      "<details>",
+                      f"<summary><strong>{esc(suite['name'])}</strong> - {suite['tests']} cases, {suite['failures'] + suite['errors']} failed, {suite['skipped']} skipped</summary>",
+                      "",
+                      f"- Source: `{esc(suite['source'])}`",
+                      f"- Time: {esc(suite['time'])}s",
+                      "",
+                      "| Case | Time | Status | Message |",
+                      "| --- | --- | --- | --- |",
+                  ])
+                  for case in suite["cases"]:
+                      message = esc(case["message"]) if case["message"] else ""
+                      summary_lines.append(
+                          f"| {esc(case['name'])} | {esc(case['time'])}s | {esc(case['status'])} | {message} |"
+                      )
+                  summary_lines.append("</details>")
+                  summary_lines.append("")
+          else:
+              summary_lines.extend([
+                  "No XML test results were uploaded, so the report page is empty.",
+                  "",
+              ])
+
+          (report_dir / "summary.md").write_text("\n".join(summary_lines) + "\n", encoding="utf-8")
+          cat report/summary.md >> $GITHUB_STEP_SUMMARY
 
       - name: Upload HTML report
         uses: actions/upload-artifact@v4
