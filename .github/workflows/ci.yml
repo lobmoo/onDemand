@@ -146,7 +146,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results-${{ matrix.dds_impl }}
+          name: test-results
           path: build/test-results/
           retention-days: 7
           if-no-files-found: ignore
@@ -176,7 +176,7 @@ jobs:
 
           root = pathlib.Path("artifacts")
           report_dir = pathlib.Path("report")
-          xml_files = sorted(root.glob("test-results-*/**/*.xml"))
+          xml_files = sorted(root.glob("**/*.xml"))
 
           suites = []
           total_tests = total_failures = total_errors = total_skipped = 0
@@ -329,61 +329,50 @@ jobs:
           </html>"""
 
           (report_dir / "index.html").write_text(html_doc, encoding="utf-8")
+
+          build_result = os.environ.get('BUILD_RESULT', 'unknown')
+          test_result  = os.environ.get('TEST_RESULT',  'unknown')
+
           (report_dir / "summary.txt").write_text(
-              f"build={os.environ.get('BUILD_RESULT', 'unknown')}\ntest={os.environ.get('TEST_RESULT', 'unknown')}\nsuites={len(suites)}\ntests={total_tests}\nfailures={total_failures}\nerrors={total_errors}\nskipped={total_skipped}\n",
+              f"build={build_result}\ntest={test_result}\nsuites={len(suites)}\ntests={total_tests}\nfailures={total_failures}\nerrors={total_errors}\nskipped={total_skipped}\n",
               encoding="utf-8",
           )
-          PY
+
+          def esc(v):
+              return html.escape(str(v))
+
           summary_lines = [
-              "# CI Report",
-              "",
+              "# CI Report", "",
               "## Overview",
-              "This run generated both a styled HTML artifact and a Markdown summary.",
-              "",
-              "| Item | Value |",
-              "| --- | --- |",
-              f"| Build | {esc(os.environ.get('BUILD_RESULT', 'unknown'))} |",
-              f"| Test | {esc(os.environ.get('TEST_RESULT', 'unknown'))} |",
+              "| Item | Value |", "| --- | --- |",
+              f"| Build | {esc(build_result)} |",
+              f"| Test  | {esc(test_result)} |",
               f"| Suites | {len(suites)} |",
               f"| Cases | {total_tests} |",
               f"| Failures | {total_failures + total_errors} |",
               f"| Skipped | {total_skipped} |",
-              "",
-              "## Artifacts",
-              "",
-              "- `report/index.html` - styled HTML report",
-              "- `report/summary.txt` - machine-readable summary",
-              "",
-              "## Suite Breakdown",
+              "", "## Suite Breakdown",
           ]
 
           if suites:
               for suite in suites:
-                  summary_lines.extend([
+                  summary_lines += [
                       "<details>",
-                      f"<summary><strong>{esc(suite['name'])}</strong> - {suite['tests']} cases, {suite['failures'] + suite['errors']} failed, {suite['skipped']} skipped</summary>",
-                      "",
-                      f"- Source: `{esc(suite['source'])}`",
-                      f"- Time: {esc(suite['time'])}s",
-                      "",
-                      "| Case | Time | Status | Message |",
-                      "| --- | --- | --- | --- |",
-                  ])
+                      f"<summary><strong>{esc(suite['name'])}</strong> — {suite['tests']} cases, {suite['failures']+suite['errors']} failed</summary>",
+                      "", f"Source: `{esc(suite['source'])}` · Time: {esc(suite['time'])}s", "",
+                      "| Case | Time | Status | Message |", "| --- | --- | --- | --- |",
+                  ]
                   for case in suite["cases"]:
-                      message = esc(case["message"]) if case["message"] else ""
                       summary_lines.append(
-                          f"| {esc(case['name'])} | {esc(case['time'])}s | {esc(case['status'])} | {message} |"
+                          f"| {esc(case['name'])} | {esc(case['time'])}s | {esc(case['status'])} | {esc(case['message']) if case['message'] else ''} |"
                       )
-                  summary_lines.append("</details>")
-                  summary_lines.append("")
+                  summary_lines += ["</details>", ""]
           else:
-              summary_lines.extend([
-                  "No XML test results were uploaded, so the report page is empty.",
-                  "",
-              ])
+              summary_lines.append("No XML test results found.")
 
           (report_dir / "summary.md").write_text("\n".join(summary_lines) + "\n", encoding="utf-8")
-          cat report/summary.md >> $GITHUB_STEP_SUMMARY
+          PY
+          cat report/summary.md >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload HTML report
         uses: actions/upload-artifact@v4
