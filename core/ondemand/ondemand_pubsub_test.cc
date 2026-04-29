@@ -519,8 +519,9 @@ TEST(OnDemandPubSub, PublishDefineAndSubReceiveCountAccurate)
                     const std::string name(v.varName.data(), v.varName.size());
                     if (v.data && v.size >= sizeof(int32_t))
                         latestValues[name] = *reinterpret_cast<const int32_t *>(v.data);
+                    // 只收集 timestampNs > 0 的有效时间戳，过滤掉 pub 尚未写入时的空回调
                     auto &ts = tsLog[name];
-                    if (ts.size() < 4)
+                    if (ts.size() < 4 && v.timestampNs > 0)
                         ts.push_back(v.timestampNs);
                     LOG(info) << "callback for var " << name << ", value=" << latestValues[name]
                               << ", timestamp=" << v.timestampNs
