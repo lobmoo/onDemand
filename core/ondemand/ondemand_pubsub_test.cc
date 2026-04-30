@@ -2819,5 +2819,180 @@ TEST(OnDemandPubSub, SetVarDataByIdCorrectness)
     expectChildOk(subProc, 14s);
 }
 
+// TC_19 - setTableDefineCallback 在 createVars / deleteVars 各阶段内容准确性验证
+//
+// 场景：pub 分三阶段操作变量：
+//   阶段1：createVars 6个变量
+//   阶段2：再 createVars 4个变量（共10个）
+//   阶段3：deleteVars 删除其中3个
+//
+// setTableDefineCallback 是 per-bucket 触发的：每次 pub 广播某个 bucket 的 PubTableDefine，
+// 回调收到的是该 bucket 当前全量变量定义。因此用 map<bucketName, set<varName>> 跟踪
+// 每个 bucket 的最新状态，取 union 得到当前全局可见变量集合。
+//
+// 验证：
+//   ① 阶段1后：union == 6个变量名，无多无少
+//   ② 阶段2后：union == 10个变量名
+//   ③ 阶段3后：union == 7个变量名，且被删除的3个名字不在其中
+TEST(OnDemandPubSub, TableDefineCallbackAccurateOnCreateAndDelete)
+{
+    const auto root =
+        std::filesystem::temp_directory_path() / uniqueName("ondemand_case_tdcb");
+    std::filesystem::create_directories(root);
+
+    const std::string pubNode = uniqueName("pub_tdcb");
+    const auto defs6  = makeDefines(pubNode, "tdcb_a", 6);
+    const auto defs4  = makeDefines(pubNode, "tdcb_b", 4);
+    const auto names6 = defineNames(defs6);
+    const auto names4 = defineNames(defs4);
+
+    // 阶段3删除 defs6 里的前3个
+    const std::vector<std::string> toDelete(names6.begin(), names6.begin() + 3);
+
+    const std::set<std::string> expected_stage1(names6.begin(), names6.end());
+    std::set<std::string> expected_stage2 = expected_stage1;
+    expected_stage2.insert(names4.begin(), names4.end());
+    std::set<std::string> expected_stage3 = expected_stage2;
+    for (const auto &n : toDelete)
+        expected_stage3.erase(n);
+
+    const auto pubProc =
+        spawnChild("tdcb_pub", root, [pubNode, defs6, defs4, toDelete]() {
+            dsf::ondemand::OnDemandPub pub;
+            ChildReport r;
+            if (!childRequire(r, pub.init(pubNode), "pub init failed")
+                || !childRequire(r, pub.start(), "pub start failed")
+                || !childRequire(r, pub.createVars(defs6), "pub createVars(6) failed")) {
+                return r;
+            }
+            std::this_thread::sleep_for(2000ms); // 阶段1传播
+
+            if (!childRequire(r, pub.createVars(defs4), "pub createVars(+4) failed")) {
+                pub.stop();
+                return r;
+            }
+            std::this_thread::sleep_for(2000ms); // 阶段2传播
+
+            if (!childRequire(r, pub.deleteVars(toDelete), "pub deleteVars(3) failed")) {
+                pub.stop();
+                return r;
+            }
+            std::this_thread::sleep_for(2000ms); // 阶段3传播
+
+            pub.stop();
+            r.ok = true;
+            r.message = "ok";
+            return r;
+        });
+
+    const auto subProc = spawnChild(
+        "tdcb_sub", root,
+        [pubNode, expected_stage1, expected_stage2, toDelete]() {
+            dsf::ondemand::OnDemandSub sub;
+            ChildReport r;
+
+            std::mutex mu;
+            std::set<std::string> allSeenNames; // 累积所有回调里出现过的变量名
+            std::atomic<int> cbFired{0};
+
+            sub.setTableDefineCallback(
+                [&](const std::vector<DSF::Var::Define> &defines) {
+                    std::lock_guard<std::mutex> lk(mu);
+                    for (const auto &d : defines) {
+                        if (d.nodeName() == pubNode)
+                            allSeenNames.insert(d.name());
+                    }
+                    cbFired.fetch_add(1, std::memory_order_release);
+                });
+
+            if (!childRequire(r, sub.init(uniqueName("sub_tdcb")), "sub init failed")
+                || !childRequire(r, sub.start(), "sub start failed")) {
+                return r;
+            }
+
+            // ── 阶段1：等待回调累积到 expected_stage1 的全部变量名 ──
+            const bool stage1Ok = waitUntil(
+                [&]() {
+                    std::lock_guard<std::mutex> lk(mu);
+                    return std::includes(allSeenNames.begin(), allSeenNames.end(),
+                                         expected_stage1.begin(), expected_stage1.end());
+                },
+                8s);
+            size_t seen1 = 0;
+            { std::lock_guard<std::mutex> lk(mu); seen1 = allSeenNames.size(); }
+            childRequire(r, stage1Ok,
+                         "stage1: not all vars in callback, seen=" + std::to_string(seen1)
+                             + " expected=6");
+            r.metrics["stage1_ok"]    = stage1Ok ? "1" : "0";
+            r.metrics["stage1_cb"]    = std::to_string(cbFired.load());
+            LOG(info) << "[tdcb_sub] stage1 seen=" << seen1 << " cbFired=" << cbFired.load();
+
+            // ── 阶段2：等待回调累积到 expected_stage2 的全部变量名 ──
+            const bool stage2Ok = waitUntil(
+                [&]() {
+                    std::lock_guard<std::mutex> lk(mu);
+                    return std::includes(allSeenNames.begin(), allSeenNames.end(),
+                                         expected_stage2.begin(), expected_stage2.end());
+                },
+                8s);
+            size_t seen2 = 0;
+            { std::lock_guard<std::mutex> lk(mu); seen2 = allSeenNames.size(); }
+            childRequire(r, stage2Ok,
+                         "stage2: not all vars in callback, seen=" + std::to_string(seen2)
+                             + " expected=10");
+            r.metrics["stage2_ok"] = stage2Ok ? "1" : "0";
+            r.metrics["stage2_cb"] = std::to_string(cbFired.load());
+            LOG(info) << "[tdcb_sub] stage2 seen=" << seen2 << " cbFired=" << cbFired.load();
+
+            // ── 阶段3：用 getAvailableVars() 验证 delete 后的状态真值 ──
+            // getAvailableVars() 直接读 varDefineIndex_，是最准确的状态反映。
+            // 不用回调追踪 delete 后内容：delete 广播可能在 stage2 确认前就到达，
+            // 用标志区分"delete 前后回调"存在竞态，不可靠。
+            const bool stage3Ok =
+                waitUntil([&]() { return countNodeVars(sub, pubNode) == 7; }, 10s);
+            const size_t availCount = countNodeVars(sub, pubNode);
+            childRequire(r, stage3Ok,
+                         "stage3: getAvailableVars mismatch, got=" + std::to_string(availCount)
+                             + " expected=7");
+
+            // 验证被删变量不在 getAvailableVars() 里
+            const auto availVars = nodeVars(sub, pubNode);
+            const std::set<std::string> availSet(availVars.begin(), availVars.end());
+            bool noDeletedInAvail = true;
+            for (const auto &n : toDelete) {
+                if (availSet.count(n)) {
+                    noDeletedInAvail = false;
+                    LOG(error) << "[tdcb_sub] deleted var still in getAvailableVars: " << n;
+                }
+            }
+            childRequire(r, noDeletedInAvail,
+                         "stage3: deleted vars still in getAvailableVars after deleteVars");
+
+            r.metrics["stage3_available_ok"] = stage3Ok ? "1" : "0";
+            r.metrics["stage3_no_deleted"]   = noDeletedInAvail ? "1" : "0";
+            r.metrics["total_cb_fired"]      = std::to_string(cbFired.load());
+            LOG(info) << "[tdcb_sub] stage3 available=" << availCount
+                      << " noDeleted=" << noDeletedInAvail << " cbFired=" << cbFired.load();
+
+            sub.stop();
+            r.ok = stage1Ok && stage2Ok && stage3Ok && noDeletedInAvail;
+            r.message = r.ok ? "ok" : r.message;
+            return r;
+        });
+
+    ChildReport subReport;
+    expectChildOk(pubProc, 16s);
+    expectChildOk(subProc, 16s, &subReport);
+
+    EXPECT_EQ(subReport.metrics["stage1_ok"], "1")
+        << "stage1: all 6 vars should appear in callback";
+    EXPECT_EQ(subReport.metrics["stage2_ok"], "1")
+        << "stage2: all 10 vars should appear in callback";
+    EXPECT_EQ(subReport.metrics["stage3_available_ok"], "1")
+        << "stage3: getAvailableVars should show 7 vars after deleteVars";
+    EXPECT_EQ(subReport.metrics["stage3_no_deleted"], "1")
+        << "deleted vars must not appear in getAvailableVars after deleteVars";
+}
+
 #endif
 

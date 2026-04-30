@@ -300,10 +300,12 @@ namespace ondemand
         void processFreqChangeCallback();
 
     private:
-        /*变量索引: hash -> 元数据*/
-        std::unordered_map<uint64_t, VarMetadata> varIndex_;
         mutable std::shared_mutex varIndexMutex_;
-
+        /*变量索引: hash -> 元数据（热路径，调度/订阅处理均访问）*/
+        std::unordered_map<uint64_t, VarMetadata> varIndex_;
+        /*变量定义冷路径索引: hash -> IDL Define（仅 tableDefine 广播时访问）
+         * 与 varIndex_ 共享 varIndexMutex_，生命周期与 varIndex_ 条目一致 */
+        std::unordered_map<uint64_t, std::shared_ptr<DSF::Var::Define>> varDefineIndex_;
         BucketManager bucketManager_;
 
         std::atomic<bool> initialized_;

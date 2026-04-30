@@ -698,15 +698,14 @@ namespace ondemand
                 }
 
                 VarMetadata meta;
-                meta.varHash = varHash;
                 meta.currentFreq = 0xFFFFFFFF;
                 meta.activeFreqCount = 0;
                 meta.bucketIndex = bucketIdx;
-                meta.varDefine = std::make_shared<DSF::Var::Define>(VarDefine);
                 meta.realVarName = VarDefine.name();
                 uint32_t kVarSize =
                     VarDefine.size() > 0 ? static_cast<uint32_t>(VarDefine.size()) : 32u;
                 meta.varId = varStore_.register_var(varHash, kVarSize);
+                varDefineIndex_.emplace(varHash, std::make_shared<DSF::Var::Define>(VarDefine));
                 varIndex_.emplace(varHash, std::move(meta));
                 bucketManager_.AddMember(varName, varHash);
                 affectedBuckets.insert(static_cast<uint32_t>(bucketIdx));
@@ -752,11 +751,15 @@ namespace ondemand
                         continue;
                     }
                     const auto &meta = it->second;
+                    auto defIt = varDefineIndex_.find(varHash);
+                    if (defIt == varDefineIndex_.end()) {
+                        continue;
+                    }
 
                     DSF::Var::PubTableVarDefine pubTableVarDefine;
                     DSF::Var::VarRequest varRequest;
                     DSF::Var::Define varDefine;
-                    varDefine = *(meta.varDefine);
+                    varDefine = *(defIt->second);
                     varRequest.varDefine(varDefine);
                     pubTableVarDefine.var(std::move(varRequest));
                     pubTableDefine.varDefines().push_back(std::move(pubTableVarDefine));
@@ -795,6 +798,7 @@ namespace ondemand
                 }
                 affectedBuckets.insert(static_cast<uint32_t>(it->second.bucketIndex));
                 varStore_.unregister_var(varHash);
+                varDefineIndex_.erase(varHash);
                 varIndex_.erase(it);
                 bucketManager_.RemoveMember(make_meta_varname(nodeName_, varName), varHash);
             }
@@ -821,11 +825,16 @@ namespace ondemand
                         continue;
                     }
                     const auto &meta = it->second;
+                    (void)meta; // bucketIndex 等字段已在上方 affectedBuckets 中使用
+                    auto defIt = varDefineIndex_.find(varHash);
+                    if (defIt == varDefineIndex_.end()) {
+                        continue;
+                    }
 
                     DSF::Var::PubTableVarDefine pubTableVarDefine;
                     DSF::Var::VarRequest varRequest;
                     DSF::Var::Define varDefine;
-                    varDefine = *(meta.varDefine);
+                    varDefine = *(defIt->second);
                     varRequest.varDefine(varDefine);
                     pubTableVarDefine.var(std::move(varRequest));
                     pubTableDefine.varDefines().push_back(std::move(pubTableVarDefine));
@@ -1306,6 +1315,7 @@ namespace ondemand
         {
             std::unique_lock lock(varIndexMutex_);
             varIndex_.clear();
+            varDefineIndex_.clear();
             bucketManager_.Clear();
             nodeSlotMap_.clear();
             nextNodeSlot_ = 0;

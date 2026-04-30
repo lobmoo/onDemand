@@ -396,14 +396,16 @@ namespace ondemand
                         const std::string &pubNodeName = tableDefine->nodeName();
                         std::vector<uint64_t> toRemove;
                         for (auto it = varIndex_.begin(); it != varIndex_.end();) {
+                            auto defIt = varDefineIndex_.find(it->first);
                             if (it->second.bucketIndex == thisBucketId
                                 && incomingHashes.find(it->first) == incomingHashes.end()
-                                && it->second.varDefine
-                                && it->second.varDefine->nodeName() == pubNodeName) {
+                                && defIt != varDefineIndex_.end()
+                                && defIt->second->nodeName() == pubNodeName) {
                                 ONDEMANDLOG(info)
                                     << "Removing deleted var: " << it->second.realVarName;
                                 toRemove.push_back(it->first);
                                 varStore_.unregister_var(it->first);
+                                varDefineIndex_.erase(defIt);
                                 totalReceived_.fetch_sub(1);
                                 it = varIndex_.erase(it);
                             } else {
@@ -439,15 +441,14 @@ namespace ondemand
 
                         /*组内部结构*/
                         VarMetadata meta;
-                        meta.varHash = varHash;
                         meta.currentFreq = 0xFFFFFFFF;
                         meta.activeFreqCount = 0;
                         uint32_t kVarSize = varDefine.size();
                         meta.bucketIndex = bucketIdx;
-                        meta.varDefine = std::make_shared<DSF::Var::Define>(varDefine);
                         meta.realVarName = varDefine.name();
                         meta.varId = varStore_.register_var(varHash, kVarSize);
 
+                        varDefineIndex_.emplace(varHash, std::make_shared<DSF::Var::Define>(varDefine));
                         varIndex_.emplace(varHash, std::move(meta));
                         newBucketIds.insert(static_cast<uint32_t>(bucketIdx));
                         totalReceived_.fetch_add(1);
@@ -764,13 +765,16 @@ namespace ondemand
                     vi.varId = varId;
                     vi.dataSize = varStore_.slot_size(static_cast<uint32_t>(varId));
                     vi.bucketIndex = static_cast<uint32_t>(vit->second.bucketIndex);
-                    if (vit->second.varDefine) {
-                        vi.nodeName = vit->second.varDefine->nodeName();
-                        vi.varType = vit->second.varDefine->modelName();
-                        vi.typeVersion = vit->second.varDefine->modelVersion();
-                    } else {
-                        ONDEMANDLOG(warning) << "varDefine is null for varHash=" << varHash
-                                             << ", callback will receive empty nodeName/varType";
+                    {
+                        auto defIt = varDefineIndex_.find(varHash);
+                        if (defIt != varDefineIndex_.end()) {
+                            vi.nodeName = defIt->second->nodeName();
+                            vi.varType = defIt->second->modelName();
+                            vi.typeVersion = defIt->second->modelVersion();
+                        } else {
+                            ONDEMANDLOG(warning) << "varDefine is null for varHash=" << varHash
+                                                 << ", callback will receive empty nodeName/varType";
+                        }
                     }
                     vi.varName = cbInfo.varName;
                     entry.members->push_back(std::move(vi));
@@ -996,13 +1000,13 @@ namespace ondemand
         std::unordered_map<std::string, std::vector<std::string>> result;
         std::shared_lock lock(varIndexMutex_);
         for (const auto &[hash, meta] : varIndex_) {
-            if (!meta.varDefine) {
+            auto defIt = varDefineIndex_.find(hash);
+            if (defIt == varDefineIndex_.end()) {
                 ONDEMANDLOG(critical)
                     << "Variable with hash " << hash << " has no definition, skipping.";
                 continue;
             }
-
-            result[meta.varDefine->nodeName()].push_back(meta.varDefine->name());
+            result[defIt->second->nodeName()].push_back(defIt->second->name());
         }
         return result;
     }
@@ -1029,9 +1033,11 @@ namespace ondemand
             std::unique_lock lock(varIndexMutex_);
             for (auto it = varIndex_.begin(); it != varIndex_.end();) {
                 const auto &meta = it->second;
-                if (meta.varDefine && meta.varDefine->nodeName() == pubNodeName) {
+                auto defIt = varDefineIndex_.find(it->first);
+                if (defIt != varDefineIndex_.end() && defIt->second->nodeName() == pubNodeName) {
                     toRemove.push_back(it->first);
                     varStore_.unregister_var(it->first);
+                    varDefineIndex_.erase(defIt);
                     totalReceived_.fetch_sub(1, std::memory_order_relaxed);
                     it = varIndex_.erase(it);
                 } else {
@@ -1127,6 +1133,7 @@ namespace ondemand
         {
             std::unique_lock lock(varIndexMutex_);
             varIndex_.clear();
+            varDefineIndex_.clear();
         }
 
         /*重置 varStore_，清空 table/metas/arena，避免重新 start 时 id 冲突*/
