@@ -304,10 +304,13 @@ namespace ondemand
         /*处理线程*/
         std::thread processTableDefineThread_;
         std::vector<std::thread> processDataTransferThreads_;
-        /*变量索引: hash -> 元数据*/
+         mutable std::shared_mutex varIndexMutex_;
+        /*变量索引: hash -> 元数据（热路径）*/
         std::unordered_map<uint64_t, VarMetadata> varIndex_;
-        mutable std::shared_mutex varIndexMutex_;
-
+        /*变量定义冷路径索引: hash -> IDL Define（仅广播/查询时访问）
+         * 与 varIndex_ 共享 varIndexMutex_，生命周期与 varIndex_ 条目一致 */
+        std::unordered_map<uint64_t, std::shared_ptr<DSF::Var::Define>> varDefineIndex_;
+       
         VarStore varStore_; // 变量值存储
 
         /*写入时间戳/计数，按 bucket 粒度跟踪 (lock-free, 单写多读)*/

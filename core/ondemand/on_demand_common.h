@@ -39,8 +39,7 @@ namespace ondemand
 #define ONDEMAND_BUCKET_SIZE 20
 #define DOMAIN_ID 66
 
-
-#define  DATA_TANSFER_PUB_SUB_NAME  "DataTransferPubSub"
+#define DATA_TANSFER_PUB_SUB_NAME "DataTransferPubSub"
 
 /*日志宏定义*/
 /************************************************************************************************ */
@@ -278,13 +277,10 @@ namespace ondemand
     * @brief 变量元数据 
     */
     struct VarMetadata {
-        uint64_t varHash;                            // 变量名 hash (唯一标识)
-        BucketManager::BucketIndex bucketIndex;      // 所属桶索引 (0-19)
-        uint32_t varId;                              // 变量ID (全局唯一，递增分配)
-        uint32_t currentFreq;                        // 当前发布频率 (ms)
-        std::shared_ptr<DSF::Var::Define> varDefine; // 变量定义 (idl)
-        std::string realVarName;                     // 变量名
-
+        BucketManager::BucketIndex bucketIndex; // 所属桶索引 (0-19)
+        uint32_t varId;                         // 变量ID (全局唯一，递增分配)
+        uint32_t currentFreq;                   // 当前发布频率 (ms)
+        std::string realVarName; // 变量名
         // 订阅频率信息 (紧凑存储)
         struct FreqSub {
             uint32_t freq;     // 订阅频率
@@ -297,8 +293,8 @@ namespace ondemand
         uint8_t activeFreqCount;       // 活跃频率数量
 
         VarMetadata()
-            : varHash(0), bucketIndex(0), varId(0), currentFreq(0xFFFFFFFF), varDefine(nullptr),
-              realVarName(), freqSubs{}, activeFreqCount(0)
+            : bucketIndex(0), varId(0), currentFreq(0xFFFFFFFF), realVarName(), freqSubs{},
+              activeFreqCount(0)
         {
         }
 
@@ -313,7 +309,6 @@ namespace ondemand
             if (!varName.empty()) {
                 oss << "\n  varName      : " << varName;
             }
-            oss << "\n  varHash      : 0x" << std::hex << varHash << std::dec;
             oss << "\n  bucketIndex  : " << bucketIndex;
             oss << "\n  varId        : " << varId;
             if (!realVarName.empty()) {
@@ -485,7 +480,7 @@ namespace ondemand
         } catch (const std::exception &e) {
             ONDEMANDLOG(error) << "Failed to create DDS node '" << nodeName << "': " << e.what();
             return nullptr;
-        }   
+        }
     }
 
 } // namespace ondemand
