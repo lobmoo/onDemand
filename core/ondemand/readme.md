@@ -3,8 +3,7 @@ TODO:
 1.pub下面立马就启动，可能没等到sub清理数据，这种异常需要处理
 2.支持@key字段，IDL 加 @key，QoS depth 从 20 改 1。
 3.优化内存
-
-测试：
+4.init start stop 接口功能描述不清晰 是否需要uinit？
 
 内存占用：
 VarStore Arena（最大头）
