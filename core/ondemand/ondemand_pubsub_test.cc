@@ -2994,5 +2994,584 @@ TEST(OnDemandPubSub, TableDefineCallbackAccurateOnCreateAndDelete)
         << "deleted vars must not appear in getAvailableVars after deleteVars";
 }
 
+
+// TC_20a - Pub stop/restart 通信恢复验证
+//
+// 场景：pub 正常发布10个变量，sub 订阅并收到数据后，pub 调用 stop() 模拟断网，
+//       随后 pub 重新 init/start/createVars，验证 sub 能自动恢复通信。
+//
+// 验证：
+//   ① 初始通信正常（sub 收到所有10个变量的回调）
+//   ② pub stop 后 sub 检测到断连（getAvailableVars 返回0）
+//   ③ pub 重启后 sub 检测到重连（getAvailableVars 返回10）
+//   ④ 重连后 sub 重新收到数据回调
+TEST(OnDemandPubSub, PubStopAndRestart)
+{
+    const auto root =
+        std::filesystem::temp_directory_path() / uniqueName("ondemand_case20a");
+    std::filesystem::create_directories(root);
+
+    const std::string pubNode = uniqueName("pub_case20a");
+    const auto defs  = makeDefines(pubNode, "v", 10);
+    const auto names = defineNames(defs);
+
+    const auto pubProc = spawnChild("case20a_pub", root, [pubNode, defs, names]() {
+        ChildReport r;
+
+        // ── 第一轮：正常发布 ──
+        {
+            dsf::ondemand::OnDemandPub pub;
+            if (!childRequire(r, pub.init(pubNode), "pub init1 failed")
+                || !childRequire(r, pub.start(), "pub start1 failed")
+                || !childRequire(r, pub.createVars(defs), "pub createVars1 failed")) {
+                return r;
+            }
+            std::atomic<bool> running{true};
+            std::thread th([&]() { publishLoop(pub, names, running, 10); });
+            std::this_thread::sleep_for(3s);
+            running.store(false, std::memory_order_release);
+            th.join();
+            pub.stop();
+            LOG(info) << "[case20a_pub] round1 stopped (simulating disconnect)";
+        }
+
+        // 等待 DDS liveliness 超时（lease=3s，多留 1s buffer）
+        std::this_thread::sleep_for(4s);
+
+        // ── 第二轮：重新启动 ──
+        {
+            dsf::ondemand::OnDemandPub pub;
+            if (!childRequire(r, pub.init(pubNode), "pub init2 failed")
+                || !childRequire(r, pub.start(), "pub start2 failed")
+                || !childRequire(r, pub.createVars(defs), "pub createVars2 failed")) {
+                return r;
+            }
+            std::atomic<bool> running{true};
+            std::thread th([&]() { publishLoop(pub, names, running, 10); });
+            std::this_thread::sleep_for(10s);
+            running.store(false, std::memory_order_release);
+            th.join();
+            pub.stop();
+            LOG(info) << "[case20a_pub] round2 stopped";
+        }
+
+        r.ok = true;
+        r.message = "ok";
+        return r;
+    });
+
+    const auto subProc = spawnChild("case20a_sub", root, [pubNode, names]() {
+        dsf::ondemand::OnDemandSub sub;
+        ChildReport r;
+
+        if (!childRequire(r, sub.init(uniqueName("sub_case20a")), "sub init failed")
+            || !childRequire(r, sub.start(), "sub start failed")) {
+            return r;
+        }
+
+        // 等待 pub 广播变量表
+        if (!childRequire(r,
+                          waitUntil([&]() { return countNodeVars(sub, pubNode) == 10; }, 8s),
+                          "sub did not receive var defines")) {
+            sub.stop();
+            return r;
+        }
+
+        std::mutex mu;
+        std::map<std::string, uint64_t> latestTs;
+
+        if (!childRequire(r,
+                          sub.subscribe(pubNode.c_str(), toSubscriptions(names, 100),
+                                        [&](const std::vector<dsf::ondemand::VarCallbackData> &vars) {
+                                            std::lock_guard<std::mutex> lk(mu);
+                                            for (const auto &v : vars) {
+                                                const std::string name(v.varName.data(),
+                                                                       v.varName.size());
+                                                latestTs[name] = v.timestampNs;
+                                            }
+                                        }),
+                          "subscribe failed")) {
+            sub.stop();
+            return r;
+        }
+
+        // ── 阶段1：初始通信正常 ──
+        const bool phase1Ok =
+            waitUntil([&]() {
+                std::lock_guard<std::mutex> lk(mu);
+                return latestTs.size() == names.size();
+            }, 6s);
+        childRequire(r, phase1Ok, "phase1: did not receive initial callbacks for all 10 vars");
+        r.metrics["phase1_ok"] = phase1Ok ? "1" : "0";
+        LOG(info) << "[case20a_sub] phase1 done, received=" << [&]() {
+            std::lock_guard<std::mutex> lk(mu);
+            return latestTs.size();
+        }();
+
+        // ── 阶段2：检测断连（getAvailableVars 应降为0） ──
+        const bool phase2Ok =
+            waitUntil([&]() { return countNodeVars(sub, pubNode) == 0; }, 10s);
+        childRequire(r, phase2Ok,
+                     "phase2: pub did not go offline (getAvailableVars still non-zero)");
+        r.metrics["phase2_ok"] = phase2Ok ? "1" : "0";
+        LOG(info) << "[case20a_sub] phase2 done, pub offline detected";
+
+        // ── 阶段3：检测重连（getAvailableVars 恢复为10） ──
+        const bool phase3Ok =
+            waitUntil([&]() { return countNodeVars(sub, pubNode) == 10; }, 12s);
+        childRequire(r, phase3Ok,
+                     "phase3: pub did not come back online (getAvailableVars still 0)");
+        r.metrics["phase3_ok"] = phase3Ok ? "1" : "0";
+        LOG(info) << "[case20a_sub] phase3 done, pub back online";
+
+        // ── 阶段4：验证数据恢复 ──
+        // 清空旧时间戳，等待新回调到来
+        {
+            std::lock_guard<std::mutex> lk(mu);
+            latestTs.clear();
+        }
+        const bool phase4Ok =
+            waitUntil([&]() {
+                std::lock_guard<std::mutex> lk(mu);
+                return latestTs.size() == names.size();
+            }, 10s);
+        childRequire(r, phase4Ok, "phase4: data did not resume after pub restart");
+        r.metrics["phase4_ok"] = phase4Ok ? "1" : "0";
+        LOG(info) << "[case20a_sub] phase4 done, data resumed";
+
+        sub.stop();
+        r.ok = phase1Ok && phase2Ok && phase3Ok && phase4Ok;
+        r.message = r.ok ? "ok" : r.message;
+        return r;
+    });
+
+    ChildReport subReport;
+    expectChildOk(pubProc, 22s);
+    expectChildOk(subProc, 45s, &subReport);
+
+    EXPECT_EQ(subReport.metrics["phase1_ok"], "1") << "phase1: initial callbacks not received";
+    EXPECT_EQ(subReport.metrics["phase2_ok"], "1") << "phase2: pub offline not detected";
+    EXPECT_EQ(subReport.metrics["phase3_ok"], "1") << "phase3: pub reconnect not detected";
+    EXPECT_EQ(subReport.metrics["phase4_ok"], "1") << "phase4: data did not resume after reconnect";
+}
+
+// TC_20b - Sub stop/restart 通信恢复验证
+//
+// 场景：pub 持续发布10个变量，sub 订阅并收到数据后，sub 调用 stop() 模拟断网，
+//       随后 sub 重新 init/start/subscribe，验证能重新收到数据。
+//
+// 验证：
+//   ① 初始通信正常（sub 收到所有10个变量的回调）
+//   ② sub 重启并重新订阅后，重新收到数据回调
+TEST(OnDemandPubSub, SubStopAndRestart)
+{
+    const auto root =
+        std::filesystem::temp_directory_path() / uniqueName("ondemand_case20b");
+    std::filesystem::create_directories(root);
+
+    const std::string pubNode = uniqueName("pub_case20b");
+    const auto defs  = makeDefines(pubNode, "v", 10);
+    const auto names = defineNames(defs);
+
+    const auto pubProc = spawnChild("case20b_pub", root, [pubNode, defs, names]() {
+        dsf::ondemand::OnDemandPub pub;
+        ChildReport r;
+        if (!childRequire(r, pub.init(pubNode), "pub init failed")
+            || !childRequire(r, pub.start(), "pub start failed")
+            || !childRequire(r, pub.createVars(defs), "pub createVars failed")) {
+            return r;
+        }
+        std::atomic<bool> running{true};
+        std::thread th([&]() { publishLoop(pub, names, running, 10); });
+        std::this_thread::sleep_for(25s);
+        running.store(false, std::memory_order_release);
+        th.join();
+        pub.stop();
+        r.ok = true;
+        r.message = "ok";
+        return r;
+    });
+
+    const auto subProc = spawnChild("case20b_sub", root, [pubNode, names]() {
+        ChildReport r;
+
+        auto runSub = [&](const std::string &subName,
+                          const std::chrono::milliseconds waitVarsTimeout,
+                          const std::chrono::milliseconds dataTimeout) -> bool {
+            dsf::ondemand::OnDemandSub sub;
+            if (!childRequire(r, sub.init(subName), subName + " init failed")
+                || !childRequire(r, sub.start(), subName + " start failed")) {
+                return false;
+            }
+
+            if (!childRequire(r,
+                              waitUntil([&]() { return countNodeVars(sub, pubNode) == 10; },
+                                        waitVarsTimeout),
+                              subName + ": did not receive var defines")) {
+                sub.stop();
+                return false;
+            }
+
+            std::mutex mu;
+            std::map<std::string, uint64_t> latestTs;
+
+            if (!childRequire(r,
+                              sub.subscribe(pubNode.c_str(), toSubscriptions(names, 100),
+                                            [&](const std::vector<dsf::ondemand::VarCallbackData> &vars) {
+                                                std::lock_guard<std::mutex> lk(mu);
+                                                for (const auto &v : vars) {
+                                                    const std::string name(v.varName.data(),
+                                                                           v.varName.size());
+                                                    latestTs[name] = v.timestampNs;
+                                                }
+                                            }),
+                              subName + ": subscribe failed")) {
+                sub.stop();
+                return false;
+            }
+
+            const bool dataOk =
+                waitUntil([&]() {
+                    std::lock_guard<std::mutex> lk(mu);
+                    return latestTs.size() == names.size();
+                }, dataTimeout);
+            childRequire(r, dataOk, subName + ": did not receive callbacks for all 10 vars");
+            sub.stop();
+            return dataOk;
+        };
+
+        // ── 第一轮：正常订阅 ──
+        const bool phase1Ok = runSub(uniqueName("sub_case20b_r1"), 8s, 6s);
+        r.metrics["phase1_ok"] = phase1Ok ? "1" : "0";
+        LOG(info) << "[case20b_sub] phase1 done, ok=" << phase1Ok;
+
+        if (!phase1Ok) {
+            r.ok = false;
+            return r;
+        }
+
+        // 模拟断网后等待一段时间再重连
+        std::this_thread::sleep_for(3s);
+
+        // ── 第二轮：重新订阅 ──
+        const bool phase2Ok = runSub(uniqueName("sub_case20b_r2"), 8s, 8s);
+        r.metrics["phase2_ok"] = phase2Ok ? "1" : "0";
+        LOG(info) << "[case20b_sub] phase2 done, ok=" << phase2Ok;
+
+        r.ok = phase1Ok && phase2Ok;
+        r.message = r.ok ? "ok" : r.message;
+        return r;
+    });
+
+    ChildReport subReport;
+    expectChildOk(pubProc, 30s);
+    expectChildOk(subProc, 35s, &subReport);
+
+    EXPECT_EQ(subReport.metrics["phase1_ok"], "1") << "phase1: initial callbacks not received";
+    EXPECT_EQ(subReport.metrics["phase2_ok"], "1") << "phase2: data did not resume after sub restart";
+}
+#if 0
+// TC_22 - Pub stop/start（不重新 init）通信恢复验证
+//
+// 场景：pub init 一次后，stop() 再直接 start()（不重新 init），验证通信是否恢复。
+//       注意：当前 stop() 会将 initialized_ 置为 false，因此 start() 会失败。
+//       本用例用于暴露该问题。
+//
+// 验证：
+//   ① 初始通信正常
+//   ② pub stop 后 sub 检测到断连
+//   ③ pub 不重新 init 直接 start 后，sub 检测到重连
+//   ④ 重连后数据恢复
+TEST(OnDemandPubSub, PubStopAndStartWithoutReinit)
+{
+    const auto root =
+        std::filesystem::temp_directory_path() / uniqueName("ondemand_case22");
+    std::filesystem::create_directories(root);
+
+    const std::string pubNode = uniqueName("pub_case22");
+    const auto defs  = makeDefines(pubNode, "v", 10);
+    const auto names = defineNames(defs);
+
+    const auto pubProc = spawnChild("case22_pub", root, [pubNode, defs, names]() {
+        dsf::ondemand::OnDemandPub pub;
+        ChildReport r;
+
+        // init 一次
+        if (!childRequire(r, pub.init(pubNode), "pub init failed")
+            || !childRequire(r, pub.start(), "pub start1 failed")
+            || !childRequire(r, pub.createVars(defs), "pub createVars1 failed")) {
+            return r;
+        }
+
+        // 第一轮发布
+        std::atomic<bool> running{true};
+        std::thread th([&]() { publishLoop(pub, names, running, 10); });
+        std::this_thread::sleep_for(3s);
+        running.store(false, std::memory_order_release);
+        th.join();
+        pub.stop();
+        LOG(info) << "[case22_pub] round1 stopped";
+
+        // 等待 DDS liveliness 超时
+        std::this_thread::sleep_for(4s);
+
+        // 第二轮：不重新 init，直接 start
+        if (!childRequire(r, pub.start(), "pub start2 failed (no reinit)")) {
+            return r;
+        }
+        if (!childRequire(r, pub.createVars(defs), "pub createVars2 failed")) {
+            pub.stop();
+            return r;
+        }
+        running.store(true, std::memory_order_release);
+        std::thread th2([&]() { publishLoop(pub, names, running, 10); });
+        std::this_thread::sleep_for(10s);
+        running.store(false, std::memory_order_release);
+        th2.join();
+        pub.stop();
+        LOG(info) << "[case22_pub] round2 stopped";
+
+        r.ok = true;
+        r.message = "ok";
+        return r;
+    });
+
+    // sub 侧与 TC_20a 相同：等待断连 → 重连 → 数据恢复
+    const auto subProc = spawnChild("case22_sub", root, [pubNode, names]() {
+        dsf::ondemand::OnDemandSub sub;
+        ChildReport r;
+
+        if (!childRequire(r, sub.init(uniqueName("sub_case22")), "sub init failed")
+            || !childRequire(r, sub.start(), "sub start failed")) {
+            return r;
+        }
+        if (!childRequire(r,
+                          waitUntil([&]() { return countNodeVars(sub, pubNode) == 10; }, 8s),
+                          "sub did not receive var defines")) {
+            sub.stop();
+            return r;
+        }
+
+        std::mutex mu;
+        std::map<std::string, uint64_t> latestTs;
+
+        if (!childRequire(r,
+                          sub.subscribe(pubNode.c_str(), toSubscriptions(names, 100),
+                                        [&](const std::vector<dsf::ondemand::VarCallbackData> &vars) {
+                                            std::lock_guard<std::mutex> lk(mu);
+                                            for (const auto &v : vars) {
+                                                const std::string name(v.varName.data(),
+                                                                       v.varName.size());
+                                                latestTs[name] = v.timestampNs;
+                                            }
+                                        }),
+                          "subscribe failed")) {
+            sub.stop();
+            return r;
+        }
+
+        const bool phase1Ok =
+            waitUntil([&]() {
+                std::lock_guard<std::mutex> lk(mu);
+                return latestTs.size() == names.size();
+            }, 6s);
+        childRequire(r, phase1Ok, "phase1: initial callbacks not received");
+        r.metrics["phase1_ok"] = phase1Ok ? "1" : "0";
+
+        const bool phase2Ok =
+            waitUntil([&]() { return countNodeVars(sub, pubNode) == 0; }, 10s);
+        childRequire(r, phase2Ok, "phase2: pub offline not detected");
+        r.metrics["phase2_ok"] = phase2Ok ? "1" : "0";
+        LOG(info) << "[case22_sub] phase2 done, pub offline detected";
+
+        const bool phase3Ok =
+            waitUntil([&]() { return countNodeVars(sub, pubNode) == 10; }, 12s);
+        childRequire(r, phase3Ok, "phase3: pub did not come back online");
+        r.metrics["phase3_ok"] = phase3Ok ? "1" : "0";
+        LOG(info) << "[case22_sub] phase3 done, pub back online";
+
+        {
+            std::lock_guard<std::mutex> lk(mu);
+            latestTs.clear();
+        }
+        const bool phase4Ok =
+            waitUntil([&]() {
+                std::lock_guard<std::mutex> lk(mu);
+                return latestTs.size() == names.size();
+            }, 10s);
+        childRequire(r, phase4Ok, "phase4: data did not resume after pub restart");
+        r.metrics["phase4_ok"] = phase4Ok ? "1" : "0";
+        LOG(info) << "[case22_sub] phase4 done, data resumed";
+
+        sub.stop();
+        r.ok = phase1Ok && phase2Ok && phase3Ok && phase4Ok;
+        r.message = r.ok ? "ok" : r.message;
+        return r;
+    });
+
+    ChildReport subReport;
+    expectChildOk(pubProc, 22s);
+    expectChildOk(subProc, 45s, &subReport);
+
+    EXPECT_EQ(subReport.metrics["phase1_ok"], "1") << "phase1: initial callbacks not received";
+    EXPECT_EQ(subReport.metrics["phase2_ok"], "1") << "phase2: pub offline not detected";
+    EXPECT_EQ(subReport.metrics["phase3_ok"], "1") << "phase3: pub reconnect not detected";
+    EXPECT_EQ(subReport.metrics["phase4_ok"], "1") << "phase4: data did not resume";
+}
+
+// TC_23 - Sub stop/start（不重新 init）通信恢复验证
+//
+// 场景：sub init 一次后，stop() 再直接 start()（不重新 init），验证通信是否恢复。
+//       注意：当前 stop() 会将 initialized_ 置为 false，因此 start() 会失败。
+//       本用例用于暴露该问题。
+//
+// 验证：
+//   ① 初始通信正常
+//   ② sub stop 后直接 start（不重新 init），重新订阅后数据恢复
+TEST(OnDemandPubSub, SubStopAndStartWithoutReinit)
+{
+    const auto root =
+        std::filesystem::temp_directory_path() / uniqueName("ondemand_case23");
+    std::filesystem::create_directories(root);
+
+    const std::string pubNode = uniqueName("pub_case23");
+    const auto defs  = makeDefines(pubNode, "v", 10);
+    const auto names = defineNames(defs);
+
+    // pub 持续发布
+    const auto pubProc = spawnChild("case23_pub", root, [pubNode, defs, names]() {
+        dsf::ondemand::OnDemandPub pub;
+        ChildReport r;
+        if (!childRequire(r, pub.init(pubNode), "pub init failed")
+            || !childRequire(r, pub.start(), "pub start failed")
+            || !childRequire(r, pub.createVars(defs), "pub createVars failed")) {
+            return r;
+        }
+        std::atomic<bool> running{true};
+        std::thread th([&]() { publishLoop(pub, names, running, 10); });
+        std::this_thread::sleep_for(28s);
+        running.store(false, std::memory_order_release);
+        th.join();
+        pub.stop();
+        r.ok = true;
+        r.message = "ok";
+        return r;
+    });
+
+    const auto subProc = spawnChild("case23_sub", root, [pubNode, names]() {
+        ChildReport r;
+        const std::string subName = uniqueName("sub_case23");
+
+        dsf::ondemand::OnDemandSub sub;
+
+        // init 一次
+        if (!childRequire(r, sub.init(subName), "sub init failed")
+            || !childRequire(r, sub.start(), "sub start1 failed")) {
+            return r;
+        }
+
+        // ── 第一轮 ──
+        if (!childRequire(r,
+                          waitUntil([&]() { return countNodeVars(sub, pubNode) == 10; }, 8s),
+                          "round1: did not receive var defines")) {
+            sub.stop();
+            return r;
+        }
+
+        std::mutex mu;
+        std::map<std::string, uint64_t> latestTs;
+
+        if (!childRequire(r,
+                          sub.subscribe(pubNode.c_str(), toSubscriptions(names, 100),
+                                        [&](const std::vector<dsf::ondemand::VarCallbackData> &vars) {
+                                            std::lock_guard<std::mutex> lk(mu);
+                                            for (const auto &v : vars) {
+                                                const std::string name(v.varName.data(),
+                                                                       v.varName.size());
+                                                latestTs[name] = v.timestampNs;
+                                            }
+                                        }),
+                          "round1: subscribe failed")) {
+            sub.stop();
+            return r;
+        }
+
+        const bool phase1Ok =
+            waitUntil([&]() {
+                std::lock_guard<std::mutex> lk(mu);
+                return latestTs.size() == names.size();
+            }, 6s);
+        childRequire(r, phase1Ok, "phase1: initial callbacks not received");
+        r.metrics["phase1_ok"] = phase1Ok ? "1" : "0";
+        LOG(info) << "[case23_sub] phase1 done, ok=" << phase1Ok;
+
+        if (!phase1Ok) {
+            sub.stop();
+            return r;
+        }
+
+        sub.stop();
+        LOG(info) << "[case23_sub] stopped (simulating disconnect)";
+
+        // 模拟断网后等待
+        std::this_thread::sleep_for(3s);
+
+        // ── 第二轮：不重新 init，直接 start ──
+        if (!childRequire(r, sub.start(), "sub start2 failed (no reinit)")) {
+            return r;
+        }
+
+        if (!childRequire(r,
+                          waitUntil([&]() { return countNodeVars(sub, pubNode) == 10; }, 8s),
+                          "round2: did not receive var defines after restart")) {
+            sub.stop();
+            return r;
+        }
+
+        {
+            std::lock_guard<std::mutex> lk(mu);
+            latestTs.clear();
+        }
+
+        if (!childRequire(r,
+                          sub.subscribe(pubNode.c_str(), toSubscriptions(names, 100),
+                                        [&](const std::vector<dsf::ondemand::VarCallbackData> &vars) {
+                                            std::lock_guard<std::mutex> lk(mu);
+                                            for (const auto &v : vars) {
+                                                const std::string name(v.varName.data(),
+                                                                       v.varName.size());
+                                                latestTs[name] = v.timestampNs;
+                                            }
+                                        }),
+                          "round2: subscribe failed")) {
+            sub.stop();
+            return r;
+        }
+
+        const bool phase2Ok =
+            waitUntil([&]() {
+                std::lock_guard<std::mutex> lk(mu);
+                return latestTs.size() == names.size();
+            }, 8s);
+        childRequire(r, phase2Ok, "phase2: data did not resume after sub restart");
+        r.metrics["phase2_ok"] = phase2Ok ? "1" : "0";
+        LOG(info) << "[case23_sub] phase2 done, ok=" << phase2Ok;
+
+        sub.stop();
+        r.ok = phase1Ok && phase2Ok;
+        r.message = r.ok ? "ok" : r.message;
+        return r;
+    });
+
+    ChildReport subReport;
+    expectChildOk(pubProc, 32s);
+    expectChildOk(subProc, 38s, &subReport);
+
+    EXPECT_EQ(subReport.metrics["phase1_ok"], "1") << "phase1: initial callbacks not received";
+    EXPECT_EQ(subReport.metrics["phase2_ok"], "1") << "phase2: data did not resume after sub restart (no reinit)";
+}
+
+#endif
+
 #endif
 
