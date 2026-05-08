@@ -159,7 +159,7 @@ void dataCallback(const std::vector<dsf::ondemand::VarCallbackData> &vars)
 
     ensureBucketWorkerStarted();
 
-    LOG(critical) << "Received batch: node=" << vars.front().nodeName << " count=" << vars.size();
+    LOG(info) << "Received batch: node=" << vars.front().nodeName << " count=" << vars.size();
     BatchEvent batch;
     if (!vars.front().nodeName.empty()) {
         batch.node_name.assign(vars.front().nodeName.data(), vars.front().nodeName.size());
