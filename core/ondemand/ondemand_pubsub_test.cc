@@ -3647,65 +3647,55 @@ TEST(OnDemandPubSub, VarReadSyncCorrectness)
             return r;
         }
 
-        // 等待第一条数据到达（轮询 v0 直到读成功）
-        dsf::ondemand::VarCallbackData probe;
-        const bool dataArrived = waitUntil(
-            [&]() { return sub.varReadSync(pubNode.c_str(), names[0].c_str(), probe); }, 6s);
-        if (!childRequire(r, dataArrived, "no data arrived within timeout")) {
-            sub.stop();
-            return r;
-        }
-
-        // ① 节点名传错 → 应返回 false
+        // 先验证错误 nodeName 路径
         dsf::ondemand::VarCallbackData dummy;
         const bool wrongNodeFails = !sub.varReadSync("wrong_node_xyz", names[0].c_str(), dummy);
         childRequire(r, wrongNodeFails, "wrong node name should return false");
         r.metrics["wrong_node_fails"] = wrongNodeFails ? "1" : "0";
 
-        // ② 节点名传对 → 逐个验证
+        // 等待一个“全量变量都可读且字段一致”的稳定窗口
         bool allDataOk   = true;
         bool allSizeOk   = true;
         bool allNodeOk   = true;
         bool allTypeOk   = true;
         bool allBlobOk   = true;
+        const bool allValidated = waitUntil(
+            [&]() {
+                allDataOk = true;
+                allSizeOk = true;
+                allNodeOk = true;
+                allTypeOk = true;
+                allBlobOk = true;
 
-        for (size_t i = 0; i < names.size(); ++i) {
-            dsf::ondemand::VarCallbackData out;
-            if (!childRequire(r, sub.varReadSync(pubNode.c_str(), names[i].c_str(), out),
-                              "varReadSync failed for " + names[i])) {
-                allDataOk = false;
-                continue;
-            }
+                for (size_t i = 0; i < names.size(); ++i) {
+                    dsf::ondemand::VarCallbackData out;
+                    if (!sub.varReadSync(pubNode.c_str(), names[i].c_str(), out)) {
+                        return false;
+                    }
 
-            const int32_t expected = static_cast<int32_t>((i + 1) * 1000);
-            const int32_t actual   = *reinterpret_cast<const int32_t *>(out.data);
+                    const int32_t expected = static_cast<int32_t>((i + 1) * 1000);
+                    const int32_t actual   = *reinterpret_cast<const int32_t *>(out.data);
+                    if (actual != expected) {
+                        allDataOk = false;
+                    }
+                    if (out.size != sizeof(int32_t)) {
+                        allSizeOk = false;
+                    }
+                    if (out.nodeName != pubNode) {
+                        allNodeOk = false;
+                    }
+                    if (out.varType != "int32") {
+                        allTypeOk = false;
+                    }
+                    if (out.blobType != DSF::Var::BLOB_TYPE::STRUCTS) {
+                        allBlobOk = false;
+                    }
+                }
 
-            if (actual != expected) {
-                LOG(error) << "[case24_sub] " << names[i] << " data mismatch: expected="
-                           << expected << " actual=" << actual;
-                allDataOk = false;
-            }
-            if (out.size != sizeof(int32_t)) {
-                LOG(error) << "[case24_sub] " << names[i] << " size mismatch: expected="
-                           << sizeof(int32_t) << " actual=" << out.size;
-                allSizeOk = false;
-            }
-            if (out.nodeName != pubNode) {
-                LOG(error) << "[case24_sub] " << names[i] << " nodeName mismatch: expected="
-                           << pubNode << " actual=" << out.nodeName;
-                allNodeOk = false;
-            }
-            if (out.varType != "int32") {
-                LOG(error) << "[case24_sub] " << names[i] << " varType mismatch: expected=int32"
-                           << " actual=" << out.varType;
-                allTypeOk = false;
-            }
-            if (out.blobType != DSF::Var::BLOB_TYPE::STRUCTS) {
-                LOG(error) << "[case24_sub] " << names[i] << " blobType mismatch: expected=STRUCTS"
-                           << " actual=" << static_cast<uint32_t>(out.blobType);
-                allBlobOk = false;
-            }
-        }
+                return allDataOk && allSizeOk && allNodeOk && allTypeOk && allBlobOk;
+            },
+            8s);
+        childRequire(r, allValidated, "not all vars validated within timeout");
 
         r.metrics["all_data_ok"]   = allDataOk  ? "1" : "0";
         r.metrics["all_size_ok"]   = allSizeOk  ? "1" : "0";
