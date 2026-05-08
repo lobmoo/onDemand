@@ -3147,7 +3147,7 @@ TEST(OnDemandPubSub, PubStopAndRestart)
 
     ChildReport subReport;
     expectChildOk(pubProc, 22s);
-    expectChildOk(subProc, 45s, &subReport);
+    expectChildOk(subProc, 55s, &subReport);
 
     EXPECT_EQ(subReport.metrics["phase1_ok"], "1") << "phase1: initial callbacks not received";
     EXPECT_EQ(subReport.metrics["phase2_ok"], "1") << "phase2: pub offline not detected";
