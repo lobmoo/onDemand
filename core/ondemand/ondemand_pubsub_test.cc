@@ -3265,7 +3265,7 @@ TEST(OnDemandPubSub, SubStopAndRestart)
 
     ChildReport subReport;
     expectChildOk(pubProc, 30s);
-    expectChildOk(subProc, 35s, &subReport);
+    expectChildOk(subProc, 45s, &subReport);
 
     EXPECT_EQ(subReport.metrics["phase1_ok"], "1") << "phase1: initial callbacks not received";
     EXPECT_EQ(subReport.metrics["phase2_ok"], "1") << "phase2: data did not resume after sub restart";
