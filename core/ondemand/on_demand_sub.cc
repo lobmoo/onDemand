@@ -1106,11 +1106,24 @@ namespace ondemand
                     out.size = tl_buf.size();
                     out.timestampNs = tsNs;
                     out.blobType = blobType;
-                    // string_view 指向 Define 对象内的字符串，在变量保持注册期间有效
-                    out.nodeName = define ? std::string_view(define->nodeName()) : std::string_view(node_name);
-                    out.varName = define ? std::string_view(define->name()) : std::string_view(var_name);
-                    out.varType = define ? std::string_view(define->modelName()) : std::string_view{};
-                    out.type_version = define ? std::string_view(define->modelVersion()) : std::string_view{};
+                    if (define) {
+                        // string_view 指向 Define 对象内的字符串，在变量保持注册期间有效
+                        out.nodeName     = std::string_view(define->nodeName());
+                        out.varName      = std::string_view(define->name());
+                        out.varType      = std::string_view(define->modelName());
+                        out.type_version = std::string_view(define->modelVersion());
+                    } else {
+                        // Define 尚未到达时，将入参复制到线程局部 string，
+                        // 避免 string_view 指向调用方可能已失效的临时缓冲区
+                        thread_local std::string tl_node_name;
+                        thread_local std::string tl_var_name;
+                        tl_node_name = node_name;
+                        tl_var_name  = var_name;
+                        out.nodeName     = std::string_view(tl_node_name);
+                        out.varName      = std::string_view(tl_var_name);
+                        out.varType      = std::string_view{};
+                        out.type_version = std::string_view{};
+                    }
                     return true;
                 }
             }
