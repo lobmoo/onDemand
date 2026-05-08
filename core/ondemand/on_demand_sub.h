@@ -129,7 +129,12 @@ namespace ondemand
          * @brief 同步读取变量当前值，填充 VarCallbackData
          * @param node_name  发布节点名
          * @param var_name   变量名
-         * @param out        输出结果；out.data 指向线程局部缓冲区，在同线程下次调用前有效
+         * @param out        输出结果：
+         *                   - out.data 指向线程局部缓冲区，在同线程下次调用前有效
+         *                   - out.nodeName / out.varName / out.varType / out.type_version：
+         *                     若变量定义已收到，string_view 指向订阅器内部 Define 对象，
+         *                     在变量保持注册期间有效；否则指向线程局部 string 缓冲区，
+         *                     在同线程下次调用前有效。调用方不应在超过上述生命周期后继续访问这些 string_view。
          * @return true 成功 / false 变量不存在或尚未收到数据
          */
         bool varReadSync(const char *node_name, const char *var_name, VarCallbackData &out) const;
