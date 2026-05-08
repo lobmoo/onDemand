@@ -4,6 +4,8 @@ TODO:
 2.支持@key字段，IDL 加 @key，QoS depth 从 20 改 1。
 3.优化内存
 4.init start stop 接口功能描述不清晰 是否需要uinit？
+5.同步异步读接口可能会读到假数据，尤其是同步读 是否约束
+
 
 内存占用：
 VarStore Arena（最大头）
