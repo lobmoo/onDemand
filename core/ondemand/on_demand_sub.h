@@ -126,6 +126,15 @@ namespace ondemand
         }
 
         /**
+         * @brief 同步读取变量当前值，填充 VarCallbackData
+         * @param node_name  发布节点名
+         * @param var_name   变量名
+         * @param out        输出结果；out.data 指向线程局部缓冲区，在同线程下次调用前有效
+         * @return true 成功 / false 变量不存在或尚未收到数据
+         */
+        bool varReadSync(const char *node_name, const char *var_name, VarCallbackData &out) const;
+
+        /**
          * @brief 手动清理指定 pub 节点的所有变量（用于外部检测到 pub 掉线的场景）
          * @param  pubNodeName  pub 节点名称
          * @return true  找到并清理成功

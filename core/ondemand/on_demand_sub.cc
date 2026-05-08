@@ -1062,6 +1062,65 @@ namespace ondemand
 
 
 
+    bool OnDemandSub::varReadSync(const char *node_name, const char *var_name,
+                                   VarCallbackData &out) const
+    {
+        const auto deadline = std::chrono::steady_clock::now() + std::chrono::milliseconds(20);
+
+        for (;;) {
+            std::string metaVarName = make_meta_varname(node_name, var_name);
+            uint64_t varHash = fast_hash(metaVarName);
+
+            uint32_t varId = VarStore::kInvalidId;
+            uint32_t bucketIndex = 0;
+            std::shared_ptr<DSF::Var::Define> define;
+            {
+                std::shared_lock lock(varIndexMutex_);
+                auto it = varIndex_.find(varHash);
+                if (it != varIndex_.end()) {
+                    varId = it->second.varId;
+                    bucketIndex = static_cast<uint32_t>(it->second.bucketIndex);
+                    auto defIt = varDefineIndex_.find(varHash);
+                    if (defIt != varDefineIndex_.end())
+                        define = defIt->second;
+                }
+            }
+
+            if (varId != VarStore::kInvalidId) {
+                auto handle = varStore_.read_zero_copy(varId);
+                if (handle) {
+                    // 线程局部缓冲区：同线程下次调用前有效
+                    thread_local std::vector<uint8_t> tl_buf;
+                    tl_buf.resize(handle.size());
+                    std::memcpy(tl_buf.data(), handle.ptr(), handle.size());
+
+                    uint64_t tsNs = 0;
+                    DSF::Var::BLOB_TYPE blobType = DSF::Var::BLOB_TYPE::UNKNOWN;
+                    if (bucketIndex < ONDEMAND_BUCKET_SIZE) {
+                        tsNs = varWriteStamps_[bucketIndex].timestampNs.load(std::memory_order_acquire);
+                        blobType = static_cast<DSF::Var::BLOB_TYPE>(
+                            varWriteStamps_[bucketIndex].blobType.load(std::memory_order_acquire));
+                    }
+
+                    out.data = tl_buf.data();
+                    out.size = tl_buf.size();
+                    out.timestampNs = tsNs;
+                    out.blobType = blobType;
+                    // string_view 指向 Define 对象内的字符串，在变量保持注册期间有效
+                    out.nodeName = define ? std::string_view(define->nodeName()) : std::string_view(node_name);
+                    out.varName = define ? std::string_view(define->name()) : std::string_view(var_name);
+                    out.varType = define ? std::string_view(define->modelName()) : std::string_view{};
+                    out.type_version = define ? std::string_view(define->modelVersion()) : std::string_view{};
+                    return true;
+                }
+            }
+
+            if (std::chrono::steady_clock::now() >= deadline)
+                return false;
+            std::this_thread::yield();
+        }
+    }
+
     /**
      * @brief 停止订阅器
      */

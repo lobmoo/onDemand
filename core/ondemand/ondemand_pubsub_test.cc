@@ -3572,6 +3572,170 @@ TEST(OnDemandPubSub, SubStopAndStartWithoutReinit)
 }
 
 #endif
+// TC_24 - varReadSync 同步读接口验证
+//
+// 场景：pub 发布 10 个 int32 变量，每个变量写入固定值 (i+1)*1000；
+//       sub 订阅时回调传空，等数据到达后通过 varReadSync 同步读取。
+//
+// 验证：
+//   ① 节点名传错 → varReadSync 返回 false
+//   ② 节点名传对 → 每个变量均能读出，且：
+//        data 值与 pub 写入一致
+//        size == sizeof(int32_t)
+//        nodeName == pubNode
+//        varType  == "int32"
+//        blobType == STRUCTS
+TEST(OnDemandPubSub, VarReadSyncCorrectness)
+{
+    const auto root = std::filesystem::temp_directory_path() / uniqueName("ondemand_case24");
+    std::filesystem::create_directories(root);
+
+    const std::string pubNode = uniqueName("pub_case24");
+    const auto defs  = makeDefines(pubNode, "v", 10);
+    const auto names = defineNames(defs);
+
+    const auto pubProc = spawnChild("case24_pub", root, [pubNode, defs, names]() {
+        dsf::ondemand::OnDemandPub pub;
+        ChildReport r;
+        if (!childRequire(r, pub.init(pubNode), "pub init failed")
+            || !childRequire(r, pub.start(), "pub start failed")
+            || !childRequire(r, pub.createVars(defs), "pub createVars failed")) {
+            return r;
+        }
+        pub.setBlobType(DSF::Var::BLOB_TYPE::STRUCTS);
+
+        std::atomic<bool> running{true};
+        std::thread th([&]() {
+            while (running.load(std::memory_order_acquire)) {
+                for (size_t i = 0; i < names.size(); ++i) {
+                    int32_t val = static_cast<int32_t>((i + 1) * 1000);
+                    pub.setVarData(names[i].c_str(), &val, sizeof(val));
+                }
+                std::this_thread::sleep_for(10ms);
+            }
+        });
+        std::this_thread::sleep_for(10s);
+        running.store(false, std::memory_order_release);
+        th.join();
+        pub.stop();
+        r.ok = true;
+        r.message = "ok";
+        return r;
+    });
+
+    const auto subProc = spawnChild("case24_sub", root, [pubNode, names]() {
+        dsf::ondemand::OnDemandSub sub;
+        ChildReport r;
+        if (!childRequire(r, sub.init(uniqueName("sub_case24")), "sub init failed")
+            || !childRequire(r, sub.start(), "sub start failed")) {
+            return r;
+        }
+
+        // 等待变量定义到达
+        if (!childRequire(r,
+                          waitUntil([&]() { return countNodeVars(sub, pubNode) == names.size(); }, 8s),
+                          "sub did not receive var defines")) {
+            sub.stop();
+            return r;
+        }
+
+        // 回调传空订阅
+        if (!childRequire(r,
+                          sub.subscribe(pubNode.c_str(), toSubscriptions(names, 50), nullptr),
+                          "subscribe failed")) {
+            sub.stop();
+            return r;
+        }
+
+        // 等待第一条数据到达（轮询 v0 直到读成功）
+        dsf::ondemand::VarCallbackData probe;
+        const bool dataArrived = waitUntil(
+            [&]() { return sub.varReadSync(pubNode.c_str(), names[0].c_str(), probe); }, 6s);
+        if (!childRequire(r, dataArrived, "no data arrived within timeout")) {
+            sub.stop();
+            return r;
+        }
+
+        // ① 节点名传错 → 应返回 false
+        dsf::ondemand::VarCallbackData dummy;
+        const bool wrongNodeFails = !sub.varReadSync("wrong_node_xyz", names[0].c_str(), dummy);
+        childRequire(r, wrongNodeFails, "wrong node name should return false");
+        r.metrics["wrong_node_fails"] = wrongNodeFails ? "1" : "0";
+
+        // ② 节点名传对 → 逐个验证
+        bool allDataOk   = true;
+        bool allSizeOk   = true;
+        bool allNodeOk   = true;
+        bool allTypeOk   = true;
+        bool allBlobOk   = true;
+
+        for (size_t i = 0; i < names.size(); ++i) {
+            dsf::ondemand::VarCallbackData out;
+            if (!childRequire(r, sub.varReadSync(pubNode.c_str(), names[i].c_str(), out),
+                              "varReadSync failed for " + names[i])) {
+                allDataOk = false;
+                continue;
+            }
+
+            const int32_t expected = static_cast<int32_t>((i + 1) * 1000);
+            const int32_t actual   = *reinterpret_cast<const int32_t *>(out.data);
+
+            if (actual != expected) {
+                LOG(error) << "[case24_sub] " << names[i] << " data mismatch: expected="
+                           << expected << " actual=" << actual;
+                allDataOk = false;
+            }
+            if (out.size != sizeof(int32_t)) {
+                LOG(error) << "[case24_sub] " << names[i] << " size mismatch: expected="
+                           << sizeof(int32_t) << " actual=" << out.size;
+                allSizeOk = false;
+            }
+            if (out.nodeName != pubNode) {
+                LOG(error) << "[case24_sub] " << names[i] << " nodeName mismatch: expected="
+                           << pubNode << " actual=" << out.nodeName;
+                allNodeOk = false;
+            }
+            if (out.varType != "int32") {
+                LOG(error) << "[case24_sub] " << names[i] << " varType mismatch: expected=int32"
+                           << " actual=" << out.varType;
+                allTypeOk = false;
+            }
+            if (out.blobType != DSF::Var::BLOB_TYPE::STRUCTS) {
+                LOG(error) << "[case24_sub] " << names[i] << " blobType mismatch: expected=STRUCTS"
+                           << " actual=" << static_cast<uint32_t>(out.blobType);
+                allBlobOk = false;
+            }
+        }
+
+        r.metrics["all_data_ok"]   = allDataOk  ? "1" : "0";
+        r.metrics["all_size_ok"]   = allSizeOk  ? "1" : "0";
+        r.metrics["all_node_ok"]   = allNodeOk  ? "1" : "0";
+        r.metrics["all_type_ok"]   = allTypeOk  ? "1" : "0";
+        r.metrics["all_blob_ok"]   = allBlobOk  ? "1" : "0";
+
+        childRequire(r, allDataOk,  "data value mismatch");
+        childRequire(r, allSizeOk,  "size mismatch");
+        childRequire(r, allNodeOk,  "nodeName mismatch");
+        childRequire(r, allTypeOk,  "varType mismatch");
+        childRequire(r, allBlobOk,  "blobType mismatch");
+
+        sub.stop();
+        r.ok = wrongNodeFails && allDataOk && allSizeOk && allNodeOk && allTypeOk && allBlobOk;
+        r.message = r.ok ? "ok" : r.message;
+        return r;
+    });
+
+    ChildReport subReport;
+    expectChildOk(pubProc, 14s);
+    expectChildOk(subProc, 18s, &subReport);
+
+    EXPECT_EQ(subReport.metrics["wrong_node_fails"], "1") << "wrong node name should return false";
+    EXPECT_EQ(subReport.metrics["all_data_ok"],      "1") << "data value mismatch";
+    EXPECT_EQ(subReport.metrics["all_size_ok"],      "1") << "size mismatch";
+    EXPECT_EQ(subReport.metrics["all_node_ok"],      "1") << "nodeName mismatch";
+    EXPECT_EQ(subReport.metrics["all_type_ok"],      "1") << "varType mismatch";
+    EXPECT_EQ(subReport.metrics["all_blob_ok"],      "1") << "blobType mismatch";
+}
 
 #endif
 
