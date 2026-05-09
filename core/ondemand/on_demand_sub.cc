@@ -1066,11 +1066,10 @@ namespace ondemand
                                    VarCallbackData &out) const
     {
         const auto deadline = std::chrono::steady_clock::now() + std::chrono::milliseconds(20);
+        const std::string metaVarName = make_meta_varname(node_name, var_name);
+        const uint64_t varHash = fast_hash(metaVarName);
 
         for (;;) {
-            std::string metaVarName = make_meta_varname(node_name, var_name);
-            uint64_t varHash = fast_hash(metaVarName);
-
             uint32_t varId = VarStore::kInvalidId;
             uint32_t bucketIndex = 0;
             std::shared_ptr<DSF::Var::Define> define;

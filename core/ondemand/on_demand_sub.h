@@ -129,12 +129,15 @@ namespace ondemand
          * @brief 同步读取变量当前值，填充 VarCallbackData
          * @param node_name  发布节点名
          * @param var_name   变量名
-         * @param out        输出结果：
-         *                   - out.data 指向线程局部缓冲区，在同线程下次调用前有效
+         * @param out        输出结果。注意：VarCallbackData 中的所有 string_view 均为非拥有视图，调用方如需跨越其有效期保存，
+         *                   必须立即复制为 std::string。
+         *                   - out.data 指向线程局部缓冲区，在同线程下次调用前有效。
          *                   - out.nodeName / out.varName / out.varType / out.type_version：
-         *                     若变量定义已收到，string_view 指向订阅器内部 Define 对象，
-         *                     在变量保持注册期间有效；否则指向线程局部 string 缓冲区，
-         *                     在同线程下次调用前有效。调用方不应在超过上述生命周期后继续访问这些 string_view。
+         *                     若变量定义已收到，这些 string_view 指向订阅器内部 Define 对象中的存储，
+         *                     在对应变量定义保持注册期间有效。
+         *                   - 若变量定义尚未收到，out.nodeName / out.varName 指向线程局部 std::string 缓冲区（由
+         *                     订阅器内部持有），在同线程下次调用 varReadSync 前有效；out.varType / out.type_version
+         *                     为空 string_view。调用方无需关心入参 node_name / var_name 的生命期。
          * @return true 成功 / false 变量不存在或尚未收到数据
          */
         bool varReadSync(const char *node_name, const char *var_name, VarCallbackData &out) const;
