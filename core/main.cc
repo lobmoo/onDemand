@@ -21,7 +21,27 @@
 #include "ondemand/on_demand_pub.h"
 #include "ondemand/on_demand_sub.h"
 
-uint32_t count = 100000;
+namespace {
+constexpr uint32_t kDefaultCount = 100000U;
+
+uint32_t getConfiguredCount() {
+    const char* env = std::getenv("COUNT");
+    if (env == nullptr || *env == '\0') {
+        return kDefaultCount;
+    }
+
+    uint32_t parsed = 0;
+    const char* end = env + std::strlen(env);
+    auto result = std::from_chars(env, end, parsed);
+    if (result.ec != std::errc() || result.ptr != end) {
+        return kDefaultCount;
+    }
+
+    return parsed;
+}
+} // namespace
+
+uint32_t count = getConfiguredCount();
 
 constexpr uint64_t kExpectedPeriodMs = 100ULL;
 constexpr uint64_t kTolerancePercent = 10ULL;
@@ -159,6 +179,7 @@ void dataCallback(const std::vector<dsf::ondemand::VarCallbackData> &vars)
 
     ensureBucketWorkerStarted();
 
+    LOG(info) << "Received batch: node=" << vars.front().nodeName << " count=" << vars.size();
     BatchEvent batch;
     if (!vars.front().nodeName.empty()) {
         batch.node_name.assign(vars.front().nodeName.data(), vars.front().nodeName.size());
