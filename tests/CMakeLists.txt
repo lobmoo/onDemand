@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 
 # 根据 DDS 实现选择源文件与库
 if(DDS_IMPL STREQUAL "FASTDDS")
+    set(WRAPPER_TEST_IDL_GEN_DIR "${CMAKE_SOURCE_DIR}/tests/fastdds_test_idl")
     set(IDL_GEN_DIR "${CMAKE_SOURCE_DIR}/core/ondemand/.gensrc")
     set(DDS_WRAPPER_SOURCES
         "${CMAKE_SOURCE_DIR}/common/fastdds_wrapper/fastdds_node.cc"
@@ -14,6 +15,7 @@ if(DDS_IMPL STREQUAL "FASTDDS")
     )
     set(DDS_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/include")
 elseif(DDS_IMPL STREQUAL "TXDDS")
+    set(WRAPPER_TEST_IDL_GEN_DIR "${CMAKE_SOURCE_DIR}/tests/txdds_test_idl")
     set(IDL_GEN_DIR "${CMAKE_SOURCE_DIR}/core/ondemand/.gensrctx")
     set(DDS_WRAPPER_SOURCES
         "${CMAKE_SOURCE_DIR}/common/txdds_wrapper/txdds_node.cc"
@@ -34,7 +36,7 @@ endif()
 find_package(GTest REQUIRED)
 enable_testing()
 
-file(GLOB DDS_GEN_SOURCES_CPP "${CMAKE_SOURCE_DIR}/tests/fastdds_wrapper_TEST/*.cxx")
+file(GLOB DDS_GEN_SOURCES_CPP "${WRAPPER_TEST_IDL_GEN_DIR}/*.cxx")
 file(GLOB ONDEMAND_IDL_SOURCES "${IDL_GEN_DIR}/*.cxx")
 
 set(ONDEMAND_SOURCES
@@ -78,7 +80,7 @@ set_tests_properties(test_log PROPERTIES WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/
 
 # ── test_ddswrapper ───────────────────────────────────────────────────────────
 add_executable(test_ddswrapper
-    "${CMAKE_SOURCE_DIR}/tests/fastdds_node_test.cc"
+    "${CMAKE_SOURCE_DIR}/tests/dds_wrapper_test.cc"
     ${DDS_WRAPPER_SOURCES}
     ${DDS_GEN_SOURCES_CPP}
 )
