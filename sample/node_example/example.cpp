@@ -64,7 +64,7 @@ void run_dds_data_writer()
     ParticipantListener *listener = new ParticipantListener();
 
     ParticipantQoSBuilder qos_configurator;
-     qos_configurator.addUDPV4TransportInterfaces({""});
+     qos_configurator.addUDPV4TransportInterfaces();
     //setDiscoveryMulticastLocator("239.255.0.1", 7400)
     //     .setUserMulticastLocator("239.255.0.1", 7401);
 

@@ -68,7 +68,7 @@ public:
                                                  uint32_t announcement_period_ms);
     ParticipantQoSBuilder &setInitialAnnouncements(uint32_t count, uint32_t period_ms);
     ParticipantQoSBuilder &
-    addUDPV4TransportInterfaces(const std::vector<std::string> &network_interfaces ,uint32_t maxMessageSize = 0);
+    addUDPV4TransportInterfaces(const std::vector<std::string> &network_interfaces = {},uint32_t maxMessageSize = 0);
     ParticipantQoSBuilder &addUDPV4TransportCoreId(int core_id);
     ParticipantQoSBuilder &setUserMulticastLocator(const std::string &address, uint16_t port);
     ParticipantQoSBuilder &setUserUnicastLocator(const std::string &address, uint16_t port);
