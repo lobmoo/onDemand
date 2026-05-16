@@ -454,7 +454,7 @@ namespace ondemand
     {
         DdsWrapper::ParticipantQoSBuilder qos;
 
-        qos.addUDPV4TransportInterfaces({""})
+        qos.addUDPV4TransportInterfaces()
             .setDiscoveryMulticastLocator("239.255.0.1", 7400)
             .setUserMulticastLocator("239.255.0.1", 7401)
             .addFlowController()

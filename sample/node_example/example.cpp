@@ -64,9 +64,9 @@ void run_dds_data_writer()
     ParticipantListener *listener = new ParticipantListener();
 
     ParticipantQoSBuilder qos_configurator;
-     qos_configurator.addUDPV4TransportInterfaces();
-    //setDiscoveryMulticastLocator("239.255.0.1", 7400)
-    //     .setUserMulticastLocator("239.255.0.1", 7401);
+    qos_configurator.addUDPV4TransportInterfaces()
+        .setDiscoveryMulticastLocator("239.255.0.1", 7400)
+        .setUserMulticastLocator("239.255.0.1", 7401);
 
     FastDataNode node(10, "test_writer", qos_configurator, listener);
 
@@ -108,9 +108,9 @@ void run_dds_data_reader()
     ParticipantListener *listener = new ParticipantListener();
 
     ParticipantQoSBuilder qos_configurator;
-    qos_configurator.addUDPV4TransportInterfaces();
-    // setDiscoveryMulticastLocator("239.255.0.1", 7400)
-    //     .setUserMulticastLocator("239.255.0.1", 7401);
+    qos_configurator.addUDPV4TransportInterfaces()
+        .setDiscoveryMulticastLocator("239.255.0.1", 7400)
+        .setUserMulticastLocator("239.255.0.1", 7401);
 
     FastDataNode node(10, "test_reader", qos_configurator, listener);
 
