@@ -123,6 +123,17 @@ ParticipantQoSBuilder &ParticipantQoSBuilder::setUserMulticastLocator(const std:
     return *this;
 }
 
+ParticipantQoSBuilder &ParticipantQoSBuilder::setUserUnicastLocator(const std::string &ip,
+                                                                    uint16_t port)
+{
+    BaoSky::rtps::Locator locator;
+    locator.mConfigName = "udp";
+    BaoSky::rtps::IPLocator::setIPv4(locator, ip);
+    BaoSky::rtps::IPLocator::setPhysicalPort(locator, port);
+    qos_.wireProtocol.defaultUnicastLocatorList.push_back(locator);
+    return *this;
+}
+
 ParticipantQoSBuilder &ParticipantQoSBuilder::setDiscoveryMulticastLocator(const std::string &ip,
                                                                            uint16_t port)
 {

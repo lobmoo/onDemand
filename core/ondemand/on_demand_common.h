@@ -280,7 +280,7 @@ namespace ondemand
         BucketManager::BucketIndex bucketIndex; // 所属桶索引 (0-19)
         uint32_t varId;                         // 变量ID (全局唯一，递增分配)
         uint32_t currentFreq;                   // 当前发布频率 (ms)
-        std::string realVarName; // 变量名
+        std::string realVarName;                // 变量名
         // 订阅频率信息 (紧凑存储)
         struct FreqSub {
             uint32_t freq;     // 订阅频率
@@ -453,8 +453,9 @@ namespace ondemand
     inline DdsWrapper::ParticipantQoSBuilder createDefaultNodeQoS()
     {
         DdsWrapper::ParticipantQoSBuilder qos;
-        //addUDPV4TransportInterfaces({"10.25.5.26"}, 1200)
-        qos.setDiscoveryMulticastLocator("239.255.0.1", 7400)
+
+        qos.addUDPV4TransportInterfaces({""})
+            .setDiscoveryMulticastLocator("239.255.0.1", 7400)
             .setUserMulticastLocator("239.255.0.1", 7401)
             .addFlowController()
             .setDiscoveryKeepAlive(3000, 1000)
