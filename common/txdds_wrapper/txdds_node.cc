@@ -12,26 +12,6 @@
 namespace TxddsWrapper
 {
 
-namespace
-{
-void ensure_transport_resources(const std::string &participant_name)
-{
-    BaoSky::rtps::ThreadConfig thread_config;
-    thread_config.mConfigName = "txdds_thread_" + participant_name;
-    thread_config.mThreadName = "txdds_evt_" + participant_name;
-    BaoSky::rtps::ThreadManager::GetInstance()->AddResource(thread_config);
-
-    auto udp_config = std::make_shared<BaoSky::rtps::UDPTransportConfig>();
-    udp_config->mKind = BaoSky::rtps::eTransportKind::UDPTransportKind;
-    udp_config->mLocalIP.push_back("0.0.0.0");
-    udp_config->mConfigName = "udp";
-    udp_config->mThreadConfigName = thread_config.mConfigName;
-    udp_config->mRecvBufferSize = 16 * 1024 * 1024;
-    udp_config->mSendBufferSize = 16 * 1024 * 1024;
-    BaoSky::rtps::TransportStack::GetInstance()->AddConfig(udp_config);
-}
-} // namespace
-
 TXDDSNode::TXDDSNode(int domainId,
                      const std::string &participant_name,
                      ParticipantListener *listener)
@@ -77,8 +57,6 @@ bool TXDDSNode::initDomainParticipant(const std::string &participant_name,
                                       ParticipantListener *listener)
 {
     try {
-        ensure_transport_resources(participant_name);
-
         BaoSky::dds::DomainParticipantQos pqos;
         if (participant_qos != nullptr) {
             pqos = participant_qos->getQos();
