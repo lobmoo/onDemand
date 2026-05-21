@@ -39,7 +39,7 @@ namespace ondemand
 #define ONDEMAND_BUCKET_SIZE 20
 #define DOMAIN_ID 66
 
-#define DATA_TANSFER_PUB_SUB_NAME "DataTransferPubSub"
+#define DATA_TRANSFER_PUB_SUB_NAME "DataTransferPubSub"
 
 /*日志宏定义*/
 /************************************************************************************************ */

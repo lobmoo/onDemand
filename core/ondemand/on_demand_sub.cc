@@ -78,8 +78,8 @@ namespace ondemand
         /*创建数据通信所需的subscriber*/
         DdsWrapper::SubscriberQoSBuilder subQos;
         subQos.setAutoEnable(true);
-        if (!dataNode_->createSubscriber(DATA_TANSFER_PUB_SUB_NAME, subQos)) {
-            ONDEMANDLOG(error) << "Failed to create subscriber: " << DATA_TANSFER_PUB_SUB_NAME;
+        if (!dataNode_->createSubscriber(DATA_TRANSFER_PUB_SUB_NAME, subQos)) {
+            ONDEMANDLOG(error) << "Failed to create subscriber: " << DATA_TRANSFER_PUB_SUB_NAME;
             initialized_.store(false);
             return false;
         }
@@ -209,7 +209,7 @@ namespace ondemand
 
             reader = dataNode_->createDataReader<DSF::Var::TableDataTransfer,
                                                  DSF::Var::TableDataTransferPubSubType>(
-                topicName, DATA_TANSFER_PUB_SUB_NAME, processFunc, readerQosBuilder);
+                topicName, DATA_TRANSFER_PUB_SUB_NAME, processFunc, readerQosBuilder);
 
             dataTransferReaderMap_.emplace(bucketId, reader);
             ONDEMANDLOG(info) << "Created DataTransfer reader for bucketId: " << bucketId
@@ -632,7 +632,7 @@ namespace ondemand
         }
 
         /*打开相应的通道*/
-        setPartition(DATA_TANSFER_PUB_SUB_NAME,
+        setPartition(DATA_TRANSFER_PUB_SUB_NAME,
                      DSF::Var::VAR_DATA_TRANSFER_TOPIC_PREFIX + node_name);
         return true;
     }

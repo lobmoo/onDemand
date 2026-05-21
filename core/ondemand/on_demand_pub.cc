@@ -69,7 +69,7 @@ namespace ondemand
             DSF::Var::VAR_DATA_TRANSFER_TOPIC_PREFIX
             + nodeName_); // 按 topicName + nodeName 分区，确保同一节点不同表间隔离，避免不相关的订阅者收到数据
 
-        if (!dataNode_->createPublisher(DATA_TANSFER_PUB_SUB_NAME, pubQos)) {
+        if (!dataNode_->createPublisher(DATA_TRANSFER_PUB_SUB_NAME, pubQos)) {
             ONDEMANDLOG(error)
                 << "Failed to create Publisher for DataTransfer writers with partition: ";
             return false;
@@ -236,7 +236,7 @@ namespace ondemand
 
             writer = dataNode_->createDataWriter<DSF::Var::TableDataTransfer,
                                                  DSF::Var::TableDataTransferPubSubType>(
-                topicName, DATA_TANSFER_PUB_SUB_NAME, writerQosBuilder);
+                topicName, DATA_TRANSFER_PUB_SUB_NAME, writerQosBuilder);
             if (!writer) {
                 ONDEMANDLOG(error)
                     << "Failed to create topic writer for topic [" << topicName << "].";
