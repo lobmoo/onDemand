@@ -2,48 +2,61 @@ cmake_minimum_required(VERSION 3.16)
 
 project(node_example_exec  LANGUAGES CXX)
 
-# 查找目录下的所有源文件
-# 假设您希望在查找源文件时排除 CMakeFiles 目录
-file(GLOB DDS_SHM_HELLOWORLD_EXAMPLE_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/HelloWorldOne/source/*.cxx"
-                                                     "${CMAKE_CURRENT_SOURCE_DIR}/HelloWorldOne/source/*.cpp"
-                                                     "${CMAKE_CURRENT_SOURCE_DIR}/HelloWorldOne/source/*.ipp"
-                                                     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
+if(DDS_IMPL STREQUAL "FASTDDS")
+    set(HELLO_WORLD_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/HelloWorldOneFast/source")
+    set(DDS_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/include")
+    set(DDS_WRAPPER_SOURCES
+        "${CMAKE_SOURCE_DIR}/common/fastdds_wrapper/fastdds_node.cc"
+        "${CMAKE_SOURCE_DIR}/common/fastdds_wrapper/fastdds_qos_config.cc"
+    )
+    set(DDS_LIBS
+        "${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib/libfastdds.so"
+        "${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib/libfastcdr.so"
+        "${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib/libfoonathan_memory-0.7.3.so"
+        "${CMAKE_SOURCE_DIR}/thirdparty/tinyxml/lib/libtinyxml2.a"
+    )
+elseif(DDS_IMPL STREQUAL "TXDDS")
+    set(HELLO_WORLD_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/HelloWorldOneTx/source")
+    set(DDS_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/thirdparty/txdds/include")
+    set(DDS_WRAPPER_SOURCES
+        "${CMAKE_SOURCE_DIR}/common/txdds_wrapper/txdds_node.cc"
+        "${CMAKE_SOURCE_DIR}/common/txdds_wrapper/txdds_qos_config.cc"
+    )
+    set(DDS_LIBS
+        "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libTXDDS.so"
+        "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libTXCDR.so"
+        "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libTXRuntimeLog.so"
+        "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libssl.so"
+        "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libcrypto.so"
+    )
+else()
+    message(FATAL_ERROR "Invalid DDS_IMPL: ${DDS_IMPL}")
+endif()
 
-file(GLOB DDS_INTERFACE_SOURCES_CPP "${CMAKE_CURRENT_SOURCE_DIR}/../../common/fastdds_wrapper/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/../../common/fastdds_wrapper/*.cc")
+file(GLOB DDS_SHM_HELLOWORLD_EXAMPLE_SOURCES
+    "${HELLO_WORLD_SOURCE_DIR}/*.cxx"
+    "${HELLO_WORLD_SOURCE_DIR}/*.cpp"
+    "${HELLO_WORLD_SOURCE_DIR}/*.ipp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
+)
 
-
-message(STATUS "Collected CXX sources: ${DDS_SHM_HELLOWORLD_EXAMPLE_SOURCES}")
-message(STATUS "Collected CPP sources: ${DDS_INTERFACE_SOURCES_CPP}")
-
-# 添加可执行文件目标
-add_executable(${PROJECT_NAME} ${DDS_SHM_HELLOWORLD_EXAMPLE_SOURCES}  ${DDS_INTERFACE_SOURCES_CPP})
+add_executable(${PROJECT_NAME} ${DDS_SHM_HELLOWORLD_EXAMPLE_SOURCES} ${DDS_WRAPPER_SOURCES})
 set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/sample")
 
-#头文件
-set(OBJ_CPP_INCLUDE
-    ${CMAKE_CURRENT_SOURCE_DIR}/HelloWorldOne/source
+target_include_directories(${PROJECT_NAME} PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/../../common
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../thirdparty/fast_dds/include
+    ${HELLO_WORLD_SOURCE_DIR}
+    ${DDS_INCLUDE_DIR}
 )
-list(APPEND OBJ_CPP_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/../../thirdparty/fast_dds/include)
-target_include_directories(${PROJECT_NAME} PRIVATE  ${OBJ_CPP_INCLUDE})
 
-
-
-target_link_libraries(${PROJECT_NAME} PRIVATE  
-    ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib/libfastdds.so
-    ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib/libfastcdr.so
-    ${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib/libfoonathan_memory-0.7.3.so
-    log::log  
+target_link_libraries(${PROJECT_NAME} PRIVATE
+    ${DDS_LIBS}
+    log::log
     pthread
 )
 
-# option(USE_SYSTEM_RPATH "Use system RPATH for installed libraries and executables" ON)
-# if (USE_SYSTEM_RPATH)
-set(CMAKE_INSTALL_RPATH "${CMAKE_CURRENT_SOURCE_DIR}/../../thirdparty/fast_dds/lib")
+set(CMAKE_INSTALL_RPATH "${DDS_INCLUDE_DIR}/../lib")
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-# endif()
 
-target_compile_options(${PROJECT_NAME}  PRIVATE -g)
-
-
+target_compile_options(${PROJECT_NAME} PRIVATE -g)

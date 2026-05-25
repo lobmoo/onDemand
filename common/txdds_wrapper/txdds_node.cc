@@ -23,10 +23,8 @@ TXDDSNode::TXDDSNode(int domainId,
     }
 }
 
-TXDDSNode::TXDDSNode(int domainId,
-                     const std::string &participant_name,
-                     const ParticipantQoSBuilder &participant_qos,
-                     ParticipantListener *listener)
+TXDDSNode::TXDDSNode(int domainId, const std::string &participant_name,
+                     const ParticipantQoSBuilder &participant_qos, ParticipantListener *listener)
     : domain_id_(domainId), participant_name_(participant_name)
 {
     initialized_ = initDomainParticipant(participant_name, &participant_qos, listener);
@@ -292,7 +290,8 @@ void TXDDSNode::destroyParticipantResources()
         }
     }
     subscribers_.clear();
-
+    BaoSky::rtps::ThreadManager::GetInstance()->DeleteResource("txdds_thread_" + participant_name_);
+    BaoSky::rtps::TransportStack::GetInstance()->DeleteConfig("udp");
     BaoSky::dds::DomainParticipantFactory::GetInstance()->DeleteParticipant(participant_);
     participant_ = nullptr;
 }
