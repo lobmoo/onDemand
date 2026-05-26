@@ -22,7 +22,7 @@
 #include "ondemand/on_demand_sub.h"
 
 namespace {
-constexpr uint32_t kDefaultCount = 100000U;
+constexpr uint32_t kDefaultCount = 1000U;
 
 uint32_t getConfiguredCount() {
     const char* env = std::getenv("COUNT");
@@ -293,7 +293,7 @@ void subscribe()
     std::vector<std::string> unitems;
     for (int i = 0; i < count; ++i) {
         std::string varName = "var" + std::to_string(i);
-        items.push_back({varName, 100});
+        items.push_back({varName, 1000});
         unitems.push_back(varName);
     }
     LOG(info) << "Subscribing representative vars for packet-loss stats, count=" << items.size();
@@ -329,7 +329,7 @@ void subscribe2()
     std::vector<std::string> unitems;
     for (int i = 0; i < count; ++i) {
         std::string varName = "var" + std::to_string(i);
-        items.push_back({varName, 500});
+        items.push_back({varName, 2000});
         unitems.push_back(varName);
     }
     sub.subscribe("pubNode", items, [](const std::vector<dsf::ondemand::VarCallbackData> &vars) {

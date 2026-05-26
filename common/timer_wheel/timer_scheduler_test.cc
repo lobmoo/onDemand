@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 #include <chrono>
 #include <atomic>
+#include <future>
 #include <vector>
 #include <algorithm>
 #include "timer_scheduler.h"
@@ -279,6 +280,46 @@ TEST_F(TimerSchedulerTest, TimerDestructionCleanup)
 
     // 任务不应该执行，因为调度器已经销毁
     EXPECT_EQ(count.load(), 0);
+}
+
+// 测试 reset 调度器时，周期任务执行中的线程池是否能正常回收
+TEST_F(TimerSchedulerTest, RecurringTaskResetReclaimsThreadPool)
+{
+    auto scheduler_ptr = std::make_unique<TimerScheduler>(10, 2);
+    std::atomic<int> count{0};
+    std::atomic<bool> release_callback{false};
+    std::promise<void> callback_started_promise;
+    auto callback_started_future = callback_started_promise.get_future();
+
+    auto timer = scheduler_ptr->ScheduleRecurring(
+        [&count, &release_callback, &callback_started_promise]() {
+            if (count.fetch_add(1, std::memory_order_relaxed) == 0) {
+                callback_started_promise.set_value();
+            }
+
+            while (!release_callback.load(std::memory_order_acquire)) {
+                std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            }
+        },
+        1, 100);
+
+    EXPECT_TRUE(timer != nullptr);
+
+    ASSERT_EQ(callback_started_future.wait_for(std::chrono::seconds(1)), std::future_status::ready);
+    EXPECT_EQ(count.load(), 1);
+
+    std::thread reset_thread([&scheduler_ptr]() { scheduler_ptr.reset(); });
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
+    release_callback.store(true, std::memory_order_release);
+
+    reset_thread.join();
+
+    EXPECT_EQ(count.load(), 1);
+    EXPECT_EQ(scheduler_ptr, nullptr);
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(150));
+    EXPECT_EQ(count.load(), 1);
 }
 
 // 性能测试

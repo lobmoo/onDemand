@@ -6,14 +6,33 @@
 #include <unordered_map>
 #include <vector>
 
-#include "HelloWorldOne.hpp"
-#include "HelloWorldOnePubSubTypes.hpp"
-#include "fastdds_wrapper/fastdds_node.h"
-#include "fastdds_wrapper/fastdds_qos_config.h"
+#include "dds_wrapper/dds_abstraction.h"
 #include "log/logger.h"
 
+#if defined(USE_FASTDDS)
+#include "HelloWorldOne.hpp"
+#include "HelloWorldOnePubSubTypes.hpp"
+#elif defined(USE_TXDDS)
+#include "HelloWorldOne.h"
+#include "HelloWorldOnePubSubTypes.h"
+#else
+#error "Please define either USE_FASTDDS or USE_TXDDS to select DDS implementation"
+#endif
+
+using DdsWrapper::DataNode;
+using DdsWrapper::DataReaderQoSBuilder;
+using DdsWrapper::DataWriterQoSBuilder;
+using DdsWrapper::DDSTopicReader;
+using DdsWrapper::DDSTopicWriter;
+using DdsWrapper::ParticipantListener;
+using DdsWrapper::ParticipantQoSBuilder;
+using DdsWrapper::PublisherQoSBuilder;
+using DdsWrapper::SubscriberQoSBuilder;
+using DdsWrapper::DurabilityKind;
+using DdsWrapper::HistoryKind;
+using DdsWrapper::ReliabilityKind;
+
 using namespace std;
-using namespace FastddsWrapper;
 
 void run_dds_data_writer();
 void run_dds_data_reader();
@@ -64,16 +83,18 @@ void run_dds_data_writer()
     ParticipantListener *listener = new ParticipantListener();
 
     ParticipantQoSBuilder qos_configurator;
-    qos_configurator.setDiscoveryMulticastLocator("239.255.0.1", 7400)
+    qos_configurator.addUDPV4TransportInterfaces()
+        .setDiscoveryMulticastLocator("239.255.0.1", 7400)
         .setUserMulticastLocator("239.255.0.1", 7401);
 
-    FastDataNode node(10, "test_writer", qos_configurator, listener);
+    DataNode node(10, "test_writer", qos_configurator, listener);
 
     // 配置 DataWriter QoS
     DataWriterQoSBuilder writer_qos;
     writer_qos.setDurabilityKind(DurabilityKind::TRANSIENT_LOCAL)
         .setReliabilityKind(ReliabilityKind::RELIABLE)
-        .setHistoryKind(HistoryKind::KEEP_ALL);
+        .setHistoryKind(HistoryKind::KEEP_ALL)
+        .disableDataSharing(); // 关闭数据共享，确保只有同一节点内的 pub/sub 能互相发现和通信
 
     auto dataWriter =
         node.createDataWriter<HelloWorldOne, HelloWorldOnePubSubType>("wwk", writer_qos);
@@ -106,17 +127,18 @@ void run_dds_data_reader()
     ParticipantListener *listener = new ParticipantListener();
 
     ParticipantQoSBuilder qos_configurator;
-    qos_configurator.setDiscoveryMulticastLocator("239.255.0.1", 7400)
+    qos_configurator.addUDPV4TransportInterfaces()
+        .setDiscoveryMulticastLocator("239.255.0.1", 7400)
         .setUserMulticastLocator("239.255.0.1", 7401);
 
-    FastDataNode node(10, "test_reader", qos_configurator, listener);
+    DataNode node(10, "test_reader", qos_configurator, listener);
 
     // 配置 DataReader QoS
     DataReaderQoSBuilder reader_qos;
     reader_qos.setDurabilityKind(DurabilityKind::TRANSIENT_LOCAL)
         .setReliabilityKind(ReliabilityKind::RELIABLE)
         .setHistoryKind(HistoryKind::KEEP_ALL)
-        .reader_resource_limits(2);
+        .disableDataSharing();
 
     auto dataReader = node.createDataReader<HelloWorldOne, HelloWorldOnePubSubType>(
         "wwk", processHelloWorldOne, reader_qos);
@@ -137,16 +159,16 @@ void test_partition_pub()
     ParticipantQoSBuilder cfg;
     cfg.setDiscoveryMulticastLocator("239.255.0.1", 7400)
         .setUserMulticastLocator("239.255.0.1", 7401);
-    
-    FastDataNode node(10, "partition_pub", cfg);
+
+    DataNode node(10, "partition_pub", cfg);
 
     PublisherQoSBuilder pQos;
     pQos.setPartition("group_A").setAutoEnable(true);
     node.createPublisher("group", pQos);
     DataWriterQoSBuilder writer_qos;
 
-    auto writer =
-        node.createDataWriter<HelloWorldOne, HelloWorldOnePubSubType>("partition_topic", "group", writer_qos);
+    auto writer = node.createDataWriter<HelloWorldOne, HelloWorldOnePubSubType>(
+        "partition_topic", "group", writer_qos);
     if (!writer) {
         LOG(error) << "Failed to create DataWriter";
         return;
@@ -181,8 +203,8 @@ void test_partition_sub()
     cfg.setDiscoveryMulticastLocator("239.255.0.1", 7400)
         .setUserMulticastLocator("239.255.0.1", 7401);
     // 改成 "group_B" 则收不到 ppub 的数据，改成 "group_A" 则可以收到
-  
-    FastDataNode node(10, "partition_sub", cfg);
+
+    DataNode node(10, "partition_sub", cfg);
 
     SubscriberQoSBuilder sQos;
     // sQos.setPartition("group_").setAutoEnable(true);
@@ -193,7 +215,8 @@ void test_partition_sub()
         "partition_topic", "group",
         [](const std::string &topic, std::shared_ptr<HelloWorldOne> data) {
             LOG(info) << "[psub] recv topic=" << topic << " index=" << data->index();
-        }, reader_qos);
+        },
+        reader_qos);
 
     if (!reader) {
         LOG(error) << "Failed to create DataReader";
@@ -217,11 +240,11 @@ void run_dds_data_Multiwriter()
     bool runFlag = true;
 
     // 初始化节点
-    FastDataNode node(100, "sender_node");
+    DataNode node(100, "sender_node");
 
     // 创建多个数据写入器
     std::vector<std::string> topics = {"Topic_1", "Topic_2", "Topic_3"};
-    std::unordered_map<std::string, std::shared_ptr<FastDDSTopicWriter<HelloWorldOne>>> dataWriters;
+    std::unordered_map<std::string, std::shared_ptr<DDSTopicWriter<HelloWorldOne>>> dataWriters;
 
     for (const auto &topic : topics) {
         // 创建 DataWriter (内部会自动注册类型和创建主题)
@@ -263,8 +286,8 @@ void run_dds_data_Multiwriter()
 void run_dds_data_Multireader()
 {
     // 初始化节点
-    FastDataNode node(100, "receiver_node");
-    std::vector<std::shared_ptr<FastDDSTopicReader<HelloWorldOne>>> readers;
+    DataNode node(100, "receiver_node");
+    std::vector<std::shared_ptr<DDSTopicReader<HelloWorldOne>>> readers;
 
     // 创建多个主题的读取器
     std::vector<std::string> topics = {"Topic_1", "Topic_2", "Topic_3"};

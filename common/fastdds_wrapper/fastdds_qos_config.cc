@@ -33,6 +33,11 @@ using namespace eprosima::fastdds::rtps;
 ParticipantQoSBuilder::ParticipantQoSBuilder()
 {
     qos_ = PARTICIPANT_QOS_DEFAULT;
+    // auto udp_transport = std::make_shared<UDPv4TransportDescriptor>();
+    // qos_.transport().use_builtin_transports = false;
+    // udp_transport->TTL = 32;
+    // udp_transport->interface_blocklist.push_back({"127.0.0.1"});
+    // qos_.transport().user_transports.push_back(udp_transport);
 }
 
 ParticipantQoSBuilder &ParticipantQoSBuilder::enableDiscovery(bool enable)
@@ -78,9 +83,12 @@ ParticipantQoSBuilder &ParticipantQoSBuilder::addUDPV4TransportInterfaces(
                                                  network_interfaces.begin(),
                                                  network_interfaces.end());
     }
-    if(maxMessageSize > 0) {
+    if (maxMessageSize > 0) {
         udp_transport->maxMessageSize = maxMessageSize;
     }
+    udp_transport->TTL = 32;
+    udp_transport->receiveBufferSize = 16 * 1024 * 1024; // 16MB, 根据需要调整
+    udp_transport->sendBufferSize = 16 * 1024 * 1024;    // 16MB, 根据需要调整
     udp_transport->interface_blocklist.push_back({"127.0.0.1"});
     qos_.transport().user_transports.push_back(udp_transport);
     return *this;
@@ -117,6 +125,17 @@ ParticipantQoSBuilder &ParticipantQoSBuilder::setUserMulticastLocator(const std:
     IPLocator::setIPv4(locator, address);
     IPLocator::setPhysicalPort(locator, port);
     qos_.wire_protocol().default_multicast_locator_list.push_back(locator);
+    return *this;
+}
+
+ParticipantQoSBuilder &ParticipantQoSBuilder::setUserUnicastLocator(const std::string &address,
+                                                                    uint16_t port)
+{
+    Locator locator;
+    locator.kind = LOCATOR_KIND_UDPv4;
+    IPLocator::setIPv4(locator, address);
+    IPLocator::setPhysicalPort(locator, port);
+    qos_.wire_protocol().default_unicast_locator_list.push_back(locator);
     return *this;
 }
 

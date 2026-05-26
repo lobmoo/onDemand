@@ -78,8 +78,8 @@ namespace ondemand
         /*创建数据通信所需的subscriber*/
         DdsWrapper::SubscriberQoSBuilder subQos;
         subQos.setAutoEnable(true);
-        if (!dataNode_->createSubscriber(DATA_TANSFER_PUB_SUB_NAME, subQos)) {
-            ONDEMANDLOG(error) << "Failed to create subscriber: " << DATA_TANSFER_PUB_SUB_NAME;
+        if (!dataNode_->createSubscriber(DATA_TRANSFER_PUB_SUB_NAME, subQos)) {
+            ONDEMANDLOG(error) << "Failed to create subscriber: " << DATA_TRANSFER_PUB_SUB_NAME;
             initialized_.store(false);
             return false;
         }
@@ -209,7 +209,7 @@ namespace ondemand
 
             reader = dataNode_->createDataReader<DSF::Var::TableDataTransfer,
                                                  DSF::Var::TableDataTransferPubSubType>(
-                topicName, DATA_TANSFER_PUB_SUB_NAME, processFunc, readerQosBuilder);
+                topicName, DATA_TRANSFER_PUB_SUB_NAME, processFunc, readerQosBuilder);
 
             dataTransferReaderMap_.emplace(bucketId, reader);
             ONDEMANDLOG(info) << "Created DataTransfer reader for bucketId: " << bucketId
@@ -448,11 +448,16 @@ namespace ondemand
                         meta.realVarName = varDefine.name();
                         meta.varId = varStore_.register_var(varHash, kVarSize);
 
-                        varDefineIndex_.emplace(varHash, std::make_shared<DSF::Var::Define>(varDefine));
+                        varDefineIndex_.emplace(varHash,
+                                                std::make_shared<DSF::Var::Define>(varDefine));
                         varIndex_.emplace(varHash, std::move(meta));
                         newBucketIds.insert(static_cast<uint32_t>(bucketIdx));
                         totalReceived_.fetch_add(1);
                         ONDEMANDLOG(debug) << "Registered var: " << varName;
+                    }
+
+                    if (!varStore_.finalize()) {
+                        ONDEMANDLOG(error) << "Failed to finalize VarStore after TableDefine";
                     }
                     lock.unlock();
 
@@ -467,11 +472,6 @@ namespace ondemand
                             }
                             tableDefineCb_(defines);
                         }
-                    }
-
-                    /*初始化内存: register_var 只写元数据，必须 finalize 才分配 arena/dirty_flags*/
-                    if (!varStore_.finalize()) {
-                        ONDEMANDLOG(error) << "Failed to finalize VarStore after TableDefine";
                     }
 
                     /* 这里很重要哦！！！！ varIndex_ 已更新，通知回调调度器重新扫描建立定时器
@@ -632,7 +632,7 @@ namespace ondemand
         }
 
         /*打开相应的通道*/
-        setPartition(DATA_TANSFER_PUB_SUB_NAME,
+        setPartition(DATA_TRANSFER_PUB_SUB_NAME,
                      DSF::Var::VAR_DATA_TRANSFER_TOPIC_PREFIX + node_name);
         return true;
     }
@@ -748,7 +748,8 @@ namespace ondemand
                     if (varId < 0 || static_cast<uint32_t>(varId) == VarStore::kInvalidId) {
                         ONDEMANDLOG_TIME(warning, 5000)
                             << "Invalid varId for varHash: " << varHash
-                            << ", likely varStore not finalized or registration failed, skipping callback registration";
+                            << ", likely varStore not finalized or registration failed, skipping "
+                               "callback registration";
                         /* varStore 尚未 finalize 或注册失败，跳过 */
                         continue;
                     }
@@ -772,8 +773,9 @@ namespace ondemand
                             vi.varType = defIt->second->modelName();
                             vi.typeVersion = defIt->second->modelVersion();
                         } else {
-                            ONDEMANDLOG(warning) << "varDefine is null for varHash=" << varHash
-                                                 << ", callback will receive empty nodeName/varType";
+                            ONDEMANDLOG(warning)
+                                << "varDefine is null for varHash=" << varHash
+                                << ", callback will receive empty nodeName/varType";
                         }
                     }
                     vi.varName = cbInfo.varName;
@@ -937,7 +939,7 @@ namespace ondemand
                 auto handle = varStore_.read_zero_copy(static_cast<uint32_t>(info.varId));
                 if (!handle || handle.size() == 0) {
                     ONDEMANDLOG_TIME(critical, 3000) << "Skip unregistered varId: " << info.varId
-                                                  << " varName: " << info.varName;           
+                                                     << " varName: " << info.varName;
                     continue;
                 }
                 sz = handle.size();
@@ -1055,15 +1057,13 @@ namespace ondemand
          * 待 pub 重新上线发 TableDefine 后可自动恢复 */
         callbackDirty_.store(true, std::memory_order_release);
 
-        ONDEMANDLOG(info) << "Pub participant offline: " << pubNodeName
-                          << ", removed " << toRemove.size() << " vars";
+        ONDEMANDLOG(info) << "Pub participant offline: " << pubNodeName << ", removed "
+                          << toRemove.size() << " vars";
         return true;
     }
 
-
-
     bool OnDemandSub::varReadSync(const char *node_name, const char *var_name,
-                                   VarCallbackData &out) const
+                                  VarCallbackData &out) const
     {
         const auto deadline = std::chrono::steady_clock::now() + std::chrono::milliseconds(20);
         const std::string metaVarName = make_meta_varname(node_name, var_name);
@@ -1096,7 +1096,8 @@ namespace ondemand
                     uint64_t tsNs = 0;
                     DSF::Var::BLOB_TYPE blobType = DSF::Var::BLOB_TYPE::UNKNOWN;
                     if (bucketIndex < ONDEMAND_BUCKET_SIZE) {
-                        tsNs = varWriteStamps_[bucketIndex].timestampNs.load(std::memory_order_acquire);
+                        tsNs = varWriteStamps_[bucketIndex].timestampNs.load(
+                            std::memory_order_acquire);
                         blobType = static_cast<DSF::Var::BLOB_TYPE>(
                             varWriteStamps_[bucketIndex].blobType.load(std::memory_order_acquire));
                     }
@@ -1107,9 +1108,9 @@ namespace ondemand
                     out.blobType = blobType;
                     if (define) {
                         // string_view 指向 Define 对象内的字符串，在变量保持注册期间有效
-                        out.nodeName     = std::string_view(define->nodeName());
-                        out.varName      = std::string_view(define->name());
-                        out.varType      = std::string_view(define->modelName());
+                        out.nodeName = std::string_view(define->nodeName());
+                        out.varName = std::string_view(define->name());
+                        out.varType = std::string_view(define->modelName());
                         out.type_version = std::string_view(define->modelVersion());
                     } else {
                         // Define 尚未到达时，将入参复制到线程局部 string，
@@ -1117,10 +1118,10 @@ namespace ondemand
                         thread_local std::string tl_node_name;
                         thread_local std::string tl_var_name;
                         tl_node_name = node_name;
-                        tl_var_name  = var_name;
-                        out.nodeName     = std::string_view(tl_node_name);
-                        out.varName      = std::string_view(tl_var_name);
-                        out.varType      = std::string_view{};
+                        tl_var_name = var_name;
+                        out.nodeName = std::string_view(tl_node_name);
+                        out.varName = std::string_view(tl_var_name);
+                        out.varType = std::string_view{};
                         out.type_version = std::string_view{};
                     }
                     return true;
