@@ -12,7 +12,6 @@ if(DDS_IMPL STREQUAL "FASTDDS")
         "${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib/libfastdds.so"
         "${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib/libfastcdr.so"
         "${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib/libfoonathan_memory-0.7.3.so"
-        "${CMAKE_SOURCE_DIR}/thirdparty/tinyxml/lib/libtinyxml2.a"
     )
     set(DDS_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/include")
 elseif(DDS_IMPL STREQUAL "TXDDS")

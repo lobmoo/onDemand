@@ -13,7 +13,6 @@ if(DDS_IMPL STREQUAL "FASTDDS")
         "${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib/libfastdds.so"
         "${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib/libfastcdr.so"
         "${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib/libfoonathan_memory-0.7.3.so"
-        "${CMAKE_SOURCE_DIR}/thirdparty/tinyxml/lib/libtinyxml2.a"
     )
 elseif(DDS_IMPL STREQUAL "TXDDS")
     set(HELLO_WORLD_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/HelloWorldOneTx/source")
