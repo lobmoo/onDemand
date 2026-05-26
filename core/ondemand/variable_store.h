@@ -82,7 +82,7 @@ namespace ondemand
         VarStore(const VarStore &) = delete;
         VarStore &operator=(const VarStore &) = delete;
 
-        uint32_t register_var(uint64_t hash, uint32_t size)
+        uint32_t register_var(uint64_t hash, uint32_t size = 0)
         {
             ConfigGuard g(this);
             auto it = table_.find(hash);
@@ -467,10 +467,10 @@ namespace ondemand
             return metas_[id].size;
         }
 
-    private:
-        mutable std::mutex reconfig_mu_;
-        mutable std::condition_variable reconfig_cv_;
-
+    public:
+        /**
+         * @brief 扩展指定变量的 slot 到至少 required 字节（供延迟分配场景使用）
+         */
         bool ensure_capacity(uint32_t id, uint32_t required)
         {
             if (required == 0 || id >= metas_.size())
@@ -538,6 +538,10 @@ namespace ondemand
             arena_size_ = new_arena_size;
             return true;
         }
+
+    private:
+        mutable std::mutex reconfig_mu_;
+        mutable std::condition_variable reconfig_cv_;
 
         struct OpGuard {
             const VarStore *s_;

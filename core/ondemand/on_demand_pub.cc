@@ -702,9 +702,8 @@ namespace ondemand
                 meta.activeFreqCount = 0;
                 meta.bucketIndex = bucketIdx;
                 meta.realVarName = VarDefine.name();
-                uint32_t kVarSize =
-                    VarDefine.size() > 0 ? static_cast<uint32_t>(VarDefine.size()) : 32u;
-                meta.varId = varStore_.register_var(varHash, kVarSize);
+                // 延迟分配：默认 size=0 占位，首订阅时再扩展到实际大小
+                meta.varId = varStore_.register_var(varHash);
                 varDefineIndex_.emplace(varHash, std::make_shared<DSF::Var::Define>(VarDefine));
                 varIndex_.emplace(varHash, std::move(meta));
                 bucketManager_.AddMember(varName, varHash);
@@ -871,8 +870,8 @@ namespace ondemand
             }
             varId = it->second.varId;
         }
-        /*写数据*/
-        if (!varStore_.write(varId, data, size)) {
+        /*写数据（使用自动扩展的 write，支持延迟分配场景）*/
+        if (!varStore_.write(varId, data, static_cast<uint32_t>(size))) {
             ONDEMANDLOG(error) << "Failed to set data for variable: " << varName;
             return false;
         }
@@ -920,6 +919,7 @@ namespace ondemand
             ONDEMANDLOG_TIME(warning, 5000)
                 << "setVarData: size overflowed uint32_t and was clipped, varId=" << varId;
         }
+        /*使用自动扩展的 write，支持延迟分配场景（slot 初始为 0，首次写入时扩展）*/
         varStore_.write(varId, data, writeSize);
     }
 
@@ -946,6 +946,11 @@ namespace ondemand
                 }
                 if (items[i].id == UINT32_MAX || items[i].data == nullptr) {
                     ++invalidCount;
+                    continue;
+                }
+                /*延迟分配：slot 为 0 时先扩展（一次性，后续 write_batch 不再触发）*/
+                if (sizes[i] > 0 && varStore_.slot_size(ids[i]) < sizes[i]) {
+                    varStore_.ensure_capacity(ids[i], sizes[i]);
                 }
             }
             varStore_.write_batch(ids, datas, sizes, count);
@@ -1049,6 +1054,19 @@ namespace ondemand
             }
 
             auto &meta = it->second;
+
+            /*首订阅时扩展 VarStore slot 到 define 大小（createVars 时注册为 size=0）*/
+            {
+                uint32_t curSlotSize = varStore_.slot_size(meta.varId);
+                auto defIt = varDefineIndex_.find(varHash);
+                if (defIt != varDefineIndex_.end()) {
+                    uint32_t defineSize = static_cast<uint32_t>(defIt->second->size());
+                    uint32_t targetSize = defineSize > 0 ? defineSize : 32u;
+                    if (curSlotSize < targetSize) {
+                        varStore_.ensure_capacity(meta.varId, targetSize);
+                    }
+                }
+            }
 
             /*解析频率*/
             uint32_t freq;

@@ -128,11 +128,14 @@ jobs:
           cd build
           source ../.env
           mkdir -p test-results
-          chmod +x ./tests/test_log ./tests/test_ddswrapper ./tests/test_ondemand || true
-          ls -l ./tests/test_log ./tests/test_ddswrapper ./tests/test_ondemand
+          chmod +x ./tests/test_log ./tests/test_timer ./tests/test_ddswrapper ./tests/test_ondemand || true
+          ls -l ./tests/test_log ./tests/test_timer ./tests/test_ddswrapper ./tests/test_ondemand
 
           echo "========== Running test_log =========="
           timeout 180s ./tests/test_log --gtest_output=xml:test-results/test_log.xml
+
+          echo "========== Running test_timer =========="
+          timeout 180s ./tests/test_timer --gtest_output=xml:test-results/test_timer.xml
 
           echo "========== Running test_ddswrapper =========="
           timeout 180s ./tests/test_ddswrapper --gtest_output=xml:test-results/test_ddswrapper.xml
