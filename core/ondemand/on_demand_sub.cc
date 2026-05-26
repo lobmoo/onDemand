@@ -297,9 +297,10 @@ namespace ondemand
             }
 
             // 2. 迭代 Roaring64Map (升序), varData[i] 与第 i 个 hash 一一对应
+            //    同一消息内所有变量属于同一 bucket，取第一个即可
             size_t idx = 0;
             size_t written = 0;
-            size_t bucketIdx = SIZE_MAX;
+            uint32_t bucketIdx = ONDEMAND_BUCKET_SIZE;
             {
                 std::shared_lock lock(varIndexMutex_);
                 for (auto it = roar.begin(); it != roar.end() && idx < varDataList.size();
@@ -323,14 +324,8 @@ namespace ondemand
                     if (varId == VarStore::kInvalidId)
                         continue;
 
-                    if (bucketIdx == SIZE_MAX) {
+                    if (bucketIdx == ONDEMAND_BUCKET_SIZE) {
                         bucketIdx = vit->second.bucketIndex;
-                    } else if (bucketIdx != vit->second.bucketIndex) {
-                        ONDEMANDLOG_TIME(warning, 2000)
-                            << "Mixed bucket data in one TableDataTransfer message, expected="
-                            << bucketIdx << ", got=" << vit->second.bucketIndex
-                            << ", varHash=" << varHash << ", skipping this entry";
-                        continue;
                     }
 
                     if (varStore_.write(varId, blob.data(), blob.size())) {
