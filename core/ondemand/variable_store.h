@@ -477,7 +477,7 @@ namespace ondemand
                 return false;
 
             ConfigGuard g(this);
-            if (id >= metas_.size() || metas_[id].size == 0)
+            if (id >= metas_.size())
                 return false;
 
             uint32_t old_size = metas_[id].size;
@@ -485,9 +485,11 @@ namespace ondemand
                 return true;
 
             uint32_t new_size = required;
-            uint32_t doubled = old_size > (UINT32_MAX / 2u) ? old_size : old_size * 2u;
-            if (doubled > new_size)
-                new_size = doubled;
+            if (old_size > 0) {
+                uint32_t doubled = old_size > (UINT32_MAX / 2u) ? old_size : old_size * 2u;
+                if (doubled > new_size)
+                    new_size = doubled;
+            }
 
             std::vector<uint32_t> new_offsets(metas_.size(), 0u);
             uint32_t new_arena_size = 0;
