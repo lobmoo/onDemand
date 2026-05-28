@@ -871,7 +871,7 @@ namespace ondemand
             varId = it->second.varId;
         }
         /*写数据（使用自动扩展的 write，支持延迟分配场景）*/
-        if (!varStore_.write(varId, data, static_cast<uint32_t>(size))) {
+        if (varStore_.write(varId, data, static_cast<uint32_t>(size)) != WriteResult::SUCCESS) {
             ONDEMANDLOG(error) << "Failed to set data for variable: " << varName;
             return false;
         }
@@ -908,10 +908,10 @@ namespace ondemand
         }
     }
 
-    void OnDemandPub::setVarData(uint32_t varId, const void *data, size_t size)
+    WriteResult OnDemandPub::setVarData(uint32_t varId, const void *data, size_t size)
     {
         if (data == nullptr || size == 0) {
-            return;
+            return WriteResult::FAILED;
         }
         uint32_t writeSize =
             static_cast<uint32_t>(size > static_cast<size_t>(UINT32_MAX) ? UINT32_MAX : size);
@@ -919,22 +919,21 @@ namespace ondemand
             ONDEMANDLOG_TIME(warning, 5000)
                 << "setVarData: size overflowed uint32_t and was clipped, varId=" << varId;
         }
-        /*使用自动扩展的 write，支持延迟分配场景（slot 初始为 0，首次写入时扩展）*/
-        varStore_.write(varId, data, writeSize);
+        return varStore_.write(varId, data, writeSize);
     }
 
-    void OnDemandPub::setVarDataBatch(const VarWriteItem *items, size_t count)
+    WriteResult OnDemandPub::setVarDataBatch(const VarWriteItem *items, size_t count)
     {
         constexpr size_t kStackMax = 4096;
 
         if (items == nullptr || count == 0) {
-            return;
+            return WriteResult::FAILED;
         }
 
         uint32_t invalidCount = 0;
         uint32_t clippedSizeCount = 0;
 
-        auto run = [&](uint32_t *ids, const void **datas, uint32_t *sizes) {
+        auto run = [&](uint32_t *ids, const void **datas, uint32_t *sizes) -> WriteResult {
             for (size_t i = 0; i < count; ++i) {
                 ids[i] = items[i].id;
                 datas[i] = items[i].data;
@@ -948,24 +947,26 @@ namespace ondemand
                     ++invalidCount;
                     continue;
                 }
-                /*延迟分配：slot 为 0 时先扩展（一次性，后续 write_batch 不再触发）*/
-                if (sizes[i] > 0 && varStore_.slot_size(ids[i]) < sizes[i]) {
+                /*已分配但不够大时扩容（size==0 的未分配项由 write_batch 返回 NOT_READY）*/
+                uint32_t slotSz = varStore_.slot_size(ids[i]);
+                if (slotSz > 0 && slotSz < sizes[i]) {
                     varStore_.ensure_capacity(ids[i], sizes[i]);
                 }
             }
-            varStore_.write_batch(ids, datas, sizes, count);
+            return varStore_.write_batch(ids, datas, sizes, count);
         };
 
+        WriteResult result = WriteResult::FAILED;
         if (count <= kStackMax) {
             uint32_t ids[kStackMax];
             const void *datas[kStackMax];
             uint32_t sizes[kStackMax];
-            run(ids, datas, sizes);
+            result = run(ids, datas, sizes);
         } else {
             std::vector<uint32_t> ids(count);
             std::vector<const void *> datas(count);
             std::vector<uint32_t> sizes(count);
-            run(ids.data(), datas.data(), sizes.data());
+            result = run(ids.data(), datas.data(), sizes.data());
         }
 
         if (invalidCount > 0) {
@@ -976,6 +977,7 @@ namespace ondemand
             ONDEMANDLOG_TIME(warning, 5000) << "setVarDataBatch: " << clippedSizeCount
                                             << " items size overflowed uint32_t and were clipped";
         }
+        return result;
     }
 
     /**

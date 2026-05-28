@@ -328,7 +328,7 @@ namespace ondemand
                         bucketIdx = vit->second.bucketIndex;
                     }
 
-                    if (varStore_.write(varId, blob.data(), blob.size())) {
+                    if (varStore_.write(varId, blob.data(), blob.size()) == WriteResult::SUCCESS) {
                         ++written;
                     } else {
                         ONDEMANDLOG_TIME(error, 5)

@@ -36,6 +36,12 @@ namespace ondemand
 
     inline constexpr uint32_t align64(uint32_t n) { return (n + 63u) & ~63u; }
 
+    enum class WriteResult : uint8_t {
+        SUCCESS = 0,   // 写入成功
+        NOT_READY,     // 变量内存尚未分配（slot size=0）
+        FAILED         // 写入失败（参数无效、扩容失败等）
+    };
+
     struct VarMeta {
         uint32_t id;
         uint32_t offset;
@@ -182,40 +188,19 @@ namespace ondemand
             return true;
         }
 
-        // ---- 写接口 ----
-
-        bool write(uint32_t id, const void *src)
-        {
-            OpGuard g(this);
-            if (!arena_ || !dirty_flags_ || id >= var_count_ || metas_[id].size == 0 || !src)
-                return false;
-            auto *slot = (Slot *)(arena_ + metas_[id].offset);
-            uint32_t size = metas_[id].size;
-
-            // [P0-1] 写开始: relaxed fetch_add + release fence，阻止 memcpy 上移到 seq++ 之前
-            slot->seq.fetch_add(1, std::memory_order_relaxed);
-            std::atomic_thread_fence(std::memory_order_release);
-            uint8_t write_idx = 1u - slot->committed.load(std::memory_order_relaxed);
-            std::memcpy(slot->data + write_idx * size, src, size);
-            slot->valid_size[write_idx] = size;
-            slot->committed.store(write_idx, std::memory_order_release);
-            slot->seq.fetch_add(1, std::memory_order_release);
-
-            if (!dirty_flags_[id].exchange(true, std::memory_order_acq_rel))
-                dirty_queue_.enqueue(id);
-            return true;
-        }
-
-        bool write(uint32_t id, const void *src, uint32_t actual_size)
+   
+        WriteResult write(uint32_t id, const void *src, uint32_t actual_size)
         {
             if (!src || actual_size == 0)
-                return false;
+                return WriteResult::FAILED;
 
             for (;;) {
                 {
                     OpGuard g(this);
-                    if (!arena_ || !dirty_flags_ || id >= var_count_ || metas_[id].size == 0)
-                        return false;
+                    if (!arena_ || !dirty_flags_ || id >= var_count_)
+                        return WriteResult::FAILED;
+                    if (metas_[id].size == 0)
+                        return WriteResult::NOT_READY;
 
                     uint32_t size = metas_[id].size;
                     if (actual_size <= size) {
@@ -230,12 +215,12 @@ namespace ondemand
 
                         if (!dirty_flags_[id].exchange(true, std::memory_order_acq_rel))
                             dirty_queue_.enqueue(id);
-                        return true;
+                        return WriteResult::SUCCESS;
                     }
                 }
 
                 if (!ensure_capacity(id, actual_size))
-                    return false;
+                    return WriteResult::FAILED;
             }
         }
 
@@ -246,15 +231,16 @@ namespace ondemand
          * @param sizes 对应数据大小数组
          * @param count 数量
          */
-        void write_batch(const uint32_t *ids, const void *const *datas, const uint32_t *sizes,
-                         size_t count)
+        WriteResult write_batch(const uint32_t *ids, const void *const *datas,
+                                const uint32_t *sizes, size_t count)
         {
             if (!ids || !datas || !sizes)
-                return;
+                return WriteResult::FAILED;
 
             /* 先按需扩容（不持 OpGuard，避免与 config_begin 死锁），
              * 扩容后在单次 OpGuard 内完成所有写入，消除两次 OpGuard 之间
-             * offset 被其他线程扩容改变的窗口。*/
+             * offset 被其他线程扩容改变的窗口。
+             * size==0 的未分配项跳过，由主循环返回 NOT_READY。*/
             for (size_t i = 0; i < count; ++i) {
                 uint32_t id = ids[i];
                 if (id == kInvalidId || !datas[i])
@@ -274,12 +260,17 @@ namespace ondemand
 
             OpGuard g(this);
             if (!arena_ || !dirty_flags_)
-                return;
+                return WriteResult::FAILED;
+            bool any_written = false;
+            bool any_not_ready = false;
             for (size_t i = 0; i < count; ++i) {
                 uint32_t id = ids[i];
-                if (id >= var_count_ || metas_[id].size == 0 || !datas[i])
+                if (!datas[i])
                     continue;
-                /* 在同一个 OpGuard 内读取 offset，保证与扩容后的 metas_ 一致 */
+                if (id >= var_count_ || metas_[id].size == 0) {
+                    any_not_ready = true;
+                    continue;
+                }
                 auto *slot = (Slot *)(arena_ + metas_[id].offset);
                 uint32_t size = metas_[id].size;
                 uint32_t actual = sizes[i] <= size ? sizes[i] : size;
@@ -294,7 +285,11 @@ namespace ondemand
 
                 if (!dirty_flags_[id].exchange(true, std::memory_order_acq_rel))
                     dirty_queue_.enqueue(id);
+                any_written = true;
             }
+            if (any_written)
+                return WriteResult::SUCCESS;
+            return any_not_ready ? WriteResult::NOT_READY : WriteResult::FAILED;
         }
 
         // ---- 读接口 ----
