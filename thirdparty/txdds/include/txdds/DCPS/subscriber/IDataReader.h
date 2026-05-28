@@ -47,6 +47,8 @@ namespace BaoSky::dds
         virtual ReturnCode TakeNextSample(void *sample, SampleInfo info) = 0;
 
         virtual std::string GetTopicName() = 0;
+
+        virtual ReturnCode UpdateQos(const DataReaderQos &qos) = 0;
         //  仅用于测试，不是很严谨
         virtual bool wait_for_unread_cache(const Duration &timeout) = 0;
         //  仅用于测试，不是很严谨

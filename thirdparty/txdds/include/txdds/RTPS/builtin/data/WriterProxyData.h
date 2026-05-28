@@ -60,6 +60,10 @@ namespace BaoSky::rtps
         {
             mIsReliable = true;
         }
+        inline void SetVolatile()
+        {
+            mIsVolatile = true;
+        }
 
         inline std::string GetTopicName() const
         {
@@ -110,6 +114,7 @@ namespace BaoSky::rtps
         InstanceHandle mWriterKey;
         InstanceHandle mParticipantKey;
         bool mIsReliable = false;
+        bool mIsVolatile = false;
     };
 }
 

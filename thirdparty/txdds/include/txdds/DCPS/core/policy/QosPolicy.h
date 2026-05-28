@@ -345,6 +345,7 @@ namespace BaoSky::dds
         long mMaxSamplesPerInstance = 100;
         long mAllocatedSamples = 1;
         long mExtraSamples = 1;
+        uint16_t mMaxMessageLength = 65000;
     };
 
     class DurabilityServiceQosPolicy : public BaoSky::rtps::Parameter, public QosPolicy

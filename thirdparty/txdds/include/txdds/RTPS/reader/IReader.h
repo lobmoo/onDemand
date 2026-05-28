@@ -19,7 +19,7 @@
 namespace BaoSky::rtps
 {
     class IReaderListener;
-
+    class WriterProxy;
     class TXDDS_API IReader : public IEndpoint
     {
     public:
@@ -36,7 +36,7 @@ namespace BaoSky::rtps
 
         virtual bool AddMatchedWriter(const WriterProxyData &writerProxyData) = 0;
 
-        virtual bool RemoveMatchedWriter(const BaoSky::rtps::Guid &guid) = 0;
+        virtual bool RemoveMatchedWriter(const BaoSky::rtps::Guid &guid, WriterProxy *&target) = 0;
 
         virtual bool IsMatchedWriter(const BaoSky::rtps::Guid &guid) = 0;
 

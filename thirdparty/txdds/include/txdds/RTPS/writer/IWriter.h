@@ -87,6 +87,8 @@ namespace BaoSky::rtps
             return isSend;
         }
 
+        virtual void RemoveChangeByKind(ChangeKind kind, const InstanceHandle &handle) = 0;
+
     protected:
         virtual void CheckCdrMsg(CDRMessage &msg, uint32_t payloadLength)
         {

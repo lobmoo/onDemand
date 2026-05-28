@@ -85,6 +85,11 @@ namespace BaoSky::rtps
          */
         void SetReliable();
         /** 
+         * @brief 设置Volatile属性标志为true 
+         * @return {}
+         */
+        void SetVolatile();
+        /** 
          * @brief 获取topicName 
          * @return {}
          */
@@ -134,6 +139,11 @@ namespace BaoSky::rtps
          * @return {}
          */
         bool GetReliable();
+        /** 
+         * @brief  获取Volatile属性
+         * @return {}
+         */
+        bool GetVolatile();
 
     private:
         BaoSky::rtps::Guid mRemoteReaderGuid;
@@ -147,6 +157,7 @@ namespace BaoSky::rtps
         InstanceHandle mParticipantKey;
         bool mExpectsInlineQos;
         bool mIsReliable = false;
+        bool mIsVolatile = false;
     };
 }
 

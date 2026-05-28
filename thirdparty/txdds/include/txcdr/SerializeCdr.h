@@ -24,8 +24,6 @@ namespace BaoSky::Cdr
     class TXDDS_API SerializeCdr : public Cdr
     {
     private:
-        ReturnCode mLastStatus{RETCODE_OK};
-        /* data */
     public:
         bool IsSuccessSerialize()
         {
@@ -58,7 +56,6 @@ namespace BaoSky::Cdr
             {
                 return mLastStatus;
             }
-
             for (size_t count = 0; count < numElements; ++count)
             {
                 mLastStatus = Serialize(value[count]);
@@ -98,10 +95,6 @@ namespace BaoSky::Cdr
                 return mLastStatus;
             }
             mLastStatus = SerializeArray(vector_t.data(), vector_t.size());
-            if (mLastStatus != 0)
-            {
-                return mLastStatus;
-            }
             return mLastStatus;
         }
 
@@ -112,13 +105,11 @@ namespace BaoSky::Cdr
             {
                 return mLastStatus;
             }
-
             mLastStatus = Serialize(static_cast<int32_t>(map_t.size()));
             if (mLastStatus != 0)
             {
                 return mLastStatus;
             }
-
             for (auto it_pair = map_t.begin(); it_pair != map_t.end(); ++it_pair)
             {
                 mLastStatus = Serialize(it_pair->first);
@@ -165,56 +156,72 @@ namespace BaoSky::Cdr
         }
 
         template <class _T>
-        Cdr &Serialize(
+        ReturnCode Serialize(
             const optional<_T> &value)
         {
+            if (mLastStatus != RETCODE_OK)
+            {
+                return mLastStatus;
+            }
             // MemberId 需要定义或者传入
             // Added by tangfuqi@baosight.com on 2026-03-11 15:08:24
             if (CdrVersion::XCDRv1 == mCdrVersion)
             {
                 // PLAIN_CDR
                 Cdr::state current_state(*this);
-                Xcdr1BeginSerializeOptionalMember(mNextMemberId, value.has_value(), current_state, XCdrHeaderSelection::AUTO_WITH_SHORT_HEADER_BY_DEFAULT);
+                mLastStatus = Xcdr1BeginSerializeOptionalMember(mNextMemberId, value.has_value(), current_state, XCdrHeaderSelection::AUTO_WITH_SHORT_HEADER_BY_DEFAULT);
+                if (mLastStatus != RETCODE_OK)
+                {
+                    return mLastStatus;
+                }
                 if (value.has_value())
                 {
-                    Serialize(*value);
+                    mLastStatus = Serialize(*value);
+                    if (mLastStatus != RETCODE_OK)
+                    {
+                        return mLastStatus;
+                    }
                 }
-                Xcdr1EndSerializeOptionalMember(current_state);
+                mLastStatus = Xcdr1EndSerializeOptionalMember(current_state);
             }
             else if (CdrVersion::XCDRv2 == mCdrVersion)
             {
                 // PLAIN_CDR2
                 if (EncodingAlgorithmFlag::PL_CDR2 != mEncodingAlgorithmFlag)
                 {
-                    Serialize(value.has_value());
+                    mLastStatus = Serialize(value.has_value());
+                    if (mLastStatus != RETCODE_OK)
+                    {
+                        return mLastStatus;
+                    }
                 }
                 if (value.has_value())
                 {
-                    Serialize(*value);
+                    mLastStatus = Serialize(*value);
                 }
             }
-            return *this;
+            return mLastStatus;
         }
-        Cdr &Xcdr1BeginSerializeOptionalMember(
+        ReturnCode Xcdr1BeginSerializeOptionalMember(
             const MemberId &member_id,
             bool is_present,
             Cdr::state &current_state,
             Cdr::XCdrHeaderSelection header_selection);
-        Cdr &Xcdr1EndSerializeOptionalMember(
+        ReturnCode Xcdr1EndSerializeOptionalMember(
             const Cdr::state &current_state);
 
-        void Xcdr1SerializeShortMemberHeader(
+        ReturnCode Xcdr1SerializeShortMemberHeader(
             const MemberId &member_id);
 
-        void Xcdr1EndShortMemberHeader(
+        ReturnCode Xcdr1EndShortMemberHeader(
             const MemberId &member_id,
             size_t member_serialized_size);
 
         ReturnCode SerializeEncapsulation();
 
-        void CdrBeginSerializeType();
+        ReturnCode CdrBeginSerializeType();
 
-        void CdrEndSerializeType();
+        ReturnCode CdrEndSerializeType();
 
         // TODO enum map longdouble
     };

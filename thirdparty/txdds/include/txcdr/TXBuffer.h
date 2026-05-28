@@ -144,7 +144,7 @@ namespace BaoSky::Cdr
         }
         inline void DumpBuffer()
         {
-            FILE *f = fopen("/data/BaoskyRuntime/log/error.bin", "wb");
+            FILE *f = fopen("./error.bin", "wb");
             if (!f)
             {
                 return;
