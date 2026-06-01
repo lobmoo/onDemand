@@ -536,6 +536,99 @@ namespace ondemand
             return true;
         }
 
+        /**
+         * @brief 批量扩展多个变量的 slot，一次 ConfigGuard + 一次 arena 重分配
+         * @param ids     变量 id 数组
+         * @param sizes   对应所需最小 size 数组
+         * @param count   数量
+         * @return true 全部成功（或无需扩展），false 失败
+         */
+        bool ensure_capacity_batch(const uint32_t *ids, const uint32_t *sizes, size_t count)
+        {
+            if (!ids || !sizes || count == 0)
+                return false;
+
+            ConfigGuard g(this);
+
+            // 1. 计算每个变量的新 size，判断是否需要扩展
+            std::vector<uint32_t> new_sizes(metas_.size());
+            for (size_t i = 0; i < metas_.size(); ++i)
+                new_sizes[i] = metas_[i].size;
+
+            bool any_expand = false;
+            for (size_t k = 0; k < count; ++k) {
+                uint32_t id = ids[k];
+                uint32_t required = sizes[k];
+                if (id >= metas_.size() || required == 0)
+                    continue;
+                uint32_t old_size = new_sizes[id];
+                if (required <= old_size)
+                    continue;
+                uint32_t ns = required;
+                if (old_size > 0) {
+                    uint32_t doubled = old_size > (UINT32_MAX / 2u) ? old_size : old_size * 2u;
+                    if (doubled > ns)
+                        ns = doubled;
+                }
+                new_sizes[id] = ns;
+                any_expand = true;
+            }
+
+            if (!any_expand)
+                return true;
+
+            // 2. 计算新 arena 总大小和每个 slot 的新 offset
+            std::vector<uint32_t> new_offsets(metas_.size(), 0u);
+            uint32_t new_arena_size = 0;
+            for (size_t i = 0; i < metas_.size(); ++i) {
+                new_offsets[i] = new_arena_size;
+                new_arena_size += slot_bytes(new_sizes[i]);
+            }
+            new_arena_size = align64(new_arena_size);
+
+            // 3. 分配新 arena
+            void *new_arena = std::aligned_alloc(64, new_arena_size);
+            if (!new_arena)
+                return false;
+            std::memset(new_arena, 0, new_arena_size);
+
+            // 4. 一次拷贝所有 slot
+            if (arena_) {
+                for (size_t i = 0; i < metas_.size(); ++i) {
+                    uint32_t src_size = metas_[i].size;
+                    uint32_t dst_size = new_sizes[i];
+
+                    auto *src_slot = reinterpret_cast<Slot *>(arena_ + metas_[i].offset);
+                    auto *dst_slot = reinterpret_cast<Slot *>(
+                        reinterpret_cast<std::byte *>(new_arena) + new_offsets[i]);
+
+                    dst_slot->seq.store(src_slot->seq.load(std::memory_order_relaxed),
+                                        std::memory_order_relaxed);
+                    dst_slot->committed.store(src_slot->committed.load(std::memory_order_relaxed),
+                                              std::memory_order_relaxed);
+                    dst_slot->valid_size[0] = src_slot->valid_size[0];
+                    dst_slot->valid_size[1] = src_slot->valid_size[1];
+
+                    uint32_t copy_size = src_size < dst_size ? src_size : dst_size;
+                    if (copy_size > 0) {
+                        std::memcpy(dst_slot->data, src_slot->data, copy_size);
+                        std::memcpy(dst_slot->data + dst_size, src_slot->data + src_size,
+                                    copy_size);
+                    }
+                }
+            }
+
+            // 5. 替换 arena，更新所有 metas
+            std::free(arena_);
+            arena_ = reinterpret_cast<std::byte *>(new_arena);
+            for (size_t i = 0; i < metas_.size(); ++i) {
+                metas_[i].size = new_sizes[i];
+                metas_[i].offset = new_offsets[i];
+            }
+            arena_size_ = new_arena_size;
+            return true;
+        }
+
     private:
         mutable std::mutex reconfig_mu_;
         mutable std::condition_variable reconfig_cv_;

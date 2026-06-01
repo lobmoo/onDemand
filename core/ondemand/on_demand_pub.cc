@@ -1025,7 +1025,14 @@ namespace ondemand
         uint64_t nodeHash = fast_hash(nodeName);
         const std::string ownPrefix = nodeName_ + "_";
 
-        std::vector<std::pair<std::string, uint32_t>> freqChanges; // 锁外触发回调
+        // 收集需要处理的变量信息
+        struct VarEntry {
+            uint64_t varHash;
+            VarMetadata *meta;
+            uint32_t freq;
+        };
+        std::vector<VarEntry> entries;
+        std::vector<std::pair<std::string, uint32_t>> freqChanges;
         uint32_t missingCount = 0;
 
         std::unique_lock lock(varIndexMutex_);
@@ -1037,10 +1044,15 @@ namespace ondemand
         }
         uint64_t nodeMask = uint64_t(1) << nodeBit;
 
-        for (const auto &varFreq : varFreqs) {
-            std::string metaName = varFreq.name(); // 这里注册请求已经是全名了，不需要再拼接一次了
+        // ── 第一阶段：收集有效变量 + 批量扩展 ──
+        std::vector<uint32_t> expandIds;
+        std::vector<uint32_t> expandSizes;
+        expandIds.reserve(varFreqs.size());
+        expandSizes.reserve(varFreqs.size());
 
-            // 非本发布节点的变量请求直接忽略，不计入 missing，避免跨 pub 场景下无意义重试。
+        for (const auto &varFreq : varFreqs) {
+            std::string metaName = varFreq.name();
+
             if (metaName.compare(0, ownPrefix.size(), ownPrefix) != 0) {
                 continue;
             }
@@ -1048,39 +1060,49 @@ namespace ondemand
             uint64_t varHash = fast_hash(metaName);
             auto it = varIndex_.find(varHash);
             if (it == varIndex_.end()) {
-                // Sub 先 subscribe()、Pub 后 createVars() 的正常竞态，调用方会延迟重试
                 ONDEMANDLOG(debug) << "handleSubscribe: var not yet created, will retry"
-                                   << " var=" << varFreq.name() << " node=" << nodeName;
+                                   << " var=" << metaName << " node=" << nodeName;
                 ++missingCount;
                 continue;
             }
 
             auto &meta = it->second;
 
-            /*首订阅时扩展 VarStore slot 到 define 大小（createVars 时注册为 size=0）*/
-            {
-                uint32_t curSlotSize = varStore_.slot_size(meta.varId);
-                auto defIt = varDefineIndex_.find(varHash);
-                if (defIt != varDefineIndex_.end()) {
-                    uint32_t defineSize = static_cast<uint32_t>(defIt->second->size());
-                    uint32_t targetSize = defineSize > 0 ? defineSize : 32u;
-                    if (curSlotSize < targetSize) {
-                        varStore_.ensure_capacity(meta.varId, targetSize);
-                    }
+            // 收集需要扩展的变量
+            auto defIt = varDefineIndex_.find(varHash);
+            if (defIt != varDefineIndex_.end()) {
+                uint32_t defineSize = static_cast<uint32_t>(defIt->second->size());
+                uint32_t targetSize = defineSize > 0 ? defineSize : 32u;
+                if (varStore_.slot_size(meta.varId) < targetSize) {
+                    expandIds.push_back(meta.varId);
+                    expandSizes.push_back(targetSize);
                 }
             }
 
-            /*解析频率*/
+            // 解析频率
             uint32_t freq;
             auto result = std::from_chars(varFreq.value().data(),
                                           varFreq.value().data() + varFreq.value().size(), freq);
             if (std::errc() != result.ec) {
-                ONDEMANDLOG(warning) << "Invalid frequency value for var: " << varFreq.name()
+                ONDEMANDLOG(warning) << "Invalid frequency value for var: " << metaName
                                      << " node: " << nodeName << " value: " << varFreq.value();
                 continue;
             }
 
-            /*先从该节点已有的其他频率条目中移除*/
+            entries.push_back({varHash, &meta, freq});
+        }
+
+        // 批量扩展（一次 arena 重分配）
+        if (!expandIds.empty()) {
+            varStore_.ensure_capacity_batch(expandIds.data(), expandSizes.data(), expandIds.size());
+        }
+
+        // ── 第二阶段：处理订阅逻辑 ──
+        for (const auto &entry : entries) {
+            auto &meta = *entry.meta;
+            uint32_t freq = entry.freq;
+
+            // 先从该节点已有的其他频率条目中移除
             for (auto fsIt = meta.freqSubs.begin(); fsIt != meta.freqSubs.end();) {
                 if (fsIt->subMask & nodeMask) {
                     fsIt->subMask &= ~nodeMask;
@@ -1095,7 +1117,7 @@ namespace ondemand
                 }
             }
 
-            /*在 freqSubs 中找到匹配 freq 的条目，或新建*/
+            // 在 freqSubs 中找到匹配 freq 的条目，或新建
             VarMetadata::FreqSub *target = nullptr;
             for (auto &fs : meta.freqSubs) {
                 if (fs.freq == freq) {
@@ -1109,14 +1131,10 @@ namespace ondemand
                 target->freq = freq;
             }
 
-            /*设置该节点的订阅位*/
             target->subMask |= nodeMask;
             target->subCount++;
-
-            /*更新活跃频率数量*/
             meta.activeFreqCount = static_cast<uint8_t>(meta.freqSubs.size());
 
-            /*重新计算最小发布频率*/
             uint32_t oldFreq = meta.currentFreq;
             recalcCurrentFreq(meta);
             schedulerDirty_.store(true, std::memory_order_release);
@@ -1125,7 +1143,7 @@ namespace ondemand
                 freqChanges.emplace_back(meta.realVarName, meta.currentFreq);
             }
 
-            ONDEMANDLOG(info) << "Var [" << varFreq.name() << "] subscribed by node [" << nodeName
+            ONDEMANDLOG(info) << "Var [" << meta.realVarName << "] subscribed by node [" << nodeName
                               << "] at freq=" << freq << "ms, currentFreq=" << meta.currentFreq
                               << "ms";
         }
