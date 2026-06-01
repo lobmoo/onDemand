@@ -105,6 +105,40 @@ namespace ondemand
             return id;
         }
 
+        /**
+         * @brief 批量注册变量，一次 ConfigGuard 完成所有注册
+         * @param hashes  变量 hash 数组
+         * @param sizes   对应 size 数组（size=0 表示延迟分配，不占 arena 空间）
+         * @param ids     输出 id 数组
+         * @param count   数量
+         * @return 实际新增注册数量
+         */
+        size_t register_var_batch(const uint64_t *hashes, const uint32_t *sizes,
+                                  uint32_t *ids, size_t count)
+        {
+            if (!hashes || !sizes || !ids || count == 0)
+                return 0;
+
+            ConfigGuard g(this);
+            size_t registered = 0;
+            for (size_t i = 0; i < count; ++i) {
+                auto it = table_.find(hashes[i]);
+                if (it != table_.end()) {
+                    ids[i] = (it->second < metas_.size() && metas_[it->second].size == sizes[i])
+                                 ? it->second
+                                 : kInvalidId;
+                    continue;
+                }
+                uint32_t id = metas_.size();
+                table_[hashes[i]] = id;
+                metas_.push_back({id, arena_size_, sizes[i]});
+                arena_size_ += slot_bytes(sizes[i]);
+                ids[i] = id;
+                ++registered;
+            }
+            return registered;
+        }
+
         uint32_t get_id(uint64_t hash) const
         {
             auto it = table_.find(hash);

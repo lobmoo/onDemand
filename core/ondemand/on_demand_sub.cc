@@ -36,7 +36,10 @@ namespace ondemand
     {
     }
 
-    OnDemandSub::~OnDemandSub() { stop(); }
+    OnDemandSub::~OnDemandSub()
+    {
+        stop();
+    }
 
     /**
      * @brief 初始化订阅器
@@ -416,40 +419,61 @@ namespace ondemand
                         }
                     }
 
-                    /*拆表：注册新增变量*/
-                    std::unordered_set<uint32_t> newBucketIds;
-                    for (auto &varDef : tableDefine->varDefines()) {
-                        const auto &varDefine = varDef.var().varDefine();
+                    /*拆表：收集新增变量，批量注册到 VarStore*/
+                    const auto &varDefines = tableDefine->varDefines();
+                    const size_t n = varDefines.size();
+
+                    // 用单个 vector 收集，减少碎片：{hash, size, bucketIdx, define索引}
+                    std::vector<uint64_t> hashes;
+                    std::vector<uint32_t> sizes;
+                    std::vector<uint32_t> bucketIdxs;
+                    std::vector<uint32_t> defineIdxs; // 指向 varDefines 的下标
+                    hashes.reserve(n);
+                    sizes.reserve(n);
+                    bucketIdxs.reserve(n);
+                    defineIdxs.reserve(n);
+
+                    for (size_t i = 0; i < n; ++i) {
+                        const auto &varDefine = varDefines[i].var().varDefine();
                         std::string varName =
-                            make_meta_varname(varDefine.nodeName(),
-                                              varDefine.name()); // 构造全名 和发布端一致
+                            make_meta_varname(varDefine.nodeName(), varDefine.name());
                         uint64_t varHash = fast_hash(varName);
-                        size_t bucketIdx =
-                            BucketManager::CalculateBucketIndexFromHash(varHash); // Reuse hash
 
-                        /*先检查是否已存在，避免重复 register_var*/
-                        auto it = varIndex_.find(varHash);
-                        if (it != varIndex_.end()) {
-                            ONDEMANDLOG(debug) << "Variable already exists: " << varName;
+                        if (varIndex_.find(varHash) != varIndex_.end())
                             continue;
-                        }
 
-                        /*组内部结构*/
+                        hashes.push_back(varHash);
+                        sizes.push_back(static_cast<uint32_t>(varDefine.size()));
+                        bucketIdxs.push_back(static_cast<uint32_t>(
+                            BucketManager::CalculateBucketIndexFromHash(varHash)));
+                        defineIdxs.push_back(static_cast<uint32_t>(i));
+                    }
+
+                    // 批量注册（一次 ConfigGuard）
+                    std::vector<uint32_t> ids(hashes.size());
+                    if (!hashes.empty())
+                        varStore_.register_var_batch(hashes.data(), sizes.data(), ids.data(),
+                                                     hashes.size());
+
+                    // 批量填充 varIndex_ / varDefineIndex_
+                    std::unordered_set<uint32_t> newBucketIds;
+                    for (size_t k = 0; k < hashes.size(); ++k) {
+                        const auto &varDefine = varDefines[defineIdxs[k]].var().varDefine();
                         VarMetadata meta;
                         meta.currentFreq = 0xFFFFFFFF;
                         meta.activeFreqCount = 0;
-                        uint32_t kVarSize = varDefine.size();
-                        meta.bucketIndex = bucketIdx;
+                        meta.bucketIndex = bucketIdxs[k];
                         meta.realVarName = varDefine.name();
-                        meta.varId = varStore_.register_var(varHash, kVarSize);
+                        meta.varId = ids[k];
 
-                        varDefineIndex_.emplace(varHash,
+                        varDefineIndex_.emplace(hashes[k],
                                                 std::make_shared<DSF::Var::Define>(varDefine));
-                        varIndex_.emplace(varHash, std::move(meta));
-                        newBucketIds.insert(static_cast<uint32_t>(bucketIdx));
+                        varIndex_.emplace(hashes[k], std::move(meta));
+                        newBucketIds.insert(bucketIdxs[k]);
                         totalReceived_.fetch_add(1);
-                        ONDEMANDLOG(debug) << "Registered var: " << varName;
                     }
+                    if (!hashes.empty())
+                        ONDEMANDLOG(info) << "Batch registered " << hashes.size() << " new vars";
 
                     if (!varStore_.finalize()) {
                         ONDEMANDLOG(error) << "Failed to finalize VarStore after TableDefine";
@@ -483,7 +507,7 @@ namespace ondemand
                 }
                 LOG(info) << "+++++++++++++++++totalReceived_ = " << totalReceived_.load();
             } else {
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                std::this_thread::sleep_for(std::chrono::milliseconds(50));
             }
         }
     }

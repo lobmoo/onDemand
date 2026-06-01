@@ -22,9 +22,8 @@ namespace BaoSky::rtps
             IHistory *history,
             IParticipant *participant,
             WriterAttributes watt,
-            std::shared_ptr<TransportStack> transportStack,
             IWriterListener *listener = nullptr)
-            : IWriter(guid, history, participant, watt, transportStack, listener) {}
+            : IWriter(guid, history, participant, watt, listener) {}
 
         virtual ~IStatefulWriter() override {}
 

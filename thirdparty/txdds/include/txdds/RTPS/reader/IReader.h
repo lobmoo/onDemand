@@ -68,6 +68,7 @@ namespace BaoSky::rtps
         virtual bool ReleaseChange(CacheChange *change);
         virtual bool wait_for_unread_cache(const Duration &timeout);
         virtual void update_last_notified(const BaoSky::rtps::Guid &guid, const SequenceNumber &seq);
+        virtual void ProcessBuffer(uint8_t *data, uint32_t length) = 0;
 
     protected:
         IReaderListener *mListener;

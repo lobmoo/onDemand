@@ -680,96 +680,115 @@ namespace ondemand
      */
     bool OnDemandPub::createVars(const std::vector<DSF::Var::Define> &VarDefines)
     {
-        /*注册变量 + 初始化存储，同时收集受影响的 bucket*/
+        // ── 第一步：预计算 hash + bucketIdx，一次性收集 ──
+        struct NewVar {
+            std::string varName;
+            uint64_t varHash;
+            uint32_t bucketIdx;
+            const DSF::Var::Define *define; // 指向输入参数，不拷贝
+        };
+        std::vector<NewVar> newVars;
+        newVars.reserve(VarDefines.size());
+
+        for (const auto &VarDefine : VarDefines) {
+            std::string varName = make_meta_varname(nodeName_, VarDefine.name());
+            uint64_t varHash = fast_hash(varName);
+            uint32_t bucketIdx =
+                static_cast<uint32_t>(BucketManager::CalculateBucketIndexFromHash(varHash));
+            newVars.push_back({std::move(varName), varHash, bucketIdx, &VarDefine});
+        }
+
+        // ── 第二步：去重 + 批量注册 + 填充索引（一次写锁 + 一次 ConfigGuard）──
         std::unordered_set<uint32_t> affectedBuckets;
         {
             std::unique_lock lock(varIndexMutex_);
-            varIndex_.reserve(varIndex_.size() + VarDefines.size());
+            varIndex_.reserve(varIndex_.size() + newVars.size());
+            varDefineIndex_.reserve(varDefineIndex_.size() + newVars.size());
 
-            for (const auto &VarDefine : VarDefines) {
-                const auto &varName = make_meta_varname(nodeName_, VarDefine.name());
-                uint64_t varHash = fast_hash(varName);
-                size_t bucketIdx = BucketManager::CalculateBucketIndexFromHash(varHash);
-
-                auto it = varIndex_.find(varHash);
-                if (it != varIndex_.end()) {
-                    ONDEMANDLOG(warning) << "Variable already exists: " << varName;
+            // 去重
+            size_t writeIdx = 0;
+            for (size_t i = 0; i < newVars.size(); ++i) {
+                if (varIndex_.find(newVars[i].varHash) != varIndex_.end()) {
+                    ONDEMANDLOG(warning) << "Variable already exists: " << newVars[i].varName;
                     continue;
                 }
+                if (writeIdx != i)
+                    newVars[writeIdx] = std::move(newVars[i]);
+                ++writeIdx;
+            }
+            newVars.resize(writeIdx);
 
+            if (newVars.empty())
+                return true;
+
+            // 批量注册（一次 ConfigGuard）
+            std::vector<uint64_t> hashes(newVars.size());
+            std::vector<uint32_t> sizes(newVars.size(), 0); //暂时不支持预设大小，统一传 0 由 VarStore 内部处理 优化内存
+            std::vector<uint32_t> ids(newVars.size());
+            for (size_t i = 0; i < newVars.size(); ++i)
+                hashes[i] = newVars[i].varHash;
+            varStore_.register_var_batch(hashes.data(), sizes.data(), ids.data(), newVars.size());
+
+            // 批量填充
+            for (size_t i = 0; i < newVars.size(); ++i) {
                 VarMetadata meta;
                 meta.currentFreq = 0xFFFFFFFF;
                 meta.activeFreqCount = 0;
-                meta.bucketIndex = bucketIdx;
-                meta.realVarName = VarDefine.name();
-                // 延迟分配：默认 size=0 占位，首订阅时再扩展到实际大小
-                meta.varId = varStore_.register_var(varHash);
-                varDefineIndex_.emplace(varHash, std::make_shared<DSF::Var::Define>(VarDefine));
-                varIndex_.emplace(varHash, std::move(meta));
-                bucketManager_.AddMember(varName, varHash);
-                affectedBuckets.insert(static_cast<uint32_t>(bucketIdx));
+                meta.bucketIndex = newVars[i].bucketIdx;
+                meta.realVarName = newVars[i].define->name();
+                meta.varId = ids[i];
+                varDefineIndex_.emplace(newVars[i].varHash,
+                                        std::make_shared<DSF::Var::Define>(*newVars[i].define));
+                varIndex_.emplace(newVars[i].varHash, std::move(meta));
+                bucketManager_.AddMember(newVars[i].varName, newVars[i].varHash);
+                affectedBuckets.insert(newVars[i].bucketIdx);
             }
-        } // 先释放写锁，再 finalize，避免 finalize 内 config_begin 等 active_ops==0
-          // 时与持有 OpGuard 的 publishGroupData 形成死锁
-
-        if (affectedBuckets.empty()) {
-            return true; // 全部重复，无需后续操作
-        }
+        } // 释放写锁，再 finalize
 
         if (!varStore_.finalize()) {
             ONDEMANDLOG(error) << "Failed to finalize variable store";
             return false;
         }
 
-        /*创建 DataTransfer writers */
         if (!createDataTransferWriter()) {
             ONDEMANDLOG(error) << "Failed to create DataTransfer writers";
             return false;
         }
 
-        /*只发布有新增变量的 bucket 的 TableDefine*/
-        for (uint32_t i : affectedBuckets) {
-            if (bucketManager_.GetBucketSize(i) == 0) {
-                continue;
-            }
+        // ── 第三步：发布 PubTableDefine（一次 shared_lock 覆盖所有 bucket）──
+        {
+            std::shared_lock lock(varIndexMutex_);
+            for (uint32_t bucketId : affectedBuckets) {
+                if (bucketManager_.GetBucketSize(bucketId) == 0)
+                    continue;
 
-            DSF::Var::PubTableDefine pubTableDefine;
-            pubTableDefine.name(make_bucket_name_by_id(i));
-            pubTableDefine.nodeName(nodeName_);
-            pubTableDefine.description("onDemandPub TableDefine");
+                DSF::Var::PubTableDefine pubTableDefine;
+                pubTableDefine.name(make_bucket_name_by_id(bucketId));
+                pubTableDefine.nodeName(nodeName_);
+                pubTableDefine.description("onDemandPub TableDefine");
 
-            const auto members = bucketManager_.GetBucketMembers(i);
-            pubTableDefine.varDefines().reserve(members.size());
+                const auto members = bucketManager_.GetBucketMembers(bucketId);
+                pubTableDefine.varDefines().reserve(members.size());
 
-            {
-                std::shared_lock lock(varIndexMutex_);
                 for (const auto &varName : members) {
                     uint64_t varHash = fast_hash(varName);
-                    auto it = varIndex_.find(varHash);
-                    if (it == varIndex_.end()) {
-                        continue;
-                    }
-                    const auto &meta = it->second;
                     auto defIt = varDefineIndex_.find(varHash);
-                    if (defIt == varDefineIndex_.end()) {
+                    if (defIt == varDefineIndex_.end())
                         continue;
-                    }
 
                     DSF::Var::PubTableVarDefine pubTableVarDefine;
                     DSF::Var::VarRequest varRequest;
-                    DSF::Var::Define varDefine;
-                    varDefine = *(defIt->second);
-                    varRequest.varDefine(varDefine);
+                    varRequest.varDefine(*(defIt->second)); // 直接解引用，省掉局部 Define 拷贝
                     pubTableVarDefine.var(std::move(varRequest));
                     pubTableDefine.varDefines().push_back(std::move(pubTableVarDefine));
                 }
-            }
 
-            if (!pubTableDefine.varDefines().empty()) {
-                tableDefinePublish(pubTableDefine);
-                std::this_thread::sleep_for(std::chrono::milliseconds(50));
-                ONDEMANDLOG(info) << "Published bucket " << i << " with "
-                                  << pubTableDefine.varDefines().size() << " variables";
+                if (!pubTableDefine.varDefines().empty()) {
+                    tableDefinePublish(pubTableDefine);
+                    std::this_thread::sleep_for(std::chrono::milliseconds(20));
+                    ONDEMANDLOG(info) << "Published bucket " << bucketId << " with "
+                                      << pubTableDefine.varDefines().size() << " variables";
+                }
             }
         }
 

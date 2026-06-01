@@ -14,13 +14,18 @@
 #include <asio.hpp>
 #include <asio/ssl.hpp>
 #include <txdds/RTPS/common/Locator.h>
+
+const size_t SHM_SLOTNUM = 512;
+const size_t SHM_SLOTSIZE = 64 * 1024;
+
 namespace BaoSky::rtps
 {
     enum eTransportKind
     {
         UnknownKind,
         UDPTransportKind,
-        TCPTransportKind
+        TCPTransportKind,
+        SHMTransportKind
     };
 
     struct BasicTransportConfig
@@ -43,6 +48,17 @@ namespace BaoSky::rtps
         uint32_t mLocalPort = 0;
     };
 
+    struct SHMTransportConfig : public BasicTransportConfig
+    {
+        SHMTransportConfig()
+        {
+            mKind = SHMTransportKind;
+            mShmName = "";
+        }
+        std::string mShmName;
+        uint16_t mSlotNum = SHM_SLOTNUM;
+        uint32_t mSlotSize = SHM_SLOTSIZE;
+    };
     struct TLSConfig
     {
         enum TLSOptions : uint32_t

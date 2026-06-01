@@ -294,6 +294,26 @@ public:
 
 
     /*!
+     * @brief This function sets a value in member size
+     * @param _size New value for member size
+     */
+    eProsima_user_DllExport void size(
+            int32_t _size);
+
+    /*!
+     * @brief This function returns the value of member size
+     * @return Value of member size
+     */
+    eProsima_user_DllExport int32_t size() const;
+
+    /*!
+     * @brief This function returns a reference to member size
+     * @return Reference to member size
+     */
+    eProsima_user_DllExport int32_t& size();
+
+
+    /*!
      * @brief This function copies the value in member modelName
      * @param _modelName New value to be copied in member modelName
      */
@@ -318,26 +338,6 @@ public:
      * @return Reference to member modelName
      */
     eProsima_user_DllExport std::string& modelName();
-
-
-    /*!
-     * @brief This function sets a value in member size
-     * @param _size New value for member size
-     */
-    eProsima_user_DllExport void size(
-            int32_t _size);
-
-    /*!
-     * @brief This function returns the value of member size
-     * @return Value of member size
-     */
-    eProsima_user_DllExport int32_t size() const;
-
-    /*!
-     * @brief This function returns a reference to member size
-     * @return Reference to member size
-     */
-    eProsima_user_DllExport int32_t& size();
 
 
     /*!
@@ -602,38 +602,11 @@ public:
      */
     eProsima_user_DllExport BaoSky::Cdr::optional<AccessControl>& permission();
 
-
-    /*!
-     * @brief This function copies the value in member dataSize
-     * @param _dataSize New value to be copied in member dataSize
-     */
-    eProsima_user_DllExport void dataSize(
-            const BaoSky::Cdr::optional<uint64_t>& _dataSize);
-
-    /*!
-     * @brief This function moves the value in member dataSize
-     * @param _dataSize New value to be moved in member dataSize
-     */
-    eProsima_user_DllExport void dataSize(
-            BaoSky::Cdr::optional<uint64_t>&& _dataSize);
-
-    /*!
-     * @brief This function returns a constant reference to member dataSize
-     * @return Constant reference to member dataSize
-     */
-    eProsima_user_DllExport const BaoSky::Cdr::optional<uint64_t>& dataSize() const;
-
-    /*!
-     * @brief This function returns a reference to member dataSize
-     * @return Reference to member dataSize
-     */
-    eProsima_user_DllExport BaoSky::Cdr::optional<uint64_t>& dataSize();
-
 private:
 
     std::string m_name;
-    std::string m_modelName;
     int32_t m_size{0};
+    std::string m_modelName;
     std::string m_modelVersion;
     std::string m_description;
     std::string m_nodeName;
@@ -644,7 +617,6 @@ private:
     BaoSky::Cdr::optional<std::vector<DSF::NamedValue>> m_initialValues;
     BaoSky::Cdr::optional<std::vector<DSF::NamedValue>> m_startIndexes;
     BaoSky::Cdr::optional<AccessControl> m_permission;
-    BaoSky::Cdr::optional<uint64_t> m_dataSize;
 
 };
 /*!

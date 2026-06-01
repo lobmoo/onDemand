@@ -51,6 +51,7 @@ namespace BaoSky::rtps
         CDRMessage *mCdrMsg;
         IParticipant *mParticipant;
         std::map<EntityId, IEndpoint *> mReaders;
+        std::map<EntityId, IEndpoint *> mRawReaders;
         std::map<EntityId, IEndpoint *> mWriters;
         GuidPrefix mPrefix;
         bool mOpFlag;

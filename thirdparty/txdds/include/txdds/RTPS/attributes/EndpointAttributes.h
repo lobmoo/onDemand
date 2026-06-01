@@ -30,9 +30,14 @@ namespace BaoSky::rtps
         LocatorList_t multicastLocatorList;
 
         BaoSky::dds::DurabilityQosPolicyKind durabilityKind;
+
         EndpointKind_t endpointKind = EndpointKind_t::WRITER;
+
         int16_t mMaxMatchedLimit = -1;
+
         BaoSky::rtps::MemoryManagementPolicy mHistoryMemoryPolicy = BaoSky::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+
+        bool mIsSHMDirect = false;
     };
 }
 
