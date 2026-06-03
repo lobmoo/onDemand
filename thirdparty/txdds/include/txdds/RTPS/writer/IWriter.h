@@ -24,7 +24,6 @@ namespace BaoSky::rtps
     class ReaderProxy;
     class AckNackMsg;
     class IWriterListener;
-    class TransportStack;
 
     class IWriter : public IEndpoint
     {
@@ -34,9 +33,8 @@ namespace BaoSky::rtps
             IHistory *history,
             IParticipant *participant,
             WriterAttributes watt,
-            std::shared_ptr<TransportStack> transportStack,
             IWriterListener *listener = nullptr)
-            : IEndpoint(guid, history, participant), mAttributes(watt), mListener(listener), mTransportStack(transportStack), mMsg(CDRMSG_BASIC_LENGTH * 2)
+            : IEndpoint(guid, history, participant), mAttributes(watt), mListener(listener), mMsg(CDRMSG_BASIC_LENGTH * 2)
         {
             mAttributes.endpoint.endpointKind = EndpointKind_t::WRITER;
         }
@@ -80,12 +78,16 @@ namespace BaoSky::rtps
         virtual bool AllSend(CDRMessage &msg, const LocatorList &locatorList)
         {
             bool isSend = true;
-            for (auto sendResource : mSenderList)
+            for (auto &sendResource : mSenderList)
             {
                 isSend &= std::get<1>(sendResource)->Send(msg.buffer, msg.length, locatorList);
             }
             return isSend;
         }
+
+        virtual void RemoveChangeByKind(ChangeKind kind, const InstanceHandle &handle) = 0;
+
+        virtual bool SendBuffer(uint8_t *buffer, uint32_t length) = 0;
 
     protected:
         virtual void CheckCdrMsg(CDRMessage &msg, uint32_t payloadLength)
@@ -109,8 +111,6 @@ namespace BaoSky::rtps
         WriterAttributes mAttributes;
 
         IWriterListener *mListener;
-
-        std::shared_ptr<TransportStack> mTransportStack;
 
         CDRMessage mMsg;
     };

@@ -15,7 +15,7 @@
 #include "txdds/RTPS/common/SerializedPayload.h"
 #include "txdds/RTPS/common/RTPSEntityTypes.h"
 #include "txdds/RTPS/message/SubMessageElements.h"
-
+#include "txdds/RTPS/history/CacheChangeProxy.h"
 namespace BaoSky::rtps
 {
     class IPayloadPool;
@@ -34,7 +34,7 @@ namespace BaoSky::rtps
         bool hasBeenRead;
         bool canBeRead;
         bool isFragmentData;
-        FragmentNumberSet_t missingData;
+        CacheChangeProxy missingData;
         uint16_t maxFragmentSize;
         IPayloadPool *payloadOwner;
         CacheChange()
@@ -45,7 +45,7 @@ namespace BaoSky::rtps
             canBeRead = false;
             hasBeenRead = false;
             isFragmentData = false;
-            maxFragmentSize=65000;
+            maxFragmentSize = 65000;
         }
         uint32_t GetFragments()
         {

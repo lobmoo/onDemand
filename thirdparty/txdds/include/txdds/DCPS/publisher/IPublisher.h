@@ -51,6 +51,8 @@ namespace BaoSky::dds
         virtual BaoSky::rtps::IParticipant *GetRTPSParticipant() = 0;
 
         virtual bool HasWriter() = 0;
+
+        virtual ReturnCode UpdateQos(const PublisherQos &qos) = 0;
     };
 }
 

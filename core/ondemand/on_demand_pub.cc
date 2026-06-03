@@ -680,97 +680,115 @@ namespace ondemand
      */
     bool OnDemandPub::createVars(const std::vector<DSF::Var::Define> &VarDefines)
     {
-        /*注册变量 + 初始化存储，同时收集受影响的 bucket*/
+        // ── 第一步：预计算 hash + bucketIdx，一次性收集 ──
+        struct NewVar {
+            std::string varName;
+            uint64_t varHash;
+            uint32_t bucketIdx;
+            const DSF::Var::Define *define; // 指向输入参数，不拷贝
+        };
+        std::vector<NewVar> newVars;
+        newVars.reserve(VarDefines.size());
+
+        for (const auto &VarDefine : VarDefines) {
+            std::string varName = make_meta_varname(nodeName_, VarDefine.name());
+            uint64_t varHash = fast_hash(varName);
+            uint32_t bucketIdx =
+                static_cast<uint32_t>(BucketManager::CalculateBucketIndexFromHash(varHash));
+            newVars.push_back({std::move(varName), varHash, bucketIdx, &VarDefine});
+        }
+
+        // ── 第二步：去重 + 批量注册 + 填充索引（一次写锁 + 一次 ConfigGuard）──
         std::unordered_set<uint32_t> affectedBuckets;
         {
             std::unique_lock lock(varIndexMutex_);
-            varIndex_.reserve(varIndex_.size() + VarDefines.size());
+            varIndex_.reserve(varIndex_.size() + newVars.size());
+            varDefineIndex_.reserve(varDefineIndex_.size() + newVars.size());
 
-            for (const auto &VarDefine : VarDefines) {
-                const auto &varName = make_meta_varname(nodeName_, VarDefine.name());
-                uint64_t varHash = fast_hash(varName);
-                size_t bucketIdx = BucketManager::CalculateBucketIndexFromHash(varHash);
-
-                auto it = varIndex_.find(varHash);
-                if (it != varIndex_.end()) {
-                    ONDEMANDLOG(warning) << "Variable already exists: " << varName;
+            // 去重
+            size_t writeIdx = 0;
+            for (size_t i = 0; i < newVars.size(); ++i) {
+                if (varIndex_.find(newVars[i].varHash) != varIndex_.end()) {
+                    ONDEMANDLOG(warning) << "Variable already exists: " << newVars[i].varName;
                     continue;
                 }
+                if (writeIdx != i)
+                    newVars[writeIdx] = std::move(newVars[i]);
+                ++writeIdx;
+            }
+            newVars.resize(writeIdx);
 
+            if (newVars.empty())
+                return true;
+
+            // 批量注册（一次 ConfigGuard）
+            std::vector<uint64_t> hashes(newVars.size());
+            std::vector<uint32_t> sizes(newVars.size(), 0); //暂时不支持预设大小，统一传 0 由 VarStore 内部处理 优化内存
+            std::vector<uint32_t> ids(newVars.size());
+            for (size_t i = 0; i < newVars.size(); ++i)
+                hashes[i] = newVars[i].varHash;
+            varStore_.register_var_batch(hashes.data(), sizes.data(), ids.data(), newVars.size());
+
+            // 批量填充
+            for (size_t i = 0; i < newVars.size(); ++i) {
                 VarMetadata meta;
                 meta.currentFreq = 0xFFFFFFFF;
                 meta.activeFreqCount = 0;
-                meta.bucketIndex = bucketIdx;
-                meta.realVarName = VarDefine.name();
-                uint32_t kVarSize =
-                    VarDefine.size() > 0 ? static_cast<uint32_t>(VarDefine.size()) : 32u;
-                meta.varId = varStore_.register_var(varHash, kVarSize);
-                varDefineIndex_.emplace(varHash, std::make_shared<DSF::Var::Define>(VarDefine));
-                varIndex_.emplace(varHash, std::move(meta));
-                bucketManager_.AddMember(varName, varHash);
-                affectedBuckets.insert(static_cast<uint32_t>(bucketIdx));
+                meta.bucketIndex = newVars[i].bucketIdx;
+                meta.realVarName = newVars[i].define->name();
+                meta.varId = ids[i];
+                varDefineIndex_.emplace(newVars[i].varHash,
+                                        std::make_shared<DSF::Var::Define>(*newVars[i].define));
+                varIndex_.emplace(newVars[i].varHash, std::move(meta));
+                bucketManager_.AddMember(newVars[i].varName, newVars[i].varHash);
+                affectedBuckets.insert(newVars[i].bucketIdx);
             }
-        } // 先释放写锁，再 finalize，避免 finalize 内 config_begin 等 active_ops==0
-          // 时与持有 OpGuard 的 publishGroupData 形成死锁
-
-        if (affectedBuckets.empty()) {
-            return true; // 全部重复，无需后续操作
-        }
+        } // 释放写锁，再 finalize
 
         if (!varStore_.finalize()) {
             ONDEMANDLOG(error) << "Failed to finalize variable store";
             return false;
         }
 
-        /*创建 DataTransfer writers */
         if (!createDataTransferWriter()) {
             ONDEMANDLOG(error) << "Failed to create DataTransfer writers";
             return false;
         }
 
-        /*只发布有新增变量的 bucket 的 TableDefine*/
-        for (uint32_t i : affectedBuckets) {
-            if (bucketManager_.GetBucketSize(i) == 0) {
-                continue;
-            }
+        // ── 第三步：发布 PubTableDefine（一次 shared_lock 覆盖所有 bucket）──
+        {
+            std::shared_lock lock(varIndexMutex_);
+            for (uint32_t bucketId : affectedBuckets) {
+                if (bucketManager_.GetBucketSize(bucketId) == 0)
+                    continue;
 
-            DSF::Var::PubTableDefine pubTableDefine;
-            pubTableDefine.name(make_bucket_name_by_id(i));
-            pubTableDefine.nodeName(nodeName_);
-            pubTableDefine.description("onDemandPub TableDefine");
+                DSF::Var::PubTableDefine pubTableDefine;
+                pubTableDefine.name(make_bucket_name_by_id(bucketId));
+                pubTableDefine.nodeName(nodeName_);
+                pubTableDefine.description("onDemandPub TableDefine");
 
-            const auto members = bucketManager_.GetBucketMembers(i);
-            pubTableDefine.varDefines().reserve(members.size());
+                const auto members = bucketManager_.GetBucketMembers(bucketId);
+                pubTableDefine.varDefines().reserve(members.size());
 
-            {
-                std::shared_lock lock(varIndexMutex_);
                 for (const auto &varName : members) {
                     uint64_t varHash = fast_hash(varName);
-                    auto it = varIndex_.find(varHash);
-                    if (it == varIndex_.end()) {
-                        continue;
-                    }
-                    const auto &meta = it->second;
                     auto defIt = varDefineIndex_.find(varHash);
-                    if (defIt == varDefineIndex_.end()) {
+                    if (defIt == varDefineIndex_.end())
                         continue;
-                    }
 
                     DSF::Var::PubTableVarDefine pubTableVarDefine;
                     DSF::Var::VarRequest varRequest;
-                    DSF::Var::Define varDefine;
-                    varDefine = *(defIt->second);
-                    varRequest.varDefine(varDefine);
+                    varRequest.varDefine(*(defIt->second)); // 直接解引用，省掉局部 Define 拷贝
                     pubTableVarDefine.var(std::move(varRequest));
                     pubTableDefine.varDefines().push_back(std::move(pubTableVarDefine));
                 }
-            }
 
-            if (!pubTableDefine.varDefines().empty()) {
-                tableDefinePublish(pubTableDefine);
-                std::this_thread::sleep_for(std::chrono::milliseconds(50));
-                ONDEMANDLOG(info) << "Published bucket " << i << " with "
-                                  << pubTableDefine.varDefines().size() << " variables";
+                if (!pubTableDefine.varDefines().empty()) {
+                    tableDefinePublish(pubTableDefine);
+                    std::this_thread::sleep_for(std::chrono::milliseconds(20));
+                    ONDEMANDLOG(info) << "Published bucket " << bucketId << " with "
+                                      << pubTableDefine.varDefines().size() << " variables";
+                }
             }
         }
 
@@ -871,8 +889,8 @@ namespace ondemand
             }
             varId = it->second.varId;
         }
-        /*写数据*/
-        if (!varStore_.write(varId, data, size)) {
+        /*写数据（使用自动扩展的 write，支持延迟分配场景）*/
+        if (varStore_.write(varId, data, static_cast<uint32_t>(size)) != WriteResult::SUCCESS) {
             ONDEMANDLOG(error) << "Failed to set data for variable: " << varName;
             return false;
         }
@@ -909,10 +927,10 @@ namespace ondemand
         }
     }
 
-    void OnDemandPub::setVarData(uint32_t varId, const void *data, size_t size)
+    WriteResult OnDemandPub::setVarData(uint32_t varId, const void *data, size_t size)
     {
         if (data == nullptr || size == 0) {
-            return;
+            return WriteResult::FAILED;
         }
         uint32_t writeSize =
             static_cast<uint32_t>(size > static_cast<size_t>(UINT32_MAX) ? UINT32_MAX : size);
@@ -920,21 +938,21 @@ namespace ondemand
             ONDEMANDLOG_TIME(warning, 5000)
                 << "setVarData: size overflowed uint32_t and was clipped, varId=" << varId;
         }
-        varStore_.write(varId, data, writeSize);
+        return varStore_.write(varId, data, writeSize);
     }
 
-    void OnDemandPub::setVarDataBatch(const VarWriteItem *items, size_t count)
+    WriteResult OnDemandPub::setVarDataBatch(const VarWriteItem *items, size_t count)
     {
         constexpr size_t kStackMax = 4096;
 
         if (items == nullptr || count == 0) {
-            return;
+            return WriteResult::FAILED;
         }
 
         uint32_t invalidCount = 0;
         uint32_t clippedSizeCount = 0;
 
-        auto run = [&](uint32_t *ids, const void **datas, uint32_t *sizes) {
+        auto run = [&](uint32_t *ids, const void **datas, uint32_t *sizes) -> WriteResult {
             for (size_t i = 0; i < count; ++i) {
                 ids[i] = items[i].id;
                 datas[i] = items[i].data;
@@ -946,21 +964,28 @@ namespace ondemand
                 }
                 if (items[i].id == UINT32_MAX || items[i].data == nullptr) {
                     ++invalidCount;
+                    continue;
+                }
+                /*已分配但不够大时扩容（size==0 的未分配项由 write_batch 返回 NOT_READY）*/
+                uint32_t slotSz = varStore_.slot_size(ids[i]);
+                if (slotSz > 0 && slotSz < sizes[i]) {
+                    varStore_.ensure_capacity(ids[i], sizes[i]);
                 }
             }
-            varStore_.write_batch(ids, datas, sizes, count);
+            return varStore_.write_batch(ids, datas, sizes, count);
         };
 
+        WriteResult result = WriteResult::FAILED;
         if (count <= kStackMax) {
             uint32_t ids[kStackMax];
             const void *datas[kStackMax];
             uint32_t sizes[kStackMax];
-            run(ids, datas, sizes);
+            result = run(ids, datas, sizes);
         } else {
             std::vector<uint32_t> ids(count);
             std::vector<const void *> datas(count);
             std::vector<uint32_t> sizes(count);
-            run(ids.data(), datas.data(), sizes.data());
+            result = run(ids.data(), datas.data(), sizes.data());
         }
 
         if (invalidCount > 0) {
@@ -971,6 +996,7 @@ namespace ondemand
             ONDEMANDLOG_TIME(warning, 5000) << "setVarDataBatch: " << clippedSizeCount
                                             << " items size overflowed uint32_t and were clipped";
         }
+        return result;
     }
 
     /**
@@ -1018,7 +1044,14 @@ namespace ondemand
         uint64_t nodeHash = fast_hash(nodeName);
         const std::string ownPrefix = nodeName_ + "_";
 
-        std::vector<std::pair<std::string, uint32_t>> freqChanges; // 锁外触发回调
+        // 收集需要处理的变量信息
+        struct VarEntry {
+            uint64_t varHash;
+            VarMetadata *meta;
+            uint32_t freq;
+        };
+        std::vector<VarEntry> entries;
+        std::vector<std::pair<std::string, uint32_t>> freqChanges;
         uint32_t missingCount = 0;
 
         std::unique_lock lock(varIndexMutex_);
@@ -1030,10 +1063,15 @@ namespace ondemand
         }
         uint64_t nodeMask = uint64_t(1) << nodeBit;
 
-        for (const auto &varFreq : varFreqs) {
-            std::string metaName = varFreq.name(); // 这里注册请求已经是全名了，不需要再拼接一次了
+        // ── 第一阶段：收集有效变量 + 批量扩展 ──
+        std::vector<uint32_t> expandIds;
+        std::vector<uint32_t> expandSizes;
+        expandIds.reserve(varFreqs.size());
+        expandSizes.reserve(varFreqs.size());
 
-            // 非本发布节点的变量请求直接忽略，不计入 missing，避免跨 pub 场景下无意义重试。
+        for (const auto &varFreq : varFreqs) {
+            std::string metaName = varFreq.name();
+
             if (metaName.compare(0, ownPrefix.size(), ownPrefix) != 0) {
                 continue;
             }
@@ -1041,26 +1079,49 @@ namespace ondemand
             uint64_t varHash = fast_hash(metaName);
             auto it = varIndex_.find(varHash);
             if (it == varIndex_.end()) {
-                // Sub 先 subscribe()、Pub 后 createVars() 的正常竞态，调用方会延迟重试
                 ONDEMANDLOG(debug) << "handleSubscribe: var not yet created, will retry"
-                                   << " var=" << varFreq.name() << " node=" << nodeName;
+                                   << " var=" << metaName << " node=" << nodeName;
                 ++missingCount;
                 continue;
             }
 
             auto &meta = it->second;
 
-            /*解析频率*/
+            // 收集需要扩展的变量
+            auto defIt = varDefineIndex_.find(varHash);
+            if (defIt != varDefineIndex_.end()) {
+                uint32_t defineSize = static_cast<uint32_t>(defIt->second->size());
+                uint32_t targetSize = defineSize > 0 ? defineSize : 32u;
+                if (varStore_.slot_size(meta.varId) < targetSize) {
+                    expandIds.push_back(meta.varId);
+                    expandSizes.push_back(targetSize);
+                }
+            }
+
+            // 解析频率
             uint32_t freq;
             auto result = std::from_chars(varFreq.value().data(),
                                           varFreq.value().data() + varFreq.value().size(), freq);
             if (std::errc() != result.ec) {
-                ONDEMANDLOG(warning) << "Invalid frequency value for var: " << varFreq.name()
+                ONDEMANDLOG(warning) << "Invalid frequency value for var: " << metaName
                                      << " node: " << nodeName << " value: " << varFreq.value();
                 continue;
             }
 
-            /*先从该节点已有的其他频率条目中移除*/
+            entries.push_back({varHash, &meta, freq});
+        }
+
+        // 批量扩展（一次 arena 重分配）
+        if (!expandIds.empty()) {
+            varStore_.ensure_capacity_batch(expandIds.data(), expandSizes.data(), expandIds.size());
+        }
+
+        // ── 第二阶段：处理订阅逻辑 ──
+        for (const auto &entry : entries) {
+            auto &meta = *entry.meta;
+            uint32_t freq = entry.freq;
+
+            // 先从该节点已有的其他频率条目中移除
             for (auto fsIt = meta.freqSubs.begin(); fsIt != meta.freqSubs.end();) {
                 if (fsIt->subMask & nodeMask) {
                     fsIt->subMask &= ~nodeMask;
@@ -1075,7 +1136,7 @@ namespace ondemand
                 }
             }
 
-            /*在 freqSubs 中找到匹配 freq 的条目，或新建*/
+            // 在 freqSubs 中找到匹配 freq 的条目，或新建
             VarMetadata::FreqSub *target = nullptr;
             for (auto &fs : meta.freqSubs) {
                 if (fs.freq == freq) {
@@ -1089,14 +1150,10 @@ namespace ondemand
                 target->freq = freq;
             }
 
-            /*设置该节点的订阅位*/
             target->subMask |= nodeMask;
             target->subCount++;
-
-            /*更新活跃频率数量*/
             meta.activeFreqCount = static_cast<uint8_t>(meta.freqSubs.size());
 
-            /*重新计算最小发布频率*/
             uint32_t oldFreq = meta.currentFreq;
             recalcCurrentFreq(meta);
             schedulerDirty_.store(true, std::memory_order_release);
@@ -1105,7 +1162,7 @@ namespace ondemand
                 freqChanges.emplace_back(meta.realVarName, meta.currentFreq);
             }
 
-            ONDEMANDLOG(info) << "Var [" << varFreq.name() << "] subscribed by node [" << nodeName
+            ONDEMANDLOG(info) << "Var [" << meta.realVarName << "] subscribed by node [" << nodeName
                               << "] at freq=" << freq << "ms, currentFreq=" << meta.currentFreq
                               << "ms";
         }

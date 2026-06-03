@@ -141,10 +141,10 @@ eProsima_user_DllExport size_t CalculateSerializedSizeUserDefined(
                 data.name(), current_alignment);
 
         calculated_size += calculator.CalculateMemberSerializedSize(BaoSky::Cdr::MemberId(1),
-                data.modelName(), current_alignment);
+                data.size(), current_alignment);
 
         calculated_size += calculator.CalculateMemberSerializedSize(BaoSky::Cdr::MemberId(2),
-                data.size(), current_alignment);
+                data.modelName(), current_alignment);
 
         calculated_size += calculator.CalculateMemberSerializedSize(BaoSky::Cdr::MemberId(3),
                 data.modelVersion(), current_alignment);
@@ -176,9 +176,6 @@ eProsima_user_DllExport size_t CalculateSerializedSizeUserDefined(
         calculated_size += calculator.CalculateMemberSerializedSize(BaoSky::Cdr::MemberId(12),
                 data.permission(), current_alignment);
 
-        calculated_size += calculator.CalculateMemberSerializedSize(BaoSky::Cdr::MemberId(13),
-                data.dataSize(), current_alignment);
-
 
     calculated_size += calculator.EndCalculateTypeSerializedSize(previous_encoding, current_alignment);
 
@@ -198,10 +195,10 @@ eProsima_user_DllExport void SerializeUserDefined(
         scdr.Serialize(data.name());
 
         scdr.Serialize(BaoSky::Cdr::MemberId(1));
-        scdr.Serialize(data.modelName());
+        scdr.Serialize(data.size());
 
         scdr.Serialize(BaoSky::Cdr::MemberId(2));
-        scdr.Serialize(data.size());
+        scdr.Serialize(data.modelName());
 
         scdr.Serialize(BaoSky::Cdr::MemberId(3));
         scdr.Serialize(data.modelVersion());
@@ -233,9 +230,6 @@ eProsima_user_DllExport void SerializeUserDefined(
         scdr.Serialize(BaoSky::Cdr::MemberId(12));
         scdr.Serialize(data.permission());
 
-        scdr.Serialize(BaoSky::Cdr::MemberId(13));
-        scdr.Serialize(data.dataSize());
-
     scdr.CdrEndSerializeType();
 }
 
@@ -257,11 +251,11 @@ eProsima_user_DllExport void DeserializeUserDefined(
                                     break;
 
                                 case 1:
-                                        dcdr.Deserialize(data.modelName());
+                                        dcdr.Deserialize(data.size());
                                     break;
 
                                 case 2:
-                                        dcdr.Deserialize(data.size());
+                                        dcdr.Deserialize(data.modelName());
                                     break;
 
                                 case 3:
@@ -302,10 +296,6 @@ eProsima_user_DllExport void DeserializeUserDefined(
 
                                 case 12:
                                         dcdr.Deserialize(data.permission());
-                                    break;
-
-                                case 13:
-                                        dcdr.Deserialize(data.dataSize());
                                     break;
 
                 default:

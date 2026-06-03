@@ -51,14 +51,9 @@ elseif(DDS_IMPL STREQUAL "TXDDS")
         ${CMAKE_SOURCE_DIR}/common/txdds_wrapper/txdds_qos_config.cc
     )
 
-    # TXDDS 库链接
-    set(DDS_LIBS
-        ${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libTXDDS.so
-        ${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libTXCDR.so
-        ${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libTXRuntimeLog.so
-        ${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libssl.so
-        ${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libcrypto.so
-    )
+    # TXDDS 库链接（不依赖 symlink，用 -L + -l 指定，CI 兼容）
+    set(DDS_LIBS TXDDS TXCDR TXRuntimeLog ssl crypto)
+    set(DDS_LINK_DIRS ${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib)
 
     message(STATUS "TXDDS wrapper will be compiled")
 else()
@@ -90,6 +85,9 @@ if(BUILD_LIBRARY)
     target_include_directories(${LIBRARY_OUTPUT_NAME} PRIVATE ${OBJ_CPP_INCLUDE})
 
     # 库也需要链接依赖
+    if(DDS_LINK_DIRS)
+        target_link_directories(${LIBRARY_OUTPUT_NAME} PRIVATE ${DDS_LINK_DIRS})
+    endif()
     target_link_libraries(${LIBRARY_OUTPUT_NAME} PRIVATE
         ${DDS_LIBS}
         ${CMAKE_SOURCE_DIR}/thirdparty/CRoaring/lib/libroaring.so
@@ -109,6 +107,9 @@ set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMA
 target_include_directories(${PROJECT_NAME} PRIVATE  ${OBJ_CPP_INCLUDE})
 
 
+if(DDS_LINK_DIRS)
+    target_link_directories(${PROJECT_NAME} PRIVATE ${DDS_LINK_DIRS})
+endif()
 target_link_libraries(${PROJECT_NAME} PRIVATE
     ${DDS_LIBS}
     ${CMAKE_SOURCE_DIR}/thirdparty/CRoaring/lib/libroaring.so

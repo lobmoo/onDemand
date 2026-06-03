@@ -76,6 +76,12 @@ namespace BaoSky::rtps
             (void)last_sequence;
             should_notify_individual_changes = true;
         }
+
+        virtual void OnDataAvailableImprove(uint8_t *buffer, uint32_t length)
+        {
+            (void)buffer;
+            (void)length;
+        }
     };
 }
 

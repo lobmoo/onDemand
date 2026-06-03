@@ -12,7 +12,6 @@ if(DDS_IMPL STREQUAL "FASTDDS")
         "${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib/libfastdds.so"
         "${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib/libfastcdr.so"
         "${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/lib/libfoonathan_memory-0.7.3.so"
-        "${CMAKE_SOURCE_DIR}/thirdparty/tinyxml/lib/libtinyxml2.a"
     )
     set(DDS_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/thirdparty/fast_dds/include")
 elseif(DDS_IMPL STREQUAL "TXDDS")
@@ -22,13 +21,8 @@ elseif(DDS_IMPL STREQUAL "TXDDS")
         "${CMAKE_SOURCE_DIR}/common/txdds_wrapper/txdds_node.cc"
         "${CMAKE_SOURCE_DIR}/common/txdds_wrapper/txdds_qos_config.cc"
     )
-    set(DDS_LIBS
-        "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libTXDDS.so"
-        "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libTXCDR.so"
-        "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libTXRuntimeLog.so"
-        "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libssl.so"
-        "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libcrypto.so"
-    )
+    set(DDS_LIBS TXDDS TXCDR TXRuntimeLog ssl crypto)
+    set(DDS_LINK_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib")
     set(DDS_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/thirdparty/txdds/include")
 else()
     message(FATAL_ERROR "Invalid DDS_IMPL for tests: ${DDS_IMPL}")
@@ -64,6 +58,10 @@ set(COMMON_LIBS
     pthread
     rt
 )
+
+if(DDS_LINK_DIRS)
+    link_directories(${DDS_LINK_DIRS})
+endif()
 
 # ── test_log ──────────────────────────────────────────────────────────────────
 add_executable(test_log

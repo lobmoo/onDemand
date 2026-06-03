@@ -33,6 +33,8 @@ namespace BaoSky::dds
         virtual ReturnCode Write(void *data, const uint64_t &len) = 0;
 
         virtual ITopic *GetTopic() = 0;
+
+        virtual ReturnCode UpdateQos(const DataWriterQos &qos) = 0;
     };
 }
 

@@ -34,7 +34,7 @@ constexpr uint32_t DSF_Message_NamedBlob_max_cdr_typesize {2316UL};
 constexpr uint32_t DSF_Message_NamedBlob_max_key_cdr_typesize {0UL};
 
 constexpr uint32_t DSF_Message_EventTransfer_max_cdr_typesize {4008UL};
-constexpr uint32_t DSF_Message_EventTransfer_max_key_cdr_typesize {0UL};
+constexpr uint32_t DSF_Message_EventTransfer_max_key_cdr_typesize {4UL};
 
 
 
@@ -43,14 +43,14 @@ constexpr uint32_t DSF_Message_EventTransfer_max_key_cdr_typesize {0UL};
 
 
 constexpr uint32_t DSF_Message_Event_max_cdr_typesize {544UL};
-constexpr uint32_t DSF_Message_Event_max_key_cdr_typesize {0UL};
+constexpr uint32_t DSF_Message_Event_max_key_cdr_typesize {4UL};
 
 
 
 
 
 constexpr uint32_t DSF_Message_Alarm_max_cdr_typesize {1132UL};
-constexpr uint32_t DSF_Message_Alarm_max_key_cdr_typesize {0UL};
+constexpr uint32_t DSF_Message_Alarm_max_key_cdr_typesize {4UL};
 
 
 

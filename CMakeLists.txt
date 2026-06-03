@@ -8,6 +8,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 option(USE_FASTDDS "Use FastDDS implementation" ON)
 option(USE_TXDDS "Use TXDDS implementation" OFF)
 
+if(USE_TXDDS)
+    set(USE_FASTDDS OFF)
+endif()
+
 if(USE_FASTDDS AND USE_TXDDS)
     message(FATAL_ERROR "Cannot enable both USE_FASTDDS and USE_TXDDS")
 endif()

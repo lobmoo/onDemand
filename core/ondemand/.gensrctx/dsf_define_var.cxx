@@ -180,8 +180,8 @@ Define::Define(
         const Define& x)
 {
     m_name = x.m_name;
-    m_modelName = x.m_modelName;
     m_size = x.m_size;
+    m_modelName = x.m_modelName;
     m_modelVersion = x.m_modelVersion;
     m_description = x.m_description;
     m_nodeName = x.m_nodeName;
@@ -192,15 +192,14 @@ Define::Define(
     m_initialValues = x.m_initialValues;
     m_startIndexes = x.m_startIndexes;
     m_permission = x.m_permission;
-    m_dataSize = x.m_dataSize;
 }
 
 Define::Define(
         Define&& x) noexcept
 {
     m_name = std::move(x.m_name);
-    m_modelName = std::move(x.m_modelName);
     m_size = x.m_size;
+    m_modelName = std::move(x.m_modelName);
     m_modelVersion = std::move(x.m_modelVersion);
     m_description = std::move(x.m_description);
     m_nodeName = std::move(x.m_nodeName);
@@ -211,7 +210,6 @@ Define::Define(
     m_initialValues = std::move(x.m_initialValues);
     m_startIndexes = std::move(x.m_startIndexes);
     m_permission = std::move(x.m_permission);
-    m_dataSize = x.m_dataSize;
 }
 
 Define& Define::operator =(
@@ -219,8 +217,8 @@ Define& Define::operator =(
 {
 
     m_name = x.m_name;
-    m_modelName = x.m_modelName;
     m_size = x.m_size;
+    m_modelName = x.m_modelName;
     m_modelVersion = x.m_modelVersion;
     m_description = x.m_description;
     m_nodeName = x.m_nodeName;
@@ -231,7 +229,6 @@ Define& Define::operator =(
     m_initialValues = x.m_initialValues;
     m_startIndexes = x.m_startIndexes;
     m_permission = x.m_permission;
-    m_dataSize = x.m_dataSize;
     return *this;
 }
 
@@ -240,8 +237,8 @@ Define& Define::operator =(
 {
 
     m_name = std::move(x.m_name);
-    m_modelName = std::move(x.m_modelName);
     m_size = x.m_size;
+    m_modelName = std::move(x.m_modelName);
     m_modelVersion = std::move(x.m_modelVersion);
     m_description = std::move(x.m_description);
     m_nodeName = std::move(x.m_nodeName);
@@ -252,7 +249,6 @@ Define& Define::operator =(
     m_initialValues = std::move(x.m_initialValues);
     m_startIndexes = std::move(x.m_startIndexes);
     m_permission = std::move(x.m_permission);
-    m_dataSize = x.m_dataSize;
     return *this;
 }
 
@@ -260,8 +256,8 @@ bool Define::operator ==(
         const Define& x) const
 {
     return (m_name == x.m_name &&
-           m_modelName == x.m_modelName &&
            m_size == x.m_size &&
+           m_modelName == x.m_modelName &&
            m_modelVersion == x.m_modelVersion &&
            m_description == x.m_description &&
            m_nodeName == x.m_nodeName &&
@@ -271,8 +267,7 @@ bool Define::operator ==(
            m_alarms == x.m_alarms &&
            m_initialValues == x.m_initialValues &&
            m_startIndexes == x.m_startIndexes &&
-           m_permission == x.m_permission &&
-           m_dataSize == x.m_dataSize);
+           m_permission == x.m_permission);
 }
 
 bool Define::operator !=(
@@ -321,6 +316,35 @@ std::string& Define::name()
 
 
 /*!
+ * @brief This function sets a value in member size
+ * @param _size New value for member size
+ */
+void Define::size(
+        int32_t _size)
+{
+    m_size = _size;
+}
+
+/*!
+ * @brief This function returns the value of member size
+ * @return Value of member size
+ */
+int32_t Define::size() const
+{
+    return m_size;
+}
+
+/*!
+ * @brief This function returns a reference to member size
+ * @return Reference to member size
+ */
+int32_t& Define::size()
+{
+    return m_size;
+}
+
+
+/*!
  * @brief This function copies the value in member modelName
  * @param _modelName New value to be copied in member modelName
  */
@@ -356,35 +380,6 @@ const std::string& Define::modelName() const
 std::string& Define::modelName()
 {
     return m_modelName;
-}
-
-
-/*!
- * @brief This function sets a value in member size
- * @param _size New value for member size
- */
-void Define::size(
-        int32_t _size)
-{
-    m_size = _size;
-}
-
-/*!
- * @brief This function returns the value of member size
- * @return Value of member size
- */
-int32_t Define::size() const
-{
-    return m_size;
-}
-
-/*!
- * @brief This function returns a reference to member size
- * @return Reference to member size
- */
-int32_t& Define::size()
-{
-    return m_size;
 }
 
 
@@ -765,45 +760,6 @@ const BaoSky::Cdr::optional<DSF::Var::AccessControl>& Define::permission() const
 BaoSky::Cdr::optional<DSF::Var::AccessControl>& Define::permission()
 {
     return m_permission;
-}
-
-
-/*!
- * @brief This function copies the value in member dataSize
- * @param _dataSize New value to be copied in member dataSize
- */
-void Define::dataSize(
-        const BaoSky::Cdr::optional<uint64_t>& _dataSize)
-{
-    m_dataSize = _dataSize;
-}
-
-/*!
- * @brief This function moves the value in member dataSize
- * @param _dataSize New value to be moved in member dataSize
- */
-void Define::dataSize(
-        BaoSky::Cdr::optional<uint64_t>&& _dataSize)
-{
-    m_dataSize = std::move(_dataSize);
-}
-
-/*!
- * @brief This function returns a constant reference to member dataSize
- * @return Constant reference to member dataSize
- */
-const BaoSky::Cdr::optional<uint64_t>& Define::dataSize() const
-{
-    return m_dataSize;
-}
-
-/*!
- * @brief This function returns a reference to member dataSize
- * @return Reference to member dataSize
- */
-BaoSky::Cdr::optional<uint64_t>& Define::dataSize()
-{
-    return m_dataSize;
 }
 
 

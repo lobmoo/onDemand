@@ -1,4 +1,11 @@
 /*
+ * @Author       : wengjiqing wengjiqing@baosight.com
+ * @Date         : 2026-05-27 16:04:03
+ * @FilePath     : /TXDDS/include/txdds/DCPS/topic/TopicDataType.h
+ * Copyright (c) 2024 by BAOSIGHT, All Rights Reserved.
+ * @Description  : 
+ */
+/*
  * @Author      : wengjiqing wengjiqing@baosight.com
  * @Date        : 2025-01-04 14:32:59
  * @FilePath    : /TXDDS/include/DCPS/topic/TopicDataType.h
@@ -60,6 +67,7 @@ namespace BaoSky::dds
         }
 
         uint32_t mTypeSize;
+        bool mIsGetKeyDefined = false;
         std::string mTypeName;
         TypeIdentifierParameter mTypeIdentifierPara;
         TypeObjectParameter mTypeObjectPara;

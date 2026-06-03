@@ -30,7 +30,8 @@ jobs:
             git \
             libgtest-dev \
             libssl-dev \
-            libsndfile1-dev
+            libsndfile1-dev \
+            libasio-dev
 
       - name: Build and install googletest
         run: |
@@ -49,6 +50,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Restore TXDDS symlinks
+        if: env.DDS_IMPL == 'txdds'
+        run: |
+          cd thirdparty/txdds/lib
+          ln -sf libssl.so.1.1 libssl.so
+          ln -sf libcrypto.so.1.1 libcrypto.so
+          ln -sf libTXDDS.so.3.00.2605.2.202605191059 libTXDDS.so
+          ln -sf libTXCDR.so.3.00.2605.2.202605191059 libTXCDR.so
+
       - name: Install dependencies
         run: |
           sudo apt-get update
@@ -58,7 +68,8 @@ jobs:
             git \
             libgtest-dev \
             libssl-dev \
-            libsndfile1-dev
+            libsndfile1-dev \
+            libasio-dev
 
       - name: Build and install googletest
         run: |
@@ -95,6 +106,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     timeout-minutes: 30
+    env:
+      DDS_IMPL: ${{ github.event.inputs.dds_impl || 'fastdds' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -108,7 +121,17 @@ jobs:
             git \
             libgtest-dev \
             libssl-dev \
-            libsndfile1-dev
+            libsndfile1-dev \
+            libasio-dev
+
+      - name: Restore TXDDS symlinks
+        if: env.DDS_IMPL == 'txdds'
+        run: |
+          cd thirdparty/txdds/lib
+          ln -sf libssl.so.1.1 libssl.so
+          ln -sf libcrypto.so.1.1 libcrypto.so
+          ln -sf libTXDDS.so.3.00.2605.2.202605191059 libTXDDS.so
+          ln -sf libTXCDR.so.3.00.2605.2.202605191059 libTXCDR.so
 
       - name: Build and install googletest
         run: |
@@ -128,11 +151,14 @@ jobs:
           cd build
           source ../.env
           mkdir -p test-results
-          chmod +x ./tests/test_log ./tests/test_ddswrapper ./tests/test_ondemand || true
-          ls -l ./tests/test_log ./tests/test_ddswrapper ./tests/test_ondemand
+          chmod +x ./tests/test_log ./tests/test_timer ./tests/test_ddswrapper ./tests/test_ondemand || true
+          ls -l ./tests/test_log ./tests/test_timer ./tests/test_ddswrapper ./tests/test_ondemand
 
           echo "========== Running test_log =========="
           timeout 180s ./tests/test_log --gtest_output=xml:test-results/test_log.xml
+
+          echo "========== Running test_timer =========="
+          timeout 180s ./tests/test_timer --gtest_output=xml:test-results/test_timer.xml
 
           echo "========== Running test_ddswrapper =========="
           timeout 180s ./tests/test_ddswrapper --gtest_output=xml:test-results/test_ddswrapper.xml

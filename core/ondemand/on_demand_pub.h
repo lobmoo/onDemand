@@ -105,7 +105,7 @@ namespace ondemand
          * @param  data   数据指针
          * @param  size   数据大小
          */
-        void setVarData(uint32_t varId, const void *data, size_t size);
+        WriteResult setVarData(uint32_t varId, const void *data, size_t size);
 
         struct VarWriteItem {
             uint32_t id;
@@ -118,7 +118,7 @@ namespace ondemand
          * @param  items  VarWriteItem 数组，每项包含 id/data/size
          * @param  count  数量
          */
-        void setVarDataBatch(const VarWriteItem *items, size_t count);
+        WriteResult setVarDataBatch(const VarWriteItem *items, size_t count);
 
         /**
          * @brief 设置该发布节点的数据序列化类型，影响所有变量的发布，默认 STRUCTS

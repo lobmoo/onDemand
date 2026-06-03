@@ -1,7 +1,7 @@
 /*
  * @Author       : wengjiqing wengjiqing@baosight.com
  * @Date         : 2025-03-17 10:44:21
- * @FilePath     : /TXDDS/include/RTPS/transport/RecvResource.h
+ * @FilePath     : /TXDDS/include/txdds/RTPS/transport/RecvResource.h
  * Copyright (c) 2024 by BAOSIGHT, All Rights Reserved.
  * @Description  :
  */

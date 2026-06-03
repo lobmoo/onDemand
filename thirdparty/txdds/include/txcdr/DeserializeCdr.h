@@ -26,7 +26,6 @@ namespace BaoSky::Cdr
     class TXDDS_API DeserializeCdr : public Cdr
     {
     private:
-        ReturnCode mLastStatus{RETCODE_OK};
         using DeserializeTypeFunctor = ReturnCode (DeserializeCdr::*)(EncodingAlgorithmFlag,
                                                                       std::function<bool(DeserializeCdr &, const uint32_t)>);
         DeserializeTypeFunctor mDeserializeType{nullptr};
@@ -104,12 +103,15 @@ namespace BaoSky::Cdr
             {
                 return mLastStatus;
             }
-
             uint32_t len = 0;
             mLastStatus = Deserialize(len);
-            if (len >= MAX_SIZE || mLastStatus != RETCODE_OK)
+            if (mLastStatus != RETCODE_OK)
             {
-                mLastStatus = MAX_SIZE;
+                return mLastStatus;
+            }
+            if (len >= MAX_SIZE)
+            {
+                mLastStatus = RETCODE_EXCEED_MAX_SIZE;
                 return mLastStatus;
             }
             value.resize(len);
@@ -136,7 +138,6 @@ namespace BaoSky::Cdr
             {
                 return mLastStatus;
             }
-
             if (CdrVersion::XCDRv2 == mCdrVersion)
             {
                 // 适配当前版本序列化，注掉dheader相关代码
@@ -253,31 +254,62 @@ namespace BaoSky::Cdr
             }
             uint32_t decodeValue{0};
             mLastStatus = Deserialize(decodeValue);
+            if (mLastStatus != RETCODE_OK)
+            {
+                return mLastStatus;
+            }
             value = static_cast<_T>(decodeValue);
             return mLastStatus;
         }
 
-        bool Xcdr1DeserializeMemberHeader(
+        ReturnCode Deserialize(const MemberId &value)
+        {
+            this->mNextMemberId = value;
+            return mLastStatus;
+        }
+
+        ReturnCode Xcdr1DeserializeMemberHeader(
             MemberId &member_id,
             Cdr::state &current_state);
         template <class _T>
-        Cdr &Deserialize(
+        ReturnCode Deserialize(
             optional<_T> &value)
         {
+            if (mLastStatus != RETCODE_OK)
+            {
+                return mLastStatus;
+            }
             // XCDR1
             if (EncodingAlgorithmFlag::PLAIN_CDR == mEncodingAlgorithmFlag)
             {
                 Cdr::state current_state(*this);
                 MemberId member_id;
-                Xcdr1DeserializeMemberHeader(member_id, current_state);
+                mLastStatus = Xcdr1DeserializeMemberHeader(member_id, current_state);
+                if (mLastStatus != RETCODE_OK)
+                {
+                    return mLastStatus;
+                }
+                if (mNextMemberId != member_id)
+                {
+                    mLastStatus = RETCODE_ERROR;
+                    return mLastStatus;
+                }
                 auto prev_offset = mOffsetIter;
                 if (0 < current_state.member_size_)
                 {
-                    Deserialize(*value);
+                    bool is_present = true;
+                    value.reset(is_present);
+                    mLastStatus = Deserialize(*value);
+                    if (mLastStatus != RETCODE_OK)
+                    {
+                        return mLastStatus;
+                    }
                 }
                 if (current_state.member_size_ != mOffsetIter - prev_offset)
                 {
                     std::cout << "Member size provided by member header is not equal to the real decoded member size" << std::endl;
+                    mLastStatus = RETCODE_BAD_PARAM;
+                    return mLastStatus;
                 }
             }
             else if (CdrVersion::XCDRv2 == mCdrVersion)
@@ -286,20 +318,24 @@ namespace BaoSky::Cdr
                 // PLAIN_CDR2
                 if (CdrVersion::XCDRv2 == mCdrVersion && EncodingAlgorithmFlag::PL_CDR2 != mEncodingAlgorithmFlag)
                 {
-                    Deserialize(is_present);
+                    mLastStatus = Deserialize(is_present);
+                    if (mLastStatus != RETCODE_OK)
+                    {
+                        return mLastStatus;
+                    }
                 }
                 value.reset(is_present);
                 if (is_present)
                 {
-                    Deserialize(*value);
+                    mLastStatus = Deserialize(*value);
                 }
             }
-            return *this;
+            return mLastStatus;
         }
         ReturnCode DeserializeEncapsulation();
         // void CdrDeserializeType(std::function<bool(DeserializeCdr &)> functor);
-        void CdrDeserializeTypeStart();
-        void CdrDeserializeTypeEnd();
+        ReturnCode CdrDeserializeTypeStart();
+        ReturnCode CdrDeserializeTypeEnd();
 
         ReturnCode DeserializeType(EncodingAlgorithmFlag typeEncoding, std::function<bool(DeserializeCdr &, const uint32_t)> functor);
         ReturnCode DeserializeTypeXCDR2(EncodingAlgorithmFlag typeEncoding, std::function<bool(DeserializeCdr &, const uint32_t)> functor);

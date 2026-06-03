@@ -36,6 +36,12 @@ namespace ondemand
 
     inline constexpr uint32_t align64(uint32_t n) { return (n + 63u) & ~63u; }
 
+    enum class WriteResult : uint8_t {
+        SUCCESS = 0,   // 写入成功
+        NOT_READY,     // 变量内存尚未分配（slot size=0）
+        FAILED         // 写入失败（参数无效、扩容失败等）
+    };
+
     struct VarMeta {
         uint32_t id;
         uint32_t offset;
@@ -82,7 +88,7 @@ namespace ondemand
         VarStore(const VarStore &) = delete;
         VarStore &operator=(const VarStore &) = delete;
 
-        uint32_t register_var(uint64_t hash, uint32_t size)
+        uint32_t register_var(uint64_t hash, uint32_t size = 0)
         {
             ConfigGuard g(this);
             auto it = table_.find(hash);
@@ -97,6 +103,40 @@ namespace ondemand
                 有些SIMD/原子操作要求对齐，防止未对齐访问导致性能下降或异常。*/
             arena_size_ += slot_bytes(size);
             return id;
+        }
+
+        /**
+         * @brief 批量注册变量，一次 ConfigGuard 完成所有注册
+         * @param hashes  变量 hash 数组
+         * @param sizes   对应 size 数组（size=0 表示延迟分配，不占 arena 空间）
+         * @param ids     输出 id 数组
+         * @param count   数量
+         * @return 实际新增注册数量
+         */
+        size_t register_var_batch(const uint64_t *hashes, const uint32_t *sizes,
+                                  uint32_t *ids, size_t count)
+        {
+            if (!hashes || !sizes || !ids || count == 0)
+                return 0;
+
+            ConfigGuard g(this);
+            size_t registered = 0;
+            for (size_t i = 0; i < count; ++i) {
+                auto it = table_.find(hashes[i]);
+                if (it != table_.end()) {
+                    ids[i] = (it->second < metas_.size() && metas_[it->second].size == sizes[i])
+                                 ? it->second
+                                 : kInvalidId;
+                    continue;
+                }
+                uint32_t id = metas_.size();
+                table_[hashes[i]] = id;
+                metas_.push_back({id, arena_size_, sizes[i]});
+                arena_size_ += slot_bytes(sizes[i]);
+                ids[i] = id;
+                ++registered;
+            }
+            return registered;
         }
 
         uint32_t get_id(uint64_t hash) const
@@ -182,40 +222,19 @@ namespace ondemand
             return true;
         }
 
-        // ---- 写接口 ----
-
-        bool write(uint32_t id, const void *src)
-        {
-            OpGuard g(this);
-            if (!arena_ || !dirty_flags_ || id >= var_count_ || metas_[id].size == 0 || !src)
-                return false;
-            auto *slot = (Slot *)(arena_ + metas_[id].offset);
-            uint32_t size = metas_[id].size;
-
-            // [P0-1] 写开始: relaxed fetch_add + release fence，阻止 memcpy 上移到 seq++ 之前
-            slot->seq.fetch_add(1, std::memory_order_relaxed);
-            std::atomic_thread_fence(std::memory_order_release);
-            uint8_t write_idx = 1u - slot->committed.load(std::memory_order_relaxed);
-            std::memcpy(slot->data + write_idx * size, src, size);
-            slot->valid_size[write_idx] = size;
-            slot->committed.store(write_idx, std::memory_order_release);
-            slot->seq.fetch_add(1, std::memory_order_release);
-
-            if (!dirty_flags_[id].exchange(true, std::memory_order_acq_rel))
-                dirty_queue_.enqueue(id);
-            return true;
-        }
-
-        bool write(uint32_t id, const void *src, uint32_t actual_size)
+   
+        WriteResult write(uint32_t id, const void *src, uint32_t actual_size)
         {
             if (!src || actual_size == 0)
-                return false;
+                return WriteResult::FAILED;
 
             for (;;) {
                 {
                     OpGuard g(this);
-                    if (!arena_ || !dirty_flags_ || id >= var_count_ || metas_[id].size == 0)
-                        return false;
+                    if (!arena_ || !dirty_flags_ || id >= var_count_)
+                        return WriteResult::FAILED;
+                    if (metas_[id].size == 0)
+                        return WriteResult::NOT_READY;
 
                     uint32_t size = metas_[id].size;
                     if (actual_size <= size) {
@@ -230,12 +249,12 @@ namespace ondemand
 
                         if (!dirty_flags_[id].exchange(true, std::memory_order_acq_rel))
                             dirty_queue_.enqueue(id);
-                        return true;
+                        return WriteResult::SUCCESS;
                     }
                 }
 
                 if (!ensure_capacity(id, actual_size))
-                    return false;
+                    return WriteResult::FAILED;
             }
         }
 
@@ -246,15 +265,16 @@ namespace ondemand
          * @param sizes 对应数据大小数组
          * @param count 数量
          */
-        void write_batch(const uint32_t *ids, const void *const *datas, const uint32_t *sizes,
-                         size_t count)
+        WriteResult write_batch(const uint32_t *ids, const void *const *datas,
+                                const uint32_t *sizes, size_t count)
         {
             if (!ids || !datas || !sizes)
-                return;
+                return WriteResult::FAILED;
 
             /* 先按需扩容（不持 OpGuard，避免与 config_begin 死锁），
              * 扩容后在单次 OpGuard 内完成所有写入，消除两次 OpGuard 之间
-             * offset 被其他线程扩容改变的窗口。*/
+             * offset 被其他线程扩容改变的窗口。
+             * size==0 的未分配项跳过，由主循环返回 NOT_READY。*/
             for (size_t i = 0; i < count; ++i) {
                 uint32_t id = ids[i];
                 if (id == kInvalidId || !datas[i])
@@ -274,12 +294,17 @@ namespace ondemand
 
             OpGuard g(this);
             if (!arena_ || !dirty_flags_)
-                return;
+                return WriteResult::FAILED;
+            bool any_written = false;
+            bool any_not_ready = false;
             for (size_t i = 0; i < count; ++i) {
                 uint32_t id = ids[i];
-                if (id >= var_count_ || metas_[id].size == 0 || !datas[i])
+                if (!datas[i])
                     continue;
-                /* 在同一个 OpGuard 内读取 offset，保证与扩容后的 metas_ 一致 */
+                if (id >= var_count_ || metas_[id].size == 0) {
+                    any_not_ready = true;
+                    continue;
+                }
                 auto *slot = (Slot *)(arena_ + metas_[id].offset);
                 uint32_t size = metas_[id].size;
                 uint32_t actual = sizes[i] <= size ? sizes[i] : size;
@@ -294,7 +319,11 @@ namespace ondemand
 
                 if (!dirty_flags_[id].exchange(true, std::memory_order_acq_rel))
                     dirty_queue_.enqueue(id);
+                any_written = true;
             }
+            if (any_written)
+                return WriteResult::SUCCESS;
+            return any_not_ready ? WriteResult::NOT_READY : WriteResult::FAILED;
         }
 
         // ---- 读接口 ----
@@ -467,17 +496,17 @@ namespace ondemand
             return metas_[id].size;
         }
 
-    private:
-        mutable std::mutex reconfig_mu_;
-        mutable std::condition_variable reconfig_cv_;
-
+    public:
+        /**
+         * @brief 扩展指定变量的 slot 到至少 required 字节（供延迟分配场景使用）
+         */
         bool ensure_capacity(uint32_t id, uint32_t required)
         {
             if (required == 0 || id >= metas_.size())
                 return false;
 
             ConfigGuard g(this);
-            if (id >= metas_.size() || metas_[id].size == 0)
+            if (id >= metas_.size())
                 return false;
 
             uint32_t old_size = metas_[id].size;
@@ -485,9 +514,11 @@ namespace ondemand
                 return true;
 
             uint32_t new_size = required;
-            uint32_t doubled = old_size > (UINT32_MAX / 2u) ? old_size : old_size * 2u;
-            if (doubled > new_size)
-                new_size = doubled;
+            if (old_size > 0) {
+                uint32_t doubled = old_size > (UINT32_MAX / 2u) ? old_size : old_size * 2u;
+                if (doubled > new_size)
+                    new_size = doubled;
+            }
 
             std::vector<uint32_t> new_offsets(metas_.size(), 0u);
             uint32_t new_arena_size = 0;
@@ -538,6 +569,103 @@ namespace ondemand
             arena_size_ = new_arena_size;
             return true;
         }
+
+        /**
+         * @brief 批量扩展多个变量的 slot，一次 ConfigGuard + 一次 arena 重分配
+         * @param ids     变量 id 数组
+         * @param sizes   对应所需最小 size 数组
+         * @param count   数量
+         * @return true 全部成功（或无需扩展），false 失败
+         */
+        bool ensure_capacity_batch(const uint32_t *ids, const uint32_t *sizes, size_t count)
+        {
+            if (!ids || !sizes || count == 0)
+                return false;
+
+            ConfigGuard g(this);
+
+            // 1. 计算每个变量的新 size，判断是否需要扩展
+            std::vector<uint32_t> new_sizes(metas_.size());
+            for (size_t i = 0; i < metas_.size(); ++i)
+                new_sizes[i] = metas_[i].size;
+
+            bool any_expand = false;
+            for (size_t k = 0; k < count; ++k) {
+                uint32_t id = ids[k];
+                uint32_t required = sizes[k];
+                if (id >= metas_.size() || required == 0)
+                    continue;
+                uint32_t old_size = new_sizes[id];
+                if (required <= old_size)
+                    continue;
+                uint32_t ns = required;
+                if (old_size > 0) {
+                    uint32_t doubled = old_size > (UINT32_MAX / 2u) ? old_size : old_size * 2u;
+                    if (doubled > ns)
+                        ns = doubled;
+                }
+                new_sizes[id] = ns;
+                any_expand = true;
+            }
+
+            if (!any_expand)
+                return true;
+
+            // 2. 计算新 arena 总大小和每个 slot 的新 offset
+            std::vector<uint32_t> new_offsets(metas_.size(), 0u);
+            uint32_t new_arena_size = 0;
+            for (size_t i = 0; i < metas_.size(); ++i) {
+                new_offsets[i] = new_arena_size;
+                new_arena_size += slot_bytes(new_sizes[i]);
+            }
+            new_arena_size = align64(new_arena_size);
+
+            // 3. 分配新 arena
+            void *new_arena = std::aligned_alloc(64, new_arena_size);
+            if (!new_arena)
+                return false;
+            std::memset(new_arena, 0, new_arena_size);
+
+            // 4. 一次拷贝所有 slot
+            if (arena_) {
+                for (size_t i = 0; i < metas_.size(); ++i) {
+                    uint32_t src_size = metas_[i].size;
+                    uint32_t dst_size = new_sizes[i];
+
+                    auto *src_slot = reinterpret_cast<Slot *>(arena_ + metas_[i].offset);
+                    auto *dst_slot = reinterpret_cast<Slot *>(
+                        reinterpret_cast<std::byte *>(new_arena) + new_offsets[i]);
+
+                    dst_slot->seq.store(src_slot->seq.load(std::memory_order_relaxed),
+                                        std::memory_order_relaxed);
+                    dst_slot->committed.store(src_slot->committed.load(std::memory_order_relaxed),
+                                              std::memory_order_relaxed);
+                    dst_slot->valid_size[0] = src_slot->valid_size[0];
+                    dst_slot->valid_size[1] = src_slot->valid_size[1];
+
+                    uint32_t copy_size = src_size < dst_size ? src_size : dst_size;
+                    if (copy_size > 0) {
+                        std::memcpy(dst_slot->data, src_slot->data, copy_size);
+                        std::memcpy(dst_slot->data + dst_size, src_slot->data + src_size,
+                                    copy_size);
+                    }
+                }
+            }
+
+            // 5. 替换 arena，更新所有 metas
+            std::free(arena_);
+            arena_ = reinterpret_cast<std::byte *>(new_arena);
+            for (size_t i = 0; i < metas_.size(); ++i) {
+                metas_[i].size = new_sizes[i];
+                metas_[i].offset = new_offsets[i];
+            }
+            arena_size_ = new_arena_size;
+            return true;
+        }
+
+    private:
+        mutable std::mutex reconfig_mu_;
+        mutable std::condition_variable reconfig_cv_;
 
         struct OpGuard {
             const VarStore *s_;

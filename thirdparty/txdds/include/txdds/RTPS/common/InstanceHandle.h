@@ -1,4 +1,11 @@
 /*
+ * @Author       : wengjiqing wengjiqing@baosight.com
+ * @Date         : 2026-05-19 13:26:16
+ * @FilePath     : /TXDDS/include/txdds/RTPS/common/InstanceHandle.h
+ * Copyright (c) 2024 by BAOSIGHT, All Rights Reserved.
+ * @Description  : 
+ */
+/*
  * @Author      : wengjiqing wengjiqing@baosight.com
  * @Date        : 2024-09-24 16:23:48
  * @FilePath: /TXDDS/include/RTPS/common/InstanceHandle.h
@@ -50,7 +57,19 @@ namespace BaoSky::rtps
     {
         return (handle1.mIsSet != handle2.mIsSet) || (handle1.mValue != handle2.mValue);
     }
-
+    inline std::ostream &operator<<(
+        std::ostream &output,
+        const InstanceHandle &iHandle)
+    {
+        std::stringstream ss;
+        ss << std::hex;
+        for (uint8_t i = 0; i < 15; ++i)
+        {
+            ss << (int)iHandle.mValue[i] << ".";
+        }
+        ss << (int)iHandle.mValue[15] << std::dec;
+        return output << ss.str();
+    }
 }
 
 #endif

@@ -345,6 +345,7 @@ namespace BaoSky::dds
         long mMaxSamplesPerInstance = 100;
         long mAllocatedSamples = 1;
         long mExtraSamples = 1;
+        uint16_t mMaxMessageLength = 65000;
     };
 
     class DurabilityServiceQosPolicy : public BaoSky::rtps::Parameter, public QosPolicy
@@ -483,7 +484,10 @@ namespace BaoSky::dds
         int16_t mEntity = -1;
 
         BaoSky::rtps::MemoryManagementPolicy mHistoryMemoryPolicy = BaoSky::rtps::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
+
         int16_t mMaxMatchedLimit = -1;
+
+        bool mIsSHMDirect = false;
     };
 }
 #endif

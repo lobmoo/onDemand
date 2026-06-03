@@ -171,9 +171,9 @@ namespace BaoSky::rtps
         IStatefulReader *mReader;
 
         ScheduledEvent *mHeartBeatEvent;
-
+        ScheduledEvent *mInitialHeartBeatEvent;
         bool mFinalFlag;
-
+        bool mInitialFlag;
         bool mAlive;
     };
 }

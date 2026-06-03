@@ -156,6 +156,13 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                            scdr.Serialize(data.eventCode());
+
+
+
+
+
+
 }
 
 
@@ -325,6 +332,17 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                            scdr.Serialize(data.eventCode());
+
+
+
+
+
+
+
+
+
+
 }
 
 

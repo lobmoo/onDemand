@@ -146,6 +146,10 @@ namespace BaoSky::Cdr
         }
 
         CdrVersion GetCdrVersion();
+        inline ReturnCode GetLastStatus()
+        {
+            return mLastStatus;
+        }
 
     protected:
         uint8_t mEndianness{Endianness::LITTLE_ENDIANNESS};
@@ -179,6 +183,7 @@ namespace BaoSky::Cdr
         // This attribute stores the option flags when the CDR type is DDS_CDR;
         std::array<uint8_t, 2> mOptions{{0}};
         MemberId mNextMemberId;
+        ReturnCode mLastStatus{RETCODE_OK};
     };
 }
 #endif
