@@ -1,10 +1,11 @@
 #ifndef ON_DEMAND_LISTENER_H
 #define ON_DEMAND_LISTENER_H
 
+#include <functional>
 #include <memory>
+#include <string>
 #include <vector>
 #include "dds_wrapper/dds_abstraction.h"
-#include "log/logger.h"
 
 namespace dsf
 {
@@ -20,19 +21,36 @@ namespace ondemand
  *   3. onSubscriptionMatched   — reader 匹配到 writer
  *
  * 子类 override 这三个方法做业务逻辑。
+ * 外部用户通过 setXxxCallback() 注册回调，参数统一为 (topicName, currentCount, change, totalCount)。
  * 创建 DataReader 时调 createReaderListener<T>() 获取 listener 指针。
  */
 class OnDemandListener : public DdsWrapper::ParticipantListener,
                           public DdsWrapper::DataWriterListener
 {
 public:
+    // 回调类型：topic名、当前匹配数、变化量、累计总数
+    using MatchedCallback = std::function<void(const std::string &topicName, int currentCount,
+                                               int currentCountChange, int totalCount)>;
+
     OnDemandListener() = default;
     ~OnDemandListener() override = default;
 
     OnDemandListener(const OnDemandListener &) = delete;
     OnDemandListener &operator=(const OnDemandListener &) = delete;
 
-    // ---- 业务入口（子类 override） ----
+    // ---- 回调注册（给用户用） ----
+
+    void setOnPublicationMatchedCallback(MatchedCallback cb)
+    {
+        pubMatchedCb_ = std::move(cb);
+    }
+
+    void setOnSubscriptionMatchedCallback(MatchedCallback cb)
+    {
+        subMatchedCb_ = std::move(cb);
+    }
+
+    // ---- DDS 回调入口（子类可 override 扩展） ----
 
     virtual void onParticipantDiscovery(const DdsWrapper::ParticipantInfo &info)
     {
@@ -41,18 +59,18 @@ public:
 
     void onPublicationMatched(const DdsWrapper::MatchedInfo &info) override
     {
-        ONDEMANDLOG(critical) << "onPublicationMatched: topic=" << info.topic_name
-                          << " current=" << info.current_count
-                          << " change=" << info.current_count_change
-                          << " total=" << info.total_count;
+        if (pubMatchedCb_) {
+            pubMatchedCb_(info.topic_name, info.current_count, info.current_count_change,
+                          info.total_count);
+        }
     }
 
     virtual void onSubscriptionMatched(const DdsWrapper::MatchedInfo &info)
     {
-        ONDEMANDLOG(critical) << "onSubscriptionMatched: topic=" << info.topic_name
-                          << " current=" << info.current_count
-                          << " change=" << info.current_count_change
-                          << " total=" << info.total_count;
+        if (subMatchedCb_) {
+            subMatchedCb_(info.topic_name, info.current_count, info.current_count_change,
+                          info.total_count);
+        }
     }
 
     // ---- Reader Listener 工厂（声明，定义在 OndemandDataReaderListener 之后） ----
@@ -62,6 +80,8 @@ public:
 
 private:
     std::vector<std::shared_ptr<void>> readerListeners_;
+    MatchedCallback pubMatchedCb_;
+    MatchedCallback subMatchedCb_;
 };
 
 /**
