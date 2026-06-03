@@ -18,6 +18,7 @@
 #define ON_DEMAND_SUB_H
 
 #include "on_demand_common.h"
+#include "on_demand_listener.h"
 #include "concurrentqueue.h"
 #include "variable_store.h"
 #include "timer_wheel/timer_scheduler.h"
@@ -66,7 +67,7 @@ namespace ondemand
     /**
  * @brief 按需订阅器 V2 - 重构版本
  */
-    class OnDemandSub : public DdsWrapper::ParticipantListener
+    class OnDemandSub : public OnDemandListener
     {
     public:
         OnDemandSub();
@@ -156,14 +157,11 @@ namespace ondemand
         }
 
     private:
-        // ParticipantListener 回调
-         void onParticipantDiscovery(const DdsWrapper::ParticipantInfo &info) override;
-         
         /**
-         * @brief 订阅者发现回调，处理新订阅者的注册信息，更新内部状态
-         * @param  info             订阅者端点信息，包含节点名称、订阅的变量和频率等
+         * @brief Participant 掉线回调，清除该 publisher 的所有变量定义
+         * @param  info  participant 信息，包含节点名称和状态
          */
-        void onWriterDiscovery(const DdsWrapper::EndpointInfo &info) override;
+        void onParticipantDiscovery(const DdsWrapper::ParticipantInfo &info) override;
 
     private:
         /**

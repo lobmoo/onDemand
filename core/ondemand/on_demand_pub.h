@@ -20,6 +20,7 @@
 #include <shared_mutex>
 #include <memory>
 #include "on_demand_common.h"
+#include "on_demand_listener.h"
 #include "variable_store.h"
 #include "timer_wheel/timer_scheduler.h"
 
@@ -28,7 +29,7 @@ namespace dsf
 namespace ondemand
 {
 
-    class OnDemandPub : public DdsWrapper::ParticipantListener
+    class OnDemandPub : public OnDemandListener
     {
     public:
         // varName: 变量全名, newFreqMs: 新的发送周期(ms), 0xFFFFFFFF 表示无订阅者
@@ -154,16 +155,8 @@ namespace ondemand
         bool cleanupParticipantSubscriptions(const std::string &participantName);
 
     private:
-        // ParticipantListener 回调
-        // void onReaderDiscovery(const DdsWrapper::EndpointInfo &info) override;
         /**
-         * @brief 订阅者发现回调，处理新订阅者的注册信息，更新内部状态
-         * @param  info             订阅者端点信息，包含节点名称、订阅的变量和频率等
-         */
-        void onWriterDiscovery(const DdsWrapper::EndpointInfo &info) override;
-
-        /**
-         * @brief Participant 掉线回调，sub 异常掉线时强制清除其所有订阅
+         * @brief Participant 掉线回调，清除该 participant 的所有订阅
          * @param  info  participant 信息，包含节点名称和状态
          */
         void onParticipantDiscovery(const DdsWrapper::ParticipantInfo &info) override;

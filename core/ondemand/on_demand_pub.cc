@@ -147,7 +147,7 @@ namespace ondemand
             != dsf::ondemand::registerNodeTopicWriter<DSF::Var::PubTableDefine,
                                                       DSF::Var::PubTableDefinePubSubType>(
                 dataNode_, pubTableDefineWriter_, DSF::Var::TABLE_DEFINE_TOPIC_NAME,
-                writerQosBuilder)) {
+                writerQosBuilder, this)) {
             ONDEMANDLOG(error) << "Failed to register topic for PubTableDefine: "
                                << DSF::Var::TABLE_DEFINE_TOPIC_NAME;
             return false;
@@ -181,7 +181,8 @@ namespace ondemand
                                                       DSF::Message::SubTableRegisterPubSubType>(
                 dataNode_, subTableRegisterReqReader_,
                 DSF::Message::MESSAGE_COMMAND_REQUEST_SUB_TABLE_REGISTER_TOPIC_NAME, processFunc,
-                readerQosBuilder)) {
+                readerQosBuilder,
+                createReaderListener<DSF::Message::SubTableRegister>())) {
             ONDEMANDLOG(error)
                 << "Failed to register topic for SubTableRegister: "
                 << DSF::Message::MESSAGE_COMMAND_REQUEST_SUB_TABLE_REGISTER_TOPIC_NAME;
@@ -236,7 +237,7 @@ namespace ondemand
 
             writer = dataNode_->createDataWriter<DSF::Var::TableDataTransfer,
                                                  DSF::Var::TableDataTransferPubSubType>(
-                topicName, DATA_TRANSFER_PUB_SUB_NAME, writerQosBuilder);
+                topicName, DATA_TRANSFER_PUB_SUB_NAME, writerQosBuilder, this);
             if (!writer) {
                 ONDEMANDLOG(error)
                     << "Failed to create topic writer for topic [" << topicName << "].";
@@ -1243,16 +1244,6 @@ namespace ondemand
         for (const auto &[varName, newFreq] : freqChanges) {
             freqChangeQueue_.enqueue({varName, newFreq});
         }
-    }
-
-    /**
-     * @brief 订阅者发现回调，处理新订阅者的注册信息，更新内部状态
-     * @param  info 订阅者端点信息，包含节点名称、订阅的变量和频率等
-     */
-    void OnDemandPub::onWriterDiscovery(const DdsWrapper::EndpointInfo &info)
-    {
-        ONDEMANDLOG(debug) << "[pub node]Writer discovery: topic=" << info.topic_name
-                           << " type=" << info.type_name << " discovered=" << info.discovered;
     }
 
     void OnDemandPub::onParticipantDiscovery(const DdsWrapper::ParticipantInfo &info)

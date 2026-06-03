@@ -118,7 +118,8 @@ namespace ondemand
             != dsf::ondemand::registerNodeTopicReader<DSF::Var::PubTableDefine,
                                                       DSF::Var::PubTableDefinePubSubType>(
                 dataNode_, pubTableDefineReader_, DSF::Var::TABLE_DEFINE_TOPIC_NAME, processFunc,
-                readerQosBuilder)) {
+                readerQosBuilder,
+                createReaderListener<DSF::Var::PubTableDefine>())) {
             ONDEMANDLOG(error)
                 << "Failed to register topic for SubTableRegister: "
                 << DSF::Message::MESSAGE_COMMAND_REQUEST_SUB_TABLE_REGISTER_TOPIC_NAME;
@@ -151,7 +152,7 @@ namespace ondemand
                                                       DSF::Message::SubTableRegisterPubSubType>(
                 dataNode_, subTableRegisterReqWriter_,
                 DSF::Message::MESSAGE_COMMAND_REQUEST_SUB_TABLE_REGISTER_TOPIC_NAME,
-                writerQosBuilder)) {
+                writerQosBuilder, this)) {
             ONDEMANDLOG(error)
                 << "Failed to register topic for SubTableRegister: "
                 << DSF::Message::MESSAGE_COMMAND_REQUEST_SUB_TABLE_REGISTER_TOPIC_NAME;
@@ -212,7 +213,8 @@ namespace ondemand
 
             reader = dataNode_->createDataReader<DSF::Var::TableDataTransfer,
                                                  DSF::Var::TableDataTransferPubSubType>(
-                topicName, DATA_TRANSFER_PUB_SUB_NAME, processFunc, readerQosBuilder);
+                topicName, DATA_TRANSFER_PUB_SUB_NAME, processFunc, readerQosBuilder,
+                createReaderListener<DSF::Var::TableDataTransfer>());
 
             dataTransferReaderMap_.emplace(bucketId, reader);
             ONDEMANDLOG(info) << "Created DataTransfer reader for bucketId: " << bucketId
@@ -1008,12 +1010,6 @@ namespace ondemand
         callbackGroupMembers_.clear();
 
         ONDEMANDLOG(info) << "All callback group timers canceled";
-    }
-
-    void OnDemandSub::onWriterDiscovery(const DdsWrapper::EndpointInfo &info)
-    {
-        ONDEMANDLOG(debug) << "[sub node]Writer discovery: topic=" << info.topic_name
-                           << " type=" << info.type_name << " discovered=" << info.discovered;
     }
 
     std::unordered_map<std::string, std::vector<std::string>> OnDemandSub::getAvailableVars() const
