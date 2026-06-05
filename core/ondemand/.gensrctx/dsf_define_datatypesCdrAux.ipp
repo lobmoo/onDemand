@@ -92,10 +92,12 @@ eProsima_user_DllExport void DeserializeUserDefined(
             switch (mid)
             {
                                 case 0:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(0));
                                         dcdr.Deserialize(data.tv_sec());
                                     break;
 
                                 case 1:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(1));
                                         dcdr.Deserialize(data.tv_nsec());
                                     break;
 
@@ -108,7 +110,7 @@ eProsima_user_DllExport void DeserializeUserDefined(
 
 }
 
-void serialize_key(
+void BaoSky::Cdr::SerializeKey(
         BaoSky::Cdr::SerializeCdr& scdr,
         const DSF::Timespec& data)
 {
@@ -181,10 +183,12 @@ eProsima_user_DllExport void DeserializeUserDefined(
             switch (mid)
             {
                                 case 0:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(0));
                                         dcdr.Deserialize(data.name());
                                     break;
 
                                 case 1:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(1));
                                         dcdr.Deserialize(data.value());
                                     break;
 
@@ -197,7 +201,7 @@ eProsima_user_DllExport void DeserializeUserDefined(
 
 }
 
-void serialize_key(
+void BaoSky::Cdr::SerializeKey(
         BaoSky::Cdr::SerializeCdr& scdr,
         const DSF::NamedValue& data)
 {
@@ -270,10 +274,12 @@ eProsima_user_DllExport void DeserializeUserDefined(
             switch (mid)
             {
                                 case 0:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(0));
                                         dcdr.Deserialize(data.key());
                                     break;
 
                                 case 1:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(1));
                                         dcdr.Deserialize(data.pairs());
                                     break;
 
@@ -286,7 +292,7 @@ eProsima_user_DllExport void DeserializeUserDefined(
 
 }
 
-void serialize_key(
+void BaoSky::Cdr::SerializeKey(
         BaoSky::Cdr::SerializeCdr& scdr,
         const DSF::StructuredDataMapEntry& data)
 {
@@ -359,10 +365,12 @@ eProsima_user_DllExport void DeserializeUserDefined(
             switch (mid)
             {
                                 case 0:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(0));
                                         dcdr.Deserialize(data.data());
                                     break;
 
                                 case 1:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(1));
                                         dcdr.Deserialize(data.length());
                                     break;
 
@@ -375,7 +383,7 @@ eProsima_user_DllExport void DeserializeUserDefined(
 
 }
 
-void serialize_key(
+void BaoSky::Cdr::SerializeKey(
         BaoSky::Cdr::SerializeCdr& scdr,
         const DSF::DataBuffer& data)
 {
@@ -454,14 +462,17 @@ eProsima_user_DllExport void DeserializeUserDefined(
             switch (mid)
             {
                                 case 0:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(0));
                                         dcdr.Deserialize(data.fname());
                                     break;
 
                                 case 1:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(1));
                                         dcdr.Deserialize(data.fdata());
                                     break;
 
                                 case 2:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(2));
                                         dcdr.Deserialize(data.fversion());
                                     break;
 
@@ -474,7 +485,7 @@ eProsima_user_DllExport void DeserializeUserDefined(
 
 }
 
-void serialize_key(
+void BaoSky::Cdr::SerializeKey(
         BaoSky::Cdr::SerializeCdr& scdr,
         const DSF::DataTypes::DT_FILE& data)
 {
@@ -532,10 +543,10 @@ void SerializeUserDefined(
         const DSF::DataTypes::DT_TIME& data)
 {
     using namespace DSF::DataTypes;
-
     scdr.CdrBeginSerializeType();
+    scdr.Serialize(BaoSky::Cdr::MemberId(0));
     scdr.Serialize(data._d());
-
+    scdr.Serialize(BaoSky::Cdr::MemberId(1));
     switch (data._d())
     {
         //2
@@ -569,9 +580,11 @@ void DeserializeUserDefined(
                 switch (mid)
                 {
                     case 0:
+                        dcdr.Deserialize(BaoSky::Cdr::MemberId(0));
                         dcdr.Deserialize(data._d());
                         break;
                     default:
+                        dcdr.Deserialize(BaoSky::Cdr::MemberId(1));
                         switch (data._d())
                         {
                             //3
@@ -638,10 +651,10 @@ void SerializeUserDefined(
         const DSF::DataTypes::DT_DATE& data)
 {
     using namespace DSF::DataTypes;
-
     scdr.CdrBeginSerializeType();
+    scdr.Serialize(BaoSky::Cdr::MemberId(0));
     scdr.Serialize(data._d());
-
+    scdr.Serialize(BaoSky::Cdr::MemberId(1));
     switch (data._d())
     {
         //2
@@ -675,9 +688,11 @@ void DeserializeUserDefined(
                 switch (mid)
                 {
                     case 0:
+                        dcdr.Deserialize(BaoSky::Cdr::MemberId(0));
                         dcdr.Deserialize(data._d());
                         break;
                     default:
+                        dcdr.Deserialize(BaoSky::Cdr::MemberId(1));
                         switch (data._d())
                         {
                             //3
@@ -744,10 +759,10 @@ void SerializeUserDefined(
         const DSF::DataTypes::DT_TIME_OF_DAY& data)
 {
     using namespace DSF::DataTypes;
-
     scdr.CdrBeginSerializeType();
+    scdr.Serialize(BaoSky::Cdr::MemberId(0));
     scdr.Serialize(data._d());
-
+    scdr.Serialize(BaoSky::Cdr::MemberId(1));
     switch (data._d())
     {
         //2
@@ -781,9 +796,11 @@ void DeserializeUserDefined(
                 switch (mid)
                 {
                     case 0:
+                        dcdr.Deserialize(BaoSky::Cdr::MemberId(0));
                         dcdr.Deserialize(data._d());
                         break;
                     default:
+                        dcdr.Deserialize(BaoSky::Cdr::MemberId(1));
                         switch (data._d())
                         {
                             //3
@@ -850,10 +867,10 @@ void SerializeUserDefined(
         const DSF::DataTypes::DT_DATE_AND_TIME& data)
 {
     using namespace DSF::DataTypes;
-
     scdr.CdrBeginSerializeType();
+    scdr.Serialize(BaoSky::Cdr::MemberId(0));
     scdr.Serialize(data._d());
-
+    scdr.Serialize(BaoSky::Cdr::MemberId(1));
     switch (data._d())
     {
         //2
@@ -887,9 +904,11 @@ void DeserializeUserDefined(
                 switch (mid)
                 {
                     case 0:
+                        dcdr.Deserialize(BaoSky::Cdr::MemberId(0));
                         dcdr.Deserialize(data._d());
                         break;
                     default:
+                        dcdr.Deserialize(BaoSky::Cdr::MemberId(1));
                         switch (data._d())
                         {
                             //3
@@ -956,10 +975,10 @@ void SerializeUserDefined(
         const DSF::DataTypes::DT_LDATE& data)
 {
     using namespace DSF::DataTypes;
-
     scdr.CdrBeginSerializeType();
+    scdr.Serialize(BaoSky::Cdr::MemberId(0));
     scdr.Serialize(data._d());
-
+    scdr.Serialize(BaoSky::Cdr::MemberId(1));
     switch (data._d())
     {
         //2
@@ -993,9 +1012,11 @@ void DeserializeUserDefined(
                 switch (mid)
                 {
                     case 0:
+                        dcdr.Deserialize(BaoSky::Cdr::MemberId(0));
                         dcdr.Deserialize(data._d());
                         break;
                     default:
+                        dcdr.Deserialize(BaoSky::Cdr::MemberId(1));
                         switch (data._d())
                         {
                             //3
@@ -1062,10 +1083,10 @@ void SerializeUserDefined(
         const DSF::DataTypes::DT_LTIME_OF_DAY& data)
 {
     using namespace DSF::DataTypes;
-
     scdr.CdrBeginSerializeType();
+    scdr.Serialize(BaoSky::Cdr::MemberId(0));
     scdr.Serialize(data._d());
-
+    scdr.Serialize(BaoSky::Cdr::MemberId(1));
     switch (data._d())
     {
         //2
@@ -1099,9 +1120,11 @@ void DeserializeUserDefined(
                 switch (mid)
                 {
                     case 0:
+                        dcdr.Deserialize(BaoSky::Cdr::MemberId(0));
                         dcdr.Deserialize(data._d());
                         break;
                     default:
+                        dcdr.Deserialize(BaoSky::Cdr::MemberId(1));
                         switch (data._d())
                         {
                             //3
@@ -1168,10 +1191,10 @@ void SerializeUserDefined(
         const DSF::DataTypes::DT_LDATE_AND_TIME& data)
 {
     using namespace DSF::DataTypes;
-
     scdr.CdrBeginSerializeType();
+    scdr.Serialize(BaoSky::Cdr::MemberId(0));
     scdr.Serialize(data._d());
-
+    scdr.Serialize(BaoSky::Cdr::MemberId(1));
     switch (data._d())
     {
         //2
@@ -1205,9 +1228,11 @@ void DeserializeUserDefined(
                 switch (mid)
                 {
                     case 0:
+                        dcdr.Deserialize(BaoSky::Cdr::MemberId(0));
                         dcdr.Deserialize(data._d());
                         break;
                     default:
+                        dcdr.Deserialize(BaoSky::Cdr::MemberId(1));
                         switch (data._d())
                         {
                             //3

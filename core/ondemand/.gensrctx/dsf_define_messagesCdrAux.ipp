@@ -116,26 +116,32 @@ eProsima_user_DllExport void DeserializeUserDefined(
             switch (mid)
             {
                                 case 0:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(0));
                                         dcdr.Deserialize(data.eventCode());
                                     break;
 
                                 case 1:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(1));
                                         dcdr.Deserialize(data.payloadType());
                                     break;
 
                                 case 2:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(2));
                                         dcdr.Deserialize(data.description());
                                     break;
 
                                 case 3:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(3));
                                         dcdr.Deserialize(data.category());
                                     break;
 
                                 case 4:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(4));
                                         dcdr.Deserialize(data.createTime());
                                     break;
 
                                 case 5:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(5));
                                         dcdr.Deserialize(data.msgType());
                                     break;
 
@@ -148,7 +154,7 @@ eProsima_user_DllExport void DeserializeUserDefined(
 
 }
 
-void serialize_key(
+void BaoSky::Cdr::SerializeKey(
         BaoSky::Cdr::SerializeCdr& scdr,
         const DSF::Message::Event& data)
 {
@@ -276,42 +282,52 @@ eProsima_user_DllExport void DeserializeUserDefined(
             switch (mid)
             {
                                 case 0:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(0));
                                         dcdr.Deserialize(data.eventCode());
                                     break;
 
                                 case 1:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(1));
                                         dcdr.Deserialize(data.srcNode());
                                     break;
 
                                 case 2:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(2));
                                         dcdr.Deserialize(data.seqNum());
                                     break;
 
                                 case 3:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(3));
                                         dcdr.Deserialize(data.sourceTime());
                                     break;
 
                                 case 4:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(4));
                                         dcdr.Deserialize(data.sendTime());
                                     break;
 
                                 case 5:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(5));
                                         dcdr.Deserialize(data.payloadData());
                                     break;
 
                                 case 6:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(6));
                                         dcdr.Deserialize(data.payloadBlobType());
                                     break;
 
                                 case 7:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(7));
                                         dcdr.Deserialize(data.nodeInfo());
                                     break;
 
                                 case 8:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(8));
                                         dcdr.Deserialize(data.relatedVars());
                                     break;
 
                                 case 9:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(9));
                                         dcdr.Deserialize(data.relatedNodes());
                                     break;
 
@@ -324,7 +340,7 @@ eProsima_user_DllExport void DeserializeUserDefined(
 
 }
 
-void serialize_key(
+void BaoSky::Cdr::SerializeKey(
         BaoSky::Cdr::SerializeCdr& scdr,
         const DSF::Message::EventTransfer& data)
 {
@@ -408,10 +424,12 @@ eProsima_user_DllExport void DeserializeUserDefined(
             switch (mid)
             {
                                 case 0:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(0));
                                         dcdr.Deserialize(data.name());
                                     break;
 
                                 case 1:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(1));
                                         dcdr.Deserialize(data.blob());
                                     break;
 
@@ -424,7 +442,7 @@ eProsima_user_DllExport void DeserializeUserDefined(
 
 }
 
-void serialize_key(
+void BaoSky::Cdr::SerializeKey(
         BaoSky::Cdr::SerializeCdr& scdr,
         const DSF::Message::NamedBlob& data)
 {
@@ -503,14 +521,17 @@ eProsima_user_DllExport void DeserializeUserDefined(
             switch (mid)
             {
                                 case 0:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(0));
                                         dcdr.Deserialize(data.nodeName());
                                     break;
 
                                 case 1:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(1));
                                         dcdr.Deserialize(data.type());
                                     break;
 
                                 case 2:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(2));
                                         dcdr.Deserialize(data.namedValue());
                                     break;
 
@@ -523,7 +544,7 @@ eProsima_user_DllExport void DeserializeUserDefined(
 
 }
 
-void serialize_key(
+void BaoSky::Cdr::SerializeKey(
         BaoSky::Cdr::SerializeCdr& scdr,
         const DSF::Message::ControlVar& data)
 {
@@ -626,30 +647,37 @@ eProsima_user_DllExport void DeserializeUserDefined(
             switch (mid)
             {
                                 case 0:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(0));
                                         dcdr.Deserialize(data.messageId());
                                     break;
 
                                 case 1:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(1));
                                         dcdr.Deserialize(data.currentTime());
                                     break;
 
                                 case 2:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(2));
                                         dcdr.Deserialize(data.msgType());
                                     break;
 
                                 case 3:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(3));
                                         dcdr.Deserialize(data.vars());
                                     break;
 
                                 case 4:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(4));
                                         dcdr.Deserialize(data.srcNode());
                                     break;
 
                                 case 5:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(5));
                                         dcdr.Deserialize(data.write_tokens());
                                     break;
 
                                 case 6:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(6));
                                         dcdr.Deserialize(data.user());
                                     break;
 
@@ -662,7 +690,7 @@ eProsima_user_DllExport void DeserializeUserDefined(
 
 }
 
-void serialize_key(
+void BaoSky::Cdr::SerializeKey(
         BaoSky::Cdr::SerializeCdr& scdr,
         const DSF::Message::Control& data)
 {
@@ -753,22 +781,27 @@ eProsima_user_DllExport void DeserializeUserDefined(
             switch (mid)
             {
                                 case 0:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(0));
                                         dcdr.Deserialize(data.msgType());
                                     break;
 
                                 case 1:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(1));
                                         dcdr.Deserialize(data.varFreqs());
                                     break;
 
                                 case 2:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(2));
                                         dcdr.Deserialize(data.tableName());
                                     break;
 
                                 case 3:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(3));
                                         dcdr.Deserialize(data.nodeName());
                                     break;
 
                                 case 4:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(4));
                                         dcdr.Deserialize(data.user());
                                     break;
 
@@ -781,7 +814,7 @@ eProsima_user_DllExport void DeserializeUserDefined(
 
 }
 
-void serialize_key(
+void BaoSky::Cdr::SerializeKey(
         BaoSky::Cdr::SerializeCdr& scdr,
         const DSF::Message::SubTableRegister& data)
 {
@@ -872,22 +905,27 @@ eProsima_user_DllExport void DeserializeUserDefined(
             switch (mid)
             {
                                 case 0:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(0));
                                         dcdr.Deserialize(data.msgType());
                                     break;
 
                                 case 1:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(1));
                                         dcdr.Deserialize(data.varNames());
                                     break;
 
                                 case 2:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(2));
                                         dcdr.Deserialize(data.tableName());
                                     break;
 
                                 case 3:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(3));
                                         dcdr.Deserialize(data.nodeName());
                                     break;
 
                                 case 4:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(4));
                                         dcdr.Deserialize(data.user());
                                     break;
 
@@ -900,7 +938,7 @@ eProsima_user_DllExport void DeserializeUserDefined(
 
 }
 
-void serialize_key(
+void BaoSky::Cdr::SerializeKey(
         BaoSky::Cdr::SerializeCdr& scdr,
         const DSF::Message::SubTableUnregister& data)
 {
@@ -1033,50 +1071,62 @@ eProsima_user_DllExport void DeserializeUserDefined(
             switch (mid)
             {
                                 case 0:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(0));
                                         dcdr.Deserialize(data.eventCode());
                                     break;
 
                                 case 1:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(1));
                                         dcdr.Deserialize(data.payloadType());
                                     break;
 
                                 case 2:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(2));
                                         dcdr.Deserialize(data.description());
                                     break;
 
                                 case 3:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(3));
                                         dcdr.Deserialize(data.category());
                                     break;
 
                                 case 4:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(4));
                                         dcdr.Deserialize(data.createTime());
                                     break;
 
                                 case 5:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(5));
                                         dcdr.Deserialize(data.msgType());
                                     break;
 
                                 case 6:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(6));
                                         dcdr.Deserialize(data.priority());
                                     break;
 
                                 case 7:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(7));
                                         dcdr.Deserialize(data.status());
                                     break;
 
                                 case 8:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(8));
                                         dcdr.Deserialize(data.tmConfirm());
                                     break;
 
                                 case 9:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(9));
                                         dcdr.Deserialize(data.confirmPerson());
                                     break;
 
                                 case 10:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(10));
                                         dcdr.Deserialize(data.tmRecovery());
                                     break;
 
                                 case 11:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(11));
                                         dcdr.Deserialize(data.recoveryNamedValue());
                                     break;
 
@@ -1089,7 +1139,7 @@ eProsima_user_DllExport void DeserializeUserDefined(
 
 }
 
-void serialize_key(
+void BaoSky::Cdr::SerializeKey(
         BaoSky::Cdr::SerializeCdr& scdr,
         const DSF::Message::Alarm& data)
 {
@@ -1174,18 +1224,22 @@ eProsima_user_DllExport void DeserializeUserDefined(
             switch (mid)
             {
                                 case 0:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(0));
                                         dcdr.Deserialize(data.nodeName());
                                     break;
 
                                 case 1:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(1));
                                         dcdr.Deserialize(data.name());
                                     break;
 
                                 case 2:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(2));
                                         dcdr.Deserialize(data.retcode());
                                     break;
 
                                 case 3:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(3));
                                         dcdr.Deserialize(data.nativeRetcode());
                                     break;
 
@@ -1198,7 +1252,7 @@ eProsima_user_DllExport void DeserializeUserDefined(
 
 }
 
-void serialize_key(
+void BaoSky::Cdr::SerializeKey(
         BaoSky::Cdr::SerializeCdr& scdr,
         const DSF::Message::NamedRetcode& data)
 {
@@ -1263,10 +1317,10 @@ void SerializeUserDefined(
         const DSF::Message::CommandRequest& data)
 {
     using namespace DSF::Message;
-
     scdr.CdrBeginSerializeType();
+    scdr.Serialize(BaoSky::Cdr::MemberId(0));
     scdr.Serialize(data._d());
-
+    scdr.Serialize(BaoSky::Cdr::MemberId(1));
     switch (data._d())
     {
         //2
@@ -1306,9 +1360,11 @@ void DeserializeUserDefined(
                 switch (mid)
                 {
                     case 0:
+                        dcdr.Deserialize(BaoSky::Cdr::MemberId(0));
                         dcdr.Deserialize(data._d());
                         break;
                     default:
+                        dcdr.Deserialize(BaoSky::Cdr::MemberId(1));
                         switch (data._d())
                         {
                             //3
@@ -1420,26 +1476,32 @@ eProsima_user_DllExport void DeserializeUserDefined(
             switch (mid)
             {
                                 case 0:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(0));
                                         dcdr.Deserialize(data.messageId());
                                     break;
 
                                 case 1:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(1));
                                         dcdr.Deserialize(data.nodeInfo());
                                     break;
 
                                 case 2:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(2));
                                         dcdr.Deserialize(data.retCode());
                                     break;
 
                                 case 3:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(3));
                                         dcdr.Deserialize(data.nativeRetcode());
                                     break;
 
                                 case 4:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(4));
                                         dcdr.Deserialize(data.statusVMessage());
                                     break;
 
                                 case 5:
+                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(5));
                                         dcdr.Deserialize(data.controlRet());
                                     break;
 
@@ -1452,7 +1514,7 @@ eProsima_user_DllExport void DeserializeUserDefined(
 
 }
 
-void serialize_key(
+void BaoSky::Cdr::SerializeKey(
         BaoSky::Cdr::SerializeCdr& scdr,
         const DSF::Message::CommandResponse& data)
 {

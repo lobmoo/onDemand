@@ -24,6 +24,8 @@
 #define FCV_PUBSUBTYPES_H
 
 #include "txdds/DCPS/topic/TopicDataType.h"
+#include "txdds/DCPS/common/InstanceHandle.h"
+#include "txdds/RTPS/common/SerializedPayload.h"
 
 #include "FCV.h"
 
@@ -36,6 +38,7 @@
 class FCVTypePubSubType : public BaoSky::dds::TopicDataType
 {
 public:
+    typedef FCVType type;
 
     FCVTypePubSubType();
 
@@ -53,6 +56,8 @@ public:
 
     virtual bool GetKey(void *data, BaoSky::rtps::InstanceHandle *ihandle, bool force_md5 = false) override;
 
+    // MD5 mMd5;
+    unsigned char *mKeyBuffer;
 };
 
 #endif // _FAST_DDS_GENERATED_FCV_PUBSUBTYPES_H_

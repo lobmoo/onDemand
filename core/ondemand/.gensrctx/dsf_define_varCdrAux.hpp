@@ -120,59 +120,61 @@ namespace BaoSky
     {
 
         class Cdr;
+        class SerializeCdr;
         class CdrSizeCalculator;
+
+        void SerializeKey(
+            BaoSky::Cdr::SerializeCdr &scdr,
+            const DSF::Var::AccessControl &data);
+
+        void SerializeKey(
+            BaoSky::Cdr::SerializeCdr &scdr,
+            const DSF::Var::Define &data);
+
+        void SerializeKey(
+            BaoSky::Cdr::SerializeCdr &scdr,
+            const DSF::Var::Undefine &data);
+
+        void SerializeKey(
+            BaoSky::Cdr::SerializeCdr &scdr,
+            const DSF::Var::VarRequestEnvelope &data);
+
+        void SerializeKey(
+            BaoSky::Cdr::SerializeCdr &scdr,
+            const DSF::Var::DataTransfer &data);
+
+        void SerializeKey(
+            BaoSky::Cdr::SerializeCdr &scdr,
+            const DSF::Var::DataTransferEx &data);
+
+        void SerializeKey(
+            BaoSky::Cdr::SerializeCdr &scdr,
+            const DSF::Var::VarPubSubInfo &data);
+
+        void SerializeKey(
+            BaoSky::Cdr::SerializeCdr &scdr,
+            const DSF::Var::PubTableVarDefine &data);
+
+        void SerializeKey(
+            BaoSky::Cdr::SerializeCdr &scdr,
+            const DSF::Var::PubTableDefine &data);
+
+        void SerializeKey(
+            BaoSky::Cdr::SerializeCdr &scdr,
+            const DSF::Var::TableDataTransfer &data);
+
+        void SerializeKey(
+            BaoSky::Cdr::SerializeCdr &scdr,
+            const DSF::Var::TableUpdateBatch &data);
+
+        void SerializeKey(
+            BaoSky::Cdr::SerializeCdr &scdr,
+            const DSF::Var::TableDataTransferEx &data);
+
+
+
     };
 };
-
-eProsima_user_DllExport void serialize_key(
-        BaoSky::Cdr::Cdr& scdr,
-        const DSF::Var::AccessControl& data);
-
-eProsima_user_DllExport void serialize_key(
-        BaoSky::Cdr::Cdr& scdr,
-        const DSF::Var::Define& data);
-
-eProsima_user_DllExport void serialize_key(
-        BaoSky::Cdr::Cdr& scdr,
-        const DSF::Var::Undefine& data);
-
-eProsima_user_DllExport void serialize_key(
-        BaoSky::Cdr::Cdr& scdr,
-        const DSF::Var::VarRequestEnvelope& data);
-
-eProsima_user_DllExport void serialize_key(
-        BaoSky::Cdr::Cdr& scdr,
-        const DSF::Var::DataTransfer& data);
-
-eProsima_user_DllExport void serialize_key(
-        BaoSky::Cdr::Cdr& scdr,
-        const DSF::Var::DataTransferEx& data);
-
-eProsima_user_DllExport void serialize_key(
-        BaoSky::Cdr::Cdr& scdr,
-        const DSF::Var::VarPubSubInfo& data);
-
-eProsima_user_DllExport void serialize_key(
-        BaoSky::Cdr::Cdr& scdr,
-        const DSF::Var::PubTableVarDefine& data);
-
-eProsima_user_DllExport void serialize_key(
-        BaoSky::Cdr::Cdr& scdr,
-        const DSF::Var::PubTableDefine& data);
-
-eProsima_user_DllExport void serialize_key(
-        BaoSky::Cdr::Cdr& scdr,
-        const DSF::Var::TableDataTransfer& data);
-
-eProsima_user_DllExport void serialize_key(
-        BaoSky::Cdr::Cdr& scdr,
-        const DSF::Var::TableUpdateBatch& data);
-
-eProsima_user_DllExport void serialize_key(
-        BaoSky::Cdr::Cdr& scdr,
-        const DSF::Var::TableDataTransferEx& data);
-
-
 
 
 #endif // _DDS_GENERATED_DSF_VAR_DSF_DEFINE_VARCDRAUX_HPP_
