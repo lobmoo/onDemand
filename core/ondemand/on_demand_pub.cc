@@ -877,8 +877,12 @@ namespace ondemand
      * @return true 成功
      * @return false 失败
      */
-    bool OnDemandPub::setVarData(const char *varName, const void *data, size_t size)
+    WriteResult OnDemandPub::setVarData(const char *varName, const void *data, size_t size)
     {
+        if (data == nullptr || size == 0) {
+            return WriteResult::FAILED;
+        }
+
         uint64_t varHash = fast_hash(make_meta_varname(nodeName_, varName));
 
         uint32_t varId = VarStore::kInvalidId;
@@ -886,16 +890,19 @@ namespace ondemand
             std::shared_lock lock(varIndexMutex_);
             auto it = varIndex_.find(varHash);
             if (it == varIndex_.end()) {
-                return false;
+                return WriteResult::FAILED;
             }
             varId = it->second.varId;
         }
-        /*写数据（使用自动扩展的 write，支持延迟分配场景）*/
-        if (varStore_.write(varId, data, static_cast<uint32_t>(size)) != WriteResult::SUCCESS) {
-            ONDEMANDLOG(error) << "Failed to set data for variable: " << varName;
-            return false;
+
+        uint32_t writeSize =
+            static_cast<uint32_t>(size > static_cast<size_t>(UINT32_MAX) ? UINT32_MAX : size);
+        if (size > static_cast<size_t>(UINT32_MAX)) {
+            ONDEMANDLOG_TIME(warning, 5000)
+                << "setVarData: size overflowed uint32_t and was clipped, varName=" << varName;
         }
-        return true;
+
+        return varStore_.write(varId, data, writeSize);
     }
 
     uint32_t OnDemandPub::getVarId(const char *varName) const

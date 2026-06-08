@@ -80,10 +80,9 @@ namespace ondemand
          * @param  varName          变量名称，必须已创建
          * @param  data             变量数据指针，指向外部数据源，发布时零拷贝
          * @param  size             数据大小，单位字节，支持分片发布
-         * @return true
-         * @return false
+         * @return WriteResult::SUCCESS 成功，其他表示失败
          */
-        bool setVarData(const char *varName, const void *data, size_t size);
+        WriteResult setVarData(const char *varName, const void *data, size_t size);
 
         /**
          * @brief 通过变量名预先查询并缓存 varId，用于后续 setVarData(id, ...) 热路径
