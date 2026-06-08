@@ -24,6 +24,8 @@
 #define DSF_MESSAGE_DSF_DEFINE_MESSAGES_PUBSUBTYPES_H
 
 #include "txdds/DCPS/topic/TopicDataType.h"
+#include "txdds/DCPS/common/InstanceHandle.h"
+#include "txdds/RTPS/common/SerializedPayload.h"
 
 #include "dsf_define_messages.h"
 
@@ -41,6 +43,7 @@ namespace DSF
         class EventPubSubType : public BaoSky::dds::TopicDataType
         {
         public:
+            typedef Event type;
 
             EventPubSubType();
 
@@ -58,6 +61,8 @@ namespace DSF
 
             virtual bool GetKey(void *data, BaoSky::rtps::InstanceHandle *ihandle, bool force_md5 = false) override;
 
+            // MD5 mMd5;
+            unsigned char *mKeyBuffer;
         };
 
         /*!
@@ -67,6 +72,7 @@ namespace DSF
         class EventTransferPubSubType : public BaoSky::dds::TopicDataType
         {
         public:
+            typedef EventTransfer type;
 
             EventTransferPubSubType();
 
@@ -84,6 +90,8 @@ namespace DSF
 
             virtual bool GetKey(void *data, BaoSky::rtps::InstanceHandle *ihandle, bool force_md5 = false) override;
 
+            // MD5 mMd5;
+            unsigned char *mKeyBuffer;
         };
 
         /*!
@@ -93,6 +101,7 @@ namespace DSF
         class NamedBlobPubSubType : public BaoSky::dds::TopicDataType
         {
         public:
+            typedef NamedBlob type;
 
             NamedBlobPubSubType();
 
@@ -110,6 +119,8 @@ namespace DSF
 
             virtual bool GetKey(void *data, BaoSky::rtps::InstanceHandle *ihandle, bool force_md5 = false) override;
 
+            // MD5 mMd5;
+            unsigned char *mKeyBuffer;
         };
 
         /*!
@@ -119,6 +130,7 @@ namespace DSF
         class ControlVarPubSubType : public BaoSky::dds::TopicDataType
         {
         public:
+            typedef ControlVar type;
 
             ControlVarPubSubType();
 
@@ -136,6 +148,8 @@ namespace DSF
 
             virtual bool GetKey(void *data, BaoSky::rtps::InstanceHandle *ihandle, bool force_md5 = false) override;
 
+            // MD5 mMd5;
+            unsigned char *mKeyBuffer;
         };
 
         /*!
@@ -145,6 +159,7 @@ namespace DSF
         class ControlPubSubType : public BaoSky::dds::TopicDataType
         {
         public:
+            typedef Control type;
 
             ControlPubSubType();
 
@@ -162,6 +177,8 @@ namespace DSF
 
             virtual bool GetKey(void *data, BaoSky::rtps::InstanceHandle *ihandle, bool force_md5 = false) override;
 
+            // MD5 mMd5;
+            unsigned char *mKeyBuffer;
         };
 
         /*!
@@ -171,6 +188,7 @@ namespace DSF
         class SubTableRegisterPubSubType : public BaoSky::dds::TopicDataType
         {
         public:
+            typedef SubTableRegister type;
 
             SubTableRegisterPubSubType();
 
@@ -188,6 +206,8 @@ namespace DSF
 
             virtual bool GetKey(void *data, BaoSky::rtps::InstanceHandle *ihandle, bool force_md5 = false) override;
 
+            // MD5 mMd5;
+            unsigned char *mKeyBuffer;
         };
 
         /*!
@@ -197,6 +217,7 @@ namespace DSF
         class SubTableUnregisterPubSubType : public BaoSky::dds::TopicDataType
         {
         public:
+            typedef SubTableUnregister type;
 
             SubTableUnregisterPubSubType();
 
@@ -214,6 +235,8 @@ namespace DSF
 
             virtual bool GetKey(void *data, BaoSky::rtps::InstanceHandle *ihandle, bool force_md5 = false) override;
 
+            // MD5 mMd5;
+            unsigned char *mKeyBuffer;
         };
 
         /*!
@@ -223,6 +246,7 @@ namespace DSF
         class AlarmPubSubType : public BaoSky::dds::TopicDataType
         {
         public:
+            typedef Alarm type;
 
             AlarmPubSubType();
 
@@ -240,6 +264,8 @@ namespace DSF
 
             virtual bool GetKey(void *data, BaoSky::rtps::InstanceHandle *ihandle, bool force_md5 = false) override;
 
+            // MD5 mMd5;
+            unsigned char *mKeyBuffer;
         };
 
         /*!
@@ -249,6 +275,7 @@ namespace DSF
         class NamedRetcodePubSubType : public BaoSky::dds::TopicDataType
         {
         public:
+            typedef NamedRetcode type;
 
             NamedRetcodePubSubType();
 
@@ -266,6 +293,8 @@ namespace DSF
 
             virtual bool GetKey(void *data, BaoSky::rtps::InstanceHandle *ihandle, bool force_md5 = false) override;
 
+            // MD5 mMd5;
+            unsigned char *mKeyBuffer;
         };
 
         /*!
@@ -275,6 +304,7 @@ namespace DSF
         class CommandResponsePubSubType : public BaoSky::dds::TopicDataType
         {
         public:
+            typedef CommandResponse type;
 
             CommandResponsePubSubType();
 
@@ -292,6 +322,8 @@ namespace DSF
 
             virtual bool GetKey(void *data, BaoSky::rtps::InstanceHandle *ihandle, bool force_md5 = false) override;
 
+            // MD5 mMd5;
+            unsigned char *mKeyBuffer;
         };
     }
 }

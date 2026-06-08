@@ -40,10 +40,19 @@ FCVTypePubSubType::FCVTypePubSubType()
     type_size += static_cast<uint32_t>(BaoSky::Cdr::Cdr::Alignment(type_size, 4)); /* possible submessage alignment */
     mTypeSize = type_size + 4;
 
+    mIsGetKeyDefined = false;
+
+    uint32_t keyLength = FCVType_max_key_cdr_typesize > 16 ? FCVType_max_key_cdr_typesize : 16;
+    mKeyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
+    memset(mKeyBuffer, 0, keyLength);
 }
 
 FCVTypePubSubType::~FCVTypePubSubType()
 {
+    if (mKeyBuffer != nullptr)
+    {
+        free(mKeyBuffer);
+    }
 }
 
 bool FCVTypePubSubType::Serialize(
@@ -120,7 +129,36 @@ bool FCVTypePubSubType::GetKey(
     InstanceHandle* handle,
     bool force_md5)
 {
-    // TODO key relate
+    if (!mIsGetKeyDefined)
+    {
+        return false;
+    }
+
+    FCVType* p_type = static_cast<FCVType*>(data);
+
+    // Object that manages the raw buffer.
+    BaoSky::Cdr::TXBuffer buffer(reinterpret_cast<char*>(mKeyBuffer), FCVType_max_key_cdr_typesize);
+
+    // Object that serializes the data.
+    BaoSky::Cdr::SerializeCdr ser(buffer, BaoSky::Cdr::Endianness::BIG_ENDIANNESS, BaoSky::Cdr::CdrVersion::XCDRv1);
+    SerializeKey(ser, *p_type);
+    // if (force_md5 || FCVType_max_key_cdr_typesize > 16)
+    // {
+    //     m_md5.init();
+    //     m_md5.update(mKeyBuffer, static_cast<unsigned int>(ser.get_serialized_data_length()));
+    //     m_md5.finalize();
+    //     for (uint8_t i = 0; i < 16; ++i)
+    //     {
+    //         handle->mValue[i] = m_md5.digest[i];
+    //     }
+    // }
+    // else
+    {
+        for (uint8_t i = 0; i < 16; ++i)
+        {
+            handle->mValue[i] = mKeyBuffer[i];
+        }
+    }
     return true;
 }
 

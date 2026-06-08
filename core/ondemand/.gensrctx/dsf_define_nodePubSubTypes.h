@@ -24,6 +24,8 @@
 #define DSF_NODE_DSF_DEFINE_NODE_PUBSUBTYPES_H
 
 #include "txdds/DCPS/topic/TopicDataType.h"
+#include "txdds/DCPS/common/InstanceHandle.h"
+#include "txdds/RTPS/common/SerializedPayload.h"
 
 #include "dsf_define_node.h"
 
@@ -39,6 +41,7 @@ namespace DSF
     class NetworkInterfacePubSubType : public BaoSky::dds::TopicDataType
     {
     public:
+        typedef NetworkInterface type;
 
         NetworkInterfacePubSubType();
 
@@ -56,6 +59,8 @@ namespace DSF
 
         virtual bool GetKey(void *data, BaoSky::rtps::InstanceHandle *ihandle, bool force_md5 = false) override;
 
+        // MD5 mMd5;
+        unsigned char *mKeyBuffer;
     };
     namespace Node
     {
@@ -67,6 +72,7 @@ namespace DSF
         class BasicInfoPubSubType : public BaoSky::dds::TopicDataType
         {
         public:
+            typedef BasicInfo type;
 
             BasicInfoPubSubType();
 
@@ -84,6 +90,8 @@ namespace DSF
 
             virtual bool GetKey(void *data, BaoSky::rtps::InstanceHandle *ihandle, bool force_md5 = false) override;
 
+            // MD5 mMd5;
+            unsigned char *mKeyBuffer;
         };
 
         /*!
@@ -93,6 +101,7 @@ namespace DSF
         class RuntimeInfoPubSubType : public BaoSky::dds::TopicDataType
         {
         public:
+            typedef RuntimeInfo type;
 
             RuntimeInfoPubSubType();
 
@@ -110,6 +119,8 @@ namespace DSF
 
             virtual bool GetKey(void *data, BaoSky::rtps::InstanceHandle *ihandle, bool force_md5 = false) override;
 
+            // MD5 mMd5;
+            unsigned char *mKeyBuffer;
         };
     }
 }
