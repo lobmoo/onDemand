@@ -130,9 +130,14 @@ add_test(NAME test_ondemand COMMAND test_ondemand)
 set_tests_properties(test_ondemand PROPERTIES WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/tests")
 
 # TXDDS 模式下，所有测试 target 都依赖 core/ 中定义的 symlink 创建步骤
+# 并设置 LD_LIBRARY_PATH 解决预构建 .so 自带 RUNPATH 指向原 CI 路径的问题
 if(TARGET ensure_txdds_symlinks)
     add_dependencies(test_log ensure_txdds_symlinks)
     add_dependencies(test_timer ensure_txdds_symlinks)
     add_dependencies(test_ddswrapper ensure_txdds_symlinks)
     add_dependencies(test_ondemand ensure_txdds_symlinks)
+
+    set(TXDDS_LIB_DIR "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib")
+    set_tests_properties(test_log test_timer test_ddswrapper test_ondemand PROPERTIES
+        ENVIRONMENT "LD_LIBRARY_PATH=${TXDDS_LIB_DIR}")
 endif()
