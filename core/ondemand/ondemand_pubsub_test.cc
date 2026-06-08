@@ -3727,5 +3727,303 @@ TEST(OnDemandPubSub, VarReadSyncCorrectness)
     EXPECT_EQ(subReport.metrics["all_blob_ok"],      "1") << "blobType mismatch";
 }
 
+// ── setOnPublicationMatchedCallback: pub 端每个 topic 的 match/unmatch 验证 ──
+TEST(OnDemandPubSub, PublicationMatchedCallbackPerTopicMatchUnmatch)
+{
+    const auto root = std::filesystem::temp_directory_path() / uniqueName("ondemand_pub_match");
+    std::filesystem::create_directories(root);
+
+    const std::string pubNode = uniqueName("pub_match");
+    const auto defs = makeDefines(pubNode, "v", 4);
+    const auto names = defineNames(defs);
+    const std::string bucketTopic =
+        "dsf/var/data/transfer/bucket_"
+        + std::to_string(dsf::ondemand::BucketManager::CalculateBucketIndexFromHash(
+            dsf::ondemand::fast_hash(dsf::ondemand::make_meta_varname(pubNode, names[0]))));
+
+    // 子进程1: pub，记录每个 topic 的 match/unmatch 事件
+    const auto pubProc = spawnChild("pub_match", root, [pubNode, defs, names, bucketTopic]() {
+        dsf::ondemand::OnDemandPub pub;
+        ChildReport r;
+        if (!childRequire(r, pub.init(pubNode), "pub init failed")
+            || !childRequire(r, pub.start(), "pub start failed")
+            || !childRequire(r, pub.createVars(defs), "pub createVars failed")) {
+            return r;
+        }
+
+        // 每个 topic 记录所有事件: {currentCount, change, totalCount}
+        std::mutex mtx;
+        std::unordered_map<std::string, std::vector<std::tuple<int, int, int>>> topicEvents;
+
+        pub.setOnPublicationMatchedCallback(
+            [&](const std::string &topic, int current, int change, int total) {
+                std::lock_guard<std::mutex> lk(mtx);
+                topicEvents[topic].emplace_back(current, change, total);
+                LOG(info) << "[pub] matched topic=" << topic << " current=" << current
+                          << " change=" << change << " total=" << total;
+            });
+
+        // 等 sub 上线: bucket topic 的 currentCount 应该变为 1
+        const bool gotMatch = waitUntil([&]() {
+            std::lock_guard<std::mutex> lk(mtx);
+            auto it = topicEvents.find(bucketTopic);
+            if (it == topicEvents.end()) return false;
+            for (const auto &[cur, chg, tot] : it->second) {
+                if (cur >= 1) return true;
+            }
+            return false;
+        }, 10s);
+        if (!childRequire(r, gotMatch, "pub: bucket topic never got match (current>=1)")) {
+            pub.stop();
+            return r;
+        }
+
+        // 等 sub 下线: bucket topic 的 currentCount 应该变为 0
+        const bool gotUnmatch = waitUntil([&]() {
+            std::lock_guard<std::mutex> lk(mtx);
+            auto it = topicEvents.find(bucketTopic);
+            if (it == topicEvents.end()) return false;
+            for (const auto &[cur, chg, tot] : it->second) {
+                if (cur == 0) return true;
+            }
+            return false;
+        }, 12s);
+        if (!childRequire(r, gotUnmatch, "pub: bucket topic never got unmatch (current==0)")) {
+            pub.stop();
+            return r;
+        }
+
+        // 汇总所有 topic 的事件
+        std::lock_guard<std::mutex> lk(mtx);
+        for (const auto &[topic, events] : topicEvents) {
+            // topic 名用 last 30 chars 做 key（避免太长）
+            std::string shortKey = topic.size() > 30 ? topic.substr(topic.size() - 30) : topic;
+            // 替换 / 为 _ 做 metric key
+            for (char &c : shortKey) { if (c == '/') c = '_'; }
+
+            bool hadMatch = false, hadUnmatch = false;
+            int maxCurrent = 0, minCurrentAfterMatch = INT_MAX;
+            for (const auto &[cur, chg, tot] : events) {
+                if (cur >= 1) hadMatch = true;
+                if (hadMatch && cur == 0) hadUnmatch = true;
+                maxCurrent = std::max(maxCurrent, cur);
+                if (hadMatch) minCurrentAfterMatch = std::min(minCurrentAfterMatch, cur);
+            }
+            r.metrics["topic_" + shortKey + "_events"]   = std::to_string(events.size());
+            r.metrics["topic_" + shortKey + "_matched"]   = hadMatch ? "1" : "0";
+            r.metrics["topic_" + shortKey + "_unmatched"] = hadUnmatch ? "1" : "0";
+            r.metrics["topic_" + shortKey + "_maxCur"]    = std::to_string(maxCurrent);
+        }
+        r.metrics["total_topics"] = std::to_string(topicEvents.size());
+
+        pub.stop();
+        r.ok = true;
+        r.message = "ok";
+        return r;
+    });
+
+    // 子进程2: sub，上线订阅后等一会再退出（触发 unmatch）
+    const auto subProc = spawnChild("sub_match", root, [pubNode, defs, names]() {
+        dsf::ondemand::OnDemandSub sub;
+        ChildReport r;
+        if (!childRequire(r, sub.init(uniqueName("sub_match")), "sub init failed")
+            || !childRequire(r, sub.start(), "sub start failed")) {
+            return r;
+        }
+
+        const bool gotDefs = waitUntil([&]() { return countNodeVars(sub, pubNode) == names.size(); }, 8s);
+        if (!childRequire(r, gotDefs, "sub did not receive defines")) {
+            sub.stop();
+            return r;
+        }
+
+        const auto subs = toSubscriptions(names, 200);
+        if (!childRequire(r, sub.subscribe(pubNode.c_str(), subs), "subscribe failed")) {
+            sub.stop();
+            return r;
+        }
+
+        std::this_thread::sleep_for(3s);
+        sub.stop();
+        r.ok = true;
+        r.message = "ok";
+        return r;
+    });
+
+    ChildReport pubReport;
+    expectChildOk(subProc, 12s);
+    expectChildOk(pubProc, 20s, &pubReport);
+
+    // 验证: 至少有 bucket topic 触发了 match 和 unmatch
+    EXPECT_GE(std::stoi(pubReport.metrics["total_topics"]), 1) << "should have at least 1 topic";
+
+    // 找 bucket topic 的 metric（key 中包含 bucket_）
+    bool foundBucket = false;
+    for (const auto &[k, v] : pubReport.metrics) {
+        if (k.find("bucket_") != std::string::npos && k.find("_matched") != std::string::npos) {
+            foundBucket = true;
+            std::string unmatchKey = k;
+            // _matched -> _unmatched
+            auto pos = unmatchKey.find("_matched");
+            unmatchKey.replace(pos, 8, "_unmatched");
+            EXPECT_EQ(v, "1") << k << ": bucket topic should have match event";
+            EXPECT_EQ(pubReport.metrics[unmatchKey], "1")
+                << unmatchKey << ": bucket topic should have unmatch event (current==0)";
+            break;
+        }
+    }
+    EXPECT_TRUE(foundBucket) << "bucket topic not found in callback events";
+}
+
+// ── setOnSubscriptionMatchedCallback: sub 端每个 topic 的 match/unmatch 验证 ──
+TEST(OnDemandPubSub, SubscriptionMatchedCallbackPerTopicMatchUnmatch)
+{
+    const auto root = std::filesystem::temp_directory_path() / uniqueName("ondemand_sub_match");
+    std::filesystem::create_directories(root);
+
+    const std::string pubNode = uniqueName("pub_match2");
+    const auto defs = makeDefines(pubNode, "v", 4);
+    const auto names = defineNames(defs);
+    const std::string bucketTopic =
+        "dsf/var/data/transfer/bucket_"
+        + std::to_string(dsf::ondemand::BucketManager::CalculateBucketIndexFromHash(
+            dsf::ondemand::fast_hash(dsf::ondemand::make_meta_varname(pubNode, names[0]))));
+
+    // 子进程1: pub，运行后退出（触发 sub 端 unmatch）
+    const auto pubProc = spawnChild("pub_match2", root, [pubNode, defs, names]() {
+        dsf::ondemand::OnDemandPub pub;
+        ChildReport r;
+        if (!childRequire(r, pub.init(pubNode), "pub init failed")
+            || !childRequire(r, pub.start(), "pub start failed")
+            || !childRequire(r, pub.createVars(defs), "pub createVars failed")) {
+            return r;
+        }
+
+        std::atomic<bool> running{true};
+        std::thread th([&]() { publishLoop(pub, names, running, 50); });
+        std::this_thread::sleep_for(4s);
+        running.store(false);
+        th.join();
+        pub.stop();
+        r.ok = true;
+        r.message = "ok";
+        return r;
+    });
+
+    // 子进程2: sub，记录每个 topic 的 match/unmatch 事件
+    const auto subProc = spawnChild("sub_match2", root, [pubNode, names, bucketTopic]() {
+        dsf::ondemand::OnDemandSub sub;
+        ChildReport r;
+        if (!childRequire(r, sub.init(uniqueName("sub_match2")), "sub init failed")
+            || !childRequire(r, sub.start(), "sub start failed")) {
+            return r;
+        }
+
+        // 每个 topic 记录所有事件
+        std::mutex mtx;
+        std::unordered_map<std::string, std::vector<std::tuple<int, int, int>>> topicEvents;
+
+        sub.setOnSubscriptionMatchedCallback(
+            [&](const std::string &topic, int current, int change, int total) {
+                std::lock_guard<std::mutex> lk(mtx);
+                topicEvents[topic].emplace_back(current, change, total);
+                LOG(info) << "[sub] matched topic=" << topic << " current=" << current
+                          << " change=" << change << " total=" << total;
+            });
+
+        // 等 pub 变量定义到达
+        const bool gotDefs = waitUntil([&]() {
+            return countNodeVars(sub, pubNode) == names.size();
+        }, 8s);
+        if (!childRequire(r, gotDefs, "sub did not receive defines")) {
+            sub.stop();
+            return r;
+        }
+
+        // 订阅，触发 data transfer reader 匹配
+        const auto subs = toSubscriptions(names, 200);
+        if (!childRequire(r, sub.subscribe(pubNode.c_str(), subs), "subscribe failed")) {
+            sub.stop();
+            return r;
+        }
+
+        // 等 bucket topic match
+        const bool gotMatch = waitUntil([&]() {
+            std::lock_guard<std::mutex> lk(mtx);
+            auto it = topicEvents.find(bucketTopic);
+            if (it == topicEvents.end()) return false;
+            for (const auto &[cur, chg, tot] : it->second) {
+                if (cur >= 1) return true;
+            }
+            return false;
+        }, 8s);
+        if (!childRequire(r, gotMatch, "sub: bucket topic never got match (current>=1)")) {
+            sub.stop();
+            return r;
+        }
+
+        // 等 pub 下线: bucket topic currentCount 变为 0
+        const bool gotUnmatch = waitUntil([&]() {
+            std::lock_guard<std::mutex> lk(mtx);
+            auto it = topicEvents.find(bucketTopic);
+            if (it == topicEvents.end()) return false;
+            for (const auto &[cur, chg, tot] : it->second) {
+                if (cur == 0) return true;
+            }
+            return false;
+        }, 12s);
+        if (!childRequire(r, gotUnmatch, "sub: bucket topic never got unmatch (current==0)")) {
+            sub.stop();
+            return r;
+        }
+
+        // 汇总
+        std::lock_guard<std::mutex> lk(mtx);
+        for (const auto &[topic, events] : topicEvents) {
+            std::string shortKey = topic.size() > 30 ? topic.substr(topic.size() - 30) : topic;
+            for (char &c : shortKey) { if (c == '/') c = '_'; }
+
+            bool hadMatch = false, hadUnmatch = false;
+            int maxCurrent = 0;
+            for (const auto &[cur, chg, tot] : events) {
+                if (cur >= 1) hadMatch = true;
+                if (hadMatch && cur == 0) hadUnmatch = true;
+                maxCurrent = std::max(maxCurrent, cur);
+            }
+            r.metrics["topic_" + shortKey + "_events"]   = std::to_string(events.size());
+            r.metrics["topic_" + shortKey + "_matched"]   = hadMatch ? "1" : "0";
+            r.metrics["topic_" + shortKey + "_unmatched"] = hadUnmatch ? "1" : "0";
+            r.metrics["topic_" + shortKey + "_maxCur"]    = std::to_string(maxCurrent);
+        }
+        r.metrics["total_topics"] = std::to_string(topicEvents.size());
+
+        sub.stop();
+        r.ok = true;
+        r.message = "ok";
+        return r;
+    });
+
+    ChildReport subReport;
+    expectChildOk(pubProc, 12s);
+    expectChildOk(subProc, 20s, &subReport);
+
+    EXPECT_GE(std::stoi(subReport.metrics["total_topics"]), 1) << "should have at least 1 topic";
+
+    bool foundBucket = false;
+    for (const auto &[k, v] : subReport.metrics) {
+        if (k.find("bucket_") != std::string::npos && k.find("_matched") != std::string::npos) {
+            foundBucket = true;
+            std::string unmatchKey = k;
+            auto pos = unmatchKey.find("_matched");
+            unmatchKey.replace(pos, 8, "_unmatched");
+            EXPECT_EQ(v, "1") << k << ": bucket topic should have match event";
+            EXPECT_EQ(subReport.metrics[unmatchKey], "1")
+                << unmatchKey << ": bucket topic should have unmatch event (current==0)";
+            break;
+        }
+    }
+    EXPECT_TRUE(foundBucket) << "bucket topic not found in callback events";
+}
+
 #endif
 
