@@ -21,8 +21,26 @@ elseif(DDS_IMPL STREQUAL "TXDDS")
         "${CMAKE_SOURCE_DIR}/common/txdds_wrapper/txdds_node.cc"
         "${CMAKE_SOURCE_DIR}/common/txdds_wrapper/txdds_qos_config.cc"
     )
-    set(DDS_LIBS TXDDS TXCDR TXRuntimeLog ssl crypto)
-    set(DDS_LINK_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib")
+    # 直接用版本化 .so 完整路径，避免 CI 下 symlink 丢失导致链接失败
+    file(GLOB TXDDS_LIB_FILES "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libTXDDS.so.*")
+    file(GLOB TXCDR_LIB_FILES "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libTXCDR.so.*")
+    list(GET TXDDS_LIB_FILES 0 TXDDS_LIB)
+    list(GET TXCDR_LIB_FILES 0 TXCDR_LIB)
+    set(DDS_LIBS
+        "${TXDDS_LIB}"
+        "${TXCDR_LIB}"
+        "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libTXRuntimeLog.so"
+        ssl crypto
+    )
+
+    # CI 下 git checkout 可能丢失 symlink，构建时自动创建运行时所需的 symlink
+    get_filename_component(TXDDS_VER_FILE "${TXDDS_LIB}" NAME)
+    get_filename_component(TXCDR_VER_FILE "${TXCDR_LIB}" NAME)
+    execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink
+        "${TXDDS_VER_FILE}" "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libTXDDS.so")
+    execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink
+        "${TXCDR_VER_FILE}" "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libTXCDR.so")
+
     set(DDS_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/thirdparty/txdds/include")
 else()
     message(FATAL_ERROR "Invalid DDS_IMPL for tests: ${DDS_IMPL}")
@@ -58,10 +76,6 @@ set(COMMON_LIBS
     pthread
     rt
 )
-
-if(DDS_LINK_DIRS)
-    link_directories(${DDS_LINK_DIRS})
-endif()
 
 # ── test_log ──────────────────────────────────────────────────────────────────
 add_executable(test_log
