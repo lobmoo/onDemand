@@ -127,7 +127,7 @@ module DSF {
 
         // 表定义是一个特殊的变量定义，包含多个变量定义,一张表最大65536个变量
         struct PubTableDefine{
-            string name;     // 表名称
+            @key string name;     // 表名称
             string nodeName; // 所属节点名称
             string description; // 表描述
             sequence<PubTableVarDefine> varDefines; // 表内变量定义

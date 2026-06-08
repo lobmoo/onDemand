@@ -150,7 +150,7 @@ eProsima_user_DllExport void DeserializeUserDefined(
 
 }
 
-void BaoSky::Cdr::SerializeKey(
+void serialize_key(
         BaoSky::Cdr::SerializeCdr& scdr,
         const FCVType& data)
 {

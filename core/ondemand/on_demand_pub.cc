@@ -132,7 +132,7 @@ namespace ondemand
      */
     bool OnDemandPub::createTableDefineWriter()
     {
-        constexpr uint32_t depth = 20;
+        constexpr uint32_t depth = 1;
         DdsWrapper::DataWriterQoSBuilder writerQosBuilder;
         writerQosBuilder.setMaxSamples(32 * depth)
             .setMaxInstances(32)

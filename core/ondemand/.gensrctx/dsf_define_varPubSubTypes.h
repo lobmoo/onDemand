@@ -24,8 +24,6 @@
 #define DSF_VAR_DSF_DEFINE_VAR_PUBSUBTYPES_H
 
 #include "txdds/DCPS/topic/TopicDataType.h"
-#include "txdds/DCPS/common/InstanceHandle.h"
-#include "txdds/RTPS/common/SerializedPayload.h"
 
 #include "dsf_define_var.h"
 
@@ -43,7 +41,6 @@ namespace DSF
         class AccessControlPubSubType : public BaoSky::dds::TopicDataType
         {
         public:
-            typedef AccessControl type;
 
             AccessControlPubSubType();
 
@@ -61,8 +58,6 @@ namespace DSF
 
             virtual bool GetKey(void *data, BaoSky::rtps::InstanceHandle *ihandle, bool force_md5 = false) override;
 
-            // MD5 mMd5;
-            unsigned char *mKeyBuffer;
         };
 
         /*!
@@ -72,7 +67,6 @@ namespace DSF
         class DefinePubSubType : public BaoSky::dds::TopicDataType
         {
         public:
-            typedef Define type;
 
             DefinePubSubType();
 
@@ -90,8 +84,6 @@ namespace DSF
 
             virtual bool GetKey(void *data, BaoSky::rtps::InstanceHandle *ihandle, bool force_md5 = false) override;
 
-            // MD5 mMd5;
-            unsigned char *mKeyBuffer;
         };
 
         /*!
@@ -101,7 +93,6 @@ namespace DSF
         class UndefinePubSubType : public BaoSky::dds::TopicDataType
         {
         public:
-            typedef Undefine type;
 
             UndefinePubSubType();
 
@@ -119,8 +110,6 @@ namespace DSF
 
             virtual bool GetKey(void *data, BaoSky::rtps::InstanceHandle *ihandle, bool force_md5 = false) override;
 
-            // MD5 mMd5;
-            unsigned char *mKeyBuffer;
         };
 
         /*!
@@ -130,7 +119,6 @@ namespace DSF
         class VarRequestEnvelopePubSubType : public BaoSky::dds::TopicDataType
         {
         public:
-            typedef VarRequestEnvelope type;
 
             VarRequestEnvelopePubSubType();
 
@@ -148,8 +136,6 @@ namespace DSF
 
             virtual bool GetKey(void *data, BaoSky::rtps::InstanceHandle *ihandle, bool force_md5 = false) override;
 
-            // MD5 mMd5;
-            unsigned char *mKeyBuffer;
         };
 
         /*!
@@ -159,7 +145,6 @@ namespace DSF
         class DataTransferPubSubType : public BaoSky::dds::TopicDataType
         {
         public:
-            typedef DataTransfer type;
 
             DataTransferPubSubType();
 
@@ -177,8 +162,6 @@ namespace DSF
 
             virtual bool GetKey(void *data, BaoSky::rtps::InstanceHandle *ihandle, bool force_md5 = false) override;
 
-            // MD5 mMd5;
-            unsigned char *mKeyBuffer;
         };
 
         /*!
@@ -188,7 +171,6 @@ namespace DSF
         class DataTransferExPubSubType : public BaoSky::dds::TopicDataType
         {
         public:
-            typedef DataTransferEx type;
 
             DataTransferExPubSubType();
 
@@ -206,8 +188,6 @@ namespace DSF
 
             virtual bool GetKey(void *data, BaoSky::rtps::InstanceHandle *ihandle, bool force_md5 = false) override;
 
-            // MD5 mMd5;
-            unsigned char *mKeyBuffer;
         };
 
         /*!
@@ -217,7 +197,6 @@ namespace DSF
         class VarPubSubInfoPubSubType : public BaoSky::dds::TopicDataType
         {
         public:
-            typedef VarPubSubInfo type;
 
             VarPubSubInfoPubSubType();
 
@@ -235,8 +214,6 @@ namespace DSF
 
             virtual bool GetKey(void *data, BaoSky::rtps::InstanceHandle *ihandle, bool force_md5 = false) override;
 
-            // MD5 mMd5;
-            unsigned char *mKeyBuffer;
         };
 
         /*!
@@ -246,7 +223,6 @@ namespace DSF
         class PubTableVarDefinePubSubType : public BaoSky::dds::TopicDataType
         {
         public:
-            typedef PubTableVarDefine type;
 
             PubTableVarDefinePubSubType();
 
@@ -264,8 +240,6 @@ namespace DSF
 
             virtual bool GetKey(void *data, BaoSky::rtps::InstanceHandle *ihandle, bool force_md5 = false) override;
 
-            // MD5 mMd5;
-            unsigned char *mKeyBuffer;
         };
 
         /*!
@@ -275,7 +249,6 @@ namespace DSF
         class PubTableDefinePubSubType : public BaoSky::dds::TopicDataType
         {
         public:
-            typedef PubTableDefine type;
 
             PubTableDefinePubSubType();
 
@@ -293,8 +266,6 @@ namespace DSF
 
             virtual bool GetKey(void *data, BaoSky::rtps::InstanceHandle *ihandle, bool force_md5 = false) override;
 
-            // MD5 mMd5;
-            unsigned char *mKeyBuffer;
         };
 
         /*!
@@ -304,7 +275,6 @@ namespace DSF
         class TableDataTransferPubSubType : public BaoSky::dds::TopicDataType
         {
         public:
-            typedef TableDataTransfer type;
 
             TableDataTransferPubSubType();
 
@@ -322,8 +292,6 @@ namespace DSF
 
             virtual bool GetKey(void *data, BaoSky::rtps::InstanceHandle *ihandle, bool force_md5 = false) override;
 
-            // MD5 mMd5;
-            unsigned char *mKeyBuffer;
         };
 
         /*!
@@ -333,7 +301,6 @@ namespace DSF
         class TableUpdateBatchPubSubType : public BaoSky::dds::TopicDataType
         {
         public:
-            typedef TableUpdateBatch type;
 
             TableUpdateBatchPubSubType();
 
@@ -351,8 +318,6 @@ namespace DSF
 
             virtual bool GetKey(void *data, BaoSky::rtps::InstanceHandle *ihandle, bool force_md5 = false) override;
 
-            // MD5 mMd5;
-            unsigned char *mKeyBuffer;
         };
 
         /*!
@@ -362,7 +327,6 @@ namespace DSF
         class TableDataTransferExPubSubType : public BaoSky::dds::TopicDataType
         {
         public:
-            typedef TableDataTransferEx type;
 
             TableDataTransferExPubSubType();
 
@@ -380,8 +344,6 @@ namespace DSF
 
             virtual bool GetKey(void *data, BaoSky::rtps::InstanceHandle *ihandle, bool force_md5 = false) override;
 
-            // MD5 mMd5;
-            unsigned char *mKeyBuffer;
         };
     }
 }

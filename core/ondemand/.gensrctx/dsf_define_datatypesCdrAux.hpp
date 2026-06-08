@@ -74,33 +74,31 @@ namespace BaoSky
     {
 
         class Cdr;
-        class SerializeCdr;
         class CdrSizeCalculator;
-
-        void SerializeKey(
-            BaoSky::Cdr::SerializeCdr &scdr,
-            const DSF::Timespec &data);
-
-        void SerializeKey(
-            BaoSky::Cdr::SerializeCdr &scdr,
-            const DSF::NamedValue &data);
-
-        void SerializeKey(
-            BaoSky::Cdr::SerializeCdr &scdr,
-            const DSF::StructuredDataMapEntry &data);
-
-        void SerializeKey(
-            BaoSky::Cdr::SerializeCdr &scdr,
-            const DSF::DataBuffer &data);
-
-        void SerializeKey(
-            BaoSky::Cdr::SerializeCdr &scdr,
-            const DSF::DataTypes::DT_FILE &data);
-
-
-
     };
 };
+
+eProsima_user_DllExport void serialize_key(
+        BaoSky::Cdr::Cdr& scdr,
+        const DSF::Timespec& data);
+
+eProsima_user_DllExport void serialize_key(
+        BaoSky::Cdr::Cdr& scdr,
+        const DSF::NamedValue& data);
+
+eProsima_user_DllExport void serialize_key(
+        BaoSky::Cdr::Cdr& scdr,
+        const DSF::StructuredDataMapEntry& data);
+
+eProsima_user_DllExport void serialize_key(
+        BaoSky::Cdr::Cdr& scdr,
+        const DSF::DataBuffer& data);
+
+eProsima_user_DllExport void serialize_key(
+        BaoSky::Cdr::Cdr& scdr,
+        const DSF::DataTypes::DT_FILE& data);
+
+
 
 
 #endif // _DDS_GENERATED_DSF_DATATYPES_DSF_DEFINE_DATATYPESCDRAUX_HPP_

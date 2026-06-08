@@ -2019,7 +2019,7 @@ void register_PubTableDefine_type_identifier(
                 }
             }
             StructMemberFlag member_flags_name = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
-                    false, false, false, false);
+                    false, false, true, false);
             MemberId member_id_name = 0x00000000;
             bool common_name_ec {false};
             CommonStructMember common_name {TypeObjectUtils::build_common_struct_member(member_id_name, member_flags_name, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_name, common_name_ec))};
@@ -2031,6 +2031,19 @@ void register_PubTableDefine_type_identifier(
             MemberName name_name = "name";
             eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_name;
             ann_custom_PubTableDefine.reset();
+            AppliedAnnotationSeq tmp_ann_custom_name;
+            eprosima::fastcdr::optional<std::string> unit_name;
+            eprosima::fastcdr::optional<AnnotationParameterValue> min_name;
+            eprosima::fastcdr::optional<AnnotationParameterValue> max_name;
+            eprosima::fastcdr::optional<std::string> hash_id_name;
+            if (unit_name.has_value() || min_name.has_value() || max_name.has_value() || hash_id_name.has_value())
+            {
+                member_ann_builtin_name = TypeObjectUtils::build_applied_builtin_member_annotations(unit_name, min_name, max_name, hash_id_name);
+            }
+            if (!tmp_ann_custom_name.empty())
+            {
+                ann_custom_PubTableDefine = tmp_ann_custom_name;
+            }
             CompleteMemberDetail detail_name = TypeObjectUtils::build_complete_member_detail(name_name, member_ann_builtin_name, ann_custom_PubTableDefine);
             CompleteStructMember member_name = TypeObjectUtils::build_complete_struct_member(common_name, detail_name);
             TypeObjectUtils::add_complete_struct_member(member_seq_PubTableDefine, member_name);

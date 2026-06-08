@@ -104,7 +104,7 @@ constexpr uint32_t DSF_Var_TableUpdateBatch_max_key_cdr_typesize {0UL};
 
 
 constexpr uint32_t DSF_Var_PubTableDefine_max_cdr_typesize {792UL};
-constexpr uint32_t DSF_Var_PubTableDefine_max_key_cdr_typesize {0UL};
+constexpr uint32_t DSF_Var_PubTableDefine_max_key_cdr_typesize {260UL};
 
 
 

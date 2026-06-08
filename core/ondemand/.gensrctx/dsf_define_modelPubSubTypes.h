@@ -24,8 +24,6 @@
 #define DSF_MODEL_DSF_DEFINE_MODEL_PUBSUBTYPES_H
 
 #include "txdds/DCPS/topic/TopicDataType.h"
-#include "txdds/DCPS/common/InstanceHandle.h"
-#include "txdds/RTPS/common/SerializedPayload.h"
 
 #include "dsf_define_model.h"
 
@@ -43,7 +41,6 @@ namespace DSF
         class DefinePubSubType : public BaoSky::dds::TopicDataType
         {
         public:
-            typedef Define type;
 
             DefinePubSubType();
 
@@ -61,8 +58,6 @@ namespace DSF
 
             virtual bool GetKey(void *data, BaoSky::rtps::InstanceHandle *ihandle, bool force_md5 = false) override;
 
-            // MD5 mMd5;
-            unsigned char *mKeyBuffer;
         };
 
         /*!
@@ -72,7 +67,6 @@ namespace DSF
         class UndefinePubSubType : public BaoSky::dds::TopicDataType
         {
         public:
-            typedef Undefine type;
 
             UndefinePubSubType();
 
@@ -90,8 +84,6 @@ namespace DSF
 
             virtual bool GetKey(void *data, BaoSky::rtps::InstanceHandle *ihandle, bool force_md5 = false) override;
 
-            // MD5 mMd5;
-            unsigned char *mKeyBuffer;
         };
 
         /*!
@@ -101,7 +93,6 @@ namespace DSF
         class ModelRequestEnvelopePubSubType : public BaoSky::dds::TopicDataType
         {
         public:
-            typedef ModelRequestEnvelope type;
 
             ModelRequestEnvelopePubSubType();
 
@@ -119,8 +110,6 @@ namespace DSF
 
             virtual bool GetKey(void *data, BaoSky::rtps::InstanceHandle *ihandle, bool force_md5 = false) override;
 
-            // MD5 mMd5;
-            unsigned char *mKeyBuffer;
         };
     }
 }

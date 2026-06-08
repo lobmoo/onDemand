@@ -24,8 +24,6 @@
 #define DSF_DATATYPES_DSF_DEFINE_DATATYPES_PUBSUBTYPES_H
 
 #include "txdds/DCPS/topic/TopicDataType.h"
-#include "txdds/DCPS/common/InstanceHandle.h"
-#include "txdds/RTPS/common/SerializedPayload.h"
 
 #include "dsf_define_datatypes.h"
 
@@ -73,7 +71,6 @@ namespace DSF
     class TimespecPubSubType : public BaoSky::dds::TopicDataType
     {
     public:
-        typedef Timespec type;
 
         TimespecPubSubType();
 
@@ -91,8 +88,6 @@ namespace DSF
 
         virtual bool GetKey(void *data, BaoSky::rtps::InstanceHandle *ihandle, bool force_md5 = false) override;
 
-        // MD5 mMd5;
-        unsigned char *mKeyBuffer;
     };
 
     /*!
@@ -102,7 +97,6 @@ namespace DSF
     class NamedValuePubSubType : public BaoSky::dds::TopicDataType
     {
     public:
-        typedef NamedValue type;
 
         NamedValuePubSubType();
 
@@ -120,8 +114,6 @@ namespace DSF
 
         virtual bool GetKey(void *data, BaoSky::rtps::InstanceHandle *ihandle, bool force_md5 = false) override;
 
-        // MD5 mMd5;
-        unsigned char *mKeyBuffer;
     };
 
     /*!
@@ -131,7 +123,6 @@ namespace DSF
     class StructuredDataMapEntryPubSubType : public BaoSky::dds::TopicDataType
     {
     public:
-        typedef StructuredDataMapEntry type;
 
         StructuredDataMapEntryPubSubType();
 
@@ -149,8 +140,6 @@ namespace DSF
 
         virtual bool GetKey(void *data, BaoSky::rtps::InstanceHandle *ihandle, bool force_md5 = false) override;
 
-        // MD5 mMd5;
-        unsigned char *mKeyBuffer;
     };
 
     /*!
@@ -160,7 +149,6 @@ namespace DSF
     class DataBufferPubSubType : public BaoSky::dds::TopicDataType
     {
     public:
-        typedef DataBuffer type;
 
         DataBufferPubSubType();
 
@@ -178,8 +166,6 @@ namespace DSF
 
         virtual bool GetKey(void *data, BaoSky::rtps::InstanceHandle *ihandle, bool force_md5 = false) override;
 
-        // MD5 mMd5;
-        unsigned char *mKeyBuffer;
     };
     typedef std::array<uint8_t, 16> GUID_t;
     typedef std::vector<uint8_t> DT_BLOB;
@@ -209,7 +195,6 @@ namespace DSF
         class DT_FILEPubSubType : public BaoSky::dds::TopicDataType
         {
         public:
-            typedef DT_FILE type;
 
             DT_FILEPubSubType();
 
@@ -227,8 +212,6 @@ namespace DSF
 
             virtual bool GetKey(void *data, BaoSky::rtps::InstanceHandle *ihandle, bool force_md5 = false) override;
 
-            // MD5 mMd5;
-            unsigned char *mKeyBuffer;
         };
         typedef char DT_CHAR;
         typedef std::vector<char> DT_CHARSEQ;

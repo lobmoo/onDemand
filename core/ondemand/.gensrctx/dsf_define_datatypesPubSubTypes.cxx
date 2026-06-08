@@ -41,19 +41,10 @@ namespace DSF {
         type_size += static_cast<uint32_t>(BaoSky::Cdr::Cdr::Alignment(type_size, 4)); /* possible submessage alignment */
         mTypeSize = type_size + 4;
 
-        mIsGetKeyDefined = false;
-
-        uint32_t keyLength = DSF_Timespec_max_key_cdr_typesize > 16 ? DSF_Timespec_max_key_cdr_typesize : 16;
-        mKeyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
-        memset(mKeyBuffer, 0, keyLength);
     }
 
     TimespecPubSubType::~TimespecPubSubType()
     {
-        if (mKeyBuffer != nullptr)
-        {
-            free(mKeyBuffer);
-        }
     }
 
     bool TimespecPubSubType::Serialize(
@@ -130,36 +121,7 @@ namespace DSF {
         InstanceHandle* handle,
         bool force_md5)
     {
-        if (!mIsGetKeyDefined)
-        {
-            return false;
-        }
-
-        Timespec* p_type = static_cast<Timespec*>(data);
-
-        // Object that manages the raw buffer.
-        BaoSky::Cdr::TXBuffer buffer(reinterpret_cast<char*>(mKeyBuffer), DSF_Timespec_max_key_cdr_typesize);
-
-        // Object that serializes the data.
-        BaoSky::Cdr::SerializeCdr ser(buffer, BaoSky::Cdr::Endianness::BIG_ENDIANNESS, BaoSky::Cdr::CdrVersion::XCDRv1);
-        SerializeKey(ser, *p_type);
-        // if (force_md5 || Timespec_max_key_cdr_typesize > 16)
-        // {
-        //     m_md5.init();
-        //     m_md5.update(mKeyBuffer, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        //     m_md5.finalize();
-        //     for (uint8_t i = 0; i < 16; ++i)
-        //     {
-        //         handle->mValue[i] = m_md5.digest[i];
-        //     }
-        // }
-        // else
-        {
-            for (uint8_t i = 0; i < 16; ++i)
-            {
-                handle->mValue[i] = mKeyBuffer[i];
-            }
-        }
+        // TODO key relate
         return true;
     }
 
@@ -171,19 +133,10 @@ namespace DSF {
         type_size += static_cast<uint32_t>(BaoSky::Cdr::Cdr::Alignment(type_size, 4)); /* possible submessage alignment */
         mTypeSize = type_size + 4;
 
-        mIsGetKeyDefined = false;
-
-        uint32_t keyLength = DSF_NamedValue_max_key_cdr_typesize > 16 ? DSF_NamedValue_max_key_cdr_typesize : 16;
-        mKeyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
-        memset(mKeyBuffer, 0, keyLength);
     }
 
     NamedValuePubSubType::~NamedValuePubSubType()
     {
-        if (mKeyBuffer != nullptr)
-        {
-            free(mKeyBuffer);
-        }
     }
 
     bool NamedValuePubSubType::Serialize(
@@ -260,36 +213,7 @@ namespace DSF {
         InstanceHandle* handle,
         bool force_md5)
     {
-        if (!mIsGetKeyDefined)
-        {
-            return false;
-        }
-
-        NamedValue* p_type = static_cast<NamedValue*>(data);
-
-        // Object that manages the raw buffer.
-        BaoSky::Cdr::TXBuffer buffer(reinterpret_cast<char*>(mKeyBuffer), DSF_NamedValue_max_key_cdr_typesize);
-
-        // Object that serializes the data.
-        BaoSky::Cdr::SerializeCdr ser(buffer, BaoSky::Cdr::Endianness::BIG_ENDIANNESS, BaoSky::Cdr::CdrVersion::XCDRv1);
-        SerializeKey(ser, *p_type);
-        // if (force_md5 || NamedValue_max_key_cdr_typesize > 16)
-        // {
-        //     m_md5.init();
-        //     m_md5.update(mKeyBuffer, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        //     m_md5.finalize();
-        //     for (uint8_t i = 0; i < 16; ++i)
-        //     {
-        //         handle->mValue[i] = m_md5.digest[i];
-        //     }
-        // }
-        // else
-        {
-            for (uint8_t i = 0; i < 16; ++i)
-            {
-                handle->mValue[i] = mKeyBuffer[i];
-            }
-        }
+        // TODO key relate
         return true;
     }
 
@@ -301,19 +225,10 @@ namespace DSF {
         type_size += static_cast<uint32_t>(BaoSky::Cdr::Cdr::Alignment(type_size, 4)); /* possible submessage alignment */
         mTypeSize = type_size + 4;
 
-        mIsGetKeyDefined = false;
-
-        uint32_t keyLength = DSF_StructuredDataMapEntry_max_key_cdr_typesize > 16 ? DSF_StructuredDataMapEntry_max_key_cdr_typesize : 16;
-        mKeyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
-        memset(mKeyBuffer, 0, keyLength);
     }
 
     StructuredDataMapEntryPubSubType::~StructuredDataMapEntryPubSubType()
     {
-        if (mKeyBuffer != nullptr)
-        {
-            free(mKeyBuffer);
-        }
     }
 
     bool StructuredDataMapEntryPubSubType::Serialize(
@@ -390,36 +305,7 @@ namespace DSF {
         InstanceHandle* handle,
         bool force_md5)
     {
-        if (!mIsGetKeyDefined)
-        {
-            return false;
-        }
-
-        StructuredDataMapEntry* p_type = static_cast<StructuredDataMapEntry*>(data);
-
-        // Object that manages the raw buffer.
-        BaoSky::Cdr::TXBuffer buffer(reinterpret_cast<char*>(mKeyBuffer), DSF_StructuredDataMapEntry_max_key_cdr_typesize);
-
-        // Object that serializes the data.
-        BaoSky::Cdr::SerializeCdr ser(buffer, BaoSky::Cdr::Endianness::BIG_ENDIANNESS, BaoSky::Cdr::CdrVersion::XCDRv1);
-        SerializeKey(ser, *p_type);
-        // if (force_md5 || StructuredDataMapEntry_max_key_cdr_typesize > 16)
-        // {
-        //     m_md5.init();
-        //     m_md5.update(mKeyBuffer, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        //     m_md5.finalize();
-        //     for (uint8_t i = 0; i < 16; ++i)
-        //     {
-        //         handle->mValue[i] = m_md5.digest[i];
-        //     }
-        // }
-        // else
-        {
-            for (uint8_t i = 0; i < 16; ++i)
-            {
-                handle->mValue[i] = mKeyBuffer[i];
-            }
-        }
+        // TODO key relate
         return true;
     }
 
@@ -431,19 +317,10 @@ namespace DSF {
         type_size += static_cast<uint32_t>(BaoSky::Cdr::Cdr::Alignment(type_size, 4)); /* possible submessage alignment */
         mTypeSize = type_size + 4;
 
-        mIsGetKeyDefined = false;
-
-        uint32_t keyLength = DSF_DataBuffer_max_key_cdr_typesize > 16 ? DSF_DataBuffer_max_key_cdr_typesize : 16;
-        mKeyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
-        memset(mKeyBuffer, 0, keyLength);
     }
 
     DataBufferPubSubType::~DataBufferPubSubType()
     {
-        if (mKeyBuffer != nullptr)
-        {
-            free(mKeyBuffer);
-        }
     }
 
     bool DataBufferPubSubType::Serialize(
@@ -520,36 +397,7 @@ namespace DSF {
         InstanceHandle* handle,
         bool force_md5)
     {
-        if (!mIsGetKeyDefined)
-        {
-            return false;
-        }
-
-        DataBuffer* p_type = static_cast<DataBuffer*>(data);
-
-        // Object that manages the raw buffer.
-        BaoSky::Cdr::TXBuffer buffer(reinterpret_cast<char*>(mKeyBuffer), DSF_DataBuffer_max_key_cdr_typesize);
-
-        // Object that serializes the data.
-        BaoSky::Cdr::SerializeCdr ser(buffer, BaoSky::Cdr::Endianness::BIG_ENDIANNESS, BaoSky::Cdr::CdrVersion::XCDRv1);
-        SerializeKey(ser, *p_type);
-        // if (force_md5 || DataBuffer_max_key_cdr_typesize > 16)
-        // {
-        //     m_md5.init();
-        //     m_md5.update(mKeyBuffer, static_cast<unsigned int>(ser.get_serialized_data_length()));
-        //     m_md5.finalize();
-        //     for (uint8_t i = 0; i < 16; ++i)
-        //     {
-        //         handle->mValue[i] = m_md5.digest[i];
-        //     }
-        // }
-        // else
-        {
-            for (uint8_t i = 0; i < 16; ++i)
-            {
-                handle->mValue[i] = mKeyBuffer[i];
-            }
-        }
+        // TODO key relate
         return true;
     }
 
@@ -562,19 +410,10 @@ namespace DSF {
             type_size += static_cast<uint32_t>(BaoSky::Cdr::Cdr::Alignment(type_size, 4)); /* possible submessage alignment */
             mTypeSize = type_size + 4;
 
-            mIsGetKeyDefined = false;
-
-            uint32_t keyLength = DSF_DataTypes_DT_FILE_max_key_cdr_typesize > 16 ? DSF_DataTypes_DT_FILE_max_key_cdr_typesize : 16;
-            mKeyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
-            memset(mKeyBuffer, 0, keyLength);
         }
 
         DT_FILEPubSubType::~DT_FILEPubSubType()
         {
-            if (mKeyBuffer != nullptr)
-            {
-                free(mKeyBuffer);
-            }
         }
 
         bool DT_FILEPubSubType::Serialize(
@@ -651,36 +490,7 @@ namespace DSF {
             InstanceHandle* handle,
             bool force_md5)
         {
-            if (!mIsGetKeyDefined)
-            {
-                return false;
-            }
-
-            DT_FILE* p_type = static_cast<DT_FILE*>(data);
-
-            // Object that manages the raw buffer.
-            BaoSky::Cdr::TXBuffer buffer(reinterpret_cast<char*>(mKeyBuffer), DSF_DataTypes_DT_FILE_max_key_cdr_typesize);
-
-            // Object that serializes the data.
-            BaoSky::Cdr::SerializeCdr ser(buffer, BaoSky::Cdr::Endianness::BIG_ENDIANNESS, BaoSky::Cdr::CdrVersion::XCDRv1);
-            SerializeKey(ser, *p_type);
-            // if (force_md5 || DT_FILE_max_key_cdr_typesize > 16)
-            // {
-            //     m_md5.init();
-            //     m_md5.update(mKeyBuffer, static_cast<unsigned int>(ser.get_serialized_data_length()));
-            //     m_md5.finalize();
-            //     for (uint8_t i = 0; i < 16; ++i)
-            //     {
-            //         handle->mValue[i] = m_md5.digest[i];
-            //     }
-            // }
-            // else
-            {
-                for (uint8_t i = 0; i < 16; ++i)
-                {
-                    handle->mValue[i] = mKeyBuffer[i];
-                }
-            }
+            // TODO key relate
             return true;
         }
 

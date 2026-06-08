@@ -34,15 +34,13 @@ namespace BaoSky
     {
 
         class Cdr;
-        class SerializeCdr;
         class CdrSizeCalculator;
-
-        void SerializeKey(
-            BaoSky::Cdr::SerializeCdr &scdr,
-            const FCVType &data);
-
     };
 };
+
+eProsima_user_DllExport void serialize_key(
+        BaoSky::Cdr::Cdr& scdr,
+        const FCVType& data);
 
 
 #endif // _DDS_GENERATED_FCVCDRAUX_HPP_

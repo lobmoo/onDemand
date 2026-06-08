@@ -110,7 +110,7 @@ eProsima_user_DllExport void DeserializeUserDefined(
 
 }
 
-void BaoSky::Cdr::SerializeKey(
+void serialize_key(
         BaoSky::Cdr::SerializeCdr& scdr,
         const DSF::Var::AccessControl& data)
 {
@@ -322,7 +322,7 @@ eProsima_user_DllExport void DeserializeUserDefined(
 
 }
 
-void BaoSky::Cdr::SerializeKey(
+void serialize_key(
         BaoSky::Cdr::SerializeCdr& scdr,
         const DSF::Var::Define& data)
 {
@@ -413,7 +413,7 @@ eProsima_user_DllExport void DeserializeUserDefined(
 
 }
 
-void BaoSky::Cdr::SerializeKey(
+void serialize_key(
         BaoSky::Cdr::SerializeCdr& scdr,
         const DSF::Var::Undefine& data)
 {
@@ -607,7 +607,7 @@ eProsima_user_DllExport void DeserializeUserDefined(
 
 }
 
-void BaoSky::Cdr::SerializeKey(
+void serialize_key(
         BaoSky::Cdr::SerializeCdr& scdr,
         const DSF::Var::VarRequestEnvelope& data)
 {
@@ -731,7 +731,7 @@ eProsima_user_DllExport void DeserializeUserDefined(
 
 }
 
-void BaoSky::Cdr::SerializeKey(
+void serialize_key(
         BaoSky::Cdr::SerializeCdr& scdr,
         const DSF::Var::DataTransfer& data)
 {
@@ -877,7 +877,7 @@ eProsima_user_DllExport void DeserializeUserDefined(
 
 }
 
-void BaoSky::Cdr::SerializeKey(
+void serialize_key(
         BaoSky::Cdr::SerializeCdr& scdr,
         const DSF::Var::DataTransferEx& data)
 {
@@ -1001,7 +1001,7 @@ eProsima_user_DllExport void DeserializeUserDefined(
 
 }
 
-void BaoSky::Cdr::SerializeKey(
+void serialize_key(
         BaoSky::Cdr::SerializeCdr& scdr,
         const DSF::Var::VarPubSubInfo& data)
 {
@@ -1092,7 +1092,7 @@ eProsima_user_DllExport void DeserializeUserDefined(
 
 }
 
-void BaoSky::Cdr::SerializeKey(
+void serialize_key(
         BaoSky::Cdr::SerializeCdr& scdr,
         const DSF::Var::PubTableVarDefine& data)
 {
@@ -1205,7 +1205,7 @@ eProsima_user_DllExport void DeserializeUserDefined(
 
 }
 
-void BaoSky::Cdr::SerializeKey(
+void serialize_key(
         BaoSky::Cdr::SerializeCdr& scdr,
         const DSF::Var::PubTableDefine& data)
 {
@@ -1213,6 +1213,11 @@ void BaoSky::Cdr::SerializeKey(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                            scdr.Serialize(data.name());
+
+
+
+
 }
 
 
@@ -1318,7 +1323,7 @@ eProsima_user_DllExport void DeserializeUserDefined(
 
 }
 
-void BaoSky::Cdr::SerializeKey(
+void serialize_key(
         BaoSky::Cdr::SerializeCdr& scdr,
         const DSF::Var::TableDataTransfer& data)
 {
@@ -1398,7 +1403,7 @@ eProsima_user_DllExport void DeserializeUserDefined(
 
 }
 
-void BaoSky::Cdr::SerializeKey(
+void serialize_key(
         BaoSky::Cdr::SerializeCdr& scdr,
         const DSF::Var::TableUpdateBatch& data)
 {
@@ -1522,7 +1527,7 @@ eProsima_user_DllExport void DeserializeUserDefined(
 
 }
 
-void BaoSky::Cdr::SerializeKey(
+void serialize_key(
         BaoSky::Cdr::SerializeCdr& scdr,
         const DSF::Var::TableDataTransferEx& data)
 {

@@ -29,8 +29,6 @@
 #include <string>
 #include <vector>
 
-#include "txcdr/optional.h"
-
 #include <txcdr/optional.h>
 
 #include "dsf_define_datatypes.h"

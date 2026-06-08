@@ -87,53 +87,51 @@ namespace BaoSky
     {
 
         class Cdr;
-        class SerializeCdr;
         class CdrSizeCalculator;
-
-        void SerializeKey(
-            BaoSky::Cdr::SerializeCdr &scdr,
-            const DSF::Message::Event &data);
-
-        void SerializeKey(
-            BaoSky::Cdr::SerializeCdr &scdr,
-            const DSF::Message::EventTransfer &data);
-
-        void SerializeKey(
-            BaoSky::Cdr::SerializeCdr &scdr,
-            const DSF::Message::NamedBlob &data);
-
-        void SerializeKey(
-            BaoSky::Cdr::SerializeCdr &scdr,
-            const DSF::Message::ControlVar &data);
-
-        void SerializeKey(
-            BaoSky::Cdr::SerializeCdr &scdr,
-            const DSF::Message::Control &data);
-
-        void SerializeKey(
-            BaoSky::Cdr::SerializeCdr &scdr,
-            const DSF::Message::SubTableRegister &data);
-
-        void SerializeKey(
-            BaoSky::Cdr::SerializeCdr &scdr,
-            const DSF::Message::SubTableUnregister &data);
-
-        void SerializeKey(
-            BaoSky::Cdr::SerializeCdr &scdr,
-            const DSF::Message::Alarm &data);
-
-        void SerializeKey(
-            BaoSky::Cdr::SerializeCdr &scdr,
-            const DSF::Message::NamedRetcode &data);
-
-        void SerializeKey(
-            BaoSky::Cdr::SerializeCdr &scdr,
-            const DSF::Message::CommandResponse &data);
-
-
-
     };
 };
+
+eProsima_user_DllExport void serialize_key(
+        BaoSky::Cdr::Cdr& scdr,
+        const DSF::Message::Event& data);
+
+eProsima_user_DllExport void serialize_key(
+        BaoSky::Cdr::Cdr& scdr,
+        const DSF::Message::EventTransfer& data);
+
+eProsima_user_DllExport void serialize_key(
+        BaoSky::Cdr::Cdr& scdr,
+        const DSF::Message::NamedBlob& data);
+
+eProsima_user_DllExport void serialize_key(
+        BaoSky::Cdr::Cdr& scdr,
+        const DSF::Message::ControlVar& data);
+
+eProsima_user_DllExport void serialize_key(
+        BaoSky::Cdr::Cdr& scdr,
+        const DSF::Message::Control& data);
+
+eProsima_user_DllExport void serialize_key(
+        BaoSky::Cdr::Cdr& scdr,
+        const DSF::Message::SubTableRegister& data);
+
+eProsima_user_DllExport void serialize_key(
+        BaoSky::Cdr::Cdr& scdr,
+        const DSF::Message::SubTableUnregister& data);
+
+eProsima_user_DllExport void serialize_key(
+        BaoSky::Cdr::Cdr& scdr,
+        const DSF::Message::Alarm& data);
+
+eProsima_user_DllExport void serialize_key(
+        BaoSky::Cdr::Cdr& scdr,
+        const DSF::Message::NamedRetcode& data);
+
+eProsima_user_DllExport void serialize_key(
+        BaoSky::Cdr::Cdr& scdr,
+        const DSF::Message::CommandResponse& data);
+
+
 
 
 #endif // _DDS_GENERATED_DSF_MESSAGE_DSF_DEFINE_MESSAGESCDRAUX_HPP_
