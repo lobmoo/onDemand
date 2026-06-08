@@ -33,13 +33,7 @@ elseif(DDS_IMPL STREQUAL "TXDDS")
         ssl crypto
     )
 
-    # CI 下 git checkout 可能丢失 symlink，构建时自动创建运行时所需的 symlink
-    get_filename_component(TXDDS_VER_FILE "${TXDDS_LIB}" NAME)
-    get_filename_component(TXCDR_VER_FILE "${TXCDR_LIB}" NAME)
-    execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink
-        "${TXDDS_VER_FILE}" "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libTXDDS.so")
-    execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink
-        "${TXCDR_VER_FILE}" "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libTXCDR.so")
+    # symlink 由 core/CMakeLists.txt 中的 ensure_txdds_symlinks target 统一创建
 
     set(DDS_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/thirdparty/txdds/include")
 else()
@@ -134,3 +128,11 @@ target_link_libraries(test_ondemand PRIVATE ${COMMON_LIBS})
 target_compile_options(test_ondemand PRIVATE -O2)
 add_test(NAME test_ondemand COMMAND test_ondemand)
 set_tests_properties(test_ondemand PROPERTIES WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/tests")
+
+# TXDDS 模式下，所有测试 target 都依赖 core/ 中定义的 symlink 创建步骤
+if(TARGET ensure_txdds_symlinks)
+    add_dependencies(test_log ensure_txdds_symlinks)
+    add_dependencies(test_timer ensure_txdds_symlinks)
+    add_dependencies(test_ddswrapper ensure_txdds_symlinks)
+    add_dependencies(test_ondemand ensure_txdds_symlinks)
+endif()

@@ -66,10 +66,13 @@ elseif(DDS_IMPL STREQUAL "TXDDS")
     # CI 下 git checkout 可能丢失 symlink，构建时自动创建运行时所需的 symlink
     get_filename_component(TXDDS_VER_FILE "${TXDDS_LIB}" NAME)
     get_filename_component(TXCDR_VER_FILE "${TXCDR_LIB}" NAME)
-    execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink
-        "${TXDDS_VER_FILE}" "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libTXDDS.so")
-    execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink
-        "${TXCDR_VER_FILE}" "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libTXCDR.so")
+    add_custom_target(ensure_txdds_symlinks ALL
+        COMMAND ${CMAKE_COMMAND} -E create_symlink
+            "${TXDDS_VER_FILE}" "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libTXDDS.so"
+        COMMAND ${CMAKE_COMMAND} -E create_symlink
+            "${TXCDR_VER_FILE}" "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libTXCDR.so"
+        COMMENT "Ensuring TXDDS runtime symlinks exist"
+    )
 
     message(STATUS "TXDDS wrapper will be compiled")
 else()
@@ -110,6 +113,9 @@ if(BUILD_LIBRARY)
     )
 
     target_compile_options(${LIBRARY_OUTPUT_NAME} PRIVATE -fPIC -g)
+    if(TARGET ensure_txdds_symlinks)
+        add_dependencies(${LIBRARY_OUTPUT_NAME} ensure_txdds_symlinks)
+    endif()
 endif()
 
 
@@ -129,6 +135,11 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 )
 
 target_compile_options(${PROJECT_NAME}  PRIVATE  -g )
+
+# TXDDS 模式下，可执行文件依赖 symlink 创建步骤
+if(TARGET ensure_txdds_symlinks)
+    add_dependencies(${PROJECT_NAME} ensure_txdds_symlinks)
+endif()
 
 if(BUILD_LIBRARY)
   include(GNUInstallDirs)  # ✅ 引入标准安装目录
