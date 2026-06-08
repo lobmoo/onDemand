@@ -51,28 +51,9 @@ elseif(DDS_IMPL STREQUAL "TXDDS")
         ${CMAKE_SOURCE_DIR}/common/txdds_wrapper/txdds_qos_config.cc
     )
 
-    # 直接用版本化 .so 完整路径，避免 CI 下 symlink 丢失导致链接失败
-    file(GLOB TXDDS_LIB_FILES "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libTXDDS.so.*")
-    file(GLOB TXCDR_LIB_FILES "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libTXCDR.so.*")
-    list(GET TXDDS_LIB_FILES 0 TXDDS_LIB)
-    list(GET TXCDR_LIB_FILES 0 TXCDR_LIB)
-    set(DDS_LIBS
-        "${TXDDS_LIB}"
-        "${TXCDR_LIB}"
-        "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libTXRuntimeLog.so"
-        ssl crypto
-    )
-
-    # CI 下 git checkout 可能丢失 symlink，构建时自动创建运行时所需的 symlink
-    get_filename_component(TXDDS_VER_FILE "${TXDDS_LIB}" NAME)
-    get_filename_component(TXCDR_VER_FILE "${TXCDR_LIB}" NAME)
-    add_custom_target(ensure_txdds_symlinks ALL
-        COMMAND ${CMAKE_COMMAND} -E create_symlink
-            "${TXDDS_VER_FILE}" "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libTXDDS.so"
-        COMMAND ${CMAKE_COMMAND} -E create_symlink
-            "${TXCDR_VER_FILE}" "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libTXCDR.so"
-        COMMENT "Ensuring TXDDS runtime symlinks exist"
-    )
+    # TXDDS 库链接（不依赖 symlink，用 -L + -l 指定，CI 兼容）
+    set(DDS_LIBS TXDDS TXCDR TXRuntimeLog ssl crypto)
+    set(DDS_LINK_DIRS ${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib)
 
     message(STATUS "TXDDS wrapper will be compiled")
 else()
@@ -104,6 +85,9 @@ if(BUILD_LIBRARY)
     target_include_directories(${LIBRARY_OUTPUT_NAME} PRIVATE ${OBJ_CPP_INCLUDE})
 
     # 库也需要链接依赖
+    if(DDS_LINK_DIRS)
+        target_link_directories(${LIBRARY_OUTPUT_NAME} PRIVATE ${DDS_LINK_DIRS})
+    endif()
     target_link_libraries(${LIBRARY_OUTPUT_NAME} PRIVATE
         ${DDS_LIBS}
         ${CMAKE_SOURCE_DIR}/thirdparty/CRoaring/lib/libroaring.so
@@ -113,9 +97,6 @@ if(BUILD_LIBRARY)
     )
 
     target_compile_options(${LIBRARY_OUTPUT_NAME} PRIVATE -fPIC -g)
-    if(TARGET ensure_txdds_symlinks)
-        add_dependencies(${LIBRARY_OUTPUT_NAME} ensure_txdds_symlinks)
-    endif()
 endif()
 
 
@@ -126,6 +107,9 @@ set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMA
 target_include_directories(${PROJECT_NAME} PRIVATE  ${OBJ_CPP_INCLUDE})
 
 
+if(DDS_LINK_DIRS)
+    target_link_directories(${PROJECT_NAME} PRIVATE ${DDS_LINK_DIRS})
+endif()
 target_link_libraries(${PROJECT_NAME} PRIVATE
     ${DDS_LIBS}
     ${CMAKE_SOURCE_DIR}/thirdparty/CRoaring/lib/libroaring.so
@@ -135,11 +119,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 )
 
 target_compile_options(${PROJECT_NAME}  PRIVATE  -g )
-
-# TXDDS 模式下，可执行文件依赖 symlink 创建步骤
-if(TARGET ensure_txdds_symlinks)
-    add_dependencies(${PROJECT_NAME} ensure_txdds_symlinks)
-endif()
 
 if(BUILD_LIBRARY)
   include(GNUInstallDirs)  # ✅ 引入标准安装目录
