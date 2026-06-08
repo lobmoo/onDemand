@@ -28,6 +28,11 @@ else()
     message(FATAL_ERROR "Must enable either USE_FASTDDS or USE_TXDDS")
 endif()
 
+# TXDDS 模式下，设置全局 RPATH 让运行时能找到 .so（CI 路径与本地不同）
+if(DDS_IMPL STREQUAL "TXDDS")
+    set(CMAKE_BUILD_RPATH "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib")
+endif()
+
 add_subdirectory(common/log)
 add_subdirectory(core)
 

@@ -21,8 +21,20 @@ elseif(DDS_IMPL STREQUAL "TXDDS")
         "${CMAKE_SOURCE_DIR}/common/txdds_wrapper/txdds_node.cc"
         "${CMAKE_SOURCE_DIR}/common/txdds_wrapper/txdds_qos_config.cc"
     )
-    set(DDS_LIBS TXDDS TXCDR TXRuntimeLog ssl crypto)
-    set(DDS_LINK_DIRS "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib")
+    # 直接用版本化 .so 完整路径，避免 CI 下 symlink 丢失导致链接失败
+    file(GLOB TXDDS_LIB_FILES "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libTXDDS.so.*")
+    file(GLOB TXCDR_LIB_FILES "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libTXCDR.so.*")
+    list(GET TXDDS_LIB_FILES 0 TXDDS_LIB)
+    list(GET TXCDR_LIB_FILES 0 TXCDR_LIB)
+    set(DDS_LIBS
+        "${TXDDS_LIB}"
+        "${TXCDR_LIB}"
+        "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libTXRuntimeLog.so"
+        ssl crypto
+    )
+
+    # symlink 由 core/CMakeLists.txt 中的 ensure_txdds_symlinks target 统一创建
+
     set(DDS_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/thirdparty/txdds/include")
 else()
     message(FATAL_ERROR "Invalid DDS_IMPL for tests: ${DDS_IMPL}")
@@ -58,10 +70,6 @@ set(COMMON_LIBS
     pthread
     rt
 )
-
-if(DDS_LINK_DIRS)
-    link_directories(${DDS_LINK_DIRS})
-endif()
 
 # ── test_log ──────────────────────────────────────────────────────────────────
 add_executable(test_log
@@ -120,3 +128,16 @@ target_link_libraries(test_ondemand PRIVATE ${COMMON_LIBS})
 target_compile_options(test_ondemand PRIVATE -O2)
 add_test(NAME test_ondemand COMMAND test_ondemand)
 set_tests_properties(test_ondemand PROPERTIES WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/tests")
+
+# TXDDS 模式下，所有测试 target 都依赖 core/ 中定义的 symlink 创建步骤
+# 并设置 LD_LIBRARY_PATH 解决预构建 .so 自带 RUNPATH 指向原 CI 路径的问题
+if(TARGET ensure_txdds_symlinks)
+    add_dependencies(test_log ensure_txdds_symlinks)
+    add_dependencies(test_timer ensure_txdds_symlinks)
+    add_dependencies(test_ddswrapper ensure_txdds_symlinks)
+    add_dependencies(test_ondemand ensure_txdds_symlinks)
+
+    set(TXDDS_LIB_DIR "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib")
+    set_tests_properties(test_log test_timer test_ddswrapper test_ondemand PROPERTIES
+        ENVIRONMENT "LD_LIBRARY_PATH=${TXDDS_LIB_DIR}")
+endif()
