@@ -23,8 +23,8 @@ elseif(DDS_IMPL STREQUAL "TXDDS")
     )
     # TXDDS 库链接，用完整路径，和 FastDDS 写法一致
     set(DDS_LIBS
-        "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libTXDDS.so.3.00.2606.1.202606010949"
-        "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libTXCDR.so.3.00.2606.1.202606010949"
+        "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libTXDDS.so"
+        "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libTXCDR.so"
         "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libTXRuntimeLog.so"
         "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libssl.so.1.1"
         "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libcrypto.so.1.1"

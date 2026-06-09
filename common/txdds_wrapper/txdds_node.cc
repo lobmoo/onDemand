@@ -162,7 +162,7 @@ bool TXDDSNode::updatePublisherQos(const std::string &name, const PublisherQoSBu
         return false;
     }
 
-    auto rc = it->second->SetQos(qos.getQos());
+    auto rc = it->second->UpdateQos(qos.getQos());
     if (rc != BaoSky::dds::RETCODE_OK) {
         LOG(error) << "Failed to update Publisher QoS for '" << name
                    << "', ret=" << static_cast<int>(rc);
@@ -183,7 +183,7 @@ bool TXDDSNode::updateSubscriberQos(const std::string &name, const SubscriberQoS
         return false;
     }
 
-    auto rc = it->second->SetQos(qos.getQos());
+    auto rc = it->second->UpdateQos(qos.getQos());
     if (rc != BaoSky::dds::RETCODE_OK) {
         LOG(error) << "Failed to update Subscriber QoS for '" << name
                    << "', ret=" << static_cast<int>(rc);
