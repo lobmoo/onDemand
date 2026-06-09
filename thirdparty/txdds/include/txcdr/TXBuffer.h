@@ -10,17 +10,7 @@
 #include "txdds/txddsexport.h"
 #include <memory>
 #include <stdio.h>
-template <class D, class S, class N>
-void memcpy(D des, S src, N n)
-{
-    char *xxd = (char *)(des);
-    const char *xxs = (const char *)(src);
-    int xxn = (n);
-    while (xxn-- > 0)
-    {
-        *(xxd++) = *(xxs++);
-    }
-}
+#include <string.h>
 
 inline uint32_t size_to_uint32(
     size_t val)
@@ -53,7 +43,7 @@ namespace BaoSky::Cdr
         }
 
         template <typename _T>
-        inline void operator>>(const _T &data)
+        inline void operator>>(_T &data)
         {
             memcpy(&data, mCurrentPosition, sizeof(_T));
         }
