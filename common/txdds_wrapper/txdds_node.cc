@@ -290,8 +290,14 @@ void TXDDSNode::destroyParticipantResources()
         }
     }
     subscribers_.clear();
-    BaoSky::rtps::ThreadManager::GetInstance()->DeleteResource("txdds_thread_" + participant_name_);
-    BaoSky::rtps::TransportStack::GetInstance()->DeleteConfig("udp");
+    std::vector<std::string> tName = BaoSky::rtps::ThreadManager::GetInstance()->GetConfigList();
+    std::vector<std::string> cName = BaoSky::rtps::TransportStack::GetInstance()->GetConfigList(UDPTransportKind);
+    for (const auto &name : tName) {
+        BaoSky::rtps::ThreadManager::GetInstance()->DeleteResource(name);
+    }
+    for (const auto &name : cName) {
+        BaoSky::rtps::TransportStack::GetInstance()->DeleteConfig(name);
+    }
     BaoSky::dds::DomainParticipantFactory::GetInstance()->DeleteParticipant(participant_);
     participant_ = nullptr;
 }

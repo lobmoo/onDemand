@@ -5,6 +5,9 @@
 
 namespace TxddsWrapper
 {
+
+std::atomic<uint32_t> ParticipantQoSBuilder::instance_counter_{0};
+
 namespace
 {
     BaoSky::rtps::Duration toDuration(uint32_t milliseconds)
@@ -13,12 +16,13 @@ namespace
                                       static_cast<uint32_t>((milliseconds % 1000) * 1000000ULL));
     }
 
-    BaoSky::rtps::Locator makeIPv4Locator(const std::string &address, uint32_t port)
+    BaoSky::rtps::Locator makeIPv4Locator(const std::string &address, uint32_t port,
+                                           const std::string &configName)
     {
         BaoSky::rtps::Locator locator;
         locator.mKind = BaoSky::rtps::LOCATOR_KIND_UDPv4;
         locator.mPort = port;
-        locator.mConfigName = "udp";
+        locator.mConfigName = configName;
         BaoSky::rtps::IPLocator::setIPv4(locator, address);
         return locator;
     }
@@ -26,22 +30,26 @@ namespace
 
 ParticipantQoSBuilder::ParticipantQoSBuilder()
 {
+    const uint32_t id = instance_counter_.fetch_add(1, std::memory_order_relaxed);
+    threadCfgName_ = "dsf_connector_" + std::to_string(id);
+    transportCfgName_ = "udp_" + std::to_string(id);
+
     BaoSky::rtps::ThreadConfig thread_config;
-    thread_config.mConfigName = "dsf_connector";
-    thread_config.mThreadName = "dsf_connector";
+    thread_config.mConfigName = threadCfgName_;
+    thread_config.mThreadName = threadCfgName_;
     BaoSky::rtps::ThreadManager::GetInstance()->AddResource(thread_config);
 
     auto udp_config = std::make_shared<BaoSky::rtps::UDPTransportConfig>();
     udp_config->mKind = BaoSky::rtps::eTransportKind::UDPTransportKind;
     udp_config->mLocalIP.push_back("0.0.0.0");
-    udp_config->mConfigName = "udp";
-    udp_config->mThreadConfigName = thread_config.mConfigName;
+    udp_config->mConfigName = transportCfgName_;
+    udp_config->mThreadConfigName = threadCfgName_;
     udp_config->mRecvBufferSize = 16 * 1024 * 1024;
     udp_config->mSendBufferSize = 16 * 1024 * 1024;
     BaoSky::rtps::TransportStack::GetInstance()->AddConfig(udp_config);
 
-    auto locatorUser = makeIPv4Locator("239.255.0.1", 7400);
-    auto locatorBuiltin = makeIPv4Locator("239.255.0.1", 7400);
+    auto locatorUser = makeIPv4Locator("239.255.0.1", 7400, transportCfgName_);
+    auto locatorBuiltin = makeIPv4Locator("239.255.0.1", 7400, transportCfgName_);
     qos_.wireProtocol.builtin.mDiscoveryAttributes.SetEnableInternalEntityMatch(true);
     qos_.wireProtocol.defaultMulticastLocatorList.push_back(locatorUser);
     qos_.wireProtocol.builtin.multicastLocatorList.push_back(locatorBuiltin); //g公告
@@ -84,18 +92,16 @@ ParticipantQoSBuilder &ParticipantQoSBuilder::setInitialAnnouncements(uint32_t c
 ParticipantQoSBuilder &ParticipantQoSBuilder::addUDPV4TransportInterfaces(
     const std::vector<std::string> &network_interfaces,  uint32_t maxMessageSize)
 {
-    BaoSky::rtps::ThreadConfig thread_config;
-    BaoSky::rtps::TransportStack::GetInstance()->DeleteConfig("udp");
+    BaoSky::rtps::TransportStack::GetInstance()->DeleteConfig(transportCfgName_);
     auto udp_config = std::make_shared<BaoSky::rtps::UDPTransportConfig>();
     udp_config->mKind = BaoSky::rtps::eTransportKind::UDPTransportKind;
-    udp_config->mThreadConfigName = "dsf_connector";
+    udp_config->mConfigName = transportCfgName_;
+    udp_config->mThreadConfigName = threadCfgName_;
     udp_config->mRecvBufferSize = 16 * 1024 * 1024;
     udp_config->mSendBufferSize = 16 * 1024 * 1024;
     if (network_interfaces.empty()) {
-        udp_config->mConfigName = "udp";
         udp_config->mLocalIP.push_back("0.0.0.0");
     } else {
-        udp_config->mConfigName = "udp";
         udp_config->mLocalIP = network_interfaces;
     }
     if (maxMessageSize > 0) {
@@ -115,7 +121,7 @@ ParticipantQoSBuilder &ParticipantQoSBuilder::setUserMulticastLocator(const std:
                                                                       uint16_t port)
 {
     BaoSky::rtps::Locator locator;
-    locator.mConfigName = "udp";
+    locator.mConfigName = transportCfgName_;
     BaoSky::rtps::IPLocator::setIPv4(locator, ip);
     BaoSky::rtps::IPLocator::setPhysicalPort(locator, port);
     qos_.wireProtocol.defaultMulticastLocatorList.Clear();
@@ -127,7 +133,7 @@ ParticipantQoSBuilder &ParticipantQoSBuilder::setUserUnicastLocator(const std::s
                                                                     uint16_t port)
 {
     BaoSky::rtps::Locator locator;
-    locator.mConfigName = "udp";
+    locator.mConfigName = transportCfgName_;
     BaoSky::rtps::IPLocator::setIPv4(locator, ip);
     BaoSky::rtps::IPLocator::setPhysicalPort(locator, port);
     qos_.wireProtocol.defaultUnicastLocatorList.push_back(locator);
@@ -138,7 +144,7 @@ ParticipantQoSBuilder &ParticipantQoSBuilder::setDiscoveryMulticastLocator(const
                                                                            uint16_t port)
 {
     BaoSky::rtps::Locator locator;
-    locator.mConfigName = "udp";
+    locator.mConfigName = transportCfgName_;
     BaoSky::rtps::IPLocator::setIPv4(locator, ip);
     BaoSky::rtps::IPLocator::setPhysicalPort(locator, port);
     qos_.wireProtocol.builtin.multicastLocatorList.Clear();
