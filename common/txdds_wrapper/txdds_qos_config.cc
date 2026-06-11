@@ -113,7 +113,8 @@ ParticipantQoSBuilder &ParticipantQoSBuilder::addUDPV4TransportInterfaces(
 
 ParticipantQoSBuilder &ParticipantQoSBuilder::setIgnoreLocalEndpoints()
 {
-    //qos_.properties().properties().emplace_back("fastdds.ignore_local_endpoints", "true");
+    qos_.wireProtocol .builtin.mDiscoveryAttributes.mIgnoreParticipantFlag =
+        BaoSky::rtps::IgnoreParticipantFlag::FILTER_SAME_PROCESS;
     return *this;
 }
 
