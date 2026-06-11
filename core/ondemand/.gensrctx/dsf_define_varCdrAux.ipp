@@ -1215,8 +1215,7 @@ void BaoSky::Cdr::SerializeKey(
     static_cast<void>(data);
                             scdr.Serialize(data.name());
 
-
-
+                            scdr.Serialize(data.nodeName());
 
 }
 
