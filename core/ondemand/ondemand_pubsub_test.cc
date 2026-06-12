@@ -1379,8 +1379,12 @@ TEST(OnDemandPubSub, MultiPubFixedValueAndFreqVerification)
         dsf::ondemand::OnDemandPub pub;
         ChildReport r;
         if (!childRequire(r, pub.init(pub1Node), "pub1 init failed")
-            || !childRequire(r, pub.start(), "pub1 start failed")
-            || !childRequire(r, pub.createVars(defs1), "pub1 createVars failed")) {
+            || !childRequire(r, pub.start(), "pub1 start failed")) {
+            return r;
+        }
+        // 交错 createVars，避免多 pub 并发写入 TXDDS 丢消息
+        std::this_thread::sleep_for(500ms);
+        if (!childRequire(r, pub.createVars(defs1), "pub1 createVars failed")) {
             return r;
         }
 
@@ -1424,8 +1428,12 @@ TEST(OnDemandPubSub, MultiPubFixedValueAndFreqVerification)
         dsf::ondemand::OnDemandPub pub;
         ChildReport r;
         if (!childRequire(r, pub.init(pub2Node), "pub2 init failed")
-            || !childRequire(r, pub.start(), "pub2 start failed")
-            || !childRequire(r, pub.createVars(defs2), "pub2 createVars failed")) {
+            || !childRequire(r, pub.start(), "pub2 start failed")) {
+            return r;
+        }
+        // 交错 createVars，避免多 pub 并发写入 TXDDS 丢消息
+        std::this_thread::sleep_for(1000ms);
+        if (!childRequire(r, pub.createVars(defs2), "pub2 createVars failed")) {
             return r;
         }
 
@@ -1469,8 +1477,12 @@ TEST(OnDemandPubSub, MultiPubFixedValueAndFreqVerification)
         dsf::ondemand::OnDemandPub pub;
         ChildReport r;
         if (!childRequire(r, pub.init(pub3Node), "pub3 init failed")
-            || !childRequire(r, pub.start(), "pub3 start failed")
-            || !childRequire(r, pub.createVars(defs3), "pub3 createVars failed")) {
+            || !childRequire(r, pub.start(), "pub3 start failed")) {
+            return r;
+        }
+        // 交错 createVars，避免多 pub 并发写入 TXDDS 丢消息
+        std::this_thread::sleep_for(1500ms);
+        if (!childRequire(r, pub.createVars(defs3), "pub3 createVars failed")) {
             return r;
         }
 
