@@ -166,10 +166,10 @@ namespace ondemand
         std::function<void(const std::string &, std::shared_ptr<DSF::Message::SubTableRegister>)>
             processFunc)
     {
-        constexpr uint32_t depth = 20;
+        constexpr uint32_t depth = 64;
         DdsWrapper::DataReaderQoSBuilder readerQosBuilder;
-        readerQosBuilder.setMaxSamples(256 * depth)
-            .setMaxInstances(256)
+        readerQosBuilder.setMaxSamples(10 * depth)
+            .setMaxInstances(10)
             .setMaxSamplesPerInstance(depth)
             .setDurabilityKind(DdsWrapper::DurabilityKind::TRANSIENT_LOCAL)
             .setReliabilityKind(DdsWrapper::ReliabilityKind::RELIABLE)
