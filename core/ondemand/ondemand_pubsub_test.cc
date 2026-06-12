@@ -1383,7 +1383,7 @@ TEST(OnDemandPubSub, MultiPubFixedValueAndFreqVerification)
             return r;
         }
         // 交错 createVars，避免多 pub 并发写入 TXDDS 丢消息
-        std::this_thread::sleep_for(500ms);
+        //std::this_thread::sleep_for(100ms);
         if (!childRequire(r, pub.createVars(defs1), "pub1 createVars failed")) {
             return r;
         }
@@ -1432,7 +1432,7 @@ TEST(OnDemandPubSub, MultiPubFixedValueAndFreqVerification)
             return r;
         }
         // 交错 createVars，避免多 pub 并发写入 TXDDS 丢消息
-        std::this_thread::sleep_for(1000ms);
+       // std::this_thread::sleep_for(200ms);
         if (!childRequire(r, pub.createVars(defs2), "pub2 createVars failed")) {
             return r;
         }
@@ -1481,7 +1481,7 @@ TEST(OnDemandPubSub, MultiPubFixedValueAndFreqVerification)
             return r;
         }
         // 交错 createVars，避免多 pub 并发写入 TXDDS 丢消息
-        std::this_thread::sleep_for(1500ms);
+        //std::this_thread::sleep_for(300ms);
         if (!childRequire(r, pub.createVars(defs3), "pub3 createVars failed")) {
             return r;
         }
