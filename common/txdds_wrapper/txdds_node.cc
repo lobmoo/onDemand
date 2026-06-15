@@ -1,5 +1,6 @@
 #include "txdds_node.h"
 
+#include <cstring>
 #include "txdds/DCPS/common/ReturnCode.h"
 #include "txdds/DCPS/domain/DomainParticipantFactory.h"
 #include "txdds/DCPS/publisher/qos/PublisherQos.h"
@@ -290,14 +291,22 @@ void TXDDSNode::destroyParticipantResources()
         }
     }
     subscribers_.clear();
-    std::vector<std::string> tName = BaoSky::rtps::ThreadManager::GetInstance()->GetConfigList();
-    std::vector<std::string> cName = BaoSky::rtps::TransportStack::GetInstance()->GetConfigList(UDPTransportKind);
-    for (const auto &name : tName) {
-        BaoSky::rtps::ThreadManager::GetInstance()->DeleteResource(name);
+
+    /*按前缀删除 dsfconnector_ 相关的 config，不影响其他 node*/
+    const std::string kCfgPrefix = "dsfconnector_";
+    for (const auto &name : BaoSky::rtps::ThreadManager::GetInstance()->GetConfigList()) {
+        if (name.compare(0, kCfgPrefix.size(), kCfgPrefix) == 0) {
+            BaoSky::rtps::ThreadManager::GetInstance()->DeleteResource(name);
+        }
     }
-    for (const auto &name : cName) {
-        BaoSky::rtps::TransportStack::GetInstance()->DeleteConfig(name);
+    for (const auto &name :
+         BaoSky::rtps::TransportStack::GetInstance()->GetConfigList(
+             BaoSky::rtps::eTransportKind::UDPTransportKind)) {
+        if (name.compare(0, kCfgPrefix.size(), kCfgPrefix) == 0) {
+            BaoSky::rtps::TransportStack::GetInstance()->DeleteConfig(name);
+        }
     }
+
     BaoSky::dds::DomainParticipantFactory::GetInstance()->DeleteParticipant(participant_);
     participant_ = nullptr;
 }

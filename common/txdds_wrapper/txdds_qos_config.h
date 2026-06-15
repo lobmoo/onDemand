@@ -67,6 +67,7 @@ private:
 
     static std::atomic<uint32_t> instance_counter_;
 
+    uint32_t id_;
     BaoSky::dds::DomainParticipantQos qos_;
     std::string transportCfgName_;
     std::string threadCfgName_;

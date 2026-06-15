@@ -30,9 +30,10 @@ namespace
 
 ParticipantQoSBuilder::ParticipantQoSBuilder()
 {
-    const uint32_t id = instance_counter_.fetch_add(1, std::memory_order_relaxed);
-    threadCfgName_ = "dsf_connector_" + std::to_string(id);
-    transportCfgName_ = "udp_" + std::to_string(id);
+    id_ = instance_counter_.fetch_add(1, std::memory_order_relaxed);
+    const std::string prefix = "dsfconnector_" + std::to_string(id_);
+    threadCfgName_ = prefix + "_thread";
+    transportCfgName_ = prefix + "_transport";
 
     BaoSky::rtps::ThreadConfig thread_config;
     thread_config.mConfigName = threadCfgName_;
