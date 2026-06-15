@@ -289,73 +289,96 @@ namespace ondemand
     {
         pthread_setname_np(pthread_self(), "PubRegProc");
         std::unordered_map<std::string, uint32_t> retryBackoffMsByNode;
+        std::unordered_map<std::string, uint32_t> retryCountByNode;
         constexpr uint32_t kMinPartialRetryMs = 200;
         constexpr uint32_t kMinAllMissingRetryMs = 800;
         constexpr uint32_t kMaxRetryMs = 3000;
+        constexpr uint32_t kMaxRetries = 20;
 
         while (running_.load(std::memory_order_acquire)) {
             std::shared_ptr<DSF::Message::SubTableRegister> data;
-            if (pubTableDefRegisterQueue_.try_dequeue(data)) {
-                if (data) {
-                    switch (data->msgType()) {
-                        case DSF::Message::MSGTYPE::SUB_TABLE_REGISTER: {
-                            const std::string nodeName = data->nodeName();
-                            uint32_t missing = handleSubscribe(nodeName, data->varFreqs());
-                            if (missing > 0) {
-                                /*但对同一 node 做指数退避，降低长期缺失时的 CPU 开销。*/
-                                const size_t total = data->varFreqs().size();
-                                const bool allMissing = (total > 0) && (missing >= total);
 
-                                uint32_t &backoffMs = retryBackoffMsByNode[nodeName];
-                                if (backoffMs == 0) {
-                                    backoffMs =
-                                        allMissing ? kMinAllMissingRetryMs : kMinPartialRetryMs;
-                                } else {
-                                    const uint32_t minBase =
-                                        allMissing ? kMinAllMissingRetryMs : kMinPartialRetryMs;
-                                    if (backoffMs < minBase) {
-                                        backoffMs = minBase;
-                                    } else {
-                                        backoffMs = std::min(kMaxRetryMs, backoffMs * 2);
-                                    }
-                                }
+            /*优先消费正常队列（新消息），空了再消费重试队列*/
+            if (!pubTableDefRegisterQueue_.try_dequeue(data)) {
+                std::lock_guard<std::mutex> lk(pubTableDefRetryQueueMutex_);
+                if (!pubTableDefRetryQueue_.empty()) {
+                    data = pubTableDefRetryQueue_.front();
+                    pubTableDefRetryQueue_.pop();
+                }
+            }
 
-                                ONDEMANDLOG_TIME(warning, 5000)
-                                    << "SUB_TABLE_REGISTER retry: node=" << nodeName
-                                    << " missing=" << missing << "/" << total
-                                    << " delayMs=" << backoffMs;
+            if (!data) {
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                continue;
+            }
 
-                                std::this_thread::sleep_for(std::chrono::milliseconds(backoffMs));
-                                pubTableDefRegisterQueue_.enqueue(data);
-                            } else {
-                                retryBackoffMsByNode.erase(nodeName);
-                            }
+            switch (data->msgType()) {
+                case DSF::Message::MSGTYPE::SUB_TABLE_REGISTER: {
+                    const std::string nodeName = data->nodeName();
+                    uint32_t missing = handleSubscribe(nodeName, data->varFreqs());
+                    if (missing > 0) {
+                        /*最大重试次数限制*/
+                        uint32_t &retryCount = retryCountByNode[nodeName];
+                        if (++retryCount > kMaxRetries) {
+                            ONDEMANDLOG(warning)
+                                << "SUB_TABLE_REGISTER max retries (" << kMaxRetries
+                                << ") exceeded, dropping: node=" << nodeName
+                                << " missing=" << missing << "/" << data->varFreqs().size();
+                            retryBackoffMsByNode.erase(nodeName);
+                            retryCountByNode.erase(nodeName);
                             break;
                         }
-                        case DSF::Message::MSGTYPE::SUB_TABLE_UNREGISTER:
-                            retryBackoffMsByNode.erase(data->nodeName());
-                            handleUnsubscribe(data->nodeName(), data->varFreqs());
-                            break;
-                        default:
-                            ONDEMANDLOG(error) << "Unknown registered type.";
-                            break;
-                    }
 
-                    // // [DEBUG] 打印相关变量的 VarMetadata
-                    // {
-                    //     std::shared_lock dumpLock(varIndexMutex_);
-                    //     for (const auto &varFreq : data->varFreqs()) {
-                    //         std::string metaName = varFreq.name();
-                    //         uint64_t varHash = fast_hash(metaName);
-                    //         auto it = varIndex_.find(varHash);
-                    //         if (it != varIndex_.end()) {
-                    //             it->second.dump(varFreq.name());
-                    //         }
-                    //     }
-                    // }
+                        /*指数退避*/
+                        const size_t total = data->varFreqs().size();
+                        const bool allMissing = (total > 0) && (missing >= total);
+
+                        uint32_t &backoffMs = retryBackoffMsByNode[nodeName];
+                        if (backoffMs == 0) {
+                            backoffMs =
+                                allMissing ? kMinAllMissingRetryMs : kMinPartialRetryMs;
+                        } else {
+                            const uint32_t minBase =
+                                allMissing ? kMinAllMissingRetryMs : kMinPartialRetryMs;
+                            if (backoffMs < minBase) {
+                                backoffMs = minBase;
+                            } else {
+                                backoffMs = std::min(kMaxRetryMs, backoffMs * 2);
+                            }
+                        }
+
+                        ONDEMANDLOG_TIME(warning, 5000)
+                            << "SUB_TABLE_REGISTER retry: node=" << nodeName
+                            << " missing=" << missing << "/" << total
+                            << " attempt=" << retryCount << "/" << kMaxRetries
+                            << " delayMs=" << backoffMs;
+
+                        /*构造只含缺失变量的重试消息，放入重试队列*/
+                        auto retryData = std::make_shared<DSF::Message::SubTableRegister>();
+                        retryData->msgType(data->msgType());
+                        retryData->nodeName(data->nodeName());
+                        retryData->tableName(data->tableName());
+                        for (const auto &vf : data->varFreqs()) {
+                            retryData->varFreqs().push_back(vf);
+                        }
+                        std::this_thread::sleep_for(std::chrono::milliseconds(backoffMs));
+                        {
+                            std::lock_guard<std::mutex> lk(pubTableDefRetryQueueMutex_);
+                            pubTableDefRetryQueue_.push(retryData);
+                        }
+                    } else {
+                        retryBackoffMsByNode.erase(nodeName);
+                        retryCountByNode.erase(nodeName);
+                    }
+                    break;
                 }
-            } else {
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                case DSF::Message::MSGTYPE::SUB_TABLE_UNREGISTER:
+                    retryBackoffMsByNode.erase(data->nodeName());
+                    handleUnsubscribe(data->nodeName(), data->varFreqs());
+                    break;
+                default:
+                    ONDEMANDLOG(error) << "Unknown registered type.";
+                    break;
             }
         }
     }
@@ -1400,6 +1423,12 @@ namespace ondemand
 
         std::shared_ptr<DSF::Message::SubTableRegister> item;
         while (pubTableDefRegisterQueue_.try_dequeue(item)) {
+        }
+        {
+            std::lock_guard<std::mutex> lk(pubTableDefRetryQueueMutex_);
+            while (!pubTableDefRetryQueue_.empty()) {
+                pubTableDefRetryQueue_.pop();
+            }
         }
 
         size_t drainedFreqChange = 0;

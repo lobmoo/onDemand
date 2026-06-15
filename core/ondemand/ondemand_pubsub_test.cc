@@ -4037,5 +4037,277 @@ TEST(OnDemandPubSub, SubscriptionMatchedCallbackPerTopicMatchUnmatch)
     EXPECT_TRUE(foundBucket) << "bucket topic not found in callback events";
 }
 
+// TC25 - Sub stop 后重启并追加订阅验证
+// 场景：pub 创建10个变量并持续发布。sub1 订阅 var0 和一个不存在的变量 nonexistent_var，
+//       等待 var0 收到回调后直接 stop。随后启动新的 sub2，先订阅 var0，
+//       收到 var0 回调后再追加订阅 var1，验证两个变量都收到回调、数据正确、频率正常。
+// 验证：① sub1 订阅不存在的变量不影响 var0 的正常接收；
+//       ② sub1 stop 后 sub2 能正常订阅并收到数据；
+//       ③ sub2 追加订阅 var1 后两个变量都能收到回调；
+//       ④ 数据值非零，回调频率在预期范围内（100ms ± 50%）。
+TEST(OnDemandPubSub, SubStopThenNewSubAddSubscribe)
+{
+    const auto root = std::filesystem::temp_directory_path() / uniqueName("ondemand_case25");
+    std::filesystem::create_directories(root);
+
+    const std::string pubNode = uniqueName("pub_case25");
+    const auto defs  = makeDefines(pubNode, "var", 10);
+    const auto names = defineNames(defs);
+    constexpr uint32_t kFreqMs = 100;
+    constexpr size_t kSamples = 10;
+
+    // pub：持续发布10个变量
+    const auto pubProc = spawnChild("case25_pub", root, [pubNode, defs, names]() {
+        dsf::ondemand::OnDemandPub pub;
+        ChildReport r;
+        if (!childRequire(r, pub.init(pubNode), "pub init failed")
+            || !childRequire(r, pub.start(), "pub start failed")
+            || !childRequire(r, pub.createVars(defs), "pub createVars failed")) {
+            return r;
+        }
+        std::atomic<bool> running{true};
+        std::thread th([&]() { publishLoop(pub, names, running, 20); });
+        std::this_thread::sleep_for(30s);
+        running.store(false, std::memory_order_release);
+        th.join();
+        pub.stop();
+        r.ok = true;
+        r.message = "ok";
+        return r;
+    });
+
+    // sub1：订阅 var0 + 一个不存在的变量，等 var0 收到数据后 stop
+    std::this_thread::sleep_for(1s);
+    const auto sub1Proc = spawnChild("case25_sub1", root, [pubNode, names, kFreqMs]() {
+        dsf::ondemand::OnDemandSub sub;
+        ChildReport r;
+        if (!childRequire(r, sub.init(uniqueName("sub1_case25")), "sub1 init failed")
+            || !childRequire(r, sub.start(), "sub1 start failed")) {
+            return r;
+        }
+
+        // 等待变量定义到达
+        if (!childRequire(r,
+                          waitUntil([&]() { return countNodeVars(sub, pubNode) == names.size(); }, 8s),
+                          "sub1 did not receive defines")) {
+            sub.stop();
+            return r;
+        }
+
+        std::mutex mu;
+        std::map<std::string, int32_t> latestValues;
+
+        // 订阅 var0 + 不存在的变量 nonexistent_var
+        std::vector<dsf::ondemand::SubscriptionItem> sub1Items;
+        sub1Items.emplace_back(names[0], kFreqMs);             // var0
+        sub1Items.emplace_back("nonexistent_var_xyz", kFreqMs); // 不存在的变量
+
+        const bool subOk = sub.subscribe(
+            pubNode.c_str(), sub1Items,
+            [&](const std::vector<dsf::ondemand::VarCallbackData> &vars) {
+                std::lock_guard<std::mutex> lk(mu);
+                for (const auto &v : vars) {
+                    const std::string name(v.varName.data(), v.varName.size());
+                    if (v.data && v.size >= sizeof(int32_t))
+                        latestValues[name] = *reinterpret_cast<const int32_t *>(v.data);
+                    LOG(info) << "[case25_sub1] cb: " << name << " val=" << latestValues[name];
+                }
+            });
+
+        if (!childRequire(r, subOk, "sub1 subscribe failed")) {
+            sub.stop();
+            return r;
+        }
+
+        // 等待 var0 收到至少 3 次回调
+        const bool gotVar0 = waitUntil(
+            [&]() {
+                std::lock_guard<std::mutex> lk(mu);
+                return latestValues.count(names[0]) > 0 && latestValues[names[0]] != 0;
+            },
+            8s);
+        if (!childRequire(r, gotVar0, "sub1: did not receive var0 data")) {
+            sub.stop();
+            return r;
+        }
+
+        // 验证 nonexistent_var 确实没有收到任何回调
+        {
+            std::lock_guard<std::mutex> lk(mu);
+            childRequire(r, latestValues.count("nonexistent_var_xyz") == 0,
+                         "sub1: nonexistent_var should not have received any callback");
+        }
+
+        LOG(info) << "[case25_sub1] var0 received OK, stopping sub1";
+        sub.stop();
+        r.ok = gotVar0;
+        r.message = r.ok ? "ok" : r.message;
+        r.metrics["var0_val"] = std::to_string(latestValues.count(names[0]) ? latestValues[names[0]] : 0);
+        return r;
+    });
+
+    // 等 sub1 完成并退出后再启动 sub2
+    expectChildOk(sub1Proc, 18s);
+
+    std::this_thread::sleep_for(1s);
+
+    // sub2：新 sub，先订阅 var0，收到回调后再追加订阅 var1
+    const auto sub2Proc = spawnChild("case25_sub2", root, [pubNode, names, kFreqMs, kSamples]() {
+        dsf::ondemand::OnDemandSub sub;
+        ChildReport r;
+        if (!childRequire(r, sub.init(uniqueName("sub2_case25")), "sub2 init failed")
+            || !childRequire(r, sub.start(), "sub2 start failed")) {
+            return r;
+        }
+
+        // 等待变量定义到达
+        if (!childRequire(r,
+                          waitUntil([&]() { return countNodeVars(sub, pubNode) == names.size(); }, 8s),
+                          "sub2 did not receive defines")) {
+            sub.stop();
+            return r;
+        }
+
+        std::mutex mu;
+        std::map<std::string, int32_t> latestValues;
+        std::map<std::string, std::vector<uint64_t>> tsLog;
+
+        // 阶段1：只订阅 var0
+        std::vector<dsf::ondemand::SubscriptionItem> sub2Items;
+        sub2Items.emplace_back(names[0], kFreqMs);
+
+        const bool subOk = sub.subscribe(
+            pubNode.c_str(), sub2Items,
+            [&](const std::vector<dsf::ondemand::VarCallbackData> &vars) {
+                std::lock_guard<std::mutex> lk(mu);
+                for (const auto &v : vars) {
+                    const std::string name(v.varName.data(), v.varName.size());
+                    if (v.data && v.size >= sizeof(int32_t))
+                        latestValues[name] = *reinterpret_cast<const int32_t *>(v.data);
+                    auto &ts = tsLog[name];
+                    if (ts.size() < kSamples && v.timestampNs > 0
+                        && (ts.empty() || v.timestampNs > ts.back()))
+                        ts.push_back(v.timestampNs);
+                    LOG(info) << "[case25_sub2] cb: " << name << " val=" << latestValues[name];
+                }
+            });
+
+        if (!childRequire(r, subOk, "sub2 initial subscribe (var0) failed")) {
+            sub.stop();
+            return r;
+        }
+
+        // 等待 var0 收到回调
+        const bool gotVar0 = waitUntil(
+            [&]() {
+                std::lock_guard<std::mutex> lk(mu);
+                return latestValues.count(names[0]) > 0 && latestValues[names[0]] != 0;
+            },
+            8s);
+        if (!childRequire(r, gotVar0, "sub2: did not receive var0 data")) {
+            sub.stop();
+            return r;
+        }
+        LOG(info) << "[case25_sub2] var0 received OK, subscribing var1";
+
+        // 阶段2：追加订阅 var1
+        std::vector<dsf::ondemand::SubscriptionItem> addSub;
+        addSub.emplace_back(names[1], kFreqMs);
+
+        const bool addSubOk = sub.subscribe(pubNode.c_str(), addSub,
+            [&](const std::vector<dsf::ondemand::VarCallbackData> &vars) {
+                std::lock_guard<std::mutex> lk(mu);
+                for (const auto &v : vars) {
+                    const std::string name(v.varName.data(), v.varName.size());
+                    if (v.data && v.size >= sizeof(int32_t))
+                        latestValues[name] = *reinterpret_cast<const int32_t *>(v.data);
+                    auto &ts = tsLog[name];
+                    if (ts.size() < kSamples && v.timestampNs > 0
+                        && (ts.empty() || v.timestampNs > ts.back()))
+                        ts.push_back(v.timestampNs);
+                    LOG(info) << "[case25_sub2] cb(var1): " << name << " val=" << latestValues[name];
+                }
+            });
+
+        if (!childRequire(r, addSubOk, "sub2 add-subscribe (var1) failed")) {
+            sub.stop();
+            return r;
+        }
+
+        // 等待 var1 也收到回调
+        const bool gotVar1 = waitUntil(
+            [&]() {
+                std::lock_guard<std::mutex> lk(mu);
+                return latestValues.count(names[1]) > 0 && latestValues[names[1]] != 0;
+            },
+            8s);
+        if (!childRequire(r, gotVar1, "sub2: did not receive var1 data after add-subscribe")) {
+            sub.stop();
+            return r;
+        }
+        LOG(info) << "[case25_sub2] var1 received OK";
+
+        // 等待两个变量都积累足够的回调时间戳用于频率验证
+        const bool gotEnough = waitUntil(
+            [&]() {
+                std::lock_guard<std::mutex> lk(mu);
+                return tsLog[names[0]].size() >= kSamples
+                       && tsLog[names[1]].size() >= kSamples;
+            },
+            12s);
+
+        sub.stop();
+
+        if (!childRequire(r, gotEnough, "sub2: not enough callbacks to verify frequency"))
+            return r;
+
+        // 验证数据正确性
+        {
+            std::lock_guard<std::mutex> lk(mu);
+            for (const auto &n : {names[0], names[1]}) {
+                if (!childRequire(r, latestValues.count(n) > 0, "no value for " + n))
+                    return r;
+                if (!childRequire(r, latestValues[n] != 0, "zero value for " + n))
+                    return r;
+            }
+        }
+
+        // 验证频率：用首尾时间戳跨度算平均间隔，允许 ±50% 误差
+        {
+            std::lock_guard<std::mutex> lk(mu);
+            constexpr double kExpectedMs = static_cast<double>(kFreqMs);
+            constexpr double kLowMs  = kExpectedMs * 0.50;
+            constexpr double kHighMs = kExpectedMs * 1.50;
+            for (const auto &n : {names[0], names[1]}) {
+                const auto &ts = tsLog[n];
+                const double avgMs = static_cast<double>(ts.back() - ts.front())
+                                     / static_cast<double>(ts.size() - 1) / 1e6;
+                LOG(info) << "[case25_sub2] avg period for " << n << ": "
+                          << static_cast<int>(avgMs) << "ms (samples=" << ts.size() << ")";
+                r.metrics["avg_ms_" + n] = std::to_string(static_cast<int>(avgMs));
+                if (!childRequire(r, avgMs >= kLowMs && avgMs <= kHighMs,
+                                  "avg period out of range for " + n + ": "
+                                      + std::to_string(static_cast<int>(avgMs)) + "ms"
+                                      + " expected [" + std::to_string(static_cast<int>(kLowMs))
+                                      + "," + std::to_string(static_cast<int>(kHighMs)) + "]ms"))
+                    return r;
+            }
+        }
+
+        r.ok = true;
+        r.message = "ok";
+        r.metrics["var0_val"] = std::to_string(latestValues[names[0]]);
+        r.metrics["var1_val"] = std::to_string(latestValues[names[1]]);
+        return r;
+    });
+
+    expectChildOk(pubProc, 40s);
+    ChildReport sub2Report;
+    expectChildOk(sub2Proc, 30s, &sub2Report);
+
+    EXPECT_EQ(sub2Report.metrics["var0_val"] != "0", true) << "var0 value should be non-zero";
+    EXPECT_EQ(sub2Report.metrics["var1_val"] != "0", true) << "var1 value should be non-zero";
+}
+
 #endif
 

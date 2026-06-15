@@ -17,6 +17,7 @@
 #ifndef ON_DEMAND_PUB_H
 #define ON_DEMAND_PUB_H
 
+#include <queue>
 #include <shared_mutex>
 #include <memory>
 #include "on_demand_common.h"
@@ -308,6 +309,10 @@ namespace ondemand
         // ---- 队列 ----
         moodycamel::ConcurrentQueue<std::shared_ptr<DSF::Message::SubTableRegister>>
             pubTableDefRegisterQueue_;
+        // 重试队列（与正常队列隔离，重试不阻塞新消息消费）
+        std::mutex pubTableDefRetryQueueMutex_;
+        std::queue<std::shared_ptr<DSF::Message::SubTableRegister>>
+            pubTableDefRetryQueue_;
         moodycamel::ConcurrentQueue<std::pair<std::string, uint32_t>> freqChangeQueue_;
 
         // ---- DDS 读写器 ----
