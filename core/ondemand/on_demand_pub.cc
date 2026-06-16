@@ -28,7 +28,8 @@ namespace ondemand
     OnDemandPub::OnDemandPub()
         : varIndex_(), varIndexMutex_(), bucketManager_(), initialized_(false), running_(false),
           dataNode_(nullptr), nodeName_(), pubTableDefineWriter_(nullptr),
-          subTableRegisterReqReader_(nullptr), freqChangeCb_(nullptr)
+          subTableRegisterReqReader_(nullptr), freqChangeCb_(nullptr),
+          maxVarsPerNode_(0), maxNodeNum_(64)
     {
     }
 
@@ -289,11 +290,9 @@ namespace ondemand
     {
         pthread_setname_np(pthread_self(), "PubRegProc");
         std::unordered_map<std::string, uint32_t> retryBackoffMsByNode;
-        std::unordered_map<std::string, uint32_t> retryCountByNode;
         constexpr uint32_t kMinPartialRetryMs = 200;
         constexpr uint32_t kMinAllMissingRetryMs = 800;
         constexpr uint32_t kMaxRetryMs = 3000;
-        constexpr uint32_t kMaxRetries = 20;
 
         while (running_.load(std::memory_order_acquire)) {
             std::shared_ptr<DSF::Message::SubTableRegister> data;
@@ -317,19 +316,7 @@ namespace ondemand
                     const std::string nodeName = data->nodeName();
                     uint32_t missing = handleSubscribe(nodeName, data->varFreqs());
                     if (missing > 0) {
-                        /*最大重试次数限制*/
-                        uint32_t &retryCount = retryCountByNode[nodeName];
-                        if (++retryCount > kMaxRetries) {
-                            ONDEMANDLOG(warning)
-                                << "SUB_TABLE_REGISTER max retries (" << kMaxRetries
-                                << ") exceeded, dropping: node=" << nodeName
-                                << " missing=" << missing << "/" << data->varFreqs().size();
-                            retryBackoffMsByNode.erase(nodeName);
-                            retryCountByNode.erase(nodeName);
-                            break;
-                        }
-
-                        /*指数退避*/
+                        /*指数退避，不丢弃，持续重试直到变量被创建*/
                         const size_t total = data->varFreqs().size();
                         const bool allMissing = (total > 0) && (missing >= total);
 
@@ -350,7 +337,6 @@ namespace ondemand
                         ONDEMANDLOG_TIME(warning, 5000)
                             << "SUB_TABLE_REGISTER retry: node=" << nodeName
                             << " missing=" << missing << "/" << total
-                            << " attempt=" << retryCount << "/" << kMaxRetries
                             << " delayMs=" << backoffMs;
 
                         /*构造只含缺失变量的重试消息，放入重试队列*/
@@ -368,7 +354,6 @@ namespace ondemand
                         }
                     } else {
                         retryBackoffMsByNode.erase(nodeName);
-                        retryCountByNode.erase(nodeName);
                     }
                     break;
                 }
@@ -1086,6 +1071,15 @@ namespace ondemand
         uint32_t missingCount = 0;
 
         std::unique_lock lock(varIndexMutex_);
+
+        /*订阅者数量限制*/
+        bool isNewNode = (nodeSlotMap_.find(nodeHash) == nodeSlotMap_.end());
+        if (isNewNode && nodeSlotMap_.size() >= maxNodeNum_) {
+            ONDEMANDLOG(warning) << "Rejecting subscribe from node=" << nodeName
+                                 << ": reached max subscriber limit (" << maxNodeNum_ << ")";
+            return 0;
+        }
+
         uint8_t nodeBit = getOrAssignNodeBit(nodeHash);
         if (nodeBit == 0xFF) {
             ONDEMANDLOG(error) << "Rejecting subscribe from node=" << nodeName
@@ -1093,6 +1087,39 @@ namespace ondemand
             return 0;
         }
         uint64_t nodeMask = uint64_t(1) << nodeBit;
+
+        /*每节点变量数限制：计算本次请求新增的变量数*/
+        uint32_t currentVarCount = nodeVarCount_[nodeHash];
+        uint32_t newVarsInRequest = 0;
+        for (const auto &varFreq : varFreqs) {
+            std::string metaName = varFreq.name();
+            if (metaName.compare(0, ownPrefix.size(), ownPrefix) != 0) {
+                continue;
+            }
+            uint64_t varHash = fast_hash(metaName);
+            auto it = varIndex_.find(varHash);
+            if (it != varIndex_.end()) {
+                bool alreadySubscribed = false;
+                for (const auto &fs : it->second.freqSubs) {
+                    if (fs.subMask & nodeMask) {
+                        alreadySubscribed = true;
+                        break;
+                    }
+                }
+                if (!alreadySubscribed) {
+                    ++newVarsInRequest;
+                }
+            } else {
+                ++newVarsInRequest;
+            }
+        }
+        if (maxVarsPerNode_ > 0 && currentVarCount + newVarsInRequest > maxVarsPerNode_) {
+            ONDEMANDLOG(warning) << "Rejecting subscribe from node=" << nodeName
+                                 << ": would exceed max vars per node (" << maxVarsPerNode_
+                                 << "), current=" << currentVarCount
+                                 << " requested=" << newVarsInRequest;
+            return 0;
+        }
 
         // ── 第一阶段：收集有效变量 + 批量扩展 ──
         std::vector<uint32_t> expandIds;
@@ -1198,7 +1225,10 @@ namespace ondemand
                               << "ms";
         }
 
+        /*更新该节点的已订阅变量计数*/
+        nodeVarCount_[nodeHash] += static_cast<uint32_t>(entries.size());
         lock.unlock();
+
         for (const auto &[varName, newFreq] : freqChanges) {
             freqChangeQueue_.enqueue({varName, newFreq});
         }
@@ -1270,7 +1300,15 @@ namespace ondemand
                               << "], freq " << oldFreq << "ms -> " << meta.currentFreq << "ms";
         }
 
+        /*更新该节点的已订阅变量计数*/
+        auto countIt = nodeVarCount_.find(nodeHash);
+        if (countIt != nodeVarCount_.end()) {
+            uint32_t unsubscribed = static_cast<uint32_t>(varFreqs.size());
+            countIt->second = (countIt->second > unsubscribed) ? countIt->second - unsubscribed : 0;
+        }
+
         lock.unlock();
+        
         for (const auto &[varName, newFreq] : freqChanges) {
             freqChangeQueue_.enqueue({varName, newFreq});
         }

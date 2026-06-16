@@ -55,6 +55,10 @@ namespace BaoSky::rtps
 
         virtual std::vector<std::string> GetConfigList(const eTransportKind &kind);
 
+        virtual void StartTCPService(const std::string &configName);
+
+        virtual void StopTCPService(const std::string &configName);
+
     private:
         void InitialTransport();
 

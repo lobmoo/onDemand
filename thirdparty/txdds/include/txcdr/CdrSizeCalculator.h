@@ -1,7 +1,7 @@
 /*
  * @Author       : yanli yanli563730@baosight.com
  * @Date         : 2025-02-17 15:22:52
- * @FilePath     : /txcdr/include/CdrSizeCalculator.h
+ * @FilePath     : /TXDDS/thirdparty/txcdr/include/txcdr/CdrSizeCalculator.h
  * @Copyright (c) 2025 by BAOSIGHT, All Rights Reserved.
  * @Description  :
  */
@@ -27,7 +27,7 @@ template <class _T>
 extern std::size_t CalculateSerializedSizeUserDefined(
     BaoSky::Cdr::CdrSizeCalculator &,
     const _T &,
-    std::size_t &);
+    std::uint64_t &);
 
 template <class _T>
 extern std::size_t CalculateSerializedSizeUserDefined(
@@ -73,7 +73,10 @@ namespace BaoSky::Cdr
         template <class _T, typename std::enable_if<!std::is_enum<_T>::value>::type * = nullptr, typename = void>
         std::size_t CalculateSerializedSize(const _T &data, std::size_t &current_alignment)
         {
-            return CalculateSerializedSizeUserDefined(*this, data, current_alignment);
+            uint64_t a = current_alignment;
+            auto value = CalculateSerializedSizeUserDefined(*this, data, a);
+            current_alignment = a;
+            return value;
         }
 
         template <class _T,
@@ -600,7 +603,6 @@ namespace BaoSky::Cdr
 
             return calculated_size;
         }
-
 
         template <class _T>
         size_t CalculateSerializedSize(

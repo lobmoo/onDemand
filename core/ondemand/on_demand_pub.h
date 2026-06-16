@@ -154,6 +154,23 @@ namespace ondemand
          */
         bool cleanupParticipantSubscriptions(const std::string &participantName);
 
+        /*资源限制相关接口*/
+        /**
+          * @brief 设置每个订阅者节点允许订阅的最大变量数量，超过后拒绝新变量订阅请求
+          * @param  maxVars   最大变量数量，建议根据实际场景设置合理值，过大可能导致性能下降，过小可能无法满足需求
+          * @return true 
+          * @return false 
+          */
+        void setMaxVarsPerNode(uint32_t maxVars) { maxVarsPerNode_ = maxVars; }
+
+        /**
+          * @brief Set the Max Node Num object
+          * @param  maxNodes   节点数  
+          * @return true 
+          * @return false 
+          */
+        void setMaxNodeNum(uint32_t maxNodes) { maxNodeNum_ = maxNodes; }
+
     private:
         /**
          * @brief Participant 掉线回调，清除该 participant 的所有订阅
@@ -212,7 +229,7 @@ namespace ondemand
          * @return 未找到的变量数量（>0 表示有变量尚未创建，调用方应延迟重试）
          */
         uint32_t handleSubscribe(const std::string &nodeName,
-                             const std::vector<DSF::NamedValue> &varFreqs);
+                                 const std::vector<DSF::NamedValue> &varFreqs);
         /**
          * @brief 处理订阅者取消订阅请求，更新订阅者信息和变量频率，触发发布调度
          * @param  nodeName         变量名
@@ -311,8 +328,7 @@ namespace ondemand
             pubTableDefRegisterQueue_;
         // 重试队列（与正常队列隔离，重试不阻塞新消息消费）
         std::mutex pubTableDefRetryQueueMutex_;
-        std::queue<std::shared_ptr<DSF::Message::SubTableRegister>>
-            pubTableDefRetryQueue_;
+        std::queue<std::shared_ptr<DSF::Message::SubTableRegister>> pubTableDefRetryQueue_;
         moodycamel::ConcurrentQueue<std::pair<std::string, uint32_t>> freqChangeQueue_;
 
         // ---- DDS 读写器 ----
@@ -359,6 +375,11 @@ namespace ondemand
             groupMaskBufs_; // 预计算 mask，shared_ptr 避免每次 publish 复制
         std::thread publishSchedulerThread_;
         std::atomic<bool> schedulerDirty_{true}; // varIndex_ 变更标记
+
+        /*资源限制相关*/
+        uint32_t maxVarsPerNode_; // 每个节点最大变量数，超过后拒绝新变量订阅
+        uint32_t maxNodeNum_;     // 最大订阅者数，超过后拒绝新订阅者注册
+        std::unordered_map<uint64_t, uint32_t> nodeVarCount_; // nodeHash -> 已订阅变量数
     };
 
 } // namespace ondemand

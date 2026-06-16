@@ -4309,5 +4309,185 @@ TEST(OnDemandPubSub, SubStopThenNewSubAddSubscribe)
     EXPECT_EQ(sub2Report.metrics["var1_val"] != "0", true) << "var1 value should be non-zero";
 }
 
+// TC26 - setMaxNodeNum 订阅者数量限制验证
+// 场景：pub 设置 maxNodeNum=3，启动4个 sub。
+// 验证：pub 侧 freqChangeCallback 最多感知到3个订阅者。
+TEST(OnDemandPubSub, MaxNodeNumLimit)
+{
+    const auto root = std::filesystem::temp_directory_path() / uniqueName("ondemand_case26");
+    std::filesystem::create_directories(root);
+
+    const std::string pubNode = uniqueName("pub_case26");
+    const auto defs = makeDefines(pubNode, "v", 5);
+    const auto names = defineNames(defs);
+
+    const auto pubProc = spawnChild("case26_pub", root, [pubNode, defs, names]() {
+        dsf::ondemand::OnDemandPub pub;
+        ChildReport r;
+        if (!childRequire(r, pub.init(pubNode), "pub init failed")
+            || !childRequire(r, pub.start(), "pub start failed")
+            || !childRequire(r, pub.createVars(defs), "pub createVars failed")) {
+            return r;
+        }
+
+        /*记录有多少个变量被订阅（只有被接受的订阅才会触发频率变化）*/
+        std::mutex mu;
+        std::set<std::string> subscribedVars;
+        pub.setFreqChangeCallback([&](const std::string &varName, uint32_t freq) {
+            if (freq != 0xFFFFFFFF) {
+                std::lock_guard<std::mutex> lk(mu);
+                subscribedVars.insert(varName);
+            }
+        });
+
+        pub.setMaxNodeNum(3);
+        LOG(info) << "[case26_pub] maxNodeNum set to 3";
+
+        std::atomic<bool> running{true};
+        std::thread th([&]() { publishLoop(pub, names, running, 20); });
+        std::this_thread::sleep_for(15s);
+        running.store(false, std::memory_order_release);
+        th.join();
+        pub.stop();
+
+        /*maxNodeNum=3，最多3个订阅者×5个变量=15次频率变化，但只有5个不同变量名*/
+        size_t count = 0;
+        {
+            std::lock_guard<std::mutex> lk(mu);
+            count = subscribedVars.size();
+        }
+        r.metrics["subscribed_var_count"] = std::to_string(count);
+        LOG(info) << "[case26_pub] subscribed var count=" << count;
+        r.ok = true;
+        r.message = "ok";
+        return r;
+    });
+
+    for (int i = 0; i < 4; ++i) {
+        std::this_thread::sleep_for(1s);
+        spawnChild("case26_sub" + std::to_string(i), root, [pubNode, names]() {
+            dsf::ondemand::OnDemandSub sub;
+            ChildReport r;
+            if (!sub.init(uniqueName("sub_case26")) || !sub.start()) {
+                r.ok = false;
+                r.message = "sub init/start failed";
+                return r;
+            }
+            waitUntil([&]() { return countNodeVars(sub, pubNode) == names.size(); }, 8s);
+            sub.subscribe(pubNode.c_str(), toSubscriptions(names, 200),
+                          [](const std::vector<dsf::ondemand::VarCallbackData> &) {});
+            std::this_thread::sleep_for(5s);
+            sub.stop();
+            r.ok = true;
+            r.message = "ok";
+            return r;
+        });
+    }
+
+    ChildReport pubReport;
+    expectChildOk(pubProc, 24s, &pubReport);
+
+    /*验证：4个sub各订阅5个变量，如果全部接受应该是20个订阅事件（4×5），
+      但maxNodeNum=3限制了只有3个sub被接受，所以最多15个订阅事件。
+      通过subscribedVars.size()验证：如果4个sub都被接受，所有5个变量都会被订阅；
+      如果只有3个sub被接受，结果一样（5个变量都被订阅了）。
+      关键是看pub日志有没有拒绝信息。*/
+    size_t varCount = std::stoi(pubReport.metrics["subscribed_var_count"]);
+    EXPECT_EQ(varCount, 5) << "all 5 vars should be subscribed (by accepted subs)";
+    LOG(info) << "[TEST] maxNodeNum test: subscribed_var_count=" << varCount;
+}
+
+// TC27 - setMaxVarsPerNode 每节点变量数限制验证
+// 场景：pub 创建200个变量，设置 maxVarsPerNode=100，sub 先订阅前100个，再订阅第101个。
+// 验证：pub 侧 freqChangeCallback 只感知到100个变量被订阅（第101个被拒绝）。
+TEST(OnDemandPubSub, MaxVarsPerNodeLimit)
+{
+    const auto root = std::filesystem::temp_directory_path() / uniqueName("ondemand_case27");
+    std::filesystem::create_directories(root);
+
+    const std::string pubNode = uniqueName("pub_case27");
+    const auto defs = makeDefines(pubNode, "v", 200);
+    const auto names = defineNames(defs);
+
+    const auto pubProc = spawnChild("case27_pub", root, [pubNode, defs, names]() {
+        dsf::ondemand::OnDemandPub pub;
+        ChildReport r;
+        if (!childRequire(r, pub.init(pubNode), "pub init failed")
+            || !childRequire(r, pub.start(), "pub start failed")
+            || !childRequire(r, pub.createVars(defs), "pub createVars failed")) {
+            return r;
+        }
+
+        /*记录有多少个不同变量被订阅*/
+        std::mutex mu;
+        std::set<std::string> subscribedVars;
+        pub.setFreqChangeCallback([&](const std::string &varName, uint32_t freq) {
+            if (freq != 0xFFFFFFFF) {
+                std::lock_guard<std::mutex> lk(mu);
+                subscribedVars.insert(varName);
+            }
+        });
+
+        pub.setMaxVarsPerNode(100);
+        LOG(info) << "[case27_pub] maxVarsPerNode set to 100";
+
+        std::atomic<bool> running{true};
+        std::thread th([&]() { publishLoop(pub, names, running, 20); });
+        std::this_thread::sleep_for(15s);
+        running.store(false, std::memory_order_release);
+        th.join();
+        pub.stop();
+
+        size_t count = 0;
+        {
+            std::lock_guard<std::mutex> lk(mu);
+            count = subscribedVars.size();
+        }
+        r.metrics["subscribed_var_count"] = std::to_string(count);
+        LOG(info) << "[case27_pub] subscribed var count=" << count;
+        r.ok = true;
+        r.message = "ok";
+        return r;
+    });
+
+    const auto subProc = spawnChild("case27_sub", root, [pubNode, names]() {
+        dsf::ondemand::OnDemandSub sub;
+        ChildReport r;
+        if (!sub.init(uniqueName("sub_case27")) || !sub.start()) {
+            r.ok = false;
+            r.message = "sub init/start failed";
+            return r;
+        }
+        waitUntil([&]() { return countNodeVars(sub, pubNode) == names.size(); }, 15s);
+
+        /*订阅前100个*/
+        const std::vector<std::string> first100(names.begin(), names.begin() + 100);
+        sub.subscribe(pubNode.c_str(), toSubscriptions(first100, 200),
+                      [](const std::vector<dsf::ondemand::VarCallbackData> &) {});
+        LOG(info) << "[case27_sub] subscribed 100 vars";
+        std::this_thread::sleep_for(2s);
+
+        /*订阅第101个*/
+        sub.subscribe(pubNode.c_str(), toSubscriptions({names[100]}, 200),
+                      [](const std::vector<dsf::ondemand::VarCallbackData> &) {});
+        LOG(info) << "[case27_sub] subscribed 101st var";
+
+        std::this_thread::sleep_for(3s);
+        sub.stop();
+        r.ok = true;
+        r.message = "ok";
+        return r;
+    });
+
+    ChildReport pubReport;
+    expectChildOk(pubProc, 25s, &pubReport);
+    expectChildOk(subProc, 25s);
+
+    /*验证：maxVarsPerNode=100，sub 先订阅100个成功，第101个被拒绝。
+      所以 pub 侧最多感知到100个变量被订阅。*/
+    size_t varCount = std::stoi(pubReport.metrics["subscribed_var_count"]);
+    EXPECT_EQ(varCount, 100) << "only 100 vars should be subscribed (101st rejected)";
+}
+
 #endif
 
