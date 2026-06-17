@@ -1,3 +1,103 @@
+// ╔══════════════════════════════════════════════════════════════════════════════════╗
+// ║                         测试用例索引 (Test Case Index)                          ║
+// ╠══════════╦═══════════════════════════════════════════════════════════════════════╣
+// ║  编号    ║  说明                                                                ║
+// ╠══════════╬═══════════════════════════════════════════════════════════════════════╣
+// ║         ║  【生命周期与基础功能】                                                ║
+// ║  TC1     ║  pub/sub 生命周期基础验证：init→start→重复start(应false)→stop→       ║
+// ║         ║  重复stop 全流程，验证幂等保护，stop不崩溃              [L401]        ║
+// ║  TC2     ║  变量增删后订阅端可见性：分3阶段(pub创建20→追加5→删10)，sub          ║
+// ║         ║  每阶段验证变量数量和名称集合完全准确                   [L443]        ║
+// ║  TC3     ║  变量定义广播+数据接收+回调周期：pub以20ms写入6个变量，sub以         ║
+// ║         ║  100ms订阅，验证收到定义、值非零、平均回调间隔±30%     [L558]        ║
+// ╠══════════╬═══════════════════════════════════════════════════════════════════════╣
+// ║         ║  【频率协商】                                                          ║
+// ║  TC4     ║  单pub单sub频率协商：sub以100ms/250ms订阅2个变量，pub侧验证         ║
+// ║         ║  freqChangeCallback感知到正确频率，sub侧验证实际回调间隔  [L699]      ║
+// ║  TC5     ║  一pub多sub频率协商与回退：3个sub依次订阅/取消，验证首次建频、       ║
+// ║         ║  新sub降频、取消非最小不触发回调、取消最小频率回退到下一个、           ║
+// ║         ║  全部取消后频率变为0xFFFFFFFF                              [L838]      ║
+// ╠══════════╬═══════════════════════════════════════════════════════════════════════╣
+// ║         ║  【通信恢复（重启场景）】                                              ║
+// ║  TC6     ║  sub先启动pub后启动：sub先init/start等待定义，pub延迟3s上线后         ║
+// ║         ║  创建变量，sub订阅并验证数据回调正常                   [L1031]       ║
+// ║  TC7     ║  pub先启动sub后启动+pub重启恢复：pub创建变量后sub上线订阅，          ║
+// ║         ║  pub掉线模拟退出后重新启动，sub能重新发现定义并恢复数据回调           ║
+// ║         ║  + pub侧频率回调也能正确触发                           [L1214]       ║
+// ║  TC8     ║  pub先启动sub后启动+sub重启恢复：pub持续发布，sub1上线订阅           ║
+// ║         ║  验证数据后退出(模拟掉线)，sub2重新启动订阅验证恢复通信，             ║
+// ║         ║  pub侧频率回调也能正确感知sub的上线与下线               [L1440]       ║
+// ╠══════════╬═══════════════════════════════════════════════════════════════════════╣
+// ║         ║  【多pub场景】                                                         ║
+// ║  TC9     ║  三pub各自发布固定值(值=序号)，sub以100/200/300ms分别订阅            ║
+// ║         ║  三个pub，验证每个pub侧频率回调正确、sub收到的30个变量值              ║
+// ║         ║  等于其序号、数据路由无串扰                               [L1756]      ║
+// ╠══════════╬═══════════════════════════════════════════════════════════════════════╣
+// ║         ║  【通信中动态变更】                                                    ║
+// ║  TC10    ║  通信过程中删除变量：pub创建20个变量，sub订阅后，pub删除后10个，      ║
+// ║         ║  验证pub对已删除变量setVarData不崩溃、sub侧只剩10个定义、             ║
+// ║         ║  已删除变量不再触发回调、剩余变量频率不变、已删除变量触发              ║
+// ║         ║  0xFFFFFFFF                                              [L1969]      ║
+// ╠══════════╬═══════════════════════════════════════════════════════════════════════╣
+// ║         ║  【写入接口】                                                          ║
+// ║  TC11    ║  批量写接口(setVarDataBatch)：pub用getVarIds预查询varId后             ║
+// ║         ║  批量写入10个变量(值=序号)，sub验证每个变量值等于序号     [L2105]      ║
+// ║  TC12    ║  setVarData(varId)单ID写入：pub交替使用setVarData(varId)和            ║
+// ║         ║  setVarData(varName)写入4个变量，sub验证两种接口语义等价、             ║
+// ║         ║  值等于序号、无数据串扰                                  [L2248]       ║
+// ╠══════════╬═══════════════════════════════════════════════════════════════════════╣
+// ║         ║  【发布控制】                                                          ║
+// ║  TC13    ║  pausePublish/resumePublish：pub创建10个变量并发布，暂停4s验证         ║
+// ║         ║  sub回调中timestampNs停止增长，恢复后timestampNs重新推进   [L2331]    ║
+// ╠══════════╬═══════════════════════════════════════════════════════════════════════╣
+// ║         ║  【回调与查询接口】                                                    ║
+// ║  TC14    ║  setBlobType/getBlobType序列化类型：pub显式设置NGVS，sub验证          ║
+// ║         ║  回调中blobType==NGVS且getBlobType()返回NGVS              [L2412]     ║
+// ║  TC15    ║  getVarId查询：pub创建5个变量后查询已注册变量(应有效)和               ║
+// ║         ║  不存在的变量(应返回UINT32_MAX)                             [L2502]   ║
+// ║  TC16    ║  cleanupParticipant手动清理：场景A-sub手动清理pub节点后               ║
+// ║         ║  getAvailableVars清零；场景B-pub手动清理sub订阅后频率回退到           ║
+// ║         ║  0xFFFFFFFF                                              [L2549]      ║
+// ║  TC17    ║  边界/异常：init前start返回false、空名称createVars不崩溃、           ║
+// ║         ║  重复createVars不崩溃、unsubscribe不存在变量返回false    [L2717]      ║
+// ║  TC18    ║  setVarData(varId)单ID写入：pub交替使用setVarData(varId)和            ║
+// ║         ║  setVarData(varName)写入4个变量，sub验证两种接口语义等价、             ║
+// ║         ║  值等于序号、无数据串扰                                  [L2798]      ║
+// ║  TC19    ║  setTableDefineCallback在create/delete各阶段准确性：pub分3阶段        ║
+// ║         ║  (创建6→追加4→删3)，验证回调累积变量名集合与getAvailableVars           ║
+// ║         ║  在每个阶段均准确                                         [L2935]     ║
+// ╠══════════╬═══════════════════════════════════════════════════════════════════════╣
+// ║         ║  【pub/sub stop后重新 init/start 恢复】                                ║
+// ║  TC20    ║  Pub stop后重新init/start恢复：pub正常发布→stop模拟断网→             ║
+// ║         ║  重新init/start/createVars，sub检测到断连(getAvailableVars            ║
+// ║         ║  降为0)后检测到重连(恢复为10)并验证数据恢复             [L3111]       ║
+// ║  TC21    ║  Sub stop后重新init/start恢复：sub正常订阅收到数据→stop→             ║
+// ║         ║  等待3s→重新init/start/subscribe，验证两轮均收到数据回调  [L3271]     ║
+// ╠══════════╬═══════════════════════════════════════════════════════════════════════╣
+// ║         ║  【同步读接口 + Matched/Unmatched 回调】                                ║
+// ║  TC22    ║  varReadSync同步读：pub发布10个int32(值=(i+1)*1000)，sub订阅          ║
+// ║         ║  后用varReadSync同步读取，验证错误nodeName返回false、读出的            ║
+// ║         ║  data/size/nodeName/varType/blobType字段全部正确          [L3688]      ║
+// ║  TC23    ║  pub端PublicationMatchedCallback：pub注册回调，sub上线订阅后           ║
+// ║         ║  退出，验证bucket topic触发match(current≥1)和unmatch(current==0)       ║
+// ║         ║                                                        [L3843]       ║
+// ║  TC24    ║  sub端SubscriptionMatchedCallback：sub注册回调，pub上线发布后          ║
+// ║         ║  退出，验证bucket topic触发match(current≥1)和unmatch(current==0)       ║
+// ║         ║                                                        [L3995]       ║
+// ╠══════════╬═══════════════════════════════════════════════════════════════════════╣
+// ║         ║  【追加订阅】                                                          ║
+// ║  TC25    ║  Sub stop后新sub追加订阅：sub1订阅var0+不存在变量，收到var0后         ║
+// ║         ║  stop；新sub2先订阅var0收到数据后追加订阅var1，验证两个变量            ║
+// ║         ║  都收到回调、数据非零、频率在100ms±50%范围内              [L4149]      ║
+// ╠══════════╬═══════════════════════════════════════════════════════════════════════╣
+// ║         ║  【资源限制】                                                          ║
+// ║  TC26    ║  setMaxNodeNum订阅者数量限制：pub设置maxNodeNum=3，启动4个sub，       ║
+// ║         ║  验证pub侧最多感知到3个订阅者的订阅事件                  [L4421]      ║
+// ║  TC27    ║  setMaxVarsPerNode每节点变量数限制：pub创建200个变量，设置             ║
+// ║         ║  maxVarsPerNode=100，sub先订阅100个再订阅第101个，验证pub              ║
+// ║         ║  侧只感知到100个变量被订阅                               [L4509]      ║
+// ╚══════════╩═══════════════════════════════════════════════════════════════════════╝
+
 #include <gtest/gtest.h>
 
 #ifdef __linux__
@@ -2831,7 +2931,7 @@ TEST(OnDemandPubSub, SetVarDataByIdCorrectness)
     expectChildOk(subProc, 14s);
 }
 
-// TC_19 - setTableDefineCallback 在 createVars / deleteVars 各阶段内容准确性验证
+// TC19 - setTableDefineCallback 在 createVars / deleteVars 各阶段内容准确性验证
 //
 // 场景：pub 分三阶段操作变量：
 //   阶段1：createVars 6个变量
@@ -3007,7 +3107,7 @@ TEST(OnDemandPubSub, TableDefineCallbackAccurateOnCreateAndDelete)
 }
 
 
-// TC_20a - Pub stop/restart 通信恢复验证
+// TC20 - Pub stop后重新init/start恢复验证
 //
 // 场景：pub 正常发布10个变量，sub 订阅并收到数据后，pub 调用 stop() 模拟断网，
 //       随后 pub 重新 init/start/createVars，验证 sub 能自动恢复通信。
@@ -3167,7 +3267,7 @@ TEST(OnDemandPubSub, PubStopAndRestart)
     EXPECT_EQ(subReport.metrics["phase4_ok"], "1") << "phase4: data did not resume after reconnect";
 }
 
-// TC_20b - Sub stop/restart 通信恢复验证
+// TC21 - Sub stop后重新init/start恢复验证
 //
 // 场景：pub 持续发布10个变量，sub 订阅并收到数据后，sub 调用 stop() 模拟断网，
 //       随后 sub 重新 init/start/subscribe，验证能重新收到数据。
@@ -3283,7 +3383,7 @@ TEST(OnDemandPubSub, SubStopAndRestart)
     EXPECT_EQ(subReport.metrics["phase2_ok"], "1") << "phase2: data did not resume after sub restart";
 }
 #if 0
-// TC_22 - Pub stop/start（不重新 init）通信恢复验证
+// [已禁用] TC_22 - Pub stop/start（不重新 init）通信恢复验证
 //
 // 场景：pub init 一次后，stop() 再直接 start()（不重新 init），验证通信是否恢复。
 //       注意：当前 stop() 会将 initialized_ 置为 false，因此 start() 会失败。
@@ -3348,7 +3448,7 @@ TEST(OnDemandPubSub, PubStopAndStartWithoutReinit)
         return r;
     });
 
-    // sub 侧与 TC_20a 相同：等待断连 → 重连 → 数据恢复
+    // sub 侧与 TC20 相同：等待断连 → 重连 → 数据恢复
     const auto subProc = spawnChild("case22_sub", root, [pubNode, names]() {
         dsf::ondemand::OnDemandSub sub;
         ChildReport r;
@@ -3431,7 +3531,7 @@ TEST(OnDemandPubSub, PubStopAndStartWithoutReinit)
     EXPECT_EQ(subReport.metrics["phase4_ok"], "1") << "phase4: data did not resume";
 }
 
-// TC_23 - Sub stop/start（不重新 init）通信恢复验证
+// [已禁用] TC_23 - Sub stop/start（不重新 init）通信恢复验证
 //
 // 场景：sub init 一次后，stop() 再直接 start()（不重新 init），验证通信是否恢复。
 //       注意：当前 stop() 会将 initialized_ 置为 false，因此 start() 会失败。
@@ -3584,7 +3684,7 @@ TEST(OnDemandPubSub, SubStopAndStartWithoutReinit)
 }
 
 #endif
-// TC_24 - varReadSync 同步读接口验证
+// TC22 - varReadSync 同步读接口验证
 //
 // 场景：pub 发布 10 个 int32 变量，每个变量写入固定值 (i+1)*1000；
 //       sub 订阅时回调传空，等数据到达后通过 varReadSync 同步读取。
@@ -3739,7 +3839,11 @@ TEST(OnDemandPubSub, VarReadSyncCorrectness)
     EXPECT_EQ(subReport.metrics["all_blob_ok"],      "1") << "blobType mismatch";
 }
 
-// ── setOnPublicationMatchedCallback: pub 端每个 topic 的 match/unmatch 验证 ──
+// TC23 - setOnPublicationMatchedCallback: pub 端每个 topic 的 match/unmatch 验证
+// 场景：pub 创建4个变量并注册 onPublicationMatchedCallback，sub 上线订阅后再退出。
+//       pub 通过 bucket topic 的 match/unmatch 事件感知 sub 的上线与下线。
+// 验证：① sub 上线后 bucket topic 触发 match（currentCount >= 1）；
+//       ② sub 下线后 bucket topic 触发 unmatch（currentCount == 0）。
 TEST(OnDemandPubSub, PublicationMatchedCallbackPerTopicMatchUnmatch)
 {
     const auto root = std::filesystem::temp_directory_path() / uniqueName("ondemand_pub_match");
@@ -3887,7 +3991,11 @@ TEST(OnDemandPubSub, PublicationMatchedCallbackPerTopicMatchUnmatch)
     EXPECT_TRUE(foundBucket) << "bucket topic not found in callback events";
 }
 
-// ── setOnSubscriptionMatchedCallback: sub 端每个 topic 的 match/unmatch 验证 ──
+// TC24 - setOnSubscriptionMatchedCallback: sub 端每个 topic 的 match/unmatch 验证
+// 场景：sub 注册 onSubscriptionMatchedCallback，pub 上线发布变量后退出。
+//       sub 通过 bucket topic 的 match/unmatch 事件感知 pub 的上线与下线。
+// 验证：① pub 上线后 bucket topic 触发 match（currentCount >= 1）；
+//       ② pub 下线后 bucket topic 触发 unmatch（currentCount == 0）。
 TEST(OnDemandPubSub, SubscriptionMatchedCallbackPerTopicMatchUnmatch)
 {
     const auto root = std::filesystem::temp_directory_path() / uniqueName("ondemand_sub_match");
