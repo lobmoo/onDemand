@@ -712,7 +712,7 @@ namespace ondemand
         {
             std::unique_lock lock(varIndexMutex_);
             varIndex_.reserve(varIndex_.size() + newVars.size());
-            varDefineIndex_.reserve(varDefineIndex_.size() + newVars.size());
+            defineLookup_.reserve(defineLookup_.size() + newVars.size());
 
             // 去重
             size_t writeIdx = 0;
@@ -746,10 +746,10 @@ namespace ondemand
                 meta.bucketIndex = newVars[i].bucketIdx;
                 meta.realVarName = newVars[i].define->name();
                 meta.varId = ids[i];
-                varDefineIndex_.emplace(newVars[i].varHash,
-                                        std::make_shared<DSF::Var::Define>(*newVars[i].define));
+                defineLookup_[newVars[i].varHash] = static_cast<uint32_t>(defineCache_.size());
+                defineCache_.push_back(*newVars[i].define);
                 varIndex_.emplace(newVars[i].varHash, std::move(meta));
-                bucketManager_.AddMember(newVars[i].varName, newVars[i].varHash);
+                bucketManager_.AddMember(newVars[i].varHash);
                 affectedBuckets.insert(newVars[i].bucketIdx);
             }
         } // 释放写锁，再 finalize
@@ -776,18 +776,17 @@ namespace ondemand
                 pubTableDefine.nodeName(nodeName_);
                 pubTableDefine.description("onDemandPub TableDefine");
 
-                const auto members = bucketManager_.GetBucketMembers(bucketId);
+                const auto &members = bucketManager_.GetBucketMembers(bucketId);
                 pubTableDefine.varDefines().reserve(members.size());
 
-                for (const auto &varName : members) {
-                    uint64_t varHash = fast_hash(varName);
-                    auto defIt = varDefineIndex_.find(varHash);
-                    if (defIt == varDefineIndex_.end())
+                for (uint64_t varHash : members) {
+                    auto idxIt = defineLookup_.find(varHash);
+                    if (idxIt == defineLookup_.end())
                         continue;
 
                     DSF::Var::PubTableVarDefine pubTableVarDefine;
                     DSF::Var::VarRequest varRequest;
-                    varRequest.varDefine(*(defIt->second)); // 直接解引用，省掉局部 Define 拷贝
+                    varRequest.varDefine(defineCache_[idxIt->second]);
                     pubTableVarDefine.var(std::move(varRequest));
                     pubTableDefine.varDefines().push_back(std::move(pubTableVarDefine));
                 }
@@ -825,9 +824,9 @@ namespace ondemand
                 }
                 affectedBuckets.insert(static_cast<uint32_t>(it->second.bucketIndex));
                 varStore_.unregister_var(varHash);
-                varDefineIndex_.erase(varHash);
+                defineLookup_.erase(varHash);
                 varIndex_.erase(it);
-                bucketManager_.RemoveMember(make_meta_varname(nodeName_, varName), varHash);
+                bucketManager_.RemoveMember(varHash);
             }
         }
 
@@ -840,29 +839,26 @@ namespace ondemand
             pubTableDefine.nodeName(nodeName_);
             pubTableDefine.description("onDemandPub TableDefine");
 
-            const auto members = bucketManager_.GetBucketMembers(i);
+            const auto &members = bucketManager_.GetBucketMembers(i);
             pubTableDefine.varDefines().reserve(members.size());
 
             {
                 std::shared_lock lock(varIndexMutex_);
-                for (const auto &varName : members) {
-                    uint64_t varHash = fast_hash(varName);
+                for (uint64_t varHash : members) {
                     auto it = varIndex_.find(varHash);
                     if (it == varIndex_.end()) {
                         continue;
                     }
                     const auto &meta = it->second;
                     (void)meta; // bucketIndex 等字段已在上方 affectedBuckets 中使用
-                    auto defIt = varDefineIndex_.find(varHash);
-                    if (defIt == varDefineIndex_.end()) {
+                    auto idxIt = defineLookup_.find(varHash);
+                    if (idxIt == defineLookup_.end()) {
                         continue;
                     }
 
                     DSF::Var::PubTableVarDefine pubTableVarDefine;
                     DSF::Var::VarRequest varRequest;
-                    DSF::Var::Define varDefine;
-                    varDefine = *(defIt->second);
-                    varRequest.varDefine(varDefine);
+                    varRequest.varDefine(defineCache_[idxIt->second]);
                     pubTableVarDefine.var(std::move(varRequest));
                     pubTableDefine.varDefines().push_back(std::move(pubTableVarDefine));
                 }
@@ -1146,9 +1142,9 @@ namespace ondemand
             auto &meta = it->second;
 
             // 收集需要扩展的变量
-            auto defIt = varDefineIndex_.find(varHash);
-            if (defIt != varDefineIndex_.end()) {
-                uint32_t defineSize = static_cast<uint32_t>(defIt->second->size());
+            auto idxIt = defineLookup_.find(varHash);
+            if (idxIt != defineLookup_.end()) {
+                uint32_t defineSize = static_cast<uint32_t>(defineCache_[idxIt->second].size());
                 uint32_t targetSize = defineSize > 0 ? defineSize : 32u;
                 if (varStore_.slot_size(meta.varId) < targetSize) {
                     expandIds.push_back(meta.varId);
@@ -1431,7 +1427,8 @@ namespace ondemand
         {
             std::unique_lock lock(varIndexMutex_);
             varIndex_.clear();
-            varDefineIndex_.clear();
+            defineCache_.clear();
+            defineLookup_.clear();
             bucketManager_.Clear();
             nodeSlotMap_.clear();
             nextNodeSlot_ = 0;
