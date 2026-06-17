@@ -1268,9 +1268,7 @@ void serialize_key(
 
                         scdr << data.nodeName();
 
-                        scdr << data.description();
 
-                        scdr << data.varDefines();
 
 }
 

@@ -104,10 +104,10 @@ namespace ondemand
             processFunc)
     {
 
-        constexpr uint32_t depth = 60;
+        constexpr uint32_t depth = 1;
         DdsWrapper::DataReaderQoSBuilder readerQosBuilder;
-        readerQosBuilder.setMaxSamples(32 * depth)
-            .setMaxInstances(32)
+        readerQosBuilder.setMaxSamples(1024 * depth)
+            .setMaxInstances(1024)
             .setMaxSamplesPerInstance(depth)
             .setDurabilityKind(DdsWrapper::DurabilityKind::TRANSIENT_LOCAL)
             .setReliabilityKind(DdsWrapper::ReliabilityKind::RELIABLE)
@@ -118,7 +118,7 @@ namespace ondemand
             != dsf::ondemand::registerNodeTopicReader<DSF::Var::PubTableDefine,
                                                       DSF::Var::PubTableDefinePubSubType>(
                 dataNode_, pubTableDefineReader_, DSF::Var::TABLE_DEFINE_TOPIC_NAME, processFunc,
-                readerQosBuilder)) {
+                readerQosBuilder, createReaderListener<DSF::Var::PubTableDefine>())) {
             ONDEMANDLOG(error)
                 << "Failed to register topic for SubTableRegister: "
                 << DSF::Message::MESSAGE_COMMAND_REQUEST_SUB_TABLE_REGISTER_TOPIC_NAME;
@@ -136,10 +136,10 @@ namespace ondemand
      */
     bool OnDemandSub::createSubTableRegisterWriter()
     {
-        constexpr uint32_t depth = 20;
+        constexpr uint32_t depth = 32;
         DdsWrapper::DataWriterQoSBuilder writerQosBuilder;
-        writerQosBuilder.setMaxSamples(256 * depth)
-            .setMaxInstances(256)
+        writerQosBuilder.setMaxSamples(10 * depth)
+            .setMaxInstances(10)
             .setMaxSamplesPerInstance(depth);
         writerQosBuilder.setDurabilityKind(DdsWrapper::DurabilityKind::TRANSIENT_LOCAL)
             .setReliabilityKind(DdsWrapper::ReliabilityKind::RELIABLE)
@@ -151,7 +151,7 @@ namespace ondemand
                                                       DSF::Message::SubTableRegisterPubSubType>(
                 dataNode_, subTableRegisterReqWriter_,
                 DSF::Message::MESSAGE_COMMAND_REQUEST_SUB_TABLE_REGISTER_TOPIC_NAME,
-                writerQosBuilder)) {
+                writerQosBuilder, this)) {
             ONDEMANDLOG(error)
                 << "Failed to register topic for SubTableRegister: "
                 << DSF::Message::MESSAGE_COMMAND_REQUEST_SUB_TABLE_REGISTER_TOPIC_NAME;
@@ -212,7 +212,8 @@ namespace ondemand
 
             reader = dataNode_->createDataReader<DSF::Var::TableDataTransfer,
                                                  DSF::Var::TableDataTransferPubSubType>(
-                topicName, DATA_TRANSFER_PUB_SUB_NAME, processFunc, readerQosBuilder);
+                topicName, DATA_TRANSFER_PUB_SUB_NAME, processFunc, readerQosBuilder,
+                createReaderListener<DSF::Var::TableDataTransfer>());
 
             dataTransferReaderMap_.emplace(bucketId, reader);
             ONDEMANDLOG(info) << "Created DataTransfer reader for bucketId: " << bucketId
@@ -750,56 +751,74 @@ namespace ondemand
                 std::unordered_map<CallbackGroupKey, DesiredEntry, CallbackGroupKeyHash>;
 
             DesiredMap desired;
+
+            /* 分段获取锁，避免同时持有 subscriptionCallbacksMutex_ + varIndexMutex_
+             * 与 processTableDefine (先 varIndexMutex_ 再 subscriptionCallbacksMutex_) 形成死锁 */
+            /* 第1步：快照 subscriptionCallbacks_ */
+            std::unordered_map<uint64_t, SubCallbackInfo> cbSnapshot;
             {
                 std::lock_guard<std::mutex> cbLock(subscriptionCallbacksMutex_);
+                cbSnapshot = subscriptionCallbacks_;
+            }
+
+            /* 第2步：读取 varIndex_ + varDefineIndex_ */
+            struct VarLookup {
+                int32_t varId;
+                uint32_t bucketIndex;
+                uint32_t dataSize;
+                std::string nodeName;
+                std::string varType;
+                std::string typeVersion;
+            };
+            std::unordered_map<uint64_t, VarLookup> varLookup;
+            {
                 std::shared_lock varLock(varIndexMutex_);
-                for (const auto &[varHash, cbInfo] : subscriptionCallbacks_) {
-                    /* 查找 varIndex_ 获取 varId 和 dataSize */
+                for (const auto &[varHash, cbInfo] : cbSnapshot) {
                     auto vit = varIndex_.find(varHash);
                     if (vit == varIndex_.end()) {
-                        ONDEMANDLOG_TIME(warning, 5000)
-                            << "No varIndex entry for subscribed varHash: " << varHash
-                            << ", skipping callback registration";
                         continue;
                     }
-
                     int32_t varId = vit->second.varId;
                     if (varId < 0 || static_cast<uint32_t>(varId) == VarStore::kInvalidId) {
-                        ONDEMANDLOG_TIME(warning, 5000)
-                            << "Invalid varId for varHash: " << varHash
-                            << ", likely varStore not finalized or registration failed, skipping "
-                               "callback registration";
-                        /* varStore 尚未 finalize 或注册失败，跳过 */
                         continue;
                     }
-
-                    CallbackGroupKey key{static_cast<uint32_t>(vit->second.bucketIndex),
-                                         cbInfo.freqMs};
-                    auto &entry = desired[key];
-                    if (!entry.members) {
-                        entry.members = std::make_shared<std::vector<CallbackVarInfo>>();
-                        entry.callback = cbInfo.callback; // 组级 callback，取第一个即可
+                    VarLookup lu;
+                    lu.varId = varId;
+                    lu.bucketIndex = static_cast<uint32_t>(vit->second.bucketIndex);
+                    lu.dataSize = varStore_.slot_size(static_cast<uint32_t>(varId));
+                    auto defIt = varDefineIndex_.find(varHash);
+                    if (defIt != varDefineIndex_.end()) {
+                        lu.nodeName = defIt->second->nodeName();
+                        lu.varType = defIt->second->modelName();
+                        lu.typeVersion = defIt->second->modelVersion();
                     }
-                    CallbackVarInfo vi;
-                    vi.varHash = varHash;
-                    vi.varId = varId;
-                    vi.dataSize = varStore_.slot_size(static_cast<uint32_t>(varId));
-                    vi.bucketIndex = static_cast<uint32_t>(vit->second.bucketIndex);
-                    {
-                        auto defIt = varDefineIndex_.find(varHash);
-                        if (defIt != varDefineIndex_.end()) {
-                            vi.nodeName = defIt->second->nodeName();
-                            vi.varType = defIt->second->modelName();
-                            vi.typeVersion = defIt->second->modelVersion();
-                        } else {
-                            ONDEMANDLOG(warning)
-                                << "varDefine is null for varHash=" << varHash
-                                << ", callback will receive empty nodeName/varType";
-                        }
-                    }
-                    vi.varName = cbInfo.varName;
-                    entry.members->push_back(std::move(vi));
+                    varLookup[varHash] = std::move(lu);
                 }
+            }
+
+            /* 第3步：合并构建 desired（无锁） */
+            for (const auto &[varHash, cbInfo] : cbSnapshot) {
+                auto luIt = varLookup.find(varHash);
+                if (luIt == varLookup.end()) {
+                    continue;
+                }
+                const auto &lu = luIt->second;
+                CallbackGroupKey key{lu.bucketIndex, cbInfo.freqMs};
+                auto &entry = desired[key];
+                if (!entry.members) {
+                    entry.members = std::make_shared<std::vector<CallbackVarInfo>>();
+                    entry.callback = cbInfo.callback;
+                }
+                CallbackVarInfo vi;
+                vi.varHash = varHash;
+                vi.varId = lu.varId;
+                vi.dataSize = lu.dataSize;
+                vi.bucketIndex = lu.bucketIndex;
+                vi.nodeName = lu.nodeName;
+                vi.varType = lu.varType;
+                vi.typeVersion = lu.typeVersion;
+                vi.varName = cbInfo.varName;
+                entry.members->push_back(std::move(vi));
             }
 
             /* 增量*/
@@ -1008,12 +1027,6 @@ namespace ondemand
         callbackGroupMembers_.clear();
 
         ONDEMANDLOG(info) << "All callback group timers canceled";
-    }
-
-    void OnDemandSub::onWriterDiscovery(const DdsWrapper::EndpointInfo &info)
-    {
-        ONDEMANDLOG(debug) << "[sub node]Writer discovery: topic=" << info.topic_name
-                           << " type=" << info.type_name << " discovered=" << info.discovered;
     }
 
     std::unordered_map<std::string, std::vector<std::string>> OnDemandSub::getAvailableVars() const

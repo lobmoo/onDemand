@@ -1,5 +1,6 @@
 #include "txdds_node.h"
 
+#include <cstring>
 #include "txdds/DCPS/common/ReturnCode.h"
 #include "txdds/DCPS/domain/DomainParticipantFactory.h"
 #include "txdds/DCPS/publisher/qos/PublisherQos.h"
@@ -162,7 +163,7 @@ bool TXDDSNode::updatePublisherQos(const std::string &name, const PublisherQoSBu
         return false;
     }
 
-    auto rc = it->second->SetQos(qos.getQos());
+    auto rc = it->second->UpdateQos(qos.getQos());
     if (rc != BaoSky::dds::RETCODE_OK) {
         LOG(error) << "Failed to update Publisher QoS for '" << name
                    << "', ret=" << static_cast<int>(rc);
@@ -183,7 +184,7 @@ bool TXDDSNode::updateSubscriberQos(const std::string &name, const SubscriberQoS
         return false;
     }
 
-    auto rc = it->second->SetQos(qos.getQos());
+    auto rc = it->second->UpdateQos(qos.getQos());
     if (rc != BaoSky::dds::RETCODE_OK) {
         LOG(error) << "Failed to update Subscriber QoS for '" << name
                    << "', ret=" << static_cast<int>(rc);
@@ -290,8 +291,22 @@ void TXDDSNode::destroyParticipantResources()
         }
     }
     subscribers_.clear();
-    BaoSky::rtps::ThreadManager::GetInstance()->DeleteResource("txdds_thread_" + participant_name_);
-    BaoSky::rtps::TransportStack::GetInstance()->DeleteConfig("udp");
+
+    /*按前缀删除 dsfconnector_ 相关的 config，不影响其他 node*/
+    const std::string kCfgPrefix = "dsfconnector_";
+    for (const auto &name : BaoSky::rtps::ThreadManager::GetInstance()->GetConfigList()) {
+        if (name.compare(0, kCfgPrefix.size(), kCfgPrefix) == 0) {
+            BaoSky::rtps::ThreadManager::GetInstance()->DeleteResource(name);
+        }
+    }
+    for (const auto &name :
+         BaoSky::rtps::TransportStack::GetInstance()->GetConfigList(
+             BaoSky::rtps::eTransportKind::UDPTransportKind)) {
+        if (name.compare(0, kCfgPrefix.size(), kCfgPrefix) == 0) {
+            BaoSky::rtps::TransportStack::GetInstance()->DeleteConfig(name);
+        }
+    }
+
     BaoSky::dds::DomainParticipantFactory::GetInstance()->DeleteParticipant(participant_);
     participant_ = nullptr;
 }

@@ -5,6 +5,7 @@
 #ifndef TXDDS_QOS_CONFIG_H
 #define TXDDS_QOS_CONFIG_H
 
+#include <atomic>
 #include <string>
 #include <vector>
 
@@ -64,7 +65,12 @@ private:
     const BaoSky::dds::DomainParticipantQos &getQos() const;
     friend class TXDDSNode;
 
+    static std::atomic<uint32_t> instance_counter_;
+
+    uint32_t id_;
     BaoSky::dds::DomainParticipantQos qos_;
+    std::string transportCfgName_;
+    std::string threadCfgName_;
 };
 
 class DataWriterQoSBuilder

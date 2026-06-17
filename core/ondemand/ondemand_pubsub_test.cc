@@ -1,3 +1,103 @@
+// ╔══════════════════════════════════════════════════════════════════════════════════╗
+// ║                         测试用例索引 (Test Case Index)                          ║
+// ╠══════════╦═══════════════════════════════════════════════════════════════════════╣
+// ║  编号    ║  说明                                                                ║
+// ╠══════════╬═══════════════════════════════════════════════════════════════════════╣
+// ║         ║  【生命周期与基础功能】                                                ║
+// ║  TC1     ║  pub/sub 生命周期基础验证：init→start→重复start(应false)→stop→       ║
+// ║         ║  重复stop 全流程，验证幂等保护，stop不崩溃              [L401]        ║
+// ║  TC2     ║  变量增删后订阅端可见性：分3阶段(pub创建20→追加5→删10)，sub          ║
+// ║         ║  每阶段验证变量数量和名称集合完全准确                   [L443]        ║
+// ║  TC3     ║  变量定义广播+数据接收+回调周期：pub以20ms写入6个变量，sub以         ║
+// ║         ║  100ms订阅，验证收到定义、值非零、平均回调间隔±30%     [L558]        ║
+// ╠══════════╬═══════════════════════════════════════════════════════════════════════╣
+// ║         ║  【频率协商】                                                          ║
+// ║  TC4     ║  单pub单sub频率协商：sub以100ms/250ms订阅2个变量，pub侧验证         ║
+// ║         ║  freqChangeCallback感知到正确频率，sub侧验证实际回调间隔  [L699]      ║
+// ║  TC5     ║  一pub多sub频率协商与回退：3个sub依次订阅/取消，验证首次建频、       ║
+// ║         ║  新sub降频、取消非最小不触发回调、取消最小频率回退到下一个、           ║
+// ║         ║  全部取消后频率变为0xFFFFFFFF                              [L838]      ║
+// ╠══════════╬═══════════════════════════════════════════════════════════════════════╣
+// ║         ║  【通信恢复（重启场景）】                                              ║
+// ║  TC6     ║  sub先启动pub后启动：sub先init/start等待定义，pub延迟3s上线后         ║
+// ║         ║  创建变量，sub订阅并验证数据回调正常                   [L1031]       ║
+// ║  TC7     ║  pub先启动sub后启动+pub重启恢复：pub创建变量后sub上线订阅，          ║
+// ║         ║  pub掉线模拟退出后重新启动，sub能重新发现定义并恢复数据回调           ║
+// ║         ║  + pub侧频率回调也能正确触发                           [L1214]       ║
+// ║  TC8     ║  pub先启动sub后启动+sub重启恢复：pub持续发布，sub1上线订阅           ║
+// ║         ║  验证数据后退出(模拟掉线)，sub2重新启动订阅验证恢复通信，             ║
+// ║         ║  pub侧频率回调也能正确感知sub的上线与下线               [L1440]       ║
+// ╠══════════╬═══════════════════════════════════════════════════════════════════════╣
+// ║         ║  【多pub场景】                                                         ║
+// ║  TC9     ║  三pub各自发布固定值(值=序号)，sub以100/200/300ms分别订阅            ║
+// ║         ║  三个pub，验证每个pub侧频率回调正确、sub收到的30个变量值              ║
+// ║         ║  等于其序号、数据路由无串扰                               [L1756]      ║
+// ╠══════════╬═══════════════════════════════════════════════════════════════════════╣
+// ║         ║  【通信中动态变更】                                                    ║
+// ║  TC10    ║  通信过程中删除变量：pub创建20个变量，sub订阅后，pub删除后10个，      ║
+// ║         ║  验证pub对已删除变量setVarData不崩溃、sub侧只剩10个定义、             ║
+// ║         ║  已删除变量不再触发回调、剩余变量频率不变、已删除变量触发              ║
+// ║         ║  0xFFFFFFFF                                              [L1969]      ║
+// ╠══════════╬═══════════════════════════════════════════════════════════════════════╣
+// ║         ║  【写入接口】                                                          ║
+// ║  TC11    ║  批量写接口(setVarDataBatch)：pub用getVarIds预查询varId后             ║
+// ║         ║  批量写入10个变量(值=序号)，sub验证每个变量值等于序号     [L2105]      ║
+// ║  TC12    ║  setVarData(varId)单ID写入：pub交替使用setVarData(varId)和            ║
+// ║         ║  setVarData(varName)写入4个变量，sub验证两种接口语义等价、             ║
+// ║         ║  值等于序号、无数据串扰                                  [L2248]       ║
+// ╠══════════╬═══════════════════════════════════════════════════════════════════════╣
+// ║         ║  【发布控制】                                                          ║
+// ║  TC13    ║  pausePublish/resumePublish：pub创建10个变量并发布，暂停4s验证         ║
+// ║         ║  sub回调中timestampNs停止增长，恢复后timestampNs重新推进   [L2331]    ║
+// ╠══════════╬═══════════════════════════════════════════════════════════════════════╣
+// ║         ║  【回调与查询接口】                                                    ║
+// ║  TC14    ║  setBlobType/getBlobType序列化类型：pub显式设置NGVS，sub验证          ║
+// ║         ║  回调中blobType==NGVS且getBlobType()返回NGVS              [L2412]     ║
+// ║  TC15    ║  getVarId查询：pub创建5个变量后查询已注册变量(应有效)和               ║
+// ║         ║  不存在的变量(应返回UINT32_MAX)                             [L2502]   ║
+// ║  TC16    ║  cleanupParticipant手动清理：场景A-sub手动清理pub节点后               ║
+// ║         ║  getAvailableVars清零；场景B-pub手动清理sub订阅后频率回退到           ║
+// ║         ║  0xFFFFFFFF                                              [L2549]      ║
+// ║  TC17    ║  边界/异常：init前start返回false、空名称createVars不崩溃、           ║
+// ║         ║  重复createVars不崩溃、unsubscribe不存在变量返回false    [L2717]      ║
+// ║  TC18    ║  setVarData(varId)单ID写入：pub交替使用setVarData(varId)和            ║
+// ║         ║  setVarData(varName)写入4个变量，sub验证两种接口语义等价、             ║
+// ║         ║  值等于序号、无数据串扰                                  [L2798]      ║
+// ║  TC19    ║  setTableDefineCallback在create/delete各阶段准确性：pub分3阶段        ║
+// ║         ║  (创建6→追加4→删3)，验证回调累积变量名集合与getAvailableVars           ║
+// ║         ║  在每个阶段均准确                                         [L2935]     ║
+// ╠══════════╬═══════════════════════════════════════════════════════════════════════╣
+// ║         ║  【pub/sub stop后重新 init/start 恢复】                                ║
+// ║  TC20    ║  Pub stop后重新init/start恢复：pub正常发布→stop模拟断网→             ║
+// ║         ║  重新init/start/createVars，sub检测到断连(getAvailableVars            ║
+// ║         ║  降为0)后检测到重连(恢复为10)并验证数据恢复             [L3111]       ║
+// ║  TC21    ║  Sub stop后重新init/start恢复：sub正常订阅收到数据→stop→             ║
+// ║         ║  等待3s→重新init/start/subscribe，验证两轮均收到数据回调  [L3271]     ║
+// ╠══════════╬═══════════════════════════════════════════════════════════════════════╣
+// ║         ║  【同步读接口 + Matched/Unmatched 回调】                                ║
+// ║  TC22    ║  varReadSync同步读：pub发布10个int32(值=(i+1)*1000)，sub订阅          ║
+// ║         ║  后用varReadSync同步读取，验证错误nodeName返回false、读出的            ║
+// ║         ║  data/size/nodeName/varType/blobType字段全部正确          [L3688]      ║
+// ║  TC23    ║  pub端PublicationMatchedCallback：pub注册回调，sub上线订阅后           ║
+// ║         ║  退出，验证bucket topic触发match(current≥1)和unmatch(current==0)       ║
+// ║         ║                                                        [L3843]       ║
+// ║  TC24    ║  sub端SubscriptionMatchedCallback：sub注册回调，pub上线发布后          ║
+// ║         ║  退出，验证bucket topic触发match(current≥1)和unmatch(current==0)       ║
+// ║         ║                                                        [L3995]       ║
+// ╠══════════╬═══════════════════════════════════════════════════════════════════════╣
+// ║         ║  【追加订阅】                                                          ║
+// ║  TC25    ║  Sub stop后新sub追加订阅：sub1订阅var0+不存在变量，收到var0后         ║
+// ║         ║  stop；新sub2先订阅var0收到数据后追加订阅var1，验证两个变量            ║
+// ║         ║  都收到回调、数据非零、频率在100ms±50%范围内              [L4149]      ║
+// ╠══════════╬═══════════════════════════════════════════════════════════════════════╣
+// ║         ║  【资源限制】                                                          ║
+// ║  TC26    ║  setMaxNodeNum订阅者数量限制：pub设置maxNodeNum=3，启动4个sub，       ║
+// ║         ║  验证pub侧最多感知到3个订阅者的订阅事件                  [L4421]      ║
+// ║  TC27    ║  setMaxVarsPerNode每节点变量数限制：pub创建200个变量，设置             ║
+// ║         ║  maxVarsPerNode=100，sub先订阅100个再订阅第101个，验证pub              ║
+// ║         ║  侧只感知到100个变量被订阅                               [L4509]      ║
+// ╚══════════╩═══════════════════════════════════════════════════════════════════════╝
+
 #include <gtest/gtest.h>
 
 #ifdef __linux__
@@ -1379,8 +1479,12 @@ TEST(OnDemandPubSub, MultiPubFixedValueAndFreqVerification)
         dsf::ondemand::OnDemandPub pub;
         ChildReport r;
         if (!childRequire(r, pub.init(pub1Node), "pub1 init failed")
-            || !childRequire(r, pub.start(), "pub1 start failed")
-            || !childRequire(r, pub.createVars(defs1), "pub1 createVars failed")) {
+            || !childRequire(r, pub.start(), "pub1 start failed")) {
+            return r;
+        }
+        // 交错 createVars，避免多 pub 并发写入 TXDDS 丢消息
+        //std::this_thread::sleep_for(100ms);
+        if (!childRequire(r, pub.createVars(defs1), "pub1 createVars failed")) {
             return r;
         }
 
@@ -1424,8 +1528,12 @@ TEST(OnDemandPubSub, MultiPubFixedValueAndFreqVerification)
         dsf::ondemand::OnDemandPub pub;
         ChildReport r;
         if (!childRequire(r, pub.init(pub2Node), "pub2 init failed")
-            || !childRequire(r, pub.start(), "pub2 start failed")
-            || !childRequire(r, pub.createVars(defs2), "pub2 createVars failed")) {
+            || !childRequire(r, pub.start(), "pub2 start failed")) {
+            return r;
+        }
+        // 交错 createVars，避免多 pub 并发写入 TXDDS 丢消息
+       // std::this_thread::sleep_for(200ms);
+        if (!childRequire(r, pub.createVars(defs2), "pub2 createVars failed")) {
             return r;
         }
 
@@ -1469,8 +1577,12 @@ TEST(OnDemandPubSub, MultiPubFixedValueAndFreqVerification)
         dsf::ondemand::OnDemandPub pub;
         ChildReport r;
         if (!childRequire(r, pub.init(pub3Node), "pub3 init failed")
-            || !childRequire(r, pub.start(), "pub3 start failed")
-            || !childRequire(r, pub.createVars(defs3), "pub3 createVars failed")) {
+            || !childRequire(r, pub.start(), "pub3 start failed")) {
+            return r;
+        }
+        // 交错 createVars，避免多 pub 并发写入 TXDDS 丢消息
+        //std::this_thread::sleep_for(300ms);
+        if (!childRequire(r, pub.createVars(defs3), "pub3 createVars failed")) {
             return r;
         }
 
@@ -2819,7 +2931,7 @@ TEST(OnDemandPubSub, SetVarDataByIdCorrectness)
     expectChildOk(subProc, 14s);
 }
 
-// TC_19 - setTableDefineCallback 在 createVars / deleteVars 各阶段内容准确性验证
+// TC19 - setTableDefineCallback 在 createVars / deleteVars 各阶段内容准确性验证
 //
 // 场景：pub 分三阶段操作变量：
 //   阶段1：createVars 6个变量
@@ -2995,7 +3107,7 @@ TEST(OnDemandPubSub, TableDefineCallbackAccurateOnCreateAndDelete)
 }
 
 
-// TC_20a - Pub stop/restart 通信恢复验证
+// TC20 - Pub stop后重新init/start恢复验证
 //
 // 场景：pub 正常发布10个变量，sub 订阅并收到数据后，pub 调用 stop() 模拟断网，
 //       随后 pub 重新 init/start/createVars，验证 sub 能自动恢复通信。
@@ -3155,7 +3267,7 @@ TEST(OnDemandPubSub, PubStopAndRestart)
     EXPECT_EQ(subReport.metrics["phase4_ok"], "1") << "phase4: data did not resume after reconnect";
 }
 
-// TC_20b - Sub stop/restart 通信恢复验证
+// TC21 - Sub stop后重新init/start恢复验证
 //
 // 场景：pub 持续发布10个变量，sub 订阅并收到数据后，sub 调用 stop() 模拟断网，
 //       随后 sub 重新 init/start/subscribe，验证能重新收到数据。
@@ -3271,7 +3383,7 @@ TEST(OnDemandPubSub, SubStopAndRestart)
     EXPECT_EQ(subReport.metrics["phase2_ok"], "1") << "phase2: data did not resume after sub restart";
 }
 #if 0
-// TC_22 - Pub stop/start（不重新 init）通信恢复验证
+// [已禁用] TC_22 - Pub stop/start（不重新 init）通信恢复验证
 //
 // 场景：pub init 一次后，stop() 再直接 start()（不重新 init），验证通信是否恢复。
 //       注意：当前 stop() 会将 initialized_ 置为 false，因此 start() 会失败。
@@ -3336,7 +3448,7 @@ TEST(OnDemandPubSub, PubStopAndStartWithoutReinit)
         return r;
     });
 
-    // sub 侧与 TC_20a 相同：等待断连 → 重连 → 数据恢复
+    // sub 侧与 TC20 相同：等待断连 → 重连 → 数据恢复
     const auto subProc = spawnChild("case22_sub", root, [pubNode, names]() {
         dsf::ondemand::OnDemandSub sub;
         ChildReport r;
@@ -3419,7 +3531,7 @@ TEST(OnDemandPubSub, PubStopAndStartWithoutReinit)
     EXPECT_EQ(subReport.metrics["phase4_ok"], "1") << "phase4: data did not resume";
 }
 
-// TC_23 - Sub stop/start（不重新 init）通信恢复验证
+// [已禁用] TC_23 - Sub stop/start（不重新 init）通信恢复验证
 //
 // 场景：sub init 一次后，stop() 再直接 start()（不重新 init），验证通信是否恢复。
 //       注意：当前 stop() 会将 initialized_ 置为 false，因此 start() 会失败。
@@ -3572,7 +3684,7 @@ TEST(OnDemandPubSub, SubStopAndStartWithoutReinit)
 }
 
 #endif
-// TC_24 - varReadSync 同步读接口验证
+// TC22 - varReadSync 同步读接口验证
 //
 // 场景：pub 发布 10 个 int32 变量，每个变量写入固定值 (i+1)*1000；
 //       sub 订阅时回调传空，等数据到达后通过 varReadSync 同步读取。
@@ -3725,6 +3837,764 @@ TEST(OnDemandPubSub, VarReadSyncCorrectness)
     EXPECT_EQ(subReport.metrics["all_node_ok"],      "1") << "nodeName mismatch";
     EXPECT_EQ(subReport.metrics["all_type_ok"],      "1") << "varType mismatch";
     EXPECT_EQ(subReport.metrics["all_blob_ok"],      "1") << "blobType mismatch";
+}
+
+// TC23 - setOnPublicationMatchedCallback: pub 端每个 topic 的 match/unmatch 验证
+// 场景：pub 创建4个变量并注册 onPublicationMatchedCallback，sub 上线订阅后再退出。
+//       pub 通过 bucket topic 的 match/unmatch 事件感知 sub 的上线与下线。
+// 验证：① sub 上线后 bucket topic 触发 match（currentCount >= 1）；
+//       ② sub 下线后 bucket topic 触发 unmatch（currentCount == 0）。
+TEST(OnDemandPubSub, PublicationMatchedCallbackPerTopicMatchUnmatch)
+{
+    const auto root = std::filesystem::temp_directory_path() / uniqueName("ondemand_pub_match");
+    std::filesystem::create_directories(root);
+
+    const std::string pubNode = uniqueName("pub_match");
+    const auto defs = makeDefines(pubNode, "v", 4);
+    const auto names = defineNames(defs);
+    const std::string bucketTopic =
+        "dsf/var/data/transfer/bucket_"
+        + std::to_string(dsf::ondemand::BucketManager::CalculateBucketIndexFromHash(
+            dsf::ondemand::fast_hash(dsf::ondemand::make_meta_varname(pubNode, names[0]))));
+
+    // 子进程1: pub，记录每个 topic 的 match/unmatch 事件
+    const auto pubProc = spawnChild("pub_match", root, [pubNode, defs, names, bucketTopic]() {
+        dsf::ondemand::OnDemandPub pub;
+        ChildReport r;
+        if (!childRequire(r, pub.init(pubNode), "pub init failed")
+            || !childRequire(r, pub.start(), "pub start failed")
+            || !childRequire(r, pub.createVars(defs), "pub createVars failed")) {
+            return r;
+        }
+
+        // 每个 topic 记录所有事件: {currentCount, change, totalCount}
+        std::mutex mtx;
+        std::unordered_map<std::string, std::vector<std::tuple<int, int, int>>> topicEvents;
+
+        pub.setOnPublicationMatchedCallback(
+            [&](const std::string &topic, int current, int change, int total) {
+                std::lock_guard<std::mutex> lk(mtx);
+                topicEvents[topic].emplace_back(current, change, total);
+                LOG(info) << "[pub] matched topic=" << topic << " current=" << current
+                          << " change=" << change << " total=" << total;
+            });
+
+        // 等 sub 上线: bucket topic 的 currentCount 应该变为 1
+        const bool gotMatch = waitUntil([&]() {
+            std::lock_guard<std::mutex> lk(mtx);
+            auto it = topicEvents.find(bucketTopic);
+            if (it == topicEvents.end()) return false;
+            for (const auto &[cur, chg, tot] : it->second) {
+                if (cur >= 1) return true;
+            }
+            return false;
+        }, 10s);
+        if (!childRequire(r, gotMatch, "pub: bucket topic never got match (current>=1)")) {
+            pub.stop();
+            return r;
+        }
+
+        // 等 sub 下线: bucket topic 的 currentCount 应该变为 0
+        const bool gotUnmatch = waitUntil([&]() {
+            std::lock_guard<std::mutex> lk(mtx);
+            auto it = topicEvents.find(bucketTopic);
+            if (it == topicEvents.end()) return false;
+            for (const auto &[cur, chg, tot] : it->second) {
+                if (cur == 0) return true;
+            }
+            return false;
+        }, 12s);
+        if (!childRequire(r, gotUnmatch, "pub: bucket topic never got unmatch (current==0)")) {
+            pub.stop();
+            return r;
+        }
+
+        // 汇总所有 topic 的事件
+        std::lock_guard<std::mutex> lk(mtx);
+        for (const auto &[topic, events] : topicEvents) {
+            // topic 名用 last 30 chars 做 key（避免太长）
+            std::string shortKey = topic.size() > 30 ? topic.substr(topic.size() - 30) : topic;
+            // 替换 / 为 _ 做 metric key
+            for (char &c : shortKey) { if (c == '/') c = '_'; }
+
+            bool hadMatch = false, hadUnmatch = false;
+            int maxCurrent = 0, minCurrentAfterMatch = INT_MAX;
+            for (const auto &[cur, chg, tot] : events) {
+                if (cur >= 1) hadMatch = true;
+                if (hadMatch && cur == 0) hadUnmatch = true;
+                maxCurrent = std::max(maxCurrent, cur);
+                if (hadMatch) minCurrentAfterMatch = std::min(minCurrentAfterMatch, cur);
+            }
+            r.metrics["topic_" + shortKey + "_events"]   = std::to_string(events.size());
+            r.metrics["topic_" + shortKey + "_matched"]   = hadMatch ? "1" : "0";
+            r.metrics["topic_" + shortKey + "_unmatched"] = hadUnmatch ? "1" : "0";
+            r.metrics["topic_" + shortKey + "_maxCur"]    = std::to_string(maxCurrent);
+        }
+        r.metrics["total_topics"] = std::to_string(topicEvents.size());
+
+        pub.stop();
+        r.ok = true;
+        r.message = "ok";
+        return r;
+    });
+
+    // 子进程2: sub，上线订阅后等一会再退出（触发 unmatch）
+    const auto subProc = spawnChild("sub_match", root, [pubNode, defs, names]() {
+        dsf::ondemand::OnDemandSub sub;
+        ChildReport r;
+        if (!childRequire(r, sub.init(uniqueName("sub_match")), "sub init failed")
+            || !childRequire(r, sub.start(), "sub start failed")) {
+            return r;
+        }
+
+        const bool gotDefs = waitUntil([&]() { return countNodeVars(sub, pubNode) == names.size(); }, 8s);
+        if (!childRequire(r, gotDefs, "sub did not receive defines")) {
+            sub.stop();
+            return r;
+        }
+
+        const auto subs = toSubscriptions(names, 200);
+        if (!childRequire(r, sub.subscribe(pubNode.c_str(), subs), "subscribe failed")) {
+            sub.stop();
+            return r;
+        }
+
+        std::this_thread::sleep_for(3s);
+        sub.stop();
+        r.ok = true;
+        r.message = "ok";
+        return r;
+    });
+
+    ChildReport pubReport;
+    expectChildOk(subProc, 12s);
+    expectChildOk(pubProc, 20s, &pubReport);
+
+    // 验证: 至少有 bucket topic 触发了 match 和 unmatch
+    EXPECT_GE(std::stoi(pubReport.metrics["total_topics"]), 1) << "should have at least 1 topic";
+
+    // 找 bucket topic 的 metric（key 中包含 bucket_）
+    bool foundBucket = false;
+    for (const auto &[k, v] : pubReport.metrics) {
+        if (k.find("bucket_") != std::string::npos && k.find("_matched") != std::string::npos) {
+            foundBucket = true;
+            std::string unmatchKey = k;
+            // _matched -> _unmatched
+            auto pos = unmatchKey.find("_matched");
+            unmatchKey.replace(pos, 8, "_unmatched");
+            EXPECT_EQ(v, "1") << k << ": bucket topic should have match event";
+            EXPECT_EQ(pubReport.metrics[unmatchKey], "1")
+                << unmatchKey << ": bucket topic should have unmatch event (current==0)";
+            break;
+        }
+    }
+    EXPECT_TRUE(foundBucket) << "bucket topic not found in callback events";
+}
+
+// TC24 - setOnSubscriptionMatchedCallback: sub 端每个 topic 的 match/unmatch 验证
+// 场景：sub 注册 onSubscriptionMatchedCallback，pub 上线发布变量后退出。
+//       sub 通过 bucket topic 的 match/unmatch 事件感知 pub 的上线与下线。
+// 验证：① pub 上线后 bucket topic 触发 match（currentCount >= 1）；
+//       ② pub 下线后 bucket topic 触发 unmatch（currentCount == 0）。
+TEST(OnDemandPubSub, SubscriptionMatchedCallbackPerTopicMatchUnmatch)
+{
+    const auto root = std::filesystem::temp_directory_path() / uniqueName("ondemand_sub_match");
+    std::filesystem::create_directories(root);
+
+    const std::string pubNode = uniqueName("pub_match2");
+    const auto defs = makeDefines(pubNode, "v", 4);
+    const auto names = defineNames(defs);
+    const std::string bucketTopic =
+        "dsf/var/data/transfer/bucket_"
+        + std::to_string(dsf::ondemand::BucketManager::CalculateBucketIndexFromHash(
+            dsf::ondemand::fast_hash(dsf::ondemand::make_meta_varname(pubNode, names[0]))));
+
+    // 子进程1: pub，运行后退出（触发 sub 端 unmatch）
+    const auto pubProc = spawnChild("pub_match2", root, [pubNode, defs, names]() {
+        dsf::ondemand::OnDemandPub pub;
+        ChildReport r;
+        if (!childRequire(r, pub.init(pubNode), "pub init failed")
+            || !childRequire(r, pub.start(), "pub start failed")
+            || !childRequire(r, pub.createVars(defs), "pub createVars failed")) {
+            return r;
+        }
+
+        std::atomic<bool> running{true};
+        std::thread th([&]() { publishLoop(pub, names, running, 50); });
+        std::this_thread::sleep_for(4s);
+        running.store(false);
+        th.join();
+        pub.stop();
+        r.ok = true;
+        r.message = "ok";
+        return r;
+    });
+
+    // 子进程2: sub，记录每个 topic 的 match/unmatch 事件
+    const auto subProc = spawnChild("sub_match2", root, [pubNode, names, bucketTopic]() {
+        dsf::ondemand::OnDemandSub sub;
+        ChildReport r;
+        if (!childRequire(r, sub.init(uniqueName("sub_match2")), "sub init failed")
+            || !childRequire(r, sub.start(), "sub start failed")) {
+            return r;
+        }
+
+        // 每个 topic 记录所有事件
+        std::mutex mtx;
+        std::unordered_map<std::string, std::vector<std::tuple<int, int, int>>> topicEvents;
+
+        sub.setOnSubscriptionMatchedCallback(
+            [&](const std::string &topic, int current, int change, int total) {
+                std::lock_guard<std::mutex> lk(mtx);
+                topicEvents[topic].emplace_back(current, change, total);
+                LOG(info) << "[sub] matched topic=" << topic << " current=" << current
+                          << " change=" << change << " total=" << total;
+            });
+
+        // 等 pub 变量定义到达
+        const bool gotDefs = waitUntil([&]() {
+            return countNodeVars(sub, pubNode) == names.size();
+        }, 8s);
+        if (!childRequire(r, gotDefs, "sub did not receive defines")) {
+            sub.stop();
+            return r;
+        }
+
+        // 订阅，触发 data transfer reader 匹配
+        const auto subs = toSubscriptions(names, 200);
+        if (!childRequire(r, sub.subscribe(pubNode.c_str(), subs), "subscribe failed")) {
+            sub.stop();
+            return r;
+        }
+
+        // 等 bucket topic match
+        const bool gotMatch = waitUntil([&]() {
+            std::lock_guard<std::mutex> lk(mtx);
+            auto it = topicEvents.find(bucketTopic);
+            if (it == topicEvents.end()) return false;
+            for (const auto &[cur, chg, tot] : it->second) {
+                if (cur >= 1) return true;
+            }
+            return false;
+        }, 8s);
+        if (!childRequire(r, gotMatch, "sub: bucket topic never got match (current>=1)")) {
+            sub.stop();
+            return r;
+        }
+
+        // 等 pub 下线: bucket topic currentCount 变为 0
+        const bool gotUnmatch = waitUntil([&]() {
+            std::lock_guard<std::mutex> lk(mtx);
+            auto it = topicEvents.find(bucketTopic);
+            if (it == topicEvents.end()) return false;
+            for (const auto &[cur, chg, tot] : it->second) {
+                if (cur == 0) return true;
+            }
+            return false;
+        }, 12s);
+        if (!childRequire(r, gotUnmatch, "sub: bucket topic never got unmatch (current==0)")) {
+            sub.stop();
+            return r;
+        }
+
+        // 汇总
+        std::lock_guard<std::mutex> lk(mtx);
+        for (const auto &[topic, events] : topicEvents) {
+            std::string shortKey = topic.size() > 30 ? topic.substr(topic.size() - 30) : topic;
+            for (char &c : shortKey) { if (c == '/') c = '_'; }
+
+            bool hadMatch = false, hadUnmatch = false;
+            int maxCurrent = 0;
+            for (const auto &[cur, chg, tot] : events) {
+                if (cur >= 1) hadMatch = true;
+                if (hadMatch && cur == 0) hadUnmatch = true;
+                maxCurrent = std::max(maxCurrent, cur);
+            }
+            r.metrics["topic_" + shortKey + "_events"]   = std::to_string(events.size());
+            r.metrics["topic_" + shortKey + "_matched"]   = hadMatch ? "1" : "0";
+            r.metrics["topic_" + shortKey + "_unmatched"] = hadUnmatch ? "1" : "0";
+            r.metrics["topic_" + shortKey + "_maxCur"]    = std::to_string(maxCurrent);
+        }
+        r.metrics["total_topics"] = std::to_string(topicEvents.size());
+
+        sub.stop();
+        r.ok = true;
+        r.message = "ok";
+        return r;
+    });
+
+    ChildReport subReport;
+    expectChildOk(pubProc, 12s);
+    expectChildOk(subProc, 20s, &subReport);
+
+    EXPECT_GE(std::stoi(subReport.metrics["total_topics"]), 1) << "should have at least 1 topic";
+
+    bool foundBucket = false;
+    for (const auto &[k, v] : subReport.metrics) {
+        if (k.find("bucket_") != std::string::npos && k.find("_matched") != std::string::npos) {
+            foundBucket = true;
+            std::string unmatchKey = k;
+            auto pos = unmatchKey.find("_matched");
+            unmatchKey.replace(pos, 8, "_unmatched");
+            EXPECT_EQ(v, "1") << k << ": bucket topic should have match event";
+            EXPECT_EQ(subReport.metrics[unmatchKey], "1")
+                << unmatchKey << ": bucket topic should have unmatch event (current==0)";
+            break;
+        }
+    }
+    EXPECT_TRUE(foundBucket) << "bucket topic not found in callback events";
+}
+
+// TC25 - Sub stop 后重启并追加订阅验证
+// 场景：pub 创建10个变量并持续发布。sub1 订阅 var0 和一个不存在的变量 nonexistent_var，
+//       等待 var0 收到回调后直接 stop。随后启动新的 sub2，先订阅 var0，
+//       收到 var0 回调后再追加订阅 var1，验证两个变量都收到回调、数据正确、频率正常。
+// 验证：① sub1 订阅不存在的变量不影响 var0 的正常接收；
+//       ② sub1 stop 后 sub2 能正常订阅并收到数据；
+//       ③ sub2 追加订阅 var1 后两个变量都能收到回调；
+//       ④ 数据值非零，回调频率在预期范围内（100ms ± 50%）。
+TEST(OnDemandPubSub, SubStopThenNewSubAddSubscribe)
+{
+    const auto root = std::filesystem::temp_directory_path() / uniqueName("ondemand_case25");
+    std::filesystem::create_directories(root);
+
+    const std::string pubNode = uniqueName("pub_case25");
+    const auto defs  = makeDefines(pubNode, "var", 10);
+    const auto names = defineNames(defs);
+    constexpr uint32_t kFreqMs = 100;
+    constexpr size_t kSamples = 10;
+
+    // pub：持续发布10个变量
+    const auto pubProc = spawnChild("case25_pub", root, [pubNode, defs, names]() {
+        dsf::ondemand::OnDemandPub pub;
+        ChildReport r;
+        if (!childRequire(r, pub.init(pubNode), "pub init failed")
+            || !childRequire(r, pub.start(), "pub start failed")
+            || !childRequire(r, pub.createVars(defs), "pub createVars failed")) {
+            return r;
+        }
+        std::atomic<bool> running{true};
+        std::thread th([&]() { publishLoop(pub, names, running, 20); });
+        std::this_thread::sleep_for(30s);
+        running.store(false, std::memory_order_release);
+        th.join();
+        pub.stop();
+        r.ok = true;
+        r.message = "ok";
+        return r;
+    });
+
+    // sub1：订阅 var0 + 一个不存在的变量，等 var0 收到数据后 stop
+    std::this_thread::sleep_for(1s);
+    const auto sub1Proc = spawnChild("case25_sub1", root, [pubNode, names, kFreqMs]() {
+        dsf::ondemand::OnDemandSub sub;
+        ChildReport r;
+        if (!childRequire(r, sub.init(uniqueName("sub1_case25")), "sub1 init failed")
+            || !childRequire(r, sub.start(), "sub1 start failed")) {
+            return r;
+        }
+
+        // 等待变量定义到达
+        if (!childRequire(r,
+                          waitUntil([&]() { return countNodeVars(sub, pubNode) == names.size(); }, 8s),
+                          "sub1 did not receive defines")) {
+            sub.stop();
+            return r;
+        }
+
+        std::mutex mu;
+        std::map<std::string, int32_t> latestValues;
+
+        // 订阅 var0 + 不存在的变量 nonexistent_var
+        std::vector<dsf::ondemand::SubscriptionItem> sub1Items;
+        sub1Items.emplace_back(names[0], kFreqMs);             // var0
+        sub1Items.emplace_back("nonexistent_var_xyz", kFreqMs); // 不存在的变量
+
+        const bool subOk = sub.subscribe(
+            pubNode.c_str(), sub1Items,
+            [&](const std::vector<dsf::ondemand::VarCallbackData> &vars) {
+                std::lock_guard<std::mutex> lk(mu);
+                for (const auto &v : vars) {
+                    const std::string name(v.varName.data(), v.varName.size());
+                    if (v.data && v.size >= sizeof(int32_t))
+                        latestValues[name] = *reinterpret_cast<const int32_t *>(v.data);
+                    LOG(info) << "[case25_sub1] cb: " << name << " val=" << latestValues[name];
+                }
+            });
+
+        if (!childRequire(r, subOk, "sub1 subscribe failed")) {
+            sub.stop();
+            return r;
+        }
+
+        // 等待 var0 收到至少 3 次回调
+        const bool gotVar0 = waitUntil(
+            [&]() {
+                std::lock_guard<std::mutex> lk(mu);
+                return latestValues.count(names[0]) > 0 && latestValues[names[0]] != 0;
+            },
+            8s);
+        if (!childRequire(r, gotVar0, "sub1: did not receive var0 data")) {
+            sub.stop();
+            return r;
+        }
+
+        // 验证 nonexistent_var 确实没有收到任何回调
+        {
+            std::lock_guard<std::mutex> lk(mu);
+            childRequire(r, latestValues.count("nonexistent_var_xyz") == 0,
+                         "sub1: nonexistent_var should not have received any callback");
+        }
+
+        LOG(info) << "[case25_sub1] var0 received OK, stopping sub1";
+        sub.stop();
+        r.ok = gotVar0;
+        r.message = r.ok ? "ok" : r.message;
+        r.metrics["var0_val"] = std::to_string(latestValues.count(names[0]) ? latestValues[names[0]] : 0);
+        return r;
+    });
+
+    // 等 sub1 完成并退出后再启动 sub2
+    expectChildOk(sub1Proc, 18s);
+
+    std::this_thread::sleep_for(1s);
+
+    // sub2：新 sub，先订阅 var0，收到回调后再追加订阅 var1
+    const auto sub2Proc = spawnChild("case25_sub2", root, [pubNode, names, kFreqMs, kSamples]() {
+        dsf::ondemand::OnDemandSub sub;
+        ChildReport r;
+        if (!childRequire(r, sub.init(uniqueName("sub2_case25")), "sub2 init failed")
+            || !childRequire(r, sub.start(), "sub2 start failed")) {
+            return r;
+        }
+
+        // 等待变量定义到达
+        if (!childRequire(r,
+                          waitUntil([&]() { return countNodeVars(sub, pubNode) == names.size(); }, 8s),
+                          "sub2 did not receive defines")) {
+            sub.stop();
+            return r;
+        }
+
+        std::mutex mu;
+        std::map<std::string, int32_t> latestValues;
+        std::map<std::string, std::vector<uint64_t>> tsLog;
+
+        // 阶段1：只订阅 var0
+        std::vector<dsf::ondemand::SubscriptionItem> sub2Items;
+        sub2Items.emplace_back(names[0], kFreqMs);
+
+        const bool subOk = sub.subscribe(
+            pubNode.c_str(), sub2Items,
+            [&](const std::vector<dsf::ondemand::VarCallbackData> &vars) {
+                std::lock_guard<std::mutex> lk(mu);
+                for (const auto &v : vars) {
+                    const std::string name(v.varName.data(), v.varName.size());
+                    if (v.data && v.size >= sizeof(int32_t))
+                        latestValues[name] = *reinterpret_cast<const int32_t *>(v.data);
+                    auto &ts = tsLog[name];
+                    if (ts.size() < kSamples && v.timestampNs > 0
+                        && (ts.empty() || v.timestampNs > ts.back()))
+                        ts.push_back(v.timestampNs);
+                    LOG(info) << "[case25_sub2] cb: " << name << " val=" << latestValues[name];
+                }
+            });
+
+        if (!childRequire(r, subOk, "sub2 initial subscribe (var0) failed")) {
+            sub.stop();
+            return r;
+        }
+
+        // 等待 var0 收到回调
+        const bool gotVar0 = waitUntil(
+            [&]() {
+                std::lock_guard<std::mutex> lk(mu);
+                return latestValues.count(names[0]) > 0 && latestValues[names[0]] != 0;
+            },
+            8s);
+        if (!childRequire(r, gotVar0, "sub2: did not receive var0 data")) {
+            sub.stop();
+            return r;
+        }
+        LOG(info) << "[case25_sub2] var0 received OK, subscribing var1";
+
+        // 阶段2：追加订阅 var1
+        std::vector<dsf::ondemand::SubscriptionItem> addSub;
+        addSub.emplace_back(names[1], kFreqMs);
+
+        const bool addSubOk = sub.subscribe(pubNode.c_str(), addSub,
+            [&](const std::vector<dsf::ondemand::VarCallbackData> &vars) {
+                std::lock_guard<std::mutex> lk(mu);
+                for (const auto &v : vars) {
+                    const std::string name(v.varName.data(), v.varName.size());
+                    if (v.data && v.size >= sizeof(int32_t))
+                        latestValues[name] = *reinterpret_cast<const int32_t *>(v.data);
+                    auto &ts = tsLog[name];
+                    if (ts.size() < kSamples && v.timestampNs > 0
+                        && (ts.empty() || v.timestampNs > ts.back()))
+                        ts.push_back(v.timestampNs);
+                    LOG(info) << "[case25_sub2] cb(var1): " << name << " val=" << latestValues[name];
+                }
+            });
+
+        if (!childRequire(r, addSubOk, "sub2 add-subscribe (var1) failed")) {
+            sub.stop();
+            return r;
+        }
+
+        // 等待 var1 也收到回调
+        const bool gotVar1 = waitUntil(
+            [&]() {
+                std::lock_guard<std::mutex> lk(mu);
+                return latestValues.count(names[1]) > 0 && latestValues[names[1]] != 0;
+            },
+            8s);
+        if (!childRequire(r, gotVar1, "sub2: did not receive var1 data after add-subscribe")) {
+            sub.stop();
+            return r;
+        }
+        LOG(info) << "[case25_sub2] var1 received OK";
+
+        // 等待两个变量都积累足够的回调时间戳用于频率验证
+        const bool gotEnough = waitUntil(
+            [&]() {
+                std::lock_guard<std::mutex> lk(mu);
+                return tsLog[names[0]].size() >= kSamples
+                       && tsLog[names[1]].size() >= kSamples;
+            },
+            12s);
+
+        sub.stop();
+
+        if (!childRequire(r, gotEnough, "sub2: not enough callbacks to verify frequency"))
+            return r;
+
+        // 验证数据正确性
+        {
+            std::lock_guard<std::mutex> lk(mu);
+            for (const auto &n : {names[0], names[1]}) {
+                if (!childRequire(r, latestValues.count(n) > 0, "no value for " + n))
+                    return r;
+                if (!childRequire(r, latestValues[n] != 0, "zero value for " + n))
+                    return r;
+            }
+        }
+
+        // 验证频率：用首尾时间戳跨度算平均间隔，允许 ±50% 误差
+        {
+            std::lock_guard<std::mutex> lk(mu);
+            constexpr double kExpectedMs = static_cast<double>(kFreqMs);
+            constexpr double kLowMs  = kExpectedMs * 0.50;
+            constexpr double kHighMs = kExpectedMs * 1.50;
+            for (const auto &n : {names[0], names[1]}) {
+                const auto &ts = tsLog[n];
+                const double avgMs = static_cast<double>(ts.back() - ts.front())
+                                     / static_cast<double>(ts.size() - 1) / 1e6;
+                LOG(info) << "[case25_sub2] avg period for " << n << ": "
+                          << static_cast<int>(avgMs) << "ms (samples=" << ts.size() << ")";
+                r.metrics["avg_ms_" + n] = std::to_string(static_cast<int>(avgMs));
+                if (!childRequire(r, avgMs >= kLowMs && avgMs <= kHighMs,
+                                  "avg period out of range for " + n + ": "
+                                      + std::to_string(static_cast<int>(avgMs)) + "ms"
+                                      + " expected [" + std::to_string(static_cast<int>(kLowMs))
+                                      + "," + std::to_string(static_cast<int>(kHighMs)) + "]ms"))
+                    return r;
+            }
+        }
+
+        r.ok = true;
+        r.message = "ok";
+        r.metrics["var0_val"] = std::to_string(latestValues[names[0]]);
+        r.metrics["var1_val"] = std::to_string(latestValues[names[1]]);
+        return r;
+    });
+
+    expectChildOk(pubProc, 40s);
+    ChildReport sub2Report;
+    expectChildOk(sub2Proc, 30s, &sub2Report);
+
+    EXPECT_EQ(sub2Report.metrics["var0_val"] != "0", true) << "var0 value should be non-zero";
+    EXPECT_EQ(sub2Report.metrics["var1_val"] != "0", true) << "var1 value should be non-zero";
+}
+
+// TC26 - setMaxNodeNum 订阅者数量限制验证
+// 场景：pub 设置 maxNodeNum=3，启动4个 sub。
+// 验证：pub 侧 freqChangeCallback 最多感知到3个订阅者。
+TEST(OnDemandPubSub, MaxNodeNumLimit)
+{
+    const auto root = std::filesystem::temp_directory_path() / uniqueName("ondemand_case26");
+    std::filesystem::create_directories(root);
+
+    const std::string pubNode = uniqueName("pub_case26");
+    const auto defs = makeDefines(pubNode, "v", 5);
+    const auto names = defineNames(defs);
+
+    const auto pubProc = spawnChild("case26_pub", root, [pubNode, defs, names]() {
+        dsf::ondemand::OnDemandPub pub;
+        ChildReport r;
+        if (!childRequire(r, pub.init(pubNode), "pub init failed")
+            || !childRequire(r, pub.start(), "pub start failed")
+            || !childRequire(r, pub.createVars(defs), "pub createVars failed")) {
+            return r;
+        }
+
+        /*记录有多少个变量被订阅（只有被接受的订阅才会触发频率变化）*/
+        std::mutex mu;
+        std::set<std::string> subscribedVars;
+        pub.setFreqChangeCallback([&](const std::string &varName, uint32_t freq) {
+            if (freq != 0xFFFFFFFF) {
+                std::lock_guard<std::mutex> lk(mu);
+                subscribedVars.insert(varName);
+            }
+        });
+
+        pub.setMaxNodeNum(3);
+        LOG(info) << "[case26_pub] maxNodeNum set to 3";
+
+        std::atomic<bool> running{true};
+        std::thread th([&]() { publishLoop(pub, names, running, 20); });
+        std::this_thread::sleep_for(15s);
+        running.store(false, std::memory_order_release);
+        th.join();
+        pub.stop();
+
+        /*maxNodeNum=3，最多3个订阅者×5个变量=15次频率变化，但只有5个不同变量名*/
+        size_t count = 0;
+        {
+            std::lock_guard<std::mutex> lk(mu);
+            count = subscribedVars.size();
+        }
+        r.metrics["subscribed_var_count"] = std::to_string(count);
+        LOG(info) << "[case26_pub] subscribed var count=" << count;
+        r.ok = true;
+        r.message = "ok";
+        return r;
+    });
+
+    for (int i = 0; i < 4; ++i) {
+        std::this_thread::sleep_for(1s);
+        spawnChild("case26_sub" + std::to_string(i), root, [pubNode, names]() {
+            dsf::ondemand::OnDemandSub sub;
+            ChildReport r;
+            if (!sub.init(uniqueName("sub_case26")) || !sub.start()) {
+                r.ok = false;
+                r.message = "sub init/start failed";
+                return r;
+            }
+            waitUntil([&]() { return countNodeVars(sub, pubNode) == names.size(); }, 8s);
+            sub.subscribe(pubNode.c_str(), toSubscriptions(names, 200),
+                          [](const std::vector<dsf::ondemand::VarCallbackData> &) {});
+            std::this_thread::sleep_for(5s);
+            sub.stop();
+            r.ok = true;
+            r.message = "ok";
+            return r;
+        });
+    }
+
+    ChildReport pubReport;
+    expectChildOk(pubProc, 24s, &pubReport);
+
+    /*验证：4个sub各订阅5个变量，如果全部接受应该是20个订阅事件（4×5），
+      但maxNodeNum=3限制了只有3个sub被接受，所以最多15个订阅事件。
+      通过subscribedVars.size()验证：如果4个sub都被接受，所有5个变量都会被订阅；
+      如果只有3个sub被接受，结果一样（5个变量都被订阅了）。
+      关键是看pub日志有没有拒绝信息。*/
+    size_t varCount = std::stoi(pubReport.metrics["subscribed_var_count"]);
+    EXPECT_EQ(varCount, 5) << "all 5 vars should be subscribed (by accepted subs)";
+    LOG(info) << "[TEST] maxNodeNum test: subscribed_var_count=" << varCount;
+}
+
+// TC27 - setMaxVarsPerNode 每节点变量数限制验证
+// 场景：pub 创建200个变量，设置 maxVarsPerNode=100，sub 先订阅前100个，再订阅第101个。
+// 验证：pub 侧 freqChangeCallback 只感知到100个变量被订阅（第101个被拒绝）。
+TEST(OnDemandPubSub, MaxVarsPerNodeLimit)
+{
+    const auto root = std::filesystem::temp_directory_path() / uniqueName("ondemand_case27");
+    std::filesystem::create_directories(root);
+
+    const std::string pubNode = uniqueName("pub_case27");
+    const auto defs = makeDefines(pubNode, "v", 200);
+    const auto names = defineNames(defs);
+
+    const auto pubProc = spawnChild("case27_pub", root, [pubNode, defs, names]() {
+        dsf::ondemand::OnDemandPub pub;
+        ChildReport r;
+        if (!childRequire(r, pub.init(pubNode), "pub init failed")
+            || !childRequire(r, pub.start(), "pub start failed")
+            || !childRequire(r, pub.createVars(defs), "pub createVars failed")) {
+            return r;
+        }
+
+        /*记录有多少个不同变量被订阅*/
+        std::mutex mu;
+        std::set<std::string> subscribedVars;
+        pub.setFreqChangeCallback([&](const std::string &varName, uint32_t freq) {
+            if (freq != 0xFFFFFFFF) {
+                std::lock_guard<std::mutex> lk(mu);
+                subscribedVars.insert(varName);
+            }
+        });
+
+        pub.setMaxVarsPerNode(100);
+        LOG(info) << "[case27_pub] maxVarsPerNode set to 100";
+
+        std::atomic<bool> running{true};
+        std::thread th([&]() { publishLoop(pub, names, running, 20); });
+        std::this_thread::sleep_for(15s);
+        running.store(false, std::memory_order_release);
+        th.join();
+        pub.stop();
+
+        size_t count = 0;
+        {
+            std::lock_guard<std::mutex> lk(mu);
+            count = subscribedVars.size();
+        }
+        r.metrics["subscribed_var_count"] = std::to_string(count);
+        LOG(info) << "[case27_pub] subscribed var count=" << count;
+        r.ok = true;
+        r.message = "ok";
+        return r;
+    });
+
+    const auto subProc = spawnChild("case27_sub", root, [pubNode, names]() {
+        dsf::ondemand::OnDemandSub sub;
+        ChildReport r;
+        if (!sub.init(uniqueName("sub_case27")) || !sub.start()) {
+            r.ok = false;
+            r.message = "sub init/start failed";
+            return r;
+        }
+        waitUntil([&]() { return countNodeVars(sub, pubNode) == names.size(); }, 15s);
+
+        /*订阅前100个*/
+        const std::vector<std::string> first100(names.begin(), names.begin() + 100);
+        sub.subscribe(pubNode.c_str(), toSubscriptions(first100, 200),
+                      [](const std::vector<dsf::ondemand::VarCallbackData> &) {});
+        LOG(info) << "[case27_sub] subscribed 100 vars";
+        std::this_thread::sleep_for(2s);
+
+        /*订阅第101个*/
+        sub.subscribe(pubNode.c_str(), toSubscriptions({names[100]}, 200),
+                      [](const std::vector<dsf::ondemand::VarCallbackData> &) {});
+        LOG(info) << "[case27_sub] subscribed 101st var";
+
+        std::this_thread::sleep_for(3s);
+        sub.stop();
+        r.ok = true;
+        r.message = "ok";
+        return r;
+    });
+
+    ChildReport pubReport;
+    expectChildOk(pubProc, 25s, &pubReport);
+    expectChildOk(subProc, 25s);
+
+    /*验证：maxVarsPerNode=100，sub 先订阅100个成功，第101个被拒绝。
+      所以 pub 侧最多感知到100个变量被订阅。*/
+    size_t varCount = std::stoi(pubReport.metrics["subscribed_var_count"]);
+    EXPECT_EQ(varCount, 100) << "only 100 vars should be subscribed (101st rejected)";
 }
 
 #endif

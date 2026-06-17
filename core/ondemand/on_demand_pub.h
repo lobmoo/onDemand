@@ -17,9 +17,11 @@
 #ifndef ON_DEMAND_PUB_H
 #define ON_DEMAND_PUB_H
 
+#include <queue>
 #include <shared_mutex>
 #include <memory>
 #include "on_demand_common.h"
+#include "on_demand_listener.h"
 #include "variable_store.h"
 #include "timer_wheel/timer_scheduler.h"
 
@@ -28,7 +30,7 @@ namespace dsf
 namespace ondemand
 {
 
-    class OnDemandPub : public DdsWrapper::ParticipantListener
+    class OnDemandPub : public OnDemandListener
     {
     public:
         // varName: 变量全名, newFreqMs: 新的发送周期(ms), 0xFFFFFFFF 表示无订阅者
@@ -79,10 +81,9 @@ namespace ondemand
          * @param  varName          变量名称，必须已创建
          * @param  data             变量数据指针，指向外部数据源，发布时零拷贝
          * @param  size             数据大小，单位字节，支持分片发布
-         * @return true
-         * @return false
+         * @return WriteResult::SUCCESS 成功，其他表示失败
          */
-        bool setVarData(const char *varName, const void *data, size_t size);
+        WriteResult setVarData(const char *varName, const void *data, size_t size);
 
         /**
          * @brief 通过变量名预先查询并缓存 varId，用于后续 setVarData(id, ...) 热路径
@@ -153,17 +154,26 @@ namespace ondemand
          */
         bool cleanupParticipantSubscriptions(const std::string &participantName);
 
-    private:
-        // ParticipantListener 回调
-        // void onReaderDiscovery(const DdsWrapper::EndpointInfo &info) override;
+        /*资源限制相关接口*/
         /**
-         * @brief 订阅者发现回调，处理新订阅者的注册信息，更新内部状态
-         * @param  info             订阅者端点信息，包含节点名称、订阅的变量和频率等
-         */
-        void onWriterDiscovery(const DdsWrapper::EndpointInfo &info) override;
+          * @brief 设置每个订阅者节点允许订阅的最大变量数量，超过后拒绝新变量订阅请求
+          * @param  maxVars   最大变量数量，建议根据实际场景设置合理值，过大可能导致性能下降，过小可能无法满足需求
+          * @return true 
+          * @return false 
+          */
+        void setMaxVarsPerNode(uint32_t maxVars) { maxVarsPerNode_ = maxVars; }
 
         /**
-         * @brief Participant 掉线回调，sub 异常掉线时强制清除其所有订阅
+          * @brief Set the Max Node Num object
+          * @param  maxNodes   节点数  
+          * @return true 
+          * @return false 
+          */
+        void setMaxNodeNum(uint32_t maxNodes) { maxNodeNum_ = maxNodes; }
+
+    private:
+        /**
+         * @brief Participant 掉线回调，清除该 participant 的所有订阅
          * @param  info  participant 信息，包含节点名称和状态
          */
         void onParticipantDiscovery(const DdsWrapper::ParticipantInfo &info) override;
@@ -219,7 +229,7 @@ namespace ondemand
          * @return 未找到的变量数量（>0 表示有变量尚未创建，调用方应延迟重试）
          */
         uint32_t handleSubscribe(const std::string &nodeName,
-                             const std::vector<DSF::NamedValue> &varFreqs);
+                                 const std::vector<DSF::NamedValue> &varFreqs);
         /**
          * @brief 处理订阅者取消订阅请求，更新订阅者信息和变量频率，触发发布调度
          * @param  nodeName         变量名
@@ -316,6 +326,9 @@ namespace ondemand
         // ---- 队列 ----
         moodycamel::ConcurrentQueue<std::shared_ptr<DSF::Message::SubTableRegister>>
             pubTableDefRegisterQueue_;
+        // 重试队列（与正常队列隔离，重试不阻塞新消息消费）
+        std::mutex pubTableDefRetryQueueMutex_;
+        std::queue<std::shared_ptr<DSF::Message::SubTableRegister>> pubTableDefRetryQueue_;
         moodycamel::ConcurrentQueue<std::pair<std::string, uint32_t>> freqChangeQueue_;
 
         // ---- DDS 读写器 ----
@@ -362,6 +375,11 @@ namespace ondemand
             groupMaskBufs_; // 预计算 mask，shared_ptr 避免每次 publish 复制
         std::thread publishSchedulerThread_;
         std::atomic<bool> schedulerDirty_{true}; // varIndex_ 变更标记
+
+        /*资源限制相关*/
+        uint32_t maxVarsPerNode_; // 每个节点最大变量数，超过后拒绝新变量订阅
+        uint32_t maxNodeNum_;     // 最大订阅者数，超过后拒绝新订阅者注册
+        std::unordered_map<uint64_t, uint32_t> nodeVarCount_; // nodeHash -> 已订阅变量数
     };
 
 } // namespace ondemand

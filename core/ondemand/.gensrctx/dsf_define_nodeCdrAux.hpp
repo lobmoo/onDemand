@@ -70,23 +70,25 @@ namespace BaoSky
     {
 
         class Cdr;
+        class SerializeCdr;
         class CdrSizeCalculator;
+
+        void SerializeKey(
+            BaoSky::Cdr::SerializeCdr &scdr,
+            const DSF::NetworkInterface &data);
+
+        void SerializeKey(
+            BaoSky::Cdr::SerializeCdr &scdr,
+            const DSF::Node::BasicInfo &data);
+
+        void SerializeKey(
+            BaoSky::Cdr::SerializeCdr &scdr,
+            const DSF::Node::RuntimeInfo &data);
+
+
+
     };
 };
-
-eProsima_user_DllExport void serialize_key(
-        BaoSky::Cdr::Cdr& scdr,
-        const DSF::NetworkInterface& data);
-
-eProsima_user_DllExport void serialize_key(
-        BaoSky::Cdr::Cdr& scdr,
-        const DSF::Node::BasicInfo& data);
-
-eProsima_user_DllExport void serialize_key(
-        BaoSky::Cdr::Cdr& scdr,
-        const DSF::Node::RuntimeInfo& data);
-
-
 
 
 #endif // _DDS_GENERATED_DSF_NODE_DSF_DEFINE_NODECDRAUX_HPP_

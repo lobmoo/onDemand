@@ -38,6 +38,8 @@ namespace BaoSky::rtps
 
         virtual bool GetConfig(ThreadConfig &config, const std::string &configName);
 
+        virtual std::vector<std::string> GetConfigList();
+
     private:
         ThreadManager();
 

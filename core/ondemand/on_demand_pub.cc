@@ -28,7 +28,8 @@ namespace ondemand
     OnDemandPub::OnDemandPub()
         : varIndex_(), varIndexMutex_(), bucketManager_(), initialized_(false), running_(false),
           dataNode_(nullptr), nodeName_(), pubTableDefineWriter_(nullptr),
-          subTableRegisterReqReader_(nullptr), freqChangeCb_(nullptr)
+          subTableRegisterReqReader_(nullptr), freqChangeCb_(nullptr),
+          maxVarsPerNode_(0), maxNodeNum_(64)
     {
     }
 
@@ -132,7 +133,7 @@ namespace ondemand
      */
     bool OnDemandPub::createTableDefineWriter()
     {
-        constexpr uint32_t depth = 20;
+        constexpr uint32_t depth = 1;
         DdsWrapper::DataWriterQoSBuilder writerQosBuilder;
         writerQosBuilder.setMaxSamples(32 * depth)
             .setMaxInstances(32)
@@ -147,7 +148,7 @@ namespace ondemand
             != dsf::ondemand::registerNodeTopicWriter<DSF::Var::PubTableDefine,
                                                       DSF::Var::PubTableDefinePubSubType>(
                 dataNode_, pubTableDefineWriter_, DSF::Var::TABLE_DEFINE_TOPIC_NAME,
-                writerQosBuilder)) {
+                writerQosBuilder, this)) {
             ONDEMANDLOG(error) << "Failed to register topic for PubTableDefine: "
                                << DSF::Var::TABLE_DEFINE_TOPIC_NAME;
             return false;
@@ -166,10 +167,10 @@ namespace ondemand
         std::function<void(const std::string &, std::shared_ptr<DSF::Message::SubTableRegister>)>
             processFunc)
     {
-        constexpr uint32_t depth = 20;
+        constexpr uint32_t depth = 64;
         DdsWrapper::DataReaderQoSBuilder readerQosBuilder;
-        readerQosBuilder.setMaxSamples(256 * depth)
-            .setMaxInstances(256)
+        readerQosBuilder.setMaxSamples(10 * depth)
+            .setMaxInstances(10)
             .setMaxSamplesPerInstance(depth)
             .setDurabilityKind(DdsWrapper::DurabilityKind::TRANSIENT_LOCAL)
             .setReliabilityKind(DdsWrapper::ReliabilityKind::RELIABLE)
@@ -181,7 +182,8 @@ namespace ondemand
                                                       DSF::Message::SubTableRegisterPubSubType>(
                 dataNode_, subTableRegisterReqReader_,
                 DSF::Message::MESSAGE_COMMAND_REQUEST_SUB_TABLE_REGISTER_TOPIC_NAME, processFunc,
-                readerQosBuilder)) {
+                readerQosBuilder,
+                createReaderListener<DSF::Message::SubTableRegister>())) {
             ONDEMANDLOG(error)
                 << "Failed to register topic for SubTableRegister: "
                 << DSF::Message::MESSAGE_COMMAND_REQUEST_SUB_TABLE_REGISTER_TOPIC_NAME;
@@ -236,7 +238,7 @@ namespace ondemand
 
             writer = dataNode_->createDataWriter<DSF::Var::TableDataTransfer,
                                                  DSF::Var::TableDataTransferPubSubType>(
-                topicName, DATA_TRANSFER_PUB_SUB_NAME, writerQosBuilder);
+                topicName, DATA_TRANSFER_PUB_SUB_NAME, writerQosBuilder, this);
             if (!writer) {
                 ONDEMANDLOG(error)
                     << "Failed to create topic writer for topic [" << topicName << "].";
@@ -294,67 +296,74 @@ namespace ondemand
 
         while (running_.load(std::memory_order_acquire)) {
             std::shared_ptr<DSF::Message::SubTableRegister> data;
-            if (pubTableDefRegisterQueue_.try_dequeue(data)) {
-                if (data) {
-                    switch (data->msgType()) {
-                        case DSF::Message::MSGTYPE::SUB_TABLE_REGISTER: {
-                            const std::string nodeName = data->nodeName();
-                            uint32_t missing = handleSubscribe(nodeName, data->varFreqs());
-                            if (missing > 0) {
-                                /*但对同一 node 做指数退避，降低长期缺失时的 CPU 开销。*/
-                                const size_t total = data->varFreqs().size();
-                                const bool allMissing = (total > 0) && (missing >= total);
 
-                                uint32_t &backoffMs = retryBackoffMsByNode[nodeName];
-                                if (backoffMs == 0) {
-                                    backoffMs =
-                                        allMissing ? kMinAllMissingRetryMs : kMinPartialRetryMs;
-                                } else {
-                                    const uint32_t minBase =
-                                        allMissing ? kMinAllMissingRetryMs : kMinPartialRetryMs;
-                                    if (backoffMs < minBase) {
-                                        backoffMs = minBase;
-                                    } else {
-                                        backoffMs = std::min(kMaxRetryMs, backoffMs * 2);
-                                    }
-                                }
-
-                                ONDEMANDLOG_TIME(warning, 5000)
-                                    << "SUB_TABLE_REGISTER retry: node=" << nodeName
-                                    << " missing=" << missing << "/" << total
-                                    << " delayMs=" << backoffMs;
-
-                                std::this_thread::sleep_for(std::chrono::milliseconds(backoffMs));
-                                pubTableDefRegisterQueue_.enqueue(data);
-                            } else {
-                                retryBackoffMsByNode.erase(nodeName);
-                            }
-                            break;
-                        }
-                        case DSF::Message::MSGTYPE::SUB_TABLE_UNREGISTER:
-                            retryBackoffMsByNode.erase(data->nodeName());
-                            handleUnsubscribe(data->nodeName(), data->varFreqs());
-                            break;
-                        default:
-                            ONDEMANDLOG(error) << "Unknown registered type.";
-                            break;
-                    }
-
-                    // // [DEBUG] 打印相关变量的 VarMetadata
-                    // {
-                    //     std::shared_lock dumpLock(varIndexMutex_);
-                    //     for (const auto &varFreq : data->varFreqs()) {
-                    //         std::string metaName = varFreq.name();
-                    //         uint64_t varHash = fast_hash(metaName);
-                    //         auto it = varIndex_.find(varHash);
-                    //         if (it != varIndex_.end()) {
-                    //             it->second.dump(varFreq.name());
-                    //         }
-                    //     }
-                    // }
+            /*优先消费正常队列（新消息），空了再消费重试队列*/
+            if (!pubTableDefRegisterQueue_.try_dequeue(data)) {
+                std::lock_guard<std::mutex> lk(pubTableDefRetryQueueMutex_);
+                if (!pubTableDefRetryQueue_.empty()) {
+                    data = pubTableDefRetryQueue_.front();
+                    pubTableDefRetryQueue_.pop();
                 }
-            } else {
+            }
+
+            if (!data) {
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                continue;
+            }
+
+            switch (data->msgType()) {
+                case DSF::Message::MSGTYPE::SUB_TABLE_REGISTER: {
+                    const std::string nodeName = data->nodeName();
+                    uint32_t missing = handleSubscribe(nodeName, data->varFreqs());
+                    if (missing > 0) {
+                        /*指数退避，不丢弃，持续重试直到变量被创建*/
+                        const size_t total = data->varFreqs().size();
+                        const bool allMissing = (total > 0) && (missing >= total);
+
+                        uint32_t &backoffMs = retryBackoffMsByNode[nodeName];
+                        if (backoffMs == 0) {
+                            backoffMs =
+                                allMissing ? kMinAllMissingRetryMs : kMinPartialRetryMs;
+                        } else {
+                            const uint32_t minBase =
+                                allMissing ? kMinAllMissingRetryMs : kMinPartialRetryMs;
+                            if (backoffMs < minBase) {
+                                backoffMs = minBase;
+                            } else {
+                                backoffMs = std::min(kMaxRetryMs, backoffMs * 2);
+                            }
+                        }
+
+                        ONDEMANDLOG_TIME(warning, 5000)
+                            << "SUB_TABLE_REGISTER retry: node=" << nodeName
+                            << " missing=" << missing << "/" << total
+                            << " delayMs=" << backoffMs;
+
+                        /*构造只含缺失变量的重试消息，放入重试队列*/
+                        auto retryData = std::make_shared<DSF::Message::SubTableRegister>();
+                        retryData->msgType(data->msgType());
+                        retryData->nodeName(data->nodeName());
+                        retryData->tableName(data->tableName());
+                        for (const auto &vf : data->varFreqs()) {
+                            retryData->varFreqs().push_back(vf);
+                        }
+                        std::this_thread::sleep_for(std::chrono::milliseconds(backoffMs));
+                        {
+                            std::lock_guard<std::mutex> lk(pubTableDefRetryQueueMutex_);
+                            pubTableDefRetryQueue_.push(retryData);
+                        }
+                    } else {
+                        retryBackoffMsByNode.erase(nodeName);
+                    }
+                    break;
+                }
+                case DSF::Message::MSGTYPE::SUB_TABLE_UNREGISTER:
+                    retryBackoffMsByNode.erase(data->nodeName());
+                    handleUnsubscribe(data->nodeName(), data->varFreqs());
+                    break;
+                default:
+                    ONDEMANDLOG(error) << "Unknown registered type.";
+                    break;
             }
         }
     }
@@ -876,8 +885,12 @@ namespace ondemand
      * @return true 成功
      * @return false 失败
      */
-    bool OnDemandPub::setVarData(const char *varName, const void *data, size_t size)
+    WriteResult OnDemandPub::setVarData(const char *varName, const void *data, size_t size)
     {
+        if (data == nullptr || size == 0) {
+            return WriteResult::FAILED;
+        }
+
         uint64_t varHash = fast_hash(make_meta_varname(nodeName_, varName));
 
         uint32_t varId = VarStore::kInvalidId;
@@ -885,16 +898,19 @@ namespace ondemand
             std::shared_lock lock(varIndexMutex_);
             auto it = varIndex_.find(varHash);
             if (it == varIndex_.end()) {
-                return false;
+                return WriteResult::FAILED;
             }
             varId = it->second.varId;
         }
-        /*写数据（使用自动扩展的 write，支持延迟分配场景）*/
-        if (varStore_.write(varId, data, static_cast<uint32_t>(size)) != WriteResult::SUCCESS) {
-            ONDEMANDLOG(error) << "Failed to set data for variable: " << varName;
-            return false;
+
+        uint32_t writeSize =
+            static_cast<uint32_t>(size > static_cast<size_t>(UINT32_MAX) ? UINT32_MAX : size);
+        if (size > static_cast<size_t>(UINT32_MAX)) {
+            ONDEMANDLOG_TIME(warning, 5000)
+                << "setVarData: size overflowed uint32_t and was clipped, varName=" << varName;
         }
-        return true;
+
+        return varStore_.write(varId, data, writeSize);
     }
 
     uint32_t OnDemandPub::getVarId(const char *varName) const
@@ -1055,6 +1071,15 @@ namespace ondemand
         uint32_t missingCount = 0;
 
         std::unique_lock lock(varIndexMutex_);
+
+        /*订阅者数量限制*/
+        bool isNewNode = (nodeSlotMap_.find(nodeHash) == nodeSlotMap_.end());
+        if (isNewNode && nodeSlotMap_.size() >= maxNodeNum_) {
+            ONDEMANDLOG(warning) << "Rejecting subscribe from node=" << nodeName
+                                 << ": reached max subscriber limit (" << maxNodeNum_ << ")";
+            return 0;
+        }
+
         uint8_t nodeBit = getOrAssignNodeBit(nodeHash);
         if (nodeBit == 0xFF) {
             ONDEMANDLOG(error) << "Rejecting subscribe from node=" << nodeName
@@ -1062,6 +1087,39 @@ namespace ondemand
             return 0;
         }
         uint64_t nodeMask = uint64_t(1) << nodeBit;
+
+        /*每节点变量数限制：计算本次请求新增的变量数*/
+        uint32_t currentVarCount = nodeVarCount_[nodeHash];
+        uint32_t newVarsInRequest = 0;
+        for (const auto &varFreq : varFreqs) {
+            std::string metaName = varFreq.name();
+            if (metaName.compare(0, ownPrefix.size(), ownPrefix) != 0) {
+                continue;
+            }
+            uint64_t varHash = fast_hash(metaName);
+            auto it = varIndex_.find(varHash);
+            if (it != varIndex_.end()) {
+                bool alreadySubscribed = false;
+                for (const auto &fs : it->second.freqSubs) {
+                    if (fs.subMask & nodeMask) {
+                        alreadySubscribed = true;
+                        break;
+                    }
+                }
+                if (!alreadySubscribed) {
+                    ++newVarsInRequest;
+                }
+            } else {
+                ++newVarsInRequest;
+            }
+        }
+        if (maxVarsPerNode_ > 0 && currentVarCount + newVarsInRequest > maxVarsPerNode_) {
+            ONDEMANDLOG(warning) << "Rejecting subscribe from node=" << nodeName
+                                 << ": would exceed max vars per node (" << maxVarsPerNode_
+                                 << "), current=" << currentVarCount
+                                 << " requested=" << newVarsInRequest;
+            return 0;
+        }
 
         // ── 第一阶段：收集有效变量 + 批量扩展 ──
         std::vector<uint32_t> expandIds;
@@ -1167,7 +1225,10 @@ namespace ondemand
                               << "ms";
         }
 
+        /*更新该节点的已订阅变量计数*/
+        nodeVarCount_[nodeHash] += static_cast<uint32_t>(entries.size());
         lock.unlock();
+
         for (const auto &[varName, newFreq] : freqChanges) {
             freqChangeQueue_.enqueue({varName, newFreq});
         }
@@ -1239,20 +1300,18 @@ namespace ondemand
                               << "], freq " << oldFreq << "ms -> " << meta.currentFreq << "ms";
         }
 
+        /*更新该节点的已订阅变量计数*/
+        auto countIt = nodeVarCount_.find(nodeHash);
+        if (countIt != nodeVarCount_.end()) {
+            uint32_t unsubscribed = static_cast<uint32_t>(varFreqs.size());
+            countIt->second = (countIt->second > unsubscribed) ? countIt->second - unsubscribed : 0;
+        }
+
         lock.unlock();
+        
         for (const auto &[varName, newFreq] : freqChanges) {
             freqChangeQueue_.enqueue({varName, newFreq});
         }
-    }
-
-    /**
-     * @brief 订阅者发现回调，处理新订阅者的注册信息，更新内部状态
-     * @param  info 订阅者端点信息，包含节点名称、订阅的变量和频率等
-     */
-    void OnDemandPub::onWriterDiscovery(const DdsWrapper::EndpointInfo &info)
-    {
-        ONDEMANDLOG(debug) << "[pub node]Writer discovery: topic=" << info.topic_name
-                           << " type=" << info.type_name << " discovered=" << info.discovered;
     }
 
     void OnDemandPub::onParticipantDiscovery(const DdsWrapper::ParticipantInfo &info)
@@ -1402,6 +1461,12 @@ namespace ondemand
 
         std::shared_ptr<DSF::Message::SubTableRegister> item;
         while (pubTableDefRegisterQueue_.try_dequeue(item)) {
+        }
+        {
+            std::lock_guard<std::mutex> lk(pubTableDefRetryQueueMutex_);
+            while (!pubTableDefRetryQueue_.empty()) {
+                pubTableDefRetryQueue_.pop();
+            }
         }
 
         size_t drainedFreqChange = 0;

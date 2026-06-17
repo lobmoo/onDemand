@@ -22,7 +22,7 @@
 #include "ondemand/on_demand_sub.h"
 
 namespace {
-constexpr uint32_t kDefaultCount = 1000U;
+constexpr uint32_t kDefaultCount = 50000U;
 
 uint32_t getConfiguredCount() {
     const char* env = std::getenv("COUNT");
@@ -242,6 +242,9 @@ void publish()
         std::string varName = "var" + std::to_string(i);
         varDelNames.push_back(varName);
     }
+     
+
+    // std::this_thread::sleep_for(std::chrono::seconds(5));
     // pub.deleteVars(varDelNames);
 
     // 预缓存 varId
@@ -258,7 +261,12 @@ void publish()
         batchItems[i].data = &vals[i];
         batchItems[i].size = sizeof(int);
     }
-
+    // pub.setOnPublicationMatchedCallback([](const std::string &topicName, int currentCount,
+    //                                       int currentCountChange, int totalCount) {
+    //     LOG(critical) << "Publication matched: topic=" << topicName
+    //               << " current=" << currentCount << " change=" << currentCountChange
+    //               << " total=" << totalCount;
+    // });
     std::thread setVarThread([&pub, &batchItems]() {
 #if defined(__linux__)
         pthread_setname_np(pthread_self(), "setvar");
@@ -268,6 +276,7 @@ void publish()
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
     });
+
     setVarThread.join();
 
     std::this_thread::sleep_for(std::chrono::seconds(100000));
@@ -306,7 +315,12 @@ void subscribe()
     //         LOG(info) << "    var name = " << v;
     //     }
     // }
-
+    // sub.setOnSubscriptionMatchedCallback([](const std::string &topicName, int currentCount,
+    //                                       int currentCountChange, int totalCount) {
+    //     LOG(critical) << "Subscription matched: topic=" << topicName
+    //               << " current=" << currentCount << " change=" << currentCountChange
+    //               << " total=" << totalCount;
+    // });
     sub.subscribe("pubNode", items, dataCallback);
 
     // sub.unsubscribe("pubNode", unitems);

@@ -47,11 +47,17 @@ namespace BaoSky::rtps
 
         virtual void DeleteRecvResource(RecvResource *&resource, const Locator &locator);
 
-        BasicTransport *GetTransport(const eTransportKind &kind);
+        virtual BasicTransport *GetTransport(const eTransportKind &kind);
 
-        bool GetConfig(std::shared_ptr<BaoSky::rtps::BasicTransportConfig> &config, const std::string &configName);
+        virtual bool GetConfig(std::shared_ptr<BaoSky::rtps::BasicTransportConfig> &config, const std::string &configName);
 
-        bool RejoinUDPMulticast(const std::string &configName, const std::string &localIP);
+        virtual bool RejoinUDPMulticast(const std::string &configName, const std::string &localIP);
+
+        virtual std::vector<std::string> GetConfigList(const eTransportKind &kind);
+
+        virtual void StartTCPService(const std::string &configName);
+
+        virtual void StopTCPService(const std::string &configName);
 
     private:
         void InitialTransport();

@@ -25,8 +25,8 @@ elseif(DDS_IMPL STREQUAL "TXDDS")
         "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libTXDDS.so"
         "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libTXCDR.so"
         "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libTXRuntimeLog.so"
-        "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libssl.so"
-        "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libcrypto.so"
+        "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libssl.so.1.1"
+        "${CMAKE_SOURCE_DIR}/thirdparty/txdds/lib/libcrypto.so.1.1"
     )
 else()
     message(FATAL_ERROR "Invalid DDS_IMPL: ${DDS_IMPL}")

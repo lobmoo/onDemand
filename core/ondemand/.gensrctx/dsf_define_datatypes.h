@@ -29,6 +29,8 @@
 #include <string>
 #include <vector>
 
+#include "txcdr/optional.h"
+
 
 
 #if defined(_WIN32)
