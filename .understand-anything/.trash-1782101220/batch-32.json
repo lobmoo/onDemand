@@ -1,0 +1,191 @@
+{
+  "nodes": [
+    {
+      "id": "document:docs/design_ondemand_definitions.md",
+      "type": "document",
+      "name": "design_ondemand_definitions.md",
+      "filePath": "docs/design_ondemand_definitions.md",
+      "summary": "大规模变量内存优化设计方案文档，详细描述了 Lazy Create（懒创建）方案：通过新增 registerVars() API 延迟分配 VarStore/varIndex_ 等重结构，将 600K 变量场景下 pub 端 ~520MB 内存降至仅在首次 subscribe 时按需创建，涵盖 API 设计、数据结构、实现细节、向后兼容及分阶段实现计划。",
+      "tags": ["documentation", "design", "memory-optimization", "architecture"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:docs/design_ondemand_lite_broadcast.md",
+      "type": "document",
+      "name": "design_ondemand_lite_broadcast.md",
+      "filePath": "docs/design_ondemand_lite_broadcast.md",
+      "summary": "轻量广播方案设计文档，提出 Lite Topic + 按需创建策略：pub 端仅存储变量名和大小（LiteVarInfo），通过 PubTableDefineLite 轻量 IDL 广播，subscribe 时才触发真正 createVars 并广播完整 PubTableDefine，将 pub+sub 总内存从 ~502MB 降至 ~20MB，包含 IDL 定义、pub/sub 端设计、时序图及风险分析。",
+      "tags": ["documentation", "design", "memory-optimization", "broadcast", "architecture"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:docs/onDemand_overview.md",
+      "type": "document",
+      "name": "onDemand_overview.md",
+      "filePath": "docs/onDemand_overview.md",
+      "summary": "onDemand 按需发布订阅系统的项目概述文档，涵盖项目定位（DDS 大规模变量框架）、整体架构（分层说明）、分桶机制（hash 分桶 + 调度对齐）、VarStore 无锁存储（Seqlock + 64 字节对齐 arena）、时间轮调度、Pub/Sub 端工作流程、DDS 通信层及性能优化要点。",
+      "tags": ["documentation", "overview", "architecture", "entry-point"],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:docs/ondemand_architecture.md",
+      "type": "document",
+      "name": "ondemand_architecture.md",
+      "filePath": "docs/ondemand_architecture.md",
+      "summary": "OnDemand 模块架构文档，全面记录项目结构、整体架构图、核心组件（OnDemandPub/OnDemandSub）、主要数据结构（VarMetadata、VarStore、BucketManager、PublishGroupKey 等）、IDL 消息结构、DDS 通信协议、数据流（订阅建立/数据推送/取消订阅）、性能设计及使用示例。",
+      "tags": ["documentation", "architecture", "api-reference", "data-structures"],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:docs/variable_store_design.md",
+      "type": "document",
+      "name": "variable_store_design.md",
+      "filePath": "docs/variable_store_design.md",
+      "summary": "VarStore 组件的专项设计文档，详细描述其 64 字节对齐 arena 内存布局、Seqlock 无锁读写协议、Dirty 追踪机制（脏标记 + ConcurrentQueue）、零拷贝接口（read_ptr/ScopedPtr、write_ptr）、并发模型（单写多读 + 双重检查竞态防护）及关键路径性能分析。",
+      "tags": ["documentation", "design", "lock-free", "memory-layout", "concurrency"],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "document:docs/design_ondemand_definitions.md",
+      "target": "file:core/ondemand/on_demand_pub.h",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design_ondemand_definitions.md",
+      "target": "file:core/ondemand/on_demand_pub.cc",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design_ondemand_definitions.md",
+      "target": "file:core/ondemand/on_demand_common.h",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design_ondemand_lite_broadcast.md",
+      "target": "file:core/ondemand/on_demand_pub.h",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design_ondemand_lite_broadcast.md",
+      "target": "file:core/ondemand/on_demand_pub.cc",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design_ondemand_lite_broadcast.md",
+      "target": "file:core/ondemand/on_demand_sub.h",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/design_ondemand_lite_broadcast.md",
+      "target": "file:core/ondemand/on_demand_sub.cc",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/onDemand_overview.md",
+      "target": "file:core/ondemand/on_demand_pub.h",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/onDemand_overview.md",
+      "target": "file:core/ondemand/on_demand_sub.h",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/onDemand_overview.md",
+      "target": "file:core/ondemand/variable_store.h",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/onDemand_overview.md",
+      "target": "file:core/ondemand/on_demand_common.h",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/ondemand_architecture.md",
+      "target": "file:core/ondemand/on_demand_pub.h",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/ondemand_architecture.md",
+      "target": "file:core/ondemand/on_demand_pub.cc",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/ondemand_architecture.md",
+      "target": "file:core/ondemand/on_demand_sub.h",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/ondemand_architecture.md",
+      "target": "file:core/ondemand/on_demand_sub.cc",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/ondemand_architecture.md",
+      "target": "file:core/ondemand/variable_store.h",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/ondemand_architecture.md",
+      "target": "file:core/ondemand/on_demand_common.h",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/ondemand_architecture.md",
+      "target": "file:common/timer_wheel/timer_scheduler.h",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/ondemand_architecture.md",
+      "target": "file:common/timer_wheel/timer_wheel.h",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/variable_store_design.md",
+      "target": "file:core/ondemand/variable_store.h",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

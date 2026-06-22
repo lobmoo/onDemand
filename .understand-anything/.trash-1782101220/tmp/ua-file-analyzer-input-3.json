@@ -1,0 +1,31 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "core/ondemand/.gensrc/dsf_define_varTypeObjectSupport.hpp", "language": "cpp", "sizeLines": 610, "fileCategory": "code"},
+    {"path": "core/ondemand/on_demand_common.h", "language": "cpp", "sizeLines": 2436, "fileCategory": "code"},
+    {"path": "core/ondemand/on_demand_pub.cc", "language": "cpp", "sizeLines": 952, "fileCategory": "code"},
+    {"path": "core/ondemand/on_demand_pub.h", "language": "cpp", "sizeLines": 534, "fileCategory": "code"},
+    {"path": "core/ondemand/on_demand_sub.cc", "language": "cpp", "sizeLines": 952, "fileCategory": "code"},
+    {"path": "core/ondemand/on_demand_sub.h", "language": "cpp", "sizeLines": 534, "fileCategory": "code"},
+    {"path": "core/ondemand/variable_store.h", "language": "cpp", "sizeLines": 2436, "fileCategory": "code"},
+    {"path": "common/fastdds_wrapper/fastdds_listeners.h", "language": "cpp", "sizeLines": 102, "fileCategory": "code"},
+    {"path": "common/fastdds_wrapper/fastdds_node.cc", "language": "cpp", "sizeLines": 952, "fileCategory": "code"},
+    {"path": "common/fastdds_wrapper/fastdds_node.h", "language": "cpp", "sizeLines": 534, "fileCategory": "code"},
+    {"path": "common/fastdds_wrapper/fastdds_qos_config.cc", "language": "cpp", "sizeLines": 952, "fileCategory": "code"},
+    {"path": "common/fastdds_wrapper/fastdds_qos_config.h", "language": "cpp", "sizeLines": 534, "fileCategory": "code"}
+  ],
+  "batchImportData": {
+    "core/ondemand/.gensrc/dsf_define_varTypeObjectSupport.hpp":[],
+    "core/ondemand/on_demand_common.h":[],
+    "core/ondemand/on_demand_pub.cc":["core/ondemand/on_demand_common.h","core/ondemand/on_demand_pub.h","core/ondemand/variable_store.h"],
+    "core/ondemand/on_demand_pub.h":[],
+    "core/ondemand/on_demand_sub.cc":["core/ondemand/on_demand_common.h","core/ondemand/on_demand_sub.h","core/ondemand/variable_store.h"],
+    "core/ondemand/on_demand_sub.h":[],
+    "core/ondemand/variable_store.h":[],
+    "common/fastdds_wrapper/fastdds_listeners.h":[],
+    "common/fastdds_wrapper/fastdds_node.cc":["common/fastdds_wrapper/fastdds_listeners.h","common/fastdds_wrapper/fastdds_node.h","common/fastdds_wrapper/fastdds_qos_config.h","common/fastdds_wrapper/fastdds_topic_reader.hpp","common/fastdds_wrapper/fastdds_topic_writer.hpp"],
+    "common/fastdds_wrapper/fastdds_node.h":[],
+    "common/fastdds_wrapper/fastdds_qos_config.cc":["common/fastdds_wrapper/fastdds_qos_config.h"],
+    "common/fastdds_wrapper/fastdds_qos_config.h":[]
+  }
+}

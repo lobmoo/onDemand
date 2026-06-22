@@ -1,0 +1,28 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "common/log/custom_rotating_file_sink.h", "language": "cpp", "sizeLines": 102, "fileCategory": "code"},
+    {"path": "common/log/logger.cc", "language": "cpp", "sizeLines": 952, "fileCategory": "code"},
+    {"path": "common/log/logger.h", "language": "cpp", "sizeLines": 534, "fileCategory": "code"},
+    {"path": "common/log/logger_impl.cc", "language": "cpp", "sizeLines": 952, "fileCategory": "code"},
+    {"path": "common/log/logger_impl.h", "language": "cpp", "sizeLines": 534, "fileCategory": "code"},
+    {"path": "common/log/logger_test.cc", "language": "cpp", "sizeLines": 952, "fileCategory": "code"},
+    {"path": "common/dds_wrapper/dds_abstraction.h", "language": "cpp", "sizeLines": 534, "fileCategory": "code"},
+    {"path": "common/dds_wrapper/dds_idl_wrapper.h", "language": "cpp", "sizeLines": 534, "fileCategory": "code"}
+  ],
+  "batchImportData": {
+    "common/log/custom_rotating_file_sink.h": [],
+    "common/log/logger.cc": ["common/log/logger_impl.h"],
+    "common/log/logger.h": [],
+    "common/log/logger_impl.cc": ["common/log/custom_rotating_file_sink.h", "common/log/logger.h", "common/log/logger_impl.h"],
+    "common/log/logger_impl.h": [],
+    "common/log/logger_test.cc": ["common/log/logger.h"],
+    "common/dds_wrapper/dds_abstraction.h": [],
+    "common/dds_wrapper/dds_idl_wrapper.h": []
+  },
+  "neighborMap": {
+    "common/log/logger_impl.cc": [
+      {"path": "common/fastdds_wrapper/fastdds_node.cc", "batchIndex": 3, "symbols": ["FastDataNode::FastDataNode", "FastDataNode::~FastDataNode", "FastDataNode::initDomainParticipant", "FastDataNode::initDomainParticipantForXml", "FastDataNode::addTopicDataTypeCreator", "FastDataNode::createPublisher", "FastDataNode::createSubscriber", "FastDataNode::updatePublisherQos", "FastDataNode::updateSubscriberQos", "FastDataNode::createTopic", "FastDataNode::isTopicTypeRegistered", "FastDataNode::cleanup", "FastDataNode::destroyParticipantResources"]}
+    ]
+  }
+}

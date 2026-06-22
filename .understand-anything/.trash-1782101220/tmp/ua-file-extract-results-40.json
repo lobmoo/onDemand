@@ -1,0 +1,3066 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 25,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "thirdparty/arrow/include/arrow/util/bitmap_builders.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 43,
+      "nonEmptyLines": 36,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/util/bitmap_generate.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 111,
+      "nonEmptyLines": 97,
+      "callGraph": [
+        {
+          "caller": "GenerateBits",
+          "callee": "g",
+          "lineNumber": 46
+        },
+        {
+          "caller": "GenerateBits",
+          "callee": "static_cast<uint8_t>",
+          "lineNumber": 48
+        },
+        {
+          "caller": "GenerateBitsUnrolled",
+          "callee": "std::declval<Generator>()",
+          "lineNumber": 65
+        },
+        {
+          "caller": "GenerateBitsUnrolled",
+          "callee": "std::declval<Generator>",
+          "lineNumber": 65
+        },
+        {
+          "caller": "GenerateBitsUnrolled",
+          "callee": "g",
+          "lineNumber": 80
+        },
+        {
+          "caller": "GenerateBitsUnrolled",
+          "callee": "static_cast<uint8_t>",
+          "lineNumber": 81
+        },
+        {
+          "caller": "GenerateBitsUnrolled",
+          "callee": "g",
+          "lineNumber": 91
+        },
+        {
+          "caller": "GenerateBitsUnrolled",
+          "callee": "g",
+          "lineNumber": 103
+        },
+        {
+          "caller": "GenerateBitsUnrolled",
+          "callee": "static_cast<uint8_t>",
+          "lineNumber": 104
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/util/bitmap_ops.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 244,
+      "nonEmptyLines": 215,
+      "classes": [
+        {
+          "name": "Buffer",
+          "startLine": 28,
+          "endLine": 28,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "MemoryPool",
+          "startLine": 29,
+          "endLine": 29,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "Buffer",
+          "line": 28,
+          "isDefault": false
+        },
+        {
+          "name": "MemoryPool",
+          "line": 29,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 0,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/util/bitmap_reader.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 273,
+      "nonEmptyLines": 239,
+      "functions": [
+        {
+          "name": "BitmapReader",
+          "startLine": 34,
+          "endLine": 42,
+          "params": [
+            "bitmap",
+            "start_offset",
+            "length"
+          ]
+        },
+        {
+          "name": "IsSet",
+          "startLine": 44,
+          "endLine": 44,
+          "params": []
+        },
+        {
+          "name": "IsNotSet",
+          "startLine": 46,
+          "endLine": 46,
+          "params": []
+        },
+        {
+          "name": "Next",
+          "startLine": 48,
+          "endLine": 58,
+          "params": []
+        },
+        {
+          "name": "position",
+          "startLine": 60,
+          "endLine": 60,
+          "params": []
+        },
+        {
+          "name": "length",
+          "startLine": 62,
+          "endLine": 62,
+          "params": []
+        },
+        {
+          "name": "BitmapUInt64Reader",
+          "startLine": 79,
+          "endLine": 94,
+          "params": [
+            "bitmap",
+            "start_offset",
+            "length"
+          ]
+        },
+        {
+          "name": "NextWord",
+          "startLine": 96,
+          "endLine": 117,
+          "params": []
+        },
+        {
+          "name": "position",
+          "startLine": 119,
+          "endLine": 119,
+          "params": []
+        },
+        {
+          "name": "length",
+          "startLine": 121,
+          "endLine": 121,
+          "params": []
+        },
+        {
+          "name": "LoadFullWord",
+          "startLine": 124,
+          "endLine": 129,
+          "params": []
+        },
+        {
+          "name": "LoadPartialWord",
+          "startLine": 131,
+          "endLine": 138,
+          "params": [
+            "bit_offset",
+            "num_bits"
+          ]
+        },
+        {
+          "name": "OptionalBitIndexer",
+          "startLine": 264,
+          "endLine": 265,
+          "params": []
+        },
+        {
+          "name": "operator[]",
+          "startLine": 267,
+          "endLine": 269,
+          "params": [
+            "i"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "BitmapReader",
+          "startLine": 32,
+          "endLine": 72,
+          "methods": [
+            "BitmapReader",
+            "IsSet",
+            "IsNotSet",
+            "Next",
+            "position",
+            "length"
+          ],
+          "properties": [
+            "bitmap_",
+            "position_",
+            "length_",
+            "current_byte_",
+            "byte_offset_",
+            "bit_offset_"
+          ]
+        },
+        {
+          "name": "BitmapUInt64Reader",
+          "startLine": 77,
+          "endLine": 145,
+          "methods": [
+            "BitmapUInt64Reader",
+            "NextWord",
+            "position",
+            "length",
+            "LoadFullWord",
+            "LoadPartialWord"
+          ],
+          "properties": [
+            "bitmap_",
+            "num_carry_bits_",
+            "length_",
+            "remaining_length_",
+            "carry_bits_"
+          ]
+        },
+        {
+          "name": "OptionalBitIndexer",
+          "startLine": 260,
+          "endLine": 270,
+          "methods": [
+            "OptionalBitIndexer",
+            "operator[]"
+          ],
+          "properties": [
+            "bitmap",
+            "offset"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "BitmapReader",
+          "line": 34,
+          "isDefault": false
+        },
+        {
+          "name": "IsSet",
+          "line": 44,
+          "isDefault": false
+        },
+        {
+          "name": "IsNotSet",
+          "line": 46,
+          "isDefault": false
+        },
+        {
+          "name": "Next",
+          "line": 48,
+          "isDefault": false
+        },
+        {
+          "name": "position",
+          "line": 60,
+          "isDefault": false
+        },
+        {
+          "name": "length",
+          "line": 62,
+          "isDefault": false
+        },
+        {
+          "name": "BitmapReader",
+          "line": 32,
+          "isDefault": false
+        },
+        {
+          "name": "BitmapUInt64Reader",
+          "line": 79,
+          "isDefault": false
+        },
+        {
+          "name": "NextWord",
+          "line": 96,
+          "isDefault": false
+        },
+        {
+          "name": "position",
+          "line": 119,
+          "isDefault": false
+        },
+        {
+          "name": "length",
+          "line": 121,
+          "isDefault": false
+        },
+        {
+          "name": "BitmapUInt64Reader",
+          "line": 77,
+          "isDefault": false
+        },
+        {
+          "name": "OptionalBitIndexer",
+          "line": 264,
+          "isDefault": false
+        },
+        {
+          "name": "operator[]",
+          "line": 267,
+          "isDefault": false
+        },
+        {
+          "name": "OptionalBitIndexer",
+          "line": 260,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "Next",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 51
+        },
+        {
+          "caller": "Next",
+          "callee": "ARROW_PREDICT_TRUE",
+          "lineNumber": 54
+        },
+        {
+          "caller": "BitmapUInt64Reader",
+          "callee": "util::MakeNonNull",
+          "lineNumber": 80
+        },
+        {
+          "caller": "BitmapUInt64Reader",
+          "callee": "LoadPartialWord",
+          "lineNumber": 89
+        },
+        {
+          "caller": "BitmapUInt64Reader",
+          "callee": "static_cast<int8_t>",
+          "lineNumber": 89
+        },
+        {
+          "caller": "BitmapUInt64Reader",
+          "callee": "LoadPartialWord",
+          "lineNumber": 91
+        },
+        {
+          "caller": "BitmapUInt64Reader",
+          "callee": "static_cast<int8_t>",
+          "lineNumber": 91
+        },
+        {
+          "caller": "NextWord",
+          "callee": "ARROW_PREDICT_TRUE",
+          "lineNumber": 97
+        },
+        {
+          "caller": "NextWord",
+          "callee": "LoadFullWord",
+          "lineNumber": 99
+        },
+        {
+          "caller": "NextWord",
+          "callee": "LoadPartialWord",
+          "lineNumber": 108
+        },
+        {
+          "caller": "NextWord",
+          "callee": "std::max<int64_t>",
+          "lineNumber": 111
+        },
+        {
+          "caller": "LoadFullWord",
+          "callee": "memcpy",
+          "lineNumber": 126
+        },
+        {
+          "caller": "LoadFullWord",
+          "callee": "bit_util::ToLittleEndian",
+          "lineNumber": 128
+        },
+        {
+          "caller": "LoadPartialWord",
+          "callee": "bit_util::BytesForBits",
+          "lineNumber": 133
+        },
+        {
+          "caller": "LoadPartialWord",
+          "callee": "memcpy",
+          "lineNumber": 134
+        },
+        {
+          "caller": "LoadPartialWord",
+          "callee": "bit_util::ToLittleEndian",
+          "lineNumber": 136
+        },
+        {
+          "caller": "LoadPartialWord",
+          "callee": "bit_util::LeastSignificantBitMask",
+          "lineNumber": 137
+        },
+        {
+          "caller": "BitmapWordReader",
+          "callee": "static_cast<int64_t>",
+          "lineNumber": 156
+        },
+        {
+          "caller": "BitmapWordReader",
+          "callee": "bit_util::BytesForBits",
+          "lineNumber": 158
+        },
+        {
+          "caller": "BitmapWordReader",
+          "callee": "static_cast<int>",
+          "lineNumber": 164
+        },
+        {
+          "caller": "BitmapWordReader",
+          "callee": "static_cast<int>",
+          "lineNumber": 165
+        },
+        {
+          "caller": "BitmapWordReader",
+          "callee": "bit_util::BytesForBits",
+          "lineNumber": 165
+        },
+        {
+          "caller": "BitmapWordReader",
+          "callee": "load<Word>",
+          "lineNumber": 168
+        },
+        {
+          "caller": "BitmapWordReader",
+          "callee": "load<uint8_t>",
+          "lineNumber": 170
+        },
+        {
+          "caller": "NextWord",
+          "callee": "load<Word>",
+          "lineNumber": 176
+        },
+        {
+          "caller": "NextTrailingByte",
+          "callee": "assert",
+          "lineNumber": 199
+        },
+        {
+          "caller": "NextTrailingByte",
+          "callee": "IsSet",
+          "lineNumber": 209
+        },
+        {
+          "caller": "NextTrailingByte",
+          "callee": "Next",
+          "lineNumber": 212
+        },
+        {
+          "caller": "NextTrailingByte",
+          "callee": "load<uint8_t>",
+          "lineNumber": 217
+        },
+        {
+          "caller": "load",
+          "callee": "assert",
+          "lineNumber": 254
+        },
+        {
+          "caller": "load",
+          "callee": "bit_util::ToLittleEndian",
+          "lineNumber": 255
+        },
+        {
+          "caller": "load",
+          "callee": "util::SafeLoadAs<DType>",
+          "lineNumber": 255
+        },
+        {
+          "caller": "operator[]",
+          "callee": "bit_util::GetBit",
+          "lineNumber": 268
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 15,
+        "functionCount": 14,
+        "classCount": 3
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/util/bitmap_visit.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 88,
+      "nonEmptyLines": 76,
+      "callGraph": [
+        {
+          "caller": "VisitBits",
+          "callee": "visit",
+          "lineNumber": 36
+        },
+        {
+          "caller": "VisitBits",
+          "callee": "IsSet",
+          "lineNumber": 36
+        },
+        {
+          "caller": "VisitBits",
+          "callee": "Next",
+          "lineNumber": 37
+        },
+        {
+          "caller": "VisitBitsUnrolled",
+          "callee": "bit_util::RoundUpToMultipleOf8",
+          "lineNumber": 51
+        },
+        {
+          "caller": "VisitBitsUnrolled",
+          "callee": "VisitBits<Visitor>",
+          "lineNumber": 57
+        },
+        {
+          "caller": "VisitBitsUnrolled",
+          "callee": "bit_util::CeilDiv",
+          "lineNumber": 61
+        },
+        {
+          "caller": "VisitBitsUnrolled",
+          "callee": "visit",
+          "lineNumber": 71
+        },
+        {
+          "caller": "VisitBitsUnrolled",
+          "callee": "bit_util::GetBitFromByte",
+          "lineNumber": 71
+        },
+        {
+          "caller": "VisitBitsUnrolled",
+          "callee": "visit",
+          "lineNumber": 72
+        },
+        {
+          "caller": "VisitBitsUnrolled",
+          "callee": "bit_util::GetBitFromByte",
+          "lineNumber": 72
+        },
+        {
+          "caller": "VisitBitsUnrolled",
+          "callee": "visit",
+          "lineNumber": 73
+        },
+        {
+          "caller": "VisitBitsUnrolled",
+          "callee": "bit_util::GetBitFromByte",
+          "lineNumber": 73
+        },
+        {
+          "caller": "VisitBitsUnrolled",
+          "callee": "visit",
+          "lineNumber": 74
+        },
+        {
+          "caller": "VisitBitsUnrolled",
+          "callee": "bit_util::GetBitFromByte",
+          "lineNumber": 74
+        },
+        {
+          "caller": "VisitBitsUnrolled",
+          "callee": "visit",
+          "lineNumber": 75
+        },
+        {
+          "caller": "VisitBitsUnrolled",
+          "callee": "bit_util::GetBitFromByte",
+          "lineNumber": 75
+        },
+        {
+          "caller": "VisitBitsUnrolled",
+          "callee": "visit",
+          "lineNumber": 76
+        },
+        {
+          "caller": "VisitBitsUnrolled",
+          "callee": "bit_util::GetBitFromByte",
+          "lineNumber": 76
+        },
+        {
+          "caller": "VisitBitsUnrolled",
+          "callee": "visit",
+          "lineNumber": 77
+        },
+        {
+          "caller": "VisitBitsUnrolled",
+          "callee": "bit_util::GetBitFromByte",
+          "lineNumber": 77
+        },
+        {
+          "caller": "VisitBitsUnrolled",
+          "callee": "visit",
+          "lineNumber": 78
+        },
+        {
+          "caller": "VisitBitsUnrolled",
+          "callee": "bit_util::GetBitFromByte",
+          "lineNumber": 78
+        },
+        {
+          "caller": "VisitBitsUnrolled",
+          "callee": "VisitBits<Visitor>",
+          "lineNumber": 83
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/util/bitmap_writer.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 286,
+      "nonEmptyLines": 252,
+      "functions": [
+        {
+          "name": "BitmapWriter",
+          "startLine": 34,
+          "endLine": 43,
+          "params": [
+            "bitmap",
+            "start_offset",
+            "length"
+          ]
+        },
+        {
+          "name": "Set",
+          "startLine": 45,
+          "endLine": 45,
+          "params": []
+        },
+        {
+          "name": "Clear",
+          "startLine": 47,
+          "endLine": 47,
+          "params": []
+        },
+        {
+          "name": "Next",
+          "startLine": 49,
+          "endLine": 60,
+          "params": []
+        },
+        {
+          "name": "Finish",
+          "startLine": 62,
+          "endLine": 67,
+          "params": []
+        },
+        {
+          "name": "position",
+          "startLine": 69,
+          "endLine": 69,
+          "params": []
+        },
+        {
+          "name": "FirstTimeBitmapWriter",
+          "startLine": 87,
+          "endLine": 98,
+          "params": [
+            "bitmap",
+            "start_offset",
+            "length"
+          ]
+        },
+        {
+          "name": "AppendWord",
+          "startLine": 105,
+          "endLine": 148,
+          "params": [
+            "word",
+            "number_of_bits"
+          ]
+        },
+        {
+          "name": "Set",
+          "startLine": 150,
+          "endLine": 150,
+          "params": []
+        },
+        {
+          "name": "Clear",
+          "startLine": 152,
+          "endLine": 152,
+          "params": []
+        },
+        {
+          "name": "Next",
+          "startLine": 154,
+          "endLine": 163,
+          "params": []
+        },
+        {
+          "name": "Finish",
+          "startLine": 165,
+          "endLine": 170,
+          "params": []
+        },
+        {
+          "name": "position",
+          "startLine": 172,
+          "endLine": 172,
+          "params": []
+        }
+      ],
+      "classes": [
+        {
+          "name": "BitmapWriter",
+          "startLine": 30,
+          "endLine": 79,
+          "methods": [
+            "BitmapWriter",
+            "Set",
+            "Clear",
+            "Next",
+            "Finish",
+            "position"
+          ],
+          "properties": [
+            "bitmap_",
+            "position_",
+            "length_",
+            "current_byte_",
+            "bit_mask_",
+            "byte_offset_"
+          ]
+        },
+        {
+          "name": "FirstTimeBitmapWriter",
+          "startLine": 81,
+          "endLine": 182,
+          "methods": [
+            "FirstTimeBitmapWriter",
+            "AppendWord",
+            "Set",
+            "Clear",
+            "Next",
+            "Finish",
+            "position"
+          ],
+          "properties": [
+            "bitmap_",
+            "position_",
+            "length_",
+            "current_byte_",
+            "bit_mask_",
+            "byte_offset_"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "BitmapWriter",
+          "line": 34,
+          "isDefault": false
+        },
+        {
+          "name": "Set",
+          "line": 45,
+          "isDefault": false
+        },
+        {
+          "name": "Clear",
+          "line": 47,
+          "isDefault": false
+        },
+        {
+          "name": "Next",
+          "line": 49,
+          "isDefault": false
+        },
+        {
+          "name": "Finish",
+          "line": 62,
+          "isDefault": false
+        },
+        {
+          "name": "position",
+          "line": 69,
+          "isDefault": false
+        },
+        {
+          "name": "BitmapWriter",
+          "line": 30,
+          "isDefault": false
+        },
+        {
+          "name": "FirstTimeBitmapWriter",
+          "line": 87,
+          "isDefault": false
+        },
+        {
+          "name": "AppendWord",
+          "line": 105,
+          "isDefault": false
+        },
+        {
+          "name": "Set",
+          "line": 150,
+          "isDefault": false
+        },
+        {
+          "name": "Clear",
+          "line": 152,
+          "isDefault": false
+        },
+        {
+          "name": "Next",
+          "line": 154,
+          "isDefault": false
+        },
+        {
+          "name": "Finish",
+          "line": 165,
+          "isDefault": false
+        },
+        {
+          "name": "position",
+          "line": 172,
+          "isDefault": false
+        },
+        {
+          "name": "FirstTimeBitmapWriter",
+          "line": 81,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "Next",
+          "callee": "static_cast<uint8_t>",
+          "lineNumber": 50
+        },
+        {
+          "caller": "Next",
+          "callee": "ARROW_PREDICT_TRUE",
+          "lineNumber": 56
+        },
+        {
+          "caller": "AppendWord",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 106
+        },
+        {
+          "caller": "AppendWord",
+          "callee": "bit_util::CountTrailingZeros",
+          "lineNumber": 115
+        },
+        {
+          "caller": "AppendWord",
+          "callee": "static_cast<uint32_t>",
+          "lineNumber": 115
+        },
+        {
+          "caller": "AppendWord",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 128
+        },
+        {
+          "caller": "AppendWord",
+          "callee": "bit_util::ToLittleEndian",
+          "lineNumber": 137
+        },
+        {
+          "caller": "AppendWord",
+          "callee": "::arrow::bit_util::BytesForBits",
+          "lineNumber": 138
+        },
+        {
+          "caller": "AppendWord",
+          "callee": "std::memcpy",
+          "lineNumber": 139
+        },
+        {
+          "caller": "Next",
+          "callee": "static_cast<uint8_t>",
+          "lineNumber": 155
+        },
+        {
+          "caller": "BitmapWordWriter",
+          "callee": "static_cast<int64_t>",
+          "lineNumber": 189
+        },
+        {
+          "caller": "BitmapWordWriter",
+          "callee": "bit_util::BytesForBits",
+          "lineNumber": 191
+        },
+        {
+          "caller": "BitmapWordWriter",
+          "callee": "static_cast<int>",
+          "lineNumber": 194
+        },
+        {
+          "caller": "BitmapWordWriter",
+          "callee": "load<Word>",
+          "lineNumber": 195
+        },
+        {
+          "caller": "BitmapWordWriter",
+          "callee": "load<uint8_t>",
+          "lineNumber": 197
+        },
+        {
+          "caller": "PutNextWord",
+          "callee": "load<Word>",
+          "lineNumber": 216
+        },
+        {
+          "caller": "PutNextWord",
+          "callee": "store<Word>",
+          "lineNumber": 219
+        },
+        {
+          "caller": "PutNextWord",
+          "callee": "store<Word>",
+          "lineNumber": 220
+        },
+        {
+          "caller": "PutNextWord",
+          "callee": "store<Word>",
+          "lineNumber": 223
+        },
+        {
+          "caller": "PutNextTrailingByte",
+          "callee": "load<uint8_t>",
+          "lineNumber": 232
+        },
+        {
+          "caller": "PutNextTrailingByte",
+          "callee": "store<uint8_t>",
+          "lineNumber": 235
+        },
+        {
+          "caller": "PutNextTrailingByte",
+          "callee": "store<uint8_t>",
+          "lineNumber": 236
+        },
+        {
+          "caller": "PutNextTrailingByte",
+          "callee": "store<uint8_t>",
+          "lineNumber": 239
+        },
+        {
+          "caller": "PutNextTrailingByte",
+          "callee": "assert",
+          "lineNumber": 243
+        },
+        {
+          "caller": "PutNextTrailingByte",
+          "callee": "assert",
+          "lineNumber": 244
+        },
+        {
+          "caller": "PutNextTrailingByte",
+          "callee": "assert",
+          "lineNumber": 245
+        },
+        {
+          "caller": "PutNextTrailingByte",
+          "callee": "bit_util::BytesForBits",
+          "lineNumber": 245
+        },
+        {
+          "caller": "PutNextTrailingByte",
+          "callee": "Set",
+          "lineNumber": 248
+        },
+        {
+          "caller": "PutNextTrailingByte",
+          "callee": "Clear",
+          "lineNumber": 248
+        },
+        {
+          "caller": "PutNextTrailingByte",
+          "callee": "Next",
+          "lineNumber": 249
+        },
+        {
+          "caller": "PutNextTrailingByte",
+          "callee": "Finish",
+          "lineNumber": 252
+        },
+        {
+          "caller": "load",
+          "callee": "assert",
+          "lineNumber": 274
+        },
+        {
+          "caller": "load",
+          "callee": "bit_util::ToLittleEndian",
+          "lineNumber": 275
+        },
+        {
+          "caller": "load",
+          "callee": "util::SafeLoadAs<DType>",
+          "lineNumber": 275
+        },
+        {
+          "caller": "store",
+          "callee": "assert",
+          "lineNumber": 280
+        },
+        {
+          "caller": "store",
+          "callee": "util::SafeStore",
+          "lineNumber": 281
+        },
+        {
+          "caller": "store",
+          "callee": "bit_util::FromLittleEndian",
+          "lineNumber": 281
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 15,
+        "functionCount": 13,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/util/bitmap.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 466,
+      "nonEmptyLines": 404,
+      "functions": [
+        {
+          "name": "Bitmap",
+          "startLine": 54,
+          "endLine": 59,
+          "params": [
+            "buffer",
+            "offset",
+            "length"
+          ]
+        },
+        {
+          "name": "Bitmap",
+          "startLine": 61,
+          "endLine": 62,
+          "params": [
+            "data",
+            "offset",
+            "length"
+          ]
+        },
+        {
+          "name": "Bitmap",
+          "startLine": 64,
+          "endLine": 68,
+          "params": [
+            "data",
+            "offset",
+            "length"
+          ]
+        },
+        {
+          "name": "Slice",
+          "startLine": 70,
+          "endLine": 76,
+          "params": [
+            "offset"
+          ]
+        },
+        {
+          "name": "Slice",
+          "startLine": 78,
+          "endLine": 84,
+          "params": [
+            "offset",
+            "length"
+          ]
+        },
+        {
+          "name": "GetBit",
+          "startLine": 92,
+          "endLine": 92,
+          "params": [
+            "i"
+          ]
+        },
+        {
+          "name": "operator[]",
+          "startLine": 94,
+          "endLine": 94,
+          "params": [
+            "i"
+          ]
+        },
+        {
+          "name": "SetBitTo",
+          "startLine": 96,
+          "endLine": 98,
+          "params": [
+            "i",
+            "v"
+          ]
+        },
+        {
+          "name": "SetBitsTo",
+          "startLine": 100,
+          "endLine": 100,
+          "params": [
+            "v"
+          ]
+        },
+        {
+          "name": "offset",
+          "startLine": 381,
+          "endLine": 381,
+          "params": []
+        },
+        {
+          "name": "length",
+          "startLine": 384,
+          "endLine": 384,
+          "params": []
+        },
+        {
+          "name": "bytes",
+          "startLine": 387,
+          "endLine": 391,
+          "params": []
+        }
+      ],
+      "classes": [
+        {
+          "name": "BooleanArray",
+          "startLine": 45,
+          "endLine": 45,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "ARROW_EXPORT",
+          "startLine": 49,
+          "endLine": 49,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "BooleanArray",
+          "line": 45,
+          "isDefault": false
+        },
+        {
+          "name": "ARROW_EXPORT",
+          "line": 49,
+          "isDefault": false
+        },
+        {
+          "name": "Bitmap",
+          "line": 54,
+          "isDefault": false
+        },
+        {
+          "name": "Bitmap",
+          "line": 61,
+          "isDefault": false
+        },
+        {
+          "name": "Bitmap",
+          "line": 64,
+          "isDefault": false
+        },
+        {
+          "name": "Slice",
+          "line": 70,
+          "isDefault": false
+        },
+        {
+          "name": "Slice",
+          "line": 78,
+          "isDefault": false
+        },
+        {
+          "name": "GetBit",
+          "line": 92,
+          "isDefault": false
+        },
+        {
+          "name": "operator[]",
+          "line": 94,
+          "isDefault": false
+        },
+        {
+          "name": "SetBitTo",
+          "line": 96,
+          "isDefault": false
+        },
+        {
+          "name": "SetBitsTo",
+          "line": 100,
+          "isDefault": false
+        },
+        {
+          "name": "offset",
+          "line": 381,
+          "isDefault": false
+        },
+        {
+          "name": "length",
+          "line": 384,
+          "isDefault": false
+        },
+        {
+          "name": "bytes",
+          "line": 387,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "Bitmap",
+          "callee": "data",
+          "lineNumber": 55
+        },
+        {
+          "caller": "Bitmap",
+          "callee": "is_mutable",
+          "lineNumber": 56
+        },
+        {
+          "caller": "Bitmap",
+          "callee": "mutable_data",
+          "lineNumber": 57
+        },
+        {
+          "caller": "Bitmap",
+          "callee": "reinterpret_cast<const uint8_t*>",
+          "lineNumber": 62
+        },
+        {
+          "caller": "Bitmap",
+          "callee": "reinterpret_cast<const uint8_t*>",
+          "lineNumber": 65
+        },
+        {
+          "caller": "Bitmap",
+          "callee": "reinterpret_cast<uint8_t*>",
+          "lineNumber": 66
+        },
+        {
+          "caller": "GetBit",
+          "callee": "bit_util::GetBit",
+          "lineNumber": 92
+        },
+        {
+          "caller": "operator[]",
+          "callee": "GetBit",
+          "lineNumber": 94
+        },
+        {
+          "caller": "SetBitTo",
+          "callee": "bit_util::SetBitTo",
+          "lineNumber": 97
+        },
+        {
+          "caller": "SetBitsTo",
+          "callee": "bit_util::SetBitsTo",
+          "lineNumber": 100
+        },
+        {
+          "caller": "VisitBits",
+          "callee": "BitLength",
+          "lineNumber": 110
+        },
+        {
+          "caller": "VisitBits",
+          "callee": "GetBit",
+          "lineNumber": 114
+        },
+        {
+          "caller": "VisitBits",
+          "callee": "visitor",
+          "lineNumber": 116
+        },
+        {
+          "caller": "VisitBits",
+          "callee": "BitLength",
+          "lineNumber": 125
+        },
+        {
+          "caller": "VisitBits",
+          "callee": "GetBit",
+          "lineNumber": 129
+        },
+        {
+          "caller": "VisitBits",
+          "callee": "visitor",
+          "lineNumber": 131
+        },
+        {
+          "caller": "VisitWords",
+          "callee": "BitLength",
+          "lineNumber": 157
+        },
+        {
+          "caller": "VisitWords",
+          "callee": "template word_offset<Word>",
+          "lineNumber": 161
+        },
+        {
+          "caller": "VisitWords",
+          "callee": "assert",
+          "lineNumber": 162
+        },
+        {
+          "caller": "VisitWords",
+          "callee": "template words<Word>",
+          "lineNumber": 163
+        },
+        {
+          "caller": "VisitWords",
+          "callee": "Slice",
+          "lineNumber": 168
+        },
+        {
+          "caller": "VisitWords",
+          "callee": "template word_offset<Word>",
+          "lineNumber": 169
+        },
+        {
+          "caller": "VisitWords",
+          "callee": "assert",
+          "lineNumber": 170
+        },
+        {
+          "caller": "VisitWords",
+          "callee": "template words<Word>",
+          "lineNumber": 171
+        },
+        {
+          "caller": "VisitWords",
+          "callee": "fill",
+          "lineNumber": 177
+        },
+        {
+          "caller": "VisitWords",
+          "callee": "std::min",
+          "lineNumber": 182
+        },
+        {
+          "caller": "VisitWords",
+          "callee": "SafeLoadWords",
+          "lineNumber": 183
+        },
+        {
+          "caller": "VisitWords",
+          "callee": "visitor",
+          "lineNumber": 184
+        },
+        {
+          "caller": "VisitWords",
+          "callee": "consume",
+          "lineNumber": 185
+        },
+        {
+          "caller": "VisitWords",
+          "callee": "std::max_element",
+          "lineNumber": 190
+        },
+        {
+          "caller": "VisitWords",
+          "callee": "std::min_element",
+          "lineNumber": 191
+        },
+        {
+          "caller": "VisitWords",
+          "callee": "SafeLoadWords",
+          "lineNumber": 195
+        },
+        {
+          "caller": "VisitWords",
+          "callee": "visitor",
+          "lineNumber": 196
+        },
+        {
+          "caller": "VisitWords",
+          "callee": "consume",
+          "lineNumber": 197
+        },
+        {
+          "caller": "VisitWords",
+          "callee": "assert",
+          "lineNumber": 199
+        },
+        {
+          "caller": "VisitWords",
+          "callee": "std::min_element",
+          "lineNumber": 199
+        },
+        {
+          "caller": "VisitWords",
+          "callee": "assert",
+          "lineNumber": 202
+        },
+        {
+          "caller": "VisitWords",
+          "callee": "assert",
+          "lineNumber": 206
+        },
+        {
+          "caller": "VisitWords",
+          "callee": "std::all_of",
+          "lineNumber": 207
+        },
+        {
+          "caller": "VisitWords",
+          "callee": "visitor",
+          "lineNumber": 213
+        },
+        {
+          "caller": "VisitWords",
+          "callee": "consume",
+          "lineNumber": 215
+        },
+        {
+          "caller": "VisitWords",
+          "callee": "bit_util::ToLittleEndian",
+          "lineNumber": 226
+        },
+        {
+          "caller": "VisitWords",
+          "callee": "bit_util::ToLittleEndian",
+          "lineNumber": 227
+        },
+        {
+          "caller": "VisitWords",
+          "callee": "bit_util::FromLittleEndian",
+          "lineNumber": 228
+        },
+        {
+          "caller": "VisitWords",
+          "callee": "visitor",
+          "lineNumber": 232
+        },
+        {
+          "caller": "VisitWords",
+          "callee": "consume",
+          "lineNumber": 234
+        },
+        {
+          "caller": "VisitWords",
+          "callee": "SafeLoadWords",
+          "lineNumber": 236
+        },
+        {
+          "caller": "VisitWords",
+          "callee": "visitor",
+          "lineNumber": 238
+        },
+        {
+          "caller": "VisitWords",
+          "callee": "consume",
+          "lineNumber": 239
+        },
+        {
+          "caller": "VisitWords",
+          "callee": "SafeLoadWords",
+          "lineNumber": 244
+        },
+        {
+          "caller": "VisitWords",
+          "callee": "visitor",
+          "lineNumber": 245
+        },
+        {
+          "caller": "RunVisitWordsAndWriteLoop",
+          "callee": "words",
+          "lineNumber": 266
+        },
+        {
+          "caller": "RunVisitWordsAndWriteLoop",
+          "callee": "NextWord",
+          "lineNumber": 271
+        },
+        {
+          "caller": "RunVisitWordsAndWriteLoop",
+          "callee": "visitor",
+          "lineNumber": 273
+        },
+        {
+          "caller": "RunVisitWordsAndWriteLoop",
+          "callee": "PutNextWord",
+          "lineNumber": 275
+        },
+        {
+          "caller": "RunVisitWordsAndWriteLoop",
+          "callee": "std::copy",
+          "lineNumber": 289
+        },
+        {
+          "caller": "RunVisitWordsAndWriteLoop",
+          "callee": "begin",
+          "lineNumber": 289
+        },
+        {
+          "caller": "RunVisitWordsAndWriteLoop",
+          "callee": "end",
+          "lineNumber": 289
+        },
+        {
+          "caller": "RunVisitWordsAndWriteLoop",
+          "callee": "begin",
+          "lineNumber": 289
+        },
+        {
+          "caller": "RunVisitWordsAndWriteLoop",
+          "callee": "visitor",
+          "lineNumber": 290
+        },
+        {
+          "caller": "RunVisitWordsAndWriteLoop",
+          "callee": "at",
+          "lineNumber": 292
+        },
+        {
+          "caller": "RunVisitWordsAndWriteLoop",
+          "callee": "static_cast<uint8_t>",
+          "lineNumber": 292
+        },
+        {
+          "caller": "RunVisitWordsAndWriteLoop",
+          "callee": "trailing_bytes",
+          "lineNumber": 298
+        },
+        {
+          "caller": "RunVisitWordsAndWriteLoop",
+          "callee": "fill",
+          "lineNumber": 300
+        },
+        {
+          "caller": "RunVisitWordsAndWriteLoop",
+          "callee": "fill",
+          "lineNumber": 301
+        },
+        {
+          "caller": "RunVisitWordsAndWriteLoop",
+          "callee": "NextTrailingByte",
+          "lineNumber": 304
+        },
+        {
+          "caller": "RunVisitWordsAndWriteLoop",
+          "callee": "byte_visitor",
+          "lineNumber": 306
+        },
+        {
+          "caller": "RunVisitWordsAndWriteLoop",
+          "callee": "PutNextTrailingByte",
+          "lineNumber": 308
+        },
+        {
+          "caller": "VisitWordsAndWrite",
+          "callee": "BitLength",
+          "lineNumber": 335
+        },
+        {
+          "caller": "VisitWordsAndWrite",
+          "callee": "assert",
+          "lineNumber": 336
+        },
+        {
+          "caller": "VisitWordsAndWrite",
+          "callee": "BitLength",
+          "lineNumber": 336
+        },
+        {
+          "caller": "VisitWordsAndWrite",
+          "callee": "std::all_of",
+          "lineNumber": 339
+        },
+        {
+          "caller": "VisitWordsAndWrite",
+          "callee": "begin",
+          "lineNumber": 339
+        },
+        {
+          "caller": "VisitWordsAndWrite",
+          "callee": "end",
+          "lineNumber": 339
+        },
+        {
+          "caller": "VisitWordsAndWrite",
+          "callee": "std::all_of",
+          "lineNumber": 341
+        },
+        {
+          "caller": "VisitWordsAndWrite",
+          "callee": "begin",
+          "lineNumber": 341
+        },
+        {
+          "caller": "VisitWordsAndWrite",
+          "callee": "end",
+          "lineNumber": 341
+        },
+        {
+          "caller": "VisitWordsAndWrite",
+          "callee": "BitmapWordReader<Word, /*may_have_byte_offset=*/false>",
+          "lineNumber": 346
+        },
+        {
+          "caller": "VisitWordsAndWrite",
+          "callee": "at",
+          "lineNumber": 352
+        },
+        {
+          "caller": "VisitWordsAndWrite",
+          "callee": "BitmapWordWriter<Word, /*may_have_byte_offset=*/false>",
+          "lineNumber": 353
+        },
+        {
+          "caller": "VisitWordsAndWrite",
+          "callee": "RunVisitWordsAndWriteLoop",
+          "lineNumber": 357
+        },
+        {
+          "caller": "VisitWordsAndWrite",
+          "callee": "BitmapWordReader<Word>",
+          "lineNumber": 363
+        },
+        {
+          "caller": "VisitWordsAndWrite",
+          "callee": "at",
+          "lineNumber": 368
+        },
+        {
+          "caller": "VisitWordsAndWrite",
+          "callee": "BitmapWordWriter<Word>",
+          "lineNumber": 369
+        },
+        {
+          "caller": "VisitWordsAndWrite",
+          "callee": "RunVisitWordsAndWriteLoop",
+          "lineNumber": 373
+        },
+        {
+          "caller": "bytes",
+          "callee": "bit_util::CeilDiv",
+          "lineNumber": 389
+        },
+        {
+          "caller": "bytes",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 390
+        },
+        {
+          "caller": "word_offset",
+          "callee": "reinterpret_cast<intptr_t>",
+          "lineNumber": 421
+        },
+        {
+          "caller": "word_offset",
+          "callee": "reinterpret_cast<intptr_t>",
+          "lineNumber": 422
+        },
+        {
+          "caller": "word_offset",
+          "callee": "data",
+          "lineNumber": 422
+        },
+        {
+          "caller": "word_offset",
+          "callee": "words<Word>",
+          "lineNumber": 422
+        },
+        {
+          "caller": "SafeLoadWords",
+          "callee": "fill",
+          "lineNumber": 430
+        },
+        {
+          "caller": "SafeLoadWords",
+          "callee": "Slice",
+          "lineNumber": 436
+        },
+        {
+          "caller": "SafeLoadWords",
+          "callee": "Bitmap",
+          "lineNumber": 437
+        },
+        {
+          "caller": "SafeLoadWords",
+          "callee": "at",
+          "lineNumber": 437
+        },
+        {
+          "caller": "SafeLoadWords",
+          "callee": "Bitmap::VisitBits",
+          "lineNumber": 441
+        },
+        {
+          "caller": "SafeLoadWords",
+          "callee": "SetBitTo",
+          "lineNumber": 443
+        },
+        {
+          "caller": "BitLength",
+          "callee": "assert",
+          "lineNumber": 455
+        },
+        {
+          "caller": "BitLength",
+          "callee": "length",
+          "lineNumber": 455
+        },
+        {
+          "caller": "BitLength",
+          "callee": "length",
+          "lineNumber": 455
+        },
+        {
+          "caller": "BitLength",
+          "callee": "length",
+          "lineNumber": 457
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 14,
+        "functionCount": 12,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/util/bitset_stack.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 89,
+      "nonEmptyLines": 77,
+      "functions": [
+        {
+          "name": "Push",
+          "startLine": 57,
+          "endLine": 60,
+          "params": [
+            "size",
+            "value"
+          ]
+        },
+        {
+          "name": "TopSize",
+          "startLine": 63,
+          "endLine": 66,
+          "params": []
+        },
+        {
+          "name": "Pop",
+          "startLine": 69,
+          "endLine": 72,
+          "params": []
+        },
+        {
+          "name": "operator[]",
+          "startLine": 76,
+          "endLine": 76,
+          "params": [
+            "i"
+          ]
+        },
+        {
+          "name": "operator[]",
+          "startLine": 80,
+          "endLine": 80,
+          "params": [
+            "i"
+          ]
+        },
+        {
+          "name": "bit_count",
+          "startLine": 83,
+          "endLine": 83,
+          "params": []
+        }
+      ],
+      "classes": [
+        {
+          "name": "BitsetStack",
+          "startLine": 50,
+          "endLine": 86,
+          "methods": [
+            "Push",
+            "TopSize",
+            "Pop",
+            "operator[]",
+            "operator[]",
+            "bit_count"
+          ],
+          "properties": [
+            "bits_",
+            "offsets_"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "Push",
+          "line": 57,
+          "isDefault": false
+        },
+        {
+          "name": "TopSize",
+          "line": 63,
+          "isDefault": false
+        },
+        {
+          "name": "Pop",
+          "line": 69,
+          "isDefault": false
+        },
+        {
+          "name": "operator[]",
+          "line": 76,
+          "isDefault": false
+        },
+        {
+          "name": "operator[]",
+          "line": 80,
+          "isDefault": false
+        },
+        {
+          "name": "BitsetStack",
+          "line": 50,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "Push",
+          "callee": "push_back",
+          "lineNumber": 58
+        },
+        {
+          "caller": "Push",
+          "callee": "bit_count",
+          "lineNumber": 58
+        },
+        {
+          "caller": "Push",
+          "callee": "resize",
+          "lineNumber": 59
+        },
+        {
+          "caller": "Push",
+          "callee": "bit_count",
+          "lineNumber": 59
+        },
+        {
+          "caller": "TopSize",
+          "callee": "size",
+          "lineNumber": 64
+        },
+        {
+          "caller": "TopSize",
+          "callee": "bit_count",
+          "lineNumber": 65
+        },
+        {
+          "caller": "TopSize",
+          "callee": "back",
+          "lineNumber": 65
+        },
+        {
+          "caller": "Pop",
+          "callee": "resize",
+          "lineNumber": 70
+        },
+        {
+          "caller": "Pop",
+          "callee": "back",
+          "lineNumber": 70
+        },
+        {
+          "caller": "Pop",
+          "callee": "pop_back",
+          "lineNumber": 71
+        },
+        {
+          "caller": "operator[]",
+          "callee": "back",
+          "lineNumber": 76
+        },
+        {
+          "caller": "operator[]",
+          "callee": "back",
+          "lineNumber": 80
+        },
+        {
+          "caller": "bit_count",
+          "callee": "static_cast<int>",
+          "lineNumber": 83
+        },
+        {
+          "caller": "bit_count",
+          "callee": "size",
+          "lineNumber": 83
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 6,
+        "functionCount": 6,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/util/bpacking_avx2.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 28,
+      "nonEmptyLines": 23,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/util/bpacking_avx512.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 28,
+      "nonEmptyLines": 23,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/util/bpacking_default.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 4251,
+      "nonEmptyLines": 4180,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/util/bpacking_neon.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 28,
+      "nonEmptyLines": 23,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/util/bpacking_simd128_generated.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 2138,
+      "nonEmptyLines": 1781,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/util/bpacking_simd256_generated.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 1270,
+      "nonEmptyLines": 1037,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/util/bpacking_simd512_generated.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 836,
+      "nonEmptyLines": 665,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/util/bpacking.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 34,
+      "nonEmptyLines": 28,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/util/bpacking64_default.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 5642,
+      "nonEmptyLines": 5507,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/util/byte_size.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 88,
+      "nonEmptyLines": 78,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/util/byte_stream_split.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 630,
+      "nonEmptyLines": 564,
+      "callGraph": [
+        {
+          "caller": "ByteStreamSplitDecodeSse2",
+          "callee": "reinterpret_cast<uint8_t*>",
+          "lineNumber": 46
+        },
+        {
+          "caller": "ByteStreamSplitDecodeSse2",
+          "callee": "arrow::util::SafeLoadAs<T>",
+          "lineNumber": 58
+        },
+        {
+          "caller": "ByteStreamSplitDecodeSse2",
+          "callee": "_mm_loadu_si128",
+          "lineNumber": 71
+        },
+        {
+          "caller": "ByteStreamSplitDecodeSse2",
+          "callee": "reinterpret_cast<const __m128i*>",
+          "lineNumber": 72
+        },
+        {
+          "caller": "ByteStreamSplitDecodeSse2",
+          "callee": "_mm_unpacklo_epi8",
+          "lineNumber": 77
+        },
+        {
+          "caller": "ByteStreamSplitDecodeSse2",
+          "callee": "_mm_unpackhi_epi8",
+          "lineNumber": 79
+        },
+        {
+          "caller": "ByteStreamSplitDecodeSse2",
+          "callee": "_mm_storeu_si128",
+          "lineNumber": 83
+        },
+        {
+          "caller": "ByteStreamSplitDecodeSse2",
+          "callee": "reinterpret_cast<__m128i*>",
+          "lineNumber": 83
+        },
+        {
+          "caller": "ByteStreamSplitEncodeSse2",
+          "callee": "reinterpret_cast<const __m128i*>",
+          "lineNumber": 102
+        },
+        {
+          "caller": "ByteStreamSplitEncodeSse2",
+          "callee": "reinterpret_cast<__m128i*>",
+          "lineNumber": 106
+        },
+        {
+          "caller": "ByteStreamSplitEncodeSse2",
+          "callee": "_mm_loadu_si128",
+          "lineNumber": 133
+        },
+        {
+          "caller": "ByteStreamSplitEncodeSse2",
+          "callee": "_mm_unpacklo_epi8",
+          "lineNumber": 142
+        },
+        {
+          "caller": "ByteStreamSplitEncodeSse2",
+          "callee": "_mm_unpackhi_epi8",
+          "lineNumber": 144
+        },
+        {
+          "caller": "ByteStreamSplitEncodeSse2",
+          "callee": "_mm_unpacklo_epi32",
+          "lineNumber": 151
+        },
+        {
+          "caller": "ByteStreamSplitEncodeSse2",
+          "callee": "_mm_unpackhi_epi32",
+          "lineNumber": 152
+        },
+        {
+          "caller": "ByteStreamSplitEncodeSse2",
+          "callee": "_mm_unpacklo_epi32",
+          "lineNumber": 156
+        },
+        {
+          "caller": "ByteStreamSplitEncodeSse2",
+          "callee": "_mm_unpackhi_epi32",
+          "lineNumber": 157
+        },
+        {
+          "caller": "ByteStreamSplitEncodeSse2",
+          "callee": "_mm_unpacklo_epi8",
+          "lineNumber": 163
+        },
+        {
+          "caller": "ByteStreamSplitEncodeSse2",
+          "callee": "_mm_unpackhi_epi8",
+          "lineNumber": 164
+        },
+        {
+          "caller": "ByteStreamSplitEncodeSse2",
+          "callee": "_mm_unpacklo_epi64",
+          "lineNumber": 167
+        },
+        {
+          "caller": "ByteStreamSplitEncodeSse2",
+          "callee": "_mm_unpackhi_epi64",
+          "lineNumber": 168
+        },
+        {
+          "caller": "ByteStreamSplitEncodeSse2",
+          "callee": "_mm_storeu_si128",
+          "lineNumber": 172
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx2",
+          "callee": "ByteStreamSplitDecodeSse2",
+          "lineNumber": 189
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx2",
+          "callee": "reinterpret_cast<uint8_t*>",
+          "lineNumber": 191
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx2",
+          "callee": "arrow::util::SafeLoadAs<T>",
+          "lineNumber": 201
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx2",
+          "callee": "_mm256_loadu_si256",
+          "lineNumber": 211
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx2",
+          "callee": "reinterpret_cast<const __m256i*>",
+          "lineNumber": 212
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx2",
+          "callee": "_mm256_unpacklo_epi8",
+          "lineNumber": 218
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx2",
+          "callee": "_mm256_unpackhi_epi8",
+          "lineNumber": 220
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx2",
+          "callee": "_mm256_permute2x128_si256",
+          "lineNumber": 228
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx2",
+          "callee": "_mm256_permute2x128_si256",
+          "lineNumber": 230
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx2",
+          "callee": "_mm256_permute2x128_si256",
+          "lineNumber": 232
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx2",
+          "callee": "_mm256_permute2x128_si256",
+          "lineNumber": 234
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx2",
+          "callee": "_mm256_permute2x128_si256",
+          "lineNumber": 236
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx2",
+          "callee": "_mm256_permute2x128_si256",
+          "lineNumber": 238
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx2",
+          "callee": "_mm256_permute2x128_si256",
+          "lineNumber": 240
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx2",
+          "callee": "_mm256_permute2x128_si256",
+          "lineNumber": 242
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx2",
+          "callee": "_mm256_permute2x128_si256",
+          "lineNumber": 247
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx2",
+          "callee": "_mm256_permute2x128_si256",
+          "lineNumber": 249
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx2",
+          "callee": "_mm256_permute2x128_si256",
+          "lineNumber": 251
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx2",
+          "callee": "_mm256_permute2x128_si256",
+          "lineNumber": 253
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx2",
+          "callee": "_mm256_storeu_si256",
+          "lineNumber": 258
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx2",
+          "callee": "reinterpret_cast<__m256i*>",
+          "lineNumber": 258
+        },
+        {
+          "caller": "ByteStreamSplitEncodeAvx2",
+          "callee": "ByteStreamSplitEncodeSse2<T>",
+          "lineNumber": 273
+        },
+        {
+          "caller": "ByteStreamSplitEncodeAvx2",
+          "callee": "ByteStreamSplitEncodeSse2<T>",
+          "lineNumber": 277
+        },
+        {
+          "caller": "ByteStreamSplitEncodeAvx2",
+          "callee": "reinterpret_cast<const __m256i*>",
+          "lineNumber": 279
+        },
+        {
+          "caller": "ByteStreamSplitEncodeAvx2",
+          "callee": "reinterpret_cast<__m256i*>",
+          "lineNumber": 284
+        },
+        {
+          "caller": "ByteStreamSplitEncodeAvx2",
+          "callee": "_mm256_set_epi32",
+          "lineNumber": 303
+        },
+        {
+          "caller": "ByteStreamSplitEncodeAvx2",
+          "callee": "_mm256_loadu_si256",
+          "lineNumber": 309
+        },
+        {
+          "caller": "ByteStreamSplitEncodeAvx2",
+          "callee": "_mm256_unpacklo_epi8",
+          "lineNumber": 315
+        },
+        {
+          "caller": "ByteStreamSplitEncodeAvx2",
+          "callee": "_mm256_unpackhi_epi8",
+          "lineNumber": 317
+        },
+        {
+          "caller": "ByteStreamSplitEncodeAvx2",
+          "callee": "_mm256_permutevar8x32_epi32",
+          "lineNumber": 322
+        },
+        {
+          "caller": "ByteStreamSplitEncodeAvx2",
+          "callee": "_mm256_permute2x128_si256",
+          "lineNumber": 325
+        },
+        {
+          "caller": "ByteStreamSplitEncodeAvx2",
+          "callee": "_mm256_permute2x128_si256",
+          "lineNumber": 326
+        },
+        {
+          "caller": "ByteStreamSplitEncodeAvx2",
+          "callee": "_mm256_permute2x128_si256",
+          "lineNumber": 327
+        },
+        {
+          "caller": "ByteStreamSplitEncodeAvx2",
+          "callee": "_mm256_permute2x128_si256",
+          "lineNumber": 328
+        },
+        {
+          "caller": "ByteStreamSplitEncodeAvx2",
+          "callee": "_mm256_storeu_si256",
+          "lineNumber": 331
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx512",
+          "callee": "ByteStreamSplitDecodeAvx2",
+          "lineNumber": 348
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx512",
+          "callee": "reinterpret_cast<uint8_t*>",
+          "lineNumber": 350
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx512",
+          "callee": "arrow::util::SafeLoadAs<T>",
+          "lineNumber": 360
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx512",
+          "callee": "_mm512_loadu_si512",
+          "lineNumber": 371
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx512",
+          "callee": "reinterpret_cast<const __m512i*>",
+          "lineNumber": 372
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx512",
+          "callee": "_mm512_unpacklo_epi8",
+          "lineNumber": 378
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx512",
+          "callee": "_mm512_unpackhi_epi8",
+          "lineNumber": 380
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx512",
+          "callee": "_mm512_shuffle_i32x4",
+          "lineNumber": 390
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx512",
+          "callee": "_mm512_shuffle_i32x4",
+          "lineNumber": 392
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx512",
+          "callee": "_mm512_shuffle_i32x4",
+          "lineNumber": 394
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx512",
+          "callee": "_mm512_shuffle_i32x4",
+          "lineNumber": 396
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx512",
+          "callee": "_mm512_shuffle_i32x4",
+          "lineNumber": 398
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx512",
+          "callee": "_mm512_shuffle_i32x4",
+          "lineNumber": 400
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx512",
+          "callee": "_mm512_shuffle_i32x4",
+          "lineNumber": 402
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx512",
+          "callee": "_mm512_shuffle_i32x4",
+          "lineNumber": 404
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx512",
+          "callee": "_mm512_shuffle_i32x4",
+          "lineNumber": 407
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx512",
+          "callee": "_mm512_shuffle_i32x4",
+          "lineNumber": 408
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx512",
+          "callee": "_mm512_shuffle_i32x4",
+          "lineNumber": 409
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx512",
+          "callee": "_mm512_shuffle_i32x4",
+          "lineNumber": 410
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx512",
+          "callee": "_mm512_shuffle_i32x4",
+          "lineNumber": 411
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx512",
+          "callee": "_mm512_shuffle_i32x4",
+          "lineNumber": 412
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx512",
+          "callee": "_mm512_shuffle_i32x4",
+          "lineNumber": 413
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx512",
+          "callee": "_mm512_shuffle_i32x4",
+          "lineNumber": 414
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx512",
+          "callee": "_mm512_shuffle_i32x4",
+          "lineNumber": 419
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx512",
+          "callee": "_mm512_shuffle_i32x4",
+          "lineNumber": 421
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx512",
+          "callee": "_mm512_shuffle_i32x4",
+          "lineNumber": 423
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx512",
+          "callee": "_mm512_shuffle_i32x4",
+          "lineNumber": 425
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx512",
+          "callee": "_mm512_shuffle_i32x4",
+          "lineNumber": 428
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx512",
+          "callee": "_mm512_shuffle_i32x4",
+          "lineNumber": 429
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx512",
+          "callee": "_mm512_shuffle_i32x4",
+          "lineNumber": 430
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx512",
+          "callee": "_mm512_shuffle_i32x4",
+          "lineNumber": 431
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx512",
+          "callee": "_mm512_storeu_si512",
+          "lineNumber": 435
+        },
+        {
+          "caller": "ByteStreamSplitDecodeAvx512",
+          "callee": "reinterpret_cast<__m512i*>",
+          "lineNumber": 435
+        },
+        {
+          "caller": "ByteStreamSplitEncodeAvx512",
+          "callee": "ByteStreamSplitEncodeAvx2<T>",
+          "lineNumber": 452
+        },
+        {
+          "caller": "ByteStreamSplitEncodeAvx512",
+          "callee": "reinterpret_cast<const __m512i*>",
+          "lineNumber": 455
+        },
+        {
+          "caller": "ByteStreamSplitEncodeAvx512",
+          "callee": "reinterpret_cast<__m512i*>",
+          "lineNumber": 459
+        },
+        {
+          "caller": "ByteStreamSplitEncodeAvx512",
+          "callee": "_mm512_set_epi32",
+          "lineNumber": 478
+        },
+        {
+          "caller": "ByteStreamSplitEncodeAvx512",
+          "callee": "_mm512_set_epi32",
+          "lineNumber": 483
+        },
+        {
+          "caller": "ByteStreamSplitEncodeAvx512",
+          "callee": "_mm512_loadu_si512",
+          "lineNumber": 489
+        },
+        {
+          "caller": "ByteStreamSplitEncodeAvx512",
+          "callee": "_mm512_unpacklo_epi8",
+          "lineNumber": 494
+        },
+        {
+          "caller": "ByteStreamSplitEncodeAvx512",
+          "callee": "_mm512_unpackhi_epi8",
+          "lineNumber": 496
+        },
+        {
+          "caller": "ByteStreamSplitEncodeAvx512",
+          "callee": "_mm512_permutexvar_epi16",
+          "lineNumber": 511
+        },
+        {
+          "caller": "ByteStreamSplitEncodeAvx512",
+          "callee": "_mm512_shuffle_i32x4",
+          "lineNumber": 514
+        },
+        {
+          "caller": "ByteStreamSplitEncodeAvx512",
+          "callee": "_mm512_shuffle_i32x4",
+          "lineNumber": 515
+        },
+        {
+          "caller": "ByteStreamSplitEncodeAvx512",
+          "callee": "_mm512_shuffle_i32x4",
+          "lineNumber": 516
+        },
+        {
+          "caller": "ByteStreamSplitEncodeAvx512",
+          "callee": "_mm512_shuffle_i32x4",
+          "lineNumber": 517
+        },
+        {
+          "caller": "ByteStreamSplitEncodeAvx512",
+          "callee": "_mm512_shuffle_i32x4",
+          "lineNumber": 518
+        },
+        {
+          "caller": "ByteStreamSplitEncodeAvx512",
+          "callee": "_mm512_shuffle_i32x4",
+          "lineNumber": 519
+        },
+        {
+          "caller": "ByteStreamSplitEncodeAvx512",
+          "callee": "_mm512_shuffle_i32x4",
+          "lineNumber": 520
+        },
+        {
+          "caller": "ByteStreamSplitEncodeAvx512",
+          "callee": "_mm512_shuffle_i32x4",
+          "lineNumber": 521
+        },
+        {
+          "caller": "ByteStreamSplitEncodeAvx512",
+          "callee": "_mm512_shuffle_i32x4",
+          "lineNumber": 523
+        },
+        {
+          "caller": "ByteStreamSplitEncodeAvx512",
+          "callee": "_mm512_shuffle_i32x4",
+          "lineNumber": 524
+        },
+        {
+          "caller": "ByteStreamSplitEncodeAvx512",
+          "callee": "_mm512_shuffle_i32x4",
+          "lineNumber": 525
+        },
+        {
+          "caller": "ByteStreamSplitEncodeAvx512",
+          "callee": "_mm512_shuffle_i32x4",
+          "lineNumber": 526
+        },
+        {
+          "caller": "ByteStreamSplitEncodeAvx512",
+          "callee": "_mm512_shuffle_i32x4",
+          "lineNumber": 527
+        },
+        {
+          "caller": "ByteStreamSplitEncodeAvx512",
+          "callee": "_mm512_shuffle_i32x4",
+          "lineNumber": 528
+        },
+        {
+          "caller": "ByteStreamSplitEncodeAvx512",
+          "callee": "_mm512_shuffle_i32x4",
+          "lineNumber": 529
+        },
+        {
+          "caller": "ByteStreamSplitEncodeAvx512",
+          "callee": "_mm512_shuffle_i32x4",
+          "lineNumber": 530
+        },
+        {
+          "caller": "ByteStreamSplitEncodeAvx512",
+          "callee": "_mm512_permutexvar_epi32",
+          "lineNumber": 537
+        },
+        {
+          "caller": "ByteStreamSplitEncodeAvx512",
+          "callee": "_mm512_shuffle_i32x4",
+          "lineNumber": 539
+        },
+        {
+          "caller": "ByteStreamSplitEncodeAvx512",
+          "callee": "_mm512_shuffle_i32x4",
+          "lineNumber": 540
+        },
+        {
+          "caller": "ByteStreamSplitEncodeAvx512",
+          "callee": "_mm512_shuffle_i32x4",
+          "lineNumber": 541
+        },
+        {
+          "caller": "ByteStreamSplitEncodeAvx512",
+          "callee": "_mm512_shuffle_i32x4",
+          "lineNumber": 542
+        },
+        {
+          "caller": "ByteStreamSplitEncodeAvx512",
+          "callee": "_mm512_storeu_si512",
+          "lineNumber": 546
+        },
+        {
+          "caller": "ByteStreamSplitDecodeSimd",
+          "callee": "ByteStreamSplitDecodeAvx512",
+          "lineNumber": 557
+        },
+        {
+          "caller": "ByteStreamSplitDecodeSimd",
+          "callee": "ByteStreamSplitDecodeAvx2",
+          "lineNumber": 559
+        },
+        {
+          "caller": "ByteStreamSplitDecodeSimd",
+          "callee": "ByteStreamSplitDecodeSse2",
+          "lineNumber": 561
+        },
+        {
+          "caller": "ByteStreamSplitEncodeSimd",
+          "callee": "ByteStreamSplitEncodeAvx512<T>",
+          "lineNumber": 571
+        },
+        {
+          "caller": "ByteStreamSplitEncodeSimd",
+          "callee": "ByteStreamSplitEncodeAvx2<T>",
+          "lineNumber": 573
+        },
+        {
+          "caller": "ByteStreamSplitEncodeSimd",
+          "callee": "ByteStreamSplitEncodeSse2<T>",
+          "lineNumber": 575
+        },
+        {
+          "caller": "ByteStreamSplitDecodeScalar",
+          "callee": "reinterpret_cast<uint8_t*>",
+          "lineNumber": 598
+        },
+        {
+          "caller": "ByteStreamSplitEncode",
+          "callee": "ByteStreamSplitEncodeSimd<T>",
+          "lineNumber": 612
+        },
+        {
+          "caller": "ByteStreamSplitEncode",
+          "callee": "ByteStreamSplitEncodeScalar<T>",
+          "lineNumber": 614
+        },
+        {
+          "caller": "ByteStreamSplitDecode",
+          "callee": "ByteStreamSplitDecodeSimd",
+          "lineNumber": 622
+        },
+        {
+          "caller": "ByteStreamSplitDecode",
+          "callee": "ByteStreamSplitDecodeScalar",
+          "lineNumber": 624
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/util/cancel.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 118,
+      "nonEmptyLines": 97,
+      "classes": [
+        {
+          "name": "StopToken",
+          "startLine": 32,
+          "endLine": 32,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "StopSourceImpl",
+          "startLine": 34,
+          "endLine": 34,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "StopToken",
+          "line": 32,
+          "isDefault": false
+        },
+        {
+          "name": "StopSourceImpl",
+          "line": 34,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "StopToken",
+          "callee": "std::move",
+          "lineNumber": 63
+        },
+        {
+          "caller": "Unstoppable",
+          "callee": "StopToken",
+          "lineNumber": 66
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 0,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/util/checked_cast.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 61,
+      "nonEmptyLines": 54,
+      "callGraph": [
+        {
+          "caller": "checked_cast",
+          "callee": "static_cast<OutputType>",
+          "lineNumber": 36
+        },
+        {
+          "caller": "checked_cast",
+          "callee": "dynamic_cast<OutputType>",
+          "lineNumber": 38
+        },
+        {
+          "caller": "checked_pointer_cast",
+          "callee": "std::static_pointer_cast<T>",
+          "lineNumber": 45
+        },
+        {
+          "caller": "checked_pointer_cast",
+          "callee": "std::move",
+          "lineNumber": 45
+        },
+        {
+          "caller": "checked_pointer_cast",
+          "callee": "std::dynamic_pointer_cast<T>",
+          "lineNumber": 47
+        },
+        {
+          "caller": "checked_pointer_cast",
+          "callee": "std::move",
+          "lineNumber": 47
+        },
+        {
+          "caller": "checked_pointer_cast",
+          "callee": "std::unique_ptr<T>",
+          "lineNumber": 54
+        },
+        {
+          "caller": "checked_pointer_cast",
+          "callee": "static_cast<T*>",
+          "lineNumber": 54
+        },
+        {
+          "caller": "checked_pointer_cast",
+          "callee": "release",
+          "lineNumber": 54
+        },
+        {
+          "caller": "checked_pointer_cast",
+          "callee": "std::unique_ptr<T>",
+          "lineNumber": 56
+        },
+        {
+          "caller": "checked_pointer_cast",
+          "callee": "dynamic_cast<T*>",
+          "lineNumber": 56
+        },
+        {
+          "caller": "checked_pointer_cast",
+          "callee": "release",
+          "lineNumber": 56
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/util/compare.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 62,
+      "nonEmptyLines": 52,
+      "callGraph": [
+        {
+          "caller": "~EqualityComparable",
+          "callee": "Equals",
+          "lineNumber": 35
+        },
+        {
+          "caller": "~EqualityComparable",
+          "callee": "std::declval<const T>",
+          "lineNumber": 35
+        },
+        {
+          "caller": "~EqualityComparable",
+          "callee": "std::declval<const T>",
+          "lineNumber": 35
+        },
+        {
+          "caller": "Equals",
+          "callee": "Equals",
+          "lineNumber": 45
+        },
+        {
+          "caller": "Equals",
+          "callee": "cast",
+          "lineNumber": 45
+        },
+        {
+          "caller": "Equals",
+          "callee": "std::forward<Extra>",
+          "lineNumber": 45
+        },
+        {
+          "caller": "operator()",
+          "callee": "Equals",
+          "lineNumber": 50
+        },
+        {
+          "caller": "operator==",
+          "callee": "Equals",
+          "lineNumber": 54
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/util/compression.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 241,
+      "nonEmptyLines": 192,
+      "callGraph": [
+        {
+          "caller": "compression_level",
+          "callee": "UseDefaultCompressionLevel",
+          "lineNumber": 233
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/util/concurrent_map.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 68,
+      "nonEmptyLines": 57,
+      "callGraph": [
+        {
+          "caller": "Insert",
+          "callee": "Lock",
+          "lineNumber": 32
+        },
+        {
+          "caller": "Insert",
+          "callee": "insert",
+          "lineNumber": 33
+        },
+        {
+          "caller": "GetOrInsert",
+          "callee": "Lock",
+          "lineNumber": 38
+        },
+        {
+          "caller": "GetOrInsert",
+          "callee": "find",
+          "lineNumber": 39
+        },
+        {
+          "caller": "GetOrInsert",
+          "callee": "end",
+          "lineNumber": 40
+        },
+        {
+          "caller": "GetOrInsert",
+          "callee": "emplace",
+          "lineNumber": 41
+        },
+        {
+          "caller": "GetOrInsert",
+          "callee": "compute_value_func",
+          "lineNumber": 41
+        },
+        {
+          "caller": "Erase",
+          "callee": "Lock",
+          "lineNumber": 48
+        },
+        {
+          "caller": "Erase",
+          "callee": "erase",
+          "lineNumber": 49
+        },
+        {
+          "caller": "Clear",
+          "callee": "Lock",
+          "lineNumber": 53
+        },
+        {
+          "caller": "Clear",
+          "callee": "clear",
+          "lineNumber": 54
+        },
+        {
+          "caller": "size",
+          "callee": "Lock",
+          "lineNumber": 58
+        },
+        {
+          "caller": "size",
+          "callee": "size",
+          "lineNumber": 59
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/util/config.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 61,
+      "nonEmptyLines": 52,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    }
+  ]
+}

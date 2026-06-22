@@ -1,0 +1,115 @@
+{
+  "nodes": [
+    {
+      "id": "file:core/ondemand/.gensrctx/dsf_define_model.cxx",
+      "type": "file",
+      "name": "dsf_define_model.cxx",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_model.cxx",
+      "summary": "fastddsgen 自动生成的 DDS 数据类型实现文件，包含 DSF::Model::Define、Undefine、ModelRequest 和 ModelRequestEnvelope 四个类的构造函数、拷贝/移动语义、比较运算符及成员访问器的完整实现。",
+      "tags": ["auto-generated", "dds", "serialization", "data-model", "idl"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:core/ondemand/.gensrctx/dsf_define_model.h",
+      "type": "file",
+      "name": "dsf_define_model.h",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_model.h",
+      "summary": "DDS IDL 生成的头文件，声明了 DSF::Model 命名空间下的四个核心数据类型：Define（模型定义，含 name、version、nodeName、dataSchema 等字段）、Undefine（模型注销）、ModelRequest（Discriminated Union，按 DEFINE_TYPE 区分 Define/Undefine）、ModelRequestEnvelope（请求封装），并定义了 DDS Topic 名称常量。",
+      "tags": ["auto-generated", "dds", "data-model", "idl", "header"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:core/ondemand/.gensrctx/dsf_define_modelCdrAux.ipp",
+      "type": "file",
+      "name": "dsf_define_modelCdrAux.ipp",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_modelCdrAux.ipp",
+      "summary": "fastddsgen 自动生成的 CDR 序列化/反序列化辅助文件，为 DSF::Model::Define、Undefine、ModelRequest、ModelRequestEnvelope 提供 CalculateSerializedSize、Serialize、Deserialize 三个模板函数特化，支持 XCDRv1/XCDRv2 编码格式。",
+      "tags": ["auto-generated", "dds", "serialization", "cdr", "idl"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:core/ondemand/.gensrctx/dsf_define_model.h:Define",
+      "type": "class",
+      "name": "Define",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_model.h",
+      "lineRange": [81, 391],
+      "summary": "DDS 数据结构，表示模型定义。包含 name、version、nodeName、description、dataSchema 五个必选 string 字段，以及 defaultValue、referenceValue（可选 string）、events、alarms（可选 vector）四个可选字段。用于通过 Topic \"dsf/sys/model/define\" 广播变量模型定义。",
+      "tags": ["dds", "data-model", "idl-generated"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:core/ondemand/.gensrctx/dsf_define_model.h:Undefine",
+      "type": "class",
+      "name": "Undefine",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_model.h",
+      "lineRange": [396, 510],
+      "summary": "DDS 数据结构，表示模型注销请求。包含 modelIndex 和 nodeName 两个 string 字段，用于通知订阅方某个模型定义已被移除。",
+      "tags": ["dds", "data-model", "idl-generated"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:core/ondemand/.gensrctx/dsf_define_model.h:ModelRequest",
+      "type": "class",
+      "name": "ModelRequest",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_model.h",
+      "lineRange": [524, 663],
+      "summary": "DDS Discriminated Union，使用 DEFINE_TYPE 枚举作为判别器，在 modelDefine（Define）和 modelUndefine（Undefine）两个成员之间切换，用于统一表示模型定义或注销操作。",
+      "tags": ["dds", "data-model", "union", "idl-generated"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:core/ondemand/.gensrctx/dsf_define_model.h:ModelRequestEnvelope",
+      "type": "class",
+      "name": "ModelRequestEnvelope",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_model.h",
+      "lineRange": [668, 754],
+      "summary": "DDS 数据结构，作为 ModelRequest 的外层封装，仅包含一个 request 字段，用于在 DDS Topic 传输中包裹实际的模型请求。",
+      "tags": ["dds", "data-model", "envelope", "idl-generated"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_model.cxx",
+      "target": "file:core/ondemand/.gensrctx/dsf_define_model.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_model.cxx",
+      "target": "file:core/ondemand/.gensrctx/dsf_define_modelCdrAux.ipp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_model.h",
+      "target": "class:core/ondemand/.gensrctx/dsf_define_model.h:Define",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_model.h",
+      "target": "class:core/ondemand/.gensrctx/dsf_define_model.h:Undefine",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_model.h",
+      "target": "class:core/ondemand/.gensrctx/dsf_define_model.h:ModelRequest",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_model.h",
+      "target": "class:core/ondemand/.gensrctx/dsf_define_model.h:ModelRequestEnvelope",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    }
+  ]
+}

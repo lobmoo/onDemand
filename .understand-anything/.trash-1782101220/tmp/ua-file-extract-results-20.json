@@ -1,0 +1,2553 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 3,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "core/ondemand/.gensrctx/dsf_define_var.cxx",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 2666,
+      "nonEmptyLines": 2254,
+      "functions": [
+        {
+          "name": "AccessControl",
+          "startLine": 40,
+          "endLine": 42,
+          "params": []
+        },
+        {
+          "name": "~AccessControl",
+          "startLine": 44,
+          "endLine": 46,
+          "params": []
+        },
+        {
+          "name": "AccessControl",
+          "startLine": 48,
+          "endLine": 53,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "AccessControl",
+          "startLine": 55,
+          "endLine": 60,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator ==",
+          "startLine": 80,
+          "endLine": 85,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator !=",
+          "startLine": 87,
+          "endLine": 91,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "read_tokens",
+          "startLine": 97,
+          "endLine": 101,
+          "params": [
+            "_read_tokens"
+          ]
+        },
+        {
+          "name": "read_tokens",
+          "startLine": 107,
+          "endLine": 111,
+          "params": [
+            "_read_tokens"
+          ]
+        },
+        {
+          "name": "write_tokens",
+          "startLine": 136,
+          "endLine": 140,
+          "params": [
+            "_write_tokens"
+          ]
+        },
+        {
+          "name": "write_tokens",
+          "startLine": 146,
+          "endLine": 150,
+          "params": [
+            "_write_tokens"
+          ]
+        },
+        {
+          "name": "Define",
+          "startLine": 171,
+          "endLine": 173,
+          "params": []
+        },
+        {
+          "name": "~Define",
+          "startLine": 175,
+          "endLine": 177,
+          "params": []
+        },
+        {
+          "name": "Define",
+          "startLine": 179,
+          "endLine": 195,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "Define",
+          "startLine": 197,
+          "endLine": 213,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator ==",
+          "startLine": 255,
+          "endLine": 271,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator !=",
+          "startLine": 273,
+          "endLine": 277,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "name",
+          "startLine": 283,
+          "endLine": 287,
+          "params": [
+            "_name"
+          ]
+        },
+        {
+          "name": "name",
+          "startLine": 293,
+          "endLine": 297,
+          "params": [
+            "_name"
+          ]
+        },
+        {
+          "name": "size",
+          "startLine": 322,
+          "endLine": 326,
+          "params": [
+            "_size"
+          ]
+        },
+        {
+          "name": "size",
+          "startLine": 332,
+          "endLine": 335,
+          "params": []
+        },
+        {
+          "name": "modelName",
+          "startLine": 351,
+          "endLine": 355,
+          "params": [
+            "_modelName"
+          ]
+        },
+        {
+          "name": "modelName",
+          "startLine": 361,
+          "endLine": 365,
+          "params": [
+            "_modelName"
+          ]
+        },
+        {
+          "name": "modelVersion",
+          "startLine": 390,
+          "endLine": 394,
+          "params": [
+            "_modelVersion"
+          ]
+        },
+        {
+          "name": "modelVersion",
+          "startLine": 400,
+          "endLine": 404,
+          "params": [
+            "_modelVersion"
+          ]
+        },
+        {
+          "name": "description",
+          "startLine": 429,
+          "endLine": 433,
+          "params": [
+            "_description"
+          ]
+        },
+        {
+          "name": "description",
+          "startLine": 439,
+          "endLine": 443,
+          "params": [
+            "_description"
+          ]
+        },
+        {
+          "name": "nodeName",
+          "startLine": 468,
+          "endLine": 472,
+          "params": [
+            "_nodeName"
+          ]
+        },
+        {
+          "name": "nodeName",
+          "startLine": 478,
+          "endLine": 482,
+          "params": [
+            "_nodeName"
+          ]
+        },
+        {
+          "name": "isReadonly",
+          "startLine": 507,
+          "endLine": 511,
+          "params": [
+            "_isReadonly"
+          ]
+        },
+        {
+          "name": "isReadonly",
+          "startLine": 517,
+          "endLine": 520,
+          "params": []
+        },
+        {
+          "name": "publishMask",
+          "startLine": 536,
+          "endLine": 540,
+          "params": [
+            "_publishMask"
+          ]
+        },
+        {
+          "name": "publishMask",
+          "startLine": 546,
+          "endLine": 550,
+          "params": [
+            "_publishMask"
+          ]
+        },
+        {
+          "name": "events",
+          "startLine": 575,
+          "endLine": 579,
+          "params": [
+            "_events"
+          ]
+        },
+        {
+          "name": "events",
+          "startLine": 585,
+          "endLine": 589,
+          "params": [
+            "_events"
+          ]
+        },
+        {
+          "name": "alarms",
+          "startLine": 614,
+          "endLine": 618,
+          "params": [
+            "_alarms"
+          ]
+        },
+        {
+          "name": "alarms",
+          "startLine": 624,
+          "endLine": 628,
+          "params": [
+            "_alarms"
+          ]
+        },
+        {
+          "name": "initialValues",
+          "startLine": 653,
+          "endLine": 657,
+          "params": [
+            "_initialValues"
+          ]
+        },
+        {
+          "name": "initialValues",
+          "startLine": 663,
+          "endLine": 667,
+          "params": [
+            "_initialValues"
+          ]
+        },
+        {
+          "name": "startIndexes",
+          "startLine": 692,
+          "endLine": 696,
+          "params": [
+            "_startIndexes"
+          ]
+        },
+        {
+          "name": "startIndexes",
+          "startLine": 702,
+          "endLine": 706,
+          "params": [
+            "_startIndexes"
+          ]
+        },
+        {
+          "name": "permission",
+          "startLine": 731,
+          "endLine": 735,
+          "params": [
+            "_permission"
+          ]
+        },
+        {
+          "name": "permission",
+          "startLine": 741,
+          "endLine": 745,
+          "params": [
+            "_permission"
+          ]
+        },
+        {
+          "name": "Undefine",
+          "startLine": 766,
+          "endLine": 768,
+          "params": []
+        },
+        {
+          "name": "~Undefine",
+          "startLine": 770,
+          "endLine": 772,
+          "params": []
+        },
+        {
+          "name": "Undefine",
+          "startLine": 774,
+          "endLine": 779,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "Undefine",
+          "startLine": 781,
+          "endLine": 786,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator ==",
+          "startLine": 806,
+          "endLine": 811,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator !=",
+          "startLine": 813,
+          "endLine": 817,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "varName",
+          "startLine": 823,
+          "endLine": 827,
+          "params": [
+            "_varName"
+          ]
+        },
+        {
+          "name": "varName",
+          "startLine": 833,
+          "endLine": 837,
+          "params": [
+            "_varName"
+          ]
+        },
+        {
+          "name": "nodeName",
+          "startLine": 862,
+          "endLine": 866,
+          "params": [
+            "_nodeName"
+          ]
+        },
+        {
+          "name": "nodeName",
+          "startLine": 872,
+          "endLine": 876,
+          "params": [
+            "_nodeName"
+          ]
+        },
+        {
+          "name": "VarRequest",
+          "startLine": 897,
+          "endLine": 900,
+          "params": []
+        },
+        {
+          "name": "~VarRequest",
+          "startLine": 902,
+          "endLine": 904,
+          "params": []
+        },
+        {
+          "name": "VarRequest",
+          "startLine": 906,
+          "endLine": 925,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "VarRequest",
+          "startLine": 927,
+          "endLine": 948,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator ==",
+          "startLine": 998,
+          "endLine": 1021,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator !=",
+          "startLine": 1023,
+          "endLine": 1027,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "_d",
+          "startLine": 1029,
+          "endLine": 1067,
+          "params": [
+            "__d"
+          ]
+        },
+        {
+          "name": "_d",
+          "startLine": 1069,
+          "endLine": 1072,
+          "params": []
+        },
+        {
+          "name": "varDefine",
+          "startLine": 1079,
+          "endLine": 1085,
+          "params": [
+            "_varDefine"
+          ]
+        },
+        {
+          "name": "varDefine",
+          "startLine": 1087,
+          "endLine": 1093,
+          "params": [
+            "_varDefine"
+          ]
+        },
+        {
+          "name": "varUndefine",
+          "startLine": 1138,
+          "endLine": 1144,
+          "params": [
+            "_varUndefine"
+          ]
+        },
+        {
+          "name": "varUndefine",
+          "startLine": 1146,
+          "endLine": 1152,
+          "params": [
+            "_varUndefine"
+          ]
+        },
+        {
+          "name": "VarRequestEnvelope",
+          "startLine": 1197,
+          "endLine": 1199,
+          "params": []
+        },
+        {
+          "name": "~VarRequestEnvelope",
+          "startLine": 1201,
+          "endLine": 1203,
+          "params": []
+        },
+        {
+          "name": "VarRequestEnvelope",
+          "startLine": 1205,
+          "endLine": 1209,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "VarRequestEnvelope",
+          "startLine": 1211,
+          "endLine": 1215,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator ==",
+          "startLine": 1233,
+          "endLine": 1237,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator !=",
+          "startLine": 1239,
+          "endLine": 1243,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "request",
+          "startLine": 1249,
+          "endLine": 1253,
+          "params": [
+            "_request"
+          ]
+        },
+        {
+          "name": "request",
+          "startLine": 1259,
+          "endLine": 1263,
+          "params": [
+            "_request"
+          ]
+        },
+        {
+          "name": "DataTransfer",
+          "startLine": 1284,
+          "endLine": 1286,
+          "params": []
+        },
+        {
+          "name": "~DataTransfer",
+          "startLine": 1288,
+          "endLine": 1290,
+          "params": []
+        },
+        {
+          "name": "DataTransfer",
+          "startLine": 1292,
+          "endLine": 1300,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "DataTransfer",
+          "startLine": 1302,
+          "endLine": 1310,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator ==",
+          "startLine": 1336,
+          "endLine": 1344,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator !=",
+          "startLine": 1346,
+          "endLine": 1350,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "name",
+          "startLine": 1356,
+          "endLine": 1360,
+          "params": [
+            "_name"
+          ]
+        },
+        {
+          "name": "name",
+          "startLine": 1366,
+          "endLine": 1370,
+          "params": [
+            "_name"
+          ]
+        },
+        {
+          "name": "nodeName",
+          "startLine": 1395,
+          "endLine": 1399,
+          "params": [
+            "_nodeName"
+          ]
+        },
+        {
+          "name": "nodeName",
+          "startLine": 1405,
+          "endLine": 1409,
+          "params": [
+            "_nodeName"
+          ]
+        },
+        {
+          "name": "timestamp",
+          "startLine": 1434,
+          "endLine": 1438,
+          "params": [
+            "_timestamp"
+          ]
+        },
+        {
+          "name": "timestamp",
+          "startLine": 1444,
+          "endLine": 1448,
+          "params": [
+            "_timestamp"
+          ]
+        },
+        {
+          "name": "varData",
+          "startLine": 1473,
+          "endLine": 1477,
+          "params": [
+            "_varData"
+          ]
+        },
+        {
+          "name": "varData",
+          "startLine": 1483,
+          "endLine": 1487,
+          "params": [
+            "_varData"
+          ]
+        },
+        {
+          "name": "blobType",
+          "startLine": 1512,
+          "endLine": 1516,
+          "params": [
+            "_blobType"
+          ]
+        },
+        {
+          "name": "blobType",
+          "startLine": 1522,
+          "endLine": 1525,
+          "params": []
+        },
+        {
+          "name": "DataTransferEx",
+          "startLine": 1537,
+          "endLine": 1541,
+          "params": []
+        },
+        {
+          "name": "~DataTransferEx",
+          "startLine": 1543,
+          "endLine": 1545,
+          "params": []
+        },
+        {
+          "name": "DataTransferEx",
+          "startLine": 1547,
+          "endLine": 1554,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "DataTransferEx",
+          "startLine": 1556,
+          "endLine": 1563,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator ==",
+          "startLine": 1585,
+          "endLine": 1594,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator !=",
+          "startLine": 1596,
+          "endLine": 1600,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "stringProperties",
+          "startLine": 1606,
+          "endLine": 1610,
+          "params": [
+            "_stringProperties"
+          ]
+        },
+        {
+          "name": "stringProperties",
+          "startLine": 1616,
+          "endLine": 1620,
+          "params": [
+            "_stringProperties"
+          ]
+        },
+        {
+          "name": "blobProperties",
+          "startLine": 1645,
+          "endLine": 1649,
+          "params": [
+            "_blobProperties"
+          ]
+        },
+        {
+          "name": "blobProperties",
+          "startLine": 1655,
+          "endLine": 1659,
+          "params": [
+            "_blobProperties"
+          ]
+        },
+        {
+          "name": "VarPubSubInfo",
+          "startLine": 1680,
+          "endLine": 1682,
+          "params": []
+        },
+        {
+          "name": "~VarPubSubInfo",
+          "startLine": 1684,
+          "endLine": 1686,
+          "params": []
+        },
+        {
+          "name": "VarPubSubInfo",
+          "startLine": 1688,
+          "endLine": 1696,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "VarPubSubInfo",
+          "startLine": 1698,
+          "endLine": 1706,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator ==",
+          "startLine": 1732,
+          "endLine": 1740,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator !=",
+          "startLine": 1742,
+          "endLine": 1746,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "nodeName",
+          "startLine": 1752,
+          "endLine": 1756,
+          "params": [
+            "_nodeName"
+          ]
+        },
+        {
+          "name": "nodeName",
+          "startLine": 1762,
+          "endLine": 1766,
+          "params": [
+            "_nodeName"
+          ]
+        },
+        {
+          "name": "ownerNode",
+          "startLine": 1791,
+          "endLine": 1795,
+          "params": [
+            "_ownerNode"
+          ]
+        },
+        {
+          "name": "ownerNode",
+          "startLine": 1801,
+          "endLine": 1805,
+          "params": [
+            "_ownerNode"
+          ]
+        },
+        {
+          "name": "varName",
+          "startLine": 1830,
+          "endLine": 1834,
+          "params": [
+            "_varName"
+          ]
+        },
+        {
+          "name": "varName",
+          "startLine": 1840,
+          "endLine": 1844,
+          "params": [
+            "_varName"
+          ]
+        },
+        {
+          "name": "isSub",
+          "startLine": 1869,
+          "endLine": 1873,
+          "params": [
+            "_isSub"
+          ]
+        },
+        {
+          "name": "isSub",
+          "startLine": 1879,
+          "endLine": 1882,
+          "params": []
+        },
+        {
+          "name": "isPub",
+          "startLine": 1898,
+          "endLine": 1902,
+          "params": [
+            "_isPub"
+          ]
+        },
+        {
+          "name": "isPub",
+          "startLine": 1908,
+          "endLine": 1911,
+          "params": []
+        },
+        {
+          "name": "PubTableVarDefine",
+          "startLine": 1923,
+          "endLine": 1925,
+          "params": []
+        },
+        {
+          "name": "~PubTableVarDefine",
+          "startLine": 1927,
+          "endLine": 1929,
+          "params": []
+        },
+        {
+          "name": "PubTableVarDefine",
+          "startLine": 1931,
+          "endLine": 1936,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "PubTableVarDefine",
+          "startLine": 1938,
+          "endLine": 1943,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator ==",
+          "startLine": 1963,
+          "endLine": 1968,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator !=",
+          "startLine": 1970,
+          "endLine": 1974,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "id",
+          "startLine": 1980,
+          "endLine": 1984,
+          "params": [
+            "_id"
+          ]
+        },
+        {
+          "name": "id",
+          "startLine": 1990,
+          "endLine": 1993,
+          "params": []
+        },
+        {
+          "name": "var",
+          "startLine": 2009,
+          "endLine": 2013,
+          "params": [
+            "_var"
+          ]
+        },
+        {
+          "name": "var",
+          "startLine": 2019,
+          "endLine": 2023,
+          "params": [
+            "_var"
+          ]
+        },
+        {
+          "name": "PubTableDefine",
+          "startLine": 2044,
+          "endLine": 2046,
+          "params": []
+        },
+        {
+          "name": "~PubTableDefine",
+          "startLine": 2048,
+          "endLine": 2050,
+          "params": []
+        },
+        {
+          "name": "PubTableDefine",
+          "startLine": 2052,
+          "endLine": 2059,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "PubTableDefine",
+          "startLine": 2061,
+          "endLine": 2068,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator ==",
+          "startLine": 2092,
+          "endLine": 2099,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator !=",
+          "startLine": 2101,
+          "endLine": 2105,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "name",
+          "startLine": 2111,
+          "endLine": 2115,
+          "params": [
+            "_name"
+          ]
+        },
+        {
+          "name": "name",
+          "startLine": 2121,
+          "endLine": 2125,
+          "params": [
+            "_name"
+          ]
+        },
+        {
+          "name": "nodeName",
+          "startLine": 2150,
+          "endLine": 2154,
+          "params": [
+            "_nodeName"
+          ]
+        },
+        {
+          "name": "nodeName",
+          "startLine": 2160,
+          "endLine": 2164,
+          "params": [
+            "_nodeName"
+          ]
+        },
+        {
+          "name": "description",
+          "startLine": 2189,
+          "endLine": 2193,
+          "params": [
+            "_description"
+          ]
+        },
+        {
+          "name": "description",
+          "startLine": 2199,
+          "endLine": 2203,
+          "params": [
+            "_description"
+          ]
+        },
+        {
+          "name": "varDefines",
+          "startLine": 2228,
+          "endLine": 2232,
+          "params": [
+            "_varDefines"
+          ]
+        },
+        {
+          "name": "varDefines",
+          "startLine": 2238,
+          "endLine": 2242,
+          "params": [
+            "_varDefines"
+          ]
+        },
+        {
+          "name": "TableDataTransfer",
+          "startLine": 2263,
+          "endLine": 2265,
+          "params": []
+        },
+        {
+          "name": "~TableDataTransfer",
+          "startLine": 2267,
+          "endLine": 2269,
+          "params": []
+        },
+        {
+          "name": "TableDataTransfer",
+          "startLine": 2271,
+          "endLine": 2278,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "TableDataTransfer",
+          "startLine": 2280,
+          "endLine": 2287,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator ==",
+          "startLine": 2311,
+          "endLine": 2318,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator !=",
+          "startLine": 2320,
+          "endLine": 2324,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "mask",
+          "startLine": 2330,
+          "endLine": 2334,
+          "params": [
+            "_mask"
+          ]
+        },
+        {
+          "name": "mask",
+          "startLine": 2340,
+          "endLine": 2344,
+          "params": [
+            "_mask"
+          ]
+        },
+        {
+          "name": "timestamp",
+          "startLine": 2369,
+          "endLine": 2373,
+          "params": [
+            "_timestamp"
+          ]
+        },
+        {
+          "name": "timestamp",
+          "startLine": 2379,
+          "endLine": 2383,
+          "params": [
+            "_timestamp"
+          ]
+        },
+        {
+          "name": "varData",
+          "startLine": 2408,
+          "endLine": 2412,
+          "params": [
+            "_varData"
+          ]
+        },
+        {
+          "name": "varData",
+          "startLine": 2418,
+          "endLine": 2422,
+          "params": [
+            "_varData"
+          ]
+        },
+        {
+          "name": "blobType",
+          "startLine": 2447,
+          "endLine": 2451,
+          "params": [
+            "_blobType"
+          ]
+        },
+        {
+          "name": "blobType",
+          "startLine": 2457,
+          "endLine": 2460,
+          "params": []
+        },
+        {
+          "name": "TableUpdateBatch",
+          "startLine": 2472,
+          "endLine": 2474,
+          "params": []
+        },
+        {
+          "name": "~TableUpdateBatch",
+          "startLine": 2476,
+          "endLine": 2478,
+          "params": []
+        },
+        {
+          "name": "TableUpdateBatch",
+          "startLine": 2480,
+          "endLine": 2484,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "TableUpdateBatch",
+          "startLine": 2486,
+          "endLine": 2490,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator ==",
+          "startLine": 2508,
+          "endLine": 2512,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator !=",
+          "startLine": 2514,
+          "endLine": 2518,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "varDataBatch",
+          "startLine": 2524,
+          "endLine": 2528,
+          "params": [
+            "_varDataBatch"
+          ]
+        },
+        {
+          "name": "varDataBatch",
+          "startLine": 2534,
+          "endLine": 2538,
+          "params": [
+            "_varDataBatch"
+          ]
+        },
+        {
+          "name": "TableDataTransferEx",
+          "startLine": 2559,
+          "endLine": 2563,
+          "params": []
+        },
+        {
+          "name": "~TableDataTransferEx",
+          "startLine": 2565,
+          "endLine": 2567,
+          "params": []
+        },
+        {
+          "name": "TableDataTransferEx",
+          "startLine": 2569,
+          "endLine": 2575,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "TableDataTransferEx",
+          "startLine": 2577,
+          "endLine": 2583,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator ==",
+          "startLine": 2603,
+          "endLine": 2611,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator !=",
+          "startLine": 2613,
+          "endLine": 2617,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "properties",
+          "startLine": 2623,
+          "endLine": 2627,
+          "params": [
+            "_properties"
+          ]
+        },
+        {
+          "name": "properties",
+          "startLine": 2633,
+          "endLine": 2637,
+          "params": [
+            "_properties"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "AccessControl",
+          "line": 40,
+          "isDefault": false
+        },
+        {
+          "name": "~AccessControl",
+          "line": 44,
+          "isDefault": false
+        },
+        {
+          "name": "AccessControl",
+          "line": 48,
+          "isDefault": false
+        },
+        {
+          "name": "AccessControl",
+          "line": 55,
+          "isDefault": false
+        },
+        {
+          "name": "operator ==",
+          "line": 80,
+          "isDefault": false
+        },
+        {
+          "name": "operator !=",
+          "line": 87,
+          "isDefault": false
+        },
+        {
+          "name": "read_tokens",
+          "line": 97,
+          "isDefault": false
+        },
+        {
+          "name": "read_tokens",
+          "line": 107,
+          "isDefault": false
+        },
+        {
+          "name": "write_tokens",
+          "line": 136,
+          "isDefault": false
+        },
+        {
+          "name": "write_tokens",
+          "line": 146,
+          "isDefault": false
+        },
+        {
+          "name": "Define",
+          "line": 171,
+          "isDefault": false
+        },
+        {
+          "name": "~Define",
+          "line": 175,
+          "isDefault": false
+        },
+        {
+          "name": "Define",
+          "line": 179,
+          "isDefault": false
+        },
+        {
+          "name": "Define",
+          "line": 197,
+          "isDefault": false
+        },
+        {
+          "name": "operator ==",
+          "line": 255,
+          "isDefault": false
+        },
+        {
+          "name": "operator !=",
+          "line": 273,
+          "isDefault": false
+        },
+        {
+          "name": "name",
+          "line": 283,
+          "isDefault": false
+        },
+        {
+          "name": "name",
+          "line": 293,
+          "isDefault": false
+        },
+        {
+          "name": "size",
+          "line": 322,
+          "isDefault": false
+        },
+        {
+          "name": "size",
+          "line": 332,
+          "isDefault": false
+        },
+        {
+          "name": "modelName",
+          "line": 351,
+          "isDefault": false
+        },
+        {
+          "name": "modelName",
+          "line": 361,
+          "isDefault": false
+        },
+        {
+          "name": "modelVersion",
+          "line": 390,
+          "isDefault": false
+        },
+        {
+          "name": "modelVersion",
+          "line": 400,
+          "isDefault": false
+        },
+        {
+          "name": "description",
+          "line": 429,
+          "isDefault": false
+        },
+        {
+          "name": "description",
+          "line": 439,
+          "isDefault": false
+        },
+        {
+          "name": "nodeName",
+          "line": 468,
+          "isDefault": false
+        },
+        {
+          "name": "nodeName",
+          "line": 478,
+          "isDefault": false
+        },
+        {
+          "name": "isReadonly",
+          "line": 507,
+          "isDefault": false
+        },
+        {
+          "name": "isReadonly",
+          "line": 517,
+          "isDefault": false
+        },
+        {
+          "name": "publishMask",
+          "line": 536,
+          "isDefault": false
+        },
+        {
+          "name": "publishMask",
+          "line": 546,
+          "isDefault": false
+        },
+        {
+          "name": "events",
+          "line": 575,
+          "isDefault": false
+        },
+        {
+          "name": "events",
+          "line": 585,
+          "isDefault": false
+        },
+        {
+          "name": "alarms",
+          "line": 614,
+          "isDefault": false
+        },
+        {
+          "name": "alarms",
+          "line": 624,
+          "isDefault": false
+        },
+        {
+          "name": "initialValues",
+          "line": 653,
+          "isDefault": false
+        },
+        {
+          "name": "initialValues",
+          "line": 663,
+          "isDefault": false
+        },
+        {
+          "name": "startIndexes",
+          "line": 692,
+          "isDefault": false
+        },
+        {
+          "name": "startIndexes",
+          "line": 702,
+          "isDefault": false
+        },
+        {
+          "name": "permission",
+          "line": 731,
+          "isDefault": false
+        },
+        {
+          "name": "permission",
+          "line": 741,
+          "isDefault": false
+        },
+        {
+          "name": "Undefine",
+          "line": 766,
+          "isDefault": false
+        },
+        {
+          "name": "~Undefine",
+          "line": 770,
+          "isDefault": false
+        },
+        {
+          "name": "Undefine",
+          "line": 774,
+          "isDefault": false
+        },
+        {
+          "name": "Undefine",
+          "line": 781,
+          "isDefault": false
+        },
+        {
+          "name": "operator ==",
+          "line": 806,
+          "isDefault": false
+        },
+        {
+          "name": "operator !=",
+          "line": 813,
+          "isDefault": false
+        },
+        {
+          "name": "varName",
+          "line": 823,
+          "isDefault": false
+        },
+        {
+          "name": "varName",
+          "line": 833,
+          "isDefault": false
+        },
+        {
+          "name": "nodeName",
+          "line": 862,
+          "isDefault": false
+        },
+        {
+          "name": "nodeName",
+          "line": 872,
+          "isDefault": false
+        },
+        {
+          "name": "VarRequest",
+          "line": 897,
+          "isDefault": false
+        },
+        {
+          "name": "~VarRequest",
+          "line": 902,
+          "isDefault": false
+        },
+        {
+          "name": "VarRequest",
+          "line": 906,
+          "isDefault": false
+        },
+        {
+          "name": "VarRequest",
+          "line": 927,
+          "isDefault": false
+        },
+        {
+          "name": "operator ==",
+          "line": 998,
+          "isDefault": false
+        },
+        {
+          "name": "operator !=",
+          "line": 1023,
+          "isDefault": false
+        },
+        {
+          "name": "_d",
+          "line": 1029,
+          "isDefault": false
+        },
+        {
+          "name": "_d",
+          "line": 1069,
+          "isDefault": false
+        },
+        {
+          "name": "varDefine",
+          "line": 1079,
+          "isDefault": false
+        },
+        {
+          "name": "varDefine",
+          "line": 1087,
+          "isDefault": false
+        },
+        {
+          "name": "varUndefine",
+          "line": 1138,
+          "isDefault": false
+        },
+        {
+          "name": "varUndefine",
+          "line": 1146,
+          "isDefault": false
+        },
+        {
+          "name": "VarRequestEnvelope",
+          "line": 1197,
+          "isDefault": false
+        },
+        {
+          "name": "~VarRequestEnvelope",
+          "line": 1201,
+          "isDefault": false
+        },
+        {
+          "name": "VarRequestEnvelope",
+          "line": 1205,
+          "isDefault": false
+        },
+        {
+          "name": "VarRequestEnvelope",
+          "line": 1211,
+          "isDefault": false
+        },
+        {
+          "name": "operator ==",
+          "line": 1233,
+          "isDefault": false
+        },
+        {
+          "name": "operator !=",
+          "line": 1239,
+          "isDefault": false
+        },
+        {
+          "name": "request",
+          "line": 1249,
+          "isDefault": false
+        },
+        {
+          "name": "request",
+          "line": 1259,
+          "isDefault": false
+        },
+        {
+          "name": "DataTransfer",
+          "line": 1284,
+          "isDefault": false
+        },
+        {
+          "name": "~DataTransfer",
+          "line": 1288,
+          "isDefault": false
+        },
+        {
+          "name": "DataTransfer",
+          "line": 1292,
+          "isDefault": false
+        },
+        {
+          "name": "DataTransfer",
+          "line": 1302,
+          "isDefault": false
+        },
+        {
+          "name": "operator ==",
+          "line": 1336,
+          "isDefault": false
+        },
+        {
+          "name": "operator !=",
+          "line": 1346,
+          "isDefault": false
+        },
+        {
+          "name": "name",
+          "line": 1356,
+          "isDefault": false
+        },
+        {
+          "name": "name",
+          "line": 1366,
+          "isDefault": false
+        },
+        {
+          "name": "nodeName",
+          "line": 1395,
+          "isDefault": false
+        },
+        {
+          "name": "nodeName",
+          "line": 1405,
+          "isDefault": false
+        },
+        {
+          "name": "timestamp",
+          "line": 1434,
+          "isDefault": false
+        },
+        {
+          "name": "timestamp",
+          "line": 1444,
+          "isDefault": false
+        },
+        {
+          "name": "varData",
+          "line": 1473,
+          "isDefault": false
+        },
+        {
+          "name": "varData",
+          "line": 1483,
+          "isDefault": false
+        },
+        {
+          "name": "blobType",
+          "line": 1512,
+          "isDefault": false
+        },
+        {
+          "name": "blobType",
+          "line": 1522,
+          "isDefault": false
+        },
+        {
+          "name": "DataTransferEx",
+          "line": 1537,
+          "isDefault": false
+        },
+        {
+          "name": "~DataTransferEx",
+          "line": 1543,
+          "isDefault": false
+        },
+        {
+          "name": "DataTransferEx",
+          "line": 1547,
+          "isDefault": false
+        },
+        {
+          "name": "DataTransferEx",
+          "line": 1556,
+          "isDefault": false
+        },
+        {
+          "name": "operator ==",
+          "line": 1585,
+          "isDefault": false
+        },
+        {
+          "name": "operator !=",
+          "line": 1596,
+          "isDefault": false
+        },
+        {
+          "name": "stringProperties",
+          "line": 1606,
+          "isDefault": false
+        },
+        {
+          "name": "stringProperties",
+          "line": 1616,
+          "isDefault": false
+        },
+        {
+          "name": "blobProperties",
+          "line": 1645,
+          "isDefault": false
+        },
+        {
+          "name": "blobProperties",
+          "line": 1655,
+          "isDefault": false
+        },
+        {
+          "name": "VarPubSubInfo",
+          "line": 1680,
+          "isDefault": false
+        },
+        {
+          "name": "~VarPubSubInfo",
+          "line": 1684,
+          "isDefault": false
+        },
+        {
+          "name": "VarPubSubInfo",
+          "line": 1688,
+          "isDefault": false
+        },
+        {
+          "name": "VarPubSubInfo",
+          "line": 1698,
+          "isDefault": false
+        },
+        {
+          "name": "operator ==",
+          "line": 1732,
+          "isDefault": false
+        },
+        {
+          "name": "operator !=",
+          "line": 1742,
+          "isDefault": false
+        },
+        {
+          "name": "nodeName",
+          "line": 1752,
+          "isDefault": false
+        },
+        {
+          "name": "nodeName",
+          "line": 1762,
+          "isDefault": false
+        },
+        {
+          "name": "ownerNode",
+          "line": 1791,
+          "isDefault": false
+        },
+        {
+          "name": "ownerNode",
+          "line": 1801,
+          "isDefault": false
+        },
+        {
+          "name": "varName",
+          "line": 1830,
+          "isDefault": false
+        },
+        {
+          "name": "varName",
+          "line": 1840,
+          "isDefault": false
+        },
+        {
+          "name": "isSub",
+          "line": 1869,
+          "isDefault": false
+        },
+        {
+          "name": "isSub",
+          "line": 1879,
+          "isDefault": false
+        },
+        {
+          "name": "isPub",
+          "line": 1898,
+          "isDefault": false
+        },
+        {
+          "name": "isPub",
+          "line": 1908,
+          "isDefault": false
+        },
+        {
+          "name": "PubTableVarDefine",
+          "line": 1923,
+          "isDefault": false
+        },
+        {
+          "name": "~PubTableVarDefine",
+          "line": 1927,
+          "isDefault": false
+        },
+        {
+          "name": "PubTableVarDefine",
+          "line": 1931,
+          "isDefault": false
+        },
+        {
+          "name": "PubTableVarDefine",
+          "line": 1938,
+          "isDefault": false
+        },
+        {
+          "name": "operator ==",
+          "line": 1963,
+          "isDefault": false
+        },
+        {
+          "name": "operator !=",
+          "line": 1970,
+          "isDefault": false
+        },
+        {
+          "name": "id",
+          "line": 1980,
+          "isDefault": false
+        },
+        {
+          "name": "id",
+          "line": 1990,
+          "isDefault": false
+        },
+        {
+          "name": "var",
+          "line": 2009,
+          "isDefault": false
+        },
+        {
+          "name": "var",
+          "line": 2019,
+          "isDefault": false
+        },
+        {
+          "name": "PubTableDefine",
+          "line": 2044,
+          "isDefault": false
+        },
+        {
+          "name": "~PubTableDefine",
+          "line": 2048,
+          "isDefault": false
+        },
+        {
+          "name": "PubTableDefine",
+          "line": 2052,
+          "isDefault": false
+        },
+        {
+          "name": "PubTableDefine",
+          "line": 2061,
+          "isDefault": false
+        },
+        {
+          "name": "operator ==",
+          "line": 2092,
+          "isDefault": false
+        },
+        {
+          "name": "operator !=",
+          "line": 2101,
+          "isDefault": false
+        },
+        {
+          "name": "name",
+          "line": 2111,
+          "isDefault": false
+        },
+        {
+          "name": "name",
+          "line": 2121,
+          "isDefault": false
+        },
+        {
+          "name": "nodeName",
+          "line": 2150,
+          "isDefault": false
+        },
+        {
+          "name": "nodeName",
+          "line": 2160,
+          "isDefault": false
+        },
+        {
+          "name": "description",
+          "line": 2189,
+          "isDefault": false
+        },
+        {
+          "name": "description",
+          "line": 2199,
+          "isDefault": false
+        },
+        {
+          "name": "varDefines",
+          "line": 2228,
+          "isDefault": false
+        },
+        {
+          "name": "varDefines",
+          "line": 2238,
+          "isDefault": false
+        },
+        {
+          "name": "TableDataTransfer",
+          "line": 2263,
+          "isDefault": false
+        },
+        {
+          "name": "~TableDataTransfer",
+          "line": 2267,
+          "isDefault": false
+        },
+        {
+          "name": "TableDataTransfer",
+          "line": 2271,
+          "isDefault": false
+        },
+        {
+          "name": "TableDataTransfer",
+          "line": 2280,
+          "isDefault": false
+        },
+        {
+          "name": "operator ==",
+          "line": 2311,
+          "isDefault": false
+        },
+        {
+          "name": "operator !=",
+          "line": 2320,
+          "isDefault": false
+        },
+        {
+          "name": "mask",
+          "line": 2330,
+          "isDefault": false
+        },
+        {
+          "name": "mask",
+          "line": 2340,
+          "isDefault": false
+        },
+        {
+          "name": "timestamp",
+          "line": 2369,
+          "isDefault": false
+        },
+        {
+          "name": "timestamp",
+          "line": 2379,
+          "isDefault": false
+        },
+        {
+          "name": "varData",
+          "line": 2408,
+          "isDefault": false
+        },
+        {
+          "name": "varData",
+          "line": 2418,
+          "isDefault": false
+        },
+        {
+          "name": "blobType",
+          "line": 2447,
+          "isDefault": false
+        },
+        {
+          "name": "blobType",
+          "line": 2457,
+          "isDefault": false
+        },
+        {
+          "name": "TableUpdateBatch",
+          "line": 2472,
+          "isDefault": false
+        },
+        {
+          "name": "~TableUpdateBatch",
+          "line": 2476,
+          "isDefault": false
+        },
+        {
+          "name": "TableUpdateBatch",
+          "line": 2480,
+          "isDefault": false
+        },
+        {
+          "name": "TableUpdateBatch",
+          "line": 2486,
+          "isDefault": false
+        },
+        {
+          "name": "operator ==",
+          "line": 2508,
+          "isDefault": false
+        },
+        {
+          "name": "operator !=",
+          "line": 2514,
+          "isDefault": false
+        },
+        {
+          "name": "varDataBatch",
+          "line": 2524,
+          "isDefault": false
+        },
+        {
+          "name": "varDataBatch",
+          "line": 2534,
+          "isDefault": false
+        },
+        {
+          "name": "TableDataTransferEx",
+          "line": 2559,
+          "isDefault": false
+        },
+        {
+          "name": "~TableDataTransferEx",
+          "line": 2565,
+          "isDefault": false
+        },
+        {
+          "name": "TableDataTransferEx",
+          "line": 2569,
+          "isDefault": false
+        },
+        {
+          "name": "TableDataTransferEx",
+          "line": 2577,
+          "isDefault": false
+        },
+        {
+          "name": "operator ==",
+          "line": 2603,
+          "isDefault": false
+        },
+        {
+          "name": "operator !=",
+          "line": 2613,
+          "isDefault": false
+        },
+        {
+          "name": "properties",
+          "line": 2623,
+          "isDefault": false
+        },
+        {
+          "name": "properties",
+          "line": 2633,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "AccessControl",
+          "callee": "std::move",
+          "lineNumber": 58
+        },
+        {
+          "caller": "AccessControl",
+          "callee": "std::move",
+          "lineNumber": 59
+        },
+        {
+          "caller": "read_tokens",
+          "callee": "std::move",
+          "lineNumber": 110
+        },
+        {
+          "caller": "write_tokens",
+          "callee": "std::move",
+          "lineNumber": 149
+        },
+        {
+          "caller": "Define",
+          "callee": "std::move",
+          "lineNumber": 200
+        },
+        {
+          "caller": "Define",
+          "callee": "std::move",
+          "lineNumber": 202
+        },
+        {
+          "caller": "Define",
+          "callee": "std::move",
+          "lineNumber": 203
+        },
+        {
+          "caller": "Define",
+          "callee": "std::move",
+          "lineNumber": 204
+        },
+        {
+          "caller": "Define",
+          "callee": "std::move",
+          "lineNumber": 205
+        },
+        {
+          "caller": "Define",
+          "callee": "std::move",
+          "lineNumber": 207
+        },
+        {
+          "caller": "Define",
+          "callee": "std::move",
+          "lineNumber": 208
+        },
+        {
+          "caller": "Define",
+          "callee": "std::move",
+          "lineNumber": 209
+        },
+        {
+          "caller": "Define",
+          "callee": "std::move",
+          "lineNumber": 210
+        },
+        {
+          "caller": "Define",
+          "callee": "std::move",
+          "lineNumber": 211
+        },
+        {
+          "caller": "Define",
+          "callee": "std::move",
+          "lineNumber": 212
+        },
+        {
+          "caller": "name",
+          "callee": "std::move",
+          "lineNumber": 296
+        },
+        {
+          "caller": "modelName",
+          "callee": "std::move",
+          "lineNumber": 364
+        },
+        {
+          "caller": "modelVersion",
+          "callee": "std::move",
+          "lineNumber": 403
+        },
+        {
+          "caller": "description",
+          "callee": "std::move",
+          "lineNumber": 442
+        },
+        {
+          "caller": "nodeName",
+          "callee": "std::move",
+          "lineNumber": 481
+        },
+        {
+          "caller": "publishMask",
+          "callee": "std::move",
+          "lineNumber": 549
+        },
+        {
+          "caller": "events",
+          "callee": "std::move",
+          "lineNumber": 588
+        },
+        {
+          "caller": "alarms",
+          "callee": "std::move",
+          "lineNumber": 627
+        },
+        {
+          "caller": "initialValues",
+          "callee": "std::move",
+          "lineNumber": 666
+        },
+        {
+          "caller": "startIndexes",
+          "callee": "std::move",
+          "lineNumber": 705
+        },
+        {
+          "caller": "permission",
+          "callee": "std::move",
+          "lineNumber": 744
+        },
+        {
+          "caller": "Undefine",
+          "callee": "std::move",
+          "lineNumber": 784
+        },
+        {
+          "caller": "Undefine",
+          "callee": "std::move",
+          "lineNumber": 785
+        },
+        {
+          "caller": "varName",
+          "callee": "std::move",
+          "lineNumber": 836
+        },
+        {
+          "caller": "nodeName",
+          "callee": "std::move",
+          "lineNumber": 875
+        },
+        {
+          "caller": "VarRequest",
+          "callee": "std::move",
+          "lineNumber": 935
+        },
+        {
+          "caller": "VarRequest",
+          "callee": "std::move",
+          "lineNumber": 941
+        },
+        {
+          "caller": "varDefine",
+          "callee": "std::move",
+          "lineNumber": 1090
+        },
+        {
+          "caller": "varUndefine",
+          "callee": "std::move",
+          "lineNumber": 1149
+        },
+        {
+          "caller": "VarRequestEnvelope",
+          "callee": "std::move",
+          "lineNumber": 1214
+        },
+        {
+          "caller": "request",
+          "callee": "std::move",
+          "lineNumber": 1262
+        },
+        {
+          "caller": "DataTransfer",
+          "callee": "std::move",
+          "lineNumber": 1305
+        },
+        {
+          "caller": "DataTransfer",
+          "callee": "std::move",
+          "lineNumber": 1306
+        },
+        {
+          "caller": "DataTransfer",
+          "callee": "std::move",
+          "lineNumber": 1307
+        },
+        {
+          "caller": "DataTransfer",
+          "callee": "std::move",
+          "lineNumber": 1308
+        },
+        {
+          "caller": "name",
+          "callee": "std::move",
+          "lineNumber": 1369
+        },
+        {
+          "caller": "nodeName",
+          "callee": "std::move",
+          "lineNumber": 1408
+        },
+        {
+          "caller": "timestamp",
+          "callee": "std::move",
+          "lineNumber": 1447
+        },
+        {
+          "caller": "varData",
+          "callee": "std::move",
+          "lineNumber": 1486
+        },
+        {
+          "caller": "DataTransferEx",
+          "callee": "std::move",
+          "lineNumber": 1558
+        },
+        {
+          "caller": "DataTransferEx",
+          "callee": "std::move",
+          "lineNumber": 1561
+        },
+        {
+          "caller": "DataTransferEx",
+          "callee": "std::move",
+          "lineNumber": 1562
+        },
+        {
+          "caller": "operator ==",
+          "callee": "DSF::Var::DataTransfer::operator !=",
+          "lineNumber": 1588
+        },
+        {
+          "caller": "stringProperties",
+          "callee": "std::move",
+          "lineNumber": 1619
+        },
+        {
+          "caller": "blobProperties",
+          "callee": "std::move",
+          "lineNumber": 1658
+        },
+        {
+          "caller": "VarPubSubInfo",
+          "callee": "std::move",
+          "lineNumber": 1701
+        },
+        {
+          "caller": "VarPubSubInfo",
+          "callee": "std::move",
+          "lineNumber": 1702
+        },
+        {
+          "caller": "VarPubSubInfo",
+          "callee": "std::move",
+          "lineNumber": 1703
+        },
+        {
+          "caller": "nodeName",
+          "callee": "std::move",
+          "lineNumber": 1765
+        },
+        {
+          "caller": "ownerNode",
+          "callee": "std::move",
+          "lineNumber": 1804
+        },
+        {
+          "caller": "varName",
+          "callee": "std::move",
+          "lineNumber": 1843
+        },
+        {
+          "caller": "PubTableVarDefine",
+          "callee": "std::move",
+          "lineNumber": 1942
+        },
+        {
+          "caller": "var",
+          "callee": "std::move",
+          "lineNumber": 2022
+        },
+        {
+          "caller": "PubTableDefine",
+          "callee": "std::move",
+          "lineNumber": 2064
+        },
+        {
+          "caller": "PubTableDefine",
+          "callee": "std::move",
+          "lineNumber": 2065
+        },
+        {
+          "caller": "PubTableDefine",
+          "callee": "std::move",
+          "lineNumber": 2066
+        },
+        {
+          "caller": "PubTableDefine",
+          "callee": "std::move",
+          "lineNumber": 2067
+        },
+        {
+          "caller": "name",
+          "callee": "std::move",
+          "lineNumber": 2124
+        },
+        {
+          "caller": "nodeName",
+          "callee": "std::move",
+          "lineNumber": 2163
+        },
+        {
+          "caller": "description",
+          "callee": "std::move",
+          "lineNumber": 2202
+        },
+        {
+          "caller": "varDefines",
+          "callee": "std::move",
+          "lineNumber": 2241
+        },
+        {
+          "caller": "TableDataTransfer",
+          "callee": "std::move",
+          "lineNumber": 2283
+        },
+        {
+          "caller": "TableDataTransfer",
+          "callee": "std::move",
+          "lineNumber": 2284
+        },
+        {
+          "caller": "TableDataTransfer",
+          "callee": "std::move",
+          "lineNumber": 2285
+        },
+        {
+          "caller": "mask",
+          "callee": "std::move",
+          "lineNumber": 2343
+        },
+        {
+          "caller": "timestamp",
+          "callee": "std::move",
+          "lineNumber": 2382
+        },
+        {
+          "caller": "varData",
+          "callee": "std::move",
+          "lineNumber": 2421
+        },
+        {
+          "caller": "TableUpdateBatch",
+          "callee": "std::move",
+          "lineNumber": 2489
+        },
+        {
+          "caller": "varDataBatch",
+          "callee": "std::move",
+          "lineNumber": 2537
+        },
+        {
+          "caller": "TableDataTransferEx",
+          "callee": "std::move",
+          "lineNumber": 2579
+        },
+        {
+          "caller": "TableDataTransferEx",
+          "callee": "std::move",
+          "lineNumber": 2582
+        },
+        {
+          "caller": "operator ==",
+          "callee": "DSF::Var::TableDataTransfer::operator !=",
+          "lineNumber": 2606
+        },
+        {
+          "caller": "properties",
+          "callee": "std::move",
+          "lineNumber": 2636
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 168,
+        "functionCount": 168,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "core/ondemand/.gensrctx/dsf_define_var.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 2148,
+      "nonEmptyLines": 1780,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "core/ondemand/.gensrctx/dsf_define_varCdrAux.ipp",
+      "language": "ipp",
+      "fileCategory": "code",
+      "totalLines": 1544,
+      "nonEmptyLines": 1181,
+      "metrics": {}
+    }
+  ]
+}

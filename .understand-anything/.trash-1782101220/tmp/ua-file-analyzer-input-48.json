@@ -1,0 +1,31 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "thirdparty/fast_dds/include/fastdds_statistics_backend/topic_types/typesPubSubTypes.hpp", "language": "cpp", "sizeLines": 1186, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds_statistics_backend/topic_types/typesTypeObjectSupport.hpp", "language": "cpp", "sizeLines": 253, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds_statistics_backend/types/app_names.h", "language": "c", "sizeLines": 77, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds_statistics_backend/types/Bitmask.hpp", "language": "cpp", "sizeLines": 244, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds_statistics_backend/types/EntityId.hpp", "language": "cpp", "sizeLines": 216, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds_statistics_backend/types/JSONTags.h", "language": "c", "sizeLines": 231, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds_statistics_backend/types/types.hpp", "language": "cpp", "sizeLines": 703, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds_statistics_backend/types/utils.hpp", "language": "cpp", "sizeLines": 57, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/config.hpp", "language": "cpp", "sizeLines": 127, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/config/doxygen_modules.hpp", "language": "cpp", "sizeLines": 172, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/builtin/topic/BuiltinTopicKey.hpp", "language": "cpp", "sizeLines": 34, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp", "language": "cpp", "sizeLines": 35, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/builtin/topic/PublicationBuiltinTopicData.hpp", "language": "cpp", "sizeLines": 34, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/builtin/topic/SubscriptionBuiltinTopicData.hpp", "language": "cpp", "sizeLines": 34, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/builtin/topic/TopicBuiltinTopicData.hpp", "language": "cpp", "sizeLines": 81, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/common/InstanceHandle.hpp", "language": "cpp", "sizeLines": 39, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/core/condition/Condition.hpp", "language": "cpp", "sizeLines": 74, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/core/condition/GuardCondition.hpp", "language": "cpp", "sizeLines": 70, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/core/condition/StatusCondition.hpp", "language": "cpp", "sizeLines": 110, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/core/condition/WaitSet.hpp", "language": "cpp", "sizeLines": 108, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/core/detail/DDSReturnCode.hpp", "language": "cpp", "sizeLines": 84, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/core/detail/DDSSecurityReturnCode.hpp", "language": "cpp", "sizeLines": 71, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/core/Entity.hpp", "language": "cpp", "sizeLines": 196, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/core/LoanableArray.hpp", "language": "cpp", "sizeLines": 75, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/core/LoanableCollection.hpp", "language": "cpp", "sizeLines": 250, "fileCategory": "code"}
+  ],
+  "batchImportData": {}
+}

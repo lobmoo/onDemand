@@ -1,0 +1,26 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "thirdparty/txdds/include/txdds/RTPS/utils/SystemInfo.h", "language": "c", "sizeLines": 44, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/utils/TimeConversion.h", "language": "c", "sizeLines": 105, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/writer/IStatefulWriter.h", "language": "c", "sizeLines": 54, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/writer/IStatelessWriter.h", "language": "c", "sizeLines": 31, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/writer/IWriter.h", "language": "c", "sizeLines": 118, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/writer/IWriterListener.h", "language": "c", "sizeLines": 34, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/writer/WriterDiscoveryInfo.h", "language": "c", "sizeLines": 35, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/txddsexport.h", "language": "c", "sizeLines": 5, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/lib/libcrypto.so", "language": "so", "sizeLines": 8840, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/lib/libcrypto.so.1.1", "language": "1", "sizeLines": 8840, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/lib/libssl.so", "language": "so", "sizeLines": 1292, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/lib/libssl.so.1.1", "language": "1", "sizeLines": 1292, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/lib/libtinyxml2.so", "language": "so", "sizeLines": 238, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/lib/libtinyxml2.so.6", "language": "6", "sizeLines": 238, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/lib/libtinyxml2.so.6.2.0", "language": "0", "sizeLines": 238, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/lib/libTXCDR.so", "language": "so", "sizeLines": 126, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/lib/libTXCDR.so.3.00.2606.3.202606151305", "language": "202606151305", "sizeLines": 126, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/lib/libTXDDS.so", "language": "so", "sizeLines": 8355, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/lib/libTXDDS.so.3.00.2606.3.202606151305", "language": "202606151305", "sizeLines": 8355, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/lib/libTXRuntimeLog.so", "language": "so", "sizeLines": 249, "fileCategory": "code"}
+  ],
+  "batchImportData": {}
+}

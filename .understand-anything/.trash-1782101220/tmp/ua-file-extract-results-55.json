@@ -1,0 +1,1502 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 25,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/rtps/common/InstanceHandle.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 367,
+      "nonEmptyLines": 317,
+      "callGraph": [
+        {
+          "caller": "clear",
+          "callee": "fill",
+          "lineNumber": 114
+        },
+        {
+          "caller": "isDefined",
+          "callee": "has_been_set",
+          "lineNumber": 195
+        },
+        {
+          "caller": "clear",
+          "callee": "clear",
+          "lineNumber": 200
+        },
+        {
+          "caller": "iHandle2GUID",
+          "callee": "memcpy",
+          "lineNumber": 254
+        },
+        {
+          "caller": "iHandle2GUID",
+          "callee": "memcpy",
+          "lineNumber": 255
+        },
+        {
+          "caller": "iHandle2GUID",
+          "callee": "iHandle2GUID",
+          "lineNumber": 267
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/rtps/common/Locator.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 529,
+      "nonEmptyLines": 478,
+      "callGraph": [
+        {
+          "caller": "Locator_t",
+          "callee": "LOCATOR_ADDRESS_INVALID",
+          "lineNumber": 98
+        },
+        {
+          "caller": "Locator_t",
+          "callee": "std::memcpy",
+          "lineNumber": 107
+        },
+        {
+          "caller": "Locator_t",
+          "callee": "std::memcpy",
+          "lineNumber": 116
+        },
+        {
+          "caller": "Locator_t",
+          "callee": "LOCATOR_ADDRESS_INVALID",
+          "lineNumber": 125
+        },
+        {
+          "caller": "Locator_t",
+          "callee": "LOCATOR_ADDRESS_INVALID",
+          "lineNumber": 135
+        },
+        {
+          "caller": "set_address",
+          "callee": "memcpy",
+          "lineNumber": 157
+        },
+        {
+          "caller": "set_Invalid_Address",
+          "callee": "LOCATOR_ADDRESS_INVALID",
+          "lineNumber": 188
+        },
+        {
+          "caller": "operator <",
+          "callee": "memcmp",
+          "lineNumber": 251
+        },
+        {
+          "caller": "operator ==",
+          "callee": "std::equal",
+          "lineNumber": 274
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/rtps/common/LocatorList.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 484,
+      "nonEmptyLines": 423,
+      "callGraph": [
+        {
+          "caller": "operator ==",
+          "callee": "static_cast<const Locators&>",
+          "lineNumber": 73
+        },
+        {
+          "caller": "operator !=",
+          "callee": "static_cast<const Locators&>",
+          "lineNumber": 79
+        },
+        {
+          "caller": "LocatorList",
+          "callee": "m_locators",
+          "lineNumber": 115
+        },
+        {
+          "caller": "LocatorList",
+          "callee": "m_locators",
+          "lineNumber": 122
+        },
+        {
+          "caller": "LocatorList",
+          "callee": "std::move",
+          "lineNumber": 122
+        },
+        {
+          "caller": "operator ==",
+          "callee": "size",
+          "lineNumber": 146
+        },
+        {
+          "caller": "operator ==",
+          "callee": "size",
+          "lineNumber": 146
+        },
+        {
+          "caller": "operator ==",
+          "callee": "begin",
+          "lineNumber": 150
+        },
+        {
+          "caller": "operator ==",
+          "callee": "end",
+          "lineNumber": 151
+        },
+        {
+          "caller": "operator ==",
+          "callee": "begin",
+          "lineNumber": 155
+        },
+        {
+          "caller": "operator ==",
+          "callee": "end",
+          "lineNumber": 155
+        },
+        {
+          "caller": "begin",
+          "callee": "begin",
+          "lineNumber": 184
+        },
+        {
+          "caller": "end",
+          "callee": "end",
+          "lineNumber": 194
+        },
+        {
+          "caller": "begin",
+          "callee": "begin",
+          "lineNumber": 204
+        },
+        {
+          "caller": "end",
+          "callee": "end",
+          "lineNumber": 214
+        },
+        {
+          "caller": "size",
+          "callee": "size",
+          "lineNumber": 224
+        },
+        {
+          "caller": "clear",
+          "callee": "clear",
+          "lineNumber": 248
+        },
+        {
+          "caller": "reserve",
+          "callee": "reserve",
+          "lineNumber": 259
+        },
+        {
+          "caller": "resize",
+          "callee": "resize",
+          "lineNumber": 272
+        },
+        {
+          "caller": "push_back",
+          "callee": "begin",
+          "lineNumber": 284
+        },
+        {
+          "caller": "push_back",
+          "callee": "end",
+          "lineNumber": 284
+        },
+        {
+          "caller": "push_back",
+          "callee": "push_back",
+          "lineNumber": 294
+        },
+        {
+          "caller": "push_back",
+          "callee": "begin",
+          "lineNumber": 306
+        },
+        {
+          "caller": "push_back",
+          "callee": "end",
+          "lineNumber": 306
+        },
+        {
+          "caller": "push_back",
+          "callee": "push_back",
+          "lineNumber": 308
+        },
+        {
+          "caller": "empty",
+          "callee": "empty",
+          "lineNumber": 319
+        },
+        {
+          "caller": "erase",
+          "callee": "std::find",
+          "lineNumber": 330
+        },
+        {
+          "caller": "erase",
+          "callee": "begin",
+          "lineNumber": 330
+        },
+        {
+          "caller": "erase",
+          "callee": "end",
+          "lineNumber": 330
+        },
+        {
+          "caller": "erase",
+          "callee": "end",
+          "lineNumber": 331
+        },
+        {
+          "caller": "erase",
+          "callee": "erase",
+          "lineNumber": 333
+        },
+        {
+          "caller": "isValid",
+          "callee": "begin",
+          "lineNumber": 344
+        },
+        {
+          "caller": "isValid",
+          "callee": "end",
+          "lineNumber": 344
+        },
+        {
+          "caller": "isValid",
+          "callee": "IsLocatorValid",
+          "lineNumber": 346
+        },
+        {
+          "caller": "swap",
+          "callee": "swap",
+          "lineNumber": 362
+        },
+        {
+          "caller": "copy_to",
+          "callee": "emplace_back",
+          "lineNumber": 386
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/rtps/common/LocatorListComparisons.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 62,
+      "nonEmptyLines": 53,
+      "callGraph": [
+        {
+          "caller": "operator ==",
+          "callee": "size",
+          "lineNumber": 42
+        },
+        {
+          "caller": "operator ==",
+          "callee": "size",
+          "lineNumber": 42
+        },
+        {
+          "caller": "operator ==",
+          "callee": "std::find",
+          "lineNumber": 46
+        },
+        {
+          "caller": "operator ==",
+          "callee": "begin",
+          "lineNumber": 46
+        },
+        {
+          "caller": "operator ==",
+          "callee": "end",
+          "lineNumber": 46
+        },
+        {
+          "caller": "operator ==",
+          "callee": "end",
+          "lineNumber": 46
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/rtps/common/LocatorSelector.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 479,
+      "nonEmptyLines": 427,
+      "callGraph": [
+        {
+          "caller": "clear",
+          "callee": "clear",
+          "lineNumber": 76
+        },
+        {
+          "caller": "clear",
+          "callee": "clear",
+          "lineNumber": 77
+        },
+        {
+          "caller": "clear",
+          "callee": "clear",
+          "lineNumber": 78
+        },
+        {
+          "caller": "add_entry",
+          "callee": "push_back",
+          "lineNumber": 89
+        },
+        {
+          "caller": "remove_entry",
+          "callee": "remove_if",
+          "lineNumber": 99
+        },
+        {
+          "caller": "reset",
+          "callee": "clear",
+          "lineNumber": 114
+        },
+        {
+          "caller": "reset",
+          "callee": "push_back",
+          "lineNumber": 117
+        },
+        {
+          "caller": "reset",
+          "callee": "enable",
+          "lineNumber": 118
+        },
+        {
+          "caller": "state_has_changed",
+          "callee": "size",
+          "lineNumber": 147
+        },
+        {
+          "caller": "state_has_changed",
+          "callee": "size",
+          "lineNumber": 147
+        },
+        {
+          "caller": "state_has_changed",
+          "callee": "size",
+          "lineNumber": 152
+        },
+        {
+          "caller": "state_has_changed",
+          "callee": "at",
+          "lineNumber": 154
+        },
+        {
+          "caller": "state_has_changed",
+          "callee": "at",
+          "lineNumber": 154
+        },
+        {
+          "caller": "selection_start",
+          "callee": "clear",
+          "lineNumber": 168
+        },
+        {
+          "caller": "selection_start",
+          "callee": "reset",
+          "lineNumber": 171
+        },
+        {
+          "caller": "select",
+          "callee": "size",
+          "lineNumber": 200
+        },
+        {
+          "caller": "select",
+          "callee": "std::find",
+          "lineNumber": 201
+        },
+        {
+          "caller": "select",
+          "callee": "begin",
+          "lineNumber": 201
+        },
+        {
+          "caller": "select",
+          "callee": "end",
+          "lineNumber": 201
+        },
+        {
+          "caller": "select",
+          "callee": "end",
+          "lineNumber": 201
+        },
+        {
+          "caller": "select",
+          "callee": "push_back",
+          "lineNumber": 203
+        },
+        {
+          "caller": "selected_size",
+          "callee": "at",
+          "lineNumber": 218
+        },
+        {
+          "caller": "selected_size",
+          "callee": "size",
+          "lineNumber": 219
+        },
+        {
+          "caller": "selected_size",
+          "callee": "size",
+          "lineNumber": 220
+        },
+        {
+          "caller": "is_selected",
+          "callee": "IPLocator::isMulticast",
+          "lineNumber": 236
+        },
+        {
+          "caller": "is_selected",
+          "callee": "at",
+          "lineNumber": 240
+        },
+        {
+          "caller": "is_selected",
+          "callee": "at",
+          "lineNumber": 243
+        },
+        {
+          "caller": "is_selected",
+          "callee": "at",
+          "lineNumber": 254
+        },
+        {
+          "caller": "is_selected",
+          "callee": "at",
+          "lineNumber": 257
+        },
+        {
+          "caller": "for_each",
+          "callee": "at",
+          "lineNumber": 280
+        },
+        {
+          "caller": "for_each",
+          "callee": "action",
+          "lineNumber": 283
+        },
+        {
+          "caller": "for_each",
+          "callee": "at",
+          "lineNumber": 283
+        },
+        {
+          "caller": "for_each",
+          "callee": "action",
+          "lineNumber": 287
+        },
+        {
+          "caller": "for_each",
+          "callee": "at",
+          "lineNumber": 287
+        },
+        {
+          "caller": "go_to_next_entry",
+          "callee": "size",
+          "lineNumber": 316
+        },
+        {
+          "caller": "go_to_next_entry",
+          "callee": "at",
+          "lineNumber": 319
+        },
+        {
+          "caller": "go_to_next_entry",
+          "callee": "size",
+          "lineNumber": 322
+        },
+        {
+          "caller": "go_to_next_entry",
+          "callee": "size",
+          "lineNumber": 325
+        },
+        {
+          "caller": "go_to_next_entry",
+          "callee": "at",
+          "lineNumber": 327
+        },
+        {
+          "caller": "go_to_next_entry",
+          "callee": "at",
+          "lineNumber": 334
+        },
+        {
+          "caller": "iterator",
+          "callee": "(std::numeric_limits<size_t>::max)",
+          "lineNumber": 355
+        },
+        {
+          "caller": "iterator",
+          "callee": "go_to_next_entry",
+          "lineNumber": 359
+        },
+        {
+          "caller": "operator ==",
+          "callee": "static_cast<const iterator&>",
+          "lineNumber": 422
+        },
+        {
+          "caller": "begin",
+          "callee": "iterator",
+          "lineNumber": 457
+        },
+        {
+          "caller": "end",
+          "callee": "iterator",
+          "lineNumber": 462
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/rtps/common/LocatorSelectorEntry.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 152,
+      "nonEmptyLines": 137,
+      "callGraph": [
+        {
+          "caller": "EntryState",
+          "callee": "ResourceLimitedContainerConfig::fixed_size_configuration",
+          "lineNumber": 54
+        },
+        {
+          "caller": "EntryState",
+          "callee": "ResourceLimitedContainerConfig::fixed_size_configuration",
+          "lineNumber": 55
+        },
+        {
+          "caller": "LocatorSelectorEntry",
+          "callee": "ResourceLimitedContainerConfig::fixed_size_configuration",
+          "lineNumber": 75
+        },
+        {
+          "caller": "LocatorSelectorEntry",
+          "callee": "ResourceLimitedContainerConfig::fixed_size_configuration",
+          "lineNumber": 76
+        },
+        {
+          "caller": "reset",
+          "callee": "clear",
+          "lineNumber": 99
+        },
+        {
+          "caller": "reset",
+          "callee": "clear",
+          "lineNumber": 100
+        },
+        {
+          "caller": "create_fully_selected_entry",
+          "callee": "size",
+          "lineNumber": 108
+        },
+        {
+          "caller": "create_fully_selected_entry",
+          "callee": "size",
+          "lineNumber": 108
+        },
+        {
+          "caller": "create_fully_selected_entry",
+          "callee": "push_back",
+          "lineNumber": 112
+        },
+        {
+          "caller": "create_fully_selected_entry",
+          "callee": "size",
+          "lineNumber": 112
+        },
+        {
+          "caller": "create_fully_selected_entry",
+          "callee": "push_back",
+          "lineNumber": 113
+        },
+        {
+          "caller": "create_fully_selected_entry",
+          "callee": "push_back",
+          "lineNumber": 118
+        },
+        {
+          "caller": "create_fully_selected_entry",
+          "callee": "size",
+          "lineNumber": 118
+        },
+        {
+          "caller": "create_fully_selected_entry",
+          "callee": "push_back",
+          "lineNumber": 119
+        },
+        {
+          "caller": "create_fully_selected_entry",
+          "callee": "create_fully_selected_entry",
+          "lineNumber": 130
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/rtps/common/LocatorsIterator.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 72,
+      "nonEmptyLines": 64,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/rtps/common/LocatorWithMask.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 80,
+      "nonEmptyLines": 65,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/rtps/common/MatchingInfo.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 82,
+      "nonEmptyLines": 71,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/rtps/common/PortParameters.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 164,
+      "nonEmptyLines": 143,
+      "callGraph": [
+        {
+          "caller": "getMulticastPort",
+          "callee": "EPROSIMA_LOG_ERROR",
+          "lineNumber": 79
+        },
+        {
+          "caller": "getMulticastPort",
+          "callee": "flush",
+          "lineNumber": 83
+        },
+        {
+          "caller": "getMulticastPort",
+          "callee": "exit",
+          "lineNumber": 84
+        },
+        {
+          "caller": "getUnicastPort",
+          "callee": "EPROSIMA_LOG_ERROR",
+          "lineNumber": 105
+        },
+        {
+          "caller": "getUnicastPort",
+          "callee": "flush",
+          "lineNumber": 109
+        },
+        {
+          "caller": "getUnicastPort",
+          "callee": "exit",
+          "lineNumber": 110
+        },
+        {
+          "caller": "get_discovery_server_port",
+          "callee": "EPROSIMA_LOG_ERROR",
+          "lineNumber": 129
+        },
+        {
+          "caller": "get_discovery_server_port",
+          "callee": "flush",
+          "lineNumber": 133
+        },
+        {
+          "caller": "get_discovery_server_port",
+          "callee": "exit",
+          "lineNumber": 134
+        },
+        {
+          "caller": "get_discovery_server_port",
+          "callee": "static_cast<uint16_t>",
+          "lineNumber": 137
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/rtps/common/ProductVersion_t.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 59,
+      "nonEmptyLines": 51,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/rtps/common/Property.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 363,
+      "nonEmptyLines": 313,
+      "callGraph": [
+        {
+          "caller": "Property",
+          "callee": "std::move",
+          "lineNumber": 48
+        },
+        {
+          "caller": "Property",
+          "callee": "std::move",
+          "lineNumber": 49
+        },
+        {
+          "caller": "Property",
+          "callee": "std::move",
+          "lineNumber": 68
+        },
+        {
+          "caller": "Property",
+          "callee": "std::move",
+          "lineNumber": 69
+        },
+        {
+          "caller": "name",
+          "callee": "std::move",
+          "lineNumber": 108
+        },
+        {
+          "caller": "value",
+          "callee": "std::move",
+          "lineNumber": 130
+        },
+        {
+          "caller": "serialized_size",
+          "callee": "propagate",
+          "lineNumber": 178
+        },
+        {
+          "caller": "serialized_size",
+          "callee": "alignment",
+          "lineNumber": 182
+        },
+        {
+          "caller": "serialized_size",
+          "callee": "size",
+          "lineNumber": 182
+        },
+        {
+          "caller": "serialized_size",
+          "callee": "name",
+          "lineNumber": 182
+        },
+        {
+          "caller": "serialized_size",
+          "callee": "alignment",
+          "lineNumber": 183
+        },
+        {
+          "caller": "serialized_size",
+          "callee": "size",
+          "lineNumber": 183
+        },
+        {
+          "caller": "serialized_size",
+          "callee": "value",
+          "lineNumber": 183
+        },
+        {
+          "caller": "serialized_size",
+          "callee": "alignment",
+          "lineNumber": 199
+        },
+        {
+          "caller": "serialized_size",
+          "callee": "begin",
+          "lineNumber": 200
+        },
+        {
+          "caller": "serialized_size",
+          "callee": "end",
+          "lineNumber": 200
+        },
+        {
+          "caller": "serialized_size",
+          "callee": "serialized_size",
+          "lineNumber": 202
+        },
+        {
+          "caller": "as_int",
+          "callee": "parse_value",
+          "lineNumber": 244
+        },
+        {
+          "caller": "as_int",
+          "callee": "std::function<int(const Property& property)>",
+          "lineNumber": 245
+        },
+        {
+          "caller": "as_int",
+          "callee": "std::stoi",
+          "lineNumber": 248
+        },
+        {
+          "caller": "as_int",
+          "callee": "value",
+          "lineNumber": 248
+        },
+        {
+          "caller": "as_double",
+          "callee": "parse_value",
+          "lineNumber": 281
+        },
+        {
+          "caller": "as_double",
+          "callee": "std::function<double(const Property& property)>",
+          "lineNumber": 282
+        },
+        {
+          "caller": "as_double",
+          "callee": "std::stod",
+          "lineNumber": 285
+        },
+        {
+          "caller": "as_double",
+          "callee": "value",
+          "lineNumber": 285
+        },
+        {
+          "caller": "as_bool",
+          "callee": "value",
+          "lineNumber": 306
+        },
+        {
+          "caller": "parse_value",
+          "callee": "conversor",
+          "lineNumber": 329
+        },
+        {
+          "caller": "parse_value",
+          "callee": "exception_t",
+          "lineNumber": 333
+        },
+        {
+          "caller": "parse_value",
+          "callee": "value",
+          "lineNumber": 333
+        },
+        {
+          "caller": "parse_value",
+          "callee": "name",
+          "lineNumber": 334
+        },
+        {
+          "caller": "parse_value",
+          "callee": "std::to_string",
+          "lineNumber": 335
+        },
+        {
+          "caller": "parse_value",
+          "callee": "exception_t",
+          "lineNumber": 340
+        },
+        {
+          "caller": "parse_value",
+          "callee": "value",
+          "lineNumber": 340
+        },
+        {
+          "caller": "parse_value",
+          "callee": "name",
+          "lineNumber": 341
+        },
+        {
+          "caller": "parse_value",
+          "callee": "std::to_string",
+          "lineNumber": 342
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/rtps/common/RemoteLocators.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 242,
+      "nonEmptyLines": 213,
+      "callGraph": [
+        {
+          "caller": "RemoteLocatorList",
+          "callee": "ResourceLimitedContainerConfig::fixed_size_configuration",
+          "lineNumber": 51
+        },
+        {
+          "caller": "RemoteLocatorList",
+          "callee": "ResourceLimitedContainerConfig::fixed_size_configuration",
+          "lineNumber": 52
+        },
+        {
+          "caller": "add_unicast_locator",
+          "callee": "push_back",
+          "lineNumber": 104
+        },
+        {
+          "caller": "add_multicast_locator",
+          "callee": "push_back",
+          "lineNumber": 126
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/rtps/common/SampleIdentity.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 199,
+      "nonEmptyLines": 165,
+      "callGraph": [
+        {
+          "caller": "unknown",
+          "callee": "SampleIdentity",
+          "lineNumber": 118
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/rtps/common/SequenceNumber.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 418,
+      "nonEmptyLines": 358,
+      "callGraph": [
+        {
+          "caller": "SequenceNumber_t",
+          "callee": "static_cast<int32_t>",
+          "lineNumber": 68
+        },
+        {
+          "caller": "SequenceNumber_t",
+          "callee": "static_cast<uint32_t>",
+          "lineNumber": 69
+        },
+        {
+          "caller": "to64long",
+          "callee": "static_cast<uint64_t>",
+          "lineNumber": 78
+        },
+        {
+          "caller": "operator -",
+          "callee": "assert",
+          "lineNumber": 245
+        },
+        {
+          "caller": "operator +",
+          "callee": "assert",
+          "lineNumber": 267
+        },
+        {
+          "caller": "operator +",
+          "callee": "std::numeric_limits<decltype(res.high)>::max",
+          "lineNumber": 267
+        },
+        {
+          "caller": "operator -",
+          "callee": "assert",
+          "lineNumber": 284
+        },
+        {
+          "caller": "operator -",
+          "callee": "assert",
+          "lineNumber": 289
+        },
+        {
+          "caller": "operator ()",
+          "callee": "static_cast<std::size_t>",
+          "lineNumber": 348
+        },
+        {
+          "caller": "operator ()",
+          "callee": "to64long",
+          "lineNumber": 348
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/rtps/common/SerializedPayload.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 158,
+      "nonEmptyLines": 134,
+      "callGraph": [
+        {
+          "caller": "SerializedPayload_t",
+          "callee": "reserve",
+          "lineNumber": 95
+        },
+        {
+          "caller": "SerializedPayload_t",
+          "callee": "std::move",
+          "lineNumber": 109
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/rtps/common/Time_t.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 413,
+      "nonEmptyLines": 362,
+      "callGraph": [
+        {
+          "caller": "operator ==",
+          "callee": "seconds",
+          "lineNumber": 161
+        },
+        {
+          "caller": "operator ==",
+          "callee": "seconds",
+          "lineNumber": 161
+        },
+        {
+          "caller": "operator ==",
+          "callee": "fraction",
+          "lineNumber": 165
+        },
+        {
+          "caller": "operator ==",
+          "callee": "fraction",
+          "lineNumber": 165
+        },
+        {
+          "caller": "operator !=",
+          "callee": "seconds",
+          "lineNumber": 182
+        },
+        {
+          "caller": "operator !=",
+          "callee": "seconds",
+          "lineNumber": 182
+        },
+        {
+          "caller": "operator !=",
+          "callee": "fraction",
+          "lineNumber": 186
+        },
+        {
+          "caller": "operator !=",
+          "callee": "fraction",
+          "lineNumber": 186
+        },
+        {
+          "caller": "operator <",
+          "callee": "seconds",
+          "lineNumber": 203
+        },
+        {
+          "caller": "operator <",
+          "callee": "seconds",
+          "lineNumber": 203
+        },
+        {
+          "caller": "operator <",
+          "callee": "seconds",
+          "lineNumber": 207
+        },
+        {
+          "caller": "operator <",
+          "callee": "seconds",
+          "lineNumber": 207
+        },
+        {
+          "caller": "operator <",
+          "callee": "fraction",
+          "lineNumber": 213
+        },
+        {
+          "caller": "operator <",
+          "callee": "fraction",
+          "lineNumber": 213
+        },
+        {
+          "caller": "operator >",
+          "callee": "seconds",
+          "lineNumber": 234
+        },
+        {
+          "caller": "operator >",
+          "callee": "seconds",
+          "lineNumber": 234
+        },
+        {
+          "caller": "operator >",
+          "callee": "seconds",
+          "lineNumber": 238
+        },
+        {
+          "caller": "operator >",
+          "callee": "seconds",
+          "lineNumber": 238
+        },
+        {
+          "caller": "operator >",
+          "callee": "fraction",
+          "lineNumber": 244
+        },
+        {
+          "caller": "operator >",
+          "callee": "fraction",
+          "lineNumber": 244
+        },
+        {
+          "caller": "operator <=",
+          "callee": "seconds",
+          "lineNumber": 265
+        },
+        {
+          "caller": "operator <=",
+          "callee": "seconds",
+          "lineNumber": 265
+        },
+        {
+          "caller": "operator <=",
+          "callee": "seconds",
+          "lineNumber": 269
+        },
+        {
+          "caller": "operator <=",
+          "callee": "seconds",
+          "lineNumber": 269
+        },
+        {
+          "caller": "operator <=",
+          "callee": "fraction",
+          "lineNumber": 275
+        },
+        {
+          "caller": "operator <=",
+          "callee": "fraction",
+          "lineNumber": 275
+        },
+        {
+          "caller": "operator >=",
+          "callee": "seconds",
+          "lineNumber": 296
+        },
+        {
+          "caller": "operator >=",
+          "callee": "seconds",
+          "lineNumber": 296
+        },
+        {
+          "caller": "operator >=",
+          "callee": "seconds",
+          "lineNumber": 300
+        },
+        {
+          "caller": "operator >=",
+          "callee": "seconds",
+          "lineNumber": 300
+        },
+        {
+          "caller": "operator >=",
+          "callee": "fraction",
+          "lineNumber": 306
+        },
+        {
+          "caller": "operator >=",
+          "callee": "fraction",
+          "lineNumber": 306
+        },
+        {
+          "caller": "operator +",
+          "callee": "seconds",
+          "lineNumber": 373
+        },
+        {
+          "caller": "operator +",
+          "callee": "seconds",
+          "lineNumber": 373
+        },
+        {
+          "caller": "operator +",
+          "callee": "fraction",
+          "lineNumber": 373
+        },
+        {
+          "caller": "operator +",
+          "callee": "fraction",
+          "lineNumber": 373
+        },
+        {
+          "caller": "operator +",
+          "callee": "fraction",
+          "lineNumber": 374
+        },
+        {
+          "caller": "operator +",
+          "callee": "fraction",
+          "lineNumber": 374
+        },
+        {
+          "caller": "operator +",
+          "callee": "seconds",
+          "lineNumber": 376
+        },
+        {
+          "caller": "operator -",
+          "callee": "seconds",
+          "lineNumber": 391
+        },
+        {
+          "caller": "operator -",
+          "callee": "seconds",
+          "lineNumber": 391
+        },
+        {
+          "caller": "operator -",
+          "callee": "fraction",
+          "lineNumber": 391
+        },
+        {
+          "caller": "operator -",
+          "callee": "fraction",
+          "lineNumber": 391
+        },
+        {
+          "caller": "operator -",
+          "callee": "fraction",
+          "lineNumber": 392
+        },
+        {
+          "caller": "operator -",
+          "callee": "fraction",
+          "lineNumber": 392
+        },
+        {
+          "caller": "operator -",
+          "callee": "seconds",
+          "lineNumber": 394
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/rtps/common/Token.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 196,
+      "nonEmptyLines": 155,
+      "callGraph": [
+        {
+          "caller": "is_nil",
+          "callee": "empty",
+          "lineNumber": 75
+        },
+        {
+          "caller": "class_id",
+          "callee": "std::move",
+          "lineNumber": 87
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/rtps/common/Types.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 165,
+      "nonEmptyLines": 139,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/rtps/common/VendorId_t.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 58,
+      "nonEmptyLines": 49,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/rtps/common/WriteParams.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 282,
+      "nonEmptyLines": 250,
+      "callGraph": [
+        {
+          "caller": "write_params_default",
+          "callee": "WriteParams",
+          "lineNumber": 249
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/rtps/Endpoint.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 136,
+      "nonEmptyLines": 107,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/rtps/flowcontrol/FlowControllerConsts.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 33,
+      "nonEmptyLines": 27,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/rtps/flowcontrol/FlowControllerDescriptor.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 77,
+      "nonEmptyLines": 63,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/rtps/flowcontrol/FlowControllerSchedulerPolicy.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 47,
+      "nonEmptyLines": 41,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    }
+  ]
+}

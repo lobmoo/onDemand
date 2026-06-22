@@ -1,0 +1,13 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "tests/txdds_test_idl/PerformanceTestCdrAux.hpp", "language": "cpp", "sizeLines": 48, "fileCategory": "code"},
+    {"path": "tests/txdds_test_idl/PerformanceTestPubSubTypes.cxx", "language": "cpp", "sizeLines": 130, "fileCategory": "code"},
+    {"path": "tests/txdds_test_idl/PerformanceTestPubSubTypes.h", "language": "c", "sizeLines": 62, "fileCategory": "code"}
+  ],
+  "batchImportData": {
+    "tests/txdds_test_idl/PerformanceTestCdrAux.hpp": [],
+    "tests/txdds_test_idl/PerformanceTestPubSubTypes.cxx": ["tests/txdds_test_idl/PerformanceTestCdrAux.hpp", "tests/txdds_test_idl/PerformanceTestPubSubTypes.h"],
+    "tests/txdds_test_idl/PerformanceTestPubSubTypes.h": []
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "core/ondemand/.gensrc/dsf_define_messages.hpp", "language": "cpp", "sizeLines": 2436, "fileCategory": "code"},
+    {"path": "core/ondemand/.gensrc/dsf_define_messagesCdrAux.hpp", "language": "cpp", "sizeLines": 102, "fileCategory": "code"},
+    {"path": "core/ondemand/.gensrc/dsf_define_messagesCdrAux.ipp", "language": "ipp", "sizeLines": 1426, "fileCategory": "code"},
+    {"path": "core/ondemand/.gensrc/dsf_define_messagesPubSubTypes.cxx", "language": "cpp", "sizeLines": 952, "fileCategory": "code"},
+    {"path": "core/ondemand/.gensrc/dsf_define_messagesPubSubTypes.hpp", "language": "cpp", "sizeLines": 534, "fileCategory": "code"},
+    {"path": "core/ondemand/.gensrc/dsf_define_messagesTypeObjectSupport.cxx", "language": "cpp", "sizeLines": 3919, "fileCategory": "code"},
+    {"path": "core/ondemand/.gensrc/dsf_define_messagesTypeObjectSupport.hpp", "language": "cpp", "sizeLines": 610, "fileCategory": "code"},
+    {"path": "core/ondemand/.gensrc/dsf_define_var.hpp", "language": "cpp", "sizeLines": 2436, "fileCategory": "code"},
+    {"path": "core/ondemand/.gensrc/dsf_define_varCdrAux.hpp", "language": "cpp", "sizeLines": 102, "fileCategory": "code"},
+    {"path": "core/ondemand/.gensrc/dsf_define_varCdrAux.ipp", "language": "ipp", "sizeLines": 1426, "fileCategory": "code"},
+    {"path": "core/ondemand/.gensrc/dsf_define_varPubSubTypes.cxx", "language": "cpp", "sizeLines": 952, "fileCategory": "code"},
+    {"path": "core/ondemand/.gensrc/dsf_define_varPubSubTypes.hpp", "language": "cpp", "sizeLines": 534, "fileCategory": "code"},
+    {"path": "core/ondemand/.gensrc/dsf_define_varTypeObjectSupport.cxx", "language": "cpp", "sizeLines": 3919, "fileCategory": "code"}
+  ],
+  "batchImportData": {"core/ondemand/.gensrc/dsf_define_messages.hpp":[],"core/ondemand/.gensrc/dsf_define_messagesCdrAux.hpp":[],"core/ondemand/.gensrc/dsf_define_messagesCdrAux.ipp":[],"core/ondemand/.gensrc/dsf_define_messagesPubSubTypes.cxx":["core/ondemand/.gensrc/dsf_define_messagesCdrAux.hpp","core/ondemand/.gensrc/dsf_define_messagesCdrAux.ipp","core/ondemand/.gensrc/dsf_define_messagesPubSubTypes.hpp","core/ondemand/.gensrc/dsf_define_messagesTypeObjectSupport.hpp"],"core/ondemand/.gensrc/dsf_define_messagesPubSubTypes.hpp":[],"core/ondemand/.gensrc/dsf_define_messagesTypeObjectSupport.cxx":["core/ondemand/.gensrc/dsf_define_messages.hpp","core/ondemand/.gensrc/dsf_define_messagesTypeObjectSupport.hpp"],"core/ondemand/.gensrc/dsf_define_messagesTypeObjectSupport.hpp":[],"core/ondemand/.gensrc/dsf_define_var.hpp":[],"core/ondemand/.gensrc/dsf_define_varCdrAux.hpp":[],"core/ondemand/.gensrc/dsf_define_varCdrAux.ipp":[],"core/ondemand/.gensrc/dsf_define_varPubSubTypes.cxx":["core/ondemand/.gensrc/dsf_define_varCdrAux.hpp","core/ondemand/.gensrc/dsf_define_varCdrAux.ipp","core/ondemand/.gensrc/dsf_define_varPubSubTypes.hpp","core/ondemand/.gensrc/dsf_define_varTypeObjectSupport.hpp"],"core/ondemand/.gensrc/dsf_define_varPubSubTypes.hpp":[],"core/ondemand/.gensrc/dsf_define_varTypeObjectSupport.cxx":["core/ondemand/.gensrc/dsf_define_var.hpp","core/ondemand/.gensrc/dsf_define_varTypeObjectSupport.hpp"]}
+}

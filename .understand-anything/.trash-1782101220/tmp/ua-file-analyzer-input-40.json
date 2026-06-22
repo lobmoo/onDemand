@@ -1,0 +1,31 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "thirdparty/arrow/include/arrow/util/bitmap_builders.h", "language": "c", "sizeLines": 43, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/bitmap_generate.h", "language": "c", "sizeLines": 111, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/bitmap_ops.h", "language": "c", "sizeLines": 244, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/bitmap_reader.h", "language": "c", "sizeLines": 273, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/bitmap_visit.h", "language": "c", "sizeLines": 88, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/bitmap_writer.h", "language": "c", "sizeLines": 286, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/bitmap.h", "language": "c", "sizeLines": 466, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/bitset_stack.h", "language": "c", "sizeLines": 89, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/bpacking_avx2.h", "language": "c", "sizeLines": 28, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/bpacking_avx512.h", "language": "c", "sizeLines": 28, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/bpacking_default.h", "language": "c", "sizeLines": 4251, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/bpacking_neon.h", "language": "c", "sizeLines": 28, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/bpacking_simd128_generated.h", "language": "c", "sizeLines": 2138, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/bpacking_simd256_generated.h", "language": "c", "sizeLines": 1270, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/bpacking_simd512_generated.h", "language": "c", "sizeLines": 836, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/bpacking.h", "language": "c", "sizeLines": 34, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/bpacking64_default.h", "language": "c", "sizeLines": 5642, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/byte_size.h", "language": "c", "sizeLines": 88, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/byte_stream_split.h", "language": "c", "sizeLines": 630, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/cancel.h", "language": "c", "sizeLines": 118, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/checked_cast.h", "language": "c", "sizeLines": 61, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/compare.h", "language": "c", "sizeLines": 62, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/compression.h", "language": "c", "sizeLines": 241, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/concurrent_map.h", "language": "c", "sizeLines": 68, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/config.h", "language": "c", "sizeLines": 61, "fileCategory": "code"}
+  ],
+  "batchImportData": {}
+}

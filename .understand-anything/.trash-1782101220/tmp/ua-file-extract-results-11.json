@@ -1,0 +1,2655 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 4,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/dynamicType/CommonType.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 82,
+      "nonEmptyLines": 81,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/dynamicType/TypeIdentifier.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 237,
+      "nonEmptyLines": 226,
+      "functions": [
+        {
+          "name": "~PlainSequenceSElemDefn",
+          "startLine": 85,
+          "endLine": 87,
+          "params": []
+        },
+        {
+          "name": "~PlainSequenceLElemDefn",
+          "startLine": 100,
+          "endLine": 102,
+          "params": []
+        },
+        {
+          "name": "~PlainArraySElemDefn",
+          "startLine": 115,
+          "endLine": 117,
+          "params": []
+        },
+        {
+          "name": "~PlainArrayLElemDefn",
+          "startLine": 130,
+          "endLine": 132,
+          "params": []
+        },
+        {
+          "name": "PlainMapSTypeDefn",
+          "startLine": 138,
+          "endLine": 138,
+          "params": []
+        },
+        {
+          "name": "~PlainMapSTypeDefn",
+          "startLine": 149,
+          "endLine": 151,
+          "params": []
+        },
+        {
+          "name": "PlainMapLTypeDefn",
+          "startLine": 166,
+          "endLine": 168,
+          "params": []
+        },
+        {
+          "name": "~PlainMapLTypeDefn",
+          "startLine": 178,
+          "endLine": 180,
+          "params": []
+        },
+        {
+          "name": "TypeIdentifier",
+          "startLine": 203,
+          "endLine": 203,
+          "params": []
+        }
+      ],
+      "classes": [
+        {
+          "name": "SerializeCdr",
+          "startLine": 16,
+          "endLine": 16,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "DeserializeCdr",
+          "startLine": 17,
+          "endLine": 17,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "CdrSizeCalculator",
+          "startLine": 18,
+          "endLine": 18,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "MemberFlag",
+          "startLine": 29,
+          "endLine": 36,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_MemberFlag"
+          ]
+        },
+        {
+          "name": "PlainCollectionHeader",
+          "startLine": 48,
+          "endLine": 56,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_equiv_kind",
+            "m_element_flags"
+          ]
+        },
+        {
+          "name": "TypeIdentifier",
+          "startLine": 57,
+          "endLine": 57,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "StringSTypeDefn",
+          "startLine": 59,
+          "endLine": 66,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_bound"
+          ]
+        },
+        {
+          "name": "StringLTypeDefn",
+          "startLine": 67,
+          "endLine": 74,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_bound"
+          ]
+        },
+        {
+          "name": "PlainSequenceSElemDefn",
+          "startLine": 76,
+          "endLine": 88,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize",
+            "~PlainSequenceSElemDefn"
+          ],
+          "properties": [
+            "m_header",
+            "m_bound",
+            "m_element_identifier"
+          ]
+        },
+        {
+          "name": "PlainSequenceLElemDefn",
+          "startLine": 90,
+          "endLine": 103,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize",
+            "~PlainSequenceLElemDefn"
+          ],
+          "properties": [
+            "m_header",
+            "m_bound",
+            "m_element_identifier",
+            "mDeserializeCreated"
+          ]
+        },
+        {
+          "name": "PlainArraySElemDefn",
+          "startLine": 105,
+          "endLine": 118,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize",
+            "~PlainArraySElemDefn"
+          ],
+          "properties": [
+            "m_header",
+            "m_array_bound_seq",
+            "m_element_identifier",
+            "mDeserializeCreated"
+          ]
+        },
+        {
+          "name": "PlainArrayLElemDefn",
+          "startLine": 120,
+          "endLine": 133,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize",
+            "~PlainArrayLElemDefn"
+          ],
+          "properties": [
+            "m_header",
+            "m_array_bound_seq",
+            "m_element_identifier",
+            "mDeserializeCreated"
+          ]
+        },
+        {
+          "name": "PlainMapSTypeDefn",
+          "startLine": 135,
+          "endLine": 152,
+          "methods": [
+            "PlainMapSTypeDefn",
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize",
+            "~PlainMapSTypeDefn"
+          ],
+          "properties": [
+            "m_header",
+            "m_bound",
+            "m_element_identifier",
+            "m_key_flags",
+            "m_key_identifier",
+            "mDeserializeElementIdentifier",
+            "mDeserializeKeyIdentifier"
+          ]
+        },
+        {
+          "name": "TypeObjectHashId",
+          "startLine": 154,
+          "endLine": 162,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m__d",
+            "m_hash"
+          ]
+        },
+        {
+          "name": "PlainMapLTypeDefn",
+          "startLine": 163,
+          "endLine": 181,
+          "methods": [
+            "PlainMapLTypeDefn",
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize",
+            "~PlainMapLTypeDefn"
+          ],
+          "properties": [
+            "m_header",
+            "m_bound",
+            "m_element_identifier",
+            "m_key_flags",
+            "m_key_identifier",
+            "mDeserializeCreated"
+          ]
+        },
+        {
+          "name": "StronglyConnectedComponentId",
+          "startLine": 182,
+          "endLine": 191,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_sc_component_id",
+            "m_scc_length",
+            "m_scc_index"
+          ]
+        },
+        {
+          "name": "ExtendedTypeDefn",
+          "startLine": 192,
+          "endLine": 198,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": []
+        },
+        {
+          "name": "TypeIdentifier",
+          "startLine": 200,
+          "endLine": 235,
+          "methods": [
+            "TypeIdentifier",
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize",
+            "operator=="
+          ],
+          "properties": [
+            "m_string_sdefn",
+            "m_string_ldefn",
+            "m_seq_sdefn",
+            "m_seq_ldefn",
+            "m_array_sdefn",
+            "m_array_ldefn",
+            "m_map_sdefn",
+            "m_map_ldefn",
+            "m_sc_component_id",
+            "m_extended_defn",
+            "m__d",
+            "m_equivalence_hash"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "SerializeCdr",
+          "line": 16,
+          "isDefault": false
+        },
+        {
+          "name": "DeserializeCdr",
+          "line": 17,
+          "isDefault": false
+        },
+        {
+          "name": "CdrSizeCalculator",
+          "line": 18,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 32,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 33,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 34,
+          "isDefault": false
+        },
+        {
+          "name": "MemberFlag",
+          "line": 29,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 53,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 54,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 55,
+          "isDefault": false
+        },
+        {
+          "name": "PlainCollectionHeader",
+          "line": 48,
+          "isDefault": false
+        },
+        {
+          "name": "TypeIdentifier",
+          "line": 57,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 62,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 63,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 64,
+          "isDefault": false
+        },
+        {
+          "name": "StringSTypeDefn",
+          "line": 59,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 70,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 71,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 72,
+          "isDefault": false
+        },
+        {
+          "name": "StringLTypeDefn",
+          "line": 67,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 79,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 80,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 81,
+          "isDefault": false
+        },
+        {
+          "name": "~PlainSequenceSElemDefn",
+          "line": 85,
+          "isDefault": false
+        },
+        {
+          "name": "PlainSequenceSElemDefn",
+          "line": 76,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 93,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 94,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 95,
+          "isDefault": false
+        },
+        {
+          "name": "~PlainSequenceLElemDefn",
+          "line": 100,
+          "isDefault": false
+        },
+        {
+          "name": "PlainSequenceLElemDefn",
+          "line": 90,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 108,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 109,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 110,
+          "isDefault": false
+        },
+        {
+          "name": "~PlainArraySElemDefn",
+          "line": 115,
+          "isDefault": false
+        },
+        {
+          "name": "PlainArraySElemDefn",
+          "line": 105,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 123,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 124,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 125,
+          "isDefault": false
+        },
+        {
+          "name": "~PlainArrayLElemDefn",
+          "line": 130,
+          "isDefault": false
+        },
+        {
+          "name": "PlainArrayLElemDefn",
+          "line": 120,
+          "isDefault": false
+        },
+        {
+          "name": "PlainMapSTypeDefn",
+          "line": 138,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 139,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 140,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 141,
+          "isDefault": false
+        },
+        {
+          "name": "~PlainMapSTypeDefn",
+          "line": 149,
+          "isDefault": false
+        },
+        {
+          "name": "PlainMapSTypeDefn",
+          "line": 135,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 157,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 158,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 159,
+          "isDefault": false
+        },
+        {
+          "name": "TypeObjectHashId",
+          "line": 154,
+          "isDefault": false
+        },
+        {
+          "name": "PlainMapLTypeDefn",
+          "line": 166,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 169,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 170,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 171,
+          "isDefault": false
+        },
+        {
+          "name": "~PlainMapLTypeDefn",
+          "line": 178,
+          "isDefault": false
+        },
+        {
+          "name": "PlainMapLTypeDefn",
+          "line": 163,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 185,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 186,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 187,
+          "isDefault": false
+        },
+        {
+          "name": "StronglyConnectedComponentId",
+          "line": 182,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 195,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 196,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 197,
+          "isDefault": false
+        },
+        {
+          "name": "ExtendedTypeDefn",
+          "line": 192,
+          "isDefault": false
+        },
+        {
+          "name": "TypeIdentifier",
+          "line": 203,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 215,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 216,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 217,
+          "isDefault": false
+        },
+        {
+          "name": "operator==",
+          "line": 218,
+          "isDefault": false
+        },
+        {
+          "name": "TypeIdentifier",
+          "line": 200,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 70,
+        "functionCount": 9,
+        "classCount": 18
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/dynamicType/TypeInformation.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 36,
+      "nonEmptyLines": 32,
+      "classes": [
+        {
+          "name": "TypeIdentifierWithSize",
+          "startLine": 13,
+          "endLine": 18,
+          "methods": [],
+          "properties": [
+            "m_type_id",
+            "m_typeobject_serialized_size"
+          ]
+        },
+        {
+          "name": "TypeIdentifierWithDependencies",
+          "startLine": 20,
+          "endLine": 27,
+          "methods": [],
+          "properties": [
+            "m_typeid_with_size",
+            "m_dependent_typeid_count",
+            "m_dependent_typeids"
+          ]
+        },
+        {
+          "name": "TypeInformation",
+          "startLine": 29,
+          "endLine": 34,
+          "methods": [],
+          "properties": [
+            "m_minimal",
+            "m_complete"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "TypeIdentifierWithSize",
+          "line": 13,
+          "isDefault": false
+        },
+        {
+          "name": "TypeIdentifierWithDependencies",
+          "line": 20,
+          "isDefault": false
+        },
+        {
+          "name": "TypeInformation",
+          "line": 29,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 3,
+        "functionCount": 0,
+        "classCount": 3
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/dynamicType/TypeObject.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 589,
+      "nonEmptyLines": 577,
+      "classes": [
+        {
+          "name": "SerializeCdr",
+          "startLine": 17,
+          "endLine": 17,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "DeserializeCdr",
+          "startLine": 18,
+          "endLine": 18,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "CdrSizeCalculator",
+          "startLine": 19,
+          "endLine": 19,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "TypeFlag",
+          "startLine": 33,
+          "endLine": 42,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_TypeFlag",
+            "ANNOTATION_STR_VALUE_MAX_LEN",
+            "ANNOTATION_OCTETSEC_VALUE_MAX_LEN"
+          ]
+        },
+        {
+          "name": "CommonCollectionElement",
+          "startLine": 53,
+          "endLine": 61,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_element_flags",
+            "m_type"
+          ]
+        },
+        {
+          "name": "CommonArrayHeader",
+          "startLine": 62,
+          "endLine": 69,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_bound_seq"
+          ]
+        },
+        {
+          "name": "CommonAliasBody",
+          "startLine": 72,
+          "endLine": 80,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_related_flags",
+            "m_related_type"
+          ]
+        },
+        {
+          "name": "ExtendedAnnotationParameterValue",
+          "startLine": 82,
+          "endLine": 88,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": []
+        },
+        {
+          "name": "AnnotationParameterValue",
+          "startLine": 89,
+          "endLine": 113,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m__d",
+            "m_boolean_value",
+            "m_byte_value",
+            "m_int16_value",
+            "m_uint_16_value",
+            "m_int32_value",
+            "m_uint32_value",
+            "m_int64_value",
+            "m_uint64_value",
+            "m_float32_value",
+            "m_float64_value",
+            "m_float128_value",
+            "m_char_value",
+            "m_wchar_value",
+            "m_enumerated_value",
+            "m_string8_value",
+            "m_string16_value",
+            "m_extended_value"
+          ]
+        },
+        {
+          "name": "AppliedAnnotationParameter",
+          "startLine": 115,
+          "endLine": 123,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_paramname_hash",
+            "m_value"
+          ]
+        },
+        {
+          "name": "AppliedAnnotation",
+          "startLine": 125,
+          "endLine": 133,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_annotation_typeid",
+            "m_param_seq"
+          ]
+        },
+        {
+          "name": "AppliedVerbatimAnnotation",
+          "startLine": 137,
+          "endLine": 146,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_placement",
+            "m_language",
+            "m_text"
+          ]
+        },
+        {
+          "name": "AppliedBuiltinTypeAnnotations",
+          "startLine": 147,
+          "endLine": 154,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_verbatim"
+          ]
+        },
+        {
+          "name": "CompleteTypeDetail",
+          "startLine": 156,
+          "endLine": 165,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_ann_builtin",
+            "m_ann_custom",
+            "m_type_name"
+          ]
+        },
+        {
+          "name": "CompleteStructHeader",
+          "startLine": 166,
+          "endLine": 174,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_base_type",
+            "m_detail"
+          ]
+        },
+        {
+          "name": "CommonStructMember",
+          "startLine": 178,
+          "endLine": 187,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_member_id",
+            "m_member_flags",
+            "m_member_type_id"
+          ]
+        },
+        {
+          "name": "AppliedBuiltinMemberAnnotations",
+          "startLine": 189,
+          "endLine": 199,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_unit",
+            "m_min",
+            "m_max",
+            "m_hash_id"
+          ]
+        },
+        {
+          "name": "CompleteMemberDetail",
+          "startLine": 200,
+          "endLine": 209,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_name",
+            "m_ann_builtin",
+            "m_ann_custom"
+          ]
+        },
+        {
+          "name": "CompleteStructMember",
+          "startLine": 211,
+          "endLine": 219,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_common",
+            "m_detail"
+          ]
+        },
+        {
+          "name": "CompleteStructType",
+          "startLine": 221,
+          "endLine": 230,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_struct_flags",
+            "m_header",
+            "m_member_seq"
+          ]
+        },
+        {
+          "name": "CompleteAliasHeader",
+          "startLine": 231,
+          "endLine": 239,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_detail"
+          ]
+        },
+        {
+          "name": "CompleteAliasBody",
+          "startLine": 240,
+          "endLine": 249,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_common",
+            "m_ann_builtin",
+            "m_ann_custom"
+          ]
+        },
+        {
+          "name": "CompleteAliasType",
+          "startLine": 250,
+          "endLine": 259,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_alias_flags",
+            "m_header",
+            "m_body"
+          ]
+        },
+        {
+          "name": "CompleteArrayHeader",
+          "startLine": 260,
+          "endLine": 268,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_common",
+            "m_detail"
+          ]
+        },
+        {
+          "name": "CompleteElementDetail",
+          "startLine": 269,
+          "endLine": 277,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_ann_builtin",
+            "m_ann_custom"
+          ]
+        },
+        {
+          "name": "CompleteCollectionElement",
+          "startLine": 278,
+          "endLine": 286,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_common",
+            "m_detail"
+          ]
+        },
+        {
+          "name": "CompleteArrayType",
+          "startLine": 287,
+          "endLine": 296,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_collection_flag",
+            "m_header",
+            "m_element"
+          ]
+        },
+        {
+          "name": "CommonCollectionHeader",
+          "startLine": 297,
+          "endLine": 304,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_bound"
+          ]
+        },
+        {
+          "name": "CompleteCollectionHeader",
+          "startLine": 305,
+          "endLine": 313,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_common",
+            "m_detail"
+          ]
+        },
+        {
+          "name": "CompleteSequenceType",
+          "startLine": 314,
+          "endLine": 323,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_collection_flag",
+            "m_header",
+            "m_element"
+          ]
+        },
+        {
+          "name": "CompleteMapType",
+          "startLine": 325,
+          "endLine": 335,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_collection_flag",
+            "m_header",
+            "m_key",
+            "m_element"
+          ]
+        },
+        {
+          "name": "CompleteAnnotationHeader",
+          "startLine": 336,
+          "endLine": 343,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_annotation_name"
+          ]
+        },
+        {
+          "name": "CommonAnnotationParameter",
+          "startLine": 344,
+          "endLine": 352,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_member_flags",
+            "m_member_type_id"
+          ]
+        },
+        {
+          "name": "CompleteAnnotationParameter",
+          "startLine": 353,
+          "endLine": 362,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_common",
+            "m_name",
+            "m_default_value"
+          ]
+        },
+        {
+          "name": "CompleteAnnotationType",
+          "startLine": 364,
+          "endLine": 373,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_annotation_flag",
+            "m_header",
+            "m_member_seq"
+          ]
+        },
+        {
+          "name": "CompleteExtendedType",
+          "startLine": 374,
+          "endLine": 380,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": []
+        },
+        {
+          "name": "CompleteUnionHeader",
+          "startLine": 381,
+          "endLine": 388,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_detail"
+          ]
+        },
+        {
+          "name": "CommonDiscriminatorMember",
+          "startLine": 389,
+          "endLine": 397,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_member_flags",
+            "m_type_id"
+          ]
+        },
+        {
+          "name": "CompleteDiscriminatorMember",
+          "startLine": 398,
+          "endLine": 407,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_common",
+            "m_ann_builtin",
+            "m_ann_custom"
+          ]
+        },
+        {
+          "name": "CommonUnionMember",
+          "startLine": 409,
+          "endLine": 419,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_member_id",
+            "m_member_flags",
+            "m_type_id",
+            "m_label_seq"
+          ]
+        },
+        {
+          "name": "CompleteUnionMember",
+          "startLine": 420,
+          "endLine": 428,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_common",
+            "m_detail"
+          ]
+        },
+        {
+          "name": "CompleteUnionType",
+          "startLine": 430,
+          "endLine": 440,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_union_flags",
+            "m_header",
+            "m_discriminator",
+            "m_member_seq"
+          ]
+        },
+        {
+          "name": "CompleteBitsetHeader",
+          "startLine": 441,
+          "endLine": 449,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_base_type",
+            "m_detail"
+          ]
+        },
+        {
+          "name": "CommonBitfield",
+          "startLine": 450,
+          "endLine": 460,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_position",
+            "m_flags",
+            "m_bitcount",
+            "m_holder_type"
+          ]
+        },
+        {
+          "name": "CompleteBitfield",
+          "startLine": 461,
+          "endLine": 469,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_common",
+            "m_detail"
+          ]
+        },
+        {
+          "name": "CompleteBitsetType",
+          "startLine": 471,
+          "endLine": 480,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_bitset_flags",
+            "m_header",
+            "m_field_seq"
+          ]
+        },
+        {
+          "name": "CommonEnumeratedHeader",
+          "startLine": 482,
+          "endLine": 489,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_bit_bound"
+          ]
+        },
+        {
+          "name": "CompleteEnumeratedHeader",
+          "startLine": 490,
+          "endLine": 498,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_common",
+            "m_detail"
+          ]
+        },
+        {
+          "name": "CommonBitflag",
+          "startLine": 499,
+          "endLine": 507,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_position",
+            "m_flags"
+          ]
+        },
+        {
+          "name": "CompleteBitflag",
+          "startLine": 508,
+          "endLine": 516,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_common",
+            "m_detail"
+          ]
+        },
+        {
+          "name": "CompleteBitmaskType",
+          "startLine": 519,
+          "endLine": 528,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_bitmask_flags",
+            "m_header",
+            "m_flag_seq"
+          ]
+        },
+        {
+          "name": "CommonEnumeratedLiteral",
+          "startLine": 529,
+          "endLine": 537,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_value",
+            "m_flags"
+          ]
+        },
+        {
+          "name": "CompleteEnumeratedLiteral",
+          "startLine": 538,
+          "endLine": 546,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_common",
+            "m_detail"
+          ]
+        },
+        {
+          "name": "CompleteEnumeratedType",
+          "startLine": 548,
+          "endLine": 557,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_enum_flags",
+            "m_header",
+            "m_literal_seq"
+          ]
+        },
+        {
+          "name": "CompleteTypeObject",
+          "startLine": 558,
+          "endLine": 576,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m__d",
+            "m_alias_type",
+            "m_annotation_type",
+            "m_struct_type",
+            "m_union_type",
+            "m_bitset_type",
+            "m_sequence_type",
+            "m_array_type",
+            "m_map_type",
+            "m_enumerated_type",
+            "m_bitmask_type",
+            "m_extended_type"
+          ]
+        },
+        {
+          "name": "TypeObject",
+          "startLine": 577,
+          "endLine": 587,
+          "methods": [
+            "Serialize",
+            "GetCdrSerializedSize",
+            "Deserialize"
+          ],
+          "properties": [
+            "m_d",
+            "mComplete"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "SerializeCdr",
+          "line": 17,
+          "isDefault": false
+        },
+        {
+          "name": "DeserializeCdr",
+          "line": 18,
+          "isDefault": false
+        },
+        {
+          "name": "CdrSizeCalculator",
+          "line": 19,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 39,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 40,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 41,
+          "isDefault": false
+        },
+        {
+          "name": "TypeFlag",
+          "line": 33,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 56,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 57,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 58,
+          "isDefault": false
+        },
+        {
+          "name": "CommonCollectionElement",
+          "line": 53,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 65,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 66,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 67,
+          "isDefault": false
+        },
+        {
+          "name": "CommonArrayHeader",
+          "line": 62,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 75,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 76,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 77,
+          "isDefault": false
+        },
+        {
+          "name": "CommonAliasBody",
+          "line": 72,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 85,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 86,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 87,
+          "isDefault": false
+        },
+        {
+          "name": "ExtendedAnnotationParameterValue",
+          "line": 82,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 92,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 93,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 94,
+          "isDefault": false
+        },
+        {
+          "name": "AnnotationParameterValue",
+          "line": 89,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 118,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 119,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 120,
+          "isDefault": false
+        },
+        {
+          "name": "AppliedAnnotationParameter",
+          "line": 115,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 128,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 129,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 130,
+          "isDefault": false
+        },
+        {
+          "name": "AppliedAnnotation",
+          "line": 125,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 140,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 141,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 142,
+          "isDefault": false
+        },
+        {
+          "name": "AppliedVerbatimAnnotation",
+          "line": 137,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 150,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 151,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 152,
+          "isDefault": false
+        },
+        {
+          "name": "AppliedBuiltinTypeAnnotations",
+          "line": 147,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 159,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 160,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 161,
+          "isDefault": false
+        },
+        {
+          "name": "CompleteTypeDetail",
+          "line": 156,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 169,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 170,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 171,
+          "isDefault": false
+        },
+        {
+          "name": "CompleteStructHeader",
+          "line": 166,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 181,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 182,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 183,
+          "isDefault": false
+        },
+        {
+          "name": "CommonStructMember",
+          "line": 178,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 192,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 193,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 194,
+          "isDefault": false
+        },
+        {
+          "name": "AppliedBuiltinMemberAnnotations",
+          "line": 189,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 203,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 204,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 205,
+          "isDefault": false
+        },
+        {
+          "name": "CompleteMemberDetail",
+          "line": 200,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 214,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 215,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 216,
+          "isDefault": false
+        },
+        {
+          "name": "CompleteStructMember",
+          "line": 211,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 224,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 225,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 226,
+          "isDefault": false
+        },
+        {
+          "name": "CompleteStructType",
+          "line": 221,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 234,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 235,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 236,
+          "isDefault": false
+        },
+        {
+          "name": "CompleteAliasHeader",
+          "line": 231,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 243,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 244,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 245,
+          "isDefault": false
+        },
+        {
+          "name": "CompleteAliasBody",
+          "line": 240,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 253,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 254,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 255,
+          "isDefault": false
+        },
+        {
+          "name": "CompleteAliasType",
+          "line": 250,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 263,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 264,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 265,
+          "isDefault": false
+        },
+        {
+          "name": "CompleteArrayHeader",
+          "line": 260,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 272,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 273,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 274,
+          "isDefault": false
+        },
+        {
+          "name": "CompleteElementDetail",
+          "line": 269,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 281,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 282,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 283,
+          "isDefault": false
+        },
+        {
+          "name": "CompleteCollectionElement",
+          "line": 278,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 290,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 291,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 292,
+          "isDefault": false
+        },
+        {
+          "name": "CompleteArrayType",
+          "line": 287,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 300,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 301,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 302,
+          "isDefault": false
+        },
+        {
+          "name": "CommonCollectionHeader",
+          "line": 297,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 308,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 309,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 310,
+          "isDefault": false
+        },
+        {
+          "name": "CompleteCollectionHeader",
+          "line": 305,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 317,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 318,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 319,
+          "isDefault": false
+        },
+        {
+          "name": "CompleteSequenceType",
+          "line": 314,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 328,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 329,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 330,
+          "isDefault": false
+        },
+        {
+          "name": "CompleteMapType",
+          "line": 325,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 339,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 340,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 341,
+          "isDefault": false
+        },
+        {
+          "name": "CompleteAnnotationHeader",
+          "line": 336,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 347,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 348,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 349,
+          "isDefault": false
+        },
+        {
+          "name": "CommonAnnotationParameter",
+          "line": 344,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 356,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 357,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 358,
+          "isDefault": false
+        },
+        {
+          "name": "CompleteAnnotationParameter",
+          "line": 353,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 367,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 368,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 369,
+          "isDefault": false
+        },
+        {
+          "name": "CompleteAnnotationType",
+          "line": 364,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 377,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 378,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 379,
+          "isDefault": false
+        },
+        {
+          "name": "CompleteExtendedType",
+          "line": 374,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 384,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 385,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 386,
+          "isDefault": false
+        },
+        {
+          "name": "CompleteUnionHeader",
+          "line": 381,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 392,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 393,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 394,
+          "isDefault": false
+        },
+        {
+          "name": "CommonDiscriminatorMember",
+          "line": 389,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 401,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 402,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 403,
+          "isDefault": false
+        },
+        {
+          "name": "CompleteDiscriminatorMember",
+          "line": 398,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 412,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 413,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 414,
+          "isDefault": false
+        },
+        {
+          "name": "CommonUnionMember",
+          "line": 409,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 423,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 424,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 425,
+          "isDefault": false
+        },
+        {
+          "name": "CompleteUnionMember",
+          "line": 420,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 433,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 434,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 435,
+          "isDefault": false
+        },
+        {
+          "name": "CompleteUnionType",
+          "line": 430,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 444,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 445,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 446,
+          "isDefault": false
+        },
+        {
+          "name": "CompleteBitsetHeader",
+          "line": 441,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 453,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 454,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 455,
+          "isDefault": false
+        },
+        {
+          "name": "CommonBitfield",
+          "line": 450,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 464,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 465,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 466,
+          "isDefault": false
+        },
+        {
+          "name": "CompleteBitfield",
+          "line": 461,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 474,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 475,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 476,
+          "isDefault": false
+        },
+        {
+          "name": "CompleteBitsetType",
+          "line": 471,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 485,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 486,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 487,
+          "isDefault": false
+        },
+        {
+          "name": "CommonEnumeratedHeader",
+          "line": 482,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 493,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 494,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 495,
+          "isDefault": false
+        },
+        {
+          "name": "CompleteEnumeratedHeader",
+          "line": 490,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 502,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 503,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 504,
+          "isDefault": false
+        },
+        {
+          "name": "CommonBitflag",
+          "line": 499,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 511,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 512,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 513,
+          "isDefault": false
+        },
+        {
+          "name": "CompleteBitflag",
+          "line": 508,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 522,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 523,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 524,
+          "isDefault": false
+        },
+        {
+          "name": "CompleteBitmaskType",
+          "line": 519,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 532,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 533,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 534,
+          "isDefault": false
+        },
+        {
+          "name": "CommonEnumeratedLiteral",
+          "line": 529,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 541,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 542,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 543,
+          "isDefault": false
+        },
+        {
+          "name": "CompleteEnumeratedLiteral",
+          "line": 538,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 551,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 552,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 553,
+          "isDefault": false
+        },
+        {
+          "name": "CompleteEnumeratedType",
+          "line": 548,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 561,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 562,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 563,
+          "isDefault": false
+        },
+        {
+          "name": "CompleteTypeObject",
+          "line": 558,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 580,
+          "isDefault": false
+        },
+        {
+          "name": "GetCdrSerializedSize",
+          "line": 581,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 582,
+          "isDefault": false
+        },
+        {
+          "name": "TypeObject",
+          "line": 577,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 215,
+        "functionCount": 0,
+        "classCount": 56
+      }
+    }
+  ]
+}

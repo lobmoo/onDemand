@@ -1,0 +1,508 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 20,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/utils/SystemInfo.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 45,
+      "nonEmptyLines": 42,
+      "callGraph": [
+        {
+          "caller": "GetProcessId",
+          "callee": "GetCurrentProcessId",
+          "lineNumber": 25
+        },
+        {
+          "caller": "GetProcessId",
+          "callee": "_getpid",
+          "lineNumber": 27
+        },
+        {
+          "caller": "GetProcessId",
+          "callee": "getpid",
+          "lineNumber": 29
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/utils/TimeConversion.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 105,
+      "nonEmptyLines": 87,
+      "callGraph": [
+        {
+          "caller": "Time_t2SecondsDouble",
+          "callee": "Fraction",
+          "lineNumber": 17
+        },
+        {
+          "caller": "Time_t2SecondsDouble",
+          "callee": "pow",
+          "lineNumber": 17
+        },
+        {
+          "caller": "Time_t2MicroSecondsInt64",
+          "callee": "Fraction",
+          "lineNumber": 22
+        },
+        {
+          "caller": "Time_t2MicroSecondsInt64",
+          "callee": "pow",
+          "lineNumber": 22
+        },
+        {
+          "caller": "Time_t2MicroSecondsInt64",
+          "callee": "pow",
+          "lineNumber": 22
+        },
+        {
+          "caller": "Time_t2MicroSecondsInt64",
+          "callee": "pow",
+          "lineNumber": 22
+        },
+        {
+          "caller": "Duration_t2MicroSecondsInt64",
+          "callee": "pow",
+          "lineNumber": 27
+        },
+        {
+          "caller": "Time_t2MicroSecondsDouble",
+          "callee": "Fraction",
+          "lineNumber": 32
+        },
+        {
+          "caller": "Time_t2MicroSecondsDouble",
+          "callee": "pow",
+          "lineNumber": 32
+        },
+        {
+          "caller": "Time_t2MicroSecondsDouble",
+          "callee": "pow",
+          "lineNumber": 32
+        },
+        {
+          "caller": "Time_t2MicroSecondsDouble",
+          "callee": "pow",
+          "lineNumber": 32
+        },
+        {
+          "caller": "Time_t2MilliSecondsInt64",
+          "callee": "Fraction",
+          "lineNumber": 37
+        },
+        {
+          "caller": "Time_t2MilliSecondsInt64",
+          "callee": "pow",
+          "lineNumber": 37
+        },
+        {
+          "caller": "Time_t2MilliSecondsInt64",
+          "callee": "pow",
+          "lineNumber": 37
+        },
+        {
+          "caller": "Time_t2MilliSecondsInt64",
+          "callee": "pow",
+          "lineNumber": 37
+        },
+        {
+          "caller": "Time_t2MilliSecondsDouble",
+          "callee": "Fraction",
+          "lineNumber": 42
+        },
+        {
+          "caller": "Time_t2MilliSecondsDouble",
+          "callee": "pow",
+          "lineNumber": 42
+        },
+        {
+          "caller": "Time_t2MilliSecondsDouble",
+          "callee": "pow",
+          "lineNumber": 42
+        },
+        {
+          "caller": "Time_t2MilliSecondsDouble",
+          "callee": "pow",
+          "lineNumber": 42
+        },
+        {
+          "caller": "Duration_t2MilliSecondsDouble",
+          "callee": "pow",
+          "lineNumber": 47
+        },
+        {
+          "caller": "MilliSeconds2Time_t",
+          "callee": "pow",
+          "lineNumber": 53
+        },
+        {
+          "caller": "MilliSeconds2Time_t",
+          "callee": "Fraction",
+          "lineNumber": 54
+        },
+        {
+          "caller": "MilliSeconds2Time_t",
+          "callee": "pow",
+          "lineNumber": 54
+        },
+        {
+          "caller": "MilliSeconds2Time_t",
+          "callee": "pow",
+          "lineNumber": 54
+        },
+        {
+          "caller": "MilliSeconds2Time_t",
+          "callee": "pow",
+          "lineNumber": 54
+        },
+        {
+          "caller": "MicroSeconds2Time_t",
+          "callee": "pow",
+          "lineNumber": 61
+        },
+        {
+          "caller": "MicroSeconds2Time_t",
+          "callee": "Fraction",
+          "lineNumber": 62
+        },
+        {
+          "caller": "MicroSeconds2Time_t",
+          "callee": "pow",
+          "lineNumber": 62
+        },
+        {
+          "caller": "MicroSeconds2Time_t",
+          "callee": "pow",
+          "lineNumber": 62
+        },
+        {
+          "caller": "MicroSeconds2Time_t",
+          "callee": "pow",
+          "lineNumber": 62
+        },
+        {
+          "caller": "Seconds2Time_t",
+          "callee": "Fraction",
+          "lineNumber": 70
+        },
+        {
+          "caller": "Seconds2Time_t",
+          "callee": "pow",
+          "lineNumber": 70
+        },
+        {
+          "caller": "Time_tAbsDiff2DoubleMillisec",
+          "callee": "abs",
+          "lineNumber": 77
+        },
+        {
+          "caller": "Time_tAbsDiff2DoubleMillisec",
+          "callee": "std::abs",
+          "lineNumber": 78
+        },
+        {
+          "caller": "Time_tAbsDiff2DoubleMillisec",
+          "callee": "Fraction",
+          "lineNumber": 78
+        },
+        {
+          "caller": "Time_tAbsDiff2DoubleMillisec",
+          "callee": "Fraction",
+          "lineNumber": 78
+        },
+        {
+          "caller": "Time_tAbsDiff2DoubleMillisec",
+          "callee": "pow",
+          "lineNumber": 78
+        },
+        {
+          "caller": "MilliSecondsWithRandOffset2Time_t",
+          "callee": "std::abs",
+          "lineNumber": 84
+        },
+        {
+          "caller": "MilliSecondsWithRandOffset2Time_t",
+          "callee": "static_cast<double>",
+          "lineNumber": 85
+        },
+        {
+          "caller": "MilliSecondsWithRandOffset2Time_t",
+          "callee": "rand",
+          "lineNumber": 85
+        },
+        {
+          "caller": "MilliSecondsWithRandOffset2Time_t",
+          "callee": "static_cast<double>",
+          "lineNumber": 85
+        },
+        {
+          "caller": "MilliSecondsWithRandOffset2Time_t",
+          "callee": "MilliSeconds2Time_t",
+          "lineNumber": 86
+        },
+        {
+          "caller": "MicroSecondsWithRandOffset2Time_t",
+          "callee": "std::abs",
+          "lineNumber": 91
+        },
+        {
+          "caller": "MicroSecondsWithRandOffset2Time_t",
+          "callee": "static_cast<double>",
+          "lineNumber": 92
+        },
+        {
+          "caller": "MicroSecondsWithRandOffset2Time_t",
+          "callee": "rand",
+          "lineNumber": 92
+        },
+        {
+          "caller": "MicroSecondsWithRandOffset2Time_t",
+          "callee": "static_cast<double>",
+          "lineNumber": 92
+        },
+        {
+          "caller": "MicroSecondsWithRandOffset2Time_t",
+          "callee": "MicroSeconds2Time_t",
+          "lineNumber": 93
+        },
+        {
+          "caller": "SecondsWithRandOffset2Time_t",
+          "callee": "std::abs",
+          "lineNumber": 98
+        },
+        {
+          "caller": "SecondsWithRandOffset2Time_t",
+          "callee": "static_cast<double>",
+          "lineNumber": 99
+        },
+        {
+          "caller": "SecondsWithRandOffset2Time_t",
+          "callee": "rand",
+          "lineNumber": 99
+        },
+        {
+          "caller": "SecondsWithRandOffset2Time_t",
+          "callee": "static_cast<double>",
+          "lineNumber": 99
+        },
+        {
+          "caller": "SecondsWithRandOffset2Time_t",
+          "callee": "Seconds2Time_t",
+          "lineNumber": 100
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/writer/IStatefulWriter.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 55,
+      "nonEmptyLines": 45,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/writer/IStatelessWriter.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 32,
+      "nonEmptyLines": 27,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/writer/IWriter.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 119,
+      "nonEmptyLines": 98,
+      "callGraph": [
+        {
+          "caller": "AllSend",
+          "callee": "Send",
+          "lineNumber": 83
+        },
+        {
+          "caller": "AllSend",
+          "callee": "std::get<1>",
+          "lineNumber": 83
+        },
+        {
+          "caller": "CheckCdrMsg",
+          "callee": "Resize",
+          "lineNumber": 100
+        },
+        {
+          "caller": "CheckCdrMsg",
+          "callee": "Resize",
+          "lineNumber": 105
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/writer/IWriterListener.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 35,
+      "nonEmptyLines": 29,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/writer/WriterDiscoveryInfo.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 36,
+      "nonEmptyLines": 31,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/txddsexport.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 5,
+      "nonEmptyLines": 5,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/lib/libcrypto.so",
+      "language": "so",
+      "fileCategory": "code",
+      "totalLines": 8841,
+      "nonEmptyLines": 8805,
+      "metrics": {}
+    },
+    {
+      "path": "thirdparty/txdds/lib/libcrypto.so.1.1",
+      "language": "1",
+      "fileCategory": "code",
+      "totalLines": 8841,
+      "nonEmptyLines": 8805,
+      "metrics": {}
+    },
+    {
+      "path": "thirdparty/txdds/lib/libssl.so",
+      "language": "so",
+      "fileCategory": "code",
+      "totalLines": 1293,
+      "nonEmptyLines": 1292,
+      "metrics": {}
+    },
+    {
+      "path": "thirdparty/txdds/lib/libssl.so.1.1",
+      "language": "1",
+      "fileCategory": "code",
+      "totalLines": 1293,
+      "nonEmptyLines": 1292,
+      "metrics": {}
+    },
+    {
+      "path": "thirdparty/txdds/lib/libtinyxml2.so",
+      "language": "so",
+      "fileCategory": "code",
+      "totalLines": 239,
+      "nonEmptyLines": 239,
+      "metrics": {}
+    },
+    {
+      "path": "thirdparty/txdds/lib/libtinyxml2.so.6",
+      "language": "6",
+      "fileCategory": "code",
+      "totalLines": 239,
+      "nonEmptyLines": 239,
+      "metrics": {}
+    },
+    {
+      "path": "thirdparty/txdds/lib/libtinyxml2.so.6.2.0",
+      "language": "0",
+      "fileCategory": "code",
+      "totalLines": 239,
+      "nonEmptyLines": 239,
+      "metrics": {}
+    },
+    {
+      "path": "thirdparty/txdds/lib/libTXCDR.so",
+      "language": "so",
+      "fileCategory": "code",
+      "totalLines": 127,
+      "nonEmptyLines": 127,
+      "metrics": {}
+    },
+    {
+      "path": "thirdparty/txdds/lib/libTXCDR.so.3.00.2606.3.202606151305",
+      "language": "202606151305",
+      "fileCategory": "code",
+      "totalLines": 127,
+      "nonEmptyLines": 127,
+      "metrics": {}
+    },
+    {
+      "path": "thirdparty/txdds/lib/libTXDDS.so",
+      "language": "so",
+      "fileCategory": "code",
+      "totalLines": 8356,
+      "nonEmptyLines": 8345,
+      "metrics": {}
+    },
+    {
+      "path": "thirdparty/txdds/lib/libTXDDS.so.3.00.2606.3.202606151305",
+      "language": "202606151305",
+      "fileCategory": "code",
+      "totalLines": 8356,
+      "nonEmptyLines": 8345,
+      "metrics": {}
+    },
+    {
+      "path": "thirdparty/txdds/lib/libTXRuntimeLog.so",
+      "language": "so",
+      "fileCategory": "code",
+      "totalLines": 250,
+      "nonEmptyLines": 250,
+      "metrics": {}
+    }
+  ]
+}

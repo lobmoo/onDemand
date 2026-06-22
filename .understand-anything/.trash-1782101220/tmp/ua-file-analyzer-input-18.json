@@ -1,0 +1,13 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "core/ondemand/.gensrctx/dsf_define_node.cxx", "language": "cpp", "sizeLines": 837, "fileCategory": "code"},
+    {"path": "core/ondemand/.gensrctx/dsf_define_node.h", "language": "c", "sizeLines": 706, "fileCategory": "code"},
+    {"path": "core/ondemand/.gensrctx/dsf_define_nodeCdrAux.ipp", "language": "ipp", "sizeLines": 409, "fileCategory": "code"}
+  ],
+  "batchImportData": {
+    "core/ondemand/.gensrctx/dsf_define_node.cxx": ["core/ondemand/.gensrctx/dsf_define_node.h", "core/ondemand/.gensrctx/dsf_define_nodeCdrAux.ipp"],
+    "core/ondemand/.gensrctx/dsf_define_node.h": [],
+    "core/ondemand/.gensrctx/dsf_define_nodeCdrAux.ipp": []
+  }
+}

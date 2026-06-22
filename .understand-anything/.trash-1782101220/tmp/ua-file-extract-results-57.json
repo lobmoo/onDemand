@@ -1,0 +1,481 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 25,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 177,
+      "nonEmptyLines": 145,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/rtps/transport/shared_mem/test_SharedMemTransportDescriptor.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 56,
+      "nonEmptyLines": 45,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/rtps/transport/SocketTransportDescriptor.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 116,
+      "nonEmptyLines": 101,
+      "callGraph": [
+        {
+          "caller": "operator ==",
+          "callee": "min_send_buffer_size",
+          "lineNumber": 86
+        },
+        {
+          "caller": "operator ==",
+          "callee": "PortBasedTransportDescriptor::operator ==",
+          "lineNumber": 93
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/rtps/transport/TCPTransportDescriptor.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 334,
+      "nonEmptyLines": 304,
+      "callGraph": [
+        {
+          "caller": "add_listener_port",
+          "callee": "push_back",
+          "lineNumber": 308
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/rtps/transport/TCPv4TransportDescriptor.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 108,
+      "nonEmptyLines": 91,
+      "callGraph": [
+        {
+          "caller": "get_WAN_address",
+          "callee": "static_cast<int>",
+          "lineNumber": 81
+        },
+        {
+          "caller": "get_WAN_address",
+          "callee": "static_cast<int>",
+          "lineNumber": 82
+        },
+        {
+          "caller": "get_WAN_address",
+          "callee": "static_cast<int>",
+          "lineNumber": 83
+        },
+        {
+          "caller": "get_WAN_address",
+          "callee": "static_cast<int>",
+          "lineNumber": 84
+        },
+        {
+          "caller": "get_WAN_address",
+          "callee": "str",
+          "lineNumber": 85
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/rtps/transport/TCPv6TransportDescriptor.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 62,
+      "nonEmptyLines": 50,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/rtps/transport/test_UDPv4TransportDescriptor.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 181,
+      "nonEmptyLines": 156,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/rtps/transport/TransportDescriptorInterface.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 137,
+      "nonEmptyLines": 114,
+      "callGraph": [
+        {
+          "caller": "operator ==",
+          "callee": "max_message_size",
+          "lineNumber": 106
+        },
+        {
+          "caller": "operator ==",
+          "callee": "max_initial_peers_range",
+          "lineNumber": 107
+        },
+        {
+          "caller": "lock",
+          "callee": "lock",
+          "lineNumber": 113
+        },
+        {
+          "caller": "unlock",
+          "callee": "unlock",
+          "lineNumber": 119
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/rtps/transport/TransportInterface.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 346,
+      "nonEmptyLines": 295,
+      "callGraph": [
+        {
+          "caller": "transform_remote_locator",
+          "callee": "static_cast<void>",
+          "lineNumber": 314
+        },
+        {
+          "caller": "transform_remote_locator",
+          "callee": "static_cast<void>",
+          "lineNumber": 315
+        },
+        {
+          "caller": "transform_remote_locator",
+          "callee": "transform_remote_locator",
+          "lineNumber": 316
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/rtps/transport/TransportReceiverInterface.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 58,
+      "nonEmptyLines": 49,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/rtps/transport/UDPTransportDescriptor.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 82,
+      "nonEmptyLines": 69,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/rtps/transport/UDPv4TransportDescriptor.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 61,
+      "nonEmptyLines": 49,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/rtps/transport/UDPv6TransportDescriptor.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 63,
+      "nonEmptyLines": 50,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/rtps/writer/RTPSWriter.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 243,
+      "nonEmptyLines": 208,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/rtps/writer/WriterDiscoveryStatus.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 47,
+      "nonEmptyLines": 41,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/rtps/writer/WriterListener.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 143,
+      "nonEmptyLines": 125,
+      "callGraph": [
+        {
+          "caller": "on_writer_matched",
+          "callee": "static_cast<void>",
+          "lineNumber": 56
+        },
+        {
+          "caller": "on_writer_matched",
+          "callee": "static_cast<void>",
+          "lineNumber": 57
+        },
+        {
+          "caller": "on_offered_incompatible_qos",
+          "callee": "static_cast<void>",
+          "lineNumber": 71
+        },
+        {
+          "caller": "on_offered_incompatible_qos",
+          "callee": "static_cast<void>",
+          "lineNumber": 72
+        },
+        {
+          "caller": "on_writer_change_received_by_all",
+          "callee": "static_cast<void>",
+          "lineNumber": 85
+        },
+        {
+          "caller": "on_writer_change_received_by_all",
+          "callee": "static_cast<void>",
+          "lineNumber": 86
+        },
+        {
+          "caller": "on_liveliness_lost",
+          "callee": "static_cast<void>",
+          "lineNumber": 99
+        },
+        {
+          "caller": "on_liveliness_lost",
+          "callee": "static_cast<void>",
+          "lineNumber": 100
+        },
+        {
+          "caller": "on_reader_discovery",
+          "callee": "static_cast<void>",
+          "lineNumber": 117
+        },
+        {
+          "caller": "on_reader_discovery",
+          "callee": "static_cast<void>",
+          "lineNumber": 118
+        },
+        {
+          "caller": "on_reader_discovery",
+          "callee": "static_cast<void>",
+          "lineNumber": 119
+        },
+        {
+          "caller": "on_reader_discovery",
+          "callee": "static_cast<void>",
+          "lineNumber": 120
+        },
+        {
+          "caller": "on_incompatible_type",
+          "callee": "static_cast<void>",
+          "lineNumber": 132
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/statistics/dds/domain/DomainParticipant.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 180,
+      "nonEmptyLines": 158,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/statistics/dds/publisher/qos/DataWriterQos.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 53,
+      "nonEmptyLines": 44,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/statistics/dds/subscriber/qos/DataReaderQos.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 70,
+      "nonEmptyLines": 58,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/statistics/IListeners.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 43,
+      "nonEmptyLines": 34,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/statistics/monitorservice_types.idl",
+      "language": "idl",
+      "fileCategory": "code",
+      "totalLines": 134,
+      "nonEmptyLines": 115,
+      "metrics": {}
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/statistics/rtps/monitor_service/connections_fwd.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 38,
+      "nonEmptyLines": 30,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/statistics/rtps/StatisticsCommon.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 400,
+      "nonEmptyLines": 326,
+      "callGraph": [
+        {
+          "caller": "init_statistics",
+          "callee": "reset",
+          "lineNumber": 67
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/statistics/topic_names.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 69,
+      "nonEmptyLines": 63,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/statistics/types.idl",
+      "language": "idl",
+      "fileCategory": "code",
+      "totalLines": 174,
+      "nonEmptyLines": 153,
+      "metrics": {}
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "docs/design_ondemand_definitions.md", "language": "markdown", "sizeLines": 358, "fileCategory": "docs"},
+    {"path": "docs/design_ondemand_lite_broadcast.md", "language": "markdown", "sizeLines": 398, "fileCategory": "docs"},
+    {"path": "docs/onDemand_overview.md", "language": "markdown", "sizeLines": 400, "fileCategory": "docs"},
+    {"path": "docs/ondemand_architecture.md", "language": "markdown", "sizeLines": 652, "fileCategory": "docs"},
+    {"path": "docs/variable_store_design.md", "language": "markdown", "sizeLines": 210, "fileCategory": "docs"}
+  ],
+  "batchImportData": {
+    "docs/design_ondemand_definitions.md": [],
+    "docs/design_ondemand_lite_broadcast.md": [],
+    "docs/onDemand_overview.md": [],
+    "docs/ondemand_architecture.md": [],
+    "docs/variable_store_design.md": []
+  }
+}

@@ -1,0 +1,1142 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 25,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "thirdparty/CRoaring/include/roaring/roaring_array.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 305,
+      "nonEmptyLines": 253,
+      "callGraph": [
+        {
+          "caller": "ra_get_index",
+          "callee": "binarySearch",
+          "lineNumber": 81
+        },
+        {
+          "caller": "ra_set_container_at_index",
+          "callee": "assert",
+          "lineNumber": 162
+        },
+        {
+          "caller": "ra_advance_until",
+          "callee": "advanceUntil",
+          "lineNumber": 181
+        },
+        {
+          "caller": "ra_replace_key_and_container_at_index",
+          "callee": "assert",
+          "lineNumber": 192
+        },
+        {
+          "caller": "ra_unshare_container_at_index",
+          "callee": "assert",
+          "lineNumber": 258
+        },
+        {
+          "caller": "ra_unshare_container_at_index",
+          "callee": "get_writable_copy_if_shared",
+          "lineNumber": 260
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/CRoaring/include/roaring/roaring_types.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 153,
+      "nonEmptyLines": 125,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/CRoaring/include/roaring/roaring_version.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 12,
+      "nonEmptyLines": 12,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/CRoaring/include/roaring/roaring.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 1223,
+      "nonEmptyLines": 1096,
+      "callGraph": [
+        {
+          "caller": "roaring_bitmap_init_cleared",
+          "callee": "roaring_bitmap_init_with_capacity",
+          "lineNumber": 60
+        },
+        {
+          "caller": "roaring_bitmap_add_range",
+          "callee": "roaring_bitmap_add_range_closed",
+          "lineNumber": 407
+        },
+        {
+          "caller": "roaring_bitmap_remove_range",
+          "callee": "roaring_bitmap_remove_range_closed",
+          "lineNumber": 429
+        },
+        {
+          "caller": "roaring_init_iterator",
+          "callee": "roaring_iterator_init",
+          "lineNumber": 1069
+        },
+        {
+          "caller": "roaring_init_iterator_last",
+          "callee": "roaring_iterator_init_last",
+          "lineNumber": 1083
+        },
+        {
+          "caller": "roaring_advance_uint32_iterator",
+          "callee": "roaring_uint32_iterator_advance",
+          "lineNumber": 1116
+        },
+        {
+          "caller": "roaring_previous_uint32_iterator",
+          "callee": "roaring_uint32_iterator_previous",
+          "lineNumber": 1133
+        },
+        {
+          "caller": "roaring_move_uint32_iterator_equalorlarger",
+          "callee": "roaring_uint32_iterator_move_equalorlarger",
+          "lineNumber": 1148
+        },
+        {
+          "caller": "roaring_free_uint32_iterator",
+          "callee": "roaring_uint32_iterator_free",
+          "lineNumber": 1172
+        },
+        {
+          "caller": "roaring_read_uint32_iterator",
+          "callee": "roaring_uint32_iterator_read",
+          "lineNumber": 1192
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/CRoaring/include/roaring/roaring.hh",
+      "language": "hh",
+      "fileCategory": "code",
+      "totalLines": 1031,
+      "nonEmptyLines": 918,
+      "metrics": {}
+    },
+    {
+      "path": "thirdparty/CRoaring/include/roaring/roaring64.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 763,
+      "nonEmptyLines": 681,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/CRoaring/include/roaring/roaring64map.hh",
+      "language": "hh",
+      "fileCategory": "code",
+      "totalLines": 1898,
+      "nonEmptyLines": 1705,
+      "metrics": {}
+    },
+    {
+      "path": "thirdparty/CRoaring/include/roaring/utilasm.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 80,
+      "nonEmptyLines": 68,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/CRoaring/lib/libcmocka.so",
+      "language": "so",
+      "fileCategory": "code",
+      "totalLines": 190,
+      "nonEmptyLines": 190,
+      "metrics": {}
+    },
+    {
+      "path": "thirdparty/CRoaring/lib/libcmocka.so.0",
+      "language": "0",
+      "fileCategory": "code",
+      "totalLines": 190,
+      "nonEmptyLines": 190,
+      "metrics": {}
+    },
+    {
+      "path": "thirdparty/CRoaring/lib/libcmocka.so.0.7.0",
+      "language": "0",
+      "fileCategory": "code",
+      "totalLines": 190,
+      "nonEmptyLines": 190,
+      "metrics": {}
+    },
+    {
+      "path": "thirdparty/CRoaring/lib/libroaring.a",
+      "language": "a",
+      "fileCategory": "code",
+      "totalLines": 1255,
+      "nonEmptyLines": 1254,
+      "metrics": {}
+    },
+    {
+      "path": "thirdparty/CRoaring/lib/libroaring.so",
+      "language": "so",
+      "fileCategory": "code",
+      "totalLines": 1087,
+      "nonEmptyLines": 1087,
+      "metrics": {}
+    },
+    {
+      "path": "thirdparty/CRoaring/lib/libroaring.so.18",
+      "language": "18",
+      "fileCategory": "code",
+      "totalLines": 1087,
+      "nonEmptyLines": 1087,
+      "metrics": {}
+    },
+    {
+      "path": "thirdparty/CRoaring/lib/libroaring.so.4.3.6",
+      "language": "6",
+      "fileCategory": "code",
+      "totalLines": 1087,
+      "nonEmptyLines": 1087,
+      "metrics": {}
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastcdr/Cdr.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 3549,
+      "nonEmptyLines": 3172,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastcdr/cdr/fixed_size_string.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 344,
+      "nonEmptyLines": 305,
+      "callGraph": [
+        {
+          "caller": "fixed_string",
+          "callee": "memset",
+          "lineNumber": 54
+        },
+        {
+          "caller": "fixed_string",
+          "callee": "assign",
+          "lineNumber": 69
+        },
+        {
+          "caller": "fixed_string",
+          "callee": "set",
+          "lineNumber": 99
+        },
+        {
+          "caller": "fixed_string",
+          "callee": "set",
+          "lineNumber": 122
+        },
+        {
+          "caller": "fixed_string",
+          "callee": "c_str",
+          "lineNumber": 122
+        },
+        {
+          "caller": "to_string",
+          "callee": "std::string",
+          "lineNumber": 164
+        },
+        {
+          "caller": "operator ==",
+          "callee": "strncmp",
+          "lineNumber": 175
+        },
+        {
+          "caller": "operator ==",
+          "callee": "strncmp",
+          "lineNumber": 186
+        },
+        {
+          "caller": "operator ==",
+          "callee": "c_str",
+          "lineNumber": 186
+        },
+        {
+          "caller": "operator ==",
+          "callee": "strncmp",
+          "lineNumber": 197
+        },
+        {
+          "caller": "operator ==",
+          "callee": "c_str",
+          "lineNumber": 197
+        },
+        {
+          "caller": "operator <",
+          "callee": "compare",
+          "lineNumber": 241
+        },
+        {
+          "caller": "operator >",
+          "callee": "compare",
+          "lineNumber": 252
+        },
+        {
+          "caller": "operator <",
+          "callee": "compare",
+          "lineNumber": 263
+        },
+        {
+          "caller": "operator >",
+          "callee": "compare",
+          "lineNumber": 274
+        },
+        {
+          "caller": "compare",
+          "callee": "strncmp",
+          "lineNumber": 301
+        },
+        {
+          "caller": "compare",
+          "callee": "strncmp",
+          "lineNumber": 312
+        },
+        {
+          "caller": "compare",
+          "callee": "c_str",
+          "lineNumber": 312
+        },
+        {
+          "caller": "compare",
+          "callee": "strncmp",
+          "lineNumber": 323
+        },
+        {
+          "caller": "compare",
+          "callee": "c_str",
+          "lineNumber": 323
+        },
+        {
+          "caller": "set",
+          "callee": "static_cast<char*>",
+          "lineNumber": 331
+        },
+        {
+          "caller": "set",
+          "callee": "MEMCCPY",
+          "lineNumber": 331
+        },
+        {
+          "caller": "set",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 332
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastcdr/CdrEncoding.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 54,
+      "nonEmptyLines": 47,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastcdr/CdrSizeCalculator.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 1345,
+      "nonEmptyLines": 1207,
+      "callGraph": [
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "eprosima::fastcdr::calculate_serialized_size",
+          "lineNumber": 97
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "calculate_serialized_size",
+          "lineNumber": 115
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "static_cast<int32_t>",
+          "lineNumber": 115
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "calculate_serialized_size",
+          "lineNumber": 133
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "static_cast<uint32_t>",
+          "lineNumber": 133
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "calculate_serialized_size",
+          "lineNumber": 151
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "static_cast<int16_t>",
+          "lineNumber": 151
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "calculate_serialized_size",
+          "lineNumber": 169
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "static_cast<uint16_t>",
+          "lineNumber": 169
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "calculate_serialized_size",
+          "lineNumber": 187
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "static_cast<int8_t>",
+          "lineNumber": 187
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "calculate_serialized_size",
+          "lineNumber": 205
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "static_cast<uint8_t>",
+          "lineNumber": 205
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "static_cast<void>",
+          "lineNumber": 219
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "static_cast<void>",
+          "lineNumber": 235
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "static_cast<void>",
+          "lineNumber": 251
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "static_cast<void>",
+          "lineNumber": 267
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "static_cast<void>",
+          "lineNumber": 283
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "alignment",
+          "lineNumber": 284
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "static_cast<void>",
+          "lineNumber": 300
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "alignment",
+          "lineNumber": 301
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "static_cast<void>",
+          "lineNumber": 317
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "alignment",
+          "lineNumber": 318
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "static_cast<void>",
+          "lineNumber": 334
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "alignment",
+          "lineNumber": 335
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "static_cast<void>",
+          "lineNumber": 351
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "alignment",
+          "lineNumber": 352
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "static_cast<void>",
+          "lineNumber": 368
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "alignment",
+          "lineNumber": 369
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "static_cast<void>",
+          "lineNumber": 385
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "alignment",
+          "lineNumber": 386
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "static_cast<void>",
+          "lineNumber": 402
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "alignment",
+          "lineNumber": 403
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "static_cast<void>",
+          "lineNumber": 419
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "alignment",
+          "lineNumber": 420
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "static_cast<void>",
+          "lineNumber": 436
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "alignment",
+          "lineNumber": 437
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "alignment",
+          "lineNumber": 453
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "size",
+          "lineNumber": 453
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "alignment",
+          "lineNumber": 471
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "size",
+          "lineNumber": 471
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "alignment",
+          "lineNumber": 488
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "size",
+          "lineNumber": 488
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "alignment",
+          "lineNumber": 512
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "alignment",
+          "lineNumber": 515
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "calculate_array_serialized_size",
+          "lineNumber": 518
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "data",
+          "lineNumber": 518
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "size",
+          "lineNumber": 518
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "alignment",
+          "lineNumber": 543
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "calculate_array_serialized_size",
+          "lineNumber": 546
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "data",
+          "lineNumber": 546
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "size",
+          "lineNumber": 546
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "get_serialized_member_size<_T>",
+          "lineNumber": 550
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "size",
+          "lineNumber": 567
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "alignment",
+          "lineNumber": 567
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "is_multi_array_primitive",
+          "lineNumber": 587
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "alignment",
+          "lineNumber": 590
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "calculate_array_serialized_size",
+          "lineNumber": 594
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "data",
+          "lineNumber": 594
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "size",
+          "lineNumber": 594
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "is_multi_array_primitive",
+          "lineNumber": 597
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "alignment",
+          "lineNumber": 623
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "alignment",
+          "lineNumber": 626
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "begin",
+          "lineNumber": 629
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "end",
+          "lineNumber": 629
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "calculate_serialized_size",
+          "lineNumber": 631
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "calculate_serialized_size",
+          "lineNumber": 632
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "alignment",
+          "lineNumber": 658
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "begin",
+          "lineNumber": 661
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "end",
+          "lineNumber": 661
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "calculate_serialized_size",
+          "lineNumber": 663
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "calculate_serialized_size",
+          "lineNumber": 664
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "static_cast<void>",
+          "lineNumber": 681
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "static_cast<void>",
+          "lineNumber": 697
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "alignment",
+          "lineNumber": 698
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "static_cast<void>",
+          "lineNumber": 714
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "alignment",
+          "lineNumber": 715
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "static_cast<void>",
+          "lineNumber": 731
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "alignment",
+          "lineNumber": 732
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "has_value",
+          "lineNumber": 759
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "calculate_serialized_size",
+          "lineNumber": 761
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "value",
+          "lineNumber": 761
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "exception::BadParamException",
+          "lineNumber": 781
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "calculate_serialized_size",
+          "lineNumber": 784
+        },
+        {
+          "caller": "calculate_array_serialized_size",
+          "callee": "calculate_serialized_size",
+          "lineNumber": 805
+        },
+        {
+          "caller": "calculate_array_serialized_size",
+          "callee": "static_cast<void>",
+          "lineNumber": 824
+        },
+        {
+          "caller": "calculate_array_serialized_size",
+          "callee": "static_cast<void>",
+          "lineNumber": 842
+        },
+        {
+          "caller": "calculate_array_serialized_size",
+          "callee": "static_cast<void>",
+          "lineNumber": 860
+        },
+        {
+          "caller": "calculate_array_serialized_size",
+          "callee": "static_cast<void>",
+          "lineNumber": 878
+        },
+        {
+          "caller": "calculate_array_serialized_size",
+          "callee": "alignment",
+          "lineNumber": 879
+        },
+        {
+          "caller": "calculate_array_serialized_size",
+          "callee": "static_cast<void>",
+          "lineNumber": 897
+        },
+        {
+          "caller": "calculate_array_serialized_size",
+          "callee": "alignment",
+          "lineNumber": 898
+        },
+        {
+          "caller": "calculate_array_serialized_size",
+          "callee": "static_cast<void>",
+          "lineNumber": 916
+        },
+        {
+          "caller": "calculate_array_serialized_size",
+          "callee": "alignment",
+          "lineNumber": 917
+        },
+        {
+          "caller": "calculate_array_serialized_size",
+          "callee": "static_cast<void>",
+          "lineNumber": 935
+        },
+        {
+          "caller": "calculate_array_serialized_size",
+          "callee": "alignment",
+          "lineNumber": 936
+        },
+        {
+          "caller": "calculate_array_serialized_size",
+          "callee": "static_cast<void>",
+          "lineNumber": 954
+        },
+        {
+          "caller": "calculate_array_serialized_size",
+          "callee": "alignment",
+          "lineNumber": 955
+        },
+        {
+          "caller": "calculate_array_serialized_size",
+          "callee": "static_cast<void>",
+          "lineNumber": 973
+        },
+        {
+          "caller": "calculate_array_serialized_size",
+          "callee": "alignment",
+          "lineNumber": 974
+        },
+        {
+          "caller": "calculate_array_serialized_size",
+          "callee": "static_cast<void>",
+          "lineNumber": 992
+        },
+        {
+          "caller": "calculate_array_serialized_size",
+          "callee": "alignment",
+          "lineNumber": 993
+        },
+        {
+          "caller": "calculate_array_serialized_size",
+          "callee": "static_cast<void>",
+          "lineNumber": 1011
+        },
+        {
+          "caller": "calculate_array_serialized_size",
+          "callee": "alignment",
+          "lineNumber": 1012
+        },
+        {
+          "caller": "calculate_array_serialized_size",
+          "callee": "static_cast<void>",
+          "lineNumber": 1030
+        },
+        {
+          "caller": "calculate_array_serialized_size",
+          "callee": "alignment",
+          "lineNumber": 1031
+        },
+        {
+          "caller": "calculate_array_serialized_size",
+          "callee": "static_cast<void>",
+          "lineNumber": 1049
+        },
+        {
+          "caller": "calculate_array_serialized_size",
+          "callee": "alignment",
+          "lineNumber": 1050
+        },
+        {
+          "caller": "calculate_array_serialized_size",
+          "callee": "calculate_array_serialized_size",
+          "lineNumber": 1068
+        },
+        {
+          "caller": "calculate_array_serialized_size",
+          "callee": "data",
+          "lineNumber": 1068
+        },
+        {
+          "caller": "calculate_array_serialized_size",
+          "callee": "size",
+          "lineNumber": 1068
+        },
+        {
+          "caller": "calculate_array_serialized_size",
+          "callee": "calculate_array_serialized_size",
+          "lineNumber": 1083
+        },
+        {
+          "caller": "calculate_array_serialized_size",
+          "callee": "data",
+          "lineNumber": 1083
+        },
+        {
+          "caller": "calculate_array_serialized_size",
+          "callee": "size",
+          "lineNumber": 1083
+        },
+        {
+          "caller": "calculate_array_serialized_size",
+          "callee": "alignment",
+          "lineNumber": 1103
+        },
+        {
+          "caller": "calculate_array_serialized_size",
+          "callee": "calculate_array_serialized_size",
+          "lineNumber": 1107
+        },
+        {
+          "caller": "calculate_array_serialized_size",
+          "callee": "data",
+          "lineNumber": 1107
+        },
+        {
+          "caller": "calculate_array_serialized_size",
+          "callee": "size",
+          "lineNumber": 1107
+        },
+        {
+          "caller": "calculate_array_serialized_size",
+          "callee": "size",
+          "lineNumber": 1129
+        },
+        {
+          "caller": "calculate_array_serialized_size",
+          "callee": "size",
+          "lineNumber": 1130
+        },
+        {
+          "caller": "calculate_member_serialized_size",
+          "callee": "alignment",
+          "lineNumber": 1153
+        },
+        {
+          "caller": "calculate_member_serialized_size",
+          "callee": "calculate_serialized_size",
+          "lineNumber": 1164
+        },
+        {
+          "caller": "calculate_member_serialized_size",
+          "callee": "std::numeric_limits<uint16_t>::max",
+          "lineNumber": 1190
+        },
+        {
+          "caller": "calculate_member_serialized_size",
+          "callee": "has_value",
+          "lineNumber": 1227
+        },
+        {
+          "caller": "calculate_member_serialized_size",
+          "callee": "alignment",
+          "lineNumber": 1230
+        },
+        {
+          "caller": "calculate_member_serialized_size",
+          "callee": "has_value",
+          "lineNumber": 1238
+        },
+        {
+          "caller": "calculate_member_serialized_size",
+          "callee": "calculate_serialized_size",
+          "lineNumber": 1243
+        },
+        {
+          "caller": "calculate_member_serialized_size",
+          "callee": "std::numeric_limits<uint16_t>::max",
+          "lineNumber": 1266
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastcdr/config.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 51,
+      "nonEmptyLines": 42,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastcdr/config/doxygen_modules.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 34,
+      "nonEmptyLines": 29,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastcdr/detail/container_recursive_inspector.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 53,
+      "nonEmptyLines": 45,
+      "callGraph": [
+        {
+          "caller": "is_multi_array_primitive",
+          "callee": "is_multi_array_primitive",
+          "lineNumber": 47
+        },
+        {
+          "caller": "is_multi_array_primitive",
+          "callee": "static_cast<_T const*>",
+          "lineNumber": 47
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastcdr/eProsima_auto_link.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 67,
+      "nonEmptyLines": 57,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastcdr/exceptions/BadOptionalAccessException.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 83,
+      "nonEmptyLines": 72,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastcdr/exceptions/BadParamException.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 83,
+      "nonEmptyLines": 72,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    }
+  ]
+}

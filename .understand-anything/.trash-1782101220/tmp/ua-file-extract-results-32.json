@@ -1,0 +1,732 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 5,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "docs/design_ondemand_definitions.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 358,
+      "nonEmptyLines": 278,
+      "sections": [
+        {
+          "heading": "OnDemand 大规模变量内存优化方案",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "1. 问题",
+          "level": 2,
+          "line": 3
+        },
+        {
+          "heading": "Pub 端内存浪费",
+          "level": 3,
+          "line": 5
+        },
+        {
+          "heading": "2. 方案：懒创建（Lazy Create）",
+          "level": 2,
+          "line": 25
+        },
+        {
+          "heading": "核心思路",
+          "level": 3,
+          "line": 27
+        },
+        {
+          "heading": "内存对比（pub 端）",
+          "level": 3,
+          "line": 44
+        },
+        {
+          "heading": "3. 详细设计",
+          "level": 2,
+          "line": 55
+        },
+        {
+          "heading": "3.1 新增 API",
+          "level": 3,
+          "line": 57
+        },
+        {
+          "heading": "3.2 新增数据结构",
+          "level": 3,
+          "line": 80
+        },
+        {
+          "heading": "3.3 registerVars() 实现",
+          "level": 3,
+          "line": 91
+        },
+        {
+          "heading": "3.4 handleSubscribe() 改造",
+          "level": 3,
+          "line": 132
+        },
+        {
+          "heading": "3.5 tryLazyCreateVar() 实现",
+          "level": 3,
+          "line": 153
+        },
+        {
+          "heading": "3.6 信息完整性保证",
+          "level": 3,
+          "line": 206
+        },
+        {
+          "heading": "3.7 setVarData() 不需要改",
+          "level": 3,
+          "line": 221
+        },
+        {
+          "heading": "3.8 广播路径适配",
+          "level": 3,
+          "line": 226
+        },
+        {
+          "heading": "3.9 deleteVars() 适配",
+          "level": 3,
+          "line": 257
+        },
+        {
+          "heading": "4. 向后兼容",
+          "level": 2,
+          "line": 291
+        },
+        {
+          "heading": "迁移路径",
+          "level": 3,
+          "line": 304
+        },
+        {
+          "heading": "5. 风险",
+          "level": 2,
+          "line": 317
+        },
+        {
+          "heading": "5.1 首次 subscribe 延迟",
+          "level": 3,
+          "line": 319
+        },
+        {
+          "heading": "5.2 广播遍历 defineLookup_ 的开销",
+          "level": 3,
+          "line": 323
+        },
+        {
+          "heading": "5.3 锁顺序",
+          "level": 3,
+          "line": 328
+        },
+        {
+          "heading": "5.4 defineCache_ 的 deleteVars 适配",
+          "level": 3,
+          "line": 334
+        },
+        {
+          "heading": "6. 实现步骤",
+          "level": 2,
+          "line": 341
+        },
+        {
+          "heading": "Phase 1: 新增 pendingVars_ + registerVars()（1天）",
+          "level": 3,
+          "line": 343
+        },
+        {
+          "heading": "Phase 2: handleSubscribe 懒创建（1天）",
+          "level": 3,
+          "line": 347
+        },
+        {
+          "heading": "Phase 3: 广播 + deleteVars 适配（半天）",
+          "level": 3,
+          "line": 351
+        },
+        {
+          "heading": "Phase 4: 测试（1天）",
+          "level": 3,
+          "line": 355
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 28
+      }
+    },
+    {
+      "path": "docs/design_ondemand_lite_broadcast.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 398,
+      "nonEmptyLines": 320,
+      "sections": [
+        {
+          "heading": "OnDemand 轻量广播方案：Lite Topic + 按需创建",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "1. 与懒创建方案的区别",
+          "level": 2,
+          "line": 3
+        },
+        {
+          "heading": "2. 流程",
+          "level": 2,
+          "line": 18
+        },
+        {
+          "heading": "3. 新增 IDL",
+          "level": 2,
+          "line": 52
+        },
+        {
+          "heading": "3.1 PubTableDefineLite（pub → sub，轻量广播）",
+          "level": 3,
+          "line": 54
+        },
+        {
+          "heading": "3.2 SubTableRegister（不变）",
+          "level": 3,
+          "line": 78
+        },
+        {
+          "heading": "4. Pub 端设计",
+          "level": 2,
+          "line": 84
+        },
+        {
+          "heading": "4.1 新增数据结构",
+          "level": 3,
+          "line": 86
+        },
+        {
+          "heading": "4.2 registerVars() 实现",
+          "level": 3,
+          "line": 104
+        },
+        {
+          "heading": "4.3 broadcastLiteDefines() 实现",
+          "level": 3,
+          "line": 132
+        },
+        {
+          "heading": "4.4 handleSubscribe() 改造：按需 createVars",
+          "level": 3,
+          "line": 163
+        },
+        {
+          "heading": "5. Sub 端设计",
+          "level": 2,
+          "line": 212
+        },
+        {
+          "heading": "5.1 新增数据结构",
+          "level": 3,
+          "line": 214
+        },
+        {
+          "heading": "5.2 processTableDefineLite() 新增",
+          "level": 3,
+          "line": 232
+        },
+        {
+          "heading": "5.3 subscribe() 不变",
+          "level": 3,
+          "line": 254
+        },
+        {
+          "heading": "5.4 getAvailableVars() 适配",
+          "level": 3,
+          "line": 259
+        },
+        {
+          "heading": "6. 内存对比",
+          "level": 2,
+          "line": 269
+        },
+        {
+          "heading": "Pub 端",
+          "level": 3,
+          "line": 271
+        },
+        {
+          "heading": "Sub 端",
+          "level": 3,
+          "line": 282
+        },
+        {
+          "heading": "合计 (pub + sub, 100 变量被订阅)",
+          "level": 3,
+          "line": 290
+        },
+        {
+          "heading": "7. 时序图",
+          "level": 2,
+          "line": 300
+        },
+        {
+          "heading": "8. 向后兼容",
+          "level": 2,
+          "line": 337
+        },
+        {
+          "heading": "9. 风险",
+          "level": 2,
+          "line": 354
+        },
+        {
+          "heading": "9.1 subscribe 后 createVars 的时序",
+          "level": 3,
+          "line": 356
+        },
+        {
+          "heading": "9.2 Lite 和 Full 广播共存",
+          "level": 3,
+          "line": 361
+        },
+        {
+          "heading": "9.3 liteVarIndex_ 的 deleteVars 适配",
+          "level": 3,
+          "line": 367
+        },
+        {
+          "heading": "10. 实现步骤",
+          "level": 2,
+          "line": 374
+        },
+        {
+          "heading": "Phase 1: IDL + DDS 通道（1天）",
+          "level": 3,
+          "line": 376
+        },
+        {
+          "heading": "Phase 2: Pub 端 registerVars + broadcastLite（1天）",
+          "level": 3,
+          "line": 381
+        },
+        {
+          "heading": "Phase 3: Pub 端 handleSubscribe 按需创建（1天）",
+          "level": 3,
+          "line": 386
+        },
+        {
+          "heading": "Phase 4: Sub 端 Lite 接收（半天）",
+          "level": 3,
+          "line": 390
+        },
+        {
+          "heading": "Phase 5: 测试（1天）",
+          "level": 3,
+          "line": 395
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 32
+      }
+    },
+    {
+      "path": "docs/onDemand_overview.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 400,
+      "nonEmptyLines": 307,
+      "sections": [
+        {
+          "heading": "onDemand 按需发布订阅系统 — 项目概述",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "1. 项目定位",
+          "level": 2,
+          "line": 3
+        },
+        {
+          "heading": "2. 解决什么问题",
+          "level": 2,
+          "line": 11
+        },
+        {
+          "heading": "3. 整体架构",
+          "level": 2,
+          "line": 23
+        },
+        {
+          "heading": "分层说明",
+          "level": 3,
+          "line": 47
+        },
+        {
+          "heading": "4. 分桶机制",
+          "level": 2,
+          "line": 58
+        },
+        {
+          "heading": "为什么分桶",
+          "level": 3,
+          "line": 60
+        },
+        {
+          "heading": "分桶逻辑",
+          "level": 3,
+          "line": 68
+        },
+        {
+          "heading": "调度对齐（Jitter）",
+          "level": 3,
+          "line": 76
+        },
+        {
+          "heading": "5. VarStore — 无锁变量存储",
+          "level": 2,
+          "line": 91
+        },
+        {
+          "heading": "内存布局",
+          "level": 3,
+          "line": 95
+        },
+        {
+          "heading": "写入流程（精确内存序）",
+          "level": 3,
+          "line": 114
+        },
+        {
+          "heading": "读取流程",
+          "level": 3,
+          "line": 124
+        },
+        {
+          "heading": "软删除（unregister_var）",
+          "level": 3,
+          "line": 139
+        },
+        {
+          "heading": "主要接口",
+          "level": 3,
+          "line": 143
+        },
+        {
+          "heading": "OpGuard / ConfigGuard",
+          "level": 3,
+          "line": 158
+        },
+        {
+          "heading": "6. 时间轮调度",
+          "level": 2,
+          "line": 165
+        },
+        {
+          "heading": "TimerWheel（底层）",
+          "level": 3,
+          "line": 167
+        },
+        {
+          "heading": "TimerScheduler（封装层）",
+          "level": 3,
+          "line": 171
+        },
+        {
+          "heading": "Pub/Sub 中的使用",
+          "level": 3,
+          "line": 182
+        },
+        {
+          "heading": "7. Pub 端工作流程",
+          "level": 2,
+          "line": 189
+        },
+        {
+          "heading": "8. Sub 端工作流程",
+          "level": 2,
+          "line": 271
+        },
+        {
+          "heading": "9. DDS 通信层",
+          "level": 2,
+          "line": 334
+        },
+        {
+          "heading": "编译时抽象",
+          "level": 3,
+          "line": 336
+        },
+        {
+          "heading": "QoS 配置",
+          "level": 3,
+          "line": 350
+        },
+        {
+          "heading": "话题拓扑",
+          "level": 3,
+          "line": 361
+        },
+        {
+          "heading": "10. 性能优化要点",
+          "level": 2,
+          "line": 371
+        },
+        {
+          "heading": "11. 关键设计决策",
+          "level": 2,
+          "line": 387
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 28
+      }
+    },
+    {
+      "path": "docs/ondemand_architecture.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 652,
+      "nonEmptyLines": 522,
+      "sections": [
+        {
+          "heading": "OnDemand 模块架构文档",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "概述",
+          "level": 2,
+          "line": 3
+        },
+        {
+          "heading": "项目结构",
+          "level": 2,
+          "line": 16
+        },
+        {
+          "heading": "整体架构",
+          "level": 2,
+          "line": 43
+        },
+        {
+          "heading": "核心组件",
+          "level": 2,
+          "line": 71
+        },
+        {
+          "heading": "1. OnDemandPub（发布端）",
+          "level": 3,
+          "line": 73
+        },
+        {
+          "heading": "2. OnDemandSub（订阅端）",
+          "level": 3,
+          "line": 125
+        },
+        {
+          "heading": "主要数据结构",
+          "level": 2,
+          "line": 185
+        },
+        {
+          "heading": "VarMetadata（变量元数据）",
+          "level": 3,
+          "line": 187
+        },
+        {
+          "heading": "VarStore（变量数据存储）",
+          "level": 3,
+          "line": 224
+        },
+        {
+          "heading": "BucketManager（分桶管理）",
+          "level": 3,
+          "line": 296
+        },
+        {
+          "heading": "PublishGroupKey / CallbackGroupKey（调度分组键）",
+          "level": 3,
+          "line": 324
+        },
+        {
+          "heading": "GroupVarInfo / CallbackVarInfo（分组内变量信息）",
+          "level": 3,
+          "line": 341
+        },
+        {
+          "heading": "SubscriptionItem / VarCallbackData（用户接口类型）",
+          "level": 3,
+          "line": 364
+        },
+        {
+          "heading": "IDL 消息结构",
+          "level": 3,
+          "line": 387
+        },
+        {
+          "heading": "TimerScheduler / TimerWheel（时间轮调度器）",
+          "level": 3,
+          "line": 454
+        },
+        {
+          "heading": "DDS 通信协议",
+          "level": 2,
+          "line": 487
+        },
+        {
+          "heading": "数据流",
+          "level": 2,
+          "line": 497
+        },
+        {
+          "heading": "订阅建立流程",
+          "level": 3,
+          "line": 499
+        },
+        {
+          "heading": "数据推送流程",
+          "level": 3,
+          "line": 522
+        },
+        {
+          "heading": "取消订阅流程",
+          "level": 3,
+          "line": 547
+        },
+        {
+          "heading": "性能设计",
+          "level": 2,
+          "line": 568
+        },
+        {
+          "heading": "使用示例",
+          "level": 2,
+          "line": 584
+        },
+        {
+          "heading": "发布端",
+          "level": 3,
+          "line": 586
+        },
+        {
+          "heading": "订阅端",
+          "level": 3,
+          "line": 614
+        },
+        {
+          "heading": "已知限制 & TODO",
+          "level": 2,
+          "line": 645
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 26
+      }
+    },
+    {
+      "path": "docs/variable_store_design.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 210,
+      "nonEmptyLines": 161,
+      "sections": [
+        {
+          "heading": "VarStore 设计文档",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "概述",
+          "level": 2,
+          "line": 3
+        },
+        {
+          "heading": "内存布局",
+          "level": 2,
+          "line": 10
+        },
+        {
+          "heading": "核心数据结构",
+          "level": 2,
+          "line": 36
+        },
+        {
+          "heading": "并发模型",
+          "level": 2,
+          "line": 49
+        },
+        {
+          "heading": "两类操作",
+          "level": 3,
+          "line": 51
+        },
+        {
+          "heading": "竞态防护（双重检查）",
+          "level": 3,
+          "line": 67
+        },
+        {
+          "heading": "Seqlock 读写协议",
+          "level": 2,
+          "line": 84
+        },
+        {
+          "heading": "Dirty 追踪机制",
+          "level": 2,
+          "line": 105
+        },
+        {
+          "heading": "零拷贝接口",
+          "level": 2,
+          "line": 130
+        },
+        {
+          "heading": "read_ptr / ScopedPtr（零拷贝读）",
+          "level": 3,
+          "line": 132
+        },
+        {
+          "heading": "write_ptr（零拷贝写）",
+          "level": 3,
+          "line": 146
+        },
+        {
+          "heading": "生命周期",
+          "level": 2,
+          "line": 158
+        },
+        {
+          "heading": "设计权衡",
+          "level": 2,
+          "line": 177
+        },
+        {
+          "heading": "关键路径性能",
+          "level": 2,
+          "line": 190
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 15
+      }
+    }
+  ]
+}

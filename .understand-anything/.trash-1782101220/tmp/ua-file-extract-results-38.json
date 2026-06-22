@@ -1,0 +1,5458 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 25,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "thirdparty/arrow/include/arrow/ipc/test_common.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 183,
+      "nonEmptyLines": 134,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/ipc/type_fwd.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 68,
+      "nonEmptyLines": 53,
+      "classes": [
+        {
+          "name": "Message",
+          "startLine": 40,
+          "endLine": 40,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "IpcReadOptions",
+          "startLine": 50,
+          "endLine": 50,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "IpcWriteOptions",
+          "startLine": 51,
+          "endLine": 51,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "MessageReader",
+          "startLine": 53,
+          "endLine": 53,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "RecordBatchStreamReader",
+          "startLine": 55,
+          "endLine": 55,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "RecordBatchFileReader",
+          "startLine": 56,
+          "endLine": 56,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "RecordBatchWriter",
+          "startLine": 57,
+          "endLine": 57,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "DictionaryFieldMapper",
+          "startLine": 59,
+          "endLine": 59,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "DictionaryMemo",
+          "startLine": 60,
+          "endLine": 60,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "Reader",
+          "startLine": 64,
+          "endLine": 64,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "Message",
+          "line": 40,
+          "isDefault": false
+        },
+        {
+          "name": "IpcReadOptions",
+          "line": 50,
+          "isDefault": false
+        },
+        {
+          "name": "IpcWriteOptions",
+          "line": 51,
+          "isDefault": false
+        },
+        {
+          "name": "MessageReader",
+          "line": 53,
+          "isDefault": false
+        },
+        {
+          "name": "RecordBatchStreamReader",
+          "line": 55,
+          "isDefault": false
+        },
+        {
+          "name": "RecordBatchFileReader",
+          "line": 56,
+          "isDefault": false
+        },
+        {
+          "name": "RecordBatchWriter",
+          "line": 57,
+          "isDefault": false
+        },
+        {
+          "name": "DictionaryFieldMapper",
+          "line": 59,
+          "isDefault": false
+        },
+        {
+          "name": "DictionaryMemo",
+          "line": 60,
+          "isDefault": false
+        },
+        {
+          "name": "Reader",
+          "line": 64,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 10,
+        "functionCount": 0,
+        "classCount": 10
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/ipc/util.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 41,
+      "nonEmptyLines": 32,
+      "functions": [
+        {
+          "name": "PaddedLength",
+          "startLine": 36,
+          "endLine": 38,
+          "params": [
+            "nbytes"
+          ]
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/ipc/writer.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 474,
+      "nonEmptyLines": 416,
+      "classes": [
+        {
+          "name": "Array",
+          "startLine": 35,
+          "endLine": 35,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "Buffer",
+          "startLine": 36,
+          "endLine": 36,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "MemoryManager",
+          "startLine": 37,
+          "endLine": 37,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "MemoryPool",
+          "startLine": 38,
+          "endLine": 38,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "RecordBatch",
+          "startLine": 39,
+          "endLine": 39,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "Schema",
+          "startLine": 40,
+          "endLine": 40,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "Status",
+          "startLine": 41,
+          "endLine": 41,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "Table",
+          "startLine": 42,
+          "endLine": 42,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "Tensor",
+          "startLine": 43,
+          "endLine": 43,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "SparseTensor",
+          "startLine": 44,
+          "endLine": 44,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "OutputStream",
+          "startLine": 48,
+          "endLine": 48,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "IpcPayload",
+          "startLine": 56,
+          "endLine": 62,
+          "methods": [],
+          "properties": [
+            "type",
+            "metadata",
+            "body_buffers",
+            "body_length",
+            "raw_body_length"
+          ]
+        },
+        {
+          "name": "WriteStats",
+          "startLine": 64,
+          "endLine": 85,
+          "methods": [],
+          "properties": [
+            "num_messages",
+            "num_record_batches",
+            "num_dictionary_batches",
+            "num_dictionary_deltas",
+            "num_replaced_dictionaries",
+            "total_raw_body_size",
+            "total_serialized_body_size"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "Array",
+          "line": 35,
+          "isDefault": false
+        },
+        {
+          "name": "Buffer",
+          "line": 36,
+          "isDefault": false
+        },
+        {
+          "name": "MemoryManager",
+          "line": 37,
+          "isDefault": false
+        },
+        {
+          "name": "MemoryPool",
+          "line": 38,
+          "isDefault": false
+        },
+        {
+          "name": "RecordBatch",
+          "line": 39,
+          "isDefault": false
+        },
+        {
+          "name": "Schema",
+          "line": 40,
+          "isDefault": false
+        },
+        {
+          "name": "Status",
+          "line": 41,
+          "isDefault": false
+        },
+        {
+          "name": "Table",
+          "line": 42,
+          "isDefault": false
+        },
+        {
+          "name": "Tensor",
+          "line": 43,
+          "isDefault": false
+        },
+        {
+          "name": "SparseTensor",
+          "line": 44,
+          "isDefault": false
+        },
+        {
+          "name": "OutputStream",
+          "line": 48,
+          "isDefault": false
+        },
+        {
+          "name": "IpcPayload",
+          "line": 56,
+          "isDefault": false
+        },
+        {
+          "name": "WriteStats",
+          "line": 64,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 13,
+        "functionCount": 0,
+        "classCount": 13
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/memory_pool_test.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 110,
+      "nonEmptyLines": 90,
+      "functions": [
+        {
+          "name": "TestMemoryTracking",
+          "startLine": 37,
+          "endLine": 54,
+          "params": []
+        },
+        {
+          "name": "TestOOM",
+          "startLine": 56,
+          "endLine": 66,
+          "params": []
+        },
+        {
+          "name": "TestReallocate",
+          "startLine": 68,
+          "endLine": 90,
+          "params": []
+        },
+        {
+          "name": "TestAlignment",
+          "startLine": 92,
+          "endLine": 107,
+          "params": []
+        }
+      ],
+      "classes": [
+        {
+          "name": "TestMemoryPoolBase",
+          "startLine": 33,
+          "endLine": 108,
+          "methods": [
+            "TestMemoryTracking",
+            "TestOOM",
+            "TestReallocate",
+            "TestAlignment"
+          ],
+          "properties": [
+            "memory_pool"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "TestMemoryTracking",
+          "line": 37,
+          "isDefault": false
+        },
+        {
+          "name": "TestOOM",
+          "line": 56,
+          "isDefault": false
+        },
+        {
+          "name": "TestReallocate",
+          "line": 68,
+          "isDefault": false
+        },
+        {
+          "name": "TestAlignment",
+          "line": 92,
+          "isDefault": false
+        },
+        {
+          "name": "TestMemoryPoolBase",
+          "line": 33,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "TestMemoryTracking",
+          "callee": "memory_pool",
+          "lineNumber": 38
+        },
+        {
+          "caller": "TestMemoryTracking",
+          "callee": "ASSERT_OK",
+          "lineNumber": 41
+        },
+        {
+          "caller": "TestMemoryTracking",
+          "callee": "Allocate",
+          "lineNumber": 41
+        },
+        {
+          "caller": "TestMemoryTracking",
+          "callee": "EXPECT_EQ",
+          "lineNumber": 42
+        },
+        {
+          "caller": "TestMemoryTracking",
+          "callee": "static_cast<uint64_t>",
+          "lineNumber": 42
+        },
+        {
+          "caller": "TestMemoryTracking",
+          "callee": "reinterpret_cast<uint64_t>",
+          "lineNumber": 42
+        },
+        {
+          "caller": "TestMemoryTracking",
+          "callee": "ASSERT_EQ",
+          "lineNumber": 43
+        },
+        {
+          "caller": "TestMemoryTracking",
+          "callee": "bytes_allocated",
+          "lineNumber": 43
+        },
+        {
+          "caller": "TestMemoryTracking",
+          "callee": "ASSERT_OK",
+          "lineNumber": 46
+        },
+        {
+          "caller": "TestMemoryTracking",
+          "callee": "Allocate",
+          "lineNumber": 46
+        },
+        {
+          "caller": "TestMemoryTracking",
+          "callee": "EXPECT_EQ",
+          "lineNumber": 47
+        },
+        {
+          "caller": "TestMemoryTracking",
+          "callee": "static_cast<uint64_t>",
+          "lineNumber": 47
+        },
+        {
+          "caller": "TestMemoryTracking",
+          "callee": "reinterpret_cast<uint64_t>",
+          "lineNumber": 47
+        },
+        {
+          "caller": "TestMemoryTracking",
+          "callee": "ASSERT_EQ",
+          "lineNumber": 48
+        },
+        {
+          "caller": "TestMemoryTracking",
+          "callee": "bytes_allocated",
+          "lineNumber": 48
+        },
+        {
+          "caller": "TestMemoryTracking",
+          "callee": "Free",
+          "lineNumber": 50
+        },
+        {
+          "caller": "TestMemoryTracking",
+          "callee": "ASSERT_EQ",
+          "lineNumber": 51
+        },
+        {
+          "caller": "TestMemoryTracking",
+          "callee": "bytes_allocated",
+          "lineNumber": 51
+        },
+        {
+          "caller": "TestMemoryTracking",
+          "callee": "Free",
+          "lineNumber": 52
+        },
+        {
+          "caller": "TestMemoryTracking",
+          "callee": "ASSERT_EQ",
+          "lineNumber": 53
+        },
+        {
+          "caller": "TestMemoryTracking",
+          "callee": "bytes_allocated",
+          "lineNumber": 53
+        },
+        {
+          "caller": "TestOOM",
+          "callee": "memory_pool",
+          "lineNumber": 57
+        },
+        {
+          "caller": "TestOOM",
+          "callee": "std::min<uint64_t>",
+          "lineNumber": 60
+        },
+        {
+          "caller": "TestOOM",
+          "callee": "std::numeric_limits<int64_t>::max",
+          "lineNumber": 60
+        },
+        {
+          "caller": "TestOOM",
+          "callee": "std::numeric_limits<size_t>::max",
+          "lineNumber": 61
+        },
+        {
+          "caller": "TestOOM",
+          "callee": "ASSERT_RAISES",
+          "lineNumber": 64
+        },
+        {
+          "caller": "TestOOM",
+          "callee": "Allocate",
+          "lineNumber": 64
+        },
+        {
+          "caller": "TestReallocate",
+          "callee": "memory_pool",
+          "lineNumber": 69
+        },
+        {
+          "caller": "TestReallocate",
+          "callee": "ASSERT_OK",
+          "lineNumber": 72
+        },
+        {
+          "caller": "TestReallocate",
+          "callee": "Allocate",
+          "lineNumber": 72
+        },
+        {
+          "caller": "TestReallocate",
+          "callee": "ASSERT_EQ",
+          "lineNumber": 73
+        },
+        {
+          "caller": "TestReallocate",
+          "callee": "bytes_allocated",
+          "lineNumber": 73
+        },
+        {
+          "caller": "TestReallocate",
+          "callee": "ASSERT_OK",
+          "lineNumber": 78
+        },
+        {
+          "caller": "TestReallocate",
+          "callee": "Reallocate",
+          "lineNumber": 78
+        },
+        {
+          "caller": "TestReallocate",
+          "callee": "ASSERT_EQ",
+          "lineNumber": 79
+        },
+        {
+          "caller": "TestReallocate",
+          "callee": "ASSERT_EQ",
+          "lineNumber": 80
+        },
+        {
+          "caller": "TestReallocate",
+          "callee": "bytes_allocated",
+          "lineNumber": 80
+        },
+        {
+          "caller": "TestReallocate",
+          "callee": "ASSERT_OK",
+          "lineNumber": 83
+        },
+        {
+          "caller": "TestReallocate",
+          "callee": "Reallocate",
+          "lineNumber": 83
+        },
+        {
+          "caller": "TestReallocate",
+          "callee": "ASSERT_EQ",
+          "lineNumber": 84
+        },
+        {
+          "caller": "TestReallocate",
+          "callee": "ASSERT_EQ",
+          "lineNumber": 85
+        },
+        {
+          "caller": "TestReallocate",
+          "callee": "bytes_allocated",
+          "lineNumber": 85
+        },
+        {
+          "caller": "TestReallocate",
+          "callee": "Free",
+          "lineNumber": 88
+        },
+        {
+          "caller": "TestReallocate",
+          "callee": "ASSERT_EQ",
+          "lineNumber": 89
+        },
+        {
+          "caller": "TestReallocate",
+          "callee": "bytes_allocated",
+          "lineNumber": 89
+        },
+        {
+          "caller": "TestAlignment",
+          "callee": "memory_pool",
+          "lineNumber": 93
+        },
+        {
+          "caller": "TestAlignment",
+          "callee": "ASSERT_OK",
+          "lineNumber": 96
+        },
+        {
+          "caller": "TestAlignment",
+          "callee": "Allocate",
+          "lineNumber": 96
+        },
+        {
+          "caller": "TestAlignment",
+          "callee": "ASSERT_EQ",
+          "lineNumber": 97
+        },
+        {
+          "caller": "TestAlignment",
+          "callee": "reinterpret_cast<uintptr_t>",
+          "lineNumber": 97
+        },
+        {
+          "caller": "TestAlignment",
+          "callee": "Free",
+          "lineNumber": 98
+        },
+        {
+          "caller": "TestAlignment",
+          "callee": "ASSERT_OK",
+          "lineNumber": 103
+        },
+        {
+          "caller": "TestAlignment",
+          "callee": "Allocate",
+          "lineNumber": 103
+        },
+        {
+          "caller": "TestAlignment",
+          "callee": "ASSERT_EQ",
+          "lineNumber": 104
+        },
+        {
+          "caller": "TestAlignment",
+          "callee": "reinterpret_cast<uintptr_t>",
+          "lineNumber": 104
+        },
+        {
+          "caller": "TestAlignment",
+          "callee": "Free",
+          "lineNumber": 105
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 5,
+        "functionCount": 4,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/memory_pool.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 272,
+      "nonEmptyLines": 214,
+      "functions": [
+        {
+          "name": "MemoryPoolStats",
+          "startLine": 40,
+          "endLine": 40,
+          "params": []
+        },
+        {
+          "name": "max_memory",
+          "startLine": 42,
+          "endLine": 42,
+          "params": []
+        },
+        {
+          "name": "bytes_allocated",
+          "startLine": 44,
+          "endLine": 44,
+          "params": []
+        },
+        {
+          "name": "total_bytes_allocated",
+          "startLine": 46,
+          "endLine": 46,
+          "params": []
+        },
+        {
+          "name": "num_allocations",
+          "startLine": 48,
+          "endLine": 48,
+          "params": []
+        },
+        {
+          "name": "UpdateAllocatedBytes",
+          "startLine": 50,
+          "endLine": 69,
+          "params": [
+            "diff"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "MemoryPoolStats",
+          "startLine": 38,
+          "endLine": 76,
+          "methods": [
+            "MemoryPoolStats",
+            "max_memory",
+            "bytes_allocated",
+            "total_bytes_allocated",
+            "num_allocations",
+            "UpdateAllocatedBytes"
+          ],
+          "properties": [
+            "bytes_allocated_",
+            "max_memory_",
+            "total_allocated_bytes_",
+            "num_allocs_"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "MemoryPoolStats",
+          "line": 40,
+          "isDefault": false
+        },
+        {
+          "name": "max_memory",
+          "line": 42,
+          "isDefault": false
+        },
+        {
+          "name": "bytes_allocated",
+          "line": 44,
+          "isDefault": false
+        },
+        {
+          "name": "total_bytes_allocated",
+          "line": 46,
+          "isDefault": false
+        },
+        {
+          "name": "num_allocations",
+          "line": 48,
+          "isDefault": false
+        },
+        {
+          "name": "UpdateAllocatedBytes",
+          "line": 50,
+          "isDefault": false
+        },
+        {
+          "name": "MemoryPoolStats",
+          "line": 38,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "max_memory",
+          "callee": "load",
+          "lineNumber": 42
+        },
+        {
+          "caller": "bytes_allocated",
+          "callee": "load",
+          "lineNumber": 44
+        },
+        {
+          "caller": "total_bytes_allocated",
+          "callee": "load",
+          "lineNumber": 46
+        },
+        {
+          "caller": "num_allocations",
+          "callee": "load",
+          "lineNumber": 48
+        },
+        {
+          "caller": "UpdateAllocatedBytes",
+          "callee": "fetch_add",
+          "lineNumber": 51
+        },
+        {
+          "caller": "Allocate",
+          "callee": "Allocate",
+          "lineNumber": 95
+        },
+        {
+          "caller": "Reallocate",
+          "callee": "Reallocate",
+          "lineNumber": 108
+        },
+        {
+          "caller": "Free",
+          "callee": "Free",
+          "lineNumber": 120
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 7,
+        "functionCount": 6,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/pch.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 30,
+      "nonEmptyLines": 28,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/pretty_print.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 151,
+      "nonEmptyLines": 118,
+      "classes": [
+        {
+          "name": "Array",
+          "startLine": 28,
+          "endLine": 28,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "ChunkedArray",
+          "startLine": 29,
+          "endLine": 29,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "RecordBatch",
+          "startLine": 30,
+          "endLine": 30,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "Schema",
+          "startLine": 31,
+          "endLine": 31,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "Status",
+          "startLine": 32,
+          "endLine": 32,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "Table",
+          "startLine": 33,
+          "endLine": 33,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "Array",
+          "line": 28,
+          "isDefault": false
+        },
+        {
+          "name": "ChunkedArray",
+          "line": 29,
+          "isDefault": false
+        },
+        {
+          "name": "RecordBatch",
+          "line": 30,
+          "isDefault": false
+        },
+        {
+          "name": "Schema",
+          "line": 31,
+          "isDefault": false
+        },
+        {
+          "name": "Status",
+          "line": 32,
+          "isDefault": false
+        },
+        {
+          "name": "Table",
+          "line": 33,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "Defaults",
+          "callee": "PrettyPrintDelimiters",
+          "lineNumber": 44
+        },
+        {
+          "caller": "PrettyPrintOptions",
+          "callee": "std::move",
+          "lineNumber": 60
+        },
+        {
+          "caller": "Defaults",
+          "callee": "PrettyPrintOptions",
+          "lineNumber": 65
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 6,
+        "functionCount": 0,
+        "classCount": 6
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/record_batch.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 353,
+      "nonEmptyLines": 291,
+      "callGraph": [
+        {
+          "caller": "ReadNext",
+          "callee": "Status::NotImplemented",
+          "lineNumber": 256
+        },
+        {
+          "caller": "Next",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 262
+        },
+        {
+          "caller": "Next",
+          "callee": "ReadNext",
+          "lineNumber": 262
+        },
+        {
+          "caller": "Close",
+          "callee": "Status::OK",
+          "lineNumber": 267
+        },
+        {
+          "caller": "RecordBatchReaderIterator",
+          "callee": "RecordBatchEnd",
+          "lineNumber": 277
+        },
+        {
+          "caller": "RecordBatchReaderIterator",
+          "callee": "RecordBatchEnd",
+          "lineNumber": 280
+        },
+        {
+          "caller": "RecordBatchReaderIterator",
+          "callee": "Next",
+          "lineNumber": 281
+        },
+        {
+          "caller": "operator*",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 293
+        },
+        {
+          "caller": "operator*",
+          "callee": "status",
+          "lineNumber": 293
+        },
+        {
+          "caller": "operator++",
+          "callee": "Next",
+          "lineNumber": 305
+        },
+        {
+          "caller": "RecordBatchEnd",
+          "callee": "std::shared_ptr<RecordBatch>",
+          "lineNumber": 311
+        },
+        {
+          "caller": "Next",
+          "callee": "RecordBatchEnd",
+          "lineNumber": 316
+        },
+        {
+          "caller": "Next",
+          "callee": "Next",
+          "lineNumber": 319
+        },
+        {
+          "caller": "begin",
+          "callee": "RecordBatchReaderIterator",
+          "lineNumber": 326
+        },
+        {
+          "caller": "end",
+          "callee": "RecordBatchReaderIterator",
+          "lineNumber": 329
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/result.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 508,
+      "nonEmptyLines": 453,
+      "callGraph": [
+        {
+          "caller": "Result",
+          "callee": "Status::UnknownError",
+          "lineNumber": 115
+        },
+        {
+          "caller": "~Result",
+          "callee": "Destroy",
+          "lineNumber": 117
+        },
+        {
+          "caller": "Result",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 131
+        },
+        {
+          "caller": "Result",
+          "callee": "ok",
+          "lineNumber": 131
+        },
+        {
+          "caller": "Result",
+          "callee": "internal::DieWithMessage",
+          "lineNumber": 132
+        },
+        {
+          "caller": "Result",
+          "callee": "std::string",
+          "lineNumber": 132
+        },
+        {
+          "caller": "Result",
+          "callee": "ToString",
+          "lineNumber": 133
+        },
+        {
+          "caller": "Result",
+          "callee": "ConstructValue",
+          "lineNumber": 163
+        },
+        {
+          "caller": "Result",
+          "callee": "std::forward<U>",
+          "lineNumber": 163
+        },
+        {
+          "caller": "Result",
+          "callee": "ConstructValue",
+          "lineNumber": 178
+        },
+        {
+          "caller": "Result",
+          "callee": "std::move",
+          "lineNumber": 178
+        },
+        {
+          "caller": "Result",
+          "callee": "ARROW_PREDICT_TRUE",
+          "lineNumber": 192
+        },
+        {
+          "caller": "Result",
+          "callee": "ok",
+          "lineNumber": 192
+        },
+        {
+          "caller": "Result",
+          "callee": "ConstructValue",
+          "lineNumber": 193
+        },
+        {
+          "caller": "Result",
+          "callee": "ValueUnsafe",
+          "lineNumber": 193
+        },
+        {
+          "caller": "Result",
+          "callee": "ARROW_PREDICT_TRUE",
+          "lineNumber": 207
+        },
+        {
+          "caller": "Result",
+          "callee": "ok",
+          "lineNumber": 207
+        },
+        {
+          "caller": "Result",
+          "callee": "ConstructValue",
+          "lineNumber": 208
+        },
+        {
+          "caller": "Result",
+          "callee": "ValueUnsafe",
+          "lineNumber": 208
+        },
+        {
+          "caller": "Result",
+          "callee": "ARROW_PREDICT_TRUE",
+          "lineNumber": 240
+        },
+        {
+          "caller": "Result",
+          "callee": "ok",
+          "lineNumber": 240
+        },
+        {
+          "caller": "Result",
+          "callee": "std::move",
+          "lineNumber": 241
+        },
+        {
+          "caller": "Result",
+          "callee": "ConstructValue",
+          "lineNumber": 242
+        },
+        {
+          "caller": "Result",
+          "callee": "MoveValueUnsafe",
+          "lineNumber": 242
+        },
+        {
+          "caller": "Equals",
+          "callee": "ARROW_PREDICT_TRUE",
+          "lineNumber": 275
+        },
+        {
+          "caller": "Equals",
+          "callee": "ok",
+          "lineNumber": 275
+        },
+        {
+          "caller": "Equals",
+          "callee": "ok",
+          "lineNumber": 276
+        },
+        {
+          "caller": "Equals",
+          "callee": "ValueUnsafe",
+          "lineNumber": 276
+        },
+        {
+          "caller": "Equals",
+          "callee": "ValueUnsafe",
+          "lineNumber": 276
+        },
+        {
+          "caller": "ok",
+          "callee": "ok",
+          "lineNumber": 288
+        },
+        {
+          "caller": "ValueOrDie",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 338
+        },
+        {
+          "caller": "ValueOrDie",
+          "callee": "ok",
+          "lineNumber": 338
+        },
+        {
+          "caller": "ValueOrDie",
+          "callee": "internal::InvalidValueOrDie",
+          "lineNumber": 339
+        },
+        {
+          "caller": "ValueOrDie",
+          "callee": "MoveValueUnsafe",
+          "lineNumber": 341
+        },
+        {
+          "caller": "operator*",
+          "callee": "ValueOrDie",
+          "lineNumber": 343
+        },
+        {
+          "caller": "operator*",
+          "callee": "std::move",
+          "lineNumber": 343
+        },
+        {
+          "caller": "Value",
+          "callee": "ok",
+          "lineNumber": 352
+        },
+        {
+          "caller": "Value",
+          "callee": "status",
+          "lineNumber": 353
+        },
+        {
+          "caller": "Value",
+          "callee": "U",
+          "lineNumber": 355
+        },
+        {
+          "caller": "Value",
+          "callee": "MoveValueUnsafe",
+          "lineNumber": 355
+        },
+        {
+          "caller": "Value",
+          "callee": "Status::OK",
+          "lineNumber": 356
+        },
+        {
+          "caller": "ValueOr",
+          "callee": "ok",
+          "lineNumber": 361
+        },
+        {
+          "caller": "ValueOr",
+          "callee": "MoveValueUnsafe",
+          "lineNumber": 364
+        },
+        {
+          "caller": "ValueOrElse",
+          "callee": "ok",
+          "lineNumber": 371
+        },
+        {
+          "caller": "ValueOrElse",
+          "callee": "MoveValueUnsafe",
+          "lineNumber": 372
+        },
+        {
+          "caller": "ValueOrElse",
+          "callee": "std::forward<G>(generate_alternative)",
+          "lineNumber": 374
+        },
+        {
+          "caller": "ValueOrElse",
+          "callee": "std::forward<G>",
+          "lineNumber": 374
+        },
+        {
+          "caller": "Map",
+          "callee": "std::declval<M&&>()",
+          "lineNumber": 380
+        },
+        {
+          "caller": "Map",
+          "callee": "std::declval<M&&>",
+          "lineNumber": 380
+        },
+        {
+          "caller": "Map",
+          "callee": "std::declval<T&&>",
+          "lineNumber": 380
+        },
+        {
+          "caller": "Map",
+          "callee": "ok",
+          "lineNumber": 382
+        },
+        {
+          "caller": "Map",
+          "callee": "status",
+          "lineNumber": 383
+        },
+        {
+          "caller": "Map",
+          "callee": "std::forward<M>(m)",
+          "lineNumber": 385
+        },
+        {
+          "caller": "Map",
+          "callee": "std::forward<M>",
+          "lineNumber": 385
+        },
+        {
+          "caller": "Map",
+          "callee": "MoveValueUnsafe",
+          "lineNumber": 385
+        },
+        {
+          "caller": "Map",
+          "callee": "std::declval<M&&>()",
+          "lineNumber": 391
+        },
+        {
+          "caller": "Map",
+          "callee": "std::declval<M&&>",
+          "lineNumber": 391
+        },
+        {
+          "caller": "Map",
+          "callee": "std::declval<const T&>",
+          "lineNumber": 391
+        },
+        {
+          "caller": "Map",
+          "callee": "ok",
+          "lineNumber": 393
+        },
+        {
+          "caller": "Map",
+          "callee": "status",
+          "lineNumber": 394
+        },
+        {
+          "caller": "Map",
+          "callee": "std::forward<M>(m)",
+          "lineNumber": 396
+        },
+        {
+          "caller": "Map",
+          "callee": "std::forward<M>",
+          "lineNumber": 396
+        },
+        {
+          "caller": "Map",
+          "callee": "ValueUnsafe",
+          "lineNumber": 396
+        },
+        {
+          "caller": "As",
+          "callee": "ok",
+          "lineNumber": 404
+        },
+        {
+          "caller": "As",
+          "callee": "status",
+          "lineNumber": 405
+        },
+        {
+          "caller": "As",
+          "callee": "U",
+          "lineNumber": 407
+        },
+        {
+          "caller": "As",
+          "callee": "MoveValueUnsafe",
+          "lineNumber": 407
+        },
+        {
+          "caller": "As",
+          "callee": "ok",
+          "lineNumber": 415
+        },
+        {
+          "caller": "As",
+          "callee": "status",
+          "lineNumber": 416
+        },
+        {
+          "caller": "As",
+          "callee": "U",
+          "lineNumber": 418
+        },
+        {
+          "caller": "As",
+          "callee": "ValueUnsafe",
+          "lineNumber": 418
+        },
+        {
+          "caller": "ValueUnsafe",
+          "callee": "MoveValueUnsafe",
+          "lineNumber": 425
+        },
+        {
+          "caller": "MoveValueUnsafe",
+          "callee": "std::move",
+          "lineNumber": 427
+        },
+        {
+          "caller": "MoveValueUnsafe",
+          "callee": "get",
+          "lineNumber": 427
+        },
+        {
+          "caller": "ConstructValue",
+          "callee": "construct",
+          "lineNumber": 435
+        },
+        {
+          "caller": "ConstructValue",
+          "callee": "std::forward<U>",
+          "lineNumber": 435
+        },
+        {
+          "caller": "Destroy",
+          "callee": "ARROW_PREDICT_TRUE",
+          "lineNumber": 439
+        },
+        {
+          "caller": "Destroy",
+          "callee": "ok",
+          "lineNumber": 439
+        },
+        {
+          "caller": "Destroy",
+          "callee": "destroy",
+          "lineNumber": 442
+        },
+        {
+          "caller": "GenericToStatus",
+          "callee": "status",
+          "lineNumber": 488
+        },
+        {
+          "caller": "GenericToStatus",
+          "callee": "std::move",
+          "lineNumber": 488
+        },
+        {
+          "caller": "ToResult",
+          "callee": "R",
+          "lineNumber": 495
+        },
+        {
+          "caller": "ToResult",
+          "callee": "std::move",
+          "lineNumber": 495
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/scalar.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 775,
+      "nonEmptyLines": 591,
+      "functions": [
+        {
+          "name": "GetSharedPtr",
+          "startLine": 107,
+          "endLine": 109,
+          "params": []
+        },
+        {
+          "name": "view",
+          "startLine": 262,
+          "endLine": 264,
+          "params": []
+        },
+        {
+          "name": "run_end_type",
+          "startLine": 601,
+          "endLine": 607,
+          "params": []
+        },
+        {
+          "name": "CheckBufferLength",
+          "startLine": 677,
+          "endLine": 677,
+          "params": []
+        },
+        {
+          "name": "MakeScalar",
+          "startLine": 715,
+          "endLine": 717,
+          "params": [
+            "value"
+          ]
+        },
+        {
+          "name": "MakeScalar",
+          "startLine": 719,
+          "endLine": 721,
+          "params": [
+            "scalar"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "Array",
+          "startLine": 45,
+          "endLine": 45,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "ARROW_EXPORT",
+          "startLine": 53,
+          "endLine": 53,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "ARROW_EXPORT",
+          "startLine": 248,
+          "endLine": 248,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "ARROW_EXPORT",
+          "startLine": 538,
+          "endLine": 538,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "ARROW_EXPORT",
+          "startLine": 590,
+          "endLine": 590,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "Array",
+          "line": 45,
+          "isDefault": false
+        },
+        {
+          "name": "ARROW_EXPORT",
+          "line": 53,
+          "isDefault": false
+        },
+        {
+          "name": "GetSharedPtr",
+          "line": 107,
+          "isDefault": false
+        },
+        {
+          "name": "ARROW_EXPORT",
+          "line": 248,
+          "isDefault": false
+        },
+        {
+          "name": "view",
+          "line": 262,
+          "isDefault": false
+        },
+        {
+          "name": "ARROW_EXPORT",
+          "line": 538,
+          "isDefault": false
+        },
+        {
+          "name": "ARROW_EXPORT",
+          "line": 590,
+          "isDefault": false
+        },
+        {
+          "name": "run_end_type",
+          "line": 601,
+          "isDefault": false
+        },
+        {
+          "name": "CheckBufferLength",
+          "line": 677,
+          "isDefault": false
+        },
+        {
+          "name": "MakeScalar",
+          "line": 715,
+          "isDefault": false
+        },
+        {
+          "name": "MakeScalar",
+          "line": 719,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "operator()",
+          "callee": "hash",
+          "lineNumber": 70
+        },
+        {
+          "caller": "operator()",
+          "callee": "hash",
+          "lineNumber": 73
+        },
+        {
+          "caller": "GetSharedPtr",
+          "callee": "shared_from_this",
+          "lineNumber": 108
+        },
+        {
+          "caller": "GetSharedPtr",
+          "callee": "const_cast<Scalar*>",
+          "lineNumber": 108
+        },
+        {
+          "caller": "NullScalar",
+          "callee": "null",
+          "lineNumber": 127
+        },
+        {
+          "caller": "PrimitiveScalarBase",
+          "callee": "std::move",
+          "lineNumber": 143
+        },
+        {
+          "caller": "PrimitiveScalar",
+          "callee": "std::move",
+          "lineNumber": 162
+        },
+        {
+          "caller": "PrimitiveScalar",
+          "callee": "std::move",
+          "lineNumber": 165
+        },
+        {
+          "caller": "view",
+          "callee": "std::string_view",
+          "lineNumber": 172
+        },
+        {
+          "caller": "view",
+          "callee": "reinterpret_cast<const char*>",
+          "lineNumber": 172
+        },
+        {
+          "caller": "BooleanScalar",
+          "callee": "boolean",
+          "lineNumber": 186
+        },
+        {
+          "caller": "BooleanScalar",
+          "callee": "boolean",
+          "lineNumber": 188
+        },
+        {
+          "caller": "NumericScalar",
+          "callee": "TypeTraits<T>::type_singleton",
+          "lineNumber": 199
+        },
+        {
+          "caller": "NumericScalar",
+          "callee": "TypeTraits<T>::type_singleton",
+          "lineNumber": 201
+        },
+        {
+          "caller": "view",
+          "callee": "std::string_view",
+          "lineNumber": 263
+        },
+        {
+          "caller": "view",
+          "callee": "std::string_view",
+          "lineNumber": 263
+        },
+        {
+          "caller": "BinaryScalar",
+          "callee": "std::move",
+          "lineNumber": 278
+        },
+        {
+          "caller": "BinaryScalar",
+          "callee": "std::move",
+          "lineNumber": 278
+        },
+        {
+          "caller": "BinaryScalar",
+          "callee": "std::move",
+          "lineNumber": 281
+        },
+        {
+          "caller": "BinaryScalar",
+          "callee": "binary",
+          "lineNumber": 281
+        },
+        {
+          "caller": "BinaryScalar",
+          "callee": "binary",
+          "lineNumber": 285
+        },
+        {
+          "caller": "StringScalar",
+          "callee": "std::move",
+          "lineNumber": 293
+        },
+        {
+          "caller": "StringScalar",
+          "callee": "utf8",
+          "lineNumber": 293
+        },
+        {
+          "caller": "StringScalar",
+          "callee": "utf8",
+          "lineNumber": 297
+        },
+        {
+          "caller": "LargeBinaryScalar",
+          "callee": "std::move",
+          "lineNumber": 305
+        },
+        {
+          "caller": "LargeBinaryScalar",
+          "callee": "std::move",
+          "lineNumber": 305
+        },
+        {
+          "caller": "LargeBinaryScalar",
+          "callee": "std::move",
+          "lineNumber": 308
+        },
+        {
+          "caller": "LargeBinaryScalar",
+          "callee": "large_binary",
+          "lineNumber": 308
+        },
+        {
+          "caller": "LargeBinaryScalar",
+          "callee": "large_binary",
+          "lineNumber": 312
+        },
+        {
+          "caller": "LargeStringScalar",
+          "callee": "std::move",
+          "lineNumber": 320
+        },
+        {
+          "caller": "LargeStringScalar",
+          "callee": "large_utf8",
+          "lineNumber": 320
+        },
+        {
+          "caller": "LargeStringScalar",
+          "callee": "large_utf8",
+          "lineNumber": 324
+        },
+        {
+          "caller": "FixedSizeBinaryScalar",
+          "callee": "TemporalScalar",
+          "lineNumber": 344
+        },
+        {
+          "caller": "FixedSizeBinaryScalar",
+          "callee": "internal::PrimitiveScalar<T>",
+          "lineNumber": 345
+        },
+        {
+          "caller": "FixedSizeBinaryScalar",
+          "callee": "std::move",
+          "lineNumber": 345
+        },
+        {
+          "caller": "DateScalar",
+          "callee": "std::move",
+          "lineNumber": 354
+        },
+        {
+          "caller": "DateScalar",
+          "callee": "TypeTraits<T>::type_singleton",
+          "lineNumber": 354
+        },
+        {
+          "caller": "DateScalar",
+          "callee": "TypeTraits<T>::type_singleton",
+          "lineNumber": 355
+        },
+        {
+          "caller": "TimeScalar",
+          "callee": "std::move",
+          "lineNumber": 371
+        },
+        {
+          "caller": "TimeScalar",
+          "callee": "std::make_shared<T>",
+          "lineNumber": 371
+        },
+        {
+          "caller": "TimestampScalar",
+          "callee": "std::move",
+          "lineNumber": 387
+        },
+        {
+          "caller": "TimestampScalar",
+          "callee": "timestamp",
+          "lineNumber": 387
+        },
+        {
+          "caller": "TimestampScalar",
+          "callee": "std::move",
+          "lineNumber": 387
+        },
+        {
+          "caller": "IntervalScalar",
+          "callee": "TypeTraits<T>::type_singleton",
+          "lineNumber": 399
+        },
+        {
+          "caller": "IntervalScalar",
+          "callee": "TypeTraits<T>::type_singleton",
+          "lineNumber": 400
+        },
+        {
+          "caller": "DurationScalar",
+          "callee": "std::move",
+          "lineNumber": 421
+        },
+        {
+          "caller": "DurationScalar",
+          "callee": "duration",
+          "lineNumber": 421
+        },
+        {
+          "caller": "DurationScalar",
+          "callee": "DurationScalar",
+          "lineNumber": 426
+        },
+        {
+          "caller": "DurationScalar",
+          "callee": "count",
+          "lineNumber": 426
+        },
+        {
+          "caller": "DurationScalar",
+          "callee": "duration",
+          "lineNumber": 426
+        },
+        {
+          "caller": "DurationScalar",
+          "callee": "DurationScalar",
+          "lineNumber": 431
+        },
+        {
+          "caller": "DurationScalar",
+          "callee": "count",
+          "lineNumber": 431
+        },
+        {
+          "caller": "DurationScalar",
+          "callee": "duration",
+          "lineNumber": 431
+        },
+        {
+          "caller": "DurationScalar",
+          "callee": "DurationScalar",
+          "lineNumber": 436
+        },
+        {
+          "caller": "DurationScalar",
+          "callee": "count",
+          "lineNumber": 436
+        },
+        {
+          "caller": "DurationScalar",
+          "callee": "duration",
+          "lineNumber": 436
+        },
+        {
+          "caller": "DurationScalar",
+          "callee": "DurationScalar",
+          "lineNumber": 442
+        },
+        {
+          "caller": "DurationScalar",
+          "callee": "count",
+          "lineNumber": 442
+        },
+        {
+          "caller": "DurationScalar",
+          "callee": "duration",
+          "lineNumber": 442
+        },
+        {
+          "caller": "DecimalScalar",
+          "callee": "std::move",
+          "lineNumber": 452
+        },
+        {
+          "caller": "view",
+          "callee": "std::string_view",
+          "lineNumber": 463
+        },
+        {
+          "caller": "view",
+          "callee": "reinterpret_cast<const char*>",
+          "lineNumber": 463
+        },
+        {
+          "caller": "view",
+          "callee": "native_endian_bytes",
+          "lineNumber": 463
+        },
+        {
+          "caller": "StructScalar",
+          "callee": "std::move",
+          "lineNumber": 532
+        },
+        {
+          "caller": "StructScalar",
+          "callee": "std::move",
+          "lineNumber": 532
+        },
+        {
+          "caller": "DenseUnionScalar",
+          "callee": "std::move",
+          "lineNumber": 586
+        },
+        {
+          "caller": "DenseUnionScalar",
+          "callee": "std::move",
+          "lineNumber": 587
+        },
+        {
+          "caller": "run_end_type",
+          "callee": "run_end_type",
+          "lineNumber": 606
+        },
+        {
+          "caller": "run_end_type",
+          "callee": "ree_type",
+          "lineNumber": 606
+        },
+        {
+          "caller": "DictionaryScalar",
+          "callee": "std::move",
+          "lineNumber": 631
+        },
+        {
+          "caller": "DictionaryScalar",
+          "callee": "std::move",
+          "lineNumber": 632
+        },
+        {
+          "caller": "view",
+          "callee": "view",
+          "lineNumber": 647
+        },
+        {
+          "caller": "view",
+          "callee": "internal::checked_cast<const internal::PrimitiveScalarBase&>",
+          "lineNumber": 647
+        },
+        {
+          "caller": "ExtensionScalar",
+          "callee": "std::move",
+          "lineNumber": 662
+        },
+        {
+          "caller": "ExtensionScalar",
+          "callee": "std::move",
+          "lineNumber": 662
+        },
+        {
+          "caller": "ExtensionScalar",
+          "callee": "std::make_shared<Storage>",
+          "lineNumber": 667
+        },
+        {
+          "caller": "ExtensionScalar",
+          "callee": "std::move",
+          "lineNumber": 667
+        },
+        {
+          "caller": "ExtensionScalar",
+          "callee": "std::move",
+          "lineNumber": 667
+        },
+        {
+          "caller": "CheckBufferLength",
+          "callee": "Status::OK",
+          "lineNumber": 677
+        },
+        {
+          "caller": "MakeScalar",
+          "callee": "Finish",
+          "lineNumber": 699
+        },
+        {
+          "caller": "MakeScalar",
+          "callee": "std::forward<Value>",
+          "lineNumber": 699
+        },
+        {
+          "caller": "MakeScalar",
+          "callee": "std::make_shared<ScalarType>",
+          "lineNumber": 712
+        },
+        {
+          "caller": "MakeScalar",
+          "callee": "std::move",
+          "lineNumber": 712
+        },
+        {
+          "caller": "MakeScalar",
+          "callee": "Traits::type_singleton",
+          "lineNumber": 712
+        },
+        {
+          "caller": "MakeScalar",
+          "callee": "std::make_shared<StringScalar>",
+          "lineNumber": 716
+        },
+        {
+          "caller": "MakeScalar",
+          "callee": "std::move",
+          "lineNumber": 716
+        },
+        {
+          "caller": "Visit",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 733
+        },
+        {
+          "caller": "Visit",
+          "callee": "internal::CheckBufferLength",
+          "lineNumber": 733
+        },
+        {
+          "caller": "Visit",
+          "callee": "std::make_shared<ScalarType>",
+          "lineNumber": 735
+        },
+        {
+          "caller": "Visit",
+          "callee": "static_cast<ValueType>",
+          "lineNumber": 736
+        },
+        {
+          "caller": "Visit",
+          "callee": "static_cast<ValueRef>",
+          "lineNumber": 736
+        },
+        {
+          "caller": "Visit",
+          "callee": "std::move",
+          "lineNumber": 736
+        },
+        {
+          "caller": "Visit",
+          "callee": "Status::OK",
+          "lineNumber": 737
+        },
+        {
+          "caller": "Visit",
+          "callee": "std::make_shared<ExtensionScalar>",
+          "lineNumber": 743
+        },
+        {
+          "caller": "Visit",
+          "callee": "std::move",
+          "lineNumber": 743
+        },
+        {
+          "caller": "Visit",
+          "callee": "Status::OK",
+          "lineNumber": 744
+        },
+        {
+          "caller": "Visit",
+          "callee": "std::make_shared<ScalarType>",
+          "lineNumber": 755
+        },
+        {
+          "caller": "Visit",
+          "callee": "Buffer::FromString",
+          "lineNumber": 755
+        },
+        {
+          "caller": "Visit",
+          "callee": "std::move",
+          "lineNumber": 755
+        },
+        {
+          "caller": "Visit",
+          "callee": "std::move",
+          "lineNumber": 756
+        },
+        {
+          "caller": "Visit",
+          "callee": "Status::OK",
+          "lineNumber": 757
+        },
+        {
+          "caller": "Visit",
+          "callee": "Status::NotImplemented",
+          "lineNumber": 761
+        },
+        {
+          "caller": "Finish",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 766
+        },
+        {
+          "caller": "Finish",
+          "callee": "VisitTypeInline",
+          "lineNumber": 766
+        },
+        {
+          "caller": "Finish",
+          "callee": "std::move",
+          "lineNumber": 767
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 11,
+        "functionCount": 6,
+        "classCount": 5
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/sparse_tensor.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 617,
+      "nonEmptyLines": 503,
+      "classes": [
+        {
+          "name": "MemoryPool",
+          "startLine": 39,
+          "endLine": 39,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "SparseTensorFormat",
+          "startLine": 52,
+          "endLine": 64,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "MemoryPool",
+          "line": 39,
+          "isDefault": false
+        },
+        {
+          "name": "SparseTensorFormat",
+          "line": 52,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "non_zero_length",
+          "callee": "shape",
+          "lineNumber": 165
+        },
+        {
+          "caller": "Equals",
+          "callee": "Equals",
+          "lineNumber": 177
+        },
+        {
+          "caller": "Equals",
+          "callee": "indices",
+          "lineNumber": 177
+        },
+        {
+          "caller": "Equals",
+          "callee": "indices",
+          "lineNumber": 177
+        },
+        {
+          "caller": "ValidateShape",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 181
+        },
+        {
+          "caller": "ValidateShape",
+          "callee": "SparseIndex::ValidateShape",
+          "lineNumber": 181
+        },
+        {
+          "caller": "ValidateShape",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 183
+        },
+        {
+          "caller": "ValidateShape",
+          "callee": "shape",
+          "lineNumber": 183
+        },
+        {
+          "caller": "ValidateShape",
+          "callee": "size",
+          "lineNumber": 183
+        },
+        {
+          "caller": "ValidateShape",
+          "callee": "Status::OK",
+          "lineNumber": 184
+        },
+        {
+          "caller": "ValidateShape",
+          "callee": "Status::Invalid",
+          "lineNumber": 187
+        },
+        {
+          "caller": "Make",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 231
+        },
+        {
+          "caller": "Make",
+          "callee": "ValidateSparseCSXIndex",
+          "lineNumber": 231
+        },
+        {
+          "caller": "Make",
+          "callee": "std::make_shared<SparseIndexType>",
+          "lineNumber": 234
+        },
+        {
+          "caller": "Make",
+          "callee": "std::make_shared<Tensor>",
+          "lineNumber": 235
+        },
+        {
+          "caller": "Make",
+          "callee": "std::make_shared<Tensor>",
+          "lineNumber": 236
+        },
+        {
+          "caller": "Make",
+          "callee": "Make",
+          "lineNumber": 244
+        },
+        {
+          "caller": "Make",
+          "callee": "Make",
+          "lineNumber": 257
+        },
+        {
+          "caller": "Make",
+          "callee": "Make",
+          "lineNumber": 267
+        },
+        {
+          "caller": "SparseCSXIndex",
+          "callee": "CheckSparseCSXIndexValidity",
+          "lineNumber": 275
+        },
+        {
+          "caller": "SparseCSXIndex",
+          "callee": "type",
+          "lineNumber": 275
+        },
+        {
+          "caller": "SparseCSXIndex",
+          "callee": "type",
+          "lineNumber": 275
+        },
+        {
+          "caller": "SparseCSXIndex",
+          "callee": "shape",
+          "lineNumber": 275
+        },
+        {
+          "caller": "SparseCSXIndex",
+          "callee": "shape",
+          "lineNumber": 276
+        },
+        {
+          "caller": "non_zero_length",
+          "callee": "shape",
+          "lineNumber": 287
+        },
+        {
+          "caller": "ToString",
+          "callee": "std::string",
+          "lineNumber": 291
+        },
+        {
+          "caller": "Equals",
+          "callee": "Equals",
+          "lineNumber": 296
+        },
+        {
+          "caller": "Equals",
+          "callee": "indptr",
+          "lineNumber": 296
+        },
+        {
+          "caller": "Equals",
+          "callee": "indptr",
+          "lineNumber": 296
+        },
+        {
+          "caller": "Equals",
+          "callee": "Equals",
+          "lineNumber": 296
+        },
+        {
+          "caller": "Equals",
+          "callee": "indices",
+          "lineNumber": 296
+        },
+        {
+          "caller": "Equals",
+          "callee": "indices",
+          "lineNumber": 296
+        },
+        {
+          "caller": "ValidateShape",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 300
+        },
+        {
+          "caller": "ValidateShape",
+          "callee": "SparseIndex::ValidateShape",
+          "lineNumber": 300
+        },
+        {
+          "caller": "ValidateShape",
+          "callee": "size",
+          "lineNumber": 302
+        },
+        {
+          "caller": "ValidateShape",
+          "callee": "Status::Invalid",
+          "lineNumber": 303
+        },
+        {
+          "caller": "ValidateShape",
+          "callee": "size",
+          "lineNumber": 306
+        },
+        {
+          "caller": "ValidateShape",
+          "callee": "Status::Invalid",
+          "lineNumber": 307
+        },
+        {
+          "caller": "ValidateShape",
+          "callee": "shape",
+          "lineNumber": 310
+        },
+        {
+          "caller": "ValidateShape",
+          "callee": "static_cast<int64_t>",
+          "lineNumber": 310
+        },
+        {
+          "caller": "ValidateShape",
+          "callee": "Status::OK",
+          "lineNumber": 311
+        },
+        {
+          "caller": "ValidateShape",
+          "callee": "Status::Invalid",
+          "lineNumber": 314
+        },
+        {
+          "caller": "ValidateShape",
+          "callee": "ToString",
+          "lineNumber": 314
+        },
+        {
+          "caller": "Make",
+          "callee": "Make",
+          "lineNumber": 417
+        },
+        {
+          "caller": "non_zero_length",
+          "callee": "shape",
+          "lineNumber": 437
+        },
+        {
+          "caller": "non_zero_length",
+          "callee": "back",
+          "lineNumber": 437
+        },
+        {
+          "caller": "format_id",
+          "callee": "format_id",
+          "lineNumber": 459
+        },
+        {
+          "caller": "ndim",
+          "callee": "static_cast<int>",
+          "lineNumber": 480
+        },
+        {
+          "caller": "ndim",
+          "callee": "size",
+          "lineNumber": 480
+        },
+        {
+          "caller": "is_mutable",
+          "callee": "is_mutable",
+          "lineNumber": 492
+        },
+        {
+          "caller": "non_zero_length",
+          "callee": "non_zero_length",
+          "lineNumber": 496
+        },
+        {
+          "caller": "ToTensor",
+          "callee": "ToTensor",
+          "lineNumber": 508
+        },
+        {
+          "caller": "ToTensor",
+          "callee": "default_memory_pool",
+          "lineNumber": 508
+        },
+        {
+          "caller": "Make",
+          "callee": "is_tensor_supported",
+          "lineNumber": 567
+        },
+        {
+          "caller": "Make",
+          "callee": "id",
+          "lineNumber": 567
+        },
+        {
+          "caller": "Make",
+          "callee": "Status::Invalid",
+          "lineNumber": 568
+        },
+        {
+          "caller": "Make",
+          "callee": "ToString",
+          "lineNumber": 568
+        },
+        {
+          "caller": "Make",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 571
+        },
+        {
+          "caller": "Make",
+          "callee": "ValidateShape",
+          "lineNumber": 571
+        },
+        {
+          "caller": "Make",
+          "callee": "size",
+          "lineNumber": 572
+        },
+        {
+          "caller": "Make",
+          "callee": "size",
+          "lineNumber": 572
+        },
+        {
+          "caller": "Make",
+          "callee": "size",
+          "lineNumber": 572
+        },
+        {
+          "caller": "Make",
+          "callee": "Status::Invalid",
+          "lineNumber": 573
+        },
+        {
+          "caller": "Make",
+          "callee": "std::make_shared<SparseTensorImpl<SparseIndexType>>",
+          "lineNumber": 575
+        },
+        {
+          "caller": "Make",
+          "callee": "default_memory_pool",
+          "lineNumber": 585
+        },
+        {
+          "caller": "Make",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 588
+        },
+        {
+          "caller": "Make",
+          "callee": "internal::MakeSparseTensorFromTensor",
+          "lineNumber": 588
+        },
+        {
+          "caller": "Make",
+          "callee": "std::make_shared<SparseTensorImpl<SparseIndexType>>",
+          "lineNumber": 591
+        },
+        {
+          "caller": "Make",
+          "callee": "internal::checked_pointer_cast<SparseIndexType>",
+          "lineNumber": 592
+        },
+        {
+          "caller": "Make",
+          "callee": "type",
+          "lineNumber": 592
+        },
+        {
+          "caller": "Make",
+          "callee": "shape",
+          "lineNumber": 593
+        },
+        {
+          "caller": "Make",
+          "callee": "default_memory_pool",
+          "lineNumber": 597
+        },
+        {
+          "caller": "Make",
+          "callee": "Make",
+          "lineNumber": 598
+        },
+        {
+          "caller": "Make",
+          "callee": "int64",
+          "lineNumber": 598
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 0,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/status.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 471,
+      "nonEmptyLines": 393,
+      "functions": [
+        {
+          "name": "OK",
+          "startLine": 166,
+          "endLine": 166,
+          "params": []
+        },
+        {
+          "name": "ok",
+          "startLine": 274,
+          "endLine": 274,
+          "params": []
+        },
+        {
+          "name": "IsOutOfMemory",
+          "startLine": 277,
+          "endLine": 277,
+          "params": []
+        },
+        {
+          "name": "IsKeyError",
+          "startLine": 279,
+          "endLine": 279,
+          "params": []
+        },
+        {
+          "name": "IsInvalid",
+          "startLine": 281,
+          "endLine": 281,
+          "params": []
+        },
+        {
+          "name": "IsCancelled",
+          "startLine": 283,
+          "endLine": 283,
+          "params": []
+        },
+        {
+          "name": "IsIOError",
+          "startLine": 285,
+          "endLine": 285,
+          "params": []
+        },
+        {
+          "name": "IsCapacityError",
+          "startLine": 287,
+          "endLine": 287,
+          "params": []
+        },
+        {
+          "name": "IsIndexError",
+          "startLine": 289,
+          "endLine": 289,
+          "params": []
+        },
+        {
+          "name": "IsTypeError",
+          "startLine": 291,
+          "endLine": 291,
+          "params": []
+        },
+        {
+          "name": "IsUnknownError",
+          "startLine": 293,
+          "endLine": 293,
+          "params": []
+        },
+        {
+          "name": "IsNotImplemented",
+          "startLine": 295,
+          "endLine": 295,
+          "params": []
+        },
+        {
+          "name": "IsSerializationError",
+          "startLine": 297,
+          "endLine": 299,
+          "params": []
+        },
+        {
+          "name": "IsRError",
+          "startLine": 301,
+          "endLine": 301,
+          "params": []
+        },
+        {
+          "name": "IsCodeGenError",
+          "startLine": 303,
+          "endLine": 303,
+          "params": []
+        },
+        {
+          "name": "IsExpressionValidationError",
+          "startLine": 305,
+          "endLine": 307,
+          "params": []
+        },
+        {
+          "name": "IsExecutionError",
+          "startLine": 309,
+          "endLine": 309,
+          "params": []
+        },
+        {
+          "name": "IsAlreadyExists",
+          "startLine": 310,
+          "endLine": 310,
+          "params": []
+        },
+        {
+          "name": "code",
+          "startLine": 329,
+          "endLine": 329,
+          "params": []
+        },
+        {
+          "name": "WithDetail",
+          "startLine": 345,
+          "endLine": 347,
+          "params": [
+            "new_detail"
+          ]
+        },
+        {
+          "name": "DeleteState",
+          "startLine": 376,
+          "endLine": 379,
+          "params": []
+        },
+        {
+          "name": "MoveFrom",
+          "startLine": 384,
+          "endLine": 388,
+          "params": [
+            "s"
+          ]
+        },
+        {
+          "name": "Status",
+          "startLine": 390,
+          "endLine": 391,
+          "params": [
+            "s"
+          ]
+        },
+        {
+          "name": "Status",
+          "startLine": 402,
+          "endLine": 402,
+          "params": [
+            "s"
+          ]
+        },
+        {
+          "name": "Equals",
+          "startLine": 409,
+          "endLine": 426,
+          "params": [
+            "s"
+          ]
+        },
+        {
+          "name": "operator&",
+          "startLine": 431,
+          "endLine": 437,
+          "params": [
+            "s"
+          ]
+        },
+        {
+          "name": "operator&",
+          "startLine": 439,
+          "endLine": 445,
+          "params": [
+            "s"
+          ]
+        },
+        {
+          "name": "GenericToStatus",
+          "startLine": 467,
+          "endLine": 467,
+          "params": [
+            "st"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "ARROW_EXPORT",
+          "startLine": 132,
+          "endLine": 132,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "ARROW_EXPORT",
+          "line": 132,
+          "isDefault": false
+        },
+        {
+          "name": "ok",
+          "line": 274,
+          "isDefault": false
+        },
+        {
+          "name": "IsOutOfMemory",
+          "line": 277,
+          "isDefault": false
+        },
+        {
+          "name": "IsKeyError",
+          "line": 279,
+          "isDefault": false
+        },
+        {
+          "name": "IsInvalid",
+          "line": 281,
+          "isDefault": false
+        },
+        {
+          "name": "IsCancelled",
+          "line": 283,
+          "isDefault": false
+        },
+        {
+          "name": "IsIOError",
+          "line": 285,
+          "isDefault": false
+        },
+        {
+          "name": "IsCapacityError",
+          "line": 287,
+          "isDefault": false
+        },
+        {
+          "name": "IsIndexError",
+          "line": 289,
+          "isDefault": false
+        },
+        {
+          "name": "IsTypeError",
+          "line": 291,
+          "isDefault": false
+        },
+        {
+          "name": "IsUnknownError",
+          "line": 293,
+          "isDefault": false
+        },
+        {
+          "name": "IsNotImplemented",
+          "line": 295,
+          "isDefault": false
+        },
+        {
+          "name": "IsSerializationError",
+          "line": 297,
+          "isDefault": false
+        },
+        {
+          "name": "IsRError",
+          "line": 301,
+          "isDefault": false
+        },
+        {
+          "name": "IsCodeGenError",
+          "line": 303,
+          "isDefault": false
+        },
+        {
+          "name": "IsExpressionValidationError",
+          "line": 305,
+          "isDefault": false
+        },
+        {
+          "name": "IsExecutionError",
+          "line": 309,
+          "isDefault": false
+        },
+        {
+          "name": "IsAlreadyExists",
+          "line": 310,
+          "isDefault": false
+        },
+        {
+          "name": "code",
+          "line": 329,
+          "isDefault": false
+        },
+        {
+          "name": "WithDetail",
+          "line": 345,
+          "isDefault": false
+        },
+        {
+          "name": "DeleteState",
+          "line": 376,
+          "isDefault": false
+        },
+        {
+          "name": "MoveFrom",
+          "line": 384,
+          "isDefault": false
+        },
+        {
+          "name": "Status",
+          "line": 390,
+          "isDefault": false
+        },
+        {
+          "name": "Status",
+          "line": 402,
+          "isDefault": false
+        },
+        {
+          "name": "Equals",
+          "line": 409,
+          "isDefault": false
+        },
+        {
+          "name": "operator&",
+          "line": 431,
+          "isDefault": false
+        },
+        {
+          "name": "operator&",
+          "line": 439,
+          "isDefault": false
+        },
+        {
+          "name": "GenericToStatus",
+          "line": 467,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "operator==",
+          "callee": "std::string",
+          "lineNumber": 120
+        },
+        {
+          "caller": "operator==",
+          "callee": "type_id",
+          "lineNumber": 120
+        },
+        {
+          "caller": "operator==",
+          "callee": "type_id",
+          "lineNumber": 120
+        },
+        {
+          "caller": "operator==",
+          "callee": "ToString",
+          "lineNumber": 120
+        },
+        {
+          "caller": "operator==",
+          "callee": "ToString",
+          "lineNumber": 120
+        },
+        {
+          "caller": "OK",
+          "callee": "Status",
+          "lineNumber": 166
+        },
+        {
+          "caller": "FromArgs",
+          "callee": "Status",
+          "lineNumber": 170
+        },
+        {
+          "caller": "FromArgs",
+          "callee": "util::StringBuilder",
+          "lineNumber": 170
+        },
+        {
+          "caller": "FromArgs",
+          "callee": "std::forward<Args>",
+          "lineNumber": 170
+        },
+        {
+          "caller": "FromDetailAndArgs",
+          "callee": "Status",
+          "lineNumber": 176
+        },
+        {
+          "caller": "FromDetailAndArgs",
+          "callee": "util::StringBuilder",
+          "lineNumber": 176
+        },
+        {
+          "caller": "FromDetailAndArgs",
+          "callee": "std::forward<Args>",
+          "lineNumber": 176
+        },
+        {
+          "caller": "FromDetailAndArgs",
+          "callee": "std::move",
+          "lineNumber": 177
+        },
+        {
+          "caller": "OutOfMemory",
+          "callee": "Status::FromArgs",
+          "lineNumber": 183
+        },
+        {
+          "caller": "OutOfMemory",
+          "callee": "std::forward<Args>",
+          "lineNumber": 183
+        },
+        {
+          "caller": "KeyError",
+          "callee": "Status::FromArgs",
+          "lineNumber": 189
+        },
+        {
+          "caller": "KeyError",
+          "callee": "std::forward<Args>",
+          "lineNumber": 189
+        },
+        {
+          "caller": "TypeError",
+          "callee": "Status::FromArgs",
+          "lineNumber": 195
+        },
+        {
+          "caller": "TypeError",
+          "callee": "std::forward<Args>",
+          "lineNumber": 195
+        },
+        {
+          "caller": "UnknownError",
+          "callee": "Status::FromArgs",
+          "lineNumber": 201
+        },
+        {
+          "caller": "UnknownError",
+          "callee": "std::forward<Args>",
+          "lineNumber": 201
+        },
+        {
+          "caller": "NotImplemented",
+          "callee": "Status::FromArgs",
+          "lineNumber": 208
+        },
+        {
+          "caller": "NotImplemented",
+          "callee": "std::forward<Args>",
+          "lineNumber": 208
+        },
+        {
+          "caller": "Invalid",
+          "callee": "Status::FromArgs",
+          "lineNumber": 214
+        },
+        {
+          "caller": "Invalid",
+          "callee": "std::forward<Args>",
+          "lineNumber": 214
+        },
+        {
+          "caller": "Cancelled",
+          "callee": "Status::FromArgs",
+          "lineNumber": 220
+        },
+        {
+          "caller": "Cancelled",
+          "callee": "std::forward<Args>",
+          "lineNumber": 220
+        },
+        {
+          "caller": "IndexError",
+          "callee": "Status::FromArgs",
+          "lineNumber": 226
+        },
+        {
+          "caller": "IndexError",
+          "callee": "std::forward<Args>",
+          "lineNumber": 226
+        },
+        {
+          "caller": "CapacityError",
+          "callee": "Status::FromArgs",
+          "lineNumber": 232
+        },
+        {
+          "caller": "CapacityError",
+          "callee": "std::forward<Args>",
+          "lineNumber": 232
+        },
+        {
+          "caller": "IOError",
+          "callee": "Status::FromArgs",
+          "lineNumber": 238
+        },
+        {
+          "caller": "IOError",
+          "callee": "std::forward<Args>",
+          "lineNumber": 238
+        },
+        {
+          "caller": "SerializationError",
+          "callee": "Status::FromArgs",
+          "lineNumber": 244
+        },
+        {
+          "caller": "SerializationError",
+          "callee": "std::forward<Args>",
+          "lineNumber": 244
+        },
+        {
+          "caller": "RError",
+          "callee": "Status::FromArgs",
+          "lineNumber": 249
+        },
+        {
+          "caller": "RError",
+          "callee": "std::forward<Args>",
+          "lineNumber": 249
+        },
+        {
+          "caller": "CodeGenError",
+          "callee": "Status::FromArgs",
+          "lineNumber": 254
+        },
+        {
+          "caller": "CodeGenError",
+          "callee": "std::forward<Args>",
+          "lineNumber": 254
+        },
+        {
+          "caller": "ExpressionValidationError",
+          "callee": "Status::FromArgs",
+          "lineNumber": 259
+        },
+        {
+          "caller": "ExpressionValidationError",
+          "callee": "std::forward<Args>",
+          "lineNumber": 260
+        },
+        {
+          "caller": "ExecutionError",
+          "callee": "Status::FromArgs",
+          "lineNumber": 265
+        },
+        {
+          "caller": "ExecutionError",
+          "callee": "std::forward<Args>",
+          "lineNumber": 265
+        },
+        {
+          "caller": "AlreadyExists",
+          "callee": "Status::FromArgs",
+          "lineNumber": 270
+        },
+        {
+          "caller": "AlreadyExists",
+          "callee": "std::forward<Args>",
+          "lineNumber": 270
+        },
+        {
+          "caller": "IsOutOfMemory",
+          "callee": "code",
+          "lineNumber": 277
+        },
+        {
+          "caller": "IsKeyError",
+          "callee": "code",
+          "lineNumber": 279
+        },
+        {
+          "caller": "IsInvalid",
+          "callee": "code",
+          "lineNumber": 281
+        },
+        {
+          "caller": "IsCancelled",
+          "callee": "code",
+          "lineNumber": 283
+        },
+        {
+          "caller": "IsIOError",
+          "callee": "code",
+          "lineNumber": 285
+        },
+        {
+          "caller": "IsCapacityError",
+          "callee": "code",
+          "lineNumber": 287
+        },
+        {
+          "caller": "IsIndexError",
+          "callee": "code",
+          "lineNumber": 289
+        },
+        {
+          "caller": "IsTypeError",
+          "callee": "code",
+          "lineNumber": 291
+        },
+        {
+          "caller": "IsUnknownError",
+          "callee": "code",
+          "lineNumber": 293
+        },
+        {
+          "caller": "IsNotImplemented",
+          "callee": "code",
+          "lineNumber": 295
+        },
+        {
+          "caller": "IsSerializationError",
+          "callee": "code",
+          "lineNumber": 298
+        },
+        {
+          "caller": "IsRError",
+          "callee": "code",
+          "lineNumber": 301
+        },
+        {
+          "caller": "IsCodeGenError",
+          "callee": "code",
+          "lineNumber": 303
+        },
+        {
+          "caller": "IsExpressionValidationError",
+          "callee": "code",
+          "lineNumber": 306
+        },
+        {
+          "caller": "IsExecutionError",
+          "callee": "code",
+          "lineNumber": 309
+        },
+        {
+          "caller": "IsAlreadyExists",
+          "callee": "code",
+          "lineNumber": 310
+        },
+        {
+          "caller": "code",
+          "callee": "ok",
+          "lineNumber": 329
+        },
+        {
+          "caller": "WithDetail",
+          "callee": "Status",
+          "lineNumber": 346
+        },
+        {
+          "caller": "WithDetail",
+          "callee": "code",
+          "lineNumber": 346
+        },
+        {
+          "caller": "WithDetail",
+          "callee": "message",
+          "lineNumber": 346
+        },
+        {
+          "caller": "WithDetail",
+          "callee": "std::move",
+          "lineNumber": 346
+        },
+        {
+          "caller": "WithMessage",
+          "callee": "WithDetail",
+          "lineNumber": 353
+        },
+        {
+          "caller": "WithMessage",
+          "callee": "FromArgs",
+          "lineNumber": 353
+        },
+        {
+          "caller": "WithMessage",
+          "callee": "code",
+          "lineNumber": 353
+        },
+        {
+          "caller": "WithMessage",
+          "callee": "std::forward<Args>",
+          "lineNumber": 353
+        },
+        {
+          "caller": "WithMessage",
+          "callee": "detail",
+          "lineNumber": 353
+        },
+        {
+          "caller": "Equals",
+          "callee": "ok",
+          "lineNumber": 414
+        },
+        {
+          "caller": "Equals",
+          "callee": "ok",
+          "lineNumber": 414
+        },
+        {
+          "caller": "Equals",
+          "callee": "detail",
+          "lineNumber": 418
+        },
+        {
+          "caller": "Equals",
+          "callee": "detail",
+          "lineNumber": 418
+        },
+        {
+          "caller": "Equals",
+          "callee": "detail",
+          "lineNumber": 419
+        },
+        {
+          "caller": "Equals",
+          "callee": "detail",
+          "lineNumber": 419
+        },
+        {
+          "caller": "Equals",
+          "callee": "detail",
+          "lineNumber": 419
+        },
+        {
+          "caller": "Equals",
+          "callee": "detail",
+          "lineNumber": 419
+        },
+        {
+          "caller": "Equals",
+          "callee": "detail",
+          "lineNumber": 422
+        },
+        {
+          "caller": "Equals",
+          "callee": "detail",
+          "lineNumber": 422
+        },
+        {
+          "caller": "Equals",
+          "callee": "code",
+          "lineNumber": 425
+        },
+        {
+          "caller": "Equals",
+          "callee": "code",
+          "lineNumber": 425
+        },
+        {
+          "caller": "Equals",
+          "callee": "message",
+          "lineNumber": 425
+        },
+        {
+          "caller": "Equals",
+          "callee": "message",
+          "lineNumber": 425
+        },
+        {
+          "caller": "operator&",
+          "callee": "ok",
+          "lineNumber": 432
+        },
+        {
+          "caller": "operator&",
+          "callee": "ok",
+          "lineNumber": 440
+        },
+        {
+          "caller": "operator&",
+          "callee": "std::move",
+          "lineNumber": 441
+        },
+        {
+          "caller": "GenericToStatus",
+          "callee": "std::move",
+          "lineNumber": 467
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 28,
+        "functionCount": 28,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/stl_allocator.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 164,
+      "nonEmptyLines": 132,
+      "callGraph": [
+        {
+          "caller": "allocator",
+          "callee": "default_memory_pool",
+          "lineNumber": 51
+        },
+        {
+          "caller": "allocator",
+          "callee": "pool",
+          "lineNumber": 56
+        },
+        {
+          "caller": "address",
+          "callee": "std::addressof",
+          "lineNumber": 60
+        },
+        {
+          "caller": "address",
+          "callee": "std::addressof",
+          "lineNumber": 62
+        },
+        {
+          "caller": "allocate",
+          "callee": "Allocate",
+          "lineNumber": 66
+        },
+        {
+          "caller": "allocate",
+          "callee": "ok",
+          "lineNumber": 67
+        },
+        {
+          "caller": "allocate",
+          "callee": "std::bad_alloc",
+          "lineNumber": 67
+        },
+        {
+          "caller": "allocate",
+          "callee": "reinterpret_cast<pointer>",
+          "lineNumber": 68
+        },
+        {
+          "caller": "deallocate",
+          "callee": "Free",
+          "lineNumber": 72
+        },
+        {
+          "caller": "deallocate",
+          "callee": "reinterpret_cast<uint8_t*>",
+          "lineNumber": 72
+        },
+        {
+          "caller": "size_max",
+          "callee": "size_type",
+          "lineNumber": 75
+        },
+        {
+          "caller": "construct",
+          "callee": "reinterpret_cast<void*>",
+          "lineNumber": 79
+        },
+        {
+          "caller": "construct",
+          "callee": "std::forward<Args>",
+          "lineNumber": 79
+        },
+        {
+          "caller": "destroy",
+          "callee": "~U",
+          "lineNumber": 84
+        },
+        {
+          "caller": "Allocate",
+          "callee": "allocate",
+          "lineNumber": 109
+        },
+        {
+          "caller": "Allocate",
+          "callee": "Status::OutOfMemory",
+          "lineNumber": 111
+        },
+        {
+          "caller": "Allocate",
+          "callee": "what",
+          "lineNumber": 111
+        },
+        {
+          "caller": "Allocate",
+          "callee": "UpdateAllocatedBytes",
+          "lineNumber": 113
+        },
+        {
+          "caller": "Allocate",
+          "callee": "Status::OK",
+          "lineNumber": 114
+        },
+        {
+          "caller": "Reallocate",
+          "callee": "allocate",
+          "lineNumber": 121
+        },
+        {
+          "caller": "Reallocate",
+          "callee": "Status::OutOfMemory",
+          "lineNumber": 123
+        },
+        {
+          "caller": "Reallocate",
+          "callee": "what",
+          "lineNumber": 123
+        },
+        {
+          "caller": "Reallocate",
+          "callee": "memcpy",
+          "lineNumber": 125
+        },
+        {
+          "caller": "Reallocate",
+          "callee": "std::min",
+          "lineNumber": 125
+        },
+        {
+          "caller": "Reallocate",
+          "callee": "deallocate",
+          "lineNumber": 126
+        },
+        {
+          "caller": "Reallocate",
+          "callee": "UpdateAllocatedBytes",
+          "lineNumber": 127
+        },
+        {
+          "caller": "Reallocate",
+          "callee": "Status::OK",
+          "lineNumber": 128
+        },
+        {
+          "caller": "Free",
+          "callee": "deallocate",
+          "lineNumber": 132
+        },
+        {
+          "caller": "Free",
+          "callee": "UpdateAllocatedBytes",
+          "lineNumber": 133
+        },
+        {
+          "caller": "bytes_allocated",
+          "callee": "bytes_allocated",
+          "lineNumber": 136
+        },
+        {
+          "caller": "max_memory",
+          "callee": "max_memory",
+          "lineNumber": 138
+        },
+        {
+          "caller": "total_bytes_allocated",
+          "callee": "total_bytes_allocated",
+          "lineNumber": 141
+        },
+        {
+          "caller": "num_allocations",
+          "callee": "num_allocations",
+          "lineNumber": 144
+        },
+        {
+          "caller": "operator==",
+          "callee": "pool",
+          "lineNumber": 155
+        },
+        {
+          "caller": "operator==",
+          "callee": "pool",
+          "lineNumber": 155
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/stl_iterator.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 304,
+      "nonEmptyLines": 264,
+      "callGraph": [
+        {
+          "caller": "operator()",
+          "callee": "GetView",
+          "lineNumber": 42
+        },
+        {
+          "caller": "operator*",
+          "callee": "assert",
+          "lineNumber": 66
+        },
+        {
+          "caller": "operator*",
+          "callee": "IsNull",
+          "lineNumber": 67
+        },
+        {
+          "caller": "operator*",
+          "callee": "GetView",
+          "lineNumber": 67
+        },
+        {
+          "caller": "operator[]",
+          "callee": "assert",
+          "lineNumber": 71
+        },
+        {
+          "caller": "operator[]",
+          "callee": "IsNull",
+          "lineNumber": 72
+        },
+        {
+          "caller": "operator[]",
+          "callee": "GetView",
+          "lineNumber": 72
+        },
+        {
+          "caller": "operator+",
+          "callee": "ArrayIterator",
+          "lineNumber": 102
+        },
+        {
+          "caller": "operator-",
+          "callee": "ArrayIterator",
+          "lineNumber": 105
+        },
+        {
+          "caller": "operator+",
+          "callee": "ArrayIterator",
+          "lineNumber": 109
+        },
+        {
+          "caller": "operator-",
+          "callee": "ArrayIterator",
+          "lineNumber": 113
+        },
+        {
+          "caller": "operator*",
+          "callee": "GetChunkLocation",
+          "lineNumber": 156
+        },
+        {
+          "caller": "operator*",
+          "callee": "arrow::internal::checked_cast<const ArrayType&>",
+          "lineNumber": 158
+        },
+        {
+          "caller": "operator*",
+          "callee": "chunk",
+          "lineNumber": 159
+        },
+        {
+          "caller": "operator*",
+          "callee": "static_cast<int>",
+          "lineNumber": 159
+        },
+        {
+          "caller": "operator+",
+          "callee": "assert",
+          "lineNumber": 193
+        },
+        {
+          "caller": "operator+",
+          "callee": "ChunkedArrayIterator",
+          "lineNumber": 194
+        },
+        {
+          "caller": "operator-",
+          "callee": "assert",
+          "lineNumber": 197
+        },
+        {
+          "caller": "operator-",
+          "callee": "ChunkedArrayIterator",
+          "lineNumber": 198
+        },
+        {
+          "caller": "operator+",
+          "callee": "assert",
+          "lineNumber": 202
+        },
+        {
+          "caller": "operator+",
+          "callee": "ChunkedArrayIterator",
+          "lineNumber": 203
+        },
+        {
+          "caller": "operator-",
+          "callee": "assert",
+          "lineNumber": 207
+        },
+        {
+          "caller": "operator-",
+          "callee": "ChunkedArrayIterator",
+          "lineNumber": 208
+        },
+        {
+          "caller": "GetChunkLocation",
+          "callee": "assert",
+          "lineNumber": 241
+        },
+        {
+          "caller": "GetChunkLocation",
+          "callee": "Resolve",
+          "lineNumber": 242
+        },
+        {
+          "caller": "Begin",
+          "callee": "ChunkedArrayIterator<ArrayType>",
+          "lineNumber": 252
+        },
+        {
+          "caller": "End",
+          "callee": "ChunkedArrayIterator<ArrayType>",
+          "lineNumber": 258
+        },
+        {
+          "caller": "End",
+          "callee": "length",
+          "lineNumber": 258
+        },
+        {
+          "caller": "begin",
+          "callee": "stl::ChunkedArrayIterator<ArrayType>",
+          "lineNumber": 266
+        },
+        {
+          "caller": "end",
+          "callee": "stl::ChunkedArrayIterator<ArrayType>",
+          "lineNumber": 269
+        },
+        {
+          "caller": "end",
+          "callee": "length",
+          "lineNumber": 269
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/stl.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 462,
+      "nonEmptyLines": 391,
+      "classes": [
+        {
+          "name": "Schema",
+          "startLine": 45,
+          "endLine": 45,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "Schema",
+          "line": 45,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "AppendListValues",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 96
+        },
+        {
+          "caller": "AppendListValues",
+          "callee": "ConversionTraits<ValueCType>::AppendRow",
+          "lineNumber": 96
+        },
+        {
+          "caller": "AppendListValues",
+          "callee": "Status::OK",
+          "lineNumber": 98
+        },
+        {
+          "caller": "AppendRow",
+          "callee": "Append",
+          "lineNumber": 136
+        },
+        {
+          "caller": "GetEntry",
+          "callee": "GetString",
+          "lineNumber": 139
+        },
+        {
+          "caller": "AppendCellRange",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 159
+        },
+        {
+          "caller": "AppendCellRange",
+          "callee": "Append",
+          "lineNumber": 159
+        },
+        {
+          "caller": "AppendCellRange",
+          "callee": "::arrow::internal::checked_cast<ChildBuilderType&>",
+          "lineNumber": 161
+        },
+        {
+          "caller": "AppendCellRange",
+          "callee": "value_builder",
+          "lineNumber": 161
+        },
+        {
+          "caller": "AppendCellRange",
+          "callee": "AppendListValues<ValueCType>",
+          "lineNumber": 164
+        },
+        {
+          "caller": "AppendCellRange",
+          "callee": "std::forward<Range>",
+          "lineNumber": 164
+        },
+        {
+          "caller": "AppendRow",
+          "callee": "AppendCellRange<ValueCType>",
+          "lineNumber": 171
+        },
+        {
+          "caller": "GetEntry",
+          "callee": "::arrow::internal::checked_cast<const ElementArrayType&>",
+          "lineNumber": 179
+        },
+        {
+          "caller": "GetEntry",
+          "callee": "values",
+          "lineNumber": 179
+        },
+        {
+          "caller": "GetEntry",
+          "callee": "value_length",
+          "lineNumber": 181
+        },
+        {
+          "caller": "GetEntry",
+          "callee": "value_length",
+          "lineNumber": 182
+        },
+        {
+          "caller": "GetEntry",
+          "callee": "ConversionTraits<ValueCType>::GetEntry",
+          "lineNumber": 184
+        },
+        {
+          "caller": "GetEntry",
+          "callee": "value_offset",
+          "lineNumber": 184
+        },
+        {
+          "caller": "AppendRow",
+          "callee": "ConversionTraits<OptionalInnerType>::AppendRow",
+          "lineNumber": 201
+        },
+        {
+          "caller": "AppendRow",
+          "callee": "AppendNull",
+          "lineNumber": 203
+        },
+        {
+          "caller": "MakeSchemaRecursion",
+          "callee": "SchemaFromTuple<Tuple, N - 1>::MakeSchemaRecursion",
+          "lineNumber": 224
+        },
+        {
+          "caller": "MakeSchemaRecursion",
+          "callee": "ConversionTraits<Element>::type_singleton",
+          "lineNumber": 225
+        },
+        {
+          "caller": "MakeSchemaRecursion",
+          "callee": "push_back",
+          "lineNumber": 226
+        },
+        {
+          "caller": "MakeSchemaRecursion",
+          "callee": "field",
+          "lineNumber": 226
+        },
+        {
+          "caller": "MakeSchema",
+          "callee": "std::make_shared<Schema>",
+          "lineNumber": 241
+        },
+        {
+          "caller": "MakeSchema",
+          "callee": "MakeSchemaRecursion",
+          "lineNumber": 241
+        },
+        {
+          "caller": "MakeSchemaRecursionT",
+          "callee": "SchemaFromTuple<Tuple, N - 1>::MakeSchemaRecursionT",
+          "lineNumber": 255
+        },
+        {
+          "caller": "MakeSchemaRecursionT",
+          "callee": "ConversionTraits<Element>::type_singleton",
+          "lineNumber": 256
+        },
+        {
+          "caller": "MakeSchemaRecursionT",
+          "callee": "push_back",
+          "lineNumber": 257
+        },
+        {
+          "caller": "MakeSchemaRecursionT",
+          "callee": "field",
+          "lineNumber": 258
+        },
+        {
+          "caller": "MakeSchemaRecursionT",
+          "callee": "get<N - 1>",
+          "lineNumber": 258
+        },
+        {
+          "caller": "MakeSchema",
+          "callee": "std::make_shared<Schema>",
+          "lineNumber": 274
+        },
+        {
+          "caller": "MakeSchema",
+          "callee": "MakeSchemaRecursionT<NamesTuple>",
+          "lineNumber": 274
+        },
+        {
+          "caller": "MakeSchemaRecursion",
+          "callee": "reserve",
+          "lineNumber": 283
+        },
+        {
+          "caller": "MakeSchemaRecursion",
+          "callee": "size",
+          "lineNumber": 283
+        },
+        {
+          "caller": "MakeSchemaRecursionT",
+          "callee": "reserve",
+          "lineNumber": 291
+        },
+        {
+          "caller": "Make",
+          "callee": "ConversionTraits<Element>::type_singleton",
+          "lineNumber": 303
+        },
+        {
+          "caller": "Make",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 304
+        },
+        {
+          "caller": "Make",
+          "callee": "MakeBuilder",
+          "lineNumber": 304
+        },
+        {
+          "caller": "Make",
+          "callee": "at",
+          "lineNumber": 304
+        },
+        {
+          "caller": "Make",
+          "callee": "CreateBuildersRecursive<Tuple, N - 1>::Make",
+          "lineNumber": 306
+        },
+        {
+          "caller": "Make",
+          "callee": "Status::OK",
+          "lineNumber": 313
+        },
+        {
+          "caller": "Append",
+          "callee": "::arrow::internal::checked_cast<BuilderType&>",
+          "lineNumber": 327
+        },
+        {
+          "caller": "Append",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 328
+        },
+        {
+          "caller": "Append",
+          "callee": "ConversionTraits<Element>::AppendRow",
+          "lineNumber": 328
+        },
+        {
+          "caller": "Append",
+          "callee": "get<N - 1>",
+          "lineNumber": 328
+        },
+        {
+          "caller": "Append",
+          "callee": "RowIterator<Tuple, N - 1>::Append",
+          "lineNumber": 330
+        },
+        {
+          "caller": "Append",
+          "callee": "Status::OK",
+          "lineNumber": 338
+        },
+        {
+          "caller": "Cast",
+          "callee": "ConversionTraits<Element>::type_singleton",
+          "lineNumber": 348
+        },
+        {
+          "caller": "Cast",
+          "callee": "Equals",
+          "lineNumber": 350
+        },
+        {
+          "caller": "Cast",
+          "callee": "type",
+          "lineNumber": 350
+        },
+        {
+          "caller": "Cast",
+          "callee": "field",
+          "lineNumber": 350
+        },
+        {
+          "caller": "Cast",
+          "callee": "schema",
+          "lineNumber": 350
+        },
+        {
+          "caller": "Cast",
+          "callee": "WithType",
+          "lineNumber": 354
+        },
+        {
+          "caller": "Cast",
+          "callee": "field",
+          "lineNumber": 354
+        },
+        {
+          "caller": "Cast",
+          "callee": "schema",
+          "lineNumber": 354
+        },
+        {
+          "caller": "Cast",
+          "callee": "ARROW_ASSIGN_OR_RAISE",
+          "lineNumber": 355
+        },
+        {
+          "caller": "Cast",
+          "callee": "SetColumn",
+          "lineNumber": 356
+        },
+        {
+          "caller": "Cast",
+          "callee": "chunked_array",
+          "lineNumber": 356
+        },
+        {
+          "caller": "Cast",
+          "callee": "EnsureColumnTypes<Tuple, N - 1>::Cast",
+          "lineNumber": 360
+        },
+        {
+          "caller": "Cast",
+          "callee": "get",
+          "lineNumber": 360
+        },
+        {
+          "caller": "Cast",
+          "callee": "Status::OK",
+          "lineNumber": 370
+        },
+        {
+          "caller": "Fill",
+          "callee": "begin",
+          "lineNumber": 382
+        },
+        {
+          "caller": "Fill",
+          "callee": "column",
+          "lineNumber": 383
+        },
+        {
+          "caller": "Fill",
+          "callee": "num_chunks",
+          "lineNumber": 384
+        },
+        {
+          "caller": "Fill",
+          "callee": "::arrow::internal::checked_cast<const ArrayType&>",
+          "lineNumber": 386
+        },
+        {
+          "caller": "Fill",
+          "callee": "chunk",
+          "lineNumber": 386
+        },
+        {
+          "caller": "Fill",
+          "callee": "length",
+          "lineNumber": 387
+        },
+        {
+          "caller": "Fill",
+          "callee": "get<N - 1>",
+          "lineNumber": 388
+        },
+        {
+          "caller": "Fill",
+          "callee": "ConversionTraits<Element>::GetEntry",
+          "lineNumber": 388
+        },
+        {
+          "caller": "Fill",
+          "callee": "TupleSetter<Range, Tuple, N - 1>::Fill",
+          "lineNumber": 392
+        },
+        {
+          "caller": "TableFromTupleRange",
+          "callee": "std::begin",
+          "lineNumber": 407
+        },
+        {
+          "caller": "TableFromTupleRange",
+          "callee": "SchemaFromTuple<row_type>::MakeSchema",
+          "lineNumber": 410
+        },
+        {
+          "caller": "TableFromTupleRange",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 413
+        },
+        {
+          "caller": "TableFromTupleRange",
+          "callee": "internal::CreateBuildersRecursive<row_type>::Make",
+          "lineNumber": 413
+        },
+        {
+          "caller": "TableFromTupleRange",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 416
+        },
+        {
+          "caller": "TableFromTupleRange",
+          "callee": "internal::RowIterator<row_type>::Append",
+          "lineNumber": 416
+        },
+        {
+          "caller": "TableFromTupleRange",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 422
+        },
+        {
+          "caller": "TableFromTupleRange",
+          "callee": "Finish",
+          "lineNumber": 422
+        },
+        {
+          "caller": "TableFromTupleRange",
+          "callee": "emplace_back",
+          "lineNumber": 423
+        },
+        {
+          "caller": "TableFromTupleRange",
+          "callee": "Table::Make",
+          "lineNumber": 426
+        },
+        {
+          "caller": "TableFromTupleRange",
+          "callee": "std::move",
+          "lineNumber": 426
+        },
+        {
+          "caller": "TableFromTupleRange",
+          "callee": "std::move",
+          "lineNumber": 426
+        },
+        {
+          "caller": "TableFromTupleRange",
+          "callee": "Status::OK",
+          "lineNumber": 428
+        },
+        {
+          "caller": "TupleRangeFromTable",
+          "callee": "std::begin",
+          "lineNumber": 434
+        },
+        {
+          "caller": "TupleRangeFromTable",
+          "callee": "num_fields",
+          "lineNumber": 437
+        },
+        {
+          "caller": "TupleRangeFromTable",
+          "callee": "schema",
+          "lineNumber": 437
+        },
+        {
+          "caller": "TupleRangeFromTable",
+          "callee": "Status::Invalid",
+          "lineNumber": 438
+        },
+        {
+          "caller": "TupleRangeFromTable",
+          "callee": "num_fields",
+          "lineNumber": 440
+        },
+        {
+          "caller": "TupleRangeFromTable",
+          "callee": "schema",
+          "lineNumber": 440
+        },
+        {
+          "caller": "TupleRangeFromTable",
+          "callee": "std::size",
+          "lineNumber": 443
+        },
+        {
+          "caller": "TupleRangeFromTable",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 443
+        },
+        {
+          "caller": "TupleRangeFromTable",
+          "callee": "num_rows",
+          "lineNumber": 443
+        },
+        {
+          "caller": "TupleRangeFromTable",
+          "callee": "Status::Invalid",
+          "lineNumber": 444
+        },
+        {
+          "caller": "TupleRangeFromTable",
+          "callee": "num_rows",
+          "lineNumber": 446
+        },
+        {
+          "caller": "TupleRangeFromTable",
+          "callee": "std::size",
+          "lineNumber": 446
+        },
+        {
+          "caller": "TupleRangeFromTable",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 453
+        },
+        {
+          "caller": "TupleRangeFromTable",
+          "callee": "internal::EnsureColumnTypes<row_type>::Cast",
+          "lineNumber": 453
+        },
+        {
+          "caller": "TupleRangeFromTable",
+          "callee": "internal::TupleSetter<Range, row_type>::Fill",
+          "lineNumber": 456
+        },
+        {
+          "caller": "TupleRangeFromTable",
+          "callee": "get",
+          "lineNumber": 456
+        },
+        {
+          "caller": "TupleRangeFromTable",
+          "callee": "Status::OK",
+          "lineNumber": 458
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/table_builder.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 107,
+      "nonEmptyLines": 86,
+      "classes": [
+        {
+          "name": "MemoryPool",
+          "startLine": 33,
+          "endLine": 33,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "RecordBatch",
+          "startLine": 34,
+          "endLine": 34,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "MemoryPool",
+          "line": 33,
+          "isDefault": false
+        },
+        {
+          "name": "RecordBatch",
+          "line": 34,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "num_fields",
+          "callee": "num_fields",
+          "lineNumber": 85
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 0,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/table.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 367,
+      "nonEmptyLines": 312,
+      "classes": [
+        {
+          "name": "Array",
+          "startLine": 35,
+          "endLine": 35,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "ChunkedArray",
+          "startLine": 36,
+          "endLine": 36,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "KeyValueMetadata",
+          "startLine": 37,
+          "endLine": 37,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "MemoryPool",
+          "startLine": 38,
+          "endLine": 38,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "CastOptions",
+          "startLine": 317,
+          "endLine": 317,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "Array",
+          "line": 35,
+          "isDefault": false
+        },
+        {
+          "name": "ChunkedArray",
+          "line": 36,
+          "isDefault": false
+        },
+        {
+          "name": "KeyValueMetadata",
+          "line": 37,
+          "isDefault": false
+        },
+        {
+          "name": "MemoryPool",
+          "line": 38,
+          "isDefault": false
+        },
+        {
+          "name": "CastOptions",
+          "line": 317,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "field",
+          "callee": "field",
+          "lineNumber": 114
+        },
+        {
+          "caller": "Slice",
+          "callee": "Slice",
+          "lineNumber": 131
+        },
+        {
+          "caller": "GetColumnByName",
+          "callee": "GetFieldIndex",
+          "lineNumber": 137
+        },
+        {
+          "caller": "GetColumnByName",
+          "callee": "column",
+          "lineNumber": 138
+        },
+        {
+          "caller": "num_columns",
+          "callee": "num_fields",
+          "lineNumber": 201
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 5,
+        "functionCount": 0,
+        "classCount": 5
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/tensor.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 246,
+      "nonEmptyLines": 201,
+      "functions": [
+        {
+          "name": "is_tensor_supported",
+          "startLine": 36,
+          "endLine": 54,
+          "params": [
+            "type_id"
+          ]
+        },
+        {
+          "name": "~Tensor",
+          "startLine": 104,
+          "endLine": 104,
+          "params": []
+        },
+        {
+          "name": "type",
+          "startLine": 119,
+          "endLine": 119,
+          "params": []
+        },
+        {
+          "name": "data",
+          "startLine": 120,
+          "endLine": 120,
+          "params": []
+        },
+        {
+          "name": "ndim",
+          "startLine": 128,
+          "endLine": 128,
+          "params": []
+        },
+        {
+          "name": "is_mutable",
+          "startLine": 137,
+          "endLine": 137,
+          "params": []
+        },
+        {
+          "name": "CalculateValueOffset",
+          "startLine": 156,
+          "endLine": 164,
+          "params": [
+            "strides",
+            "index"
+          ]
+        },
+        {
+          "name": "CalculateValueOffset",
+          "startLine": 166,
+          "endLine": 168,
+          "params": [
+            "index"
+          ]
+        },
+        {
+          "name": "Validate",
+          "startLine": 179,
+          "endLine": 181,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "~Tensor",
+          "line": 104,
+          "isDefault": false
+        },
+        {
+          "name": "type",
+          "line": 119,
+          "isDefault": false
+        },
+        {
+          "name": "data",
+          "line": 120,
+          "isDefault": false
+        },
+        {
+          "name": "ndim",
+          "line": 128,
+          "isDefault": false
+        },
+        {
+          "name": "is_mutable",
+          "line": 137,
+          "isDefault": false
+        },
+        {
+          "name": "CalculateValueOffset",
+          "line": 166,
+          "isDefault": false
+        },
+        {
+          "name": "Validate",
+          "line": 179,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "ndim",
+          "callee": "static_cast<int>",
+          "lineNumber": 128
+        },
+        {
+          "caller": "ndim",
+          "callee": "size",
+          "lineNumber": 128
+        },
+        {
+          "caller": "is_mutable",
+          "callee": "is_mutable",
+          "lineNumber": 137
+        },
+        {
+          "caller": "CalculateValueOffset",
+          "callee": "static_cast<int64_t>",
+          "lineNumber": 158
+        },
+        {
+          "caller": "CalculateValueOffset",
+          "callee": "size",
+          "lineNumber": 158
+        },
+        {
+          "caller": "CalculateValueOffset",
+          "callee": "Tensor::CalculateValueOffset",
+          "lineNumber": 167
+        },
+        {
+          "caller": "Validate",
+          "callee": "internal::ValidateTensorParameters",
+          "lineNumber": 180
+        },
+        {
+          "caller": "Make",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 221
+        },
+        {
+          "caller": "Make",
+          "callee": "internal::ValidateTensorParameters",
+          "lineNumber": 221
+        },
+        {
+          "caller": "Make",
+          "callee": "TypeTraits<TYPE>::type_singleton",
+          "lineNumber": 222
+        },
+        {
+          "caller": "Make",
+          "callee": "std::make_shared<NumericTensor<TYPE>>",
+          "lineNumber": 223
+        },
+        {
+          "caller": "NumericTensor",
+          "callee": "TypeTraits<TYPE>::type_singleton",
+          "lineNumber": 230
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 7,
+        "functionCount": 9,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/tensor/converter.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 67,
+      "nonEmptyLines": 52,
+      "functions": [
+        {
+          "name": "IsNonZero",
+          "startLine": 28,
+          "endLine": 28,
+          "params": [
+            "val"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "SparseTensorConverterMixin",
+          "startLine": 27,
+          "endLine": 33,
+          "methods": [
+            "IsNonZero",
+            "AssignIndex",
+            "GetIndexValue"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "IsNonZero",
+          "line": 28,
+          "isDefault": false
+        },
+        {
+          "name": "AssignIndex",
+          "line": 30,
+          "isDefault": false
+        },
+        {
+          "name": "GetIndexValue",
+          "line": 32,
+          "isDefault": false
+        },
+        {
+          "name": "SparseTensorConverterMixin",
+          "line": 27,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 4,
+        "functionCount": 1,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/testing/async_test_util.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 79,
+      "nonEmptyLines": 65,
+      "callGraph": [
+        {
+          "caller": "AsyncVectorIt",
+          "callee": "MakeVectorGenerator",
+          "lineNumber": 32
+        },
+        {
+          "caller": "AsyncVectorIt",
+          "callee": "std::move",
+          "lineNumber": 32
+        },
+        {
+          "caller": "FailAt",
+          "callee": "std::make_shared<std::atomic<int>>",
+          "lineNumber": 37
+        },
+        {
+          "caller": "FailAt",
+          "callee": "fetch_add",
+          "lineNumber": 39
+        },
+        {
+          "caller": "FailAt",
+          "callee": "Future<T>::MakeFinished",
+          "lineNumber": 41
+        },
+        {
+          "caller": "FailAt",
+          "callee": "Status::Invalid",
+          "lineNumber": 41
+        },
+        {
+          "caller": "FailAt",
+          "callee": "src",
+          "lineNumber": 43
+        },
+        {
+          "caller": "SlowdownABit",
+          "callee": "MakeMappedGenerator",
+          "lineNumber": 49
+        },
+        {
+          "caller": "SlowdownABit",
+          "callee": "std::move",
+          "lineNumber": 49
+        },
+        {
+          "caller": "SlowdownABit",
+          "callee": "Then",
+          "lineNumber": 50
+        },
+        {
+          "caller": "SlowdownABit",
+          "callee": "SleepABitAsync",
+          "lineNumber": 50
+        },
+        {
+          "caller": "TrackingGenerator",
+          "callee": "std::make_shared<State>",
+          "lineNumber": 58
+        },
+        {
+          "caller": "TrackingGenerator",
+          "callee": "std::move",
+          "lineNumber": 58
+        },
+        {
+          "caller": "operator()",
+          "callee": "source",
+          "lineNumber": 62
+        },
+        {
+          "caller": "num_read",
+          "callee": "load",
+          "lineNumber": 65
+        },
+        {
+          "caller": "State",
+          "callee": "std::move",
+          "lineNumber": 69
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/testing/builder.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 231,
+      "nonEmptyLines": 196,
+      "callGraph": [
+        {
+          "caller": "ArrayFromVector",
+          "callee": "ASSERT_EQ",
+          "lineNumber": 44
+        },
+        {
+          "caller": "ArrayFromVector",
+          "callee": "id",
+          "lineNumber": 44
+        },
+        {
+          "caller": "ArrayFromVector",
+          "callee": "ASSERT_OK",
+          "lineNumber": 48
+        },
+        {
+          "caller": "ArrayFromVector",
+          "callee": "MakeBuilder",
+          "lineNumber": 48
+        },
+        {
+          "caller": "ArrayFromVector",
+          "callee": "default_memory_pool",
+          "lineNumber": 48
+        },
+        {
+          "caller": "ArrayFromVector",
+          "callee": "dynamic_cast<typename TypeTraits<TYPE>::BuilderType&>",
+          "lineNumber": 50
+        },
+        {
+          "caller": "ArrayFromVector",
+          "callee": "size",
+          "lineNumber": 52
+        },
+        {
+          "caller": "ArrayFromVector",
+          "callee": "ASSERT_OK",
+          "lineNumber": 54
+        },
+        {
+          "caller": "ArrayFromVector",
+          "callee": "Append",
+          "lineNumber": 54
+        },
+        {
+          "caller": "ArrayFromVector",
+          "callee": "ASSERT_OK",
+          "lineNumber": 56
+        },
+        {
+          "caller": "ArrayFromVector",
+          "callee": "AppendNull",
+          "lineNumber": 56
+        },
+        {
+          "caller": "ArrayFromVector",
+          "callee": "ASSERT_OK",
+          "lineNumber": 59
+        },
+        {
+          "caller": "ArrayFromVector",
+          "callee": "Finish",
+          "lineNumber": 59
+        },
+        {
+          "caller": "ArrayFromVector",
+          "callee": "ASSERT_EQ",
+          "lineNumber": 66
+        },
+        {
+          "caller": "ArrayFromVector",
+          "callee": "id",
+          "lineNumber": 66
+        },
+        {
+          "caller": "ArrayFromVector",
+          "callee": "ASSERT_OK",
+          "lineNumber": 70
+        },
+        {
+          "caller": "ArrayFromVector",
+          "callee": "MakeBuilder",
+          "lineNumber": 70
+        },
+        {
+          "caller": "ArrayFromVector",
+          "callee": "default_memory_pool",
+          "lineNumber": 70
+        },
+        {
+          "caller": "ArrayFromVector",
+          "callee": "dynamic_cast<typename TypeTraits<TYPE>::BuilderType&>",
+          "lineNumber": 72
+        },
+        {
+          "caller": "ArrayFromVector",
+          "callee": "size",
+          "lineNumber": 74
+        },
+        {
+          "caller": "ArrayFromVector",
+          "callee": "ASSERT_OK",
+          "lineNumber": 75
+        },
+        {
+          "caller": "ArrayFromVector",
+          "callee": "Append",
+          "lineNumber": 75
+        },
+        {
+          "caller": "ArrayFromVector",
+          "callee": "ASSERT_OK",
+          "lineNumber": 77
+        },
+        {
+          "caller": "ArrayFromVector",
+          "callee": "Finish",
+          "lineNumber": 77
+        },
+        {
+          "caller": "ArrayFromVector",
+          "callee": "TypeTraits<TYPE>::type_singleton",
+          "lineNumber": 85
+        },
+        {
+          "caller": "ArrayFromVector",
+          "callee": "ArrayFromVector<TYPE, C_TYPE>",
+          "lineNumber": 86
+        },
+        {
+          "caller": "ArrayFromVector",
+          "callee": "TypeTraits<TYPE>::type_singleton",
+          "lineNumber": 91
+        },
+        {
+          "caller": "ArrayFromVector",
+          "callee": "ArrayFromVector<TYPE, C_TYPE>",
+          "lineNumber": 92
+        },
+        {
+          "caller": "ChunkedArrayFromVector",
+          "callee": "ASSERT_EQ",
+          "lineNumber": 103
+        },
+        {
+          "caller": "ChunkedArrayFromVector",
+          "callee": "size",
+          "lineNumber": 103
+        },
+        {
+          "caller": "ChunkedArrayFromVector",
+          "callee": "size",
+          "lineNumber": 103
+        },
+        {
+          "caller": "ChunkedArrayFromVector",
+          "callee": "size",
+          "lineNumber": 104
+        },
+        {
+          "caller": "ChunkedArrayFromVector",
+          "callee": "ArrayFromVector<TYPE, C_TYPE>",
+          "lineNumber": 106
+        },
+        {
+          "caller": "ChunkedArrayFromVector",
+          "callee": "push_back",
+          "lineNumber": 107
+        },
+        {
+          "caller": "ChunkedArrayFromVector",
+          "callee": "std::make_shared<ChunkedArray>",
+          "lineNumber": 109
+        },
+        {
+          "caller": "ChunkedArrayFromVector",
+          "callee": "size",
+          "lineNumber": 117
+        },
+        {
+          "caller": "ChunkedArrayFromVector",
+          "callee": "ArrayFromVector<TYPE, C_TYPE>",
+          "lineNumber": 119
+        },
+        {
+          "caller": "ChunkedArrayFromVector",
+          "callee": "push_back",
+          "lineNumber": 120
+        },
+        {
+          "caller": "ChunkedArrayFromVector",
+          "callee": "std::make_shared<ChunkedArray>",
+          "lineNumber": 122
+        },
+        {
+          "caller": "ChunkedArrayFromVector",
+          "callee": "TypeTraits<TYPE>::type_singleton",
+          "lineNumber": 131
+        },
+        {
+          "caller": "ChunkedArrayFromVector",
+          "callee": "ChunkedArrayFromVector<TYPE, C_TYPE>",
+          "lineNumber": 132
+        },
+        {
+          "caller": "ChunkedArrayFromVector",
+          "callee": "TypeTraits<TYPE>::type_singleton",
+          "lineNumber": 138
+        },
+        {
+          "caller": "ChunkedArrayFromVector",
+          "callee": "ChunkedArrayFromVector<TYPE, C_TYPE>",
+          "lineNumber": 139
+        },
+        {
+          "caller": "FinishAndCheckPadding",
+          "callee": "ASSERT_OK_AND_ASSIGN",
+          "lineNumber": 144
+        },
+        {
+          "caller": "FinishAndCheckPadding",
+          "callee": "Finish",
+          "lineNumber": 144
+        },
+        {
+          "caller": "FinishAndCheckPadding",
+          "callee": "AssertZeroPadded",
+          "lineNumber": 145
+        },
+        {
+          "caller": "FinishAndCheckPadding",
+          "callee": "TestInitialized",
+          "lineNumber": 146
+        },
+        {
+          "caller": "MakeArray",
+          "callee": "RETURN_NOT_OK",
+          "lineNumber": 155
+        },
+        {
+          "caller": "MakeArray",
+          "callee": "Append",
+          "lineNumber": 155
+        },
+        {
+          "caller": "MakeArray",
+          "callee": "RETURN_NOT_OK",
+          "lineNumber": 157
+        },
+        {
+          "caller": "MakeArray",
+          "callee": "AppendNull",
+          "lineNumber": 157
+        },
+        {
+          "caller": "MakeArray",
+          "callee": "Finish",
+          "lineNumber": 160
+        },
+        {
+          "caller": "Visit",
+          "callee": "fn",
+          "lineNumber": 170
+        },
+        {
+          "caller": "Visit",
+          "callee": "internal::checked_cast<BuilderType*>",
+          "lineNumber": 170
+        },
+        {
+          "caller": "Visit",
+          "callee": "Status::OK",
+          "lineNumber": 171
+        },
+        {
+          "caller": "Visit",
+          "callee": "Status::NotImplemented",
+          "lineNumber": 175
+        },
+        {
+          "caller": "ArrayFromBuilderVisitor",
+          "callee": "RETURN_NOT_OK",
+          "lineNumber": 184
+        },
+        {
+          "caller": "ArrayFromBuilderVisitor",
+          "callee": "MakeBuilder",
+          "lineNumber": 184
+        },
+        {
+          "caller": "ArrayFromBuilderVisitor",
+          "callee": "default_memory_pool",
+          "lineNumber": 184
+        },
+        {
+          "caller": "ArrayFromBuilderVisitor",
+          "callee": "RETURN_NOT_OK",
+          "lineNumber": 187
+        },
+        {
+          "caller": "ArrayFromBuilderVisitor",
+          "callee": "Resize",
+          "lineNumber": 187
+        },
+        {
+          "caller": "ArrayFromBuilderVisitor",
+          "callee": "RETURN_NOT_OK",
+          "lineNumber": 192
+        },
+        {
+          "caller": "ArrayFromBuilderVisitor",
+          "callee": "VisitTypeInline",
+          "lineNumber": 193
+        },
+        {
+          "caller": "ArrayFromBuilderVisitor",
+          "callee": "type",
+          "lineNumber": 193
+        },
+        {
+          "caller": "ArrayFromBuilderVisitor",
+          "callee": "get",
+          "lineNumber": 193
+        },
+        {
+          "caller": "ArrayFromBuilderVisitor",
+          "callee": "std::forward<Fn>",
+          "lineNumber": 193
+        },
+        {
+          "caller": "ArrayFromBuilderVisitor",
+          "callee": "RETURN_NOT_OK",
+          "lineNumber": 197
+        },
+        {
+          "caller": "ArrayFromBuilderVisitor",
+          "callee": "Finish",
+          "lineNumber": 197
+        },
+        {
+          "caller": "ArrayFromBuilderVisitor",
+          "callee": "std::move",
+          "lineNumber": 198
+        },
+        {
+          "caller": "ArrayFromBuilderVisitor",
+          "callee": "ArrayFromBuilderVisitor",
+          "lineNumber": 204
+        },
+        {
+          "caller": "ArrayFromBuilderVisitor",
+          "callee": "std::forward<Fn>",
+          "lineNumber": 204
+        },
+        {
+          "caller": "GetBitmapFromVector",
+          "callee": "size",
+          "lineNumber": 210
+        },
+        {
+          "caller": "GetBitmapFromVector",
+          "callee": "mutable_data",
+          "lineNumber": 214
+        },
+        {
+          "caller": "GetBitmapFromVector",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 215
+        },
+        {
+          "caller": "GetBitmapFromVector",
+          "callee": "bit_util::SetBit",
+          "lineNumber": 217
+        },
+        {
+          "caller": "GetBitmapFromVector",
+          "callee": "Status::OK",
+          "lineNumber": 222
+        },
+        {
+          "caller": "BitmapFromVector",
+          "callee": "ASSERT_OK",
+          "lineNumber": 228
+        },
+        {
+          "caller": "BitmapFromVector",
+          "callee": "GetBitmapFromVector",
+          "lineNumber": 228
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/testing/executor_util.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 55,
+      "nonEmptyLines": 45,
+      "functions": [
+        {
+          "name": "GetCapacity",
+          "startLine": 27,
+          "endLine": 27,
+          "params": []
+        },
+        {
+          "name": "SpawnReal",
+          "startLine": 29,
+          "endLine": 34,
+          "params": [
+            "hints",
+            "task"
+          ]
+        },
+        {
+          "name": "GetCapacity",
+          "startLine": 44,
+          "endLine": 44,
+          "params": []
+        },
+        {
+          "name": "SpawnReal",
+          "startLine": 46,
+          "endLine": 50,
+          "params": [
+            "hints",
+            "task"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "MockExecutor",
+          "startLine": 25,
+          "endLine": 37,
+          "methods": [
+            "GetCapacity",
+            "SpawnReal"
+          ],
+          "properties": [
+            "spawn_count"
+          ]
+        },
+        {
+          "name": "DelayedExecutor",
+          "startLine": 42,
+          "endLine": 53,
+          "methods": [
+            "GetCapacity",
+            "SpawnReal"
+          ],
+          "properties": [
+            "captured_tasks"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "GetCapacity",
+          "line": 27,
+          "isDefault": false
+        },
+        {
+          "name": "SpawnReal",
+          "line": 29,
+          "isDefault": false
+        },
+        {
+          "name": "MockExecutor",
+          "line": 25,
+          "isDefault": false
+        },
+        {
+          "name": "GetCapacity",
+          "line": 44,
+          "isDefault": false
+        },
+        {
+          "name": "SpawnReal",
+          "line": 46,
+          "isDefault": false
+        },
+        {
+          "name": "DelayedExecutor",
+          "line": 42,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "SpawnReal",
+          "callee": "std::move(task)",
+          "lineNumber": 32
+        },
+        {
+          "caller": "SpawnReal",
+          "callee": "std::move",
+          "lineNumber": 32
+        },
+        {
+          "caller": "SpawnReal",
+          "callee": "Status::OK",
+          "lineNumber": 33
+        },
+        {
+          "caller": "SpawnReal",
+          "callee": "push_back",
+          "lineNumber": 48
+        },
+        {
+          "caller": "SpawnReal",
+          "callee": "std::move",
+          "lineNumber": 48
+        },
+        {
+          "caller": "SpawnReal",
+          "callee": "Status::OK",
+          "lineNumber": 49
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 6,
+        "functionCount": 4,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/testing/extension_type.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 211,
+      "nonEmptyLines": 150,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/testing/future_util.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 142,
+      "nonEmptyLines": 121,
+      "callGraph": [
+        {
+          "caller": "AssertNotFinished",
+          "callee": "ASSERT_FALSE",
+          "lineNumber": 112
+        },
+        {
+          "caller": "AssertNotFinished",
+          "callee": "IsFutureFinished",
+          "lineNumber": 112
+        },
+        {
+          "caller": "AssertNotFinished",
+          "callee": "state",
+          "lineNumber": 112
+        },
+        {
+          "caller": "AssertFinished",
+          "callee": "ASSERT_TRUE",
+          "lineNumber": 117
+        },
+        {
+          "caller": "AssertFinished",
+          "callee": "IsFutureFinished",
+          "lineNumber": 117
+        },
+        {
+          "caller": "AssertFinished",
+          "callee": "state",
+          "lineNumber": 117
+        },
+        {
+          "caller": "AssertSuccessful",
+          "callee": "IsFutureFinished",
+          "lineNumber": 123
+        },
+        {
+          "caller": "AssertSuccessful",
+          "callee": "state",
+          "lineNumber": 123
+        },
+        {
+          "caller": "AssertSuccessful",
+          "callee": "ASSERT_EQ",
+          "lineNumber": 124
+        },
+        {
+          "caller": "AssertSuccessful",
+          "callee": "state",
+          "lineNumber": 124
+        },
+        {
+          "caller": "AssertSuccessful",
+          "callee": "ASSERT_OK",
+          "lineNumber": 125
+        },
+        {
+          "caller": "AssertSuccessful",
+          "callee": "status",
+          "lineNumber": 125
+        },
+        {
+          "caller": "AssertSuccessful",
+          "callee": "FAIL",
+          "lineNumber": 127
+        },
+        {
+          "caller": "AssertFailed",
+          "callee": "IsFutureFinished",
+          "lineNumber": 134
+        },
+        {
+          "caller": "AssertFailed",
+          "callee": "state",
+          "lineNumber": 134
+        },
+        {
+          "caller": "AssertFailed",
+          "callee": "ASSERT_EQ",
+          "lineNumber": 135
+        },
+        {
+          "caller": "AssertFailed",
+          "callee": "state",
+          "lineNumber": 135
+        },
+        {
+          "caller": "AssertFailed",
+          "callee": "ASSERT_FALSE",
+          "lineNumber": 136
+        },
+        {
+          "caller": "AssertFailed",
+          "callee": "ok",
+          "lineNumber": 136
+        },
+        {
+          "caller": "AssertFailed",
+          "callee": "status",
+          "lineNumber": 136
+        },
+        {
+          "caller": "AssertFailed",
+          "callee": "FAIL",
+          "lineNumber": 138
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    }
+  ]
+}

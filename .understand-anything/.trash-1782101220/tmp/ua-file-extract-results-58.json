@@ -1,0 +1,3151 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 25,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/thirdparty/optionparser/optionparser.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 48,
+      "nonEmptyLines": 39,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/thirdparty/optionparser/optionparser/optionparser.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 2862,
+      "nonEmptyLines": 2640,
+      "callGraph": [
+        {
+          "caller": "builtin_clz",
+          "callee": "_BitScanReverse",
+          "lineNumber": 231
+        },
+        {
+          "caller": "count",
+          "callee": "first",
+          "lineNumber": 557
+        },
+        {
+          "caller": "count",
+          "callee": "isLast",
+          "lineNumber": 558
+        },
+        {
+          "caller": "isFirst",
+          "callee": "isTagged",
+          "lineNumber": 576
+        },
+        {
+          "caller": "isLast",
+          "callee": "isTagged",
+          "lineNumber": 589
+        },
+        {
+          "caller": "append",
+          "callee": "last",
+          "lineNumber": 728
+        },
+        {
+          "caller": "append",
+          "callee": "first",
+          "lineNumber": 729
+        },
+        {
+          "caller": "append",
+          "callee": "tag",
+          "lineNumber": 732
+        },
+        {
+          "caller": "append",
+          "callee": "tag",
+          "lineNumber": 733
+        },
+        {
+          "caller": "Option",
+          "callee": "tag",
+          "lineNumber": 785
+        },
+        {
+          "caller": "Option",
+          "callee": "tag",
+          "lineNumber": 786
+        },
+        {
+          "caller": "Option",
+          "callee": "init",
+          "lineNumber": 799
+        },
+        {
+          "caller": "operator=",
+          "callee": "init",
+          "lineNumber": 809
+        },
+        {
+          "caller": "Option",
+          "callee": "init",
+          "lineNumber": 819
+        },
+        {
+          "caller": "init",
+          "callee": "tag",
+          "lineNumber": 836
+        },
+        {
+          "caller": "init",
+          "callee": "tag",
+          "lineNumber": 837
+        },
+        {
+          "caller": "Stats",
+          "callee": "add",
+          "lineNumber": 1001
+        },
+        {
+          "caller": "Stats",
+          "callee": "add",
+          "lineNumber": 1009
+        },
+        {
+          "caller": "Stats",
+          "callee": "add",
+          "lineNumber": 1017
+        },
+        {
+          "caller": "Stats",
+          "callee": "add",
+          "lineNumber": 1025
+        },
+        {
+          "caller": "add",
+          "callee": "add",
+          "lineNumber": 1044
+        },
+        {
+          "caller": "add",
+          "callee": "add",
+          "lineNumber": 1051
+        },
+        {
+          "caller": "add",
+          "callee": "add",
+          "lineNumber": 1058
+        },
+        {
+          "caller": "Parser",
+          "callee": "parse",
+          "lineNumber": 1108
+        },
+        {
+          "caller": "Parser",
+          "callee": "parse",
+          "lineNumber": 1116
+        },
+        {
+          "caller": "Parser",
+          "callee": "parse",
+          "lineNumber": 1124
+        },
+        {
+          "caller": "Parser",
+          "callee": "parse",
+          "lineNumber": 1132
+        },
+        {
+          "caller": "parse",
+          "callee": "parse",
+          "lineNumber": 1198
+        },
+        {
+          "caller": "parse",
+          "callee": "parse",
+          "lineNumber": 1205
+        },
+        {
+          "caller": "parse",
+          "callee": "parse",
+          "lineNumber": 1212
+        },
+        {
+          "caller": "perform",
+          "callee": "append",
+          "lineNumber": 1496
+        },
+        {
+          "caller": "parse",
+          "callee": "workhorse",
+          "lineNumber": 1523
+        },
+        {
+          "caller": "add",
+          "callee": "Parser::workhorse",
+          "lineNumber": 1540
+        },
+        {
+          "caller": "workhorse",
+          "callee": "shift",
+          "lineNumber": 1575
+        },
+        {
+          "caller": "workhorse",
+          "callee": "streq",
+          "lineNumber": 1608
+        },
+        {
+          "caller": "workhorse",
+          "callee": "streqabbr",
+          "lineNumber": 1614
+        },
+        {
+          "caller": "workhorse",
+          "callee": "streqabbr",
+          "lineNumber": 1619
+        },
+        {
+          "caller": "workhorse",
+          "callee": "instr",
+          "lineNumber": 1650
+        },
+        {
+          "caller": "workhorse",
+          "callee": "check_arg",
+          "lineNumber": 1674
+        },
+        {
+          "caller": "workhorse",
+          "callee": "shift",
+          "lineNumber": 1682
+        },
+        {
+          "caller": "workhorse",
+          "callee": "perform",
+          "lineNumber": 1698
+        },
+        {
+          "caller": "workhorse",
+          "callee": "shift",
+          "lineNumber": 1704
+        },
+        {
+          "caller": "workhorse",
+          "callee": "finished",
+          "lineNumber": 1721
+        },
+        {
+          "caller": "operator()",
+          "callee": "(*write)",
+          "lineNumber": 1756
+        },
+        {
+          "caller": "operator()",
+          "callee": "write",
+          "lineNumber": 1777
+        },
+        {
+          "caller": "operator()",
+          "callee": "write",
+          "lineNumber": 1798
+        },
+        {
+          "caller": "operator()",
+          "callee": "(*write)",
+          "lineNumber": 1821
+        },
+        {
+          "caller": "operator()",
+          "callee": "(*fwrite)",
+          "lineNumber": 1842
+        },
+        {
+          "caller": "indent",
+          "callee": "write",
+          "lineNumber": 1876
+        },
+        {
+          "caller": "indent",
+          "callee": "write",
+          "lineNumber": 1884
+        },
+        {
+          "caller": "update_length",
+          "callee": "__builtin_clz",
+          "lineNumber": 1983
+        },
+        {
+          "caller": "update_length",
+          "callee": "isWideChar",
+          "lineNumber": 1991
+        },
+        {
+          "caller": "nextTable",
+          "callee": "restartTable",
+          "lineNumber": 2024
+        },
+        {
+          "caller": "nextRow",
+          "callee": "restartRow",
+          "lineNumber": 2047
+        },
+        {
+          "caller": "nextRow",
+          "callee": "restartRow",
+          "lineNumber": 2067
+        },
+        {
+          "caller": "next",
+          "callee": "update_length",
+          "lineNumber": 2101
+        },
+        {
+          "caller": "next",
+          "callee": "upmax",
+          "lineNumber": 2111
+        },
+        {
+          "caller": "next",
+          "callee": "update_length",
+          "lineNumber": 2117
+        },
+        {
+          "caller": "next",
+          "callee": "update_length",
+          "lineNumber": 2131
+        },
+        {
+          "caller": "next",
+          "callee": "update_length",
+          "lineNumber": 2138
+        },
+        {
+          "caller": "next",
+          "callee": "update_length",
+          "lineNumber": 2154
+        },
+        {
+          "caller": "output",
+          "callee": "buf_full",
+          "lineNumber": 2292
+        },
+        {
+          "caller": "output",
+          "callee": "write_one_line",
+          "lineNumber": 2293
+        },
+        {
+          "caller": "output",
+          "callee": "buf_store",
+          "lineNumber": 2295
+        },
+        {
+          "caller": "write_one_line",
+          "callee": "write",
+          "lineNumber": 2305
+        },
+        {
+          "caller": "write_one_line",
+          "callee": "indent",
+          "lineNumber": 2307
+        },
+        {
+          "caller": "write_one_line",
+          "callee": "buf_empty",
+          "lineNumber": 2310
+        },
+        {
+          "caller": "write_one_line",
+          "callee": "buf_next",
+          "lineNumber": 2312
+        },
+        {
+          "caller": "write_one_line",
+          "callee": "write",
+          "lineNumber": 2313
+        },
+        {
+          "caller": "flush",
+          "callee": "buf_empty",
+          "lineNumber": 2327
+        },
+        {
+          "caller": "flush",
+          "callee": "indent",
+          "lineNumber": 2330
+        },
+        {
+          "caller": "flush",
+          "callee": "buf_empty",
+          "lineNumber": 2332
+        },
+        {
+          "caller": "flush",
+          "callee": "write_one_line",
+          "lineNumber": 2333
+        },
+        {
+          "caller": "flush",
+          "callee": "write",
+          "lineNumber": 2334
+        },
+        {
+          "caller": "process",
+          "callee": "output",
+          "lineNumber": 2363
+        },
+        {
+          "caller": "process",
+          "callee": "__builtin_clz",
+          "lineNumber": 2378
+        },
+        {
+          "caller": "process",
+          "callee": "isWideChar",
+          "lineNumber": 2387
+        },
+        {
+          "caller": "process",
+          "callee": "output",
+          "lineNumber": 2403
+        },
+        {
+          "caller": "process",
+          "callee": "output",
+          "lineNumber": 2415
+        },
+        {
+          "caller": "process",
+          "callee": "output",
+          "lineNumber": 2421
+        },
+        {
+          "caller": "process",
+          "callee": "write_one_line",
+          "lineNumber": 2429
+        },
+        {
+          "caller": "printUsage",
+          "callee": "nextTable",
+          "lineNumber": 2466
+        },
+        {
+          "caller": "printUsage",
+          "callee": "restartTable",
+          "lineNumber": 2482
+        },
+        {
+          "caller": "printUsage",
+          "callee": "nextRow",
+          "lineNumber": 2483
+        },
+        {
+          "caller": "printUsage",
+          "callee": "next",
+          "lineNumber": 2485
+        },
+        {
+          "caller": "printUsage",
+          "callee": "column",
+          "lineNumber": 2487
+        },
+        {
+          "caller": "printUsage",
+          "callee": "upmax",
+          "lineNumber": 2489
+        },
+        {
+          "caller": "printUsage",
+          "callee": "column",
+          "lineNumber": 2489
+        },
+        {
+          "caller": "printUsage",
+          "callee": "screenLength",
+          "lineNumber": 2490
+        },
+        {
+          "caller": "printUsage",
+          "callee": "column",
+          "lineNumber": 2494
+        },
+        {
+          "caller": "printUsage",
+          "callee": "line",
+          "lineNumber": 2494
+        },
+        {
+          "caller": "printUsage",
+          "callee": "data",
+          "lineNumber": 2494
+        },
+        {
+          "caller": "printUsage",
+          "callee": "length",
+          "lineNumber": 2494
+        },
+        {
+          "caller": "printUsage",
+          "callee": "data",
+          "lineNumber": 2495
+        },
+        {
+          "caller": "printUsage",
+          "callee": "length",
+          "lineNumber": 2495
+        },
+        {
+          "caller": "printUsage",
+          "callee": "upmax",
+          "lineNumber": 2496
+        },
+        {
+          "caller": "printUsage",
+          "callee": "column",
+          "lineNumber": 2496
+        },
+        {
+          "caller": "printUsage",
+          "callee": "screenLength",
+          "lineNumber": 2496
+        },
+        {
+          "caller": "printUsage",
+          "callee": "upmax",
+          "lineNumber": 2517
+        },
+        {
+          "caller": "printUsage",
+          "callee": "restartTable",
+          "lineNumber": 2555
+        },
+        {
+          "caller": "printUsage",
+          "callee": "nextRow",
+          "lineNumber": 2559
+        },
+        {
+          "caller": "printUsage",
+          "callee": "next",
+          "lineNumber": 2562
+        },
+        {
+          "caller": "printUsage",
+          "callee": "column",
+          "lineNumber": 2564
+        },
+        {
+          "caller": "printUsage",
+          "callee": "column",
+          "lineNumber": 2567
+        },
+        {
+          "caller": "printUsage",
+          "callee": "write",
+          "lineNumber": 2570
+        },
+        {
+          "caller": "printUsage",
+          "callee": "indent",
+          "lineNumber": 2574
+        },
+        {
+          "caller": "printUsage",
+          "callee": "column",
+          "lineNumber": 2574
+        },
+        {
+          "caller": "printUsage",
+          "callee": "column",
+          "lineNumber": 2576
+        },
+        {
+          "caller": "printUsage",
+          "callee": "column",
+          "lineNumber": 2577
+        },
+        {
+          "caller": "printUsage",
+          "callee": "line",
+          "lineNumber": 2577
+        },
+        {
+          "caller": "printUsage",
+          "callee": "data",
+          "lineNumber": 2577
+        },
+        {
+          "caller": "printUsage",
+          "callee": "length",
+          "lineNumber": 2577
+        },
+        {
+          "caller": "printUsage",
+          "callee": "data",
+          "lineNumber": 2578
+        },
+        {
+          "caller": "printUsage",
+          "callee": "length",
+          "lineNumber": 2578
+        },
+        {
+          "caller": "printUsage",
+          "callee": "write",
+          "lineNumber": 2580
+        },
+        {
+          "caller": "printUsage",
+          "callee": "data",
+          "lineNumber": 2580
+        },
+        {
+          "caller": "printUsage",
+          "callee": "length",
+          "lineNumber": 2580
+        },
+        {
+          "caller": "printUsage",
+          "callee": "screenLength",
+          "lineNumber": 2581
+        },
+        {
+          "caller": "printUsage",
+          "callee": "column",
+          "lineNumber": 2589
+        },
+        {
+          "caller": "printUsage",
+          "callee": "column",
+          "lineNumber": 2591
+        },
+        {
+          "caller": "printUsage",
+          "callee": "process",
+          "lineNumber": 2592
+        },
+        {
+          "caller": "printUsage",
+          "callee": "data",
+          "lineNumber": 2592
+        },
+        {
+          "caller": "printUsage",
+          "callee": "length",
+          "lineNumber": 2592
+        },
+        {
+          "caller": "printUsage",
+          "callee": "restartRow",
+          "lineNumber": 2598
+        },
+        {
+          "caller": "printUsage",
+          "callee": "next",
+          "lineNumber": 2599
+        },
+        {
+          "caller": "printUsage",
+          "callee": "column",
+          "lineNumber": 2601
+        },
+        {
+          "caller": "printUsage",
+          "callee": "write",
+          "lineNumber": 2603
+        },
+        {
+          "caller": "printUsage",
+          "callee": "indent",
+          "lineNumber": 2605
+        },
+        {
+          "caller": "printUsage",
+          "callee": "process",
+          "lineNumber": 2606
+        },
+        {
+          "caller": "printUsage",
+          "callee": "data",
+          "lineNumber": 2606
+        },
+        {
+          "caller": "printUsage",
+          "callee": "length",
+          "lineNumber": 2606
+        },
+        {
+          "caller": "printUsage",
+          "callee": "write",
+          "lineNumber": 2611
+        },
+        {
+          "caller": "printUsage",
+          "callee": "flush",
+          "lineNumber": 2612
+        },
+        {
+          "caller": "printUsage",
+          "callee": "flush",
+          "lineNumber": 2613
+        },
+        {
+          "caller": "printUsage",
+          "callee": "PrintUsageImplementation::printUsage",
+          "lineNumber": 2823
+        },
+        {
+          "caller": "printUsage",
+          "callee": "PrintUsageImplementation::printUsage",
+          "lineNumber": 2831
+        },
+        {
+          "caller": "printUsage",
+          "callee": "PrintUsageImplementation::printUsage",
+          "lineNumber": 2839
+        },
+        {
+          "caller": "printUsage",
+          "callee": "PrintUsageImplementation::printUsage",
+          "lineNumber": 2847
+        },
+        {
+          "caller": "printUsage",
+          "callee": "PrintUsageImplementation::printUsage",
+          "lineNumber": 2856
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/utils/collections/ResourceLimitedContainerConfig.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 93,
+      "nonEmptyLines": 79,
+      "callGraph": [
+        {
+          "caller": "ResourceLimitedContainerConfig",
+          "callee": "std::numeric_limits<size_t>::max",
+          "lineNumber": 40
+        },
+        {
+          "caller": "fixed_size_configuration",
+          "callee": "ResourceLimitedContainerConfig",
+          "lineNumber": 63
+        },
+        {
+          "caller": "dynamic_allocation_configuration",
+          "callee": "ResourceLimitedContainerConfig",
+          "lineNumber": 74
+        },
+        {
+          "caller": "dynamic_allocation_configuration",
+          "callee": "std::numeric_limits<size_t>::max",
+          "lineNumber": 75
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/utils/collections/ResourceLimitedVector.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 622,
+      "nonEmptyLines": 551,
+      "callGraph": [
+        {
+          "caller": "ResourceLimitedVector",
+          "callee": "configuration_type",
+          "lineNumber": 90
+        },
+        {
+          "caller": "ResourceLimitedVector",
+          "callee": "allocator_type",
+          "lineNumber": 91
+        },
+        {
+          "caller": "ResourceLimitedVector",
+          "callee": "reserve",
+          "lineNumber": 95
+        },
+        {
+          "caller": "ResourceLimitedVector",
+          "callee": "get_allocator",
+          "lineNumber": 101
+        },
+        {
+          "caller": "ResourceLimitedVector",
+          "callee": "reserve",
+          "lineNumber": 103
+        },
+        {
+          "caller": "ResourceLimitedVector",
+          "callee": "capacity",
+          "lineNumber": 103
+        },
+        {
+          "caller": "ResourceLimitedVector",
+          "callee": "assign",
+          "lineNumber": 104
+        },
+        {
+          "caller": "ResourceLimitedVector",
+          "callee": "begin",
+          "lineNumber": 104
+        },
+        {
+          "caller": "ResourceLimitedVector",
+          "callee": "end",
+          "lineNumber": 104
+        },
+        {
+          "caller": "insert",
+          "callee": "std::distance",
+          "lineNumber": 134
+        },
+        {
+          "caller": "insert",
+          "callee": "cbegin",
+          "lineNumber": 134
+        },
+        {
+          "caller": "insert",
+          "callee": "ensure_capacity",
+          "lineNumber": 135
+        },
+        {
+          "caller": "insert",
+          "callee": "end",
+          "lineNumber": 137
+        },
+        {
+          "caller": "insert",
+          "callee": "insert",
+          "lineNumber": 140
+        },
+        {
+          "caller": "insert",
+          "callee": "cbegin",
+          "lineNumber": 140
+        },
+        {
+          "caller": "insert",
+          "callee": "std::distance",
+          "lineNumber": 155
+        },
+        {
+          "caller": "insert",
+          "callee": "cbegin",
+          "lineNumber": 155
+        },
+        {
+          "caller": "insert",
+          "callee": "ensure_capacity",
+          "lineNumber": 156
+        },
+        {
+          "caller": "insert",
+          "callee": "end",
+          "lineNumber": 158
+        },
+        {
+          "caller": "insert",
+          "callee": "insert",
+          "lineNumber": 161
+        },
+        {
+          "caller": "insert",
+          "callee": "cbegin",
+          "lineNumber": 161
+        },
+        {
+          "caller": "insert",
+          "callee": "std::move",
+          "lineNumber": 161
+        },
+        {
+          "caller": "push_back",
+          "callee": "emplace_back",
+          "lineNumber": 177
+        },
+        {
+          "caller": "push_back",
+          "callee": "ensure_capacity",
+          "lineNumber": 193
+        },
+        {
+          "caller": "push_back",
+          "callee": "push_back",
+          "lineNumber": 200
+        },
+        {
+          "caller": "push_back",
+          "callee": "std::move",
+          "lineNumber": 200
+        },
+        {
+          "caller": "push_back",
+          "callee": "back",
+          "lineNumber": 203
+        },
+        {
+          "caller": "emplace_back",
+          "callee": "ensure_capacity",
+          "lineNumber": 220
+        },
+        {
+          "caller": "emplace_back",
+          "callee": "emplace_back",
+          "lineNumber": 227
+        },
+        {
+          "caller": "emplace_back",
+          "callee": "back",
+          "lineNumber": 230
+        },
+        {
+          "caller": "remove",
+          "callee": "std::find",
+          "lineNumber": 246
+        },
+        {
+          "caller": "remove",
+          "callee": "begin",
+          "lineNumber": 246
+        },
+        {
+          "caller": "remove",
+          "callee": "end",
+          "lineNumber": 246
+        },
+        {
+          "caller": "remove",
+          "callee": "end",
+          "lineNumber": 247
+        },
+        {
+          "caller": "remove",
+          "callee": "do_remove",
+          "lineNumber": 249
+        },
+        {
+          "caller": "remove_if",
+          "callee": "std::find_if",
+          "lineNumber": 274
+        },
+        {
+          "caller": "remove_if",
+          "callee": "begin",
+          "lineNumber": 274
+        },
+        {
+          "caller": "remove_if",
+          "callee": "end",
+          "lineNumber": 274
+        },
+        {
+          "caller": "remove_if",
+          "callee": "end",
+          "lineNumber": 275
+        },
+        {
+          "caller": "remove_if",
+          "callee": "do_remove",
+          "lineNumber": 277
+        },
+        {
+          "caller": "contains",
+          "callee": "std::find",
+          "lineNumber": 295
+        },
+        {
+          "caller": "contains",
+          "callee": "begin",
+          "lineNumber": 295
+        },
+        {
+          "caller": "contains",
+          "callee": "end",
+          "lineNumber": 295
+        },
+        {
+          "caller": "contains",
+          "callee": "end",
+          "lineNumber": 296
+        },
+        {
+          "caller": "assign",
+          "callee": "static_cast<size_type>",
+          "lineNumber": 322
+        },
+        {
+          "caller": "assign",
+          "callee": "std::distance",
+          "lineNumber": 322
+        },
+        {
+          "caller": "assign",
+          "callee": "std::advance",
+          "lineNumber": 325
+        },
+        {
+          "caller": "assign",
+          "callee": "assign",
+          "lineNumber": 326
+        },
+        {
+          "caller": "assign",
+          "callee": "assign",
+          "lineNumber": 344
+        },
+        {
+          "caller": "assign",
+          "callee": "size",
+          "lineNumber": 361
+        },
+        {
+          "caller": "assign",
+          "callee": "assign",
+          "lineNumber": 362
+        },
+        {
+          "caller": "assign",
+          "callee": "begin",
+          "lineNumber": 362
+        },
+        {
+          "caller": "assign",
+          "callee": "begin",
+          "lineNumber": 362
+        },
+        {
+          "caller": "at",
+          "callee": "at",
+          "lineNumber": 373
+        },
+        {
+          "caller": "at",
+          "callee": "at",
+          "lineNumber": 379
+        },
+        {
+          "caller": "front",
+          "callee": "front",
+          "lineNumber": 396
+        },
+        {
+          "caller": "front",
+          "callee": "front",
+          "lineNumber": 401
+        },
+        {
+          "caller": "back",
+          "callee": "back",
+          "lineNumber": 406
+        },
+        {
+          "caller": "back",
+          "callee": "back",
+          "lineNumber": 411
+        },
+        {
+          "caller": "begin",
+          "callee": "begin",
+          "lineNumber": 416
+        },
+        {
+          "caller": "begin",
+          "callee": "begin",
+          "lineNumber": 421
+        },
+        {
+          "caller": "cbegin",
+          "callee": "cbegin",
+          "lineNumber": 426
+        },
+        {
+          "caller": "end",
+          "callee": "end",
+          "lineNumber": 431
+        },
+        {
+          "caller": "end",
+          "callee": "end",
+          "lineNumber": 436
+        },
+        {
+          "caller": "cend",
+          "callee": "cend",
+          "lineNumber": 441
+        },
+        {
+          "caller": "rbegin",
+          "callee": "rbegin",
+          "lineNumber": 446
+        },
+        {
+          "caller": "rbegin",
+          "callee": "rbegin",
+          "lineNumber": 451
+        },
+        {
+          "caller": "crbegin",
+          "callee": "crbegin",
+          "lineNumber": 456
+        },
+        {
+          "caller": "rend",
+          "callee": "rend",
+          "lineNumber": 461
+        },
+        {
+          "caller": "rend",
+          "callee": "rend",
+          "lineNumber": 466
+        },
+        {
+          "caller": "crend",
+          "callee": "crend",
+          "lineNumber": 471
+        },
+        {
+          "caller": "empty",
+          "callee": "empty",
+          "lineNumber": 476
+        },
+        {
+          "caller": "size",
+          "callee": "size",
+          "lineNumber": 481
+        },
+        {
+          "caller": "capacity",
+          "callee": "capacity",
+          "lineNumber": 486
+        },
+        {
+          "caller": "max_size",
+          "callee": "max_size",
+          "lineNumber": 491
+        },
+        {
+          "caller": "clear",
+          "callee": "clear",
+          "lineNumber": 496
+        },
+        {
+          "caller": "erase",
+          "callee": "erase",
+          "lineNumber": 502
+        },
+        {
+          "caller": "erase",
+          "callee": "erase",
+          "lineNumber": 509
+        },
+        {
+          "caller": "pop_back",
+          "callee": "pop_back",
+          "lineNumber": 514
+        },
+        {
+          "caller": "ensure_capacity",
+          "callee": "size",
+          "lineNumber": 555
+        },
+        {
+          "caller": "ensure_capacity",
+          "callee": "capacity",
+          "lineNumber": 556
+        },
+        {
+          "caller": "ensure_capacity",
+          "callee": "assert",
+          "lineNumber": 563
+        },
+        {
+          "caller": "ensure_capacity",
+          "callee": "reserve",
+          "lineNumber": 566
+        },
+        {
+          "caller": "do_remove",
+          "callee": "end",
+          "lineNumber": 591
+        },
+        {
+          "caller": "do_remove",
+          "callee": "std::move",
+          "lineNumber": 593
+        },
+        {
+          "caller": "do_remove",
+          "callee": "back",
+          "lineNumber": 593
+        },
+        {
+          "caller": "do_remove",
+          "callee": "pop_back",
+          "lineNumber": 597
+        },
+        {
+          "caller": "do_remove",
+          "callee": "erase",
+          "lineNumber": 614
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/utils/fixed_size_bitmap.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 637,
+      "nonEmptyLines": 569,
+      "callGraph": [
+        {
+          "caller": "base",
+          "callee": "fill",
+          "lineNumber": 148
+        },
+        {
+          "caller": "base",
+          "callee": "fill",
+          "lineNumber": 165
+        },
+        {
+          "caller": "base_update",
+          "callee": "d_func",
+          "lineNumber": 187
+        },
+        {
+          "caller": "base_update",
+          "callee": "shift_map_left",
+          "lineNumber": 188
+        },
+        {
+          "caller": "base_update",
+          "callee": "d_func",
+          "lineNumber": 193
+        },
+        {
+          "caller": "base_update",
+          "callee": "shift_map_right",
+          "lineNumber": 194
+        },
+        {
+          "caller": "min",
+          "callee": "_BitScanReverse",
+          "lineNumber": 243
+        },
+        {
+          "caller": "min",
+          "callee": "static_cast<uint32_t>",
+          "lineNumber": 246
+        },
+        {
+          "caller": "min",
+          "callee": "__builtin_clz",
+          "lineNumber": 246
+        },
+        {
+          "caller": "is_set",
+          "callee": "d_func",
+          "lineNumber": 275
+        },
+        {
+          "caller": "add",
+          "callee": "d_func",
+          "lineNumber": 303
+        },
+        {
+          "caller": "add",
+          "callee": "std::max",
+          "lineNumber": 304
+        },
+        {
+          "caller": "add_range",
+          "callee": "(std::numeric_limits<uint32_t>::max)",
+          "lineNumber": 327
+        },
+        {
+          "caller": "add_range",
+          "callee": "d_func",
+          "lineNumber": 341
+        },
+        {
+          "caller": "add_range",
+          "callee": "d_func",
+          "lineNumber": 342
+        },
+        {
+          "caller": "add_range",
+          "callee": "std::max",
+          "lineNumber": 344
+        },
+        {
+          "caller": "remove",
+          "callee": "max",
+          "lineNumber": 379
+        },
+        {
+          "caller": "remove",
+          "callee": "d_func",
+          "lineNumber": 384
+        },
+        {
+          "caller": "remove",
+          "callee": "calc_maximum_bit_set",
+          "lineNumber": 391
+        },
+        {
+          "caller": "bitmap_set",
+          "callee": "std::min",
+          "lineNumber": 425
+        },
+        {
+          "caller": "bitmap_set",
+          "callee": "static_cast<uint32_t>",
+          "lineNumber": 427
+        },
+        {
+          "caller": "bitmap_set",
+          "callee": "fill",
+          "lineNumber": 428
+        },
+        {
+          "caller": "bitmap_set",
+          "callee": "memcpy",
+          "lineNumber": 429
+        },
+        {
+          "caller": "bitmap_set",
+          "callee": "data",
+          "lineNumber": 429
+        },
+        {
+          "caller": "bitmap_set",
+          "callee": "(std::numeric_limits<uint32_t>::max)",
+          "lineNumber": 434
+        },
+        {
+          "caller": "bitmap_set",
+          "callee": "calc_maximum_bit_set",
+          "lineNumber": 436
+        },
+        {
+          "caller": "for_each",
+          "callee": "_BitScanReverse",
+          "lineNumber": 464
+        },
+        {
+          "caller": "for_each",
+          "callee": "static_cast<uint32_t>",
+          "lineNumber": 467
+        },
+        {
+          "caller": "for_each",
+          "callee": "__builtin_clz",
+          "lineNumber": 467
+        },
+        {
+          "caller": "for_each",
+          "callee": "f",
+          "lineNumber": 472
+        },
+        {
+          "caller": "shift_map_left",
+          "callee": "fill",
+          "lineNumber": 499
+        },
+        {
+          "caller": "shift_map_left",
+          "callee": "std::copy",
+          "lineNumber": 512
+        },
+        {
+          "caller": "shift_map_left",
+          "callee": "begin",
+          "lineNumber": 512
+        },
+        {
+          "caller": "shift_map_left",
+          "callee": "end",
+          "lineNumber": 512
+        },
+        {
+          "caller": "shift_map_left",
+          "callee": "begin",
+          "lineNumber": 512
+        },
+        {
+          "caller": "shift_map_left",
+          "callee": "std::fill_n",
+          "lineNumber": 513
+        },
+        {
+          "caller": "shift_map_left",
+          "callee": "rbegin",
+          "lineNumber": 513
+        },
+        {
+          "caller": "shift_map_left",
+          "callee": "std::fill_n",
+          "lineNumber": 532
+        },
+        {
+          "caller": "shift_map_left",
+          "callee": "rbegin",
+          "lineNumber": 532
+        },
+        {
+          "caller": "shift_map_right",
+          "callee": "fill",
+          "lineNumber": 544
+        },
+        {
+          "caller": "shift_map_right",
+          "callee": "std::copy",
+          "lineNumber": 559
+        },
+        {
+          "caller": "shift_map_right",
+          "callee": "rbegin",
+          "lineNumber": 559
+        },
+        {
+          "caller": "shift_map_right",
+          "callee": "rend",
+          "lineNumber": 559
+        },
+        {
+          "caller": "shift_map_right",
+          "callee": "rbegin",
+          "lineNumber": 559
+        },
+        {
+          "caller": "shift_map_right",
+          "callee": "std::fill_n",
+          "lineNumber": 560
+        },
+        {
+          "caller": "shift_map_right",
+          "callee": "begin",
+          "lineNumber": 560
+        },
+        {
+          "caller": "shift_map_right",
+          "callee": "std::fill_n",
+          "lineNumber": 580
+        },
+        {
+          "caller": "shift_map_right",
+          "callee": "begin",
+          "lineNumber": 580
+        },
+        {
+          "caller": "shift_map_right",
+          "callee": "calc_maximum_bit_set",
+          "lineNumber": 586
+        },
+        {
+          "caller": "calc_maximum_bit_set",
+          "callee": "_BitScanReverse",
+          "lineNumber": 605
+        },
+        {
+          "caller": "calc_maximum_bit_set",
+          "callee": "static_cast<uint32_t>",
+          "lineNumber": 608
+        },
+        {
+          "caller": "calc_maximum_bit_set",
+          "callee": "__builtin_clz",
+          "lineNumber": 608
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/utils/IPFinder.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 136,
+      "nonEmptyLines": 120,
+      "callGraph": [
+        {
+          "caller": "operator ==",
+          "callee": "memcmp",
+          "lineNumber": 74
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/utils/IPLocator.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 332,
+      "nonEmptyLines": 270,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/utils/md5.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 172,
+      "nonEmptyLines": 146,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/utils/TimedConditionVariable.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 196,
+      "nonEmptyLines": 169,
+      "callGraph": [
+        {
+          "caller": "TimedConditionVariable",
+          "callee": "CV_INIT_",
+          "lineNumber": 74
+        },
+        {
+          "caller": "wait",
+          "callee": "predicate",
+          "lineNumber": 82
+        },
+        {
+          "caller": "wait",
+          "callee": "CV_WAIT_",
+          "lineNumber": 84
+        },
+        {
+          "caller": "wait",
+          "callee": "native_handle",
+          "lineNumber": 84
+        },
+        {
+          "caller": "wait",
+          "callee": "mutex",
+          "lineNumber": 84
+        },
+        {
+          "caller": "wait",
+          "callee": "CV_WAIT_",
+          "lineNumber": 92
+        },
+        {
+          "caller": "wait",
+          "callee": "native_handle",
+          "lineNumber": 92
+        },
+        {
+          "caller": "wait",
+          "callee": "mutex",
+          "lineNumber": 92
+        },
+        {
+          "caller": "wait_for",
+          "callee": "clock_gettime",
+          "lineNumber": 106
+        },
+        {
+          "caller": "wait_for",
+          "callee": "std::chrono::nanoseconds",
+          "lineNumber": 107
+        },
+        {
+          "caller": "wait_for",
+          "callee": "std::chrono::duration_cast<std::chrono::seconds>",
+          "lineNumber": 108
+        },
+        {
+          "caller": "wait_for",
+          "callee": "count",
+          "lineNumber": 110
+        },
+        {
+          "caller": "wait_for",
+          "callee": "count",
+          "lineNumber": 111
+        },
+        {
+          "caller": "wait_for",
+          "callee": "predicate",
+          "lineNumber": 112
+        },
+        {
+          "caller": "wait_for",
+          "callee": "CV_TIMEDWAIT_",
+          "lineNumber": 114
+        },
+        {
+          "caller": "wait_for",
+          "callee": "native_handle",
+          "lineNumber": 114
+        },
+        {
+          "caller": "wait_for",
+          "callee": "mutex",
+          "lineNumber": 114
+        },
+        {
+          "caller": "wait_for",
+          "callee": "clock_gettime",
+          "lineNumber": 129
+        },
+        {
+          "caller": "wait_for",
+          "callee": "std::chrono::nanoseconds",
+          "lineNumber": 130
+        },
+        {
+          "caller": "wait_for",
+          "callee": "std::chrono::duration_cast<std::chrono::seconds>",
+          "lineNumber": 131
+        },
+        {
+          "caller": "wait_for",
+          "callee": "count",
+          "lineNumber": 133
+        },
+        {
+          "caller": "wait_for",
+          "callee": "count",
+          "lineNumber": 134
+        },
+        {
+          "caller": "wait_for",
+          "callee": "CV_TIMEDWAIT_",
+          "lineNumber": 135
+        },
+        {
+          "caller": "wait_for",
+          "callee": "native_handle",
+          "lineNumber": 135
+        },
+        {
+          "caller": "wait_for",
+          "callee": "mutex",
+          "lineNumber": 135
+        },
+        {
+          "caller": "wait_until",
+          "callee": "std::chrono::time_point_cast<std::chrono::seconds>",
+          "lineNumber": 145
+        },
+        {
+          "caller": "wait_until",
+          "callee": "std::chrono::time_point_cast<std::chrono::nanoseconds>",
+          "lineNumber": 146
+        },
+        {
+          "caller": "wait_until",
+          "callee": "std::chrono::time_point_cast<std::chrono::nanoseconds>",
+          "lineNumber": 147
+        },
+        {
+          "caller": "wait_until",
+          "callee": "count",
+          "lineNumber": 149
+        },
+        {
+          "caller": "wait_until",
+          "callee": "time_since_epoch",
+          "lineNumber": 149
+        },
+        {
+          "caller": "wait_until",
+          "callee": "count",
+          "lineNumber": 149
+        },
+        {
+          "caller": "wait_until",
+          "callee": "predicate",
+          "lineNumber": 152
+        },
+        {
+          "caller": "wait_until",
+          "callee": "CV_TIMEDWAIT_",
+          "lineNumber": 154
+        },
+        {
+          "caller": "wait_until",
+          "callee": "native_handle",
+          "lineNumber": 154
+        },
+        {
+          "caller": "wait_until",
+          "callee": "mutex",
+          "lineNumber": 154
+        },
+        {
+          "caller": "wait_until",
+          "callee": "std::chrono::time_point_cast<std::chrono::seconds>",
+          "lineNumber": 165
+        },
+        {
+          "caller": "wait_until",
+          "callee": "std::chrono::time_point_cast<std::chrono::nanoseconds>",
+          "lineNumber": 166
+        },
+        {
+          "caller": "wait_until",
+          "callee": "std::chrono::time_point_cast<std::chrono::nanoseconds>",
+          "lineNumber": 167
+        },
+        {
+          "caller": "wait_until",
+          "callee": "count",
+          "lineNumber": 169
+        },
+        {
+          "caller": "wait_until",
+          "callee": "time_since_epoch",
+          "lineNumber": 169
+        },
+        {
+          "caller": "wait_until",
+          "callee": "count",
+          "lineNumber": 169
+        },
+        {
+          "caller": "wait_until",
+          "callee": "CV_TIMEDWAIT_",
+          "lineNumber": 171
+        },
+        {
+          "caller": "wait_until",
+          "callee": "native_handle",
+          "lineNumber": 171
+        },
+        {
+          "caller": "wait_until",
+          "callee": "mutex",
+          "lineNumber": 171
+        },
+        {
+          "caller": "notify_one",
+          "callee": "CV_SIGNAL_",
+          "lineNumber": 177
+        },
+        {
+          "caller": "notify_all",
+          "callee": "CV_BROADCAST_",
+          "lineNumber": 182
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/utils/TimedMutex.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 349,
+      "nonEmptyLines": 289,
+      "callGraph": [
+        {
+          "caller": "TimedMutex",
+          "callee": "_Mtx_init",
+          "lineNumber": 63
+        },
+        {
+          "caller": "~TimedMutex",
+          "callee": "_Mtx_destroy",
+          "lineNumber": 73
+        },
+        {
+          "caller": "lock",
+          "callee": "_Mtx_lock",
+          "lineNumber": 78
+        },
+        {
+          "caller": "unlock",
+          "callee": "_Mtx_unlock",
+          "lineNumber": 83
+        },
+        {
+          "caller": "try_lock_for",
+          "callee": "try_lock_until",
+          "lineNumber": 90
+        },
+        {
+          "caller": "try_lock_for",
+          "callee": "std::chrono::steady_clock::now",
+          "lineNumber": 90
+        },
+        {
+          "caller": "try_lock_until",
+          "callee": "Clock::now",
+          "lineNumber": 97
+        },
+        {
+          "caller": "try_lock_until",
+          "callee": "count",
+          "lineNumber": 99
+        },
+        {
+          "caller": "try_lock_until",
+          "callee": "clock_gettime",
+          "lineNumber": 104
+        },
+        {
+          "caller": "try_lock_until",
+          "callee": "std::chrono::nanoseconds",
+          "lineNumber": 105
+        },
+        {
+          "caller": "try_lock_until",
+          "callee": "std::chrono::duration_cast<std::chrono::seconds>",
+          "lineNumber": 106
+        },
+        {
+          "caller": "try_lock_until",
+          "callee": "count",
+          "lineNumber": 108
+        },
+        {
+          "caller": "try_lock_until",
+          "callee": "count",
+          "lineNumber": 109
+        },
+        {
+          "caller": "try_lock_until",
+          "callee": "_Mtx_timedlock",
+          "lineNumber": 110
+        },
+        {
+          "caller": "try_lock_until",
+          "callee": "_Mtx_trylock",
+          "lineNumber": 114
+        },
+        {
+          "caller": "RecursiveTimedMutex",
+          "callee": "_Mtx_init",
+          "lineNumber": 134
+        },
+        {
+          "caller": "~RecursiveTimedMutex",
+          "callee": "_Mtx_destroy",
+          "lineNumber": 144
+        },
+        {
+          "caller": "lock",
+          "callee": "_Mtx_lock",
+          "lineNumber": 149
+        },
+        {
+          "caller": "unlock",
+          "callee": "_Mtx_unlock",
+          "lineNumber": 154
+        },
+        {
+          "caller": "try_lock",
+          "callee": "_Mtx_trylock",
+          "lineNumber": 159
+        },
+        {
+          "caller": "try_lock_for",
+          "callee": "try_lock_until",
+          "lineNumber": 166
+        },
+        {
+          "caller": "try_lock_for",
+          "callee": "std::chrono::steady_clock::now",
+          "lineNumber": 166
+        },
+        {
+          "caller": "try_lock_until",
+          "callee": "Clock::now",
+          "lineNumber": 173
+        },
+        {
+          "caller": "try_lock_until",
+          "callee": "count",
+          "lineNumber": 174
+        },
+        {
+          "caller": "try_lock_until",
+          "callee": "clock_gettime",
+          "lineNumber": 179
+        },
+        {
+          "caller": "try_lock_until",
+          "callee": "std::chrono::nanoseconds",
+          "lineNumber": 180
+        },
+        {
+          "caller": "try_lock_until",
+          "callee": "std::chrono::duration_cast<std::chrono::seconds>",
+          "lineNumber": 181
+        },
+        {
+          "caller": "try_lock_until",
+          "callee": "count",
+          "lineNumber": 183
+        },
+        {
+          "caller": "try_lock_until",
+          "callee": "count",
+          "lineNumber": 184
+        },
+        {
+          "caller": "try_lock_until",
+          "callee": "_Mtx_timedlock",
+          "lineNumber": 185
+        },
+        {
+          "caller": "try_lock_until",
+          "callee": "_Mtx_trylock",
+          "lineNumber": 189
+        },
+        {
+          "caller": "TimedMutex",
+          "callee": "pthread_mutex_init",
+          "lineNumber": 214
+        },
+        {
+          "caller": "~TimedMutex",
+          "callee": "pthread_mutex_destroy",
+          "lineNumber": 224
+        },
+        {
+          "caller": "lock",
+          "callee": "pthread_mutex_lock",
+          "lineNumber": 229
+        },
+        {
+          "caller": "unlock",
+          "callee": "pthread_mutex_unlock",
+          "lineNumber": 234
+        },
+        {
+          "caller": "try_lock_for",
+          "callee": "try_lock_until",
+          "lineNumber": 241
+        },
+        {
+          "caller": "try_lock_for",
+          "callee": "std::chrono::steady_clock::now",
+          "lineNumber": 241
+        },
+        {
+          "caller": "try_lock_until",
+          "callee": "Clock::now",
+          "lineNumber": 248
+        },
+        {
+          "caller": "try_lock_until",
+          "callee": "clock_gettime",
+          "lineNumber": 252
+        },
+        {
+          "caller": "try_lock_until",
+          "callee": "std::chrono::nanoseconds",
+          "lineNumber": 253
+        },
+        {
+          "caller": "try_lock_until",
+          "callee": "std::chrono::duration_cast<std::chrono::seconds>",
+          "lineNumber": 254
+        },
+        {
+          "caller": "try_lock_until",
+          "callee": "count",
+          "lineNumber": 256
+        },
+        {
+          "caller": "try_lock_until",
+          "callee": "count",
+          "lineNumber": 257
+        },
+        {
+          "caller": "try_lock_until",
+          "callee": "pthread_mutex_timedlock",
+          "lineNumber": 258
+        },
+        {
+          "caller": "RecursiveTimedMutex",
+          "callee": "pthread_mutexattr_init",
+          "lineNumber": 277
+        },
+        {
+          "caller": "RecursiveTimedMutex",
+          "callee": "pthread_mutexattr_settype",
+          "lineNumber": 278
+        },
+        {
+          "caller": "RecursiveTimedMutex",
+          "callee": "pthread_mutex_init",
+          "lineNumber": 279
+        },
+        {
+          "caller": "~RecursiveTimedMutex",
+          "callee": "pthread_mutex_destroy",
+          "lineNumber": 289
+        },
+        {
+          "caller": "~RecursiveTimedMutex",
+          "callee": "pthread_mutexattr_destroy",
+          "lineNumber": 290
+        },
+        {
+          "caller": "lock",
+          "callee": "pthread_mutex_lock",
+          "lineNumber": 295
+        },
+        {
+          "caller": "unlock",
+          "callee": "pthread_mutex_unlock",
+          "lineNumber": 300
+        },
+        {
+          "caller": "try_lock",
+          "callee": "pthread_mutex_trylock",
+          "lineNumber": 305
+        },
+        {
+          "caller": "try_lock_for",
+          "callee": "try_lock_until",
+          "lineNumber": 312
+        },
+        {
+          "caller": "try_lock_for",
+          "callee": "std::chrono::steady_clock::now",
+          "lineNumber": 312
+        },
+        {
+          "caller": "try_lock_until",
+          "callee": "Clock::now",
+          "lineNumber": 319
+        },
+        {
+          "caller": "try_lock_until",
+          "callee": "clock_gettime",
+          "lineNumber": 323
+        },
+        {
+          "caller": "try_lock_until",
+          "callee": "std::chrono::nanoseconds",
+          "lineNumber": 324
+        },
+        {
+          "caller": "try_lock_until",
+          "callee": "std::chrono::duration_cast<std::chrono::seconds>",
+          "lineNumber": 325
+        },
+        {
+          "caller": "try_lock_until",
+          "callee": "count",
+          "lineNumber": 327
+        },
+        {
+          "caller": "try_lock_until",
+          "callee": "count",
+          "lineNumber": 328
+        },
+        {
+          "caller": "try_lock_until",
+          "callee": "pthread_mutex_timedlock",
+          "lineNumber": 329
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/aligned_allocator.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 196,
+      "nonEmptyLines": 169,
+      "callGraph": [
+        {
+          "caller": "aligned_allocator",
+          "callee": "detail::move",
+          "lineNumber": 38
+        },
+        {
+          "caller": "aligned_allocator",
+          "callee": "FOONATHAN_MEMORY_ASSERT",
+          "lineNumber": 40
+        },
+        {
+          "caller": "aligned_allocator",
+          "callee": "max_alignment",
+          "lineNumber": 40
+        },
+        {
+          "caller": "aligned_allocator",
+          "callee": "detail::move",
+          "lineNumber": 47
+        },
+        {
+          "caller": "deallocate_node",
+          "callee": "traits::deallocate_node",
+          "lineNumber": 80
+        },
+        {
+          "caller": "deallocate_node",
+          "callee": "get_allocator",
+          "lineNumber": 80
+        },
+        {
+          "caller": "deallocate_array",
+          "callee": "traits::deallocate_array",
+          "lineNumber": 88
+        },
+        {
+          "caller": "deallocate_array",
+          "callee": "get_allocator",
+          "lineNumber": 88
+        },
+        {
+          "caller": "try_deallocate_node",
+          "callee": "composable_traits::try_deallocate_node",
+          "lineNumber": 119
+        },
+        {
+          "caller": "try_deallocate_node",
+          "callee": "get_allocator",
+          "lineNumber": 119
+        },
+        {
+          "caller": "try_deallocate_array",
+          "callee": "composable_traits::try_deallocate_array",
+          "lineNumber": 129
+        },
+        {
+          "caller": "try_deallocate_array",
+          "callee": "get_allocator",
+          "lineNumber": 129
+        },
+        {
+          "caller": "max_node_size",
+          "callee": "traits::max_node_size",
+          "lineNumber": 138
+        },
+        {
+          "caller": "max_node_size",
+          "callee": "get_allocator",
+          "lineNumber": 138
+        },
+        {
+          "caller": "max_array_size",
+          "callee": "traits::max_array_size",
+          "lineNumber": 143
+        },
+        {
+          "caller": "max_array_size",
+          "callee": "get_allocator",
+          "lineNumber": 143
+        },
+        {
+          "caller": "max_alignment",
+          "callee": "traits::max_alignment",
+          "lineNumber": 148
+        },
+        {
+          "caller": "max_alignment",
+          "callee": "get_allocator",
+          "lineNumber": 148
+        },
+        {
+          "caller": "set_min_alignment",
+          "callee": "FOONATHAN_MEMORY_ASSERT",
+          "lineNumber": 175
+        },
+        {
+          "caller": "set_min_alignment",
+          "callee": "max_alignment",
+          "lineNumber": 175
+        },
+        {
+          "caller": "make_aligned_allocator",
+          "callee": "detail::forward<RawAllocator>",
+          "lineNumber": 191
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/allocator_storage.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 933,
+      "nonEmptyLines": 805,
+      "callGraph": [
+        {
+          "caller": "try_deallocate_node",
+          "callee": "composable_allocator_traits<Alloc>::try_deallocate_node",
+          "lineNumber": 44
+        },
+        {
+          "caller": "try_deallocate_array",
+          "callee": "composable_allocator_traits<Alloc>::try_deallocate_array",
+          "lineNumber": 52
+        },
+        {
+          "caller": "try_deallocate_node",
+          "callee": "FOONATHAN_MEMORY_UNREACHABLE",
+          "lineNumber": 75
+        },
+        {
+          "caller": "try_deallocate_array",
+          "callee": "FOONATHAN_MEMORY_UNREACHABLE",
+          "lineNumber": 83
+        },
+        {
+          "caller": "allocator_storage",
+          "callee": "detail::forward<Alloc>",
+          "lineNumber": 129
+        },
+        {
+          "caller": "allocator_storage",
+          "callee": "get_allocator",
+          "lineNumber": 142
+        },
+        {
+          "caller": "allocator_storage",
+          "callee": "detail::move",
+          "lineNumber": 150
+        },
+        {
+          "caller": "allocator_storage",
+          "callee": "detail::move",
+          "lineNumber": 153
+        },
+        {
+          "caller": "deallocate_node",
+          "callee": "get_allocator",
+          "lineNumber": 193
+        },
+        {
+          "caller": "deallocate_node",
+          "callee": "traits::deallocate_node",
+          "lineNumber": 194
+        },
+        {
+          "caller": "deallocate_array",
+          "callee": "get_allocator",
+          "lineNumber": 201
+        },
+        {
+          "caller": "deallocate_array",
+          "callee": "traits::deallocate_array",
+          "lineNumber": 202
+        },
+        {
+          "caller": "max_node_size",
+          "callee": "get_allocator",
+          "lineNumber": 208
+        },
+        {
+          "caller": "max_node_size",
+          "callee": "traits::max_node_size",
+          "lineNumber": 209
+        },
+        {
+          "caller": "max_array_size",
+          "callee": "get_allocator",
+          "lineNumber": 215
+        },
+        {
+          "caller": "max_array_size",
+          "callee": "traits::max_array_size",
+          "lineNumber": 216
+        },
+        {
+          "caller": "max_alignment",
+          "callee": "get_allocator",
+          "lineNumber": 222
+        },
+        {
+          "caller": "max_alignment",
+          "callee": "traits::max_alignment",
+          "lineNumber": 223
+        },
+        {
+          "caller": "try_deallocate_node",
+          "callee": "FOONATHAN_MEMORY_ASSERT",
+          "lineNumber": 256
+        },
+        {
+          "caller": "try_deallocate_node",
+          "callee": "is_composable",
+          "lineNumber": 256
+        },
+        {
+          "caller": "try_deallocate_node",
+          "callee": "get_allocator",
+          "lineNumber": 258
+        },
+        {
+          "caller": "try_deallocate_node",
+          "callee": "composable_traits::try_deallocate_node",
+          "lineNumber": 259
+        },
+        {
+          "caller": "try_deallocate_array",
+          "callee": "FOONATHAN_MEMORY_ASSERT",
+          "lineNumber": 266
+        },
+        {
+          "caller": "try_deallocate_array",
+          "callee": "is_composable",
+          "lineNumber": 266
+        },
+        {
+          "caller": "try_deallocate_array",
+          "callee": "get_allocator",
+          "lineNumber": 268
+        },
+        {
+          "caller": "try_deallocate_array",
+          "callee": "composable_traits::try_deallocate_array",
+          "lineNumber": 269
+        },
+        {
+          "caller": "get_allocator",
+          "callee": "get_allocator",
+          "lineNumber": 278
+        },
+        {
+          "caller": "get_allocator",
+          "callee": "std::declval<storage_policy>",
+          "lineNumber": 278
+        },
+        {
+          "caller": "get_allocator",
+          "callee": "storage_policy::get_allocator",
+          "lineNumber": 280
+        },
+        {
+          "caller": "get_allocator",
+          "callee": "get_allocator",
+          "lineNumber": 284
+        },
+        {
+          "caller": "get_allocator",
+          "callee": "std::declval<const storage_policy>",
+          "lineNumber": 284
+        },
+        {
+          "caller": "get_allocator",
+          "callee": "storage_policy::get_allocator",
+          "lineNumber": 286
+        },
+        {
+          "caller": "lock",
+          "callee": "detail::lock_allocator",
+          "lineNumber": 294
+        },
+        {
+          "caller": "lock",
+          "callee": "get_allocator",
+          "lineNumber": 295
+        },
+        {
+          "caller": "lock",
+          "callee": "std::declval<storage_policy>",
+          "lineNumber": 295
+        },
+        {
+          "caller": "lock",
+          "callee": "std::declval<actual_mutex&>",
+          "lineNumber": 295
+        },
+        {
+          "caller": "lock",
+          "callee": "detail::lock_allocator",
+          "lineNumber": 297
+        },
+        {
+          "caller": "lock",
+          "callee": "get_allocator",
+          "lineNumber": 297
+        },
+        {
+          "caller": "lock",
+          "callee": "static_cast<actual_mutex&>",
+          "lineNumber": 297
+        },
+        {
+          "caller": "lock",
+          "callee": "detail::lock_allocator",
+          "lineNumber": 300
+        },
+        {
+          "caller": "lock",
+          "callee": "get_allocator",
+          "lineNumber": 301
+        },
+        {
+          "caller": "lock",
+          "callee": "std::declval<const storage_policy>",
+          "lineNumber": 301
+        },
+        {
+          "caller": "lock",
+          "callee": "std::declval<actual_mutex&>",
+          "lineNumber": 302
+        },
+        {
+          "caller": "lock",
+          "callee": "detail::lock_allocator",
+          "lineNumber": 304
+        },
+        {
+          "caller": "lock",
+          "callee": "get_allocator",
+          "lineNumber": 304
+        },
+        {
+          "caller": "lock",
+          "callee": "static_cast<actual_mutex&>",
+          "lineNumber": 304
+        },
+        {
+          "caller": "is_composable",
+          "callee": "StoragePolicy::is_composable",
+          "lineNumber": 314
+        },
+        {
+          "caller": "direct_storage",
+          "callee": "detail::move",
+          "lineNumber": 343
+        },
+        {
+          "caller": "direct_storage",
+          "callee": "detail::move",
+          "lineNumber": 350
+        },
+        {
+          "caller": "make_allocator_adapter",
+          "callee": "detail::forward<RawAllocator>",
+          "lineNumber": 395
+        },
+        {
+          "caller": "make_thread_safe_allocator",
+          "callee": "detail::forward<RawAllocator>",
+          "lineNumber": 420
+        },
+        {
+          "caller": "make_thread_safe_allocator",
+          "callee": "detail::forward<RawAllocator>",
+          "lineNumber": 432
+        },
+        {
+          "caller": "deallocate_node",
+          "callee": "deallocate_impl",
+          "lineNumber": 639
+        },
+        {
+          "caller": "deallocate_array",
+          "callee": "deallocate_impl",
+          "lineNumber": 645
+        },
+        {
+          "caller": "try_deallocate_node",
+          "callee": "try_deallocate_impl",
+          "lineNumber": 662
+        },
+        {
+          "caller": "try_deallocate_array",
+          "callee": "try_deallocate_impl",
+          "lineNumber": 668
+        },
+        {
+          "caller": "max_node_size",
+          "callee": "max",
+          "lineNumber": 685
+        },
+        {
+          "caller": "max_array_size",
+          "callee": "max",
+          "lineNumber": 690
+        },
+        {
+          "caller": "max_alignment",
+          "callee": "max",
+          "lineNumber": 695
+        },
+        {
+          "caller": "reference_storage",
+          "callee": "static_cast<void*>",
+          "lineNumber": 723
+        },
+        {
+          "caller": "reference_storage",
+          "callee": "static_cast<void*>",
+          "lineNumber": 737
+        },
+        {
+          "caller": "reference_storage",
+          "callee": "clone",
+          "lineNumber": 745
+        },
+        {
+          "caller": "reference_storage",
+          "callee": "clone",
+          "lineNumber": 761
+        },
+        {
+          "caller": "reference_storage",
+          "callee": "get_allocator",
+          "lineNumber": 761
+        },
+        {
+          "caller": "~reference_storage",
+          "callee": "~allocator_type",
+          "lineNumber": 785
+        },
+        {
+          "caller": "~reference_storage",
+          "callee": "get_allocator",
+          "lineNumber": 785
+        },
+        {
+          "caller": "is_composable",
+          "callee": "is_composable",
+          "lineNumber": 790
+        },
+        {
+          "caller": "is_composable",
+          "callee": "get_allocator",
+          "lineNumber": 790
+        },
+        {
+          "caller": "clone",
+          "callee": "get",
+          "lineNumber": 826
+        },
+        {
+          "caller": "deallocate_impl",
+          "callee": "get",
+          "lineNumber": 842
+        },
+        {
+          "caller": "deallocate_impl",
+          "callee": "traits::deallocate_node",
+          "lineNumber": 844
+        },
+        {
+          "caller": "deallocate_impl",
+          "callee": "traits::deallocate_array",
+          "lineNumber": 846
+        },
+        {
+          "caller": "try_deallocate_impl",
+          "callee": "get",
+          "lineNumber": 863
+        },
+        {
+          "caller": "try_deallocate_impl",
+          "callee": "detail::try_deallocate_node",
+          "lineNumber": 865
+        },
+        {
+          "caller": "try_deallocate_impl",
+          "callee": "detail::try_deallocate_array",
+          "lineNumber": 868
+        },
+        {
+          "caller": "max",
+          "callee": "get",
+          "lineNumber": 879
+        },
+        {
+          "caller": "max",
+          "callee": "traits::max_node_size",
+          "lineNumber": 881
+        },
+        {
+          "caller": "max",
+          "callee": "traits::max_array_size",
+          "lineNumber": 883
+        },
+        {
+          "caller": "max",
+          "callee": "traits::max_alignment",
+          "lineNumber": 884
+        },
+        {
+          "caller": "make_allocator_reference",
+          "callee": "detail::forward<RawAllocator>",
+          "lineNumber": 908
+        },
+        {
+          "caller": "make_any_allocator_reference",
+          "callee": "detail::forward<RawAllocator>",
+          "lineNumber": 928
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/allocator_traits.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 601,
+      "nonEmptyLines": 520,
+      "callGraph": [
+        {
+          "caller": "deallocate_array",
+          "callee": "deallocate_node",
+          "lineNumber": 243
+        },
+        {
+          "caller": "max_node_size",
+          "callee": "std::size_t",
+          "lineNumber": 256
+        },
+        {
+          "caller": "max_array_size",
+          "callee": "max_node_size",
+          "lineNumber": 269
+        },
+        {
+          "caller": "deallocate_node",
+          "callee": "traits_detail::deallocate_node",
+          "lineNumber": 324
+        },
+        {
+          "caller": "deallocate_array",
+          "callee": "traits_detail::deallocate_array",
+          "lineNumber": 334
+        },
+        {
+          "caller": "max_node_size",
+          "callee": "traits_detail::max_node_size",
+          "lineNumber": 343
+        },
+        {
+          "caller": "max_array_size",
+          "callee": "traits_detail::max_array_size",
+          "lineNumber": 351
+        },
+        {
+          "caller": "max_alignment",
+          "callee": "traits_detail::max_alignment",
+          "lineNumber": 359
+        },
+        {
+          "caller": "try_deallocate_array",
+          "callee": "try_deallocate_node",
+          "lineNumber": 490
+        },
+        {
+          "caller": "try_deallocate_node",
+          "callee": "traits_detail::try_deallocate_node",
+          "lineNumber": 527
+        },
+        {
+          "caller": "try_deallocate_array",
+          "callee": "traits_detail::try_deallocate_array",
+          "lineNumber": 536
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/config_impl.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 22,
+      "nonEmptyLines": 19,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/container_node_sizes_impl.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 448,
+      "nonEmptyLines": 363,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/container.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 367,
+      "nonEmptyLines": 320,
+      "callGraph": [
+        {
+          "caller": "make_stack",
+          "callee": "Container",
+          "lineNumber": 220
+        },
+        {
+          "caller": "make_queue",
+          "callee": "Container",
+          "lineNumber": 227
+        },
+        {
+          "caller": "make_priority_queue",
+          "callee": "detail::move",
+          "lineNumber": 236
+        },
+        {
+          "caller": "make_priority_queue",
+          "callee": "Container",
+          "lineNumber": 237
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/default_allocator.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 36,
+      "nonEmptyLines": 30,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/deleter.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 307,
+      "nonEmptyLines": 264,
+      "callGraph": [
+        {
+          "caller": "operator()",
+          "callee": "deallocate_node",
+          "lineNumber": 51
+        },
+        {
+          "caller": "get_allocator",
+          "callee": "get_allocator",
+          "lineNumber": 58
+        },
+        {
+          "caller": "get_allocator",
+          "callee": "std::declval<allocator_reference<allocator_type>>",
+          "lineNumber": 58
+        },
+        {
+          "caller": "get_allocator",
+          "callee": "allocator_reference<allocator_type>::get_allocator",
+          "lineNumber": 60
+        },
+        {
+          "caller": "operator()",
+          "callee": "deallocate_array",
+          "lineNumber": 96
+        },
+        {
+          "caller": "get_allocator",
+          "callee": "get_allocator",
+          "lineNumber": 103
+        },
+        {
+          "caller": "get_allocator",
+          "callee": "std::declval<allocator_reference<allocator_type>>",
+          "lineNumber": 103
+        },
+        {
+          "caller": "get_allocator",
+          "callee": "allocator_reference<allocator_type>::get_allocator",
+          "lineNumber": 105
+        },
+        {
+          "caller": "allocator_polymorphic_deallocator",
+          "callee": "get_allocator",
+          "lineNumber": 134
+        },
+        {
+          "caller": "operator()",
+          "callee": "deallocate_node",
+          "lineNumber": 145
+        },
+        {
+          "caller": "get_allocator",
+          "callee": "get_allocator",
+          "lineNumber": 151
+        },
+        {
+          "caller": "get_allocator",
+          "callee": "std::declval<allocator_reference<allocator_type>>",
+          "lineNumber": 151
+        },
+        {
+          "caller": "get_allocator",
+          "callee": "allocator_reference<allocator_type>::get_allocator",
+          "lineNumber": 153
+        },
+        {
+          "caller": "operator()",
+          "callee": "~value_type",
+          "lineNumber": 191
+        },
+        {
+          "caller": "operator()",
+          "callee": "deallocate_node",
+          "lineNumber": 192
+        },
+        {
+          "caller": "get_allocator",
+          "callee": "get_allocator",
+          "lineNumber": 198
+        },
+        {
+          "caller": "get_allocator",
+          "callee": "std::declval<allocator_reference<allocator_type>>",
+          "lineNumber": 198
+        },
+        {
+          "caller": "get_allocator",
+          "callee": "allocator_reference<allocator_type>::get_allocator",
+          "lineNumber": 200
+        },
+        {
+          "caller": "operator()",
+          "callee": "~value_type",
+          "lineNumber": 236
+        },
+        {
+          "caller": "operator()",
+          "callee": "deallocate_array",
+          "lineNumber": 237
+        },
+        {
+          "caller": "get_allocator",
+          "callee": "get_allocator",
+          "lineNumber": 244
+        },
+        {
+          "caller": "get_allocator",
+          "callee": "std::declval<allocator_reference<allocator_type>>",
+          "lineNumber": 244
+        },
+        {
+          "caller": "get_allocator",
+          "callee": "allocator_reference<allocator_type>::get_allocator",
+          "lineNumber": 246
+        },
+        {
+          "caller": "allocator_polymorphic_deleter",
+          "callee": "get_allocator",
+          "lineNumber": 275
+        },
+        {
+          "caller": "allocator_polymorphic_deleter",
+          "callee": "FOONATHAN_MEMORY_ASSERT",
+          "lineNumber": 279
+        },
+        {
+          "caller": "allocator_polymorphic_deleter",
+          "callee": "std::size_t",
+          "lineNumber": 279
+        },
+        {
+          "caller": "allocator_polymorphic_deleter",
+          "callee": "std::size_t",
+          "lineNumber": 280
+        },
+        {
+          "caller": "operator()",
+          "callee": "~value_type",
+          "lineNumber": 288
+        },
+        {
+          "caller": "operator()",
+          "callee": "deallocate_node",
+          "lineNumber": 289
+        },
+        {
+          "caller": "get_allocator",
+          "callee": "get_allocator",
+          "lineNumber": 295
+        },
+        {
+          "caller": "get_allocator",
+          "callee": "std::declval<allocator_reference<allocator_type>>",
+          "lineNumber": 295
+        },
+        {
+          "caller": "get_allocator",
+          "callee": "allocator_reference<allocator_type>::get_allocator",
+          "lineNumber": 297
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/detail/container_node_sizes_impl.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 448,
+      "nonEmptyLines": 363,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/detail/container_node_sizes.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 9,
+      "nonEmptyLines": 6,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/detail/ebo_storage.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 41,
+      "nonEmptyLines": 34,
+      "callGraph": [
+        {
+          "caller": "ebo_storage",
+          "callee": "detail::move",
+          "lineNumber": 23
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/detail/free_list.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 227,
+      "nonEmptyLines": 180,
+      "callGraph": [
+        {
+          "caller": "ordered_free_memory_list",
+          "callee": "insert",
+          "lineNumber": 136
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/detail/ilog2.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 68,
+      "nonEmptyLines": 59,
+      "callGraph": [
+        {
+          "caller": "ilog2_base",
+          "callee": "static_cast<unsigned>",
+          "lineNumber": 29
+        },
+        {
+          "caller": "ilog2_base",
+          "callee": "__builtin_clzll",
+          "lineNumber": 29
+        },
+        {
+          "caller": "ilog2",
+          "callee": "ilog2_base",
+          "lineNumber": 54
+        },
+        {
+          "caller": "ilog2_ceil",
+          "callee": "ilog2_base",
+          "lineNumber": 62
+        },
+        {
+          "caller": "ilog2_ceil",
+          "callee": "std::size_t",
+          "lineNumber": 62
+        },
+        {
+          "caller": "ilog2_ceil",
+          "callee": "is_power_of_two",
+          "lineNumber": 62
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/detail/lowlevel_allocator.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 85,
+      "nonEmptyLines": 68,
+      "callGraph": [
+        {
+          "caller": "operator()",
+          "callee": "debug_handle_memory_leak",
+          "lineNumber": 26
+        },
+        {
+          "caller": "operator()",
+          "callee": "Functor::info",
+          "lineNumber": 26
+        },
+        {
+          "caller": "deallocate_node",
+          "callee": "debug_fill_free",
+          "lineNumber": 67
+        },
+        {
+          "caller": "deallocate_node",
+          "callee": "Functor::deallocate",
+          "lineNumber": 68
+        },
+        {
+          "caller": "deallocate_node",
+          "callee": "on_deallocate",
+          "lineNumber": 70
+        },
+        {
+          "caller": "max_node_size",
+          "callee": "Functor::max_node_size",
+          "lineNumber": 75
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/detail/small_free_list.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 163,
+      "nonEmptyLines": 130,
+      "callGraph": [
+        {
+          "caller": "min_block_size",
+          "callee": "chunk_count",
+          "lineNumber": 65
+        },
+        {
+          "caller": "deallocate",
+          "callee": "insert",
+          "lineNumber": 113
+        },
+        {
+          "caller": "find_chunk",
+          "callee": "find_chunk_impl",
+          "lineNumber": 123
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    }
+  ]
+}

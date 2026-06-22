@@ -1,0 +1,31 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "thirdparty/spdlog/include/spdlog/sinks/basic_file_sink-inl.h", "language": "c", "sizeLines": 48, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/sinks/basic_file_sink.h", "language": "c", "sizeLines": 66, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/sinks/callback_sink.h", "language": "c", "sizeLines": 56, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/sinks/daily_file_sink.h", "language": "c", "sizeLines": 254, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/sinks/hourly_file_sink.h", "language": "c", "sizeLines": 193, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/sinks/kafka_sink.h", "language": "c", "sizeLines": 119, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/sinks/mongo_sink.h", "language": "c", "sizeLines": 108, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/sinks/msvc_sink.h", "language": "c", "sizeLines": 68, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/sinks/null_sink.h", "language": "c", "sizeLines": 41, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/sinks/ostream_sink.h", "language": "c", "sizeLines": 43, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/sinks/qt_sinks.h", "language": "c", "sizeLines": 304, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/sinks/ringbuffer_sink.h", "language": "c", "sizeLines": 67, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/sinks/rotating_file_sink-inl.h", "language": "c", "sizeLines": 150, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/sinks/rotating_file_sink.h", "language": "c", "sizeLines": 90, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/sinks/sink-inl.h", "language": "c", "sizeLines": 22, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/sinks/sink.h", "language": "c", "sizeLines": 34, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/sinks/stdout_color_sinks-inl.h", "language": "c", "sizeLines": 38, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/sinks/stdout_color_sinks.h", "language": "c", "sizeLines": 49, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/sinks/stdout_sinks-inl.h", "language": "c", "sizeLines": 127, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/sinks/stdout_sinks.h", "language": "c", "sizeLines": 84, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/sinks/syslog_sink.h", "language": "c", "sizeLines": 104, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/sinks/systemd_sink.h", "language": "c", "sizeLines": 121, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/sinks/tcp_sink.h", "language": "c", "sizeLines": 75, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/sinks/udp_sink.h", "language": "c", "sizeLines": 69, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/sinks/win_eventlog_sink.h", "language": "c", "sizeLines": 260, "fileCategory": "code"}
+  ],
+  "batchImportData": {}
+}

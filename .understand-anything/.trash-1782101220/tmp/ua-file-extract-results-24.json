@@ -1,0 +1,5143 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 3,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "sample/data_memory_manger/concurrentqueue.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 4247,
+      "nonEmptyLines": 3815,
+      "functions": [
+        {
+          "name": "ConcurrentQueueProducerTypelessBase",
+          "startLine": 567,
+          "endLine": 567,
+          "params": []
+        },
+        {
+          "name": "hash_thread_id",
+          "startLine": 600,
+          "endLine": 607,
+          "params": [
+            "id"
+          ]
+        },
+        {
+          "name": "ProducerToken",
+          "startLine": 823,
+          "endLine": 829,
+          "params": [
+            "other"
+          ]
+        },
+        {
+          "name": "swap",
+          "startLine": 837,
+          "endLine": 846,
+          "params": [
+            "other"
+          ]
+        },
+        {
+          "name": "valid",
+          "startLine": 856,
+          "endLine": 856,
+          "params": []
+        },
+        {
+          "name": "~ProducerToken",
+          "startLine": 858,
+          "endLine": 864,
+          "params": []
+        },
+        {
+          "name": "ConsumerToken",
+          "startLine": 886,
+          "endLine": 893,
+          "params": [
+            "other"
+          ]
+        },
+        {
+          "name": "swap",
+          "startLine": 901,
+          "endLine": 908,
+          "params": [
+            "other"
+          ]
+        },
+        {
+          "name": "ProducerBase",
+          "startLine": 1957,
+          "endLine": 1961,
+          "params": [
+            "parent_",
+            "isExplicit_"
+          ]
+        },
+        {
+          "name": "~ProducerBase",
+          "startLine": 1963,
+          "endLine": 1963,
+          "params": []
+        },
+        {
+          "name": "size_approx",
+          "startLine": 1987,
+          "endLine": 1992,
+          "params": []
+        },
+        {
+          "name": "getTail",
+          "startLine": 1994,
+          "endLine": 1994,
+          "params": []
+        },
+        {
+          "name": "ExplicitProducer",
+          "startLine": 2020,
+          "endLine": 2032,
+          "params": [
+            "parent_"
+          ]
+        },
+        {
+          "name": "~ExplicitProducer",
+          "startLine": 2034,
+          "endLine": 2106,
+          "params": []
+        },
+        {
+          "name": "new_block_index",
+          "startLine": 2708,
+          "endLine": 2749,
+          "params": [
+            "numberOfFilledSlotsToExpose"
+          ]
+        },
+        {
+          "name": "ImplicitProducer",
+          "startLine": 2778,
+          "endLine": 2783,
+          "params": [
+            "parent_"
+          ]
+        },
+        {
+          "name": "~ImplicitProducer",
+          "startLine": 2785,
+          "endLine": 2841,
+          "params": []
+        },
+        {
+          "name": "rewind_block_index_tail",
+          "startLine": 3366,
+          "endLine": 3372,
+          "params": []
+        },
+        {
+          "name": "get_block_index_index_for_index",
+          "startLine": 3381,
+          "endLine": 3402,
+          "params": [
+            "index",
+            "localBlockIndex"
+          ]
+        },
+        {
+          "name": "new_block_index",
+          "startLine": 3404,
+          "endLine": 3450,
+          "params": []
+        },
+        {
+          "name": "populate_initial_block_list",
+          "startLine": 3482,
+          "endLine": 3497,
+          "params": [
+            "blockCount"
+          ]
+        },
+        {
+          "name": "add_block_to_free_list",
+          "startLine": 3510,
+          "endLine": 3520,
+          "params": [
+            "block"
+          ]
+        },
+        {
+          "name": "add_blocks_to_free_list",
+          "startLine": 3522,
+          "endLine": 3529,
+          "params": [
+            "block"
+          ]
+        },
+        {
+          "name": "reown_producers",
+          "startLine": 3740,
+          "endLine": 3749,
+          "params": []
+        },
+        {
+          "name": "ImplicitProducerKVP",
+          "startLine": 3760,
+          "endLine": 3760,
+          "params": []
+        },
+        {
+          "name": "ImplicitProducerKVP",
+          "startLine": 3762,
+          "endLine": 3766,
+          "params": [
+            "other"
+          ]
+        },
+        {
+          "name": "swap",
+          "startLine": 3774,
+          "endLine": 3780,
+          "params": [
+            "other"
+          ]
+        },
+        {
+          "name": "populate_initial_implicit_producer_hash",
+          "startLine": 3794,
+          "endLine": 3812,
+          "params": []
+        },
+        {
+          "name": "swap_implicit_producer_hashes",
+          "startLine": 3815,
+          "endLine": 3855,
+          "params": [
+            "other"
+          ]
+        },
+        {
+          "name": "swap",
+          "startLine": 4222,
+          "endLine": 4225,
+          "params": [
+            "a",
+            "b"
+          ]
+        },
+        {
+          "name": "swap",
+          "startLine": 4227,
+          "endLine": 4230,
+          "params": [
+            "a",
+            "b"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "ConcurrentQueueDefaultTraits",
+          "startLine": 454,
+          "endLine": 542,
+          "methods": [],
+          "properties": [
+            "BLOCK_SIZE",
+            "EXPLICIT_BLOCK_EMPTY_COUNTER_THRESHOLD",
+            "EXPLICIT_INITIAL_INDEX_SIZE",
+            "IMPLICIT_INITIAL_INDEX_SIZE",
+            "INITIAL_IMPLICIT_PRODUCER_HASH_SIZE",
+            "EXPLICIT_CONSUMER_CONSUMPTION_QUOTA_BEFORE_ROTATE",
+            "MAX_SUBQUEUE_SIZE",
+            "MAX_SEMA_SPINS",
+            "RECYCLE_ALLOCATED_BLOCKS"
+          ]
+        },
+        {
+          "name": "ProducerToken",
+          "startLine": 551,
+          "endLine": 551,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "ConsumerToken",
+          "startLine": 552,
+          "endLine": 552,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "ConcurrentQueueTests",
+          "startLine": 558,
+          "endLine": 558,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "ConcurrentQueueProducerTypelessBase",
+          "startLine": 562,
+          "endLine": 568,
+          "methods": [
+            "ConcurrentQueueProducerTypelessBase"
+          ],
+          "properties": [
+            "next",
+            "inactive",
+            "token"
+          ]
+        },
+        {
+          "name": "ProducerToken",
+          "startLine": 816,
+          "endLine": 877,
+          "methods": [
+            "ProducerToken",
+            "swap",
+            "valid",
+            "~ProducerToken"
+          ],
+          "properties": [
+            "producer"
+          ]
+        },
+        {
+          "name": "ConsumerToken",
+          "startLine": 879,
+          "endLine": 925,
+          "methods": [
+            "ConsumerToken",
+            "swap"
+          ],
+          "properties": [
+            "initialOffset",
+            "lastKnownGlobalOffset",
+            "itemsConsumedFromCurrent",
+            "currentProducer",
+            "desiredProducer"
+          ]
+        },
+        {
+          "name": "ProducerBase",
+          "startLine": 1956,
+          "endLine": 2013,
+          "methods": [
+            "ProducerBase",
+            "~ProducerBase",
+            "size_approx",
+            "getTail"
+          ],
+          "properties": [
+            "tailIndex",
+            "headIndex",
+            "dequeueOptimisticCount",
+            "dequeueOvercommit",
+            "tailBlock",
+            "isExplicit",
+            "parent"
+          ]
+        },
+        {
+          "name": "ExplicitProducer",
+          "startLine": 2019,
+          "endLine": 2228,
+          "methods": [
+            "ExplicitProducer",
+            "~ExplicitProducer",
+            "store"
+          ],
+          "properties": [
+            "true"
+          ]
+        },
+        {
+          "name": "BlockIndexHeader",
+          "startLine": 2701,
+          "endLine": 2706,
+          "methods": [],
+          "properties": [
+            "size",
+            "front",
+            "entries",
+            "prev"
+          ]
+        },
+        {
+          "name": "ImplicitProducer",
+          "startLine": 2777,
+          "endLine": 2915,
+          "methods": [
+            "ImplicitProducer",
+            "~ImplicitProducer",
+            "store"
+          ],
+          "properties": [
+            "true"
+          ]
+        },
+        {
+          "name": "BlockIndexEntry",
+          "startLine": 3312,
+          "endLine": 3315,
+          "methods": [],
+          "properties": [
+            "key",
+            "value"
+          ]
+        },
+        {
+          "name": "BlockIndexHeader",
+          "startLine": 3317,
+          "endLine": 3323,
+          "methods": [],
+          "properties": [
+            "capacity",
+            "tail",
+            "entries",
+            "index",
+            "prev"
+          ]
+        },
+        {
+          "name": "ImplicitProducerKVP",
+          "startLine": 3755,
+          "endLine": 3781,
+          "methods": [
+            "ImplicitProducerKVP",
+            "ImplicitProducerKVP",
+            "swap"
+          ],
+          "properties": [
+            "key",
+            "value"
+          ]
+        },
+        {
+          "name": "ImplicitProducerHash",
+          "startLine": 3788,
+          "endLine": 3792,
+          "methods": [],
+          "properties": [
+            "capacity",
+            "entries",
+            "prev"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ConcurrentQueueDefaultTraits",
+          "line": 454,
+          "isDefault": false
+        },
+        {
+          "name": "ProducerToken",
+          "line": 551,
+          "isDefault": false
+        },
+        {
+          "name": "ConsumerToken",
+          "line": 552,
+          "isDefault": false
+        },
+        {
+          "name": "ConcurrentQueueTests",
+          "line": 558,
+          "isDefault": false
+        },
+        {
+          "name": "ConcurrentQueueProducerTypelessBase",
+          "line": 567,
+          "isDefault": false
+        },
+        {
+          "name": "ConcurrentQueueProducerTypelessBase",
+          "line": 562,
+          "isDefault": false
+        },
+        {
+          "name": "ProducerToken",
+          "line": 823,
+          "isDefault": false
+        },
+        {
+          "name": "swap",
+          "line": 837,
+          "isDefault": false
+        },
+        {
+          "name": "valid",
+          "line": 856,
+          "isDefault": false
+        },
+        {
+          "name": "~ProducerToken",
+          "line": 858,
+          "isDefault": false
+        },
+        {
+          "name": "ProducerToken",
+          "line": 816,
+          "isDefault": false
+        },
+        {
+          "name": "ConsumerToken",
+          "line": 886,
+          "isDefault": false
+        },
+        {
+          "name": "swap",
+          "line": 901,
+          "isDefault": false
+        },
+        {
+          "name": "ConsumerToken",
+          "line": 879,
+          "isDefault": false
+        },
+        {
+          "name": "ProducerBase",
+          "line": 1957,
+          "isDefault": false
+        },
+        {
+          "name": "~ProducerBase",
+          "line": 1963,
+          "isDefault": false
+        },
+        {
+          "name": "size_approx",
+          "line": 1987,
+          "isDefault": false
+        },
+        {
+          "name": "getTail",
+          "line": 1994,
+          "isDefault": false
+        },
+        {
+          "name": "ProducerBase",
+          "line": 1956,
+          "isDefault": false
+        },
+        {
+          "name": "ExplicitProducer",
+          "line": 2020,
+          "isDefault": false
+        },
+        {
+          "name": "~ExplicitProducer",
+          "line": 2034,
+          "isDefault": false
+        },
+        {
+          "name": "store",
+          "line": 2226,
+          "isDefault": false
+        },
+        {
+          "name": "ExplicitProducer",
+          "line": 2019,
+          "isDefault": false
+        },
+        {
+          "name": "BlockIndexHeader",
+          "line": 2701,
+          "isDefault": false
+        },
+        {
+          "name": "new_block_index",
+          "line": 2708,
+          "isDefault": false
+        },
+        {
+          "name": "ImplicitProducer",
+          "line": 2778,
+          "isDefault": false
+        },
+        {
+          "name": "~ImplicitProducer",
+          "line": 2785,
+          "isDefault": false
+        },
+        {
+          "name": "store",
+          "line": 2913,
+          "isDefault": false
+        },
+        {
+          "name": "ImplicitProducer",
+          "line": 2777,
+          "isDefault": false
+        },
+        {
+          "name": "BlockIndexEntry",
+          "line": 3312,
+          "isDefault": false
+        },
+        {
+          "name": "BlockIndexHeader",
+          "line": 3317,
+          "isDefault": false
+        },
+        {
+          "name": "rewind_block_index_tail",
+          "line": 3366,
+          "isDefault": false
+        },
+        {
+          "name": "get_block_index_index_for_index",
+          "line": 3381,
+          "isDefault": false
+        },
+        {
+          "name": "new_block_index",
+          "line": 3404,
+          "isDefault": false
+        },
+        {
+          "name": "populate_initial_block_list",
+          "line": 3482,
+          "isDefault": false
+        },
+        {
+          "name": "add_block_to_free_list",
+          "line": 3510,
+          "isDefault": false
+        },
+        {
+          "name": "add_blocks_to_free_list",
+          "line": 3522,
+          "isDefault": false
+        },
+        {
+          "name": "reown_producers",
+          "line": 3740,
+          "isDefault": false
+        },
+        {
+          "name": "ImplicitProducerKVP",
+          "line": 3760,
+          "isDefault": false
+        },
+        {
+          "name": "ImplicitProducerKVP",
+          "line": 3762,
+          "isDefault": false
+        },
+        {
+          "name": "swap",
+          "line": 3774,
+          "isDefault": false
+        },
+        {
+          "name": "ImplicitProducerKVP",
+          "line": 3755,
+          "isDefault": false
+        },
+        {
+          "name": "ImplicitProducerHash",
+          "line": 3788,
+          "isDefault": false
+        },
+        {
+          "name": "populate_initial_implicit_producer_hash",
+          "line": 3794,
+          "isDefault": false
+        },
+        {
+          "name": "swap_implicit_producer_hashes",
+          "line": 3815,
+          "isDefault": false
+        },
+        {
+          "name": "swap",
+          "line": 4222,
+          "isDefault": false
+        },
+        {
+          "name": "swap",
+          "line": 4227,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "thread_id",
+          "callee": "rl::thread_index",
+          "lineNumber": 105
+        },
+        {
+          "caller": "thread_id",
+          "callee": "static_cast<thread_id_t>",
+          "lineNumber": 126
+        },
+        {
+          "caller": "thread_id",
+          "callee": "::GetCurrentThreadId",
+          "lineNumber": 126
+        },
+        {
+          "caller": "thread_id",
+          "callee": "std::this_thread::get_id",
+          "lineNumber": 148
+        },
+        {
+          "caller": "prehash",
+          "callee": "std::hash<std::thread::id>()",
+          "lineNumber": 175
+        },
+        {
+          "caller": "prehash",
+          "callee": "std::hash<std::thread::id>",
+          "lineNumber": 175
+        },
+        {
+          "caller": "prehash",
+          "callee": "reinterpret_cast<thread_id_hash_t const *>",
+          "lineNumber": 177
+        },
+        {
+          "caller": "thread_id",
+          "callee": "reinterpret_cast<thread_id_t>",
+          "lineNumber": 206
+        },
+        {
+          "caller": "bool(likely)",
+          "callee": "__builtin_expect",
+          "lineNumber": 395
+        },
+        {
+          "caller": "bool(unlikely)",
+          "callee": "__builtin_expect",
+          "lineNumber": 399
+        },
+        {
+          "caller": "WORKAROUND_free",
+          "callee": "free",
+          "lineNumber": 529
+        },
+        {
+          "caller": "void(free)",
+          "callee": "WORKAROUND_free",
+          "lineNumber": 531
+        },
+        {
+          "caller": "free",
+          "callee": "std::free",
+          "lineNumber": 534
+        },
+        {
+          "caller": "free",
+          "callee": "rl::rl_free",
+          "lineNumber": 540
+        },
+        {
+          "caller": "hash_thread_id",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 604
+        },
+        {
+          "caller": "hash_thread_id",
+          "callee": "hash_32_or_64<sizeof(thread_id_converter<thread_id_t>::thread_id_hash_t)>::hash",
+          "lineNumber": 605
+        },
+        {
+          "caller": "hash_thread_id",
+          "callee": "thread_id_converter<thread_id_t>::prehash",
+          "lineNumber": 606
+        },
+        {
+          "caller": "circular_less_than",
+          "callee": "static_cast<T>",
+          "lineNumber": 614
+        },
+        {
+          "caller": "circular_less_than",
+          "callee": "static_cast<T>",
+          "lineNumber": 615
+        },
+        {
+          "caller": "circular_less_than",
+          "callee": "static_cast<T>",
+          "lineNumber": 615
+        },
+        {
+          "caller": "circular_less_than",
+          "callee": "static_cast<T>",
+          "lineNumber": 615
+        },
+        {
+          "caller": "swap_relaxed",
+          "callee": "load",
+          "lineNumber": 648
+        },
+        {
+          "caller": "swap_relaxed",
+          "callee": "store",
+          "lineNumber": 649
+        },
+        {
+          "caller": "swap_relaxed",
+          "callee": "load",
+          "lineNumber": 649
+        },
+        {
+          "caller": "swap_relaxed",
+          "callee": "store",
+          "lineNumber": 650
+        },
+        {
+          "caller": "eval",
+          "callee": "std::forward<U>",
+          "lineNumber": 671
+        },
+        {
+          "caller": "eval",
+          "callee": "std::forward<U>",
+          "lineNumber": 673
+        },
+        {
+          "caller": "subscribe",
+          "callee": "instance",
+          "lineNumber": 715
+        },
+        {
+          "caller": "~ThreadExitNotifier",
+          "callee": "assert",
+          "lineNumber": 748
+        },
+        {
+          "caller": "~ThreadExitNotifier",
+          "callee": "instance",
+          "lineNumber": 748
+        },
+        {
+          "caller": "~ThreadExitNotifier",
+          "callee": "callback",
+          "lineNumber": 755
+        },
+        {
+          "caller": "swap",
+          "callee": "std::swap",
+          "lineNumber": 839
+        },
+        {
+          "caller": "~ProducerToken",
+          "callee": "store",
+          "lineNumber": 862
+        },
+        {
+          "caller": "swap",
+          "callee": "std::swap",
+          "lineNumber": 903
+        },
+        {
+          "caller": "swap",
+          "callee": "std::swap",
+          "lineNumber": 904
+        },
+        {
+          "caller": "swap",
+          "callee": "std::swap",
+          "lineNumber": 905
+        },
+        {
+          "caller": "swap",
+          "callee": "std::swap",
+          "lineNumber": 906
+        },
+        {
+          "caller": "swap",
+          "callee": "std::swap",
+          "lineNumber": 907
+        },
+        {
+          "caller": "ConcurrentQueue",
+          "callee": "clear",
+          "lineNumber": 1013
+        },
+        {
+          "caller": "ConcurrentQueue",
+          "callee": "populate_initial_implicit_producer_hash",
+          "lineNumber": 1014
+        },
+        {
+          "caller": "ConcurrentQueue",
+          "callee": "populate_initial_block_list",
+          "lineNumber": 1015
+        },
+        {
+          "caller": "ConcurrentQueue",
+          "callee": "store",
+          "lineNumber": 1023
+        },
+        {
+          "caller": "ConcurrentQueue",
+          "callee": "store",
+          "lineNumber": 1024
+        },
+        {
+          "caller": "ConcurrentQueue",
+          "callee": "clear",
+          "lineNumber": 1035
+        },
+        {
+          "caller": "ConcurrentQueue",
+          "callee": "populate_initial_implicit_producer_hash",
+          "lineNumber": 1036
+        },
+        {
+          "caller": "ConcurrentQueue",
+          "callee": "populate_initial_block_list",
+          "lineNumber": 1040
+        },
+        {
+          "caller": "ConcurrentQueue",
+          "callee": "store",
+          "lineNumber": 1043
+        },
+        {
+          "caller": "ConcurrentQueue",
+          "callee": "store",
+          "lineNumber": 1044
+        },
+        {
+          "caller": "~ConcurrentQueue",
+          "callee": "load",
+          "lineNumber": 1054
+        },
+        {
+          "caller": "~ConcurrentQueue",
+          "callee": "next_prod",
+          "lineNumber": 1056
+        },
+        {
+          "caller": "~ConcurrentQueue",
+          "callee": "destroy",
+          "lineNumber": 1060
+        },
+        {
+          "caller": "~ConcurrentQueue",
+          "callee": "MOODYCAMEL_CONSTEXPR_IF",
+          "lineNumber": 1065
+        },
+        {
+          "caller": "~ConcurrentQueue",
+          "callee": "load",
+          "lineNumber": 1067
+        },
+        {
+          "caller": "~ConcurrentQueue",
+          "callee": "~ImplicitProducerKVP",
+          "lineNumber": 1073
+        },
+        {
+          "caller": "~ConcurrentQueue",
+          "callee": "~ImplicitProducerHash",
+          "lineNumber": 1075
+        },
+        {
+          "caller": "~ConcurrentQueue",
+          "callee": "head_unsafe",
+          "lineNumber": 1083
+        },
+        {
+          "caller": "~ConcurrentQueue",
+          "callee": "load",
+          "lineNumber": 1085
+        },
+        {
+          "caller": "~ConcurrentQueue",
+          "callee": "destroy",
+          "lineNumber": 1087
+        },
+        {
+          "caller": "~ConcurrentQueue",
+          "callee": "destroy_array",
+          "lineNumber": 1093
+        },
+        {
+          "caller": "ConcurrentQueue",
+          "callee": "load",
+          "lineNumber": 1107
+        },
+        {
+          "caller": "ConcurrentQueue",
+          "callee": "load",
+          "lineNumber": 1108
+        },
+        {
+          "caller": "ConcurrentQueue",
+          "callee": "load",
+          "lineNumber": 1109
+        },
+        {
+          "caller": "ConcurrentQueue",
+          "callee": "std::move",
+          "lineNumber": 1112
+        },
+        {
+          "caller": "ConcurrentQueue",
+          "callee": "load",
+          "lineNumber": 1113
+        },
+        {
+          "caller": "ConcurrentQueue",
+          "callee": "load",
+          "lineNumber": 1115
+        },
+        {
+          "caller": "ConcurrentQueue",
+          "callee": "clear",
+          "lineNumber": 1118
+        },
+        {
+          "caller": "ConcurrentQueue",
+          "callee": "populate_initial_implicit_producer_hash",
+          "lineNumber": 1119
+        },
+        {
+          "caller": "ConcurrentQueue",
+          "callee": "swap_implicit_producer_hashes",
+          "lineNumber": 1120
+        },
+        {
+          "caller": "ConcurrentQueue",
+          "callee": "store",
+          "lineNumber": 1122
+        },
+        {
+          "caller": "ConcurrentQueue",
+          "callee": "store",
+          "lineNumber": 1123
+        },
+        {
+          "caller": "ConcurrentQueue",
+          "callee": "store",
+          "lineNumber": 1124
+        },
+        {
+          "caller": "ConcurrentQueue",
+          "callee": "store",
+          "lineNumber": 1125
+        },
+        {
+          "caller": "ConcurrentQueue",
+          "callee": "store",
+          "lineNumber": 1128
+        },
+        {
+          "caller": "ConcurrentQueue",
+          "callee": "load",
+          "lineNumber": 1128
+        },
+        {
+          "caller": "ConcurrentQueue",
+          "callee": "store",
+          "lineNumber": 1130
+        },
+        {
+          "caller": "ConcurrentQueue",
+          "callee": "store",
+          "lineNumber": 1131
+        },
+        {
+          "caller": "ConcurrentQueue",
+          "callee": "load",
+          "lineNumber": 1131
+        },
+        {
+          "caller": "ConcurrentQueue",
+          "callee": "store",
+          "lineNumber": 1133
+        },
+        {
+          "caller": "ConcurrentQueue",
+          "callee": "store",
+          "lineNumber": 1136
+        },
+        {
+          "caller": "ConcurrentQueue",
+          "callee": "reown_producers",
+          "lineNumber": 1140
+        },
+        {
+          "caller": "swap",
+          "callee": "swap_internal",
+          "lineNumber": 1153
+        },
+        {
+          "caller": "enqueue",
+          "callee": "MOODYCAMEL_CONSTEXPR_IF",
+          "lineNumber": 1192
+        },
+        {
+          "caller": "enqueue",
+          "callee": "MOODYCAMEL_CONSTEXPR_IF",
+          "lineNumber": 1203
+        },
+        {
+          "caller": "enqueue",
+          "callee": "inner_enqueue<CanAlloc>",
+          "lineNumber": 1213
+        },
+        {
+          "caller": "enqueue",
+          "callee": "inner_enqueue<CanAlloc>",
+          "lineNumber": 1222
+        },
+        {
+          "caller": "enqueue",
+          "callee": "std::move",
+          "lineNumber": 1222
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "MOODYCAMEL_CONSTEXPR_IF",
+          "lineNumber": 1234
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "inner_enqueue_bulk<CanAlloc>",
+          "lineNumber": 1247
+        },
+        {
+          "caller": "try_enqueue",
+          "callee": "MOODYCAMEL_CONSTEXPR_IF",
+          "lineNumber": 1257
+        },
+        {
+          "caller": "try_enqueue",
+          "callee": "MOODYCAMEL_CONSTEXPR_IF",
+          "lineNumber": 1268
+        },
+        {
+          "caller": "try_enqueue",
+          "callee": "inner_enqueue<CannotAlloc>",
+          "lineNumber": 1277
+        },
+        {
+          "caller": "try_enqueue",
+          "callee": "inner_enqueue<CannotAlloc>",
+          "lineNumber": 1285
+        },
+        {
+          "caller": "try_enqueue",
+          "callee": "std::move",
+          "lineNumber": 1285
+        },
+        {
+          "caller": "try_enqueue_bulk",
+          "callee": "MOODYCAMEL_CONSTEXPR_IF",
+          "lineNumber": 1298
+        },
+        {
+          "caller": "try_enqueue_bulk",
+          "callee": "inner_enqueue_bulk<CannotAlloc>",
+          "lineNumber": 1310
+        },
+        {
+          "caller": "try_dequeue",
+          "callee": "load",
+          "lineNumber": 1325
+        },
+        {
+          "caller": "try_dequeue",
+          "callee": "next_prod",
+          "lineNumber": 1326
+        },
+        {
+          "caller": "try_dequeue",
+          "callee": "size_approx",
+          "lineNumber": 1327
+        },
+        {
+          "caller": "try_dequeue",
+          "callee": "dequeue",
+          "lineNumber": 1340
+        },
+        {
+          "caller": "try_dequeue",
+          "callee": "load",
+          "lineNumber": 1343
+        },
+        {
+          "caller": "try_dequeue",
+          "callee": "next_prod",
+          "lineNumber": 1344
+        },
+        {
+          "caller": "try_dequeue",
+          "callee": "dequeue",
+          "lineNumber": 1345
+        },
+        {
+          "caller": "try_dequeue_non_interleaved",
+          "callee": "load",
+          "lineNumber": 1365
+        },
+        {
+          "caller": "try_dequeue_non_interleaved",
+          "callee": "next_prod",
+          "lineNumber": 1366
+        },
+        {
+          "caller": "try_dequeue_non_interleaved",
+          "callee": "dequeue",
+          "lineNumber": 1367
+        },
+        {
+          "caller": "try_dequeue",
+          "callee": "load",
+          "lineNumber": 1389
+        },
+        {
+          "caller": "try_dequeue",
+          "callee": "update_current_producer_after_rotation",
+          "lineNumber": 1390
+        },
+        {
+          "caller": "try_dequeue",
+          "callee": "dequeue",
+          "lineNumber": 1397
+        },
+        {
+          "caller": "try_dequeue",
+          "callee": "static_cast<ProducerBase *>",
+          "lineNumber": 1397
+        },
+        {
+          "caller": "try_dequeue",
+          "callee": "fetch_add",
+          "lineNumber": 1400
+        },
+        {
+          "caller": "try_dequeue",
+          "callee": "load",
+          "lineNumber": 1405
+        },
+        {
+          "caller": "try_dequeue",
+          "callee": "next_prod",
+          "lineNumber": 1406
+        },
+        {
+          "caller": "try_dequeue",
+          "callee": "static_cast<ProducerBase *>",
+          "lineNumber": 1406
+        },
+        {
+          "caller": "try_dequeue",
+          "callee": "static_cast<ProducerBase *>",
+          "lineNumber": 1410
+        },
+        {
+          "caller": "try_dequeue",
+          "callee": "dequeue",
+          "lineNumber": 1411
+        },
+        {
+          "caller": "try_dequeue",
+          "callee": "next_prod",
+          "lineNumber": 1416
+        },
+        {
+          "caller": "try_dequeue_bulk",
+          "callee": "load",
+          "lineNumber": 1433
+        },
+        {
+          "caller": "try_dequeue_bulk",
+          "callee": "next_prod",
+          "lineNumber": 1434
+        },
+        {
+          "caller": "try_dequeue_bulk",
+          "callee": "dequeue_bulk",
+          "lineNumber": 1435
+        },
+        {
+          "caller": "try_dequeue_bulk",
+          "callee": "load",
+          "lineNumber": 1453
+        },
+        {
+          "caller": "try_dequeue_bulk",
+          "callee": "update_current_producer_after_rotation",
+          "lineNumber": 1454
+        },
+        {
+          "caller": "try_dequeue_bulk",
+          "callee": "dequeue_bulk",
+          "lineNumber": 1460
+        },
+        {
+          "caller": "try_dequeue_bulk",
+          "callee": "static_cast<ProducerBase *>",
+          "lineNumber": 1460
+        },
+        {
+          "caller": "try_dequeue_bulk",
+          "callee": "static_cast<std::uint32_t>",
+          "lineNumber": 1462
+        },
+        {
+          "caller": "try_dequeue_bulk",
+          "callee": "fetch_add",
+          "lineNumber": 1464
+        },
+        {
+          "caller": "try_dequeue_bulk",
+          "callee": "static_cast<std::uint32_t>",
+          "lineNumber": 1468
+        },
+        {
+          "caller": "try_dequeue_bulk",
+          "callee": "load",
+          "lineNumber": 1471
+        },
+        {
+          "caller": "try_dequeue_bulk",
+          "callee": "next_prod",
+          "lineNumber": 1472
+        },
+        {
+          "caller": "try_dequeue_bulk",
+          "callee": "static_cast<ProducerBase *>",
+          "lineNumber": 1472
+        },
+        {
+          "caller": "try_dequeue_bulk",
+          "callee": "static_cast<ProducerBase *>",
+          "lineNumber": 1476
+        },
+        {
+          "caller": "try_dequeue_bulk",
+          "callee": "dequeue_bulk",
+          "lineNumber": 1477
+        },
+        {
+          "caller": "try_dequeue_bulk",
+          "callee": "static_cast<std::uint32_t>",
+          "lineNumber": 1481
+        },
+        {
+          "caller": "try_dequeue_bulk",
+          "callee": "next_prod",
+          "lineNumber": 1487
+        },
+        {
+          "caller": "try_dequeue_from_producer",
+          "callee": "dequeue",
+          "lineNumber": 1504
+        },
+        {
+          "caller": "try_dequeue_from_producer",
+          "callee": "static_cast<ExplicitProducer *>",
+          "lineNumber": 1504
+        },
+        {
+          "caller": "try_dequeue_bulk_from_producer",
+          "callee": "dequeue_bulk",
+          "lineNumber": 1518
+        },
+        {
+          "caller": "try_dequeue_bulk_from_producer",
+          "callee": "static_cast<ExplicitProducer *>",
+          "lineNumber": 1518
+        },
+        {
+          "caller": "size_approx",
+          "callee": "load",
+          "lineNumber": 1530
+        },
+        {
+          "caller": "size_approx",
+          "callee": "next_prod",
+          "lineNumber": 1531
+        },
+        {
+          "caller": "size_approx",
+          "callee": "size_approx",
+          "lineNumber": 1532
+        },
+        {
+          "caller": "inner_enqueue",
+          "callee": "ConcurrentQueue::ExplicitProducer::template enqueue<canAlloc>",
+          "lineNumber": 1570
+        },
+        {
+          "caller": "inner_enqueue",
+          "callee": "static_cast<ExplicitProducer *>",
+          "lineNumber": 1570
+        },
+        {
+          "caller": "inner_enqueue",
+          "callee": "std::forward<U>",
+          "lineNumber": 1572
+        },
+        {
+          "caller": "inner_enqueue",
+          "callee": "get_or_add_implicit_producer",
+          "lineNumber": 1578
+        },
+        {
+          "caller": "inner_enqueue",
+          "callee": "ConcurrentQueue::ImplicitProducer::template enqueue<canAlloc>",
+          "lineNumber": 1581
+        },
+        {
+          "caller": "inner_enqueue",
+          "callee": "std::forward<U>",
+          "lineNumber": 1582
+        },
+        {
+          "caller": "inner_enqueue_bulk",
+          "callee": "ConcurrentQueue::ExplicitProducer::template enqueue_bulk<canAlloc>",
+          "lineNumber": 1588
+        },
+        {
+          "caller": "inner_enqueue_bulk",
+          "callee": "static_cast<ExplicitProducer *>",
+          "lineNumber": 1588
+        },
+        {
+          "caller": "inner_enqueue_bulk",
+          "callee": "get_or_add_implicit_producer",
+          "lineNumber": 1595
+        },
+        {
+          "caller": "inner_enqueue_bulk",
+          "callee": "ConcurrentQueue::ImplicitProducer::template enqueue_bulk<canAlloc>",
+          "lineNumber": 1598
+        },
+        {
+          "caller": "update_current_producer_after_rotation",
+          "callee": "load",
+          "lineNumber": 1605
+        },
+        {
+          "caller": "update_current_producer_after_rotation",
+          "callee": "load",
+          "lineNumber": 1609
+        },
+        {
+          "caller": "update_current_producer_after_rotation",
+          "callee": "load",
+          "lineNumber": 1610
+        },
+        {
+          "caller": "update_current_producer_after_rotation",
+          "callee": "next_prod",
+          "lineNumber": 1619
+        },
+        {
+          "caller": "update_current_producer_after_rotation",
+          "callee": "static_cast<ProducerBase *>",
+          "lineNumber": 1619
+        },
+        {
+          "caller": "update_current_producer_after_rotation",
+          "callee": "next_prod",
+          "lineNumber": 1631
+        },
+        {
+          "caller": "update_current_producer_after_rotation",
+          "callee": "static_cast<ProducerBase *>",
+          "lineNumber": 1631
+        },
+        {
+          "caller": "FreeList",
+          "callee": "load",
+          "lineNumber": 1663
+        },
+        {
+          "caller": "FreeList",
+          "callee": "store",
+          "lineNumber": 1665
+        },
+        {
+          "caller": "swap",
+          "callee": "details::swap_relaxed",
+          "lineNumber": 1667
+        },
+        {
+          "caller": "add",
+          "callee": "fetch_add",
+          "lineNumber": 1679
+        },
+        {
+          "caller": "add",
+          "callee": "add_knowing_refcount_is_zero",
+          "lineNumber": 1683
+        },
+        {
+          "caller": "add_knowing_refcount_is_zero",
+          "callee": "load",
+          "lineNumber": 1745
+        },
+        {
+          "caller": "add_knowing_refcount_is_zero",
+          "callee": "store",
+          "lineNumber": 1747
+        },
+        {
+          "caller": "add_knowing_refcount_is_zero",
+          "callee": "store",
+          "lineNumber": 1748
+        },
+        {
+          "caller": "add_knowing_refcount_is_zero",
+          "callee": "compare_exchange_strong",
+          "lineNumber": 1749
+        },
+        {
+          "caller": "add_knowing_refcount_is_zero",
+          "callee": "fetch_add",
+          "lineNumber": 1752
+        },
+        {
+          "caller": "is_empty",
+          "callee": "MOODYCAMEL_CONSTEXPR_IF",
+          "lineNumber": 1793
+        },
+        {
+          "caller": "is_empty",
+          "callee": "load",
+          "lineNumber": 1798
+        },
+        {
+          "caller": "is_empty",
+          "callee": "std::atomic_thread_fence",
+          "lineNumber": 1804
+        },
+        {
+          "caller": "is_empty",
+          "callee": "if",
+          "lineNumber": 1810
+        },
+        {
+          "caller": "is_empty",
+          "callee": "load",
+          "lineNumber": 1810
+        },
+        {
+          "caller": "is_empty",
+          "callee": "std::atomic_thread_fence",
+          "lineNumber": 1811
+        },
+        {
+          "caller": "is_empty",
+          "callee": "assert",
+          "lineNumber": 1814
+        },
+        {
+          "caller": "is_empty",
+          "callee": "load",
+          "lineNumber": 1814
+        },
+        {
+          "caller": "set_empty",
+          "callee": "MOODYCAMEL_CONSTEXPR_IF",
+          "lineNumber": 1823
+        },
+        {
+          "caller": "set_empty",
+          "callee": "assert",
+          "lineNumber": 1827
+        },
+        {
+          "caller": "set_empty",
+          "callee": "load",
+          "lineNumber": 1827
+        },
+        {
+          "caller": "set_empty",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 1828
+        },
+        {
+          "caller": "set_empty",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 1828
+        },
+        {
+          "caller": "set_empty",
+          "callee": "store",
+          "lineNumber": 1830
+        },
+        {
+          "caller": "set_empty",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 1831
+        },
+        {
+          "caller": "set_empty",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 1831
+        },
+        {
+          "caller": "set_empty",
+          "callee": "fetch_add",
+          "lineNumber": 1838
+        },
+        {
+          "caller": "set_empty",
+          "callee": "assert",
+          "lineNumber": 1839
+        },
+        {
+          "caller": "dequeue",
+          "callee": "dequeue",
+          "lineNumber": 1969
+        },
+        {
+          "caller": "dequeue",
+          "callee": "static_cast<ExplicitProducer *>",
+          "lineNumber": 1969
+        },
+        {
+          "caller": "dequeue",
+          "callee": "dequeue",
+          "lineNumber": 1971
+        },
+        {
+          "caller": "dequeue",
+          "callee": "static_cast<ImplicitProducer *>",
+          "lineNumber": 1971
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "dequeue_bulk",
+          "lineNumber": 1979
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "static_cast<ExplicitProducer *>",
+          "lineNumber": 1979
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "dequeue_bulk",
+          "lineNumber": 1981
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "static_cast<ImplicitProducer *>",
+          "lineNumber": 1981
+        },
+        {
+          "caller": "size_approx",
+          "callee": "load",
+          "lineNumber": 1989
+        },
+        {
+          "caller": "size_approx",
+          "callee": "load",
+          "lineNumber": 1990
+        },
+        {
+          "caller": "size_approx",
+          "callee": "details::circular_less_than",
+          "lineNumber": 1991
+        },
+        {
+          "caller": "size_approx",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 1991
+        },
+        {
+          "caller": "getTail",
+          "callee": "load",
+          "lineNumber": 1994
+        },
+        {
+          "caller": "ExplicitProducer",
+          "callee": "details::ceil_to_pow_2",
+          "lineNumber": 2025
+        },
+        {
+          "caller": "ExplicitProducer",
+          "callee": "new_block_index",
+          "lineNumber": 2030
+        },
+        {
+          "caller": "~ExplicitProducer",
+          "callee": "load",
+          "lineNumber": 2042
+        },
+        {
+          "caller": "~ExplicitProducer",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 2043
+        },
+        {
+          "caller": "~ExplicitProducer",
+          "callee": "details::circular_less_than<index_t>",
+          "lineNumber": 2049
+        },
+        {
+          "caller": "~ExplicitProducer",
+          "callee": "load",
+          "lineNumber": 2051
+        },
+        {
+          "caller": "~ExplicitProducer",
+          "callee": "assert",
+          "lineNumber": 2054
+        },
+        {
+          "caller": "~ExplicitProducer",
+          "callee": "details::circular_less_than<index_t>",
+          "lineNumber": 2054
+        },
+        {
+          "caller": "~ExplicitProducer",
+          "callee": "load",
+          "lineNumber": 2056
+        },
+        {
+          "caller": "~ExplicitProducer",
+          "callee": "ConcurrentQueue::Block::template is_empty<explicit_context>",
+          "lineNumber": 2064
+        },
+        {
+          "caller": "~ExplicitProducer",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 2070
+        },
+        {
+          "caller": "~ExplicitProducer",
+          "callee": "load",
+          "lineNumber": 2070
+        },
+        {
+          "caller": "~ExplicitProducer",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 2071
+        },
+        {
+          "caller": "~ExplicitProducer",
+          "callee": "load",
+          "lineNumber": 2076
+        },
+        {
+          "caller": "~ExplicitProducer",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 2077
+        },
+        {
+          "caller": "~ExplicitProducer",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 2080
+        },
+        {
+          "caller": "~ExplicitProducer",
+          "callee": "load",
+          "lineNumber": 2080
+        },
+        {
+          "caller": "~ExplicitProducer",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 2081
+        },
+        {
+          "caller": "~ExplicitProducer",
+          "callee": "~T",
+          "lineNumber": 2083
+        },
+        {
+          "caller": "~ExplicitProducer",
+          "callee": "add_block_to_free_list",
+          "lineNumber": 2093
+        },
+        {
+          "caller": "~ExplicitProducer",
+          "callee": "static_cast<BlockIndexHeader *>",
+          "lineNumber": 2099
+        },
+        {
+          "caller": "~ExplicitProducer",
+          "callee": "static_cast<BlockIndexHeader *>",
+          "lineNumber": 2101
+        },
+        {
+          "caller": "~ExplicitProducer",
+          "callee": "~BlockIndexHeader",
+          "lineNumber": 2102
+        },
+        {
+          "caller": "enqueue",
+          "callee": "load",
+          "lineNumber": 2111
+        },
+        {
+          "caller": "enqueue",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 2113
+        },
+        {
+          "caller": "enqueue",
+          "callee": "ConcurrentQueue::Block::template is_empty<explicit_context>",
+          "lineNumber": 2118
+        },
+        {
+          "caller": "enqueue",
+          "callee": "ConcurrentQueue::Block::template reset_empty<explicit_context>",
+          "lineNumber": 2122
+        },
+        {
+          "caller": "enqueue",
+          "callee": "load",
+          "lineNumber": 2134
+        },
+        {
+          "caller": "enqueue",
+          "callee": "assert",
+          "lineNumber": 2135
+        },
+        {
+          "caller": "enqueue",
+          "callee": "details::circular_less_than<index_t>",
+          "lineNumber": 2135
+        },
+        {
+          "caller": "enqueue",
+          "callee": "details::circular_less_than<index_t>",
+          "lineNumber": 2136
+        },
+        {
+          "caller": "enqueue",
+          "callee": "MOODYCAMEL_CONSTEXPR_IF",
+          "lineNumber": 2152
+        },
+        {
+          "caller": "enqueue",
+          "callee": "new_block_index",
+          "lineNumber": 2156
+        },
+        {
+          "caller": "enqueue",
+          "callee": "ConcurrentQueue::template requisition_block<allocMode>",
+          "lineNumber": 2164
+        },
+        {
+          "caller": "enqueue",
+          "callee": "ConcurrentQueue::Block::template reset_empty<explicit_context>",
+          "lineNumber": 2171
+        },
+        {
+          "caller": "enqueue",
+          "callee": "MOODYCAMEL_CONSTEXPR_IF",
+          "lineNumber": 2182
+        },
+        {
+          "caller": "enqueue",
+          "callee": "MOODYCAMEL_NOEXCEPT_CTOR",
+          "lineNumber": 2182
+        },
+        {
+          "caller": "enqueue",
+          "callee": "static_cast<T *>",
+          "lineNumber": 2183
+        },
+        {
+          "caller": "enqueue",
+          "callee": "std::forward<U>",
+          "lineNumber": 2183
+        },
+        {
+          "caller": "enqueue",
+          "callee": "std::forward<U>",
+          "lineNumber": 2189
+        },
+        {
+          "caller": "enqueue",
+          "callee": "load",
+          "lineNumber": 2208
+        },
+        {
+          "caller": "enqueue",
+          "callee": "store",
+          "lineNumber": 2211
+        },
+        {
+          "caller": "enqueue",
+          "callee": "load",
+          "lineNumber": 2211
+        },
+        {
+          "caller": "enqueue",
+          "callee": "MOODYCAMEL_CONSTEXPR_IF",
+          "lineNumber": 2215
+        },
+        {
+          "caller": "enqueue",
+          "callee": "MOODYCAMEL_NOEXCEPT_CTOR",
+          "lineNumber": 2215
+        },
+        {
+          "caller": "enqueue",
+          "callee": "static_cast<T *>",
+          "lineNumber": 2216
+        },
+        {
+          "caller": "enqueue",
+          "callee": "std::forward<U>",
+          "lineNumber": 2216
+        },
+        {
+          "caller": "enqueue",
+          "callee": "store",
+          "lineNumber": 2218
+        },
+        {
+          "caller": "~Guard",
+          "callee": "~T",
+          "lineNumber": 2316
+        },
+        {
+          "caller": "~Guard",
+          "callee": "ConcurrentQueue::Block::template set_empty<explicit_context>",
+          "lineNumber": 2317
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "load",
+          "lineNumber": 2348
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 2357
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 2358
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 2359
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "ConcurrentQueue::Block::template is_empty<explicit_context>",
+          "lineNumber": 2364
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 2366
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 2367
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "load",
+          "lineNumber": 2374
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 2382
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 2383
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "load",
+          "lineNumber": 2385
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "assert",
+          "lineNumber": 2386
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "details::circular_less_than<index_t>",
+          "lineNumber": 2386
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "details::circular_less_than<index_t>",
+          "lineNumber": 2388
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "MOODYCAMEL_CONSTEXPR_IF",
+          "lineNumber": 2394
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "new_block_index",
+          "lineNumber": 2403
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "ConcurrentQueue::template requisition_block<allocMode>",
+          "lineNumber": 2421
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "ConcurrentQueue::Block::template set_all_empty<explicit_context>",
+          "lineNumber": 2432
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "load",
+          "lineNumber": 2446
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "ConcurrentQueue::Block::template reset_empty<explicit_context>",
+          "lineNumber": 2456
+        },
+        {
+          "caller": "MOODYCAMEL_CONSTEXPR_IF",
+          "callee": "store",
+          "lineNumber": 2467
+        },
+        {
+          "caller": "MOODYCAMEL_CONSTEXPR_IF",
+          "callee": "load",
+          "lineNumber": 2467
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 2474
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "assert",
+          "lineNumber": 2478
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 2478
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 2480
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 2485
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 2486
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "details::circular_less_than<index_t>",
+          "lineNumber": 2487
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "while",
+          "lineNumber": 2502
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "details::nomove_if<!MOODYCAMEL_NOEXCEPT_CTOR(\n                                    T, decltype(*itemFirst),\n                                    new (static_cast<T *>(nullptr))\n                                        T(details::deref_noexcept(itemFirst)))>::eval",
+          "lineNumber": 2511
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "MOODYCAMEL_NOEXCEPT_CTOR",
+          "lineNumber": 2511
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "static_cast<T *>",
+          "lineNumber": 2513
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "details::deref_noexcept",
+          "lineNumber": 2514
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 2533
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 2539
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 2540
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "details::circular_less_than<index_t>",
+          "lineNumber": 2541
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "~T",
+          "lineNumber": 2546
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "load",
+          "lineNumber": 2582
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "load",
+          "lineNumber": 2583
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 2584
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "load",
+          "lineNumber": 2585
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "details::circular_less_than<size_t>",
+          "lineNumber": 2586
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "std::atomic_thread_fence",
+          "lineNumber": 2588
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "fetch_add",
+          "lineNumber": 2591
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "load",
+          "lineNumber": 2593
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 2594
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "details::circular_less_than<size_t>",
+          "lineNumber": 2595
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "fetch_add",
+          "lineNumber": 2598
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "fetch_add",
+          "lineNumber": 2605
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "load",
+          "lineNumber": 2608
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "load",
+          "lineNumber": 2610
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 2613
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 2614
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "static_cast<typename std::make_signed<index_t>::type>",
+          "lineNumber": 2615
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "static_cast<typename std::make_signed<index_t>::type>",
+          "lineNumber": 2617
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 2624
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 2625
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "details::circular_less_than<index_t>",
+          "lineNumber": 2626
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 2627
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 2628
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "MOODYCAMEL_NOEXCEPT_ASSIGN",
+          "lineNumber": 2631
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "details::deref_noexcept",
+          "lineNumber": 2632
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "std::move",
+          "lineNumber": 2633
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "std::move",
+          "lineNumber": 2636
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "~T",
+          "lineNumber": 2637
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "while",
+          "lineNumber": 2643
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "~T",
+          "lineNumber": 2644
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "std::move",
+          "lineNumber": 2645
+        },
+        {
+          "caller": "MOODYCAMEL_CATCH",
+          "callee": "~T",
+          "lineNumber": 2659
+        },
+        {
+          "caller": "MOODYCAMEL_CATCH",
+          "callee": "ConcurrentQueue::Block::template set_many_empty<\n                                        explicit_context>",
+          "lineNumber": 2661
+        },
+        {
+          "caller": "MOODYCAMEL_CATCH",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 2664
+        },
+        {
+          "caller": "MOODYCAMEL_CATCH",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 2668
+        },
+        {
+          "caller": "MOODYCAMEL_CATCH",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 2669
+        },
+        {
+          "caller": "MOODYCAMEL_CATCH",
+          "callee": "details::circular_less_than<index_t>",
+          "lineNumber": 2670
+        },
+        {
+          "caller": "MOODYCAMEL_CATCH",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 2671
+        },
+        {
+          "caller": "MOODYCAMEL_CATCH",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 2673
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "ConcurrentQueue::Block::template set_many_empty<explicit_context>",
+          "lineNumber": 2680
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 2681
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "fetch_add",
+          "lineNumber": 2688
+        },
+        {
+          "caller": "new_block_index",
+          "callee": "static_cast<char *>",
+          "lineNumber": 2714
+        },
+        {
+          "caller": "new_block_index",
+          "callee": "reinterpret_cast<BlockIndexEntry *>",
+          "lineNumber": 2722
+        },
+        {
+          "caller": "new_block_index",
+          "callee": "details::align_for<BlockIndexEntry>",
+          "lineNumber": 2723
+        },
+        {
+          "caller": "new_block_index",
+          "callee": "store",
+          "lineNumber": 2738
+        },
+        {
+          "caller": "new_block_index",
+          "callee": "store",
+          "lineNumber": 2746
+        },
+        {
+          "caller": "ImplicitProducer",
+          "callee": "new_block_index",
+          "lineNumber": 2782
+        },
+        {
+          "caller": "~ImplicitProducer",
+          "callee": "load",
+          "lineNumber": 2794
+        },
+        {
+          "caller": "~ImplicitProducer",
+          "callee": "details::ThreadExitNotifier::unsubscribe",
+          "lineNumber": 2795
+        },
+        {
+          "caller": "~ImplicitProducer",
+          "callee": "load",
+          "lineNumber": 2800
+        },
+        {
+          "caller": "~ImplicitProducer",
+          "callee": "load",
+          "lineNumber": 2801
+        },
+        {
+          "caller": "~ImplicitProducer",
+          "callee": "assert",
+          "lineNumber": 2803
+        },
+        {
+          "caller": "~ImplicitProducer",
+          "callee": "details::circular_less_than",
+          "lineNumber": 2803
+        },
+        {
+          "caller": "~ImplicitProducer",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 2807
+        },
+        {
+          "caller": "~ImplicitProducer",
+          "callee": "add_block_to_free_list",
+          "lineNumber": 2810
+        },
+        {
+          "caller": "~ImplicitProducer",
+          "callee": "load",
+          "lineNumber": 2813
+        },
+        {
+          "caller": "~ImplicitProducer",
+          "callee": "get_block_index_entry_for_index",
+          "lineNumber": 2813
+        },
+        {
+          "caller": "~ImplicitProducer",
+          "callee": "~T",
+          "lineNumber": 2817
+        },
+        {
+          "caller": "~ImplicitProducer",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 2824
+        },
+        {
+          "caller": "~ImplicitProducer",
+          "callee": "add_block_to_free_list",
+          "lineNumber": 2825
+        },
+        {
+          "caller": "~ImplicitProducer",
+          "callee": "load",
+          "lineNumber": 2829
+        },
+        {
+          "caller": "~ImplicitProducer",
+          "callee": "~BlockIndexEntry",
+          "lineNumber": 2832
+        },
+        {
+          "caller": "~ImplicitProducer",
+          "callee": "~BlockIndexHeader",
+          "lineNumber": 2836
+        },
+        {
+          "caller": "enqueue",
+          "callee": "load",
+          "lineNumber": 2846
+        },
+        {
+          "caller": "enqueue",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 2848
+        },
+        {
+          "caller": "enqueue",
+          "callee": "load",
+          "lineNumber": 2850
+        },
+        {
+          "caller": "enqueue",
+          "callee": "assert",
+          "lineNumber": 2851
+        },
+        {
+          "caller": "enqueue",
+          "callee": "details::circular_less_than<index_t>",
+          "lineNumber": 2851
+        },
+        {
+          "caller": "enqueue",
+          "callee": "details::circular_less_than<index_t>",
+          "lineNumber": 2852
+        },
+        {
+          "caller": "enqueue",
+          "callee": "insert_block_index_entry<allocMode>",
+          "lineNumber": 2863
+        },
+        {
+          "caller": "enqueue",
+          "callee": "ConcurrentQueue::template requisition_block<allocMode>",
+          "lineNumber": 2869
+        },
+        {
+          "caller": "enqueue",
+          "callee": "rewind_block_index_tail",
+          "lineNumber": 2871
+        },
+        {
+          "caller": "enqueue",
+          "callee": "store",
+          "lineNumber": 2872
+        },
+        {
+          "caller": "enqueue",
+          "callee": "ConcurrentQueue::Block::template reset_empty<implicit_context>",
+          "lineNumber": 2878
+        },
+        {
+          "caller": "enqueue",
+          "callee": "MOODYCAMEL_CONSTEXPR_IF",
+          "lineNumber": 2880
+        },
+        {
+          "caller": "enqueue",
+          "callee": "MOODYCAMEL_NOEXCEPT_CTOR",
+          "lineNumber": 2880
+        },
+        {
+          "caller": "enqueue",
+          "callee": "static_cast<T *>",
+          "lineNumber": 2881
+        },
+        {
+          "caller": "enqueue",
+          "callee": "std::forward<U>",
+          "lineNumber": 2881
+        },
+        {
+          "caller": "enqueue",
+          "callee": "std::forward<U>",
+          "lineNumber": 2886
+        },
+        {
+          "caller": "MOODYCAMEL_CATCH",
+          "callee": "rewind_block_index_tail",
+          "lineNumber": 2890
+        },
+        {
+          "caller": "MOODYCAMEL_CATCH",
+          "callee": "store",
+          "lineNumber": 2891
+        },
+        {
+          "caller": "MOODYCAMEL_CATCH",
+          "callee": "add_block_to_free_list",
+          "lineNumber": 2892
+        },
+        {
+          "caller": "enqueue",
+          "callee": "store",
+          "lineNumber": 2898
+        },
+        {
+          "caller": "enqueue",
+          "callee": "MOODYCAMEL_CONSTEXPR_IF",
+          "lineNumber": 2902
+        },
+        {
+          "caller": "enqueue",
+          "callee": "MOODYCAMEL_NOEXCEPT_CTOR",
+          "lineNumber": 2902
+        },
+        {
+          "caller": "enqueue",
+          "callee": "static_cast<T *>",
+          "lineNumber": 2903
+        },
+        {
+          "caller": "enqueue",
+          "callee": "std::forward<U>",
+          "lineNumber": 2903
+        },
+        {
+          "caller": "enqueue",
+          "callee": "store",
+          "lineNumber": 2905
+        },
+        {
+          "caller": "~Guard",
+          "callee": "~T",
+          "lineNumber": 2956
+        },
+        {
+          "caller": "~Guard",
+          "callee": "ConcurrentQueue::Block::template set_empty<\n                                        implicit_context>",
+          "lineNumber": 2957
+        },
+        {
+          "caller": "~Guard",
+          "callee": "store",
+          "lineNumber": 2959
+        },
+        {
+          "caller": "~Guard",
+          "callee": "add_block_to_free_list",
+          "lineNumber": 2960
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "load",
+          "lineNumber": 3008
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 3015
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 3016
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 3017
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 3023
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 3024
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "load",
+          "lineNumber": 3031
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "assert",
+          "lineNumber": 3032
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "details::circular_less_than<index_t>",
+          "lineNumber": 3032
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "details::circular_less_than<index_t>",
+          "lineNumber": 3034
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "insert_block_index_entry<allocMode>",
+          "lineNumber": 3041
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "ConcurrentQueue::template requisition_block<allocMode>",
+          "lineNumber": 3043
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "rewind_block_index_tail",
+          "lineNumber": 3049
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "store",
+          "lineNumber": 3050
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 3053
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 3056
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "get_block_index_entry_for_index",
+          "lineNumber": 3057
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "store",
+          "lineNumber": 3058
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "rewind_block_index_tail",
+          "lineNumber": 3059
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "add_blocks_to_free_list",
+          "lineNumber": 3061
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "ConcurrentQueue::Block::template reset_empty<implicit_context>",
+          "lineNumber": 3070
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "store",
+          "lineNumber": 3074
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 3078
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "assert",
+          "lineNumber": 3080
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 3091
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "assert",
+          "lineNumber": 3094
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 3094
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 3096
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 3101
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 3102
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "details::circular_less_than<index_t>",
+          "lineNumber": 3103
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "while",
+          "lineNumber": 3118
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "details::nomove_if<!MOODYCAMEL_NOEXCEPT_CTOR(\n                                    T, decltype(*itemFirst),\n                                    new (static_cast<T *>(nullptr))\n                                        T(details::deref_noexcept(itemFirst)))>::eval",
+          "lineNumber": 3120
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "MOODYCAMEL_NOEXCEPT_CTOR",
+          "lineNumber": 3120
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "static_cast<T *>",
+          "lineNumber": 3122
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "details::deref_noexcept",
+          "lineNumber": 3123
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 3135
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 3141
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 3142
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "details::circular_less_than<index_t>",
+          "lineNumber": 3143
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "~T",
+          "lineNumber": 3148
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 3158
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 3161
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "get_block_index_entry_for_index",
+          "lineNumber": 3162
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "store",
+          "lineNumber": 3163
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "rewind_block_index_tail",
+          "lineNumber": 3164
+        },
+        {
+          "caller": "enqueue_bulk",
+          "callee": "add_blocks_to_free_list",
+          "lineNumber": 3166
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "load",
+          "lineNumber": 3188
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "load",
+          "lineNumber": 3189
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 3190
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "load",
+          "lineNumber": 3191
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "details::circular_less_than<size_t>",
+          "lineNumber": 3192
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "std::atomic_thread_fence",
+          "lineNumber": 3194
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "fetch_add",
+          "lineNumber": 3197
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "load",
+          "lineNumber": 3199
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 3200
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "details::circular_less_than<size_t>",
+          "lineNumber": 3201
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "fetch_add",
+          "lineNumber": 3204
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "fetch_add",
+          "lineNumber": 3211
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "get_block_index_index_for_index",
+          "lineNumber": 3216
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 3219
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 3220
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "details::circular_less_than<index_t>",
+          "lineNumber": 3221
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 3222
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 3223
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "load",
+          "lineNumber": 3227
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "MOODYCAMEL_NOEXCEPT_ASSIGN",
+          "lineNumber": 3228
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "details::deref_noexcept",
+          "lineNumber": 3229
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "std::move",
+          "lineNumber": 3230
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "std::move",
+          "lineNumber": 3233
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "~T",
+          "lineNumber": 3234
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "while",
+          "lineNumber": 3240
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "~T",
+          "lineNumber": 3241
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "std::move",
+          "lineNumber": 3242
+        },
+        {
+          "caller": "MOODYCAMEL_CATCH",
+          "callee": "load",
+          "lineNumber": 3252
+        },
+        {
+          "caller": "MOODYCAMEL_CATCH",
+          "callee": "~T",
+          "lineNumber": 3254
+        },
+        {
+          "caller": "MOODYCAMEL_CATCH",
+          "callee": "ConcurrentQueue::Block::template set_many_empty<\n                                            implicit_context>",
+          "lineNumber": 3257
+        },
+        {
+          "caller": "MOODYCAMEL_CATCH",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 3260
+        },
+        {
+          "caller": "MOODYCAMEL_CATCH",
+          "callee": "store",
+          "lineNumber": 3264
+        },
+        {
+          "caller": "MOODYCAMEL_CATCH",
+          "callee": "add_block_to_free_list",
+          "lineNumber": 3265
+        },
+        {
+          "caller": "MOODYCAMEL_CATCH",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 3270
+        },
+        {
+          "caller": "MOODYCAMEL_CATCH",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 3271
+        },
+        {
+          "caller": "MOODYCAMEL_CATCH",
+          "callee": "details::circular_less_than<index_t>",
+          "lineNumber": 3272
+        },
+        {
+          "caller": "MOODYCAMEL_CATCH",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 3273
+        },
+        {
+          "caller": "MOODYCAMEL_CATCH",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 3275
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "ConcurrentQueue::Block::template set_many_empty<implicit_context>",
+          "lineNumber": 3282
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 3285
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "store",
+          "lineNumber": 3292
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "add_block_to_free_list",
+          "lineNumber": 3294
+        },
+        {
+          "caller": "dequeue_bulk",
+          "callee": "fetch_add",
+          "lineNumber": 3301
+        },
+        {
+          "caller": "insert_block_index_entry",
+          "callee": "load",
+          "lineNumber": 3328
+        },
+        {
+          "caller": "insert_block_index_entry",
+          "callee": "load",
+          "lineNumber": 3333
+        },
+        {
+          "caller": "insert_block_index_entry",
+          "callee": "load",
+          "lineNumber": 3336
+        },
+        {
+          "caller": "insert_block_index_entry",
+          "callee": "load",
+          "lineNumber": 3337
+        },
+        {
+          "caller": "insert_block_index_entry",
+          "callee": "store",
+          "lineNumber": 3339
+        },
+        {
+          "caller": "insert_block_index_entry",
+          "callee": "store",
+          "lineNumber": 3340
+        },
+        {
+          "caller": "insert_block_index_entry",
+          "callee": "MOODYCAMEL_CONSTEXPR_IF",
+          "lineNumber": 3345
+        },
+        {
+          "caller": "insert_block_index_entry",
+          "callee": "new_block_index",
+          "lineNumber": 3349
+        },
+        {
+          "caller": "insert_block_index_entry",
+          "callee": "load",
+          "lineNumber": 3355
+        },
+        {
+          "caller": "insert_block_index_entry",
+          "callee": "load",
+          "lineNumber": 3356
+        },
+        {
+          "caller": "insert_block_index_entry",
+          "callee": "assert",
+          "lineNumber": 3359
+        },
+        {
+          "caller": "insert_block_index_entry",
+          "callee": "load",
+          "lineNumber": 3359
+        },
+        {
+          "caller": "insert_block_index_entry",
+          "callee": "store",
+          "lineNumber": 3360
+        },
+        {
+          "caller": "insert_block_index_entry",
+          "callee": "store",
+          "lineNumber": 3361
+        },
+        {
+          "caller": "rewind_block_index_tail",
+          "callee": "load",
+          "lineNumber": 3368
+        },
+        {
+          "caller": "rewind_block_index_tail",
+          "callee": "store",
+          "lineNumber": 3369
+        },
+        {
+          "caller": "rewind_block_index_tail",
+          "callee": "load",
+          "lineNumber": 3369
+        },
+        {
+          "caller": "get_block_index_index_for_index",
+          "callee": "static_cast<index_t>",
+          "lineNumber": 3387
+        },
+        {
+          "caller": "get_block_index_index_for_index",
+          "callee": "load",
+          "lineNumber": 3388
+        },
+        {
+          "caller": "get_block_index_index_for_index",
+          "callee": "load",
+          "lineNumber": 3389
+        },
+        {
+          "caller": "get_block_index_index_for_index",
+          "callee": "load",
+          "lineNumber": 3390
+        },
+        {
+          "caller": "get_block_index_index_for_index",
+          "callee": "assert",
+          "lineNumber": 3391
+        },
+        {
+          "caller": "get_block_index_index_for_index",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 3394
+        },
+        {
+          "caller": "get_block_index_index_for_index",
+          "callee": "static_cast<typename std::make_signed<index_t>::type>",
+          "lineNumber": 3395
+        },
+        {
+          "caller": "get_block_index_index_for_index",
+          "callee": "static_cast<typename std::make_signed<index_t>::type>",
+          "lineNumber": 3396
+        },
+        {
+          "caller": "get_block_index_index_for_index",
+          "callee": "assert",
+          "lineNumber": 3398
+        },
+        {
+          "caller": "get_block_index_index_for_index",
+          "callee": "load",
+          "lineNumber": 3398
+        },
+        {
+          "caller": "get_block_index_index_for_index",
+          "callee": "load",
+          "lineNumber": 3399
+        },
+        {
+          "caller": "new_block_index",
+          "callee": "load",
+          "lineNumber": 3406
+        },
+        {
+          "caller": "new_block_index",
+          "callee": "static_cast<char *>",
+          "lineNumber": 3409
+        },
+        {
+          "caller": "new_block_index",
+          "callee": "reinterpret_cast<BlockIndexEntry *>",
+          "lineNumber": 3419
+        },
+        {
+          "caller": "new_block_index",
+          "callee": "details::align_for<BlockIndexEntry>",
+          "lineNumber": 3420
+        },
+        {
+          "caller": "new_block_index",
+          "callee": "reinterpret_cast<BlockIndexEntry **>",
+          "lineNumber": 3421
+        },
+        {
+          "caller": "new_block_index",
+          "callee": "details::align_for<BlockIndexEntry *>",
+          "lineNumber": 3421
+        },
+        {
+          "caller": "new_block_index",
+          "callee": "reinterpret_cast<char *>",
+          "lineNumber": 3422
+        },
+        {
+          "caller": "new_block_index",
+          "callee": "load",
+          "lineNumber": 3424
+        },
+        {
+          "caller": "new_block_index",
+          "callee": "assert",
+          "lineNumber": 3431
+        },
+        {
+          "caller": "new_block_index",
+          "callee": "store",
+          "lineNumber": 3435
+        },
+        {
+          "caller": "new_block_index",
+          "callee": "store",
+          "lineNumber": 3442
+        },
+        {
+          "caller": "new_block_index",
+          "callee": "store",
+          "lineNumber": 3445
+        },
+        {
+          "caller": "populate_initial_block_list",
+          "callee": "create_array<Block>",
+          "lineNumber": 3490
+        },
+        {
+          "caller": "add_block_to_free_list",
+          "callee": "destroy",
+          "lineNumber": 3516
+        },
+        {
+          "caller": "add_block_to_free_list",
+          "callee": "add",
+          "lineNumber": 3518
+        },
+        {
+          "caller": "add_blocks_to_free_list",
+          "callee": "add_block_to_free_list",
+          "lineNumber": 3526
+        },
+        {
+          "caller": "getFor",
+          "callee": "size_approx",
+          "lineNumber": 3580
+        },
+        {
+          "caller": "getFor",
+          "callee": "head_unsafe",
+          "lineNumber": 3582
+        },
+        {
+          "caller": "getFor",
+          "callee": "load",
+          "lineNumber": 3586
+        },
+        {
+          "caller": "getFor",
+          "callee": "load",
+          "lineNumber": 3589
+        },
+        {
+          "caller": "getFor",
+          "callee": "next_prod",
+          "lineNumber": 3590
+        },
+        {
+          "caller": "getFor",
+          "callee": "dynamic_cast<ImplicitProducer *>",
+          "lineNumber": 3591
+        },
+        {
+          "caller": "getFor",
+          "callee": "static_cast<ImplicitProducer *>",
+          "lineNumber": 3596
+        },
+        {
+          "caller": "getFor",
+          "callee": "load",
+          "lineNumber": 3598
+        },
+        {
+          "caller": "getFor",
+          "callee": "load",
+          "lineNumber": 3599
+        },
+        {
+          "caller": "getFor",
+          "callee": "load",
+          "lineNumber": 3600
+        },
+        {
+          "caller": "getFor",
+          "callee": "load",
+          "lineNumber": 3603
+        },
+        {
+          "caller": "getFor",
+          "callee": "load",
+          "lineNumber": 3605
+        },
+        {
+          "caller": "getFor",
+          "callee": "details::circular_less_than<index_t>",
+          "lineNumber": 3620
+        },
+        {
+          "caller": "getFor",
+          "callee": "static_cast<ExplicitProducer *>",
+          "lineNumber": 3625
+        },
+        {
+          "caller": "getFor",
+          "callee": "ConcurrentQueue::Block::template is_empty<explicit_context>",
+          "lineNumber": 3633
+        },
+        {
+          "caller": "getFor",
+          "callee": "load",
+          "lineNumber": 3643
+        },
+        {
+          "caller": "getFor",
+          "callee": "static_cast<typename ExplicitProducer::BlockIndexHeader *>",
+          "lineNumber": 3649
+        },
+        {
+          "caller": "getFor",
+          "callee": "load",
+          "lineNumber": 3655
+        },
+        {
+          "caller": "getFor",
+          "callee": "load",
+          "lineNumber": 3658
+        },
+        {
+          "caller": "getMemStats",
+          "callee": "MemStats::getFor",
+          "lineNumber": 3670
+        },
+        {
+          "caller": "reown_producers",
+          "callee": "load",
+          "lineNumber": 3745
+        },
+        {
+          "caller": "reown_producers",
+          "callee": "next_prod",
+          "lineNumber": 3746
+        },
+        {
+          "caller": "ImplicitProducerKVP",
+          "callee": "store",
+          "lineNumber": 3764
+        },
+        {
+          "caller": "ImplicitProducerKVP",
+          "callee": "load",
+          "lineNumber": 3764
+        },
+        {
+          "caller": "swap",
+          "callee": "details::swap_relaxed",
+          "lineNumber": 3777
+        },
+        {
+          "caller": "swap",
+          "callee": "std::swap",
+          "lineNumber": 3778
+        },
+        {
+          "caller": "populate_initial_implicit_producer_hash",
+          "callee": "MOODYCAMEL_CONSTEXPR_IF",
+          "lineNumber": 3796
+        },
+        {
+          "caller": "populate_initial_implicit_producer_hash",
+          "callee": "store",
+          "lineNumber": 3802
+        },
+        {
+          "caller": "populate_initial_implicit_producer_hash",
+          "callee": "store",
+          "lineNumber": 3807
+        },
+        {
+          "caller": "populate_initial_implicit_producer_hash",
+          "callee": "store",
+          "lineNumber": 3811
+        },
+        {
+          "caller": "swap_implicit_producer_hashes",
+          "callee": "MOODYCAMEL_CONSTEXPR_IF",
+          "lineNumber": 3817
+        },
+        {
+          "caller": "swap_implicit_producer_hashes",
+          "callee": "swap",
+          "lineNumber": 3824
+        },
+        {
+          "caller": "swap_implicit_producer_hashes",
+          "callee": "details::swap_relaxed",
+          "lineNumber": 3829
+        },
+        {
+          "caller": "swap_implicit_producer_hashes",
+          "callee": "details::swap_relaxed",
+          "lineNumber": 3831
+        },
+        {
+          "caller": "swap_implicit_producer_hashes",
+          "callee": "load",
+          "lineNumber": 3832
+        },
+        {
+          "caller": "swap_implicit_producer_hashes",
+          "callee": "store",
+          "lineNumber": 3834
+        },
+        {
+          "caller": "swap_implicit_producer_hashes",
+          "callee": "load",
+          "lineNumber": 3837
+        },
+        {
+          "caller": "swap_implicit_producer_hashes",
+          "callee": "load",
+          "lineNumber": 3843
+        },
+        {
+          "caller": "swap_implicit_producer_hashes",
+          "callee": "store",
+          "lineNumber": 3845
+        },
+        {
+          "caller": "swap_implicit_producer_hashes",
+          "callee": "load",
+          "lineNumber": 3849
+        },
+        {
+          "caller": "implicit_producer_thread_exited",
+          "callee": "load",
+          "lineNumber": 4029
+        },
+        {
+          "caller": "implicit_producer_thread_exited",
+          "callee": "assert",
+          "lineNumber": 4030
+        },
+        {
+          "caller": "implicit_producer_thread_exited",
+          "callee": "details::thread_id",
+          "lineNumber": 4033
+        },
+        {
+          "caller": "implicit_producer_thread_exited",
+          "callee": "details::hash_thread_id",
+          "lineNumber": 4034
+        },
+        {
+          "caller": "implicit_producer_thread_exited",
+          "callee": "compare_exchange_strong",
+          "lineNumber": 4044
+        },
+        {
+          "caller": "implicit_producer_thread_exited",
+          "callee": "store",
+          "lineNumber": 4057
+        },
+        {
+          "caller": "implicit_producer_thread_exited_callback",
+          "callee": "static_cast<ImplicitProducer *>",
+          "lineNumber": 4062
+        },
+        {
+          "caller": "implicit_producer_thread_exited_callback",
+          "callee": "implicit_producer_thread_exited",
+          "lineNumber": 4064
+        },
+        {
+          "caller": "aligned_free",
+          "callee": "MOODYCAMEL_CONSTEXPR_IF",
+          "lineNumber": 4093
+        },
+        {
+          "caller": "aligned_free",
+          "callee": "else(Traits::free)",
+          "lineNumber": 4096
+        },
+        {
+          "caller": "aligned_free",
+          "callee": "else",
+          "lineNumber": 4096
+        },
+        {
+          "caller": "aligned_free",
+          "callee": "reinterpret_cast<void **>",
+          "lineNumber": 4096
+        },
+        {
+          "caller": "destroy_array",
+          "callee": "assert",
+          "lineNumber": 4116
+        },
+        {
+          "caller": "destroy_array",
+          "callee": "~U",
+          "lineNumber": 4118
+        },
+        {
+          "caller": "destroy_array",
+          "callee": "aligned_free<U>",
+          "lineNumber": 4120
+        },
+        {
+          "caller": "destroy",
+          "callee": "~U",
+          "lineNumber": 4141
+        },
+        {
+          "caller": "destroy",
+          "callee": "aligned_free<U>",
+          "lineNumber": 4142
+        },
+        {
+          "caller": "ProducerToken",
+          "callee": "recycle_or_create_producer",
+          "lineNumber": 4181
+        },
+        {
+          "caller": "ProducerToken",
+          "callee": "recycle_or_create_producer",
+          "lineNumber": 4191
+        },
+        {
+          "caller": "ProducerToken",
+          "callee": "reinterpret_cast<ConcurrentQueue<T, Traits> *>",
+          "lineNumber": 4191
+        },
+        {
+          "caller": "ConsumerToken",
+          "callee": "fetch_add",
+          "lineNumber": 4202
+        },
+        {
+          "caller": "ConsumerToken",
+          "callee": "static_cast<std::uint32_t>",
+          "lineNumber": 4203
+        },
+        {
+          "caller": "ConsumerToken",
+          "callee": "fetch_add",
+          "lineNumber": 4211
+        },
+        {
+          "caller": "ConsumerToken",
+          "callee": "reinterpret_cast<ConcurrentQueue<T, Traits> *>",
+          "lineNumber": 4211
+        },
+        {
+          "caller": "ConsumerToken",
+          "callee": "static_cast<std::uint32_t>",
+          "lineNumber": 4213
+        },
+        {
+          "caller": "swap",
+          "callee": "swap",
+          "lineNumber": 4219
+        },
+        {
+          "caller": "swap",
+          "callee": "swap",
+          "lineNumber": 4224
+        },
+        {
+          "caller": "swap",
+          "callee": "swap",
+          "lineNumber": 4229
+        },
+        {
+          "caller": "swap",
+          "callee": "swap",
+          "lineNumber": 4236
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 47,
+        "functionCount": 31,
+        "classCount": 15
+      }
+    },
+    {
+      "path": "sample/data_memory_manger/example.cc",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 412,
+      "nonEmptyLines": 360,
+      "functions": [
+        {
+          "name": "fast_hash",
+          "startLine": 12,
+          "endLine": 20,
+          "params": [
+            "str"
+          ]
+        },
+        {
+          "name": "test_method1_direct_id",
+          "startLine": 23,
+          "endLine": 121,
+          "params": [
+            "test_points",
+            "test_seconds"
+          ]
+        },
+        {
+          "name": "test_method2_string_hash_every_time",
+          "startLine": 124,
+          "endLine": 244,
+          "params": [
+            "test_points",
+            "test_seconds"
+          ]
+        },
+        {
+          "name": "test_method3_cache_mapping",
+          "startLine": 247,
+          "endLine": 362,
+          "params": [
+            "test_points",
+            "test_seconds"
+          ]
+        },
+        {
+          "name": "main",
+          "startLine": 364,
+          "endLine": 412,
+          "params": [
+            "argc",
+            "argv"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "fast_hash",
+          "line": 12,
+          "isDefault": false
+        },
+        {
+          "name": "test_method1_direct_id",
+          "line": 23,
+          "isDefault": false
+        },
+        {
+          "name": "test_method2_string_hash_every_time",
+          "line": 124,
+          "isDefault": false
+        },
+        {
+          "name": "test_method3_cache_mapping",
+          "line": 247,
+          "isDefault": false
+        },
+        {
+          "name": "main",
+          "line": 364,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "fast_hash",
+          "callee": "static_cast<uint64_t>",
+          "lineNumber": 16
+        },
+        {
+          "caller": "test_method1_direct_id",
+          "callee": "register_var",
+          "lineNumber": 30
+        },
+        {
+          "caller": "test_method1_direct_id",
+          "callee": "finalize",
+          "lineNumber": 32
+        },
+        {
+          "caller": "test_method1_direct_id",
+          "callee": "var_count",
+          "lineNumber": 36
+        },
+        {
+          "caller": "test_method1_direct_id",
+          "callee": "total_size",
+          "lineNumber": 37
+        },
+        {
+          "caller": "test_method1_direct_id",
+          "callee": "pthread_setname_np",
+          "lineNumber": 44
+        },
+        {
+          "caller": "test_method1_direct_id",
+          "callee": "pthread_self",
+          "lineNumber": 44
+        },
+        {
+          "caller": "test_method1_direct_id",
+          "callee": "std::chrono::high_resolution_clock::now",
+          "lineNumber": 47
+        },
+        {
+          "caller": "test_method1_direct_id",
+          "callee": "write",
+          "lineNumber": 50
+        },
+        {
+          "caller": "test_method1_direct_id",
+          "callee": "std::chrono::high_resolution_clock::now",
+          "lineNumber": 52
+        },
+        {
+          "caller": "test_method1_direct_id",
+          "callee": "std::setprecision",
+          "lineNumber": 58
+        },
+        {
+          "caller": "test_method1_direct_id",
+          "callee": "count",
+          "lineNumber": 58
+        },
+        {
+          "caller": "test_method1_direct_id",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 60
+        },
+        {
+          "caller": "test_method1_direct_id",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 60
+        },
+        {
+          "caller": "test_method1_direct_id",
+          "callee": "pthread_setname_np",
+          "lineNumber": 66
+        },
+        {
+          "caller": "test_method1_direct_id",
+          "callee": "pthread_self",
+          "lineNumber": 66
+        },
+        {
+          "caller": "test_method1_direct_id",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 67
+        },
+        {
+          "caller": "test_method1_direct_id",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 67
+        },
+        {
+          "caller": "test_method1_direct_id",
+          "callee": "std::chrono::high_resolution_clock::now",
+          "lineNumber": 69
+        },
+        {
+          "caller": "test_method1_direct_id",
+          "callee": "read",
+          "lineNumber": 73
+        },
+        {
+          "caller": "test_method1_direct_id",
+          "callee": "std::chrono::high_resolution_clock::now",
+          "lineNumber": 77
+        },
+        {
+          "caller": "test_method1_direct_id",
+          "callee": "std::setprecision",
+          "lineNumber": 80
+        },
+        {
+          "caller": "test_method1_direct_id",
+          "callee": "count",
+          "lineNumber": 80
+        },
+        {
+          "caller": "test_method1_direct_id",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 82
+        },
+        {
+          "caller": "test_method1_direct_id",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 82
+        },
+        {
+          "caller": "test_method1_direct_id",
+          "callee": "pthread_setname_np",
+          "lineNumber": 88
+        },
+        {
+          "caller": "test_method1_direct_id",
+          "callee": "pthread_self",
+          "lineNumber": 88
+        },
+        {
+          "caller": "test_method1_direct_id",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 89
+        },
+        {
+          "caller": "test_method1_direct_id",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 89
+        },
+        {
+          "caller": "test_method1_direct_id",
+          "callee": "std::chrono::high_resolution_clock::now",
+          "lineNumber": 91
+        },
+        {
+          "caller": "test_method1_direct_id",
+          "callee": "for_each_dirty",
+          "lineNumber": 94
+        },
+        {
+          "caller": "test_method1_direct_id",
+          "callee": "read_ptr",
+          "lineNumber": 96
+        },
+        {
+          "caller": "test_method1_direct_id",
+          "callee": "static_cast<const uint32_t *>",
+          "lineNumber": 98
+        },
+        {
+          "caller": "test_method1_direct_id",
+          "callee": "get",
+          "lineNumber": 98
+        },
+        {
+          "caller": "test_method1_direct_id",
+          "callee": "std::chrono::high_resolution_clock::now",
+          "lineNumber": 105
+        },
+        {
+          "caller": "test_method1_direct_id",
+          "callee": "std::setprecision",
+          "lineNumber": 109
+        },
+        {
+          "caller": "test_method1_direct_id",
+          "callee": "count",
+          "lineNumber": 109
+        },
+        {
+          "caller": "test_method1_direct_id",
+          "callee": "queue_size_approx",
+          "lineNumber": 110
+        },
+        {
+          "caller": "test_method1_direct_id",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 112
+        },
+        {
+          "caller": "test_method1_direct_id",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 112
+        },
+        {
+          "caller": "test_method1_direct_id",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 116
+        },
+        {
+          "caller": "test_method1_direct_id",
+          "callee": "std::chrono::seconds",
+          "lineNumber": 116
+        },
+        {
+          "caller": "test_method1_direct_id",
+          "callee": "join",
+          "lineNumber": 118
+        },
+        {
+          "caller": "test_method1_direct_id",
+          "callee": "join",
+          "lineNumber": 119
+        },
+        {
+          "caller": "test_method1_direct_id",
+          "callee": "join",
+          "lineNumber": 120
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "reserve",
+          "lineNumber": 130
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "reserve",
+          "lineNumber": 132
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "std::string",
+          "lineNumber": 135
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "std::to_string",
+          "lineNumber": 135
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "push_back",
+          "lineNumber": 136
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "fast_hash",
+          "lineNumber": 137
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "c_str",
+          "lineNumber": 137
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "register_var",
+          "lineNumber": 138
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "size",
+          "lineNumber": 139
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "resize",
+          "lineNumber": 140
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "finalize",
+          "lineNumber": 143
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "var_count",
+          "lineNumber": 147
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "total_size",
+          "lineNumber": 148
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "pthread_setname_np",
+          "lineNumber": 155
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "pthread_self",
+          "lineNumber": 155
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "std::chrono::high_resolution_clock::now",
+          "lineNumber": 159
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "fast_hash",
+          "lineNumber": 164
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "c_str",
+          "lineNumber": 164
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "get_id",
+          "lineNumber": 165
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "write",
+          "lineNumber": 166
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "std::chrono::high_resolution_clock::now",
+          "lineNumber": 168
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "std::setprecision",
+          "lineNumber": 174
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "count",
+          "lineNumber": 174
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 176
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 176
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "pthread_setname_np",
+          "lineNumber": 182
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "pthread_self",
+          "lineNumber": 182
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 183
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 183
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "std::chrono::high_resolution_clock::now",
+          "lineNumber": 186
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "fast_hash",
+          "lineNumber": 192
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "c_str",
+          "lineNumber": 192
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "get_id",
+          "lineNumber": 193
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "read",
+          "lineNumber": 194
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "std::chrono::high_resolution_clock::now",
+          "lineNumber": 198
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "std::setprecision",
+          "lineNumber": 201
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "count",
+          "lineNumber": 201
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 203
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 203
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "pthread_setname_np",
+          "lineNumber": 209
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "pthread_self",
+          "lineNumber": 209
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 210
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 210
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "std::chrono::high_resolution_clock::now",
+          "lineNumber": 212
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "for_each_dirty",
+          "lineNumber": 215
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "read_ptr",
+          "lineNumber": 218
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "static_cast<const uint32_t *>",
+          "lineNumber": 220
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "get",
+          "lineNumber": 220
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "std::chrono::high_resolution_clock::now",
+          "lineNumber": 228
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "std::setprecision",
+          "lineNumber": 232
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "count",
+          "lineNumber": 232
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "queue_size_approx",
+          "lineNumber": 233
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 235
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 235
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 239
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "std::chrono::seconds",
+          "lineNumber": 239
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "join",
+          "lineNumber": 241
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "join",
+          "lineNumber": 242
+        },
+        {
+          "caller": "test_method2_string_hash_every_time",
+          "callee": "join",
+          "lineNumber": 243
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "std::string",
+          "lineNumber": 257
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "std::to_string",
+          "lineNumber": 257
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "fast_hash",
+          "lineNumber": 258
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "c_str",
+          "lineNumber": 258
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "register_var",
+          "lineNumber": 259
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "size",
+          "lineNumber": 260
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "resize",
+          "lineNumber": 261
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "finalize",
+          "lineNumber": 265
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "var_count",
+          "lineNumber": 269
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "total_size",
+          "lineNumber": 270
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "pthread_setname_np",
+          "lineNumber": 277
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "pthread_self",
+          "lineNumber": 277
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "std::chrono::high_resolution_clock::now",
+          "lineNumber": 280
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "std::string",
+          "lineNumber": 283
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "std::to_string",
+          "lineNumber": 283
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "write",
+          "lineNumber": 285
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "std::chrono::high_resolution_clock::now",
+          "lineNumber": 287
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "std::setprecision",
+          "lineNumber": 293
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "count",
+          "lineNumber": 293
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 295
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 295
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "pthread_setname_np",
+          "lineNumber": 301
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "pthread_self",
+          "lineNumber": 301
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 302
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 302
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "std::chrono::high_resolution_clock::now",
+          "lineNumber": 305
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "std::string",
+          "lineNumber": 309
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "std::to_string",
+          "lineNumber": 309
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "read",
+          "lineNumber": 311
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "std::chrono::high_resolution_clock::now",
+          "lineNumber": 315
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "std::setprecision",
+          "lineNumber": 318
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "count",
+          "lineNumber": 318
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 320
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 320
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "pthread_setname_np",
+          "lineNumber": 326
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "pthread_self",
+          "lineNumber": 326
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 327
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 327
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "std::chrono::high_resolution_clock::now",
+          "lineNumber": 330
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "for_each_dirty",
+          "lineNumber": 333
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "read_ptr",
+          "lineNumber": 336
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "static_cast<const uint32_t *>",
+          "lineNumber": 338
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "get",
+          "lineNumber": 338
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "std::chrono::high_resolution_clock::now",
+          "lineNumber": 346
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "std::setprecision",
+          "lineNumber": 350
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "count",
+          "lineNumber": 350
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "queue_size_approx",
+          "lineNumber": 351
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 353
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 353
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 357
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "std::chrono::seconds",
+          "lineNumber": 357
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "join",
+          "lineNumber": 359
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "join",
+          "lineNumber": 360
+        },
+        {
+          "caller": "test_method3_cache_mapping",
+          "callee": "join",
+          "lineNumber": 361
+        },
+        {
+          "caller": "main",
+          "callee": "std::atoi",
+          "lineNumber": 371
+        },
+        {
+          "caller": "main",
+          "callee": "std::atoi",
+          "lineNumber": 373
+        },
+        {
+          "caller": "main",
+          "callee": "std::atoi",
+          "lineNumber": 375
+        },
+        {
+          "caller": "main",
+          "callee": "test_method1_direct_id",
+          "lineNumber": 384
+        },
+        {
+          "caller": "main",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 386
+        },
+        {
+          "caller": "main",
+          "callee": "std::chrono::seconds",
+          "lineNumber": 386
+        },
+        {
+          "caller": "main",
+          "callee": "test_method2_string_hash_every_time",
+          "lineNumber": 390
+        },
+        {
+          "caller": "main",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 392
+        },
+        {
+          "caller": "main",
+          "callee": "std::chrono::seconds",
+          "lineNumber": 392
+        },
+        {
+          "caller": "main",
+          "callee": "test_method3_cache_mapping",
+          "lineNumber": 396
+        },
+        {
+          "caller": "main",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 400
+        },
+        {
+          "caller": "main",
+          "callee": "std::chrono::seconds",
+          "lineNumber": 400
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 5,
+        "functionCount": 5,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "sample/data_memory_manger/variable_store.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 274,
+      "nonEmptyLines": 238,
+      "functions": [
+        {
+          "name": "align64",
+          "startLine": 18,
+          "endLine": 21,
+          "params": [
+            "n"
+          ]
+        },
+        {
+          "name": "VarStore",
+          "startLine": 37,
+          "endLine": 37,
+          "params": []
+        },
+        {
+          "name": "~VarStore",
+          "startLine": 38,
+          "endLine": 38,
+          "params": []
+        },
+        {
+          "name": "VarStore",
+          "startLine": 39,
+          "endLine": 39,
+          "params": []
+        },
+        {
+          "name": "register_var",
+          "startLine": 42,
+          "endLine": 54,
+          "params": [
+            "hash",
+            "size"
+          ]
+        },
+        {
+          "name": "get_id",
+          "startLine": 56,
+          "endLine": 60,
+          "params": [
+            "hash"
+          ]
+        },
+        {
+          "name": "unregister_var",
+          "startLine": 62,
+          "endLine": 74,
+          "params": [
+            "hash"
+          ]
+        },
+        {
+          "name": "finalize",
+          "startLine": 76,
+          "endLine": 110,
+          "params": []
+        },
+        {
+          "name": "write",
+          "startLine": 112,
+          "endLine": 126,
+          "params": [
+            "id",
+            "src"
+          ]
+        },
+        {
+          "name": "write",
+          "startLine": 128,
+          "endLine": 146,
+          "params": [
+            "id",
+            "src",
+            "actual_size"
+          ]
+        },
+        {
+          "name": "read",
+          "startLine": 148,
+          "endLine": 163,
+          "params": [
+            "id",
+            "dst"
+          ]
+        },
+        {
+          "name": "read_ptr",
+          "startLine": 192,
+          "endLine": 192,
+          "params": [
+            "id"
+          ]
+        },
+        {
+          "name": "var_count",
+          "startLine": 211,
+          "endLine": 211,
+          "params": []
+        },
+        {
+          "name": "total_size",
+          "startLine": 212,
+          "endLine": 212,
+          "params": []
+        },
+        {
+          "name": "queue_size_approx",
+          "startLine": 213,
+          "endLine": 213,
+          "params": []
+        },
+        {
+          "name": "op_enter",
+          "startLine": 228,
+          "endLine": 238,
+          "params": []
+        },
+        {
+          "name": "op_exit",
+          "startLine": 239,
+          "endLine": 239,
+          "params": []
+        },
+        {
+          "name": "config_begin",
+          "startLine": 241,
+          "endLine": 247,
+          "params": []
+        },
+        {
+          "name": "config_end",
+          "startLine": 248,
+          "endLine": 252,
+          "params": []
+        },
+        {
+          "name": "cleanup",
+          "startLine": 254,
+          "endLine": 260,
+          "params": []
+        }
+      ],
+      "classes": [
+        {
+          "name": "VarMeta",
+          "startLine": 23,
+          "endLine": 25,
+          "methods": [],
+          "properties": [
+            "id"
+          ]
+        },
+        {
+          "name": "Slot",
+          "startLine": 27,
+          "endLine": 30,
+          "methods": [],
+          "properties": [
+            "seq",
+            "data"
+          ]
+        },
+        {
+          "name": "VarStore",
+          "startLine": 32,
+          "endLine": 272,
+          "methods": [
+            "VarStore",
+            "~VarStore",
+            "VarStore",
+            "register_var",
+            "get_id",
+            "unregister_var",
+            "finalize",
+            "write",
+            "write",
+            "read",
+            "read_ptr",
+            "var_count",
+            "total_size",
+            "queue_size_approx",
+            "op_enter",
+            "op_exit",
+            "config_begin",
+            "config_end",
+            "cleanup"
+          ],
+          "properties": [
+            "kInvalidId",
+            "config_mu_",
+            "reconfig_",
+            "active_ops_",
+            "table_",
+            "metas_",
+            "arena_size_",
+            "arena_",
+            "dirty_flags_",
+            "dirty_queue_"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "align64",
+          "line": 18,
+          "isDefault": false
+        },
+        {
+          "name": "VarMeta",
+          "line": 23,
+          "isDefault": false
+        },
+        {
+          "name": "Slot",
+          "line": 27,
+          "isDefault": false
+        },
+        {
+          "name": "VarStore",
+          "line": 37,
+          "isDefault": false
+        },
+        {
+          "name": "~VarStore",
+          "line": 38,
+          "isDefault": false
+        },
+        {
+          "name": "VarStore",
+          "line": 39,
+          "isDefault": false
+        },
+        {
+          "name": "register_var",
+          "line": 42,
+          "isDefault": false
+        },
+        {
+          "name": "get_id",
+          "line": 56,
+          "isDefault": false
+        },
+        {
+          "name": "unregister_var",
+          "line": 62,
+          "isDefault": false
+        },
+        {
+          "name": "finalize",
+          "line": 76,
+          "isDefault": false
+        },
+        {
+          "name": "write",
+          "line": 112,
+          "isDefault": false
+        },
+        {
+          "name": "write",
+          "line": 128,
+          "isDefault": false
+        },
+        {
+          "name": "read",
+          "line": 148,
+          "isDefault": false
+        },
+        {
+          "name": "read_ptr",
+          "line": 192,
+          "isDefault": false
+        },
+        {
+          "name": "var_count",
+          "line": 211,
+          "isDefault": false
+        },
+        {
+          "name": "total_size",
+          "line": 212,
+          "isDefault": false
+        },
+        {
+          "name": "queue_size_approx",
+          "line": 213,
+          "isDefault": false
+        },
+        {
+          "name": "VarStore",
+          "line": 32,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "~VarStore",
+          "callee": "cleanup",
+          "lineNumber": 38
+        },
+        {
+          "caller": "register_var",
+          "callee": "find",
+          "lineNumber": 45
+        },
+        {
+          "caller": "register_var",
+          "callee": "end",
+          "lineNumber": 46
+        },
+        {
+          "caller": "register_var",
+          "callee": "size",
+          "lineNumber": 47
+        },
+        {
+          "caller": "register_var",
+          "callee": "size",
+          "lineNumber": 49
+        },
+        {
+          "caller": "register_var",
+          "callee": "push_back",
+          "lineNumber": 51
+        },
+        {
+          "caller": "register_var",
+          "callee": "align64",
+          "lineNumber": 52
+        },
+        {
+          "caller": "get_id",
+          "callee": "find",
+          "lineNumber": 58
+        },
+        {
+          "caller": "get_id",
+          "callee": "end",
+          "lineNumber": 59
+        },
+        {
+          "caller": "unregister_var",
+          "callee": "find",
+          "lineNumber": 65
+        },
+        {
+          "caller": "unregister_var",
+          "callee": "end",
+          "lineNumber": 66
+        },
+        {
+          "caller": "unregister_var",
+          "callee": "size",
+          "lineNumber": 69
+        },
+        {
+          "caller": "unregister_var",
+          "callee": "erase",
+          "lineNumber": 72
+        },
+        {
+          "caller": "finalize",
+          "callee": "size",
+          "lineNumber": 79
+        },
+        {
+          "caller": "finalize",
+          "callee": "align64",
+          "lineNumber": 83
+        },
+        {
+          "caller": "finalize",
+          "callee": "align64",
+          "lineNumber": 85
+        },
+        {
+          "caller": "finalize",
+          "callee": "std::aligned_alloc",
+          "lineNumber": 88
+        },
+        {
+          "caller": "finalize",
+          "callee": "std::memcpy",
+          "lineNumber": 92
+        },
+        {
+          "caller": "finalize",
+          "callee": "std::memset",
+          "lineNumber": 94
+        },
+        {
+          "caller": "finalize",
+          "callee": "std::free",
+          "lineNumber": 95
+        },
+        {
+          "caller": "finalize",
+          "callee": "store",
+          "lineNumber": 102
+        },
+        {
+          "caller": "finalize",
+          "callee": "load",
+          "lineNumber": 102
+        },
+        {
+          "caller": "finalize",
+          "callee": "store",
+          "lineNumber": 105
+        },
+        {
+          "caller": "write",
+          "callee": "fetch_add",
+          "lineNumber": 119
+        },
+        {
+          "caller": "write",
+          "callee": "std::memcpy",
+          "lineNumber": 120
+        },
+        {
+          "caller": "write",
+          "callee": "fetch_add",
+          "lineNumber": 121
+        },
+        {
+          "caller": "write",
+          "callee": "exchange",
+          "lineNumber": 123
+        },
+        {
+          "caller": "write",
+          "callee": "enqueue",
+          "lineNumber": 124
+        },
+        {
+          "caller": "write",
+          "callee": "fetch_add",
+          "lineNumber": 139
+        },
+        {
+          "caller": "write",
+          "callee": "std::memcpy",
+          "lineNumber": 140
+        },
+        {
+          "caller": "write",
+          "callee": "fetch_add",
+          "lineNumber": 141
+        },
+        {
+          "caller": "write",
+          "callee": "exchange",
+          "lineNumber": 143
+        },
+        {
+          "caller": "write",
+          "callee": "enqueue",
+          "lineNumber": 144
+        },
+        {
+          "caller": "read",
+          "callee": "load",
+          "lineNumber": 155
+        },
+        {
+          "caller": "read",
+          "callee": "std::memcpy",
+          "lineNumber": 158
+        },
+        {
+          "caller": "read",
+          "callee": "load",
+          "lineNumber": 159
+        },
+        {
+          "caller": "ScopedPtr",
+          "callee": "op_enter",
+          "lineNumber": 175
+        },
+        {
+          "caller": "~ScopedPtr",
+          "callee": "op_exit",
+          "lineNumber": 184
+        },
+        {
+          "caller": "for_each_dirty",
+          "callee": "reserve",
+          "lineNumber": 198
+        },
+        {
+          "caller": "for_each_dirty",
+          "callee": "try_dequeue_bulk",
+          "lineNumber": 201
+        },
+        {
+          "caller": "for_each_dirty",
+          "callee": "std::back_inserter",
+          "lineNumber": 201
+        },
+        {
+          "caller": "for_each_dirty",
+          "callee": "store",
+          "lineNumber": 204
+        },
+        {
+          "caller": "for_each_dirty",
+          "callee": "fn",
+          "lineNumber": 208
+        },
+        {
+          "caller": "queue_size_approx",
+          "callee": "size_approx",
+          "lineNumber": 213
+        },
+        {
+          "caller": "OpGuard",
+          "callee": "op_enter",
+          "lineNumber": 218
+        },
+        {
+          "caller": "~OpGuard",
+          "callee": "op_exit",
+          "lineNumber": 219
+        },
+        {
+          "caller": "ConfigGuard",
+          "callee": "config_begin",
+          "lineNumber": 224
+        },
+        {
+          "caller": "~ConfigGuard",
+          "callee": "config_end",
+          "lineNumber": 225
+        },
+        {
+          "caller": "op_enter",
+          "callee": "load",
+          "lineNumber": 231
+        },
+        {
+          "caller": "op_enter",
+          "callee": "std::this_thread::yield",
+          "lineNumber": 232
+        },
+        {
+          "caller": "op_enter",
+          "callee": "fetch_add",
+          "lineNumber": 233
+        },
+        {
+          "caller": "op_enter",
+          "callee": "load",
+          "lineNumber": 234
+        },
+        {
+          "caller": "op_enter",
+          "callee": "fetch_sub",
+          "lineNumber": 236
+        },
+        {
+          "caller": "op_exit",
+          "callee": "fetch_sub",
+          "lineNumber": 239
+        },
+        {
+          "caller": "config_begin",
+          "callee": "lock",
+          "lineNumber": 243
+        },
+        {
+          "caller": "config_begin",
+          "callee": "store",
+          "lineNumber": 244
+        },
+        {
+          "caller": "config_begin",
+          "callee": "load",
+          "lineNumber": 245
+        },
+        {
+          "caller": "config_begin",
+          "callee": "std::this_thread::yield",
+          "lineNumber": 246
+        },
+        {
+          "caller": "config_end",
+          "callee": "store",
+          "lineNumber": 250
+        },
+        {
+          "caller": "config_end",
+          "callee": "unlock",
+          "lineNumber": 251
+        },
+        {
+          "caller": "cleanup",
+          "callee": "std::free",
+          "lineNumber": 256
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 18,
+        "functionCount": 20,
+        "classCount": 3
+      }
+    }
+  ]
+}

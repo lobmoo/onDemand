@@ -1,0 +1,871 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 3,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "core/ondemand/.gensrctx/dsf_define_model.cxx",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 1005,
+      "nonEmptyLines": 832,
+      "functions": [
+        {
+          "name": "Define",
+          "startLine": 40,
+          "endLine": 42,
+          "params": []
+        },
+        {
+          "name": "~Define",
+          "startLine": 44,
+          "endLine": 46,
+          "params": []
+        },
+        {
+          "name": "Define",
+          "startLine": 48,
+          "endLine": 60,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "Define",
+          "startLine": 62,
+          "endLine": 74,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator ==",
+          "startLine": 108,
+          "endLine": 120,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator !=",
+          "startLine": 122,
+          "endLine": 126,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "name",
+          "startLine": 132,
+          "endLine": 136,
+          "params": [
+            "_name"
+          ]
+        },
+        {
+          "name": "name",
+          "startLine": 142,
+          "endLine": 146,
+          "params": [
+            "_name"
+          ]
+        },
+        {
+          "name": "version",
+          "startLine": 171,
+          "endLine": 175,
+          "params": [
+            "_version"
+          ]
+        },
+        {
+          "name": "version",
+          "startLine": 181,
+          "endLine": 185,
+          "params": [
+            "_version"
+          ]
+        },
+        {
+          "name": "nodeName",
+          "startLine": 210,
+          "endLine": 214,
+          "params": [
+            "_nodeName"
+          ]
+        },
+        {
+          "name": "nodeName",
+          "startLine": 220,
+          "endLine": 224,
+          "params": [
+            "_nodeName"
+          ]
+        },
+        {
+          "name": "description",
+          "startLine": 249,
+          "endLine": 253,
+          "params": [
+            "_description"
+          ]
+        },
+        {
+          "name": "description",
+          "startLine": 259,
+          "endLine": 263,
+          "params": [
+            "_description"
+          ]
+        },
+        {
+          "name": "dataSchema",
+          "startLine": 288,
+          "endLine": 292,
+          "params": [
+            "_dataSchema"
+          ]
+        },
+        {
+          "name": "dataSchema",
+          "startLine": 298,
+          "endLine": 302,
+          "params": [
+            "_dataSchema"
+          ]
+        },
+        {
+          "name": "defaultValue",
+          "startLine": 327,
+          "endLine": 331,
+          "params": [
+            "_defaultValue"
+          ]
+        },
+        {
+          "name": "defaultValue",
+          "startLine": 337,
+          "endLine": 341,
+          "params": [
+            "_defaultValue"
+          ]
+        },
+        {
+          "name": "referenceValue",
+          "startLine": 366,
+          "endLine": 370,
+          "params": [
+            "_referenceValue"
+          ]
+        },
+        {
+          "name": "referenceValue",
+          "startLine": 376,
+          "endLine": 380,
+          "params": [
+            "_referenceValue"
+          ]
+        },
+        {
+          "name": "events",
+          "startLine": 405,
+          "endLine": 409,
+          "params": [
+            "_events"
+          ]
+        },
+        {
+          "name": "events",
+          "startLine": 415,
+          "endLine": 419,
+          "params": [
+            "_events"
+          ]
+        },
+        {
+          "name": "alarms",
+          "startLine": 444,
+          "endLine": 448,
+          "params": [
+            "_alarms"
+          ]
+        },
+        {
+          "name": "alarms",
+          "startLine": 454,
+          "endLine": 458,
+          "params": [
+            "_alarms"
+          ]
+        },
+        {
+          "name": "Undefine",
+          "startLine": 479,
+          "endLine": 481,
+          "params": []
+        },
+        {
+          "name": "~Undefine",
+          "startLine": 483,
+          "endLine": 485,
+          "params": []
+        },
+        {
+          "name": "Undefine",
+          "startLine": 487,
+          "endLine": 492,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "Undefine",
+          "startLine": 494,
+          "endLine": 499,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator ==",
+          "startLine": 519,
+          "endLine": 524,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator !=",
+          "startLine": 526,
+          "endLine": 530,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "modelIndex",
+          "startLine": 536,
+          "endLine": 540,
+          "params": [
+            "_modelIndex"
+          ]
+        },
+        {
+          "name": "modelIndex",
+          "startLine": 546,
+          "endLine": 550,
+          "params": [
+            "_modelIndex"
+          ]
+        },
+        {
+          "name": "nodeName",
+          "startLine": 575,
+          "endLine": 579,
+          "params": [
+            "_nodeName"
+          ]
+        },
+        {
+          "name": "nodeName",
+          "startLine": 585,
+          "endLine": 589,
+          "params": [
+            "_nodeName"
+          ]
+        },
+        {
+          "name": "ModelRequest",
+          "startLine": 610,
+          "endLine": 613,
+          "params": []
+        },
+        {
+          "name": "~ModelRequest",
+          "startLine": 615,
+          "endLine": 617,
+          "params": []
+        },
+        {
+          "name": "ModelRequest",
+          "startLine": 619,
+          "endLine": 638,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "ModelRequest",
+          "startLine": 640,
+          "endLine": 661,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator ==",
+          "startLine": 711,
+          "endLine": 734,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator !=",
+          "startLine": 736,
+          "endLine": 740,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "_d",
+          "startLine": 742,
+          "endLine": 780,
+          "params": [
+            "__d"
+          ]
+        },
+        {
+          "name": "_d",
+          "startLine": 782,
+          "endLine": 785,
+          "params": []
+        },
+        {
+          "name": "modelDefine",
+          "startLine": 792,
+          "endLine": 798,
+          "params": [
+            "_modelDefine"
+          ]
+        },
+        {
+          "name": "modelDefine",
+          "startLine": 800,
+          "endLine": 806,
+          "params": [
+            "_modelDefine"
+          ]
+        },
+        {
+          "name": "modelUndefine",
+          "startLine": 851,
+          "endLine": 857,
+          "params": [
+            "_modelUndefine"
+          ]
+        },
+        {
+          "name": "modelUndefine",
+          "startLine": 859,
+          "endLine": 865,
+          "params": [
+            "_modelUndefine"
+          ]
+        },
+        {
+          "name": "ModelRequestEnvelope",
+          "startLine": 910,
+          "endLine": 912,
+          "params": []
+        },
+        {
+          "name": "~ModelRequestEnvelope",
+          "startLine": 914,
+          "endLine": 916,
+          "params": []
+        },
+        {
+          "name": "ModelRequestEnvelope",
+          "startLine": 918,
+          "endLine": 922,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "ModelRequestEnvelope",
+          "startLine": 924,
+          "endLine": 928,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator ==",
+          "startLine": 946,
+          "endLine": 950,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator !=",
+          "startLine": 952,
+          "endLine": 956,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "request",
+          "startLine": 962,
+          "endLine": 966,
+          "params": [
+            "_request"
+          ]
+        },
+        {
+          "name": "request",
+          "startLine": 972,
+          "endLine": 976,
+          "params": [
+            "_request"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "Define",
+          "line": 40,
+          "isDefault": false
+        },
+        {
+          "name": "~Define",
+          "line": 44,
+          "isDefault": false
+        },
+        {
+          "name": "Define",
+          "line": 48,
+          "isDefault": false
+        },
+        {
+          "name": "Define",
+          "line": 62,
+          "isDefault": false
+        },
+        {
+          "name": "operator ==",
+          "line": 108,
+          "isDefault": false
+        },
+        {
+          "name": "operator !=",
+          "line": 122,
+          "isDefault": false
+        },
+        {
+          "name": "name",
+          "line": 132,
+          "isDefault": false
+        },
+        {
+          "name": "name",
+          "line": 142,
+          "isDefault": false
+        },
+        {
+          "name": "version",
+          "line": 171,
+          "isDefault": false
+        },
+        {
+          "name": "version",
+          "line": 181,
+          "isDefault": false
+        },
+        {
+          "name": "nodeName",
+          "line": 210,
+          "isDefault": false
+        },
+        {
+          "name": "nodeName",
+          "line": 220,
+          "isDefault": false
+        },
+        {
+          "name": "description",
+          "line": 249,
+          "isDefault": false
+        },
+        {
+          "name": "description",
+          "line": 259,
+          "isDefault": false
+        },
+        {
+          "name": "dataSchema",
+          "line": 288,
+          "isDefault": false
+        },
+        {
+          "name": "dataSchema",
+          "line": 298,
+          "isDefault": false
+        },
+        {
+          "name": "defaultValue",
+          "line": 327,
+          "isDefault": false
+        },
+        {
+          "name": "defaultValue",
+          "line": 337,
+          "isDefault": false
+        },
+        {
+          "name": "referenceValue",
+          "line": 366,
+          "isDefault": false
+        },
+        {
+          "name": "referenceValue",
+          "line": 376,
+          "isDefault": false
+        },
+        {
+          "name": "events",
+          "line": 405,
+          "isDefault": false
+        },
+        {
+          "name": "events",
+          "line": 415,
+          "isDefault": false
+        },
+        {
+          "name": "alarms",
+          "line": 444,
+          "isDefault": false
+        },
+        {
+          "name": "alarms",
+          "line": 454,
+          "isDefault": false
+        },
+        {
+          "name": "Undefine",
+          "line": 479,
+          "isDefault": false
+        },
+        {
+          "name": "~Undefine",
+          "line": 483,
+          "isDefault": false
+        },
+        {
+          "name": "Undefine",
+          "line": 487,
+          "isDefault": false
+        },
+        {
+          "name": "Undefine",
+          "line": 494,
+          "isDefault": false
+        },
+        {
+          "name": "operator ==",
+          "line": 519,
+          "isDefault": false
+        },
+        {
+          "name": "operator !=",
+          "line": 526,
+          "isDefault": false
+        },
+        {
+          "name": "modelIndex",
+          "line": 536,
+          "isDefault": false
+        },
+        {
+          "name": "modelIndex",
+          "line": 546,
+          "isDefault": false
+        },
+        {
+          "name": "nodeName",
+          "line": 575,
+          "isDefault": false
+        },
+        {
+          "name": "nodeName",
+          "line": 585,
+          "isDefault": false
+        },
+        {
+          "name": "ModelRequest",
+          "line": 610,
+          "isDefault": false
+        },
+        {
+          "name": "~ModelRequest",
+          "line": 615,
+          "isDefault": false
+        },
+        {
+          "name": "ModelRequest",
+          "line": 619,
+          "isDefault": false
+        },
+        {
+          "name": "ModelRequest",
+          "line": 640,
+          "isDefault": false
+        },
+        {
+          "name": "operator ==",
+          "line": 711,
+          "isDefault": false
+        },
+        {
+          "name": "operator !=",
+          "line": 736,
+          "isDefault": false
+        },
+        {
+          "name": "_d",
+          "line": 742,
+          "isDefault": false
+        },
+        {
+          "name": "_d",
+          "line": 782,
+          "isDefault": false
+        },
+        {
+          "name": "modelDefine",
+          "line": 792,
+          "isDefault": false
+        },
+        {
+          "name": "modelDefine",
+          "line": 800,
+          "isDefault": false
+        },
+        {
+          "name": "modelUndefine",
+          "line": 851,
+          "isDefault": false
+        },
+        {
+          "name": "modelUndefine",
+          "line": 859,
+          "isDefault": false
+        },
+        {
+          "name": "ModelRequestEnvelope",
+          "line": 910,
+          "isDefault": false
+        },
+        {
+          "name": "~ModelRequestEnvelope",
+          "line": 914,
+          "isDefault": false
+        },
+        {
+          "name": "ModelRequestEnvelope",
+          "line": 918,
+          "isDefault": false
+        },
+        {
+          "name": "ModelRequestEnvelope",
+          "line": 924,
+          "isDefault": false
+        },
+        {
+          "name": "operator ==",
+          "line": 946,
+          "isDefault": false
+        },
+        {
+          "name": "operator !=",
+          "line": 952,
+          "isDefault": false
+        },
+        {
+          "name": "request",
+          "line": 962,
+          "isDefault": false
+        },
+        {
+          "name": "request",
+          "line": 972,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "Define",
+          "callee": "std::move",
+          "lineNumber": 65
+        },
+        {
+          "caller": "Define",
+          "callee": "std::move",
+          "lineNumber": 66
+        },
+        {
+          "caller": "Define",
+          "callee": "std::move",
+          "lineNumber": 67
+        },
+        {
+          "caller": "Define",
+          "callee": "std::move",
+          "lineNumber": 68
+        },
+        {
+          "caller": "Define",
+          "callee": "std::move",
+          "lineNumber": 69
+        },
+        {
+          "caller": "Define",
+          "callee": "std::move",
+          "lineNumber": 70
+        },
+        {
+          "caller": "Define",
+          "callee": "std::move",
+          "lineNumber": 71
+        },
+        {
+          "caller": "Define",
+          "callee": "std::move",
+          "lineNumber": 72
+        },
+        {
+          "caller": "Define",
+          "callee": "std::move",
+          "lineNumber": 73
+        },
+        {
+          "caller": "name",
+          "callee": "std::move",
+          "lineNumber": 145
+        },
+        {
+          "caller": "version",
+          "callee": "std::move",
+          "lineNumber": 184
+        },
+        {
+          "caller": "nodeName",
+          "callee": "std::move",
+          "lineNumber": 223
+        },
+        {
+          "caller": "description",
+          "callee": "std::move",
+          "lineNumber": 262
+        },
+        {
+          "caller": "dataSchema",
+          "callee": "std::move",
+          "lineNumber": 301
+        },
+        {
+          "caller": "defaultValue",
+          "callee": "std::move",
+          "lineNumber": 340
+        },
+        {
+          "caller": "referenceValue",
+          "callee": "std::move",
+          "lineNumber": 379
+        },
+        {
+          "caller": "events",
+          "callee": "std::move",
+          "lineNumber": 418
+        },
+        {
+          "caller": "alarms",
+          "callee": "std::move",
+          "lineNumber": 457
+        },
+        {
+          "caller": "Undefine",
+          "callee": "std::move",
+          "lineNumber": 497
+        },
+        {
+          "caller": "Undefine",
+          "callee": "std::move",
+          "lineNumber": 498
+        },
+        {
+          "caller": "modelIndex",
+          "callee": "std::move",
+          "lineNumber": 549
+        },
+        {
+          "caller": "nodeName",
+          "callee": "std::move",
+          "lineNumber": 588
+        },
+        {
+          "caller": "ModelRequest",
+          "callee": "std::move",
+          "lineNumber": 648
+        },
+        {
+          "caller": "ModelRequest",
+          "callee": "std::move",
+          "lineNumber": 654
+        },
+        {
+          "caller": "modelDefine",
+          "callee": "std::move",
+          "lineNumber": 803
+        },
+        {
+          "caller": "modelUndefine",
+          "callee": "std::move",
+          "lineNumber": 862
+        },
+        {
+          "caller": "ModelRequestEnvelope",
+          "callee": "std::move",
+          "lineNumber": 927
+        },
+        {
+          "caller": "request",
+          "callee": "std::move",
+          "lineNumber": 975
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 54,
+        "functionCount": 54,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "core/ondemand/.gensrctx/dsf_define_model.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 763,
+      "nonEmptyLines": 628,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "core/ondemand/.gensrctx/dsf_define_modelCdrAux.ipp",
+      "language": "ipp",
+      "fileCategory": "code",
+      "totalLines": 490,
+      "nonEmptyLines": 381,
+      "metrics": {}
+    }
+  ]
+}

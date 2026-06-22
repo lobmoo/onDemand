@@ -1,0 +1,13 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "core/ondemand/.gensrctx/dsf_define_varCdrAux.hpp", "language": "cpp", "sizeLines": 181, "fileCategory": "code"},
+    {"path": "core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx", "language": "cpp", "sizeLines": 1602, "fileCategory": "code"},
+    {"path": "core/ondemand/.gensrctx/dsf_define_varPubSubTypes.h", "language": "c", "sizeLines": 390, "fileCategory": "code"}
+  ],
+  "batchImportData": {
+    "core/ondemand/.gensrctx/dsf_define_varCdrAux.hpp": [],
+    "core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx": ["core/ondemand/.gensrctx/dsf_define_varCdrAux.hpp", "core/ondemand/.gensrctx/dsf_define_varPubSubTypes.h"],
+    "core/ondemand/.gensrctx/dsf_define_varPubSubTypes.h": []
+  }
+}

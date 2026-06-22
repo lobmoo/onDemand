@@ -1,0 +1,9 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "core/ondemand/.gensrctx/dsf_define_messagesCdrAux.hpp", "language": "cpp", "sizeLines": 140, "fileCategory": "code"},
+    {"path": "core/ondemand/.gensrctx/dsf_define_messagesPubSubTypes.cxx", "language": "cpp", "sizeLines": 1342, "fileCategory": "code"},
+    {"path": "core/ondemand/.gensrctx/dsf_define_messagesPubSubTypes.h", "language": "c", "sizeLines": 332, "fileCategory": "code"}
+  ],
+  "batchImportData": {"core/ondemand/.gensrctx/dsf_define_messagesCdrAux.hpp":[],"core/ondemand/.gensrctx/dsf_define_messagesPubSubTypes.cxx":["core/ondemand/.gensrctx/dsf_define_messagesCdrAux.hpp","core/ondemand/.gensrctx/dsf_define_messagesPubSubTypes.h"],"core/ondemand/.gensrctx/dsf_define_messagesPubSubTypes.h":[]}
+}

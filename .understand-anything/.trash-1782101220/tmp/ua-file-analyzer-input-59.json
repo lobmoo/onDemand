@@ -1,0 +1,31 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/detail/utility.hpp", "language": "cpp", "sizeLines": 117, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/fallback_allocator.hpp", "language": "cpp", "sizeLines": 211, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/heap_allocator.hpp", "language": "cpp", "sizeLines": 82, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/iteration_allocator.hpp", "language": "cpp", "sizeLines": 304, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/joint_allocator.hpp", "language": "cpp", "sizeLines": 926, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/malloc_allocator.hpp", "language": "cpp", "sizeLines": 70, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/memory_resource_adapter.hpp", "language": "cpp", "sizeLines": 238, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/memory_stack.hpp", "language": "cpp", "sizeLines": 489, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/namespace_alias.hpp", "language": "cpp", "sizeLines": 36, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/new_allocator.hpp", "language": "cpp", "sizeLines": 54, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/segregator.hpp", "language": "cpp", "sizeLines": 447, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/smart_ptr.hpp", "language": "cpp", "sizeLines": 197, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/static_allocator.hpp", "language": "cpp", "sizeLines": 178, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/std_allocator.hpp", "language": "cpp", "sizeLines": 361, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/temporary_allocator.hpp", "language": "cpp", "sizeLines": 334, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/threading.hpp", "language": "cpp", "sizeLines": 154, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/tracking.hpp", "language": "cpp", "sizeLines": 429, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/virtual_memory.hpp", "language": "cpp", "sizeLines": 201, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/lib/libfastcdr.so", "language": "so", "sizeLines": 246, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/lib/libfastcdr.so.2", "language": "2", "sizeLines": 246, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/lib/libfastcdr.so.2.3.0", "language": "0", "sizeLines": 246, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/lib/libfastdds_statistics_backend.so", "language": "so", "sizeLines": 7258, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/lib/libfastdds_statistics_backend.so.2", "language": "2", "sizeLines": 7258, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/lib/libfastdds_statistics_backend.so.2.2.0", "language": "0", "sizeLines": 7258, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/lib/libfastdds.so", "language": "so", "sizeLines": 34202, "fileCategory": "code"}
+  ],
+  "batchImportData": {}
+}

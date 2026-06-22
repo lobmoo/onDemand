@@ -1,0 +1,228 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 3,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "tests/txdds_test_idl/PerformanceTestCdrAux.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 48,
+      "nonEmptyLines": 36,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "tests/txdds_test_idl/PerformanceTestPubSubTypes.cxx",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 130,
+      "nonEmptyLines": 104,
+      "functions": [
+        {
+          "name": "TestMessagePubSubType",
+          "startLine": 36,
+          "endLine": 44,
+          "params": []
+        },
+        {
+          "name": "~TestMessagePubSubType",
+          "startLine": 46,
+          "endLine": 48,
+          "params": []
+        },
+        {
+          "name": "Serialize",
+          "startLine": 50,
+          "endLine": 70,
+          "params": [
+            "data",
+            "payload"
+          ]
+        },
+        {
+          "name": "Deserialize",
+          "startLine": 72,
+          "endLine": 93,
+          "params": [
+            "payload",
+            "data"
+          ]
+        },
+        {
+          "name": "GetSerializedSizeProvider",
+          "startLine": 95,
+          "endLine": 106,
+          "params": [
+            "data"
+          ]
+        },
+        {
+          "name": "DeleteData",
+          "startLine": 113,
+          "endLine": 117,
+          "params": [
+            "data"
+          ]
+        },
+        {
+          "name": "GetKey",
+          "startLine": 119,
+          "endLine": 126,
+          "params": [
+            "data",
+            "handle",
+            "force_md5"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "TestMessagePubSubType",
+          "line": 36,
+          "isDefault": false
+        },
+        {
+          "name": "~TestMessagePubSubType",
+          "line": 46,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 50,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 72,
+          "isDefault": false
+        },
+        {
+          "name": "GetSerializedSizeProvider",
+          "line": 95,
+          "isDefault": false
+        },
+        {
+          "name": "DeleteData",
+          "line": 113,
+          "isDefault": false
+        },
+        {
+          "name": "GetKey",
+          "line": 119,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "TestMessagePubSubType",
+          "callee": "SetName",
+          "lineNumber": 38
+        },
+        {
+          "caller": "TestMessagePubSubType",
+          "callee": "static_cast<uint32_t>",
+          "lineNumber": 41
+        },
+        {
+          "caller": "TestMessagePubSubType",
+          "callee": "BaoSky::Cdr::Cdr::Alignment",
+          "lineNumber": 41
+        },
+        {
+          "caller": "Serialize",
+          "callee": "static_cast<TestMessage *>",
+          "lineNumber": 54
+        },
+        {
+          "caller": "Serialize",
+          "callee": "reinterpret_cast<char*>",
+          "lineNumber": 57
+        },
+        {
+          "caller": "Serialize",
+          "callee": "SerializeEncapsulation",
+          "lineNumber": 63
+        },
+        {
+          "caller": "Serialize",
+          "callee": "Serialize",
+          "lineNumber": 65
+        },
+        {
+          "caller": "Serialize",
+          "callee": "static_cast<uint32_t>",
+          "lineNumber": 68
+        },
+        {
+          "caller": "Serialize",
+          "callee": "GetSerializedDataLength",
+          "lineNumber": 68
+        },
+        {
+          "caller": "Deserialize",
+          "callee": "static_cast<TestMessage *>",
+          "lineNumber": 77
+        },
+        {
+          "caller": "Deserialize",
+          "callee": "reinterpret_cast<char*>",
+          "lineNumber": 80
+        },
+        {
+          "caller": "Deserialize",
+          "callee": "DeserializeEncapsulation",
+          "lineNumber": 86
+        },
+        {
+          "caller": "Deserialize",
+          "callee": "Deserialize",
+          "lineNumber": 90
+        },
+        {
+          "caller": "GetSerializedSizeProvider",
+          "callee": "static_cast<uint32_t>",
+          "lineNumber": 102
+        },
+        {
+          "caller": "GetSerializedSizeProvider",
+          "callee": "CalculateSerializedSize",
+          "lineNumber": 102
+        },
+        {
+          "caller": "GetSerializedSizeProvider",
+          "callee": "static_cast<TestMessage *>",
+          "lineNumber": 103
+        },
+        {
+          "caller": "DeleteData",
+          "callee": "reinterpret_cast<TestMessage *>",
+          "lineNumber": 116
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 7,
+        "functionCount": 7,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "tests/txdds_test_idl/PerformanceTestPubSubTypes.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 62,
+      "nonEmptyLines": 43,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    }
+  ]
+}

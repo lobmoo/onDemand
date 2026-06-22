@@ -1,0 +1,236 @@
+{
+  "nodes": [
+    {
+      "id": "file:thirdparty/CRoaring/include/roaring/roaring_array.h",
+      "type": "file",
+      "name": "roaring_array.h",
+      "filePath": "thirdparty/CRoaring/include/roaring/roaring_array.h",
+      "summary": "CRoaring 库的底层 roaring array 数据结构头文件，定义了 roaring_array_t 的操作函数，包括创建、拷贝、序列化、容器管理等核心操作，是 roaring bitmap 的内部实现基础。",
+      "tags": ["data-structure", "header", "third-party", "roaring-bitmap", "internal-api"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/CRoaring/include/roaring/roaring_types.h",
+      "type": "file",
+      "name": "roaring_types.h",
+      "filePath": "thirdparty/CRoaring/include/roaring/roaring_types.h",
+      "summary": "CRoaring 库的核心类型定义头文件，定义了 roaring_array_t（roaring bitmap 的并行数组结构）、roaring_statistics_t（bitmap 统计信息）、迭代器类型和 COW 标志等基础类型。",
+      "tags": ["type-definition", "header", "third-party", "roaring-bitmap"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/CRoaring/include/roaring/roaring_version.h",
+      "type": "file",
+      "name": "roaring_version.h",
+      "filePath": "thirdparty/CRoaring/include/roaring/roaring_version.h",
+      "summary": "CRoaring 库的版本定义头文件，由 release.py 自动生成，定义版本号 4.3.6。",
+      "tags": ["version", "header", "third-party", "roaring-bitmap", "auto-generated"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/CRoaring/include/roaring/roaring.h",
+      "type": "file",
+      "name": "roaring.h",
+      "filePath": "thirdparty/CRoaring/include/roaring/roaring.h",
+      "summary": "CRoaring 库的主公共 API 头文件，提供 32 位 roaring bitmap 的完整接口，包括创建、添加/删除元素、集合运算（并集、交集、差集、异或）、序列化、迭代器和统计等功能。",
+      "tags": ["public-api", "header", "third-party", "roaring-bitmap", "bitmap-operations"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:thirdparty/CRoaring/include/roaring/roaring.hh",
+      "type": "file",
+      "name": "roaring.hh",
+      "filePath": "thirdparty/CRoaring/include/roaring/roaring.hh",
+      "summary": "CRoaring 库的 C++ 封装头文件，提供 Roaring 类作为 32 位 roaring bitmap 的面向对象包装，支持 STL 风格的迭代器、集合运算、序列化和异常处理。",
+      "tags": ["cpp-wrapper", "header", "third-party", "roaring-bitmap", "object-oriented"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:thirdparty/CRoaring/include/roaring/roaring64.h",
+      "type": "file",
+      "name": "roaring64.h",
+      "filePath": "thirdparty/CRoaring/include/roaring/roaring64.h",
+      "summary": "CRoaring 库的 64 位 roaring bitmap C API 头文件，提供 roaring64_bitmap_t 的完整操作接口，包括创建、集合运算、序列化、迭代器和批量操作。",
+      "tags": ["public-api", "header", "third-party", "roaring-bitmap", "64-bit"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:thirdparty/CRoaring/include/roaring/roaring64map.hh",
+      "type": "file",
+      "name": "roaring64map.hh",
+      "filePath": "thirdparty/CRoaring/include/roaring/roaring64map.hh",
+      "summary": "CRoaring 库的 64 位 roaring bitmap C++ 实现，通过 std::map<uint32_t, Roaring> 将 64 位键拆分为高 32 位索引和低 32 位 Roaring bitmap，提供完整的面向对象接口。",
+      "tags": ["cpp-wrapper", "header", "third-party", "roaring-bitmap", "64-bit", "map-based"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:thirdparty/CRoaring/include/roaring/utilasm.h",
+      "type": "file",
+      "name": "utilasm.h",
+      "filePath": "thirdparty/CRoaring/include/roaring/utilasm.h",
+      "summary": "CRoaring 库的 x86 内联汇编优化宏定义头文件，提供位移、位测试和位计数等 SIMD/位操作指令的内联汇编封装，用于性能关键路径。",
+      "tags": ["optimization", "header", "third-party", "assembly", "x86"],
+      "complexity": "simple",
+      "languageNotes": "使用 x86 内联汇编（shrx/shlx/bts/btr/bt 指令）进行位操作优化，仅在 CROARING_INLINE_ASM 宏定义时启用。"
+    },
+    {
+      "id": "file:thirdparty/CRoaring/lib/libcmocka.so",
+      "type": "file",
+      "name": "libcmocka.so",
+      "filePath": "thirdparty/CRoaring/lib/libcmocka.so",
+      "summary": "cmocka 测试框架的共享库符号链接，指向 libcmocka.so.0，用于 CRoaring 库的单元测试。",
+      "tags": ["binary", "third-party", "test-framework", "shared-library"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/CRoaring/lib/libcmocka.so.0",
+      "type": "file",
+      "name": "libcmocka.so.0",
+      "filePath": "thirdparty/CRoaring/lib/libcmocka.so.0",
+      "summary": "cmocka 测试框架的共享库符号链接，指向 libcmocka.so.0.7.0，版本化 soname 链接。",
+      "tags": ["binary", "third-party", "test-framework", "shared-library"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/CRoaring/lib/libcmocka.so.0.7.0",
+      "type": "file",
+      "name": "libcmocka.so.0.7.0",
+      "filePath": "thirdparty/CRoaring/lib/libcmocka.so.0.7.0",
+      "summary": "cmocka 测试框架 0.7.0 版本的共享库二进制文件，提供 C 语言单元测试的 mock 和断言功能。",
+      "tags": ["binary", "third-party", "test-framework", "shared-library"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/CRoaring/lib/libroaring.a",
+      "type": "file",
+      "name": "libroaring.a",
+      "filePath": "thirdparty/CRoaring/lib/libroaring.a",
+      "summary": "CRoaring 库的静态库归档文件，包含 roaring bitmap 的完整 C 实现，用于静态链接。",
+      "tags": ["binary", "third-party", "roaring-bitmap", "static-library"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/CRoaring/lib/libroaring.so",
+      "type": "file",
+      "name": "libroaring.so",
+      "filePath": "thirdparty/CRoaring/lib/libroaring.so",
+      "summary": "CRoaring 库的共享库符号链接，指向 libroaring.so.18，用于动态链接。",
+      "tags": ["binary", "third-party", "roaring-bitmap", "shared-library"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/CRoaring/lib/libroaring.so.18",
+      "type": "file",
+      "name": "libroaring.so.18",
+      "filePath": "thirdparty/CRoaring/lib/libroaring.so.18",
+      "summary": "CRoaring 库的共享库符号链接，指向 libroaring.so.4.3.6，版本化 soname 链接。",
+      "tags": ["binary", "third-party", "roaring-bitmap", "shared-library"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/CRoaring/lib/libroaring.so.4.3.6",
+      "type": "file",
+      "name": "libroaring.so.4.3.6",
+      "filePath": "thirdparty/CRoaring/lib/libroaring.so.4.3.6",
+      "summary": "CRoaring 库 4.3.6 版本的共享库二进制文件，包含 roaring bitmap 的完整 C 实现。",
+      "tags": ["binary", "third-party", "roaring-bitmap", "shared-library"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/fast_dds/include/fastcdr/Cdr.h",
+      "type": "file",
+      "name": "Cdr.h",
+      "filePath": "thirdparty/fast_dds/include/fastcdr/Cdr.h",
+      "summary": "FastCDR 序列化库的核心 Cdr 类头文件，提供基于 CDR 协议的序列化/反序列化接口，支持基本类型、STL 容器、字符串、嵌套结构和多种编码格式（XCDRv1/v2、PL_CDR 等）。",
+      "tags": ["public-api", "header", "third-party", "serialization", "cdr-protocol"],
+      "complexity": "complex",
+      "languageNotes": "Cdr 类是 FastCDR 的核心，支持 CORBA CDR、DDS CDR、XCDRv1 和 XCDRv2 四种编码版本，以及 PLAIN_CDR、PL_CDR 等多种编码算法标志。"
+    },
+    {
+      "id": "file:thirdparty/fast_dds/include/fastcdr/cdr/fixed_size_string.hpp",
+      "type": "file",
+      "name": "fixed_size_string.hpp",
+      "filePath": "thirdparty/fast_dds/include/fastcdr/cdr/fixed_size_string.hpp",
+      "summary": "FastCDR 库的固定大小字符串模板类，提供编译期确定大小的非分配字符串实现，用于 DDS 序列化中的 bounded string 类型，避免动态内存分配。",
+      "tags": ["utility", "header", "third-party", "serialization", "template"],
+      "complexity": "moderate",
+      "languageNotes": "fixed_string<MAX_CHARS> 模板使用栈上固定大小缓冲区，提供 assign、set、compare、to_string 等操作，超出长度时自动截断。"
+    },
+    {
+      "id": "file:thirdparty/fast_dds/include/fastcdr/CdrEncoding.hpp",
+      "type": "file",
+      "name": "CdrEncoding.hpp",
+      "filePath": "thirdparty/fast_dds/include/fastcdr/CdrEncoding.hpp",
+      "summary": "FastCDR 库的编码类型枚举定义头文件，定义 CdrVersion（CORBA CDR、DDS CDR、XCDRv1、XCDRv2）和 EncodingAlgorithmFlag（PLAIN_CDR、PL_CDR 等编码算法标志）。",
+      "tags": ["type-definition", "header", "third-party", "serialization", "encoding"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/fast_dds/include/fastcdr/CdrSizeCalculator.hpp",
+      "type": "file",
+      "name": "CdrSizeCalculator.hpp",
+      "filePath": "thirdparty/fast_dds/include/fastcdr/CdrSizeCalculator.hpp",
+      "summary": "FastCDR 库的序列化大小计算器，提供 CdrSizeCalculator 类和一组模板函数，用于在实际序列化前精确计算各种类型（基本类型、容器、嵌套结构、optional 等）的编码后字节数。",
+      "tags": ["utility", "header", "third-party", "serialization", "size-calculation"],
+      "complexity": "complex",
+      "languageNotes": "大量使用模板特化和递归来处理不同类型（包括 std::vector、std::map、std::array、optional 等）的序列化大小计算，支持对齐和 padding 计算。"
+    },
+    {
+      "id": "file:thirdparty/fast_dds/include/fastcdr/config.h",
+      "type": "file",
+      "name": "config.h",
+      "filePath": "thirdparty/fast_dds/include/fastcdr/config.h",
+      "summary": "FastCDR 库的配置头文件，定义版本号（2.3.0）、C++11 支持标志、字节序检测、float128 支持、long double 大小和平台特定宏。",
+      "tags": ["configuration", "header", "third-party", "serialization", "platform"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/fast_dds/include/fastcdr/config/doxygen_modules.h",
+      "type": "file",
+      "name": "doxygen_modules.h",
+      "filePath": "thirdparty/fast_dds/include/fastcdr/config/doxygen_modules.h",
+      "summary": "FastCDR 库的 Doxygen 文档模块定义头文件，定义 FASTCDRAPIREFERENCE 和 EXCEPTIONMODULE 两个文档分组。",
+      "tags": ["documentation", "header", "third-party", "doxygen"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/fast_dds/include/fastcdr/detail/container_recursive_inspector.hpp",
+      "type": "file",
+      "name": "container_recursive_inspector.hpp",
+      "filePath": "thirdparty/fast_dds/include/fastcdr/detail/container_recursive_inspector.hpp",
+      "summary": "FastCDR 库的容器递归检查工具，提供 constexpr 函数 is_multi_array_primitive 用于编译期判断类型是否为基本类型或基本类型的多维 std::array，以优化序列化路径。",
+      "tags": ["utility", "header", "third-party", "serialization", "template-meta"],
+      "complexity": "simple",
+      "languageNotes": "使用 SFINAE 和 constexpr 函数递归检查 std::array 嵌套层次，判断是否为基本类型的多维数组，用于 CdrSizeCalculator 的优化路径。"
+    },
+    {
+      "id": "file:thirdparty/fast_dds/include/fastcdr/eProsima_auto_link.h",
+      "type": "file",
+      "name": "eProsima_auto_link.h",
+      "filePath": "thirdparty/fast_dds/include/fastcdr/eProsima_auto_link.h",
+      "summary": "FastCDR 库的 MSVC 自动链接头文件，在 Windows 平台上通过 #pragma comment(lib, ...) 自动链接正确版本的 FastCDR 静态/动态库。",
+      "tags": ["configuration", "header", "third-party", "platform-specific", "msvc"],
+      "complexity": "simple",
+      "languageNotes": "仅在 _MSC_VER 定义时生效，根据 EPROSIMA_DYN_LINK 和 _DEBUG 宏选择链接静态库或动态库的 debug/release 版本。"
+    },
+    {
+      "id": "file:thirdparty/fast_dds/include/fastcdr/exceptions/BadOptionalAccessException.hpp",
+      "type": "file",
+      "name": "BadOptionalAccessException.hpp",
+      "filePath": "thirdparty/fast_dds/include/fastcdr/exceptions/BadOptionalAccessException.hpp",
+      "summary": "FastCDR 库的异常类，在访问空 optional 值时抛出，继承自 Exception 基类，提供默认构造、拷贝/移动构造和赋值操作。",
+      "tags": ["exception", "header", "third-party", "serialization", "error-handling"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/fast_dds/include/fastcdr/exceptions/BadParamException.h",
+      "type": "file",
+      "name": "BadParamException.h",
+      "filePath": "thirdparty/fast_dds/include/fastcdr/exceptions/BadParamException.h",
+      "summary": "FastCDR 库的异常类，在序列化无效参数时抛出，继承自 Exception 基类，提供默认构造、拷贝/移动构造和赋值操作。",
+      "tags": ["exception", "header", "third-party", "serialization", "error-handling"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": []
+}

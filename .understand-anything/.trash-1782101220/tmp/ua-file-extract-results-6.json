@@ -1,0 +1,849 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 7,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "core/ondemand/.gensrc/FCV.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 363,
+      "nonEmptyLines": 304,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "core/ondemand/.gensrc/FCVCdrAux.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 46,
+      "nonEmptyLines": 34,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "core/ondemand/.gensrc/FCVCdrAux.ipp",
+      "language": "ipp",
+      "fileCategory": "code",
+      "totalLines": 171,
+      "nonEmptyLines": 130,
+      "metrics": {}
+    },
+    {
+      "path": "core/ondemand/.gensrc/FCVPubSubTypes.cxx",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 218,
+      "nonEmptyLines": 188,
+      "functions": [
+        {
+          "name": "FCVTypePubSubType",
+          "startLine": 34,
+          "endLine": 44,
+          "params": []
+        },
+        {
+          "name": "~FCVTypePubSubType",
+          "startLine": 46,
+          "endLine": 52,
+          "params": []
+        },
+        {
+          "name": "serialize",
+          "startLine": 54,
+          "endLine": 89,
+          "params": [
+            "data",
+            "payload",
+            "data_representation"
+          ]
+        },
+        {
+          "name": "deserialize",
+          "startLine": 91,
+          "endLine": 119,
+          "params": [
+            "payload",
+            "data"
+          ]
+        },
+        {
+          "name": "calculate_serialized_size",
+          "startLine": 121,
+          "endLine": 139,
+          "params": [
+            "data",
+            "data_representation"
+          ]
+        },
+        {
+          "name": "delete_data",
+          "startLine": 146,
+          "endLine": 150,
+          "params": [
+            "data"
+          ]
+        },
+        {
+          "name": "compute_key",
+          "startLine": 152,
+          "endLine": 169,
+          "params": [
+            "payload",
+            "handle",
+            "force_md5"
+          ]
+        },
+        {
+          "name": "compute_key",
+          "startLine": 171,
+          "endLine": 209,
+          "params": [
+            "data",
+            "handle",
+            "force_md5"
+          ]
+        },
+        {
+          "name": "register_type_object_representation",
+          "startLine": 211,
+          "endLine": 214,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "FCVTypePubSubType",
+          "line": 34,
+          "isDefault": false
+        },
+        {
+          "name": "~FCVTypePubSubType",
+          "line": 46,
+          "isDefault": false
+        },
+        {
+          "name": "serialize",
+          "line": 54,
+          "isDefault": false
+        },
+        {
+          "name": "deserialize",
+          "line": 91,
+          "isDefault": false
+        },
+        {
+          "name": "calculate_serialized_size",
+          "line": 121,
+          "isDefault": false
+        },
+        {
+          "name": "delete_data",
+          "line": 146,
+          "isDefault": false
+        },
+        {
+          "name": "compute_key",
+          "line": 152,
+          "isDefault": false
+        },
+        {
+          "name": "compute_key",
+          "line": 171,
+          "isDefault": false
+        },
+        {
+          "name": "register_type_object_representation",
+          "line": 211,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "FCVTypePubSubType",
+          "callee": "set_name",
+          "lineNumber": 36
+        },
+        {
+          "caller": "FCVTypePubSubType",
+          "callee": "static_cast<uint32_t>",
+          "lineNumber": 38
+        },
+        {
+          "caller": "FCVTypePubSubType",
+          "callee": "eprosima::fastcdr::Cdr::alignment",
+          "lineNumber": 38
+        },
+        {
+          "caller": "FCVTypePubSubType",
+          "callee": "reinterpret_cast<unsigned char*>",
+          "lineNumber": 42
+        },
+        {
+          "caller": "FCVTypePubSubType",
+          "callee": "malloc",
+          "lineNumber": 42
+        },
+        {
+          "caller": "FCVTypePubSubType",
+          "callee": "memset",
+          "lineNumber": 43
+        },
+        {
+          "caller": "~FCVTypePubSubType",
+          "callee": "free",
+          "lineNumber": 50
+        },
+        {
+          "caller": "serialize",
+          "callee": "static_cast<const FCVType*>",
+          "lineNumber": 59
+        },
+        {
+          "caller": "serialize",
+          "callee": "reinterpret_cast<char*>",
+          "lineNumber": 62
+        },
+        {
+          "caller": "serialize",
+          "callee": "endianness",
+          "lineNumber": 67
+        },
+        {
+          "caller": "serialize",
+          "callee": "set_encoding_flag",
+          "lineNumber": 68
+        },
+        {
+          "caller": "serialize",
+          "callee": "serialize_encapsulation",
+          "lineNumber": 76
+        },
+        {
+          "caller": "serialize",
+          "callee": "set_dds_cdr_options",
+          "lineNumber": 79
+        },
+        {
+          "caller": "serialize",
+          "callee": "static_cast<uint32_t>",
+          "lineNumber": 87
+        },
+        {
+          "caller": "serialize",
+          "callee": "get_serialized_data_length",
+          "lineNumber": 87
+        },
+        {
+          "caller": "deserialize",
+          "callee": "static_cast<FCVType*>",
+          "lineNumber": 98
+        },
+        {
+          "caller": "deserialize",
+          "callee": "reinterpret_cast<char*>",
+          "lineNumber": 101
+        },
+        {
+          "caller": "deserialize",
+          "callee": "read_encapsulation",
+          "lineNumber": 107
+        },
+        {
+          "caller": "deserialize",
+          "callee": "endianness",
+          "lineNumber": 108
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "static_cast<uint32_t>",
+          "lineNumber": 131
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "calculate_serialized_size",
+          "lineNumber": 131
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "static_cast<const FCVType*>",
+          "lineNumber": 132
+        },
+        {
+          "caller": "delete_data",
+          "callee": "reinterpret_cast<FCVType*>",
+          "lineNumber": 149
+        },
+        {
+          "caller": "compute_key",
+          "callee": "deserialize",
+          "lineNumber": 163
+        },
+        {
+          "caller": "compute_key",
+          "callee": "static_cast<void*>",
+          "lineNumber": 163
+        },
+        {
+          "caller": "compute_key",
+          "callee": "compute_key",
+          "lineNumber": 165
+        },
+        {
+          "caller": "compute_key",
+          "callee": "static_cast<void*>",
+          "lineNumber": 165
+        },
+        {
+          "caller": "compute_key",
+          "callee": "static_cast<const FCVType*>",
+          "lineNumber": 181
+        },
+        {
+          "caller": "compute_key",
+          "callee": "set_encoding_flag",
+          "lineNumber": 189
+        },
+        {
+          "caller": "compute_key",
+          "callee": "eprosima::fastcdr::serialize_key",
+          "lineNumber": 190
+        },
+        {
+          "caller": "compute_key",
+          "callee": "init",
+          "lineNumber": 193
+        },
+        {
+          "caller": "compute_key",
+          "callee": "update",
+          "lineNumber": 194
+        },
+        {
+          "caller": "compute_key",
+          "callee": "static_cast<unsigned int>",
+          "lineNumber": 194
+        },
+        {
+          "caller": "compute_key",
+          "callee": "get_serialized_data_length",
+          "lineNumber": 194
+        },
+        {
+          "caller": "compute_key",
+          "callee": "finalize",
+          "lineNumber": 195
+        },
+        {
+          "caller": "register_type_object_representation",
+          "callee": "register_FCVType_type_identifier",
+          "lineNumber": 213
+        }
+      ],
+      "metrics": {
+        "importCount": 4,
+        "exportCount": 9,
+        "functionCount": 9,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "core/ondemand/.gensrc/FCVPubSubTypes.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 123,
+      "nonEmptyLines": 91,
+      "callGraph": [
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 99
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 109
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "core/ondemand/.gensrc/FCVTypeObjectSupport.cxx",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 250,
+      "nonEmptyLines": 234,
+      "functions": [
+        {
+          "name": "register_FCVType_type_identifier",
+          "startLine": 42,
+          "endLine": 249,
+          "params": [
+            "type_ids_FCVType"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "register_FCVType_type_identifier",
+          "line": 42,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "get_type_identifiers",
+          "lineNumber": 48
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "type_object_registry",
+          "lineNumber": 48
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "eprosima::fastdds::dds::DomainParticipantFactory::get_instance",
+          "lineNumber": 48
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "TypeObjectUtils::build_struct_type_flag",
+          "lineNumber": 52
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "TypeObjectUtils::build_complete_type_detail",
+          "lineNumber": 57
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "to_string",
+          "lineNumber": 57
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "TypeObjectUtils::build_complete_struct_header",
+          "lineNumber": 59
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "TypeIdentifier",
+          "lineNumber": 59
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "get_type_identifiers",
+          "lineNumber": 65
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "type_object_registry",
+          "lineNumber": 65
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "eprosima::fastdds::dds::DomainParticipantFactory::get_instance",
+          "lineNumber": 65
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "EPROSIMA_LOG_ERROR",
+          "lineNumber": 70
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "TypeObjectUtils::build_struct_member_flag",
+          "lineNumber": 74
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "TypeObjectUtils::build_common_struct_member",
+          "lineNumber": 78
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "TypeObjectUtils::retrieve_complete_type_identifier",
+          "lineNumber": 78
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "EPROSIMA_LOG_ERROR",
+          "lineNumber": 81
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "reset",
+          "lineNumber": 86
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "TypeObjectUtils::build_complete_member_detail",
+          "lineNumber": 87
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "TypeObjectUtils::build_complete_struct_member",
+          "lineNumber": 88
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "TypeObjectUtils::add_complete_struct_member",
+          "lineNumber": 89
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "get_type_identifiers",
+          "lineNumber": 95
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "type_object_registry",
+          "lineNumber": 95
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "eprosima::fastdds::dds::DomainParticipantFactory::get_instance",
+          "lineNumber": 95
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "EPROSIMA_LOG_ERROR",
+          "lineNumber": 100
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "TypeObjectUtils::build_struct_member_flag",
+          "lineNumber": 104
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "TypeObjectUtils::build_common_struct_member",
+          "lineNumber": 108
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "TypeObjectUtils::retrieve_complete_type_identifier",
+          "lineNumber": 108
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "EPROSIMA_LOG_ERROR",
+          "lineNumber": 111
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "reset",
+          "lineNumber": 116
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "TypeObjectUtils::build_complete_member_detail",
+          "lineNumber": 117
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "TypeObjectUtils::build_complete_struct_member",
+          "lineNumber": 118
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "TypeObjectUtils::add_complete_struct_member",
+          "lineNumber": 119
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "get_type_identifiers",
+          "lineNumber": 125
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "type_object_registry",
+          "lineNumber": 125
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "eprosima::fastdds::dds::DomainParticipantFactory::get_instance",
+          "lineNumber": 125
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "EPROSIMA_LOG_ERROR",
+          "lineNumber": 130
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "TypeObjectUtils::build_struct_member_flag",
+          "lineNumber": 134
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "TypeObjectUtils::build_common_struct_member",
+          "lineNumber": 138
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "TypeObjectUtils::retrieve_complete_type_identifier",
+          "lineNumber": 138
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "EPROSIMA_LOG_ERROR",
+          "lineNumber": 141
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "reset",
+          "lineNumber": 146
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "TypeObjectUtils::build_complete_member_detail",
+          "lineNumber": 147
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "TypeObjectUtils::build_complete_struct_member",
+          "lineNumber": 148
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "TypeObjectUtils::add_complete_struct_member",
+          "lineNumber": 149
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "get_type_identifiers",
+          "lineNumber": 155
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "type_object_registry",
+          "lineNumber": 155
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "eprosima::fastdds::dds::DomainParticipantFactory::get_instance",
+          "lineNumber": 155
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "EPROSIMA_LOG_ERROR",
+          "lineNumber": 160
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "TypeObjectUtils::build_struct_member_flag",
+          "lineNumber": 164
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "TypeObjectUtils::build_common_struct_member",
+          "lineNumber": 168
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "TypeObjectUtils::retrieve_complete_type_identifier",
+          "lineNumber": 168
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "EPROSIMA_LOG_ERROR",
+          "lineNumber": 171
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "reset",
+          "lineNumber": 176
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "TypeObjectUtils::build_complete_member_detail",
+          "lineNumber": 177
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "TypeObjectUtils::build_complete_struct_member",
+          "lineNumber": 178
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "TypeObjectUtils::add_complete_struct_member",
+          "lineNumber": 179
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "get_type_identifiers",
+          "lineNumber": 185
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "type_object_registry",
+          "lineNumber": 185
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "eprosima::fastdds::dds::DomainParticipantFactory::get_instance",
+          "lineNumber": 185
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "EPROSIMA_LOG_ERROR",
+          "lineNumber": 190
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "TypeObjectUtils::build_struct_member_flag",
+          "lineNumber": 194
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "TypeObjectUtils::build_common_struct_member",
+          "lineNumber": 198
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "TypeObjectUtils::retrieve_complete_type_identifier",
+          "lineNumber": 198
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "EPROSIMA_LOG_ERROR",
+          "lineNumber": 201
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "reset",
+          "lineNumber": 206
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "TypeObjectUtils::build_complete_member_detail",
+          "lineNumber": 207
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "TypeObjectUtils::build_complete_struct_member",
+          "lineNumber": 208
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "TypeObjectUtils::add_complete_struct_member",
+          "lineNumber": 209
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "get_type_identifiers",
+          "lineNumber": 215
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "type_object_registry",
+          "lineNumber": 215
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "eprosima::fastdds::dds::DomainParticipantFactory::get_instance",
+          "lineNumber": 215
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "EPROSIMA_LOG_ERROR",
+          "lineNumber": 220
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "TypeObjectUtils::build_struct_member_flag",
+          "lineNumber": 224
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "TypeObjectUtils::build_common_struct_member",
+          "lineNumber": 228
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "TypeObjectUtils::retrieve_complete_type_identifier",
+          "lineNumber": 228
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "EPROSIMA_LOG_ERROR",
+          "lineNumber": 231
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "reset",
+          "lineNumber": 236
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "TypeObjectUtils::build_complete_member_detail",
+          "lineNumber": 237
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "TypeObjectUtils::build_complete_struct_member",
+          "lineNumber": 238
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "TypeObjectUtils::add_complete_struct_member",
+          "lineNumber": 239
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "TypeObjectUtils::build_complete_struct_type",
+          "lineNumber": 241
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "TypeObjectUtils::build_and_register_struct_type_object",
+          "lineNumber": 243
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "to_string",
+          "lineNumber": 243
+        },
+        {
+          "caller": "register_FCVType_type_identifier",
+          "callee": "EPROSIMA_LOG_ERROR",
+          "lineNumber": 245
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "core/ondemand/.gensrc/FCVTypeObjectSupport.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 56,
+      "nonEmptyLines": 46,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    }
+  ]
+}

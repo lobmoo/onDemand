@@ -1,0 +1,31 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "thirdparty/txdds/include/txdds/DCPS/topic/qos/TopicQos.h", "language": "c", "sizeLines": 31, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/topic/TopicDataType.h", "language": "c", "sizeLines": 80, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/topic/TypeSupport.h", "language": "c", "sizeLines": 54, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/utils/QosConvert.h", "language": "c", "sizeLines": 35, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/attributes/BuiltinAttributes.h", "language": "c", "sizeLines": 85, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/attributes/EndpointAttributes.h", "language": "c", "sizeLines": 43, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/attributes/HistoryAttributes.h", "language": "c", "sizeLines": 34, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/attributes/ParticipantAttributes.h", "language": "c", "sizeLines": 49, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/attributes/ReaderAttributes.h", "language": "c", "sizeLines": 25, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/attributes/TopicAttributes.h", "language": "c", "sizeLines": 39, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/attributes/WriterAttributes.h", "language": "c", "sizeLines": 35, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/builtin/data/DiscoveredParticipantData.h", "language": "c", "sizeLines": 54, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/builtin/data/DiscoveredReaderData.h", "language": "c", "sizeLines": 63, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/builtin/data/DiscoveredTopicData.h", "language": "c", "sizeLines": 23, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/builtin/data/DiscoveredWriterData.h", "language": "c", "sizeLines": 59, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/builtin/data/ParticipantProxy.h", "language": "c", "sizeLines": 58, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/builtin/data/ParticipantProxyData.h", "language": "c", "sizeLines": 13, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/builtin/data/ReaderProxyData.h", "language": "c", "sizeLines": 163, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/builtin/data/SPDPdiscoveredParticipantData.h", "language": "c", "sizeLines": 22, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/builtin/data/WriterProxyData.h", "language": "c", "sizeLines": 120, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/builtin/entity/BuiltinEntitysDefine.h", "language": "c", "sizeLines": 41, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/common/CDRMessage.h", "language": "c", "sizeLines": 132, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/common/ChangeCount_t.h", "language": "c", "sizeLines": 19, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/common/Duration.h", "language": "c", "sizeLines": 18, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/common/EntityId.h", "language": "c", "sizeLines": 159, "fileCategory": "code"}
+  ],
+  "batchImportData": {}
+}

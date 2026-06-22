@@ -1,0 +1,279 @@
+{
+  "nodes": [
+    {
+      "id": "file:thirdparty/arrow/include/arrow/vendored/double-conversion/fast-dtoa.h",
+      "type": "file",
+      "name": "fast-dtoa.h",
+      "filePath": "thirdparty/arrow/include/arrow/vendored/double-conversion/fast-dtoa.h",
+      "summary": "V8 double-conversion 库的快速 double-to-ASCII 转换头文件，声明 FastDtoa 函数，支持最短表示和精度模式两种浮点数到字符串的转换方式。",
+      "tags": ["utility", "type-definition", "serialization"],
+      "complexity": "simple",
+      "languageNotes": "使用 arrow_vendored::double_conversion 命名空间隔离 V8 代码，避免符号冲突。"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/vendored/double-conversion/fixed-dtoa.h",
+      "type": "file",
+      "name": "fixed-dtoa.h",
+      "filePath": "thirdparty/arrow/include/arrow/vendored/double-conversion/fixed-dtoa.h",
+      "summary": "V8 double-conversion 库的定点格式 double-to-ASCII 转换头文件，声明 FastFixedDtoa 函数，按指定小数位数输出浮点数的十进制表示。",
+      "tags": ["utility", "type-definition", "serialization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/vendored/double-conversion/ieee.h",
+      "type": "file",
+      "name": "ieee.h",
+      "filePath": "thirdparty/arrow/include/arrow/vendored/double-conversion/ieee.h",
+      "summary": "V8 double-conversion 库的 IEEE 754 浮点数位操作头文件，提供 Double 和 Single 类用于位级访问浮点数的符号、指数、尾数字段，支持 NaN/Infinity 检测和 DiyFp 转换。",
+      "tags": ["utility", "data-model", "type-definition"],
+      "complexity": "complex",
+      "languageNotes": "Double 类封装了完整的 IEEE 754 双精度浮点数位操作，包括 NextDouble/PreviousDouble 用于 ULP 级精度遍历。"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/vendored/double-conversion/string-to-double.h",
+      "type": "file",
+      "name": "string-to-double.h",
+      "filePath": "thirdparty/arrow/include/arrow/vendored/double-conversion/string-to-double.h",
+      "summary": "V8 double-conversion 库的字符串到浮点数转换器头文件，定义 StringToDoubleConverter 类，支持十六进制、八进制、千分位分隔符等多种解析选项。",
+      "tags": ["utility", "type-definition", "validation"],
+      "complexity": "moderate",
+      "languageNotes": "StringToDoubleConverter 通过 Flags 位掩码组合控制解析行为，支持 char 和 uc16 两种字符类型的输入。"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/vendored/double-conversion/strtod.h",
+      "type": "file",
+      "name": "strtod.h",
+      "filePath": "thirdparty/arrow/include/arrow/vendored/double-conversion/strtod.h",
+      "summary": "V8 double-conversion 库的字符串转 double/float 函数头文件，声明 Strtod、Strtof 及其 Trimmed 变体，以及 TrimTrailingZeros 辅助函数。",
+      "tags": ["utility", "type-definition", "serialization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/vendored/double-conversion/utils.h",
+      "type": "file",
+      "name": "utils.h",
+      "filePath": "thirdparty/arrow/include/arrow/vendored/double-conversion/utils.h",
+      "summary": "V8 double-conversion 库的基础工具头文件，定义 Vector 模板类（轻量数组视图）、StringBuilder 字符串构建器、BitCast 类型位转换函数，以及跨平台的编译器宏和类型定义。",
+      "tags": ["utility", "type-definition", "data-model"],
+      "complexity": "moderate",
+      "languageNotes": "Vector<T> 是 V8 风格的非拥有数组视图，StringBuilder 提供边界检查的字符串拼接，BitCast 利用 memcpy 规避严格别名规则。"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/vendored/pcg/pcg_extras.hpp",
+      "type": "file",
+      "name": "pcg_extras.hpp",
+      "filePath": "thirdparty/arrow/include/arrow/vendored/pcg/pcg_extras.hpp",
+      "summary": "PCG 随机数生成器的扩展工具头文件，提供位操作辅助函数（如 count-leading-zeros、population-count）、种子序列支持和平台相关的整数类型定义。",
+      "tags": ["utility", "type-definition", "data-model"],
+      "complexity": "complex",
+      "languageNotes": "使用 C++ SFINAE 和模板元编程实现跨平台的位操作原语封装。"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/vendored/pcg/pcg_random.hpp",
+      "type": "file",
+      "name": "pcg_random.hpp",
+      "filePath": "thirdparty/arrow/include/arrow/vendored/pcg/pcg_random.hpp",
+      "summary": "PCG 随机数生成器的核心实现头文件，定义多种 PCG 变体（PCG32、PCG64 等），提供符合 C++ <random> 接口的高性能伪随机数生成器。",
+      "tags": ["utility", "data-model", "type-definition"],
+      "complexity": "complex",
+      "languageNotes": "PCG（Permuted Congruential Generator）是 Melissa O'Neill 设计的高质量伪随机数生成器，兼具统计质量和计算效率。"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/vendored/pcg/pcg_uint128.hpp",
+      "type": "file",
+      "name": "pcg_uint128.hpp",
+      "filePath": "thirdparty/arrow/include/arrow/vendored/pcg/pcg_uint128.hpp",
+      "summary": "PCG 库的 128 位无符号整数实现头文件，定义 uint_x4 类型及其算术运算，提供 flog2 和 trailingzeros 等位操作函数。",
+      "tags": ["utility", "data-model", "type-definition"],
+      "complexity": "complex",
+      "languageNotes": "在不支持 __int128 的平台上通过 4 个 32 位整数模拟 128 位运算。"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/vendored/portable-snippets/debug-trap.h",
+      "type": "file",
+      "name": "debug-trap.h",
+      "filePath": "thirdparty/arrow/include/arrow/vendored/portable-snippets/debug-trap.h",
+      "summary": "跨平台调试断点头文件，定义 psnip_trap() 宏，在多种编译器和架构（x86、ARM、MIPS 等）上触发调试器断点，以及 psnip_dbg_assert 调试断言宏。",
+      "tags": ["utility", "type-definition"],
+      "complexity": "simple",
+      "languageNotes": "使用条件编译适配超过 15 种不同平台的断点指令。"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/vendored/portable-snippets/safe-math.h",
+      "type": "file",
+      "name": "safe-math.h",
+      "filePath": "thirdparty/arrow/include/arrow/vendored/portable-snippets/safe-math.h",
+      "summary": "跨平台安全数学运算头文件，提供溢出检测的加减乘除运算宏，支持多种整数类型，在算术溢出时返回错误标志而非未定义行为。",
+      "tags": ["utility", "validation", "type-definition"],
+      "complexity": "complex",
+      "languageNotes": "使用 __builtin_add_overflow 等编译器内建函数实现高效溢出检测，回退到手动位运算实现。"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/vendored/ProducerConsumerQueue.h",
+      "type": "file",
+      "name": "ProducerConsumerQueue.h",
+      "filePath": "thirdparty/arrow/include/arrow/vendored/ProducerConsumerQueue.h",
+      "summary": "Facebook Folly 库的无锁单生产者单消费者环形队列模板类，使用原子操作和缓存行填充避免 false sharing，支持 Write/Read/FrontPtr/PopFront 等操作。",
+      "tags": ["utility", "data-model", "type-definition"],
+      "complexity": "moderate",
+      "languageNotes": "使用 hardware_destructive_interference_size 进行缓存行填充，ARM/S390X 使用 64 字节，其他平台使用 128 字节。"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/vendored/strptime.h",
+      "type": "file",
+      "name": "strptime.h",
+      "filePath": "thirdparty/arrow/include/arrow/vendored/strptime.h",
+      "summary": "跨平台 strptime 函数声明头文件，为 Windows 等缺少标准 strptime 实现的平台提供 arrow_strptime 替代函数。",
+      "tags": ["utility", "type-definition"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/vendored/xxhash.h",
+      "type": "file",
+      "name": "xxhash.h",
+      "filePath": "thirdparty/arrow/include/arrow/vendored/xxhash.h",
+      "summary": "Arrow 的 xxHash 转发头文件，通过 #include 将请求转发到 xxhash/xxhash.h 的实际实现。",
+      "tags": ["utility", "barrel"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/vendored/xxhash/xxhash.h",
+      "type": "file",
+      "name": "xxhash.h",
+      "filePath": "thirdparty/arrow/include/arrow/vendored/xxhash/xxhash.h",
+      "summary": "xxHash 极速非加密哈希算法的完整单头文件实现，支持 32/64/128 位哈希、流式处理和自定义种子，性能接近 memcpy 速度。",
+      "tags": ["utility", "data-model", "type-definition"],
+      "complexity": "complex",
+      "languageNotes": "单头文件设计（STB 风格），通过 XXH_STATIC_LINKING_ONLY 和 XXH_IMPLEMENTATION 宏控制声明/实现的可见性。"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/visit_array_inline.h",
+      "type": "file",
+      "name": "visit_array_inline.h",
+      "filePath": "thirdparty/arrow/include/arrow/visit_array_inline.h",
+      "summary": "Arrow 的数组内联分发头文件，定义 VisitArrayInline 模板函数，通过 switch-case 将 Array 按 type_id 分派到 visitor 的对应 Visit 方法。",
+      "tags": ["utility", "type-definition"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/visit_data_inline.h",
+      "type": "file",
+      "name": "visit_data_inline.h",
+      "filePath": "thirdparty/arrow/include/arrow/visit_data_inline.h",
+      "summary": "Arrow 的数据内联访问头文件，定义 ArraySpanInlineVisitor 模板，支持对 ArraySpan 进行零拷贝的 valid/null 回调遍历，针对数值、布尔、字符串等类型特化。",
+      "tags": ["utility", "data-model", "type-definition"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/visit_scalar_inline.h",
+      "type": "file",
+      "name": "visit_scalar_inline.h",
+      "filePath": "thirdparty/arrow/include/arrow/visit_scalar_inline.h",
+      "summary": "Arrow 的标量内联分发头文件，定义 VisitScalarInline 模板函数，通过 switch-case 将 Scalar 按 type_id 分派到 visitor 的对应 Visit 方法。",
+      "tags": ["utility", "type-definition"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/visit_type_inline.h",
+      "type": "file",
+      "name": "visit_type_inline.h",
+      "filePath": "thirdparty/arrow/include/arrow/visit_type_inline.h",
+      "summary": "Arrow 的类型内联分发头文件，定义 VisitTypeInline、VisitType 和 VisitTypeIdInline 三个模板函数，支持按 DataType 的 type_id 进行 visitor 分派。",
+      "tags": ["utility", "type-definition"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/visitor_generate.h",
+      "type": "file",
+      "name": "visitor_generate.h",
+      "filePath": "thirdparty/arrow/include/arrow/visitor_generate.h",
+      "summary": "Arrow 的类型列表生成宏头文件，定义 ARROW_GENERATE_FOR_ALL_TYPES 等宏，枚举所有 Arrow 数据类型（Null、Boolean、Int8~UInt64、String、List、Struct 等），供 visitor 分派机制使用。",
+      "tags": ["utility", "type-definition"],
+      "complexity": "simple",
+      "languageNotes": "X-macro 模式：通过 ACTION 宏参数实现类型列表的代码生成。"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/visitor.h",
+      "type": "file",
+      "name": "visitor.h",
+      "filePath": "thirdparty/arrow/include/arrow/visitor.h",
+      "summary": "Arrow 的抽象 visitor 基类头文件，定义 ArrayVisitor、TypeVisitor 和 ScalarVisitor 三个抽象基类，为所有 Arrow 数据类型提供虚函数 Visit 接口。",
+      "tags": ["utility", "type-definition", "data-model"],
+      "complexity": "moderate",
+      "languageNotes": "经典的 Visitor 设计模式实现，每个 visitor 基类为 ~35 种 Arrow 类型提供默认空实现。"
+    },
+    {
+      "id": "file:thirdparty/arrow/lib/libarrow_bundled_dependencies.a",
+      "type": "file",
+      "name": "libarrow_bundled_dependencies.a",
+      "filePath": "thirdparty/arrow/lib/libarrow_bundled_dependencies.a",
+      "summary": "Arrow 的捆绑第三方依赖静态库，包含 Arrow 编译时静态链接的所有第三方库（如 double-conversion、xxhash 等）的目标文件归档。",
+      "tags": ["utility", "infrastructure"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/lib/libarrow.a",
+      "type": "file",
+      "name": "libarrow.a",
+      "filePath": "thirdparty/arrow/lib/libarrow.a",
+      "summary": "Apache Arrow C++ 核心库的静态库归档文件，包含 Arrow 列式内存格式、IPC 序列化、计算内核等功能的编译目标文件。",
+      "tags": ["utility", "infrastructure"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/lib/libarrow.so",
+      "type": "file",
+      "name": "libarrow.so",
+      "filePath": "thirdparty/arrow/lib/libarrow.so",
+      "summary": "Apache Arrow C++ 核心库的动态链接库（符号链接），指向 libarrow.so.1400 版本化库文件。",
+      "tags": ["utility", "infrastructure"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/lib/libarrow.so.1400",
+      "type": "file",
+      "name": "libarrow.so.1400",
+      "filePath": "thirdparty/arrow/lib/libarrow.so.1400",
+      "summary": "Apache Arrow C++ 核心库的版本化动态链接库（SO version 1400），提供列式内存格式、IPC、计算内核等运行时功能。",
+      "tags": ["utility", "infrastructure"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:thirdparty/arrow/include/arrow/vendored/xxhash.h",
+      "target": "file:thirdparty/arrow/include/arrow/vendored/xxhash/xxhash.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/visit_array_inline.h",
+      "target": "file:thirdparty/arrow/include/arrow/visitor_generate.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/visit_scalar_inline.h",
+      "target": "file:thirdparty/arrow/include/arrow/visitor_generate.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/visit_type_inline.h",
+      "target": "file:thirdparty/arrow/include/arrow/visitor_generate.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:thirdparty/arrow/lib/libarrow.so",
+      "target": "file:thirdparty/arrow/lib/libarrow.so.1400",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    }
+  ]
+}

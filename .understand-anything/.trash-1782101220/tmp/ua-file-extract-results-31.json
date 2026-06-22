@@ -1,0 +1,276 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 4,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": ".env",
+      "language": "config",
+      "fileCategory": "config",
+      "totalLines": 26,
+      "nonEmptyLines": 21,
+      "definitions": [
+        {
+          "name": "dir",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 11,
+          "endLine": 11
+        },
+        {
+          "name": "PROJECT_ROOT",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 17,
+          "endLine": 17
+        },
+        {
+          "name": "FAST_DDS_LIB",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 19,
+          "endLine": 19
+        },
+        {
+          "name": "TX_DDS_LIB",
+          "kind": "variable",
+          "fields": [],
+          "startLine": 20,
+          "endLine": 20
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "definitionCount": 4
+      }
+    },
+    {
+      "path": "CLAUDE.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 92,
+      "nonEmptyLines": 59,
+      "sections": [
+        {
+          "heading": "CLAUDE.md",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "Build",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "Tests",
+          "level": 2,
+          "line": 16
+        },
+        {
+          "heading": "Code Formatting",
+          "level": 2,
+          "line": 26
+        },
+        {
+          "heading": "Architecture",
+          "level": 2,
+          "line": 36
+        },
+        {
+          "heading": "Core Components",
+          "level": 3,
+          "line": 40
+        },
+        {
+          "heading": "DDS Topics",
+          "level": 3,
+          "line": 60
+        },
+        {
+          "heading": "Frequency Negotiation",
+          "level": 3,
+          "line": 68
+        },
+        {
+          "heading": "Scheduler Rebuild",
+          "level": 3,
+          "line": 72
+        },
+        {
+          "heading": "IDL Definitions",
+          "level": 3,
+          "line": 76
+        },
+        {
+          "heading": "Maintenance Principles (from `.claude/CLAUDE.md`)",
+          "level": 2,
+          "line": 82
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 11
+      }
+    },
+    {
+      "path": "CMakeLists.txt",
+      "language": "txt",
+      "fileCategory": "docs",
+      "totalLines": 45,
+      "nonEmptyLines": 34,
+      "metrics": {}
+    },
+    {
+      "path": "README.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 652,
+      "nonEmptyLines": 522,
+      "sections": [
+        {
+          "heading": "OnDemand 模块架构文档",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "概述",
+          "level": 2,
+          "line": 3
+        },
+        {
+          "heading": "项目结构",
+          "level": 2,
+          "line": 16
+        },
+        {
+          "heading": "整体架构",
+          "level": 2,
+          "line": 43
+        },
+        {
+          "heading": "核心组件",
+          "level": 2,
+          "line": 71
+        },
+        {
+          "heading": "1. OnDemandPub（发布端）",
+          "level": 3,
+          "line": 73
+        },
+        {
+          "heading": "2. OnDemandSub（订阅端）",
+          "level": 3,
+          "line": 125
+        },
+        {
+          "heading": "主要数据结构",
+          "level": 2,
+          "line": 185
+        },
+        {
+          "heading": "VarMetadata（变量元数据）",
+          "level": 3,
+          "line": 187
+        },
+        {
+          "heading": "VarStore（变量数据存储）",
+          "level": 3,
+          "line": 224
+        },
+        {
+          "heading": "BucketManager（分桶管理）",
+          "level": 3,
+          "line": 296
+        },
+        {
+          "heading": "PublishGroupKey / CallbackGroupKey（调度分组键）",
+          "level": 3,
+          "line": 324
+        },
+        {
+          "heading": "GroupVarInfo / CallbackVarInfo（分组内变量信息）",
+          "level": 3,
+          "line": 341
+        },
+        {
+          "heading": "SubscriptionItem / VarCallbackData（用户接口类型）",
+          "level": 3,
+          "line": 364
+        },
+        {
+          "heading": "IDL 消息结构",
+          "level": 3,
+          "line": 387
+        },
+        {
+          "heading": "TimerScheduler / TimerWheel（时间轮调度器）",
+          "level": 3,
+          "line": 454
+        },
+        {
+          "heading": "DDS 通信协议",
+          "level": 2,
+          "line": 487
+        },
+        {
+          "heading": "数据流",
+          "level": 2,
+          "line": 497
+        },
+        {
+          "heading": "订阅建立流程",
+          "level": 3,
+          "line": 499
+        },
+        {
+          "heading": "数据推送流程",
+          "level": 3,
+          "line": 522
+        },
+        {
+          "heading": "取消订阅流程",
+          "level": 3,
+          "line": 547
+        },
+        {
+          "heading": "性能设计",
+          "level": 2,
+          "line": 568
+        },
+        {
+          "heading": "使用示例",
+          "level": 2,
+          "line": 584
+        },
+        {
+          "heading": "发布端",
+          "level": 3,
+          "line": 586
+        },
+        {
+          "heading": "订阅端",
+          "level": 3,
+          "line": 614
+        },
+        {
+          "heading": "已知限制 & TODO",
+          "level": 2,
+          "line": 645
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 26
+      }
+    }
+  ]
+}

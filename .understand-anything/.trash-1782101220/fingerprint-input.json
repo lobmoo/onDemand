@@ -1,0 +1,5 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "sourceFilePaths": ["core/main.cc", "core/ondemand/on_demand_pub.cc", "core/ondemand/on_demand_pub.h", "core/ondemand/on_demand_sub.cc", "core/ondemand/on_demand_sub.h", "core/ondemand/on_demand_common.h", "core/ondemand/variable_store.h", "core/ondemand/on_demand_listener.h", "common/timer_wheel/timer_wheel.h", "common/timer_wheel/timer_scheduler.h", "common/timer_wheel/thread_pool.h", "common/fastdds_wrapper/fastdds_node.cc", "common/fastdds_wrapper/fastdds_node.h", "common/log/logger.cc", "common/log/logger.h"],
+  "gitCommitHash": "96875dbcf86ac99ad8625fc00bbd687e9b8012c5"
+}

@@ -1,0 +1,31 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "thirdparty/txdds/include/txdds/DCPS/dynamicType/DynamicTypeBuilderFactory.h", "language": "c", "sizeLines": 70, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/dynamicType/DynamicTypeMember.h", "language": "c", "sizeLines": 33, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/dynamicType/DynamicTypeParameter.h", "language": "c", "sizeLines": 62, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/dynamicType/MemberDescriptor.h", "language": "c", "sizeLines": 48, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/dynamicType/TypeDescriptor.h", "language": "c", "sizeLines": 114, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/dynamicType/TypeNamesGenerator.h", "language": "c", "sizeLines": 24, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/dynamicType/TypeObjectFactory.h", "language": "c", "sizeLines": 114, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/dynamicType/TypeObjectUtils.h", "language": "c", "sizeLines": 33, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/publisher/history/DataWriterHistory.h", "language": "c", "sizeLines": 39, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/publisher/IDataWriter.h", "language": "c", "sizeLines": 40, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/publisher/IDataWriterListener.h", "language": "c", "sizeLines": 30, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/publisher/IPublisher.h", "language": "c", "sizeLines": 58, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/publisher/IPublisherListener.h", "language": "c", "sizeLines": 14, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/publisher/qos/DataWriterQos.h", "language": "c", "sizeLines": 31, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/publisher/qos/PublisherQos.h", "language": "c", "sizeLines": 22, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/subscriber/history/DataReaderHistory.h", "language": "c", "sizeLines": 52, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/subscriber/IDataReader.h", "language": "c", "sizeLines": 58, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/subscriber/IDataReaderListener.h", "language": "c", "sizeLines": 41, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/subscriber/ISubscriber.h", "language": "c", "sizeLines": 58, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/subscriber/ISubscriberListener.h", "language": "c", "sizeLines": 14, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/subscriber/qos/DataReaderQos.h", "language": "c", "sizeLines": 28, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/subscriber/qos/SubscriberQos.h", "language": "c", "sizeLines": 20, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/subscriber/SampleInfo.h", "language": "c", "sizeLines": 59, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/topic/ITopic.h", "language": "c", "sizeLines": 53, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/topic/ITopicListener.h", "language": "c", "sizeLines": 12, "fileCategory": "code"}
+  ],
+  "batchImportData": {}
+}

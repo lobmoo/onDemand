@@ -1,0 +1,670 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 3,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "core/ondemand/.gensrctx/dsf_define_nodeCdrAux.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 95,
+      "nonEmptyLines": 47,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "core/ondemand/.gensrctx/dsf_define_nodePubSubTypes.cxx",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 432,
+      "nonEmptyLines": 356,
+      "functions": [
+        {
+          "name": "NetworkInterfacePubSubType",
+          "startLine": 36,
+          "endLine": 49,
+          "params": []
+        },
+        {
+          "name": "~NetworkInterfacePubSubType",
+          "startLine": 51,
+          "endLine": 57,
+          "params": []
+        },
+        {
+          "name": "Serialize",
+          "startLine": 59,
+          "endLine": 79,
+          "params": [
+            "data",
+            "payload"
+          ]
+        },
+        {
+          "name": "Deserialize",
+          "startLine": 81,
+          "endLine": 102,
+          "params": [
+            "payload",
+            "data"
+          ]
+        },
+        {
+          "name": "GetSerializedSizeProvider",
+          "startLine": 104,
+          "endLine": 115,
+          "params": [
+            "data"
+          ]
+        },
+        {
+          "name": "DeleteData",
+          "startLine": 122,
+          "endLine": 126,
+          "params": [
+            "data"
+          ]
+        },
+        {
+          "name": "GetKey",
+          "startLine": 128,
+          "endLine": 164,
+          "params": [
+            "data",
+            "handle",
+            "force_md5"
+          ]
+        },
+        {
+          "name": "BasicInfoPubSubType",
+          "startLine": 167,
+          "endLine": 180,
+          "params": []
+        },
+        {
+          "name": "~BasicInfoPubSubType",
+          "startLine": 182,
+          "endLine": 188,
+          "params": []
+        },
+        {
+          "name": "Serialize",
+          "startLine": 190,
+          "endLine": 210,
+          "params": [
+            "data",
+            "payload"
+          ]
+        },
+        {
+          "name": "Deserialize",
+          "startLine": 212,
+          "endLine": 233,
+          "params": [
+            "payload",
+            "data"
+          ]
+        },
+        {
+          "name": "GetSerializedSizeProvider",
+          "startLine": 235,
+          "endLine": 246,
+          "params": [
+            "data"
+          ]
+        },
+        {
+          "name": "DeleteData",
+          "startLine": 253,
+          "endLine": 257,
+          "params": [
+            "data"
+          ]
+        },
+        {
+          "name": "GetKey",
+          "startLine": 259,
+          "endLine": 295,
+          "params": [
+            "data",
+            "handle",
+            "force_md5"
+          ]
+        },
+        {
+          "name": "RuntimeInfoPubSubType",
+          "startLine": 297,
+          "endLine": 310,
+          "params": []
+        },
+        {
+          "name": "~RuntimeInfoPubSubType",
+          "startLine": 312,
+          "endLine": 318,
+          "params": []
+        },
+        {
+          "name": "Serialize",
+          "startLine": 320,
+          "endLine": 340,
+          "params": [
+            "data",
+            "payload"
+          ]
+        },
+        {
+          "name": "Deserialize",
+          "startLine": 342,
+          "endLine": 363,
+          "params": [
+            "payload",
+            "data"
+          ]
+        },
+        {
+          "name": "GetSerializedSizeProvider",
+          "startLine": 365,
+          "endLine": 376,
+          "params": [
+            "data"
+          ]
+        },
+        {
+          "name": "DeleteData",
+          "startLine": 383,
+          "endLine": 387,
+          "params": [
+            "data"
+          ]
+        },
+        {
+          "name": "GetKey",
+          "startLine": 389,
+          "endLine": 425,
+          "params": [
+            "data",
+            "handle",
+            "force_md5"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "NetworkInterfacePubSubType",
+          "line": 36,
+          "isDefault": false
+        },
+        {
+          "name": "~NetworkInterfacePubSubType",
+          "line": 51,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 59,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 81,
+          "isDefault": false
+        },
+        {
+          "name": "GetSerializedSizeProvider",
+          "line": 104,
+          "isDefault": false
+        },
+        {
+          "name": "DeleteData",
+          "line": 122,
+          "isDefault": false
+        },
+        {
+          "name": "GetKey",
+          "line": 128,
+          "isDefault": false
+        },
+        {
+          "name": "BasicInfoPubSubType",
+          "line": 167,
+          "isDefault": false
+        },
+        {
+          "name": "~BasicInfoPubSubType",
+          "line": 182,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 190,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 212,
+          "isDefault": false
+        },
+        {
+          "name": "GetSerializedSizeProvider",
+          "line": 235,
+          "isDefault": false
+        },
+        {
+          "name": "DeleteData",
+          "line": 253,
+          "isDefault": false
+        },
+        {
+          "name": "GetKey",
+          "line": 259,
+          "isDefault": false
+        },
+        {
+          "name": "RuntimeInfoPubSubType",
+          "line": 297,
+          "isDefault": false
+        },
+        {
+          "name": "~RuntimeInfoPubSubType",
+          "line": 312,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 320,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 342,
+          "isDefault": false
+        },
+        {
+          "name": "GetSerializedSizeProvider",
+          "line": 365,
+          "isDefault": false
+        },
+        {
+          "name": "DeleteData",
+          "line": 383,
+          "isDefault": false
+        },
+        {
+          "name": "GetKey",
+          "line": 389,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "NetworkInterfacePubSubType",
+          "callee": "SetName",
+          "lineNumber": 38
+        },
+        {
+          "caller": "NetworkInterfacePubSubType",
+          "callee": "static_cast<uint32_t>",
+          "lineNumber": 41
+        },
+        {
+          "caller": "NetworkInterfacePubSubType",
+          "callee": "BaoSky::Cdr::Cdr::Alignment",
+          "lineNumber": 41
+        },
+        {
+          "caller": "NetworkInterfacePubSubType",
+          "callee": "reinterpret_cast<unsigned char*>",
+          "lineNumber": 47
+        },
+        {
+          "caller": "NetworkInterfacePubSubType",
+          "callee": "malloc",
+          "lineNumber": 47
+        },
+        {
+          "caller": "NetworkInterfacePubSubType",
+          "callee": "memset",
+          "lineNumber": 48
+        },
+        {
+          "caller": "~NetworkInterfacePubSubType",
+          "callee": "free",
+          "lineNumber": 55
+        },
+        {
+          "caller": "Serialize",
+          "callee": "static_cast<NetworkInterface *>",
+          "lineNumber": 63
+        },
+        {
+          "caller": "Serialize",
+          "callee": "reinterpret_cast<char*>",
+          "lineNumber": 66
+        },
+        {
+          "caller": "Serialize",
+          "callee": "SerializeEncapsulation",
+          "lineNumber": 72
+        },
+        {
+          "caller": "Serialize",
+          "callee": "Serialize",
+          "lineNumber": 74
+        },
+        {
+          "caller": "Serialize",
+          "callee": "static_cast<uint32_t>",
+          "lineNumber": 77
+        },
+        {
+          "caller": "Serialize",
+          "callee": "GetSerializedDataLength",
+          "lineNumber": 77
+        },
+        {
+          "caller": "Deserialize",
+          "callee": "static_cast<NetworkInterface *>",
+          "lineNumber": 86
+        },
+        {
+          "caller": "Deserialize",
+          "callee": "reinterpret_cast<char*>",
+          "lineNumber": 89
+        },
+        {
+          "caller": "Deserialize",
+          "callee": "DeserializeEncapsulation",
+          "lineNumber": 95
+        },
+        {
+          "caller": "Deserialize",
+          "callee": "Deserialize",
+          "lineNumber": 101
+        },
+        {
+          "caller": "GetSerializedSizeProvider",
+          "callee": "static_cast<uint32_t>",
+          "lineNumber": 111
+        },
+        {
+          "caller": "GetSerializedSizeProvider",
+          "callee": "CalculateSerializedSize",
+          "lineNumber": 111
+        },
+        {
+          "caller": "GetSerializedSizeProvider",
+          "callee": "static_cast<NetworkInterface *>",
+          "lineNumber": 112
+        },
+        {
+          "caller": "DeleteData",
+          "callee": "reinterpret_cast<NetworkInterface *>",
+          "lineNumber": 125
+        },
+        {
+          "caller": "GetKey",
+          "callee": "static_cast<NetworkInterface*>",
+          "lineNumber": 138
+        },
+        {
+          "caller": "GetKey",
+          "callee": "SerializeKey",
+          "lineNumber": 145
+        },
+        {
+          "caller": "BasicInfoPubSubType",
+          "callee": "SetName",
+          "lineNumber": 169
+        },
+        {
+          "caller": "BasicInfoPubSubType",
+          "callee": "static_cast<uint32_t>",
+          "lineNumber": 172
+        },
+        {
+          "caller": "BasicInfoPubSubType",
+          "callee": "BaoSky::Cdr::Cdr::Alignment",
+          "lineNumber": 172
+        },
+        {
+          "caller": "BasicInfoPubSubType",
+          "callee": "reinterpret_cast<unsigned char*>",
+          "lineNumber": 178
+        },
+        {
+          "caller": "BasicInfoPubSubType",
+          "callee": "malloc",
+          "lineNumber": 178
+        },
+        {
+          "caller": "BasicInfoPubSubType",
+          "callee": "memset",
+          "lineNumber": 179
+        },
+        {
+          "caller": "~BasicInfoPubSubType",
+          "callee": "free",
+          "lineNumber": 186
+        },
+        {
+          "caller": "Serialize",
+          "callee": "static_cast<BasicInfo *>",
+          "lineNumber": 194
+        },
+        {
+          "caller": "Serialize",
+          "callee": "reinterpret_cast<char*>",
+          "lineNumber": 197
+        },
+        {
+          "caller": "Serialize",
+          "callee": "SerializeEncapsulation",
+          "lineNumber": 203
+        },
+        {
+          "caller": "Serialize",
+          "callee": "Serialize",
+          "lineNumber": 205
+        },
+        {
+          "caller": "Serialize",
+          "callee": "static_cast<uint32_t>",
+          "lineNumber": 208
+        },
+        {
+          "caller": "Serialize",
+          "callee": "GetSerializedDataLength",
+          "lineNumber": 208
+        },
+        {
+          "caller": "Deserialize",
+          "callee": "static_cast<BasicInfo *>",
+          "lineNumber": 217
+        },
+        {
+          "caller": "Deserialize",
+          "callee": "reinterpret_cast<char*>",
+          "lineNumber": 220
+        },
+        {
+          "caller": "Deserialize",
+          "callee": "DeserializeEncapsulation",
+          "lineNumber": 226
+        },
+        {
+          "caller": "Deserialize",
+          "callee": "Deserialize",
+          "lineNumber": 232
+        },
+        {
+          "caller": "GetSerializedSizeProvider",
+          "callee": "static_cast<uint32_t>",
+          "lineNumber": 242
+        },
+        {
+          "caller": "GetSerializedSizeProvider",
+          "callee": "CalculateSerializedSize",
+          "lineNumber": 242
+        },
+        {
+          "caller": "GetSerializedSizeProvider",
+          "callee": "static_cast<BasicInfo *>",
+          "lineNumber": 243
+        },
+        {
+          "caller": "DeleteData",
+          "callee": "reinterpret_cast<BasicInfo *>",
+          "lineNumber": 256
+        },
+        {
+          "caller": "GetKey",
+          "callee": "static_cast<BasicInfo*>",
+          "lineNumber": 269
+        },
+        {
+          "caller": "GetKey",
+          "callee": "SerializeKey",
+          "lineNumber": 276
+        },
+        {
+          "caller": "RuntimeInfoPubSubType",
+          "callee": "SetName",
+          "lineNumber": 299
+        },
+        {
+          "caller": "RuntimeInfoPubSubType",
+          "callee": "static_cast<uint32_t>",
+          "lineNumber": 302
+        },
+        {
+          "caller": "RuntimeInfoPubSubType",
+          "callee": "BaoSky::Cdr::Cdr::Alignment",
+          "lineNumber": 302
+        },
+        {
+          "caller": "RuntimeInfoPubSubType",
+          "callee": "reinterpret_cast<unsigned char*>",
+          "lineNumber": 308
+        },
+        {
+          "caller": "RuntimeInfoPubSubType",
+          "callee": "malloc",
+          "lineNumber": 308
+        },
+        {
+          "caller": "RuntimeInfoPubSubType",
+          "callee": "memset",
+          "lineNumber": 309
+        },
+        {
+          "caller": "~RuntimeInfoPubSubType",
+          "callee": "free",
+          "lineNumber": 316
+        },
+        {
+          "caller": "Serialize",
+          "callee": "static_cast<RuntimeInfo *>",
+          "lineNumber": 324
+        },
+        {
+          "caller": "Serialize",
+          "callee": "reinterpret_cast<char*>",
+          "lineNumber": 327
+        },
+        {
+          "caller": "Serialize",
+          "callee": "SerializeEncapsulation",
+          "lineNumber": 333
+        },
+        {
+          "caller": "Serialize",
+          "callee": "Serialize",
+          "lineNumber": 335
+        },
+        {
+          "caller": "Serialize",
+          "callee": "static_cast<uint32_t>",
+          "lineNumber": 338
+        },
+        {
+          "caller": "Serialize",
+          "callee": "GetSerializedDataLength",
+          "lineNumber": 338
+        },
+        {
+          "caller": "Deserialize",
+          "callee": "static_cast<RuntimeInfo *>",
+          "lineNumber": 347
+        },
+        {
+          "caller": "Deserialize",
+          "callee": "reinterpret_cast<char*>",
+          "lineNumber": 350
+        },
+        {
+          "caller": "Deserialize",
+          "callee": "DeserializeEncapsulation",
+          "lineNumber": 356
+        },
+        {
+          "caller": "Deserialize",
+          "callee": "Deserialize",
+          "lineNumber": 362
+        },
+        {
+          "caller": "GetSerializedSizeProvider",
+          "callee": "static_cast<uint32_t>",
+          "lineNumber": 372
+        },
+        {
+          "caller": "GetSerializedSizeProvider",
+          "callee": "CalculateSerializedSize",
+          "lineNumber": 372
+        },
+        {
+          "caller": "GetSerializedSizeProvider",
+          "callee": "static_cast<RuntimeInfo *>",
+          "lineNumber": 373
+        },
+        {
+          "caller": "DeleteData",
+          "callee": "reinterpret_cast<RuntimeInfo *>",
+          "lineNumber": 386
+        },
+        {
+          "caller": "GetKey",
+          "callee": "static_cast<RuntimeInfo*>",
+          "lineNumber": 399
+        },
+        {
+          "caller": "GetKey",
+          "callee": "SerializeKey",
+          "lineNumber": 406
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 21,
+        "functionCount": 21,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "core/ondemand/.gensrctx/dsf_define_nodePubSubTypes.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 129,
+      "nonEmptyLines": 90,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    }
+  ]
+}

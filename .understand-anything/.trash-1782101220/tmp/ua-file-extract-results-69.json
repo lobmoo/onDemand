@@ -1,0 +1,423 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 25,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/history/CacheChangeProxy.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 30,
+      "nonEmptyLines": 29,
+      "classes": [
+        {
+          "name": "CacheChangeProxy",
+          "startLine": 14,
+          "endLine": 29,
+          "methods": [
+            "Isfull",
+            "ReceiveFragment",
+            "MissingData"
+          ],
+          "properties": [
+            "mbase",
+            "mFragementNumber",
+            "mFragementSize",
+            "mReceivedFragment"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "Isfull",
+          "line": 23,
+          "isDefault": false
+        },
+        {
+          "name": "ReceiveFragment",
+          "line": 24,
+          "isDefault": false
+        },
+        {
+          "name": "MissingData",
+          "line": 25,
+          "isDefault": false
+        },
+        {
+          "name": "CacheChangeProxy",
+          "line": 14,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 4,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/history/IChangePool.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 26,
+      "nonEmptyLines": 21,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/history/IHistory.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 101,
+      "nonEmptyLines": 76,
+      "callGraph": [
+        {
+          "caller": "begin",
+          "callee": "begin",
+          "lineNumber": 47
+        },
+        {
+          "caller": "end",
+          "callee": "end",
+          "lineNumber": 49
+        },
+        {
+          "caller": "Empty",
+          "callee": "empty",
+          "lineNumber": 53
+        },
+        {
+          "caller": "GetLatestSequence",
+          "callee": "empty",
+          "lineNumber": 60
+        },
+        {
+          "caller": "GetLatestSequence",
+          "callee": "size",
+          "lineNumber": 64
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/history/IPayloadPool.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 26,
+      "nonEmptyLines": 25,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/history/IReaderHistory.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 35,
+      "nonEmptyLines": 30,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/history/IWriterHistory.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 39,
+      "nonEmptyLines": 31,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/history/PoolConfig.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 47,
+      "nonEmptyLines": 38,
+      "callGraph": [
+        {
+          "caller": "FromHistoryAttributes",
+          "callee": "static_cast<uint32_t>",
+          "lineNumber": 41
+        },
+        {
+          "caller": "FromHistoryAttributes",
+          "callee": "static_cast<uint32_t>",
+          "lineNumber": 42
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/IEndpoint.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 58,
+      "nonEmptyLines": 45,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/IEntity.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 36,
+      "nonEmptyLines": 24,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/message/CDRMessageOperator.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 363,
+      "nonEmptyLines": 318,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/message/MessageReceiver.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 134,
+      "nonEmptyLines": 123,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/message/RTPSMessage.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 85,
+      "nonEmptyLines": 77,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/message/SubMessageElements.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 36,
+      "nonEmptyLines": 34,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/message/SubMessageHeader.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 28,
+      "nonEmptyLines": 26,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/message/SubMessages.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 20,
+      "nonEmptyLines": 20,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/message/submessages/AckNack.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 24,
+      "nonEmptyLines": 23,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/message/submessages/Data.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 40,
+      "nonEmptyLines": 38,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/message/submessages/DataFrag.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 36,
+      "nonEmptyLines": 34,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/message/submessages/Gap.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 35,
+      "nonEmptyLines": 33,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/message/submessages/HeaderExtension.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 31,
+      "nonEmptyLines": 30,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/message/submessages/HeartBeat.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 46,
+      "nonEmptyLines": 44,
+      "callGraph": [
+        {
+          "caller": "HeartBeatMsg",
+          "callee": "memset",
+          "lineNumber": 34
+        },
+        {
+          "caller": "HeartBeatMsg",
+          "callee": "memset",
+          "lineNumber": 35
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/message/submessages/HeartBeatFrag.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 23,
+      "nonEmptyLines": 22,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/message/submessages/InfoDestination.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 22,
+      "nonEmptyLines": 22,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/message/submessages/InfoReply.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 21,
+      "nonEmptyLines": 20,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/message/submessages/InfoSource.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 21,
+      "nonEmptyLines": 20,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    }
+  ]
+}

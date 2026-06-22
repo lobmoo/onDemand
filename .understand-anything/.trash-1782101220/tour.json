@@ -1,0 +1,120 @@
+[
+  {
+    "order": 1,
+    "title": "项目概览与架构总览",
+    "description": "从 README.md 开始，了解 OnDemand 系统的定位：一个基于 FastDDS 的高性能按需变量发布/订阅系统，支持 10 万+ 变量的高效分发。文档涵盖了项目结构、核心组件关系、DDS 通信协议和数据流时序，是整个代码库的地图。",
+    "nodeIds": ["document:README.md"]
+  },
+  {
+    "order": 2,
+    "title": "IDL 数据契约定义",
+    "description": "IDL 文件是整个系统的数据契约基础。dsf_define_var.idl 定义了变量配置（Define）、数据传输（TableDataTransfer）和表定义（PubTableDefine）等核心结构体，是发布端和订阅端通信的共同语言。dsf_define_messages.idl 则定义了订阅注册（SubTableRegister）等控制消息类型。理解这些 IDL 定义是理解后续所有代码的前提。",
+    "nodeIds": [
+      "schema:core/ondemand/idl/dsf_define_var.idl",
+      "schema:core/ondemand/idl/dsf_define_messages.idl",
+      "schema:core/ondemand/idl/dsf_define_datatypes.idl"
+    ],
+    "languageLesson": "IDL（Interface Definition Language）是 DDS 中间件的类型描述语言。每个 IDL 结构体会由 fastddsgen 工具自动生成 C++ 头文件、CDR 序列化代码和 PubSubType 接口实现。IDL 中的 @topic 注解标记哪些结构体可以作为 DDS Topic 发布。"
+  },
+  {
+    "order": 3,
+    "title": "DDS 中间件抽象层",
+    "description": "项目需要同时支持 FastDDS 和 TXDDS 两种 DDS 实现。dds_abstraction.h 通过编译时宏（USE_FASTDDS/USE_TXDDS）统一导出 DataNode、DDSTopicWriter、DDSTopicReader 等类型别名，让上层代码无需关心底层 DDS 实现。fastdds_node.cc 封装了 DomainParticipant 的创建、Publisher/Subscriber/Topic 管理和 QoS 配置。",
+    "nodeIds": [
+      "file:common/dds_wrapper/dds_abstraction.h",
+      "file:common/fastdds_wrapper/fastdds_node.h",
+      "file:common/fastdds_wrapper/fastdds_node.cc"
+    ],
+    "languageLesson": "C++ 的类型别名（using/typedef）配合条件编译宏，可以在编译期切换底层实现而不改变上层 API。这种策略模式的编译期变体避免了虚函数调用开销，符合零开销原则。"
+  },
+  {
+    "order": 4,
+    "title": "OnDemand 核心公共定义",
+    "description": "on_demand_common.h 定义了发布端和订阅端共享的核心数据结构：VarMetadata（变量元信息，含当前频率和订阅者列表）、BucketManager（将变量 hash 分配到 20 个桶，每个桶对应独立的 DDS Topic 以并行传输）、PublishGroupKey（调度分组键）。分桶机制是系统支撑 10 万+ 变量的关键设计。",
+    "nodeIds": [
+      "file:core/ondemand/on_demand_common.h"
+    ],
+    "languageLesson": "BucketManager 使用 hash % 20 将变量分散到 20 个 DDS Topic（dsf/var/data/transfer/bucket_N），避免单一 Topic 成为传输瓶颈。这种分桶并行策略在分布式系统中非常常见，类似于一致性哈希的简化版。"
+  },
+  {
+    "order": 5,
+    "title": "时间轮调度器",
+    "description": "TimerWheel 是一个 8 层分级时间轮，每层 256 个槽位，1ms 精度，支持从 1 毫秒到数天的定时任务。TimerScheduler 封装了时间轮和 8 线程的线程池，提供 ScheduleRecurring 等高层 API。发布端用它来调度周期性数据推送，订阅端用它来触发用户回调——它是整个系统的心跳驱动器。",
+    "nodeIds": [
+      "file:common/timer_wheel/timer_wheel.h",
+      "file:common/timer_wheel/timer_scheduler.h",
+      "file:common/timer_wheel/thread_pool.h"
+    ],
+    "languageLesson": "分层时间轮（Hierarchical Timing Wheel）是高性能定时器的经典实现。底层轮处理精确的短周期（0-255ms），高层轮处理长周期，溢出时降级到底层。相比 std::priority_queue 的 O(log n)，时间轮的插入和触发都是 O(1)。"
+  },
+  {
+    "order": 6,
+    "title": "无锁变量存储（VarStore）",
+    "description": "variable_store.h 实现了基于 Seqlock 的无锁变量存储。每个变量槽位 64 字节对齐，使用原子序列计数器（奇数=写入中，偶数=稳定）实现单写多读。Dirty 标记配合 ConcurrentQueue 追踪变更变量，read_ptr() 提供零拷贝读取接口。这是系统在高并发场景下保持性能的核心数据结构。",
+    "nodeIds": [
+      "file:core/ondemand/variable_store.h"
+    ],
+    "languageLesson": "Seqlock 是一种无锁读写协议：写入者先将序列号递增为奇数（表示正在写），写完后再递增为偶数（表示稳定）。读取者读取前后检查序列号是否一致且为偶数，不一致则重试。相比读写锁，Seqlock 在读多写少场景下完全无锁，读取零开销。"
+  },
+  {
+    "order": 7,
+    "title": "发布端核心实现",
+    "description": "on_demand_pub.cc 是系统最核心的文件（fan-out 27，全项目最高）。它管理变量注册（varIndex_ 哈希表）、处理订阅请求、执行频率协商（currentFreq 始终取所有订阅者的最小值），并通过 TimerScheduler 按 (bucketIndex, freqMs) 分组调度周期性发布任务。当订阅者增减时，通过 Dirty 标志和 50ms 后台扫描循环重建调度器，避免每次订阅变更都触发重建。",
+    "nodeIds": [
+      "file:core/ondemand/on_demand_pub.h",
+      "file:core/ondemand/on_demand_pub.cc"
+    ],
+    "languageLesson": "频率协商的核心逻辑：VarMetadata.currentFreq = min(all freqSubs)。当新订阅者请求更快频率时立即重调度；当最快频率的最后订阅者取消时，currentFreq 向上步进（或变为 0xFFFFFFFF 表示无订阅者）。这种'取最小值'策略确保数据永远不会以低于任何订阅者需求的频率发送。"
+  },
+  {
+    "order": 8,
+    "title": "订阅端核心实现",
+    "description": "on_demand_sub.cc 与发布端对称：接收变量定义、发送订阅请求、将数据写入 VarStore、通过独立的 TimerScheduler 触发用户回调。关键优化：使用 writeCount 比较，只在数据实际发生变化时才触发回调，避免无效通知。订阅端同样使用 Dirty 标志 + 50ms 扫描循环来批量重建调度器。",
+    "nodeIds": [
+      "file:core/ondemand/on_demand_sub.h",
+      "file:core/ondemand/on_demand_sub.cc"
+    ]
+  },
+  {
+    "order": 9,
+    "title": "DDS Topic 通信协议",
+    "description": "系统使用三类 DDS Topic 完成通信：PubTableDefine（pub→sub，广播变量定义，每个桶一条）、SubTableRegister（sub→pub，订阅/取消请求）、TableDataTransfer（pub→sub，按桶批量传输变量数据）。TableDataTransfer 使用序列化的 Roaring64Map 作为变量哈希掩码，varData 按匹配顺序排列，实现高效批量传输。",
+    "nodeIds": [
+      "file:core/ondemand/on_demand_listener.h",
+      "file:common/fastdds_wrapper/fastdds_topic_reader.hpp",
+      "file:common/fastdds_wrapper/fastdds_topic_writer.hpp"
+    ],
+    "languageLesson": "Roaring Bitmap 是一种压缩位图数据结构，对稀疏位集的压缩率极高。Roaring64Map 支持 64 位整数，用于标记当前批次包含哪些变量的 hash。相比直接传输变量 ID 列表，位图的交集/并集运算更快，且序列化体积更小。"
+  },
+  {
+    "order": 10,
+    "title": "日志与配置系统",
+    "description": "Logger 基于 spdlog 封装，支持同步/异步模式、日志级别管理、配置文件热加载和环境变量覆盖。logConfig.json 定义了日志文件路径、最大大小（1MB）、备份数量和异步模式。.env 脚本设置 LD_LIBRARY_PATH 确保 DDS 动态库能正确加载。这些基础设施支撑了整个系统的可观测性和可配置性。",
+    "nodeIds": [
+      "file:common/log/logger.h",
+      "config:config/logConfig.json",
+      "config:.env"
+    ]
+  },
+  {
+    "order": 11,
+    "title": "内存优化设计文档",
+    "description": "docs/design_ondemand_definitions.md 和 design_ondemand_lite_broadcast.md 记录了两项关键优化：Lazy Create 方案通过 registerVars() 延迟分配 VarStore，将 600K 变量场景下 pub 端 ~520MB 内存降至按需创建；Lite Broadcast 方案通过仅广播变量名和大小的轻量 Topic，将 pub+sub 总内存从 ~502MB 降至 ~20MB。这些文档展示了系统从原型到生产级的演进思路。",
+    "nodeIds": [
+      "document:docs/design_ondemand_definitions.md",
+      "document:docs/design_ondemand_lite_broadcast.md",
+      "document:core/ondemand/readme.md"
+    ]
+  },
+  {
+    "order": 12,
+    "title": "测试、示例与 CI",
+    "description": "测试覆盖了 DDS 封装层（dds_wrapper_test）、计时器调度器（timer_scheduler_test）和日志模块（logger_test）。sample/data_memory_manger/ 提供了 VarStore 的独立使用示例，帮助开发者快速理解无锁存储的用法。ci.yml 定义了 GitHub Actions 工作流，在 push/PR 时自动完成依赖安装、编译构建和单元测试。",
+    "nodeIds": [
+      "file:tests/dds_wrapper_test.cc",
+      "file:sample/data_memory_manger/example.cc",
+      "pipeline:.github/workflows/ci.yml"
+    ],
+    "languageLesson": "GitHub Actions CI 工作流使用 YAML 定义，on 触发器指定分支事件，jobs 定义并行执行的任务，steps 定义每个任务内的顺序步骤。matrix 策略可跨多个 OS/编译器版本测试。缓存依赖安装步骤能显著加速 CI 运行。"
+  }
+]

@@ -1,0 +1,15 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "thirdparty/txdds/include/txdds/DCPS/dynamicType/CommonType.h", "language": "c", "sizeLines": 82, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/dynamicType/TypeIdentifier.h", "language": "c", "sizeLines": 236, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/dynamicType/TypeInformation.h", "language": "c", "sizeLines": 36, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/dynamicType/TypeObject.h", "language": "c", "sizeLines": 588, "fileCategory": "code"}
+  ],
+  "batchImportData": {
+    "thirdparty/txdds/include/txdds/DCPS/dynamicType/CommonType.h": [],
+    "thirdparty/txdds/include/txdds/DCPS/dynamicType/TypeIdentifier.h": [],
+    "thirdparty/txdds/include/txdds/DCPS/dynamicType/TypeInformation.h": [],
+    "thirdparty/txdds/include/txdds/DCPS/dynamicType/TypeObject.h": []
+  }
+}

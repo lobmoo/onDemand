@@ -1,0 +1,31 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "thirdparty/arrow/include/arrow/testing/generator.h", "language": "c", "sizeLines": 321, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/testing/gtest_compat.h", "language": "c", "sizeLines": 33, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/testing/gtest_util.h", "language": "c", "sizeLines": 544, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/testing/matchers.h", "language": "c", "sizeLines": 467, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/testing/pch.h", "language": "c", "sizeLines": 25, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/testing/random.h", "language": "c", "sizeLines": 637, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/testing/uniform_real.h", "language": "c", "sizeLines": 84, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/testing/util.h", "language": "c", "sizeLines": 140, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/testing/visibility.h", "language": "c", "sizeLines": 48, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/type_fwd.h", "language": "c", "sizeLines": 677, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/type_traits.h", "language": "c", "sizeLines": 1585, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/type.h", "language": "c", "sizeLines": 2360, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/algorithm.h", "language": "c", "sizeLines": 33, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/align_util.h", "language": "c", "sizeLines": 221, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/aligned_storage.h", "language": "c", "sizeLines": 145, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/async_generator_fwd.h", "language": "c", "sizeLines": 71, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/async_generator.h", "language": "c", "sizeLines": 2058, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/async_util.h", "language": "c", "sizeLines": 457, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/base64.h", "language": "c", "sizeLines": 35, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/basic_decimal.h", "language": "c", "sizeLines": 492, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/benchmark_util.h", "language": "c", "sizeLines": 211, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/bit_block_counter.h", "language": "c", "sizeLines": 570, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/bit_run_reader.h", "language": "c", "sizeLines": 515, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/bit_stream_utils.h", "language": "c", "sizeLines": 529, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/bit_util.h", "language": "c", "sizeLines": 367, "fileCategory": "code"}
+  ],
+  "batchImportData": {}
+}

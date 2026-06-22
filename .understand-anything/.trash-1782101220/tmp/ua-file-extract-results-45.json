@@ -1,0 +1,3149 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 25,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "thirdparty/arrow/lib/libarrow.so.1400.0.0",
+      "language": "0",
+      "fileCategory": "code",
+      "totalLines": 70241,
+      "nonEmptyLines": 70009,
+      "metrics": {}
+    },
+    {
+      "path": "thirdparty/CRoaring/include/cmocka_pbc.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 62,
+      "nonEmptyLines": 53,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/CRoaring/include/cmocka.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 2384,
+      "nonEmptyLines": 2224,
+      "functions": [
+        {
+          "name": "_unit_test_dummy",
+          "startLine": 1676,
+          "endLine": 1678,
+          "params": [
+            "state"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "CMUnitTest",
+          "startLine": 2156,
+          "endLine": 2162,
+          "methods": [],
+          "properties": [
+            "name",
+            "test_func",
+            "setup_func",
+            "teardown_func",
+            "initial_state"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "CMUnitTest",
+          "line": 2156,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "thirdparty/CRoaring/include/roaring/array_util.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 274,
+      "nonEmptyLines": 243,
+      "callGraph": [
+        {
+          "caller": "count_less",
+          "callee": "binarySearch",
+          "lineNumber": 110
+        },
+        {
+          "caller": "count_greater",
+          "callee": "binarySearch",
+          "lineNumber": 121
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/CRoaring/include/roaring/art/art.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 241,
+      "nonEmptyLines": 202,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/CRoaring/include/roaring/bitset_util.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 718,
+      "nonEmptyLines": 668,
+      "callGraph": [
+        {
+          "caller": "bitset_set_range",
+          "callee": "UINT64_C",
+          "lineNumber": 34
+        },
+        {
+          "caller": "bitset_set_range",
+          "callee": "UINT64_C",
+          "lineNumber": 35
+        },
+        {
+          "caller": "bitset_set_range",
+          "callee": "UINT64_C",
+          "lineNumber": 38
+        },
+        {
+          "caller": "bitset_set_range",
+          "callee": "UINT64_C",
+          "lineNumber": 40
+        },
+        {
+          "caller": "bitset_set_range",
+          "callee": "UINT64_C",
+          "lineNumber": 42
+        },
+        {
+          "caller": "bitset_lenrange_cardinality",
+          "callee": "roaring_hamming",
+          "lineNumber": 54
+        },
+        {
+          "caller": "bitset_lenrange_cardinality",
+          "callee": "UINT64_C",
+          "lineNumber": 55
+        },
+        {
+          "caller": "bitset_lenrange_cardinality",
+          "callee": "roaring_hamming",
+          "lineNumber": 59
+        },
+        {
+          "caller": "bitset_lenrange_cardinality",
+          "callee": "UINT64_C",
+          "lineNumber": 59
+        },
+        {
+          "caller": "bitset_lenrange_cardinality",
+          "callee": "roaring_hamming",
+          "lineNumber": 61
+        },
+        {
+          "caller": "bitset_lenrange_cardinality",
+          "callee": "roaring_hamming",
+          "lineNumber": 63
+        },
+        {
+          "caller": "bitset_lenrange_cardinality",
+          "callee": "UINT64_C",
+          "lineNumber": 64
+        },
+        {
+          "caller": "bitset_lenrange_empty",
+          "callee": "UINT64_C",
+          "lineNumber": 77
+        },
+        {
+          "caller": "bitset_lenrange_empty",
+          "callee": "UINT64_C",
+          "lineNumber": 80
+        },
+        {
+          "caller": "bitset_lenrange_empty",
+          "callee": "UINT64_C",
+          "lineNumber": 89
+        },
+        {
+          "caller": "bitset_set_lenrange",
+          "callee": "UINT64_C",
+          "lineNumber": 103
+        },
+        {
+          "caller": "bitset_set_lenrange",
+          "callee": "UINT64_C",
+          "lineNumber": 108
+        },
+        {
+          "caller": "bitset_set_lenrange",
+          "callee": "UINT64_C",
+          "lineNumber": 110
+        },
+        {
+          "caller": "bitset_set_lenrange",
+          "callee": "UINT64_C",
+          "lineNumber": 112
+        },
+        {
+          "caller": "bitset_flip_range",
+          "callee": "UINT64_C",
+          "lineNumber": 123
+        },
+        {
+          "caller": "bitset_flip_range",
+          "callee": "UINT64_C",
+          "lineNumber": 127
+        },
+        {
+          "caller": "bitset_reset_range",
+          "callee": "UINT64_C",
+          "lineNumber": 139
+        },
+        {
+          "caller": "bitset_reset_range",
+          "callee": "UINT64_C",
+          "lineNumber": 140
+        },
+        {
+          "caller": "bitset_reset_range",
+          "callee": "UINT64_C",
+          "lineNumber": 143
+        },
+        {
+          "caller": "bitset_reset_range",
+          "callee": "UINT64_C",
+          "lineNumber": 145
+        },
+        {
+          "caller": "bitset_reset_range",
+          "callee": "UINT64_C",
+          "lineNumber": 147
+        },
+        {
+          "caller": "popcount256",
+          "callee": "_mm256_setr_epi8",
+          "lineNumber": 280
+        },
+        {
+          "caller": "popcount256",
+          "callee": "_mm256_setr_epi8",
+          "lineNumber": 290
+        },
+        {
+          "caller": "popcount256",
+          "callee": "_mm256_set1_epi8",
+          "lineNumber": 300
+        },
+        {
+          "caller": "popcount256",
+          "callee": "_mm256_and_si256",
+          "lineNumber": 302
+        },
+        {
+          "caller": "popcount256",
+          "callee": "_mm256_and_si256",
+          "lineNumber": 303
+        },
+        {
+          "caller": "popcount256",
+          "callee": "_mm256_srli_epi16",
+          "lineNumber": 303
+        },
+        {
+          "caller": "popcount256",
+          "callee": "_mm256_shuffle_epi8",
+          "lineNumber": 304
+        },
+        {
+          "caller": "popcount256",
+          "callee": "_mm256_shuffle_epi8",
+          "lineNumber": 305
+        },
+        {
+          "caller": "popcount256",
+          "callee": "_mm256_sad_epu8",
+          "lineNumber": 306
+        },
+        {
+          "caller": "CSA",
+          "callee": "_mm256_xor_si256",
+          "lineNumber": 316
+        },
+        {
+          "caller": "CSA",
+          "callee": "_mm256_or_si256",
+          "lineNumber": 317
+        },
+        {
+          "caller": "CSA",
+          "callee": "_mm256_and_si256",
+          "lineNumber": 317
+        },
+        {
+          "caller": "CSA",
+          "callee": "_mm256_and_si256",
+          "lineNumber": 317
+        },
+        {
+          "caller": "CSA",
+          "callee": "_mm256_xor_si256",
+          "lineNumber": 318
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "_mm256_setzero_si256",
+          "lineNumber": 328
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "_mm256_setzero_si256",
+          "lineNumber": 329
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "_mm256_setzero_si256",
+          "lineNumber": 330
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "_mm256_setzero_si256",
+          "lineNumber": 331
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "_mm256_setzero_si256",
+          "lineNumber": 332
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "_mm256_setzero_si256",
+          "lineNumber": 333
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "CSA",
+          "lineNumber": 340
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "_mm256_lddqu_si256",
+          "lineNumber": 340
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "_mm256_lddqu_si256",
+          "lineNumber": 341
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "CSA",
+          "lineNumber": 342
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "_mm256_lddqu_si256",
+          "lineNumber": 342
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "_mm256_lddqu_si256",
+          "lineNumber": 343
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "CSA",
+          "lineNumber": 344
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "CSA",
+          "lineNumber": 345
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "_mm256_lddqu_si256",
+          "lineNumber": 345
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "_mm256_lddqu_si256",
+          "lineNumber": 346
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "CSA",
+          "lineNumber": 347
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "_mm256_lddqu_si256",
+          "lineNumber": 347
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "_mm256_lddqu_si256",
+          "lineNumber": 348
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "CSA",
+          "lineNumber": 349
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "CSA",
+          "lineNumber": 350
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "CSA",
+          "lineNumber": 351
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "_mm256_lddqu_si256",
+          "lineNumber": 351
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "_mm256_lddqu_si256",
+          "lineNumber": 352
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "CSA",
+          "lineNumber": 353
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "_mm256_lddqu_si256",
+          "lineNumber": 353
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "_mm256_lddqu_si256",
+          "lineNumber": 354
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "CSA",
+          "lineNumber": 355
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "CSA",
+          "lineNumber": 356
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "_mm256_lddqu_si256",
+          "lineNumber": 356
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "_mm256_lddqu_si256",
+          "lineNumber": 357
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "CSA",
+          "lineNumber": 358
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "_mm256_lddqu_si256",
+          "lineNumber": 358
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "_mm256_lddqu_si256",
+          "lineNumber": 359
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "CSA",
+          "lineNumber": 360
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "CSA",
+          "lineNumber": 361
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "CSA",
+          "lineNumber": 362
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "_mm256_add_epi64",
+          "lineNumber": 364
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "popcount256",
+          "lineNumber": 364
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "_mm256_slli_epi64",
+          "lineNumber": 367
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "_mm256_add_epi64",
+          "lineNumber": 368
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "_mm256_slli_epi64",
+          "lineNumber": 369
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "popcount256",
+          "lineNumber": 369
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "_mm256_add_epi64",
+          "lineNumber": 370
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "_mm256_slli_epi64",
+          "lineNumber": 371
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "popcount256",
+          "lineNumber": 371
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "_mm256_add_epi64",
+          "lineNumber": 372
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "_mm256_slli_epi64",
+          "lineNumber": 373
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "popcount256",
+          "lineNumber": 373
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "_mm256_add_epi64",
+          "lineNumber": 374
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "popcount256",
+          "lineNumber": 374
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "_mm256_add_epi64",
+          "lineNumber": 377
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "popcount256",
+          "lineNumber": 377
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "_mm256_lddqu_si256",
+          "lineNumber": 377
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "_mm256_extract_epi64",
+          "lineNumber": 379
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "_mm256_extract_epi64",
+          "lineNumber": 380
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "_mm256_extract_epi64",
+          "lineNumber": 381
+        },
+        {
+          "caller": "avx2_harley_seal_popcount256",
+          "callee": "_mm256_extract_epi64",
+          "lineNumber": 382
+        },
+        {
+          "caller": "sum_epu64_256",
+          "callee": "_mm256_extract_epi64",
+          "lineNumber": 598
+        },
+        {
+          "caller": "sum_epu64_256",
+          "callee": "_mm256_extract_epi64",
+          "lineNumber": 599
+        },
+        {
+          "caller": "sum_epu64_256",
+          "callee": "_mm256_extract_epi64",
+          "lineNumber": 600
+        },
+        {
+          "caller": "sum_epu64_256",
+          "callee": "_mm256_extract_epi64",
+          "lineNumber": 601
+        },
+        {
+          "caller": "simd_sum_epu64",
+          "callee": "_mm512_extracti64x4_epi64",
+          "lineNumber": 605
+        },
+        {
+          "caller": "simd_sum_epu64",
+          "callee": "_mm512_extracti64x4_epi64",
+          "lineNumber": 606
+        },
+        {
+          "caller": "simd_sum_epu64",
+          "callee": "sum_epu64_256",
+          "lineNumber": 608
+        },
+        {
+          "caller": "simd_sum_epu64",
+          "callee": "sum_epu64_256",
+          "lineNumber": 608
+        },
+        {
+          "caller": "avx512_vpopcount",
+          "callee": "_mm512_setzero_si512",
+          "lineNumber": 614
+        },
+        {
+          "caller": "avx512_vpopcount",
+          "callee": "VPOPCNT_AND_ADD",
+          "lineNumber": 618
+        },
+        {
+          "caller": "avx512_vpopcount",
+          "callee": "VPOPCNT_AND_ADD",
+          "lineNumber": 619
+        },
+        {
+          "caller": "avx512_vpopcount",
+          "callee": "VPOPCNT_AND_ADD",
+          "lineNumber": 620
+        },
+        {
+          "caller": "avx512_vpopcount",
+          "callee": "VPOPCNT_AND_ADD",
+          "lineNumber": 621
+        },
+        {
+          "caller": "avx512_vpopcount",
+          "callee": "_mm512_add_epi64",
+          "lineNumber": 625
+        },
+        {
+          "caller": "avx512_vpopcount",
+          "callee": "_mm512_popcnt_epi64",
+          "lineNumber": 626
+        },
+        {
+          "caller": "avx512_vpopcount",
+          "callee": "_mm512_loadu_si512",
+          "lineNumber": 626
+        },
+        {
+          "caller": "avx512_vpopcount",
+          "callee": "simd_sum_epu64",
+          "lineNumber": 629
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/CRoaring/include/roaring/bitset/bitset.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 298,
+      "nonEmptyLines": 253,
+      "callGraph": [
+        {
+          "caller": "bitset_set",
+          "callee": "bitset_grow",
+          "lineNumber": 98
+        },
+        {
+          "caller": "bitset_set_to_value",
+          "callee": "bitset_grow",
+          "lineNumber": 112
+        },
+        {
+          "caller": "bitset_next_set_bit",
+          "callee": "roaring_trailing_zeroes",
+          "lineNumber": 207
+        },
+        {
+          "caller": "bitset_next_set_bit",
+          "callee": "roaring_trailing_zeroes",
+          "lineNumber": 214
+        },
+        {
+          "caller": "bitset_next_set_bits",
+          "callee": "UINT64_C",
+          "lineNumber": 240
+        },
+        {
+          "caller": "bitset_next_set_bits",
+          "callee": "roaring_trailing_zeroes",
+          "lineNumber": 246
+        },
+        {
+          "caller": "bitset_for_each",
+          "callee": "roaring_trailing_zeroes",
+          "lineNumber": 275
+        },
+        {
+          "caller": "bitset_for_each",
+          "callee": "iterator",
+          "lineNumber": 276
+        },
+        {
+          "caller": "bitset_print",
+          "callee": "printf",
+          "lineNumber": 285
+        },
+        {
+          "caller": "bitset_print",
+          "callee": "bitset_next_set_bit",
+          "lineNumber": 286
+        },
+        {
+          "caller": "bitset_print",
+          "callee": "printf",
+          "lineNumber": 287
+        },
+        {
+          "caller": "bitset_print",
+          "callee": "printf",
+          "lineNumber": 289
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/CRoaring/include/roaring/containers/array.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 521,
+      "nonEmptyLines": 450,
+      "callGraph": [
+        {
+          "caller": "array_container_equals",
+          "callee": "memequals",
+          "lineNumber": 226
+        },
+        {
+          "caller": "array_container_select",
+          "callee": "array_container_cardinality",
+          "lineNumber": 245
+        },
+        {
+          "caller": "array_container_append",
+          "callee": "array_container_full",
+          "lineNumber": 269
+        },
+        {
+          "caller": "array_container_append",
+          "callee": "array_container_grow",
+          "lineNumber": 270
+        },
+        {
+          "caller": "array_container_try_add",
+          "callee": "array_container_empty",
+          "lineNumber": 289
+        },
+        {
+          "caller": "array_container_try_add",
+          "callee": "array_container_append",
+          "lineNumber": 291
+        },
+        {
+          "caller": "array_container_try_add",
+          "callee": "binarySearch",
+          "lineNumber": 295
+        },
+        {
+          "caller": "array_container_try_add",
+          "callee": "array_container_full",
+          "lineNumber": 300
+        },
+        {
+          "caller": "array_container_try_add",
+          "callee": "array_container_grow",
+          "lineNumber": 301
+        },
+        {
+          "caller": "array_container_try_add",
+          "callee": "memmove",
+          "lineNumber": 304
+        },
+        {
+          "caller": "array_container_add",
+          "callee": "array_container_try_add",
+          "lineNumber": 316
+        },
+        {
+          "caller": "array_container_remove",
+          "callee": "binarySearch",
+          "lineNumber": 322
+        },
+        {
+          "caller": "array_container_remove",
+          "callee": "memmove",
+          "lineNumber": 325
+        },
+        {
+          "caller": "array_container_contains_range",
+          "callee": "binarySearch",
+          "lineNumber": 385
+        },
+        {
+          "caller": "array_container_rank",
+          "callee": "binarySearch",
+          "lineNumber": 408
+        },
+        {
+          "caller": "array_container_rank_many",
+          "callee": "binarySearch",
+          "lineNumber": 432
+        },
+        {
+          "caller": "array_container_get_index",
+          "callee": "binarySearch",
+          "lineNumber": 446
+        },
+        {
+          "caller": "array_container_index_equalorlarger",
+          "callee": "binarySearch",
+          "lineNumber": 458
+        },
+        {
+          "caller": "array_container_add_range_nvals",
+          "callee": "array_container_grow",
+          "lineNumber": 480
+        },
+        {
+          "caller": "array_container_add_range_nvals",
+          "callee": "memmove",
+          "lineNumber": 482
+        },
+        {
+          "caller": "array_container_remove_range",
+          "callee": "memmove",
+          "lineNumber": 509
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/CRoaring/include/roaring/containers/bitset.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 514,
+      "nonEmptyLines": 432,
+      "callGraph": [
+        {
+          "caller": "bitset_container_set",
+          "callee": "ASM_SHIFT_RIGHT",
+          "lineNumber": 75
+        },
+        {
+          "caller": "bitset_container_set",
+          "callee": "ASM_SET_BIT_INC_WAS_CLEAR",
+          "lineNumber": 77
+        },
+        {
+          "caller": "bitset_container_add",
+          "callee": "ASM_SHIFT_RIGHT",
+          "lineNumber": 100
+        },
+        {
+          "caller": "bitset_container_add",
+          "callee": "ASM_SET_BIT_INC_WAS_CLEAR",
+          "lineNumber": 104
+        },
+        {
+          "caller": "bitset_container_remove",
+          "callee": "ASM_SHIFT_RIGHT",
+          "lineNumber": 116
+        },
+        {
+          "caller": "bitset_container_remove",
+          "callee": "ASM_CLEAR_BIT_DEC_WAS_SET",
+          "lineNumber": 120
+        },
+        {
+          "caller": "bitset_container_get",
+          "callee": "ASM_INPLACESHIFT_RIGHT",
+          "lineNumber": 130
+        },
+        {
+          "caller": "bitset_container_set",
+          "callee": "UINT64_C",
+          "lineNumber": 141
+        },
+        {
+          "caller": "bitset_container_add",
+          "callee": "UINT64_C",
+          "lineNumber": 162
+        },
+        {
+          "caller": "bitset_container_remove",
+          "callee": "UINT64_C",
+          "lineNumber": 175
+        },
+        {
+          "caller": "bitset_container_get_range",
+          "callee": "UINT64_C",
+          "lineNumber": 215
+        },
+        {
+          "caller": "bitset_container_contains",
+          "callee": "bitset_container_get",
+          "lineNumber": 224
+        },
+        {
+          "caller": "bitset_container_contains_range",
+          "callee": "bitset_container_get_range",
+          "lineNumber": 233
+        },
+        {
+          "caller": "bitset_container_const_nonzero_cardinality",
+          "callee": "bitset_container_empty",
+          "lineNumber": 273
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/CRoaring/include/roaring/containers/container_defs.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 100,
+      "nonEmptyLines": 89,
+      "callGraph": [
+        {
+          "caller": "movable_CAST_HELPER",
+          "callee": "reinterpret_cast<Derived **>",
+          "lineNumber": 84
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/CRoaring/include/roaring/containers/containers.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 2486,
+      "nonEmptyLines": 2246,
+      "callGraph": [
+        {
+          "caller": "get_container_type",
+          "callee": "const_CAST_shared",
+          "lineNumber": 119
+        },
+        {
+          "caller": "container_get_cardinality",
+          "callee": "container_unwrap_shared",
+          "lineNumber": 233
+        },
+        {
+          "caller": "container_get_cardinality",
+          "callee": "bitset_container_cardinality",
+          "lineNumber": 236
+        },
+        {
+          "caller": "container_get_cardinality",
+          "callee": "const_CAST_bitset",
+          "lineNumber": 236
+        },
+        {
+          "caller": "container_get_cardinality",
+          "callee": "array_container_cardinality",
+          "lineNumber": 238
+        },
+        {
+          "caller": "container_get_cardinality",
+          "callee": "const_CAST_array",
+          "lineNumber": 238
+        },
+        {
+          "caller": "container_get_cardinality",
+          "callee": "run_container_cardinality",
+          "lineNumber": 240
+        },
+        {
+          "caller": "container_get_cardinality",
+          "callee": "const_CAST_run",
+          "lineNumber": 240
+        },
+        {
+          "caller": "container_get_cardinality",
+          "callee": "assert",
+          "lineNumber": 242
+        },
+        {
+          "caller": "container_is_full",
+          "callee": "container_unwrap_shared",
+          "lineNumber": 251
+        },
+        {
+          "caller": "container_is_full",
+          "callee": "bitset_container_cardinality",
+          "lineNumber": 254
+        },
+        {
+          "caller": "container_is_full",
+          "callee": "const_CAST_bitset",
+          "lineNumber": 254
+        },
+        {
+          "caller": "container_is_full",
+          "callee": "array_container_cardinality",
+          "lineNumber": 257
+        },
+        {
+          "caller": "container_is_full",
+          "callee": "const_CAST_array",
+          "lineNumber": 257
+        },
+        {
+          "caller": "container_is_full",
+          "callee": "run_container_is_full",
+          "lineNumber": 260
+        },
+        {
+          "caller": "container_is_full",
+          "callee": "const_CAST_run",
+          "lineNumber": 260
+        },
+        {
+          "caller": "container_is_full",
+          "callee": "assert",
+          "lineNumber": 262
+        },
+        {
+          "caller": "container_shrink_to_fit",
+          "callee": "container_mutable_unwrap_shared",
+          "lineNumber": 268
+        },
+        {
+          "caller": "container_shrink_to_fit",
+          "callee": "array_container_shrink_to_fit",
+          "lineNumber": 273
+        },
+        {
+          "caller": "container_shrink_to_fit",
+          "callee": "CAST_array",
+          "lineNumber": 273
+        },
+        {
+          "caller": "container_shrink_to_fit",
+          "callee": "run_container_shrink_to_fit",
+          "lineNumber": 275
+        },
+        {
+          "caller": "container_shrink_to_fit",
+          "callee": "CAST_run",
+          "lineNumber": 275
+        },
+        {
+          "caller": "container_shrink_to_fit",
+          "callee": "assert",
+          "lineNumber": 277
+        },
+        {
+          "caller": "container_write",
+          "callee": "container_unwrap_shared",
+          "lineNumber": 371
+        },
+        {
+          "caller": "container_write",
+          "callee": "bitset_container_write",
+          "lineNumber": 374
+        },
+        {
+          "caller": "container_write",
+          "callee": "const_CAST_bitset",
+          "lineNumber": 374
+        },
+        {
+          "caller": "container_write",
+          "callee": "array_container_write",
+          "lineNumber": 376
+        },
+        {
+          "caller": "container_write",
+          "callee": "const_CAST_array",
+          "lineNumber": 376
+        },
+        {
+          "caller": "container_write",
+          "callee": "run_container_write",
+          "lineNumber": 378
+        },
+        {
+          "caller": "container_write",
+          "callee": "const_CAST_run",
+          "lineNumber": 378
+        },
+        {
+          "caller": "container_write",
+          "callee": "assert",
+          "lineNumber": 380
+        },
+        {
+          "caller": "container_size_in_bytes",
+          "callee": "container_unwrap_shared",
+          "lineNumber": 392
+        },
+        {
+          "caller": "container_size_in_bytes",
+          "callee": "bitset_container_size_in_bytes",
+          "lineNumber": 395
+        },
+        {
+          "caller": "container_size_in_bytes",
+          "callee": "const_CAST_bitset",
+          "lineNumber": 395
+        },
+        {
+          "caller": "container_size_in_bytes",
+          "callee": "array_container_size_in_bytes",
+          "lineNumber": 397
+        },
+        {
+          "caller": "container_size_in_bytes",
+          "callee": "const_CAST_array",
+          "lineNumber": 397
+        },
+        {
+          "caller": "container_size_in_bytes",
+          "callee": "run_container_size_in_bytes",
+          "lineNumber": 399
+        },
+        {
+          "caller": "container_size_in_bytes",
+          "callee": "const_CAST_run",
+          "lineNumber": 399
+        },
+        {
+          "caller": "container_size_in_bytes",
+          "callee": "assert",
+          "lineNumber": 401
+        },
+        {
+          "caller": "container_nonzero_cardinality",
+          "callee": "container_unwrap_shared",
+          "lineNumber": 426
+        },
+        {
+          "caller": "container_nonzero_cardinality",
+          "callee": "bitset_container_const_nonzero_cardinality",
+          "lineNumber": 429
+        },
+        {
+          "caller": "container_nonzero_cardinality",
+          "callee": "const_CAST_bitset",
+          "lineNumber": 430
+        },
+        {
+          "caller": "container_nonzero_cardinality",
+          "callee": "array_container_nonzero_cardinality",
+          "lineNumber": 432
+        },
+        {
+          "caller": "container_nonzero_cardinality",
+          "callee": "const_CAST_array",
+          "lineNumber": 432
+        },
+        {
+          "caller": "container_nonzero_cardinality",
+          "callee": "run_container_nonzero_cardinality",
+          "lineNumber": 434
+        },
+        {
+          "caller": "container_nonzero_cardinality",
+          "callee": "const_CAST_run",
+          "lineNumber": 434
+        },
+        {
+          "caller": "container_nonzero_cardinality",
+          "callee": "assert",
+          "lineNumber": 436
+        },
+        {
+          "caller": "container_to_uint32_array",
+          "callee": "container_unwrap_shared",
+          "lineNumber": 454
+        },
+        {
+          "caller": "container_to_uint32_array",
+          "callee": "bitset_container_to_uint32_array",
+          "lineNumber": 457
+        },
+        {
+          "caller": "container_to_uint32_array",
+          "callee": "const_CAST_bitset",
+          "lineNumber": 458
+        },
+        {
+          "caller": "container_to_uint32_array",
+          "callee": "array_container_to_uint32_array",
+          "lineNumber": 460
+        },
+        {
+          "caller": "container_to_uint32_array",
+          "callee": "const_CAST_array",
+          "lineNumber": 460
+        },
+        {
+          "caller": "container_to_uint32_array",
+          "callee": "run_container_to_uint32_array",
+          "lineNumber": 463
+        },
+        {
+          "caller": "container_to_uint32_array",
+          "callee": "const_CAST_run",
+          "lineNumber": 463
+        },
+        {
+          "caller": "container_to_uint32_array",
+          "callee": "assert",
+          "lineNumber": 466
+        },
+        {
+          "caller": "container_contains",
+          "callee": "container_unwrap_shared",
+          "lineNumber": 557
+        },
+        {
+          "caller": "container_contains",
+          "callee": "bitset_container_get",
+          "lineNumber": 560
+        },
+        {
+          "caller": "container_contains",
+          "callee": "const_CAST_bitset",
+          "lineNumber": 560
+        },
+        {
+          "caller": "container_contains",
+          "callee": "array_container_contains",
+          "lineNumber": 562
+        },
+        {
+          "caller": "container_contains",
+          "callee": "const_CAST_array",
+          "lineNumber": 562
+        },
+        {
+          "caller": "container_contains",
+          "callee": "run_container_contains",
+          "lineNumber": 564
+        },
+        {
+          "caller": "container_contains",
+          "callee": "const_CAST_run",
+          "lineNumber": 564
+        },
+        {
+          "caller": "container_contains",
+          "callee": "assert",
+          "lineNumber": 566
+        },
+        {
+          "caller": "container_contains_range",
+          "callee": "container_unwrap_shared",
+          "lineNumber": 580
+        },
+        {
+          "caller": "container_contains_range",
+          "callee": "bitset_container_get_range",
+          "lineNumber": 583
+        },
+        {
+          "caller": "container_contains_range",
+          "callee": "const_CAST_bitset",
+          "lineNumber": 583
+        },
+        {
+          "caller": "container_contains_range",
+          "callee": "array_container_contains_range",
+          "lineNumber": 586
+        },
+        {
+          "caller": "container_contains_range",
+          "callee": "const_CAST_array",
+          "lineNumber": 586
+        },
+        {
+          "caller": "container_contains_range",
+          "callee": "run_container_contains_range",
+          "lineNumber": 589
+        },
+        {
+          "caller": "container_contains_range",
+          "callee": "const_CAST_run",
+          "lineNumber": 589
+        },
+        {
+          "caller": "container_contains_range",
+          "callee": "assert",
+          "lineNumber": 592
+        },
+        {
+          "caller": "container_equals",
+          "callee": "container_unwrap_shared",
+          "lineNumber": 604
+        },
+        {
+          "caller": "container_equals",
+          "callee": "container_unwrap_shared",
+          "lineNumber": 605
+        },
+        {
+          "caller": "container_equals",
+          "callee": "PAIR_CONTAINER_TYPES",
+          "lineNumber": 606
+        },
+        {
+          "caller": "container_equals",
+          "callee": "CONTAINER_PAIR",
+          "lineNumber": 607
+        },
+        {
+          "caller": "container_equals",
+          "callee": "bitset_container_equals",
+          "lineNumber": 608
+        },
+        {
+          "caller": "container_equals",
+          "callee": "const_CAST_bitset",
+          "lineNumber": 608
+        },
+        {
+          "caller": "container_equals",
+          "callee": "const_CAST_bitset",
+          "lineNumber": 609
+        },
+        {
+          "caller": "container_equals",
+          "callee": "CONTAINER_PAIR",
+          "lineNumber": 611
+        },
+        {
+          "caller": "container_equals",
+          "callee": "run_container_equals_bitset",
+          "lineNumber": 612
+        },
+        {
+          "caller": "container_equals",
+          "callee": "const_CAST_run",
+          "lineNumber": 612
+        },
+        {
+          "caller": "container_equals",
+          "callee": "const_CAST_bitset",
+          "lineNumber": 613
+        },
+        {
+          "caller": "container_equals",
+          "callee": "CONTAINER_PAIR",
+          "lineNumber": 615
+        },
+        {
+          "caller": "container_equals",
+          "callee": "run_container_equals_bitset",
+          "lineNumber": 616
+        },
+        {
+          "caller": "container_equals",
+          "callee": "const_CAST_run",
+          "lineNumber": 616
+        },
+        {
+          "caller": "container_equals",
+          "callee": "const_CAST_bitset",
+          "lineNumber": 617
+        },
+        {
+          "caller": "container_equals",
+          "callee": "CONTAINER_PAIR",
+          "lineNumber": 619
+        },
+        {
+          "caller": "container_equals",
+          "callee": "array_container_equal_bitset",
+          "lineNumber": 621
+        },
+        {
+          "caller": "container_equals",
+          "callee": "const_CAST_array",
+          "lineNumber": 621
+        },
+        {
+          "caller": "container_equals",
+          "callee": "const_CAST_bitset",
+          "lineNumber": 622
+        },
+        {
+          "caller": "container_equals",
+          "callee": "CONTAINER_PAIR",
+          "lineNumber": 624
+        },
+        {
+          "caller": "container_equals",
+          "callee": "array_container_equal_bitset",
+          "lineNumber": 626
+        },
+        {
+          "caller": "container_equals",
+          "callee": "const_CAST_array",
+          "lineNumber": 626
+        },
+        {
+          "caller": "container_equals",
+          "callee": "const_CAST_bitset",
+          "lineNumber": 627
+        },
+        {
+          "caller": "container_equals",
+          "callee": "CONTAINER_PAIR",
+          "lineNumber": 629
+        },
+        {
+          "caller": "container_equals",
+          "callee": "run_container_equals_array",
+          "lineNumber": 630
+        },
+        {
+          "caller": "container_equals",
+          "callee": "const_CAST_run",
+          "lineNumber": 630
+        },
+        {
+          "caller": "container_equals",
+          "callee": "const_CAST_array",
+          "lineNumber": 631
+        },
+        {
+          "caller": "container_equals",
+          "callee": "CONTAINER_PAIR",
+          "lineNumber": 633
+        },
+        {
+          "caller": "container_equals",
+          "callee": "run_container_equals_array",
+          "lineNumber": 634
+        },
+        {
+          "caller": "container_equals",
+          "callee": "const_CAST_run",
+          "lineNumber": 634
+        },
+        {
+          "caller": "container_equals",
+          "callee": "const_CAST_array",
+          "lineNumber": 635
+        },
+        {
+          "caller": "container_equals",
+          "callee": "CONTAINER_PAIR",
+          "lineNumber": 637
+        },
+        {
+          "caller": "container_equals",
+          "callee": "array_container_equals",
+          "lineNumber": 638
+        },
+        {
+          "caller": "container_equals",
+          "callee": "const_CAST_array",
+          "lineNumber": 638
+        },
+        {
+          "caller": "container_equals",
+          "callee": "const_CAST_array",
+          "lineNumber": 639
+        },
+        {
+          "caller": "container_equals",
+          "callee": "CONTAINER_PAIR",
+          "lineNumber": 641
+        },
+        {
+          "caller": "container_equals",
+          "callee": "run_container_equals",
+          "lineNumber": 642
+        },
+        {
+          "caller": "container_equals",
+          "callee": "const_CAST_run",
+          "lineNumber": 642
+        },
+        {
+          "caller": "container_equals",
+          "callee": "const_CAST_run",
+          "lineNumber": 642
+        },
+        {
+          "caller": "container_equals",
+          "callee": "assert",
+          "lineNumber": 645
+        },
+        {
+          "caller": "container_is_subset",
+          "callee": "container_unwrap_shared",
+          "lineNumber": 657
+        },
+        {
+          "caller": "container_is_subset",
+          "callee": "container_unwrap_shared",
+          "lineNumber": 658
+        },
+        {
+          "caller": "container_is_subset",
+          "callee": "PAIR_CONTAINER_TYPES",
+          "lineNumber": 659
+        },
+        {
+          "caller": "container_is_subset",
+          "callee": "CONTAINER_PAIR",
+          "lineNumber": 660
+        },
+        {
+          "caller": "container_is_subset",
+          "callee": "bitset_container_is_subset",
+          "lineNumber": 661
+        },
+        {
+          "caller": "container_is_subset",
+          "callee": "const_CAST_bitset",
+          "lineNumber": 661
+        },
+        {
+          "caller": "container_is_subset",
+          "callee": "const_CAST_bitset",
+          "lineNumber": 662
+        },
+        {
+          "caller": "container_is_subset",
+          "callee": "CONTAINER_PAIR",
+          "lineNumber": 664
+        },
+        {
+          "caller": "container_is_subset",
+          "callee": "bitset_container_is_subset_run",
+          "lineNumber": 665
+        },
+        {
+          "caller": "container_is_subset",
+          "callee": "const_CAST_bitset",
+          "lineNumber": 665
+        },
+        {
+          "caller": "container_is_subset",
+          "callee": "const_CAST_run",
+          "lineNumber": 666
+        },
+        {
+          "caller": "container_is_subset",
+          "callee": "CONTAINER_PAIR",
+          "lineNumber": 668
+        },
+        {
+          "caller": "container_is_subset",
+          "callee": "run_container_is_subset_bitset",
+          "lineNumber": 669
+        },
+        {
+          "caller": "container_is_subset",
+          "callee": "const_CAST_run",
+          "lineNumber": 669
+        },
+        {
+          "caller": "container_is_subset",
+          "callee": "const_CAST_bitset",
+          "lineNumber": 670
+        },
+        {
+          "caller": "container_is_subset",
+          "callee": "CONTAINER_PAIR",
+          "lineNumber": 672
+        },
+        {
+          "caller": "container_is_subset",
+          "callee": "CONTAINER_PAIR",
+          "lineNumber": 675
+        },
+        {
+          "caller": "container_is_subset",
+          "callee": "array_container_is_subset_bitset",
+          "lineNumber": 676
+        },
+        {
+          "caller": "container_is_subset",
+          "callee": "const_CAST_array",
+          "lineNumber": 676
+        },
+        {
+          "caller": "container_is_subset",
+          "callee": "const_CAST_bitset",
+          "lineNumber": 677
+        },
+        {
+          "caller": "container_is_subset",
+          "callee": "CONTAINER_PAIR",
+          "lineNumber": 679
+        },
+        {
+          "caller": "container_is_subset",
+          "callee": "array_container_is_subset_run",
+          "lineNumber": 680
+        },
+        {
+          "caller": "container_is_subset",
+          "callee": "const_CAST_array",
+          "lineNumber": 680
+        },
+        {
+          "caller": "container_is_subset",
+          "callee": "const_CAST_run",
+          "lineNumber": 681
+        },
+        {
+          "caller": "container_is_subset",
+          "callee": "CONTAINER_PAIR",
+          "lineNumber": 683
+        },
+        {
+          "caller": "container_is_subset",
+          "callee": "run_container_is_subset_array",
+          "lineNumber": 684
+        },
+        {
+          "caller": "container_is_subset",
+          "callee": "const_CAST_run",
+          "lineNumber": 684
+        },
+        {
+          "caller": "container_is_subset",
+          "callee": "const_CAST_array",
+          "lineNumber": 685
+        },
+        {
+          "caller": "container_is_subset",
+          "callee": "CONTAINER_PAIR",
+          "lineNumber": 687
+        },
+        {
+          "caller": "container_is_subset",
+          "callee": "array_container_is_subset",
+          "lineNumber": 688
+        },
+        {
+          "caller": "container_is_subset",
+          "callee": "const_CAST_array",
+          "lineNumber": 688
+        },
+        {
+          "caller": "container_is_subset",
+          "callee": "const_CAST_array",
+          "lineNumber": 689
+        },
+        {
+          "caller": "container_is_subset",
+          "callee": "CONTAINER_PAIR",
+          "lineNumber": 691
+        },
+        {
+          "caller": "container_is_subset",
+          "callee": "run_container_is_subset",
+          "lineNumber": 692
+        },
+        {
+          "caller": "container_is_subset",
+          "callee": "const_CAST_run",
+          "lineNumber": 692
+        },
+        {
+          "caller": "container_is_subset",
+          "callee": "const_CAST_run",
+          "lineNumber": 693
+        },
+        {
+          "caller": "container_is_subset",
+          "callee": "assert",
+          "lineNumber": 696
+        },
+        {
+          "caller": "container_and_cardinality",
+          "callee": "container_unwrap_shared",
+          "lineNumber": 798
+        },
+        {
+          "caller": "container_and_cardinality",
+          "callee": "container_unwrap_shared",
+          "lineNumber": 799
+        },
+        {
+          "caller": "container_and_cardinality",
+          "callee": "PAIR_CONTAINER_TYPES",
+          "lineNumber": 800
+        },
+        {
+          "caller": "container_and_cardinality",
+          "callee": "CONTAINER_PAIR",
+          "lineNumber": 801
+        },
+        {
+          "caller": "container_and_cardinality",
+          "callee": "bitset_container_and_justcard",
+          "lineNumber": 802
+        },
+        {
+          "caller": "container_and_cardinality",
+          "callee": "const_CAST_bitset",
+          "lineNumber": 802
+        },
+        {
+          "caller": "container_and_cardinality",
+          "callee": "const_CAST_bitset",
+          "lineNumber": 803
+        },
+        {
+          "caller": "container_and_cardinality",
+          "callee": "CONTAINER_PAIR",
+          "lineNumber": 805
+        },
+        {
+          "caller": "container_and_cardinality",
+          "callee": "array_container_intersection_cardinality",
+          "lineNumber": 806
+        },
+        {
+          "caller": "container_and_cardinality",
+          "callee": "const_CAST_array",
+          "lineNumber": 807
+        },
+        {
+          "caller": "container_and_cardinality",
+          "callee": "const_CAST_array",
+          "lineNumber": 807
+        },
+        {
+          "caller": "container_and_cardinality",
+          "callee": "CONTAINER_PAIR",
+          "lineNumber": 809
+        },
+        {
+          "caller": "container_and_cardinality",
+          "callee": "run_container_intersection_cardinality",
+          "lineNumber": 810
+        },
+        {
+          "caller": "container_and_cardinality",
+          "callee": "const_CAST_run",
+          "lineNumber": 810
+        },
+        {
+          "caller": "container_and_cardinality",
+          "callee": "const_CAST_run",
+          "lineNumber": 811
+        },
+        {
+          "caller": "container_and_cardinality",
+          "callee": "CONTAINER_PAIR",
+          "lineNumber": 813
+        },
+        {
+          "caller": "container_and_cardinality",
+          "callee": "array_bitset_container_intersection_cardinality",
+          "lineNumber": 814
+        },
+        {
+          "caller": "container_and_cardinality",
+          "callee": "const_CAST_array",
+          "lineNumber": 815
+        },
+        {
+          "caller": "container_and_cardinality",
+          "callee": "const_CAST_bitset",
+          "lineNumber": 815
+        },
+        {
+          "caller": "container_and_cardinality",
+          "callee": "CONTAINER_PAIR",
+          "lineNumber": 817
+        },
+        {
+          "caller": "container_and_cardinality",
+          "callee": "array_bitset_container_intersection_cardinality",
+          "lineNumber": 818
+        },
+        {
+          "caller": "container_and_cardinality",
+          "callee": "const_CAST_array",
+          "lineNumber": 819
+        },
+        {
+          "caller": "container_and_cardinality",
+          "callee": "const_CAST_bitset",
+          "lineNumber": 819
+        },
+        {
+          "caller": "container_and_cardinality",
+          "callee": "CONTAINER_PAIR",
+          "lineNumber": 821
+        },
+        {
+          "caller": "container_and_cardinality",
+          "callee": "run_bitset_container_intersection_cardinality",
+          "lineNumber": 822
+        },
+        {
+          "caller": "container_and_cardinality",
+          "callee": "const_CAST_run",
+          "lineNumber": 823
+        },
+        {
+          "caller": "container_and_cardinality",
+          "callee": "const_CAST_bitset",
+          "lineNumber": 823
+        },
+        {
+          "caller": "container_and_cardinality",
+          "callee": "CONTAINER_PAIR",
+          "lineNumber": 825
+        },
+        {
+          "caller": "container_and_cardinality",
+          "callee": "run_bitset_container_intersection_cardinality",
+          "lineNumber": 826
+        },
+        {
+          "caller": "container_and_cardinality",
+          "callee": "const_CAST_run",
+          "lineNumber": 827
+        },
+        {
+          "caller": "container_and_cardinality",
+          "callee": "const_CAST_bitset",
+          "lineNumber": 827
+        },
+        {
+          "caller": "container_and_cardinality",
+          "callee": "CONTAINER_PAIR",
+          "lineNumber": 829
+        },
+        {
+          "caller": "container_and_cardinality",
+          "callee": "array_run_container_intersection_cardinality",
+          "lineNumber": 830
+        },
+        {
+          "caller": "container_and_cardinality",
+          "callee": "const_CAST_array",
+          "lineNumber": 831
+        },
+        {
+          "caller": "container_and_cardinality",
+          "callee": "const_CAST_run",
+          "lineNumber": 831
+        },
+        {
+          "caller": "container_and_cardinality",
+          "callee": "CONTAINER_PAIR",
+          "lineNumber": 833
+        },
+        {
+          "caller": "container_and_cardinality",
+          "callee": "array_run_container_intersection_cardinality",
+          "lineNumber": 834
+        },
+        {
+          "caller": "container_and_cardinality",
+          "callee": "const_CAST_array",
+          "lineNumber": 835
+        },
+        {
+          "caller": "container_and_cardinality",
+          "callee": "const_CAST_run",
+          "lineNumber": 835
+        },
+        {
+          "caller": "container_and_cardinality",
+          "callee": "assert",
+          "lineNumber": 838
+        },
+        {
+          "caller": "container_intersect",
+          "callee": "container_unwrap_shared",
+          "lineNumber": 849
+        },
+        {
+          "caller": "container_intersect",
+          "callee": "container_unwrap_shared",
+          "lineNumber": 850
+        },
+        {
+          "caller": "container_intersect",
+          "callee": "PAIR_CONTAINER_TYPES",
+          "lineNumber": 851
+        },
+        {
+          "caller": "container_intersect",
+          "callee": "CONTAINER_PAIR",
+          "lineNumber": 852
+        },
+        {
+          "caller": "container_intersect",
+          "callee": "bitset_container_intersect",
+          "lineNumber": 853
+        },
+        {
+          "caller": "container_intersect",
+          "callee": "const_CAST_bitset",
+          "lineNumber": 853
+        },
+        {
+          "caller": "container_intersect",
+          "callee": "const_CAST_bitset",
+          "lineNumber": 854
+        },
+        {
+          "caller": "container_intersect",
+          "callee": "CONTAINER_PAIR",
+          "lineNumber": 856
+        },
+        {
+          "caller": "container_intersect",
+          "callee": "array_container_intersect",
+          "lineNumber": 857
+        },
+        {
+          "caller": "container_intersect",
+          "callee": "const_CAST_array",
+          "lineNumber": 857
+        },
+        {
+          "caller": "container_intersect",
+          "callee": "const_CAST_array",
+          "lineNumber": 858
+        },
+        {
+          "caller": "container_intersect",
+          "callee": "CONTAINER_PAIR",
+          "lineNumber": 860
+        },
+        {
+          "caller": "container_intersect",
+          "callee": "run_container_intersect",
+          "lineNumber": 861
+        },
+        {
+          "caller": "container_intersect",
+          "callee": "const_CAST_run",
+          "lineNumber": 861
+        },
+        {
+          "caller": "container_intersect",
+          "callee": "const_CAST_run",
+          "lineNumber": 862
+        },
+        {
+          "caller": "container_intersect",
+          "callee": "CONTAINER_PAIR",
+          "lineNumber": 864
+        },
+        {
+          "caller": "container_intersect",
+          "callee": "array_bitset_container_intersect",
+          "lineNumber": 865
+        },
+        {
+          "caller": "container_intersect",
+          "callee": "const_CAST_array",
+          "lineNumber": 865
+        },
+        {
+          "caller": "container_intersect",
+          "callee": "const_CAST_bitset",
+          "lineNumber": 866
+        },
+        {
+          "caller": "container_intersect",
+          "callee": "CONTAINER_PAIR",
+          "lineNumber": 868
+        },
+        {
+          "caller": "container_intersect",
+          "callee": "array_bitset_container_intersect",
+          "lineNumber": 869
+        },
+        {
+          "caller": "container_intersect",
+          "callee": "const_CAST_array",
+          "lineNumber": 869
+        },
+        {
+          "caller": "container_intersect",
+          "callee": "const_CAST_bitset",
+          "lineNumber": 870
+        },
+        {
+          "caller": "container_intersect",
+          "callee": "CONTAINER_PAIR",
+          "lineNumber": 872
+        },
+        {
+          "caller": "container_intersect",
+          "callee": "run_bitset_container_intersect",
+          "lineNumber": 873
+        },
+        {
+          "caller": "container_intersect",
+          "callee": "const_CAST_run",
+          "lineNumber": 873
+        },
+        {
+          "caller": "container_intersect",
+          "callee": "const_CAST_bitset",
+          "lineNumber": 874
+        },
+        {
+          "caller": "container_intersect",
+          "callee": "CONTAINER_PAIR",
+          "lineNumber": 876
+        },
+        {
+          "caller": "container_intersect",
+          "callee": "run_bitset_container_intersect",
+          "lineNumber": 877
+        },
+        {
+          "caller": "container_intersect",
+          "callee": "const_CAST_run",
+          "lineNumber": 877
+        },
+        {
+          "caller": "container_intersect",
+          "callee": "const_CAST_bitset",
+          "lineNumber": 878
+        },
+        {
+          "caller": "container_intersect",
+          "callee": "CONTAINER_PAIR",
+          "lineNumber": 880
+        },
+        {
+          "caller": "container_intersect",
+          "callee": "array_run_container_intersect",
+          "lineNumber": 881
+        },
+        {
+          "caller": "container_intersect",
+          "callee": "const_CAST_array",
+          "lineNumber": 881
+        },
+        {
+          "caller": "container_intersect",
+          "callee": "const_CAST_run",
+          "lineNumber": 882
+        },
+        {
+          "caller": "container_intersect",
+          "callee": "CONTAINER_PAIR",
+          "lineNumber": 884
+        },
+        {
+          "caller": "container_intersect",
+          "callee": "array_run_container_intersect",
+          "lineNumber": 885
+        },
+        {
+          "caller": "container_intersect",
+          "callee": "const_CAST_array",
+          "lineNumber": 885
+        },
+        {
+          "caller": "container_intersect",
+          "callee": "const_CAST_run",
+          "lineNumber": 886
+        },
+        {
+          "caller": "container_intersect",
+          "callee": "assert",
+          "lineNumber": 889
+        },
+        {
+          "caller": "container_add_offset",
+          "callee": "assert",
+          "lineNumber": 1522
+        },
+        {
+          "caller": "container_add_offset",
+          "callee": "assert",
+          "lineNumber": 1523
+        },
+        {
+          "caller": "container_add_offset",
+          "callee": "container_nonzero_cardinality",
+          "lineNumber": 1523
+        },
+        {
+          "caller": "container_add_offset",
+          "callee": "assert",
+          "lineNumber": 1524
+        },
+        {
+          "caller": "container_add_offset",
+          "callee": "assert",
+          "lineNumber": 1525
+        },
+        {
+          "caller": "container_add_offset",
+          "callee": "assert",
+          "lineNumber": 1526
+        },
+        {
+          "caller": "container_add_offset",
+          "callee": "bitset_container_offset",
+          "lineNumber": 1530
+        },
+        {
+          "caller": "container_add_offset",
+          "callee": "const_CAST_bitset",
+          "lineNumber": 1530
+        },
+        {
+          "caller": "container_add_offset",
+          "callee": "array_container_offset",
+          "lineNumber": 1533
+        },
+        {
+          "caller": "container_add_offset",
+          "callee": "const_CAST_array",
+          "lineNumber": 1533
+        },
+        {
+          "caller": "container_add_offset",
+          "callee": "run_container_offset",
+          "lineNumber": 1536
+        },
+        {
+          "caller": "container_add_offset",
+          "callee": "const_CAST_run",
+          "lineNumber": 1536
+        },
+        {
+          "caller": "container_add_offset",
+          "callee": "assert",
+          "lineNumber": 1539
+        },
+        {
+          "caller": "container_iterate",
+          "callee": "container_unwrap_shared",
+          "lineNumber": 1948
+        },
+        {
+          "caller": "container_iterate",
+          "callee": "bitset_container_iterate",
+          "lineNumber": 1951
+        },
+        {
+          "caller": "container_iterate",
+          "callee": "const_CAST_bitset",
+          "lineNumber": 1951
+        },
+        {
+          "caller": "container_iterate",
+          "callee": "array_container_iterate",
+          "lineNumber": 1954
+        },
+        {
+          "caller": "container_iterate",
+          "callee": "const_CAST_array",
+          "lineNumber": 1954
+        },
+        {
+          "caller": "container_iterate",
+          "callee": "run_container_iterate",
+          "lineNumber": 1957
+        },
+        {
+          "caller": "container_iterate",
+          "callee": "const_CAST_run",
+          "lineNumber": 1957
+        },
+        {
+          "caller": "container_iterate",
+          "callee": "assert",
+          "lineNumber": 1960
+        },
+        {
+          "caller": "container_iterate",
+          "callee": "assert",
+          "lineNumber": 1963
+        },
+        {
+          "caller": "container_iterate64",
+          "callee": "container_unwrap_shared",
+          "lineNumber": 1972
+        },
+        {
+          "caller": "container_iterate64",
+          "callee": "bitset_container_iterate64",
+          "lineNumber": 1975
+        },
+        {
+          "caller": "container_iterate64",
+          "callee": "const_CAST_bitset",
+          "lineNumber": 1975
+        },
+        {
+          "caller": "container_iterate64",
+          "callee": "array_container_iterate64",
+          "lineNumber": 1978
+        },
+        {
+          "caller": "container_iterate64",
+          "callee": "const_CAST_array",
+          "lineNumber": 1978
+        },
+        {
+          "caller": "container_iterate64",
+          "callee": "run_container_iterate64",
+          "lineNumber": 1981
+        },
+        {
+          "caller": "container_iterate64",
+          "callee": "const_CAST_run",
+          "lineNumber": 1981
+        },
+        {
+          "caller": "container_iterate64",
+          "callee": "assert",
+          "lineNumber": 1984
+        },
+        {
+          "caller": "container_iterate64",
+          "callee": "assert",
+          "lineNumber": 1987
+        },
+        {
+          "caller": "container_select",
+          "callee": "container_unwrap_shared",
+          "lineNumber": 2134
+        },
+        {
+          "caller": "container_select",
+          "callee": "bitset_container_select",
+          "lineNumber": 2137
+        },
+        {
+          "caller": "container_select",
+          "callee": "const_CAST_bitset",
+          "lineNumber": 2137
+        },
+        {
+          "caller": "container_select",
+          "callee": "array_container_select",
+          "lineNumber": 2140
+        },
+        {
+          "caller": "container_select",
+          "callee": "const_CAST_array",
+          "lineNumber": 2140
+        },
+        {
+          "caller": "container_select",
+          "callee": "run_container_select",
+          "lineNumber": 2143
+        },
+        {
+          "caller": "container_select",
+          "callee": "const_CAST_run",
+          "lineNumber": 2143
+        },
+        {
+          "caller": "container_select",
+          "callee": "assert",
+          "lineNumber": 2146
+        },
+        {
+          "caller": "container_select",
+          "callee": "assert",
+          "lineNumber": 2149
+        },
+        {
+          "caller": "container_maximum",
+          "callee": "container_unwrap_shared",
+          "lineNumber": 2155
+        },
+        {
+          "caller": "container_maximum",
+          "callee": "bitset_container_maximum",
+          "lineNumber": 2158
+        },
+        {
+          "caller": "container_maximum",
+          "callee": "const_CAST_bitset",
+          "lineNumber": 2158
+        },
+        {
+          "caller": "container_maximum",
+          "callee": "array_container_maximum",
+          "lineNumber": 2160
+        },
+        {
+          "caller": "container_maximum",
+          "callee": "const_CAST_array",
+          "lineNumber": 2160
+        },
+        {
+          "caller": "container_maximum",
+          "callee": "run_container_maximum",
+          "lineNumber": 2162
+        },
+        {
+          "caller": "container_maximum",
+          "callee": "const_CAST_run",
+          "lineNumber": 2162
+        },
+        {
+          "caller": "container_maximum",
+          "callee": "assert",
+          "lineNumber": 2164
+        },
+        {
+          "caller": "container_maximum",
+          "callee": "assert",
+          "lineNumber": 2167
+        },
+        {
+          "caller": "container_minimum",
+          "callee": "container_unwrap_shared",
+          "lineNumber": 2173
+        },
+        {
+          "caller": "container_minimum",
+          "callee": "bitset_container_minimum",
+          "lineNumber": 2176
+        },
+        {
+          "caller": "container_minimum",
+          "callee": "const_CAST_bitset",
+          "lineNumber": 2176
+        },
+        {
+          "caller": "container_minimum",
+          "callee": "array_container_minimum",
+          "lineNumber": 2178
+        },
+        {
+          "caller": "container_minimum",
+          "callee": "const_CAST_array",
+          "lineNumber": 2178
+        },
+        {
+          "caller": "container_minimum",
+          "callee": "run_container_minimum",
+          "lineNumber": 2180
+        },
+        {
+          "caller": "container_minimum",
+          "callee": "const_CAST_run",
+          "lineNumber": 2180
+        },
+        {
+          "caller": "container_minimum",
+          "callee": "assert",
+          "lineNumber": 2182
+        },
+        {
+          "caller": "container_minimum",
+          "callee": "assert",
+          "lineNumber": 2185
+        },
+        {
+          "caller": "container_rank",
+          "callee": "container_unwrap_shared",
+          "lineNumber": 2193
+        },
+        {
+          "caller": "container_rank",
+          "callee": "bitset_container_rank",
+          "lineNumber": 2196
+        },
+        {
+          "caller": "container_rank",
+          "callee": "const_CAST_bitset",
+          "lineNumber": 2196
+        },
+        {
+          "caller": "container_rank",
+          "callee": "array_container_rank",
+          "lineNumber": 2198
+        },
+        {
+          "caller": "container_rank",
+          "callee": "const_CAST_array",
+          "lineNumber": 2198
+        },
+        {
+          "caller": "container_rank",
+          "callee": "run_container_rank",
+          "lineNumber": 2200
+        },
+        {
+          "caller": "container_rank",
+          "callee": "const_CAST_run",
+          "lineNumber": 2200
+        },
+        {
+          "caller": "container_rank",
+          "callee": "assert",
+          "lineNumber": 2202
+        },
+        {
+          "caller": "container_rank",
+          "callee": "assert",
+          "lineNumber": 2205
+        },
+        {
+          "caller": "container_rank_many",
+          "callee": "container_unwrap_shared",
+          "lineNumber": 2215
+        },
+        {
+          "caller": "container_rank_many",
+          "callee": "bitset_container_rank_many",
+          "lineNumber": 2218
+        },
+        {
+          "caller": "container_rank_many",
+          "callee": "const_CAST_bitset",
+          "lineNumber": 2218
+        },
+        {
+          "caller": "container_rank_many",
+          "callee": "array_container_rank_many",
+          "lineNumber": 2221
+        },
+        {
+          "caller": "container_rank_many",
+          "callee": "const_CAST_array",
+          "lineNumber": 2221
+        },
+        {
+          "caller": "container_rank_many",
+          "callee": "run_container_rank_many",
+          "lineNumber": 2224
+        },
+        {
+          "caller": "container_rank_many",
+          "callee": "const_CAST_run",
+          "lineNumber": 2224
+        },
+        {
+          "caller": "container_rank_many",
+          "callee": "assert",
+          "lineNumber": 2227
+        },
+        {
+          "caller": "container_rank_many",
+          "callee": "assert",
+          "lineNumber": 2230
+        },
+        {
+          "caller": "container_get_index",
+          "callee": "container_unwrap_shared",
+          "lineNumber": 2238
+        },
+        {
+          "caller": "container_get_index",
+          "callee": "bitset_container_get_index",
+          "lineNumber": 2241
+        },
+        {
+          "caller": "container_get_index",
+          "callee": "const_CAST_bitset",
+          "lineNumber": 2241
+        },
+        {
+          "caller": "container_get_index",
+          "callee": "array_container_get_index",
+          "lineNumber": 2243
+        },
+        {
+          "caller": "container_get_index",
+          "callee": "const_CAST_array",
+          "lineNumber": 2243
+        },
+        {
+          "caller": "container_get_index",
+          "callee": "run_container_get_index",
+          "lineNumber": 2245
+        },
+        {
+          "caller": "container_get_index",
+          "callee": "const_CAST_run",
+          "lineNumber": 2245
+        },
+        {
+          "caller": "container_get_index",
+          "callee": "assert",
+          "lineNumber": 2247
+        },
+        {
+          "caller": "container_get_index",
+          "callee": "assert",
+          "lineNumber": 2250
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/CRoaring/include/roaring/containers/convert.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 73,
+      "nonEmptyLines": 58,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/CRoaring/include/roaring/containers/mixed_andnot.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 181,
+      "nonEmptyLines": 143,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/CRoaring/include/roaring/containers/mixed_equal.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 42,
+      "nonEmptyLines": 35,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/CRoaring/include/roaring/containers/mixed_intersection.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 101,
+      "nonEmptyLines": 84,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/CRoaring/include/roaring/containers/mixed_negation.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 140,
+      "nonEmptyLines": 124,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/CRoaring/include/roaring/containers/mixed_subset.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 55,
+      "nonEmptyLines": 45,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/CRoaring/include/roaring/containers/mixed_union.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 117,
+      "nonEmptyLines": 101,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/CRoaring/include/roaring/containers/mixed_xor.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 177,
+      "nonEmptyLines": 138,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/CRoaring/include/roaring/containers/perfparameters.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 49,
+      "nonEmptyLines": 39,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/CRoaring/include/roaring/containers/run.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 718,
+      "nonEmptyLines": 634,
+      "callGraph": [
+        {
+          "caller": "recoverRoomAtIndex",
+          "callee": "memmove",
+          "lineNumber": 95
+        },
+        {
+          "caller": "rle16_count_less",
+          "callee": "UINT32_C",
+          "lineNumber": 158
+        },
+        {
+          "caller": "rle16_count_greater",
+          "callee": "UINT32_C",
+          "lineNumber": 181
+        },
+        {
+          "caller": "makeRoomAtIndex",
+          "callee": "run_container_grow",
+          "lineNumber": 205
+        },
+        {
+          "caller": "makeRoomAtIndex",
+          "callee": "memmove",
+          "lineNumber": 206
+        },
+        {
+          "caller": "run_container_remove",
+          "callee": "interleavedBinarySearch",
+          "lineNumber": 216
+        },
+        {
+          "caller": "run_container_remove",
+          "callee": "recoverRoomAtIndex",
+          "lineNumber": 220
+        },
+        {
+          "caller": "run_container_remove",
+          "callee": "makeRoomAtIndex",
+          "lineNumber": 237
+        },
+        {
+          "caller": "run_container_contains",
+          "callee": "interleavedBinarySearch",
+          "lineNumber": 253
+        },
+        {
+          "caller": "run_container_contains_range",
+          "callee": "interleavedBinarySearch",
+          "lineNumber": 273
+        },
+        {
+          "caller": "run_container_append",
+          "callee": "UINT32_C",
+          "lineNumber": 331
+        },
+        {
+          "caller": "run_container_append_value",
+          "callee": "CROARING_MAKE_RLE16",
+          "lineNumber": 363
+        },
+        {
+          "caller": "run_container_append_value_first",
+          "callee": "CROARING_MAKE_RLE16",
+          "lineNumber": 378
+        },
+        {
+          "caller": "run_container_size_in_bytes",
+          "callee": "run_container_serialized_size_in_bytes",
+          "lineNumber": 486
+        },
+        {
+          "caller": "run_container_equals",
+          "callee": "memequals",
+          "lineNumber": 498
+        },
+        {
+          "caller": "run_container_index_equalorlarger",
+          "callee": "interleavedBinarySearch",
+          "lineNumber": 581
+        },
+        {
+          "caller": "run_container_add_range_nruns",
+          "callee": "makeRoomAtIndex",
+          "lineNumber": 605
+        },
+        {
+          "caller": "run_container_add_range_nruns",
+          "callee": "memmove",
+          "lineNumber": 618
+        },
+        {
+          "caller": "run_container_shift_tail",
+          "callee": "run_container_grow",
+          "lineNumber": 645
+        },
+        {
+          "caller": "run_container_shift_tail",
+          "callee": "memmove",
+          "lineNumber": 650
+        },
+        {
+          "caller": "run_container_remove_range",
+          "callee": "rle16_find_run",
+          "lineNumber": 660
+        },
+        {
+          "caller": "run_container_remove_range",
+          "callee": "rle16_find_run",
+          "lineNumber": 661
+        },
+        {
+          "caller": "run_container_remove_range",
+          "callee": "makeRoomAtIndex",
+          "lineNumber": 669
+        },
+        {
+          "caller": "run_container_remove_range",
+          "callee": "run_container_shift_tail",
+          "lineNumber": 707
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/CRoaring/include/roaring/isadetection.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 42,
+      "nonEmptyLines": 38,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/CRoaring/include/roaring/memory.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 39,
+      "nonEmptyLines": 31,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/CRoaring/include/roaring/misc/configreport.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 240,
+      "nonEmptyLines": 227,
+      "callGraph": [
+        {
+          "caller": "computecacheline",
+          "callee": "cpuinfo",
+          "lineNumber": 50
+        },
+        {
+          "caller": "tellmeall",
+          "callee": "printf",
+          "lineNumber": 172
+        },
+        {
+          "caller": "tellmeall",
+          "callee": "printf",
+          "lineNumber": 174
+        },
+        {
+          "caller": "tellmeall",
+          "callee": "guessprocessor",
+          "lineNumber": 174
+        },
+        {
+          "caller": "tellmeall",
+          "callee": "printf",
+          "lineNumber": 176
+        },
+        {
+          "caller": "tellmeall",
+          "callee": "printf",
+          "lineNumber": 180
+        },
+        {
+          "caller": "tellmeall",
+          "callee": "printf",
+          "lineNumber": 183
+        },
+        {
+          "caller": "tellmeall",
+          "callee": "printf",
+          "lineNumber": 185
+        },
+        {
+          "caller": "tellmeall",
+          "callee": "printf",
+          "lineNumber": 194
+        },
+        {
+          "caller": "tellmeall",
+          "callee": "printf",
+          "lineNumber": 197
+        },
+        {
+          "caller": "tellmeall",
+          "callee": "computecacheline",
+          "lineNumber": 199
+        },
+        {
+          "caller": "tellmeall",
+          "callee": "printf",
+          "lineNumber": 200
+        },
+        {
+          "caller": "tellmeall",
+          "callee": "computecacheline",
+          "lineNumber": 200
+        },
+        {
+          "caller": "tellmeall",
+          "callee": "printf",
+          "lineNumber": 206
+        },
+        {
+          "caller": "tellmeall",
+          "callee": "printf",
+          "lineNumber": 208
+        },
+        {
+          "caller": "tellmeall",
+          "callee": "printf",
+          "lineNumber": 210
+        },
+        {
+          "caller": "tellmeall",
+          "callee": "printf",
+          "lineNumber": 213
+        },
+        {
+          "caller": "tellmeall",
+          "callee": "printf",
+          "lineNumber": 216
+        },
+        {
+          "caller": "tellmeall",
+          "callee": "printf",
+          "lineNumber": 225
+        },
+        {
+          "caller": "tellmeall",
+          "callee": "printf",
+          "lineNumber": 228
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/CRoaring/include/roaring/portability.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 604,
+      "nonEmptyLines": 532,
+      "callGraph": [
+        {
+          "caller": "roaring_trailing_zeroes",
+          "callee": "_BitScanForward64",
+          "lineNumber": 175
+        },
+        {
+          "caller": "roaring_trailing_zeroes",
+          "callee": "_BitScanForward",
+          "lineNumber": 178
+        },
+        {
+          "caller": "roaring_trailing_zeroes",
+          "callee": "_BitScanForward",
+          "lineNumber": 180
+        },
+        {
+          "caller": "roaring_leading_zeroes",
+          "callee": "_BitScanReverse64",
+          "lineNumber": 193
+        },
+        {
+          "caller": "roaring_leading_zeroes",
+          "callee": "_BitScanReverse",
+          "lineNumber": 196
+        },
+        {
+          "caller": "roaring_leading_zeroes",
+          "callee": "_BitScanReverse",
+          "lineNumber": 199
+        },
+        {
+          "caller": "roaring_trailing_zeroes",
+          "callee": "__builtin_ctzll",
+          "lineNumber": 216
+        },
+        {
+          "caller": "roaring_leading_zeroes",
+          "callee": "__builtin_clzll",
+          "lineNumber": 220
+        },
+        {
+          "caller": "roaring_hamming_backup",
+          "callee": "UINT64_C",
+          "lineNumber": 249
+        },
+        {
+          "caller": "roaring_hamming_backup",
+          "callee": "UINT64_C",
+          "lineNumber": 250
+        },
+        {
+          "caller": "roaring_hamming_backup",
+          "callee": "UINT64_C",
+          "lineNumber": 251
+        },
+        {
+          "caller": "roaring_hamming_backup",
+          "callee": "UINT64_C",
+          "lineNumber": 255
+        },
+        {
+          "caller": "roaring_hamming",
+          "callee": "vaddv_u8",
+          "lineNumber": 264
+        },
+        {
+          "caller": "roaring_hamming",
+          "callee": "vcnt_u8",
+          "lineNumber": 264
+        },
+        {
+          "caller": "roaring_hamming",
+          "callee": "vcreate_u8",
+          "lineNumber": 264
+        },
+        {
+          "caller": "roaring_hamming",
+          "callee": "roaring_hamming_backup",
+          "lineNumber": 266
+        },
+        {
+          "caller": "roaring_hamming",
+          "callee": "__popcnt64",
+          "lineNumber": 269
+        },
+        {
+          "caller": "roaring_hamming",
+          "callee": "roaring_hamming_backup",
+          "lineNumber": 274
+        },
+        {
+          "caller": "roaring_hamming",
+          "callee": "__popcnt",
+          "lineNumber": 277
+        },
+        {
+          "caller": "roaring_hamming",
+          "callee": "__popcnt",
+          "lineNumber": 278
+        },
+        {
+          "caller": "roaring_hamming",
+          "callee": "__builtin_popcountll",
+          "lineNumber": 281
+        },
+        {
+          "caller": "croaring_refcount_inc",
+          "callee": "atomic_fetch_add_explicit",
+          "lineNumber": 486
+        },
+        {
+          "caller": "croaring_refcount_dec",
+          "callee": "atomic_fetch_sub_explicit",
+          "lineNumber": 496
+        },
+        {
+          "caller": "croaring_refcount_dec",
+          "callee": "atomic_thread_fence",
+          "lineNumber": 498
+        },
+        {
+          "caller": "croaring_refcount_get",
+          "callee": "atomic_load_explicit",
+          "lineNumber": 504
+        },
+        {
+          "caller": "croaring_refcount_inc",
+          "callee": "fetch_add",
+          "lineNumber": 511
+        },
+        {
+          "caller": "croaring_refcount_dec",
+          "callee": "fetch_sub",
+          "lineNumber": 516
+        },
+        {
+          "caller": "croaring_refcount_dec",
+          "callee": "std::atomic_thread_fence",
+          "lineNumber": 518
+        },
+        {
+          "caller": "croaring_refcount_get",
+          "callee": "load",
+          "lineNumber": 524
+        },
+        {
+          "caller": "croaring_refcount_inc",
+          "callee": "_InterlockedIncrement",
+          "lineNumber": 536
+        },
+        {
+          "caller": "croaring_refcount_dec",
+          "callee": "_InterlockedDecrement",
+          "lineNumber": 540
+        },
+        {
+          "caller": "croaring_refcount_dec",
+          "callee": "assert",
+          "lineNumber": 560
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    }
+  ]
+}

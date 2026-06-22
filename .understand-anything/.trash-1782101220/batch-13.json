@@ -1,0 +1,735 @@
+{
+  "nodes": [
+    {
+      "id": "file:core/ondemand/.gensrctx/dsf_define_datatypesCdrAux.hpp",
+      "type": "file",
+      "name": "dsf_define_datatypesCdrAux.hpp",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_datatypesCdrAux.hpp",
+      "summary": "由 fastddsgen 自动生成的 CDR 辅助头文件，定义各 DDS 数据类型（Timespec、NamedValue、StructuredDataMapEntry、DataBuffer、DT_FILE）的最大序列化尺寸常量，并在 BaoSky::Cdr 命名空间中声明 SerializeKey 函数重载。",
+      "tags": ["auto-generated", "serialization", "cdr", "type-definition"],
+      "complexity": "simple",
+      "languageNotes": "使用 constexpr 定义 CDR 类型尺寸常量，供序列化/反序列化流程使用。SerializeKey 函数通过函数重载为每种数据类型提供键序列化支持。"
+    },
+    {
+      "id": "file:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h",
+      "type": "file",
+      "name": "dsf_define_datatypesPubSubTypes.h",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h",
+      "summary": "由 fastddsgen 自动生成的 PubSub 类型声明头文件，定义 5 个继承自 BaoSky::dds::TopicDataType 的序列化类型类（TimespecPubSubType、NamedValuePubSubType、StructuredDataMapEntryPubSubType、DataBufferPubSubType、DT_FILEPubSubType），并包含 DSF 命名空间下的各种数据类型别名（GUID_t、DT_BLOB、DT_BOOLEAN 等）。",
+      "tags": ["auto-generated", "dds", "topic-data-type", "type-definition", "header"],
+      "complexity": "moderate",
+      "languageNotes": "使用了 pointer-to-member 和 reinterpret_cast 技巧实现编译期偏移量计算（Timespec_offset_of），这是 eProsima Fast-DDS 代码生成器的典型模式。"
+    },
+    {
+      "id": "class:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h:TimespecPubSubType",
+      "type": "class",
+      "name": "TimespecPubSubType",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h",
+      "lineRange": [73, 96],
+      "summary": "DDS TopicDataType 实现类，负责 DSF::Timespec 类型的序列化、反序列化、数据创建/销毁和键提取。继承自 BaoSky::dds::TopicDataType。",
+      "tags": ["dds", "serialization", "topic-data-type"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h:NamedValuePubSubType",
+      "type": "class",
+      "name": "NamedValuePubSubType",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h",
+      "lineRange": [102, 125],
+      "summary": "DDS TopicDataType 实现类，负责 DSF::NamedValue 类型的序列化、反序列化、数据创建/销毁和键提取。继承自 BaoSky::dds::TopicDataType。",
+      "tags": ["dds", "serialization", "topic-data-type"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h:StructuredDataMapEntryPubSubType",
+      "type": "class",
+      "name": "StructuredDataMapEntryPubSubType",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h",
+      "lineRange": [131, 154],
+      "summary": "DDS TopicDataType 实现类，负责 DSF::StructuredDataMapEntry 类型的序列化、反序列化、数据创建/销毁和键提取。继承自 BaoSky::dds::TopicDataType。",
+      "tags": ["dds", "serialization", "topic-data-type"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h:DataBufferPubSubType",
+      "type": "class",
+      "name": "DataBufferPubSubType",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h",
+      "lineRange": [160, 183],
+      "summary": "DDS TopicDataType 实现类，负责 DSF::DataBuffer 类型的序列化、反序列化、数据创建/销毁和键提取。继承自 BaoSky::dds::TopicDataType。",
+      "tags": ["dds", "serialization", "topic-data-type"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h:DT_FILEPubSubType",
+      "type": "class",
+      "name": "DT_FILEPubSubType",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h",
+      "lineRange": [209, 232],
+      "summary": "DDS TopicDataType 实现类，负责 DSF::DataTypes::DT_FILE 类型的序列化、反序列化、数据创建/销毁和键提取。位于 DSF::DataTypes 子命名空间，继承自 BaoSky::dds::TopicDataType。",
+      "tags": ["dds", "serialization", "topic-data-type"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "type": "file",
+      "name": "dsf_define_datatypesPubSubTypes.cxx",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "summary": "由 fastddsgen 自动生成的 PubSub 类型实现文件，包含 5 个 DDS TopicDataType 子类（TimespecPubSubType、NamedValuePubSubType、StructuredDataMapEntryPubSubType、DataBufferPubSubType、DT_FILEPubSubType）的完整方法实现，涵盖 CDR 序列化/反序列化、数据生命周期管理和键提取逻辑。",
+      "tags": ["auto-generated", "dds", "serialization", "implementation", "cdr"],
+      "complexity": "complex",
+      "languageNotes": "所有序列化均使用 BaoSky::Cdr 的 XCDRv1 编码格式。构造函数使用 malloc/free 管理 mKeyBuffer（裸指针），而非 RAII，这是自动生成代码的典型特征。GetKey 方法中 MD5 相关逻辑已被注释掉。"
+    },
+    {
+      "id": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:TimespecPubSubType",
+      "type": "function",
+      "name": "TimespecPubSubType::TimespecPubSubType",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "lineRange": [36, 49],
+      "summary": "TimespecPubSubType 构造函数，设置 DDS 类型名为 \"DSF::Timespec\"，计算 CDR 序列化大小，分配并清零 mKeyBuffer。",
+      "tags": ["constructor", "dds", "initialization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:~TimespecPubSubType",
+      "type": "function",
+      "name": "TimespecPubSubType::~TimespecPubSubType",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "lineRange": [51, 57],
+      "summary": "TimespecPubSubType 析构函数，释放构造函数中通过 malloc 分配的 mKeyBuffer。",
+      "tags": ["destructor", "dds", "memory-cleanup"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:Serialize_Timespec",
+      "type": "function",
+      "name": "TimespecPubSubType::Serialize",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "lineRange": [59, 79],
+      "summary": "将 DSF::Timespec 数据序列化为 CDR 格式的 SerializedPayload，使用 XCDRv1 编码并包含封装头。",
+      "tags": ["serialization", "cdr", "dds"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:Deserialize_Timespec",
+      "type": "function",
+      "name": "TimespecPubSubType::Deserialize",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "lineRange": [81, 102],
+      "summary": "从 CDR 格式的 SerializedPayload 反序列化出 DSF::Timespec 数据，解析封装头并使用 XCDRv1 编码。",
+      "tags": ["deserialization", "cdr", "dds"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:GetKey_Timespec",
+      "type": "function",
+      "name": "TimespecPubSubType::GetKey",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "lineRange": [128, 164],
+      "summary": "从 DSF::Timespec 数据中提取键，通过 SerializeKey 序列化键字段并填充 InstanceHandle。当 mIsGetKeyDefined 为 false 时直接返回。",
+      "tags": ["key-extraction", "dds", "serialization"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:NamedValuePubSubType",
+      "type": "function",
+      "name": "NamedValuePubSubType::NamedValuePubSubType",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "lineRange": [166, 179],
+      "summary": "NamedValuePubSubType 构造函数，设置 DDS 类型名为 \"DSF::NamedValue\"，计算 CDR 序列化大小，分配并清零 mKeyBuffer。",
+      "tags": ["constructor", "dds", "initialization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:~NamedValuePubSubType",
+      "type": "function",
+      "name": "NamedValuePubSubType::~NamedValuePubSubType",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "lineRange": [181, 187],
+      "summary": "NamedValuePubSubType 析构函数，释放构造函数中通过 malloc 分配的 mKeyBuffer。",
+      "tags": ["destructor", "dds", "memory-cleanup"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:Serialize_NamedValue",
+      "type": "function",
+      "name": "NamedValuePubSubType::Serialize",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "lineRange": [189, 209],
+      "summary": "将 DSF::NamedValue 数据序列化为 CDR 格式的 SerializedPayload，使用 XCDRv1 编码并包含封装头。",
+      "tags": ["serialization", "cdr", "dds"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:Deserialize_NamedValue",
+      "type": "function",
+      "name": "NamedValuePubSubType::Deserialize",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "lineRange": [211, 232],
+      "summary": "从 CDR 格式的 SerializedPayload 反序列化出 DSF::NamedValue 数据，解析封装头并使用 XCDRv1 编码。",
+      "tags": ["deserialization", "cdr", "dds"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:GetKey_NamedValue",
+      "type": "function",
+      "name": "NamedValuePubSubType::GetKey",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "lineRange": [258, 294],
+      "summary": "从 DSF::NamedValue 数据中提取键，通过 SerializeKey 序列化键字段并填充 InstanceHandle。",
+      "tags": ["key-extraction", "dds", "serialization"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:StructuredDataMapEntryPubSubType",
+      "type": "function",
+      "name": "StructuredDataMapEntryPubSubType::StructuredDataMapEntryPubSubType",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "lineRange": [296, 309],
+      "summary": "StructuredDataMapEntryPubSubType 构造函数，设置 DDS 类型名为 \"DSF::StructuredDataMapEntry\"，计算 CDR 序列化大小，分配并清零 mKeyBuffer。",
+      "tags": ["constructor", "dds", "initialization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:~StructuredDataMapEntryPubSubType",
+      "type": "function",
+      "name": "StructuredDataMapEntryPubSubType::~StructuredDataMapEntryPubSubType",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "lineRange": [311, 317],
+      "summary": "StructuredDataMapEntryPubSubType 析构函数，释放构造函数中通过 malloc 分配的 mKeyBuffer。",
+      "tags": ["destructor", "dds", "memory-cleanup"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:Serialize_StructuredDataMapEntry",
+      "type": "function",
+      "name": "StructuredDataMapEntryPubSubType::Serialize",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "lineRange": [319, 339],
+      "summary": "将 DSF::StructuredDataMapEntry 数据序列化为 CDR 格式的 SerializedPayload，使用 XCDRv1 编码并包含封装头。",
+      "tags": ["serialization", "cdr", "dds"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:Deserialize_StructuredDataMapEntry",
+      "type": "function",
+      "name": "StructuredDataMapEntryPubSubType::Deserialize",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "lineRange": [341, 362],
+      "summary": "从 CDR 格式的 SerializedPayload 反序列化出 DSF::StructuredDataMapEntry 数据。",
+      "tags": ["deserialization", "cdr", "dds"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:GetKey_StructuredDataMapEntry",
+      "type": "function",
+      "name": "StructuredDataMapEntryPubSubType::GetKey",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "lineRange": [388, 424],
+      "summary": "从 DSF::StructuredDataMapEntry 数据中提取键，通过 SerializeKey 序列化键字段并填充 InstanceHandle。",
+      "tags": ["key-extraction", "dds", "serialization"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:DataBufferPubSubType",
+      "type": "function",
+      "name": "DataBufferPubSubType::DataBufferPubSubType",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "lineRange": [426, 439],
+      "summary": "DataBufferPubSubType 构造函数，设置 DDS 类型名为 \"DSF::DataBuffer\"，计算 CDR 序列化大小，分配并清零 mKeyBuffer。",
+      "tags": ["constructor", "dds", "initialization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:~DataBufferPubSubType",
+      "type": "function",
+      "name": "DataBufferPubSubType::~DataBufferPubSubType",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "lineRange": [441, 447],
+      "summary": "DataBufferPubSubType 析构函数，释放构造函数中通过 malloc 分配的 mKeyBuffer。",
+      "tags": ["destructor", "dds", "memory-cleanup"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:Serialize_DataBuffer",
+      "type": "function",
+      "name": "DataBufferPubSubType::Serialize",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "lineRange": [449, 469],
+      "summary": "将 DSF::DataBuffer 数据序列化为 CDR 格式的 SerializedPayload，使用 XCDRv1 编码并包含封装头。",
+      "tags": ["serialization", "cdr", "dds"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:Deserialize_DataBuffer",
+      "type": "function",
+      "name": "DataBufferPubSubType::Deserialize",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "lineRange": [471, 492],
+      "summary": "从 CDR 格式的 SerializedPayload 反序列化出 DSF::DataBuffer 数据。",
+      "tags": ["deserialization", "cdr", "dds"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:GetKey_DataBuffer",
+      "type": "function",
+      "name": "DataBufferPubSubType::GetKey",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "lineRange": [518, 554],
+      "summary": "从 DSF::DataBuffer 数据中提取键，通过 SerializeKey 序列化键字段并填充 InstanceHandle。",
+      "tags": ["key-extraction", "dds", "serialization"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:DT_FILEPubSubType",
+      "type": "function",
+      "name": "DT_FILEPubSubType::DT_FILEPubSubType",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "lineRange": [557, 570],
+      "summary": "DT_FILEPubSubType 构造函数，设置 DDS 类型名为 \"DSF::DataTypes::DT_FILE\"，计算 CDR 序列化大小，分配并清零 mKeyBuffer。",
+      "tags": ["constructor", "dds", "initialization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:~DT_FILEPubSubType",
+      "type": "function",
+      "name": "DT_FILEPubSubType::~DT_FILEPubSubType",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "lineRange": [572, 578],
+      "summary": "DT_FILEPubSubType 析构函数，释放构造函数中通过 malloc 分配的 mKeyBuffer。",
+      "tags": ["destructor", "dds", "memory-cleanup"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:Serialize_DT_FILE",
+      "type": "function",
+      "name": "DT_FILEPubSubType::Serialize",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "lineRange": [580, 600],
+      "summary": "将 DSF::DataTypes::DT_FILE 数据序列化为 CDR 格式的 SerializedPayload，使用 XCDRv1 编码并包含封装头。",
+      "tags": ["serialization", "cdr", "dds"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:Deserialize_DT_FILE",
+      "type": "function",
+      "name": "DT_FILEPubSubType::Deserialize",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "lineRange": [602, 623],
+      "summary": "从 CDR 格式的 SerializedPayload 反序列化出 DSF::DataTypes::DT_FILE 数据。",
+      "tags": ["deserialization", "cdr", "dds"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:GetKey_DT_FILE",
+      "type": "function",
+      "name": "DT_FILEPubSubType::GetKey",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "lineRange": [649, 685],
+      "summary": "从 DSF::DataTypes::DT_FILE 数据中提取键，通过 SerializeKey 序列化键字段并填充 InstanceHandle。",
+      "tags": ["key-extraction", "dds", "serialization"],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "target": "file:core/ondemand/.gensrctx/dsf_define_datatypesCdrAux.hpp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "target": "file:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h",
+      "target": "class:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h:TimespecPubSubType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h",
+      "target": "class:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h:NamedValuePubSubType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h",
+      "target": "class:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h:StructuredDataMapEntryPubSubType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h",
+      "target": "class:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h:DataBufferPubSubType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h",
+      "target": "class:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h:DT_FILEPubSubType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:TimespecPubSubType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:~TimespecPubSubType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:Serialize_Timespec",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:Deserialize_Timespec",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:GetKey_Timespec",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:NamedValuePubSubType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:~NamedValuePubSubType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:Serialize_NamedValue",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:Deserialize_NamedValue",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:GetKey_NamedValue",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:StructuredDataMapEntryPubSubType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:~StructuredDataMapEntryPubSubType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:Serialize_StructuredDataMapEntry",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:Deserialize_StructuredDataMapEntry",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:GetKey_StructuredDataMapEntry",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:DataBufferPubSubType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:~DataBufferPubSubType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:Serialize_DataBuffer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:Deserialize_DataBuffer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:GetKey_DataBuffer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:DT_FILEPubSubType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:~DT_FILEPubSubType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:Serialize_DT_FILE",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:Deserialize_DT_FILE",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:GetKey_DT_FILE",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h:TimespecPubSubType",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:TimespecPubSubType",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h:TimespecPubSubType",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:~TimespecPubSubType",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h:TimespecPubSubType",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:Serialize_Timespec",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h:TimespecPubSubType",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:Deserialize_Timespec",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h:TimespecPubSubType",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:GetKey_Timespec",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h:NamedValuePubSubType",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:NamedValuePubSubType",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h:NamedValuePubSubType",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:~NamedValuePubSubType",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h:NamedValuePubSubType",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:Serialize_NamedValue",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h:NamedValuePubSubType",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:Deserialize_NamedValue",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h:NamedValuePubSubType",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:GetKey_NamedValue",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h:StructuredDataMapEntryPubSubType",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:StructuredDataMapEntryPubSubType",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h:StructuredDataMapEntryPubSubType",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:~StructuredDataMapEntryPubSubType",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h:StructuredDataMapEntryPubSubType",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:Serialize_StructuredDataMapEntry",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h:StructuredDataMapEntryPubSubType",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:Deserialize_StructuredDataMapEntry",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h:StructuredDataMapEntryPubSubType",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:GetKey_StructuredDataMapEntry",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h:DataBufferPubSubType",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:DataBufferPubSubType",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h:DataBufferPubSubType",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:~DataBufferPubSubType",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h:DataBufferPubSubType",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:Serialize_DataBuffer",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h:DataBufferPubSubType",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:Deserialize_DataBuffer",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h:DataBufferPubSubType",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:GetKey_DataBuffer",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h:DT_FILEPubSubType",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:DT_FILEPubSubType",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h:DT_FILEPubSubType",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:~DT_FILEPubSubType",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h:DT_FILEPubSubType",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:Serialize_DT_FILE",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h:DT_FILEPubSubType",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:Deserialize_DT_FILE",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h:DT_FILEPubSubType",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:GetKey_DT_FILE",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

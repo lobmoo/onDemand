@@ -1,0 +1,3404 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 8,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "common/log/custom_rotating_file_sink.h",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 81,
+      "nonEmptyLines": 67,
+      "callGraph": [
+        {
+          "caller": "custom_rotating_logger_mt",
+          "callee": "Factory::template create<sinks::custom_rotating_file_sink_mt>",
+          "lineNumber": 64
+        },
+        {
+          "caller": "custom_rotating_logger_st",
+          "callee": "Factory::template create<sinks::custom_rotating_file_sink_st>",
+          "lineNumber": 74
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "common/log/logger.cc",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 95,
+      "nonEmptyLines": 80,
+      "functions": [
+        {
+          "name": "Logger",
+          "startLine": 19,
+          "endLine": 21,
+          "params": []
+        },
+        {
+          "name": "Uninit",
+          "startLine": 29,
+          "endLine": 32,
+          "params": []
+        },
+        {
+          "name": "Init",
+          "startLine": 34,
+          "endLine": 37,
+          "params": [
+            "log_config_file_path"
+          ]
+        },
+        {
+          "name": "Init",
+          "startLine": 39,
+          "endLine": 43,
+          "params": [
+            "file_name",
+            "type",
+            "level",
+            "max_file_size",
+            "max_backup_index",
+            "is_async"
+          ]
+        },
+        {
+          "name": "GetLogStream",
+          "startLine": 45,
+          "endLine": 49,
+          "params": [
+            "level",
+            "file",
+            "line",
+            "func"
+          ]
+        },
+        {
+          "name": "Log",
+          "startLine": 51,
+          "endLine": 55,
+          "params": [
+            "level",
+            "msg",
+            "file",
+            "line",
+            "func"
+          ]
+        },
+        {
+          "name": "ShouldLog",
+          "startLine": 57,
+          "endLine": 60,
+          "params": [
+            "level"
+          ]
+        },
+        {
+          "name": "SetFlushEvery",
+          "startLine": 62,
+          "endLine": 65,
+          "params": [
+            "flush_every"
+          ]
+        },
+        {
+          "name": "SetFlushOnLevel",
+          "startLine": 67,
+          "endLine": 70,
+          "params": [
+            "flush_on_level"
+          ]
+        },
+        {
+          "name": "SetLogLevel",
+          "startLine": 72,
+          "endLine": 75,
+          "params": [
+            "level"
+          ]
+        },
+        {
+          "name": "SetLogPattern",
+          "startLine": 77,
+          "endLine": 80,
+          "params": [
+            "pattern"
+          ]
+        },
+        {
+          "name": "SetLogConsoleLevel",
+          "startLine": 82,
+          "endLine": 85,
+          "params": [
+            "level"
+          ]
+        },
+        {
+          "name": "SetLogFileLevel",
+          "startLine": 87,
+          "endLine": 90,
+          "params": [
+            "level"
+          ]
+        },
+        {
+          "name": "SetLogBufferSize",
+          "startLine": 92,
+          "endLine": 95,
+          "params": [
+            "size"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "Logger",
+          "line": 19,
+          "isDefault": false
+        },
+        {
+          "name": "Uninit",
+          "line": 29,
+          "isDefault": false
+        },
+        {
+          "name": "Init",
+          "line": 34,
+          "isDefault": false
+        },
+        {
+          "name": "Init",
+          "line": 39,
+          "isDefault": false
+        },
+        {
+          "name": "GetLogStream",
+          "line": 45,
+          "isDefault": false
+        },
+        {
+          "name": "Log",
+          "line": 51,
+          "isDefault": false
+        },
+        {
+          "name": "ShouldLog",
+          "line": 57,
+          "isDefault": false
+        },
+        {
+          "name": "SetFlushEvery",
+          "line": 62,
+          "isDefault": false
+        },
+        {
+          "name": "SetFlushOnLevel",
+          "line": 67,
+          "isDefault": false
+        },
+        {
+          "name": "SetLogLevel",
+          "line": 72,
+          "isDefault": false
+        },
+        {
+          "name": "SetLogPattern",
+          "line": 77,
+          "isDefault": false
+        },
+        {
+          "name": "SetLogConsoleLevel",
+          "line": 82,
+          "isDefault": false
+        },
+        {
+          "name": "SetLogFileLevel",
+          "line": 87,
+          "isDefault": false
+        },
+        {
+          "name": "SetLogBufferSize",
+          "line": 92,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "Logger",
+          "callee": "std::make_unique<LoggerImpl>",
+          "lineNumber": 19
+        },
+        {
+          "caller": "Uninit",
+          "callee": "Uninit",
+          "lineNumber": 31
+        },
+        {
+          "caller": "Init",
+          "callee": "Init",
+          "lineNumber": 36
+        },
+        {
+          "caller": "Init",
+          "callee": "Init",
+          "lineNumber": 42
+        },
+        {
+          "caller": "GetLogStream",
+          "callee": "LogStreamOptimized",
+          "lineNumber": 48
+        },
+        {
+          "caller": "Log",
+          "callee": "Log",
+          "lineNumber": 54
+        },
+        {
+          "caller": "Log",
+          "callee": "std::move",
+          "lineNumber": 54
+        },
+        {
+          "caller": "ShouldLog",
+          "callee": "ShouldLog",
+          "lineNumber": 59
+        },
+        {
+          "caller": "SetFlushEvery",
+          "callee": "SetFlushEvery",
+          "lineNumber": 64
+        },
+        {
+          "caller": "SetFlushOnLevel",
+          "callee": "SetFlushOnLevel",
+          "lineNumber": 69
+        },
+        {
+          "caller": "SetLogLevel",
+          "callee": "SetLogLevel",
+          "lineNumber": 74
+        },
+        {
+          "caller": "SetLogPattern",
+          "callee": "SetLogPattern",
+          "lineNumber": 79
+        },
+        {
+          "caller": "SetLogConsoleLevel",
+          "callee": "SetLogConsoleLevel",
+          "lineNumber": 84
+        },
+        {
+          "caller": "SetLogFileLevel",
+          "callee": "SetLogFileLevel",
+          "lineNumber": 89
+        },
+        {
+          "caller": "SetLogBufferSize",
+          "callee": "SetLogBufferSize",
+          "lineNumber": 94
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 14,
+        "functionCount": 14,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "common/log/logger.h",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 205,
+      "nonEmptyLines": 174,
+      "callGraph": [
+        {
+          "caller": "~LogStreamOptimized",
+          "callee": "str",
+          "lineNumber": 153
+        },
+        {
+          "caller": "~LogStreamOptimized",
+          "callee": "empty",
+          "lineNumber": 154
+        },
+        {
+          "caller": "~LogStreamOptimized",
+          "callee": "Log",
+          "lineNumber": 155
+        },
+        {
+          "caller": "~LogStreamOptimized",
+          "callee": "std::move",
+          "lineNumber": 155
+        },
+        {
+          "caller": "shouldLog",
+          "callee": "steady_clock::now",
+          "lineNumber": 179
+        },
+        {
+          "caller": "shouldLog",
+          "callee": "find",
+          "lineNumber": 180
+        },
+        {
+          "caller": "shouldLog",
+          "callee": "end",
+          "lineNumber": 181
+        },
+        {
+          "caller": "shouldLog",
+          "callee": "count",
+          "lineNumber": 182
+        },
+        {
+          "caller": "shouldLog",
+          "callee": "duration_cast<milliseconds>",
+          "lineNumber": 182
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "common/log/logger_impl.cc",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 291,
+      "nonEmptyLines": 256,
+      "functions": [
+        {
+          "name": "LoggerImpl::LoggerImpl",
+          "startLine": 26,
+          "endLine": 34,
+          "params": []
+        },
+        {
+          "name": "LoggerImpl::~LoggerImpl",
+          "startLine": 36,
+          "endLine": 43,
+          "params": []
+        },
+        {
+          "name": "LoggerImpl::LoggerConfigChecker",
+          "startLine": 45,
+          "endLine": 66,
+          "params": []
+        },
+        {
+          "name": "LoggerImpl::LogApplyConfig",
+          "startLine": 68,
+          "endLine": 73,
+          "params": [
+            "config"
+          ]
+        },
+        {
+          "name": "LoggerImpl::Init",
+          "startLine": 75,
+          "endLine": 105,
+          "params": [
+            "log_config_file_path"
+          ]
+        },
+        {
+          "name": "LoggerImpl::Stop",
+          "startLine": 107,
+          "endLine": 110,
+          "params": []
+        },
+        {
+          "name": "LoggerImpl::Init",
+          "startLine": 112,
+          "endLine": 204,
+          "params": [
+            "file_name",
+            "type",
+            "level",
+            "max_file_size",
+            "max_backup_index",
+            "is_async"
+          ]
+        },
+        {
+          "name": "LoggerImpl::Uninit",
+          "startLine": 206,
+          "endLine": 218,
+          "params": []
+        },
+        {
+          "name": "LoggerImpl::Log",
+          "startLine": 220,
+          "endLine": 227,
+          "params": [
+            "level",
+            "msg",
+            "file",
+            "line",
+            "func"
+          ]
+        },
+        {
+          "name": "LoggerImpl::ShouldLog",
+          "startLine": 229,
+          "endLine": 232,
+          "params": [
+            "level"
+          ]
+        },
+        {
+          "name": "LoggerImpl::GetLogLevelFromEnv",
+          "startLine": 234,
+          "endLine": 244,
+          "params": [
+            "env_var",
+            "default_level"
+          ]
+        },
+        {
+          "name": "LoggerImpl::SetFlushEvery",
+          "startLine": 246,
+          "endLine": 251,
+          "params": [
+            "flush_every"
+          ]
+        },
+        {
+          "name": "LoggerImpl::SetFlushOnLevel",
+          "startLine": 253,
+          "endLine": 258,
+          "params": [
+            "flush_on_level"
+          ]
+        },
+        {
+          "name": "LoggerImpl::SetLogLevel",
+          "startLine": 260,
+          "endLine": 265,
+          "params": [
+            "level"
+          ]
+        },
+        {
+          "name": "LoggerImpl::SetLogPattern",
+          "startLine": 267,
+          "endLine": 272,
+          "params": [
+            "pattern"
+          ]
+        },
+        {
+          "name": "LoggerImpl::SetLogConsoleLevel",
+          "startLine": 274,
+          "endLine": 279,
+          "params": [
+            "level"
+          ]
+        },
+        {
+          "name": "LoggerImpl::SetLogFileLevel",
+          "startLine": 281,
+          "endLine": 286,
+          "params": [
+            "level"
+          ]
+        },
+        {
+          "name": "LoggerImpl::SetLogBufferSize",
+          "startLine": 288,
+          "endLine": 291,
+          "params": [
+            "size"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "LoggerImpl::LoggerImpl",
+          "line": 26,
+          "isDefault": false
+        },
+        {
+          "name": "LoggerImpl::~LoggerImpl",
+          "line": 36,
+          "isDefault": false
+        },
+        {
+          "name": "LoggerImpl::LoggerConfigChecker",
+          "line": 45,
+          "isDefault": false
+        },
+        {
+          "name": "LoggerImpl::LogApplyConfig",
+          "line": 68,
+          "isDefault": false
+        },
+        {
+          "name": "LoggerImpl::Init",
+          "line": 75,
+          "isDefault": false
+        },
+        {
+          "name": "LoggerImpl::Stop",
+          "line": 107,
+          "isDefault": false
+        },
+        {
+          "name": "LoggerImpl::Init",
+          "line": 112,
+          "isDefault": false
+        },
+        {
+          "name": "LoggerImpl::Uninit",
+          "line": 206,
+          "isDefault": false
+        },
+        {
+          "name": "LoggerImpl::Log",
+          "line": 220,
+          "isDefault": false
+        },
+        {
+          "name": "LoggerImpl::ShouldLog",
+          "line": 229,
+          "isDefault": false
+        },
+        {
+          "name": "LoggerImpl::GetLogLevelFromEnv",
+          "line": 234,
+          "isDefault": false
+        },
+        {
+          "name": "LoggerImpl::SetFlushEvery",
+          "line": 246,
+          "isDefault": false
+        },
+        {
+          "name": "LoggerImpl::SetFlushOnLevel",
+          "line": 253,
+          "isDefault": false
+        },
+        {
+          "name": "LoggerImpl::SetLogLevel",
+          "line": 260,
+          "isDefault": false
+        },
+        {
+          "name": "LoggerImpl::SetLogPattern",
+          "line": 267,
+          "isDefault": false
+        },
+        {
+          "name": "LoggerImpl::SetLogConsoleLevel",
+          "line": 274,
+          "isDefault": false
+        },
+        {
+          "name": "LoggerImpl::SetLogFileLevel",
+          "line": 281,
+          "isDefault": false
+        },
+        {
+          "name": "LoggerImpl::SetLogBufferSize",
+          "line": 288,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "LoggerImpl::~LoggerImpl",
+          "callee": "Uninit",
+          "lineNumber": 38
+        },
+        {
+          "caller": "LoggerImpl::~LoggerImpl",
+          "callee": "spdlog::shutdown",
+          "lineNumber": 40
+        },
+        {
+          "caller": "LoggerImpl::LoggerConfigChecker",
+          "callee": "pthread_setname_np",
+          "lineNumber": 48
+        },
+        {
+          "caller": "LoggerImpl::LoggerConfigChecker",
+          "callee": "pthread_self",
+          "lineNumber": 48
+        },
+        {
+          "caller": "LoggerImpl::LoggerConfigChecker",
+          "callee": "fs::last_write_time",
+          "lineNumber": 51
+        },
+        {
+          "caller": "LoggerImpl::LoggerConfigChecker",
+          "callee": "GetIsValid",
+          "lineNumber": 55
+        },
+        {
+          "caller": "LoggerImpl::LoggerConfigChecker",
+          "callee": "LogApplyConfig",
+          "lineNumber": 56
+        },
+        {
+          "caller": "LoggerImpl::LoggerConfigChecker",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 64
+        },
+        {
+          "caller": "LoggerImpl::LoggerConfigChecker",
+          "callee": "std::chrono::seconds",
+          "lineNumber": 64
+        },
+        {
+          "caller": "LoggerImpl::LogApplyConfig",
+          "callee": "SetFlushOnLevel",
+          "lineNumber": 70
+        },
+        {
+          "caller": "LoggerImpl::LogApplyConfig",
+          "callee": "GetFlushOnLevel",
+          "lineNumber": 70
+        },
+        {
+          "caller": "LoggerImpl::LogApplyConfig",
+          "callee": "SetLogConsoleLevel",
+          "lineNumber": 71
+        },
+        {
+          "caller": "LoggerImpl::LogApplyConfig",
+          "callee": "GetConsoleLogLevel",
+          "lineNumber": 71
+        },
+        {
+          "caller": "LoggerImpl::LogApplyConfig",
+          "callee": "SetLogFileLevel",
+          "lineNumber": 72
+        },
+        {
+          "caller": "LoggerImpl::LogApplyConfig",
+          "callee": "GetFileLogLevel",
+          "lineNumber": 72
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "GetType",
+          "lineNumber": 79
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "GetLogLevel",
+          "lineNumber": 80
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "GetFileName",
+          "lineNumber": 81
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "GetMaxFileSize",
+          "lineNumber": 82
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "GetMaxBackupIndex",
+          "lineNumber": 83
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "GetIsAsync",
+          "lineNumber": 84
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "Init",
+          "lineNumber": 86
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "SetFlushOnLevel",
+          "lineNumber": 90
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "GetFlushOnLevel",
+          "lineNumber": 90
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "SetLogPattern",
+          "lineNumber": 91
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "GetLogPattern",
+          "lineNumber": 91
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "SetLogBufferSize",
+          "lineNumber": 92
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "GetBufferSize",
+          "lineNumber": 92
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "GetLogLevelFromEnv",
+          "lineNumber": 95
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "static_cast<spdlog::level::level_enum>",
+          "lineNumber": 95
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "GetLogLevelFromEnv",
+          "lineNumber": 97
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "static_cast<spdlog::level::level_enum>",
+          "lineNumber": 97
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "SetLogConsoleLevel",
+          "lineNumber": 99
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "static_cast<Logger::SeverityLevel>",
+          "lineNumber": 99
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "SetLogFileLevel",
+          "lineNumber": 100
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "static_cast<Logger::SeverityLevel>",
+          "lineNumber": 100
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "detach",
+          "lineNumber": 103
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "std::thread",
+          "lineNumber": 103
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "LoggerConfigChecker",
+          "lineNumber": 103
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "spdlog::get",
+          "lineNumber": 116
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "spdlog::warn",
+          "lineNumber": 117
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "GetLogLevelFromEnv",
+          "lineNumber": 125
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "static_cast<spdlog::level::level_enum>",
+          "lineNumber": 125
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "GetLogLevelFromEnv",
+          "lineNumber": 127
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "static_cast<spdlog::level::level_enum>",
+          "lineNumber": 127
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "std::make_shared<spdlog::sinks::stdout_color_sink_mt>",
+          "lineNumber": 131
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "std::make_shared<spdlog::sinks::custom_rotating_file_sink_mt>",
+          "lineNumber": 132
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "set_level",
+          "lineNumber": 134
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "set_level",
+          "lineNumber": 135
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "push_back",
+          "lineNumber": 136
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "push_back",
+          "lineNumber": 137
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "std::make_shared<spdlog::sinks::stdout_color_sink_mt>",
+          "lineNumber": 141
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "set_level",
+          "lineNumber": 142
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "push_back",
+          "lineNumber": 143
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "std::make_shared<spdlog::sinks::custom_rotating_file_sink_mt>",
+          "lineNumber": 147
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "set_level",
+          "lineNumber": 149
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "push_back",
+          "lineNumber": 150
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "std::make_shared<spdlog::sinks::stdout_color_sink_mt>",
+          "lineNumber": 154
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "set_level",
+          "lineNumber": 155
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "push_back",
+          "lineNumber": 156
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "empty",
+          "lineNumber": 160
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "spdlog::error",
+          "lineNumber": 161
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "std::max",
+          "lineNumber": 166
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 166
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "std::max",
+          "lineNumber": 167
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "std::thread::hardware_concurrency",
+          "lineNumber": 167
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "spdlog::init_thread_pool",
+          "lineNumber": 172
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "spdlog::thread_pool",
+          "lineNumber": 177
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "std::make_shared<spdlog::async_logger>",
+          "lineNumber": 187
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "begin",
+          "lineNumber": 188
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "end",
+          "lineNumber": 188
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "spdlog::thread_pool",
+          "lineNumber": 188
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "std::make_shared<spdlog::logger>",
+          "lineNumber": 192
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "begin",
+          "lineNumber": 192
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "end",
+          "lineNumber": 192
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "std::make_shared<spdlog::logger>",
+          "lineNumber": 195
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "begin",
+          "lineNumber": 195
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "end",
+          "lineNumber": 195
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "set_level",
+          "lineNumber": 198
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "set_pattern",
+          "lineNumber": 199
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "spdlog::register_logger",
+          "lineNumber": 201
+        },
+        {
+          "caller": "LoggerImpl::Init",
+          "callee": "spdlog::set_default_logger",
+          "lineNumber": 202
+        },
+        {
+          "caller": "LoggerImpl::Uninit",
+          "callee": "Stop",
+          "lineNumber": 208
+        },
+        {
+          "caller": "LoggerImpl::Uninit",
+          "callee": "flush",
+          "lineNumber": 210
+        },
+        {
+          "caller": "LoggerImpl::Uninit",
+          "callee": "spdlog::drop",
+          "lineNumber": 211
+        },
+        {
+          "caller": "LoggerImpl::Uninit",
+          "callee": "reset",
+          "lineNumber": 212
+        },
+        {
+          "caller": "LoggerImpl::Uninit",
+          "callee": "spdlog::shutdown",
+          "lineNumber": 215
+        },
+        {
+          "caller": "LoggerImpl::Log",
+          "callee": "log",
+          "lineNumber": 224
+        },
+        {
+          "caller": "LoggerImpl::Log",
+          "callee": "static_cast<int>",
+          "lineNumber": 224
+        },
+        {
+          "caller": "LoggerImpl::Log",
+          "callee": "static_cast<spdlog::level::level_enum>",
+          "lineNumber": 225
+        },
+        {
+          "caller": "LoggerImpl::Log",
+          "callee": "std::move",
+          "lineNumber": 225
+        },
+        {
+          "caller": "LoggerImpl::ShouldLog",
+          "callee": "should_log",
+          "lineNumber": 231
+        },
+        {
+          "caller": "LoggerImpl::ShouldLog",
+          "callee": "static_cast<spdlog::level::level_enum>",
+          "lineNumber": 231
+        },
+        {
+          "caller": "LoggerImpl::GetLogLevelFromEnv",
+          "callee": "std::getenv",
+          "lineNumber": 238
+        },
+        {
+          "caller": "LoggerImpl::GetLogLevelFromEnv",
+          "callee": "c_str",
+          "lineNumber": 238
+        },
+        {
+          "caller": "LoggerImpl::GetLogLevelFromEnv",
+          "callee": "spdlog::level::from_str",
+          "lineNumber": 243
+        },
+        {
+          "caller": "LoggerImpl::SetFlushEvery",
+          "callee": "spdlog::flush_every",
+          "lineNumber": 249
+        },
+        {
+          "caller": "LoggerImpl::SetFlushEvery",
+          "callee": "std::chrono::seconds",
+          "lineNumber": 249
+        },
+        {
+          "caller": "LoggerImpl::SetFlushOnLevel",
+          "callee": "flush_on",
+          "lineNumber": 256
+        },
+        {
+          "caller": "LoggerImpl::SetFlushOnLevel",
+          "callee": "static_cast<spdlog::level::level_enum>",
+          "lineNumber": 256
+        },
+        {
+          "caller": "LoggerImpl::SetLogLevel",
+          "callee": "set_level",
+          "lineNumber": 263
+        },
+        {
+          "caller": "LoggerImpl::SetLogLevel",
+          "callee": "static_cast<spdlog::level::level_enum>",
+          "lineNumber": 263
+        },
+        {
+          "caller": "LoggerImpl::SetLogPattern",
+          "callee": "set_pattern",
+          "lineNumber": 270
+        },
+        {
+          "caller": "LoggerImpl::SetLogConsoleLevel",
+          "callee": "set_level",
+          "lineNumber": 277
+        },
+        {
+          "caller": "LoggerImpl::SetLogConsoleLevel",
+          "callee": "static_cast<spdlog::level::level_enum>",
+          "lineNumber": 277
+        },
+        {
+          "caller": "LoggerImpl::SetLogFileLevel",
+          "callee": "set_level",
+          "lineNumber": 284
+        },
+        {
+          "caller": "LoggerImpl::SetLogFileLevel",
+          "callee": "static_cast<spdlog::level::level_enum>",
+          "lineNumber": 284
+        }
+      ],
+      "metrics": {
+        "importCount": 3,
+        "exportCount": 18,
+        "functionCount": 18,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "common/log/logger_impl.h",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 194,
+      "nonEmptyLines": 171,
+      "callGraph": [
+        {
+          "caller": "LoggerConfig",
+          "callee": "std::string",
+          "lineNumber": 49
+        },
+        {
+          "caller": "LoggerConfig",
+          "callee": "std::string",
+          "lineNumber": 51
+        },
+        {
+          "caller": "LoggerConfig",
+          "callee": "is_open",
+          "lineNumber": 55
+        },
+        {
+          "caller": "LoggerConfig",
+          "callee": "warning_message",
+          "lineNumber": 56
+        },
+        {
+          "caller": "LoggerConfig",
+          "callee": "value",
+          "lineNumber": 67
+        },
+        {
+          "caller": "LoggerConfig",
+          "callee": "json::object",
+          "lineNumber": 67
+        },
+        {
+          "caller": "LoggerConfig",
+          "callee": "value",
+          "lineNumber": 69
+        },
+        {
+          "caller": "LoggerConfig",
+          "callee": "value",
+          "lineNumber": 70
+        },
+        {
+          "caller": "LoggerConfig",
+          "callee": "value",
+          "lineNumber": 71
+        },
+        {
+          "caller": "LoggerConfig",
+          "callee": "value",
+          "lineNumber": 72
+        },
+        {
+          "caller": "LoggerConfig",
+          "callee": "value",
+          "lineNumber": 73
+        },
+        {
+          "caller": "LoggerConfig",
+          "callee": "value",
+          "lineNumber": 74
+        },
+        {
+          "caller": "LoggerConfig",
+          "callee": "value",
+          "lineNumber": 75
+        },
+        {
+          "caller": "LoggerConfig",
+          "callee": "value",
+          "lineNumber": 76
+        },
+        {
+          "caller": "LoggerConfig",
+          "callee": "value",
+          "lineNumber": 77
+        },
+        {
+          "caller": "LoggerConfig",
+          "callee": "value",
+          "lineNumber": 78
+        },
+        {
+          "caller": "LoggerConfig",
+          "callee": "value",
+          "lineNumber": 79
+        },
+        {
+          "caller": "LoggerConfig",
+          "callee": "what",
+          "lineNumber": 82
+        },
+        {
+          "caller": "GetLogLevel",
+          "callee": "GetLevel",
+          "lineNumber": 121
+        },
+        {
+          "caller": "GetFlushOnLevel",
+          "callee": "GetLevel",
+          "lineNumber": 122
+        },
+        {
+          "caller": "GetConsoleLogLevel",
+          "callee": "GetLevel",
+          "lineNumber": 123
+        },
+        {
+          "caller": "GetFileLogLevel",
+          "callee": "GetLevel",
+          "lineNumber": 124
+        },
+        {
+          "caller": "PrintConfig",
+          "callee": "spdlog::info",
+          "lineNumber": 135
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "common/log/logger_test.cc",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 696,
+      "nonEmptyLines": 558,
+      "functions": [
+        {
+          "name": "SetUp",
+          "startLine": 34,
+          "endLine": 44,
+          "params": []
+        },
+        {
+          "name": "TearDown",
+          "startLine": 46,
+          "endLine": 51,
+          "params": []
+        },
+        {
+          "name": "CleanupTestFiles",
+          "startLine": 53,
+          "endLine": 61,
+          "params": []
+        },
+        {
+          "name": "ReadFileContent",
+          "startLine": 63,
+          "endLine": 71,
+          "params": [
+            "file_path"
+          ]
+        },
+        {
+          "name": "CreateTestConfigFile",
+          "startLine": 73,
+          "endLine": 77,
+          "params": [
+            "config"
+          ]
+        },
+        {
+          "name": "CountLogLines",
+          "startLine": 79,
+          "endLine": 84,
+          "params": [
+            "file_path"
+          ]
+        },
+        {
+          "name": "TEST_F",
+          "startLine": 92,
+          "endLine": 104,
+          "params": []
+        },
+        {
+          "name": "TEST_F",
+          "startLine": 107,
+          "endLine": 123,
+          "params": []
+        },
+        {
+          "name": "TEST_F",
+          "startLine": 126,
+          "endLine": 144,
+          "params": []
+        },
+        {
+          "name": "TEST_F",
+          "startLine": 147,
+          "endLine": 168,
+          "params": []
+        },
+        {
+          "name": "TEST_F",
+          "startLine": 171,
+          "endLine": 198,
+          "params": []
+        },
+        {
+          "name": "TEST_F",
+          "startLine": 201,
+          "endLine": 251,
+          "params": []
+        },
+        {
+          "name": "TEST_F",
+          "startLine": 254,
+          "endLine": 283,
+          "params": []
+        },
+        {
+          "name": "TEST_F",
+          "startLine": 286,
+          "endLine": 300,
+          "params": []
+        },
+        {
+          "name": "TEST_F",
+          "startLine": 303,
+          "endLine": 329,
+          "params": []
+        },
+        {
+          "name": "TEST_F",
+          "startLine": 332,
+          "endLine": 368,
+          "params": []
+        },
+        {
+          "name": "TEST_F",
+          "startLine": 371,
+          "endLine": 391,
+          "params": []
+        },
+        {
+          "name": "TEST_F",
+          "startLine": 396,
+          "endLine": 420,
+          "params": []
+        },
+        {
+          "name": "TEST_F",
+          "startLine": 423,
+          "endLine": 448,
+          "params": []
+        },
+        {
+          "name": "TEST_F",
+          "startLine": 451,
+          "endLine": 466,
+          "params": []
+        },
+        {
+          "name": "TEST_F",
+          "startLine": 469,
+          "endLine": 523,
+          "params": []
+        },
+        {
+          "name": "TEST_F",
+          "startLine": 526,
+          "endLine": 577,
+          "params": []
+        },
+        {
+          "name": "TEST_F",
+          "startLine": 580,
+          "endLine": 611,
+          "params": []
+        },
+        {
+          "name": "FindMatchingFiles",
+          "startLine": 614,
+          "endLine": 625,
+          "params": [
+            "dir",
+            "pattern"
+          ]
+        },
+        {
+          "name": "TEST_F",
+          "startLine": 628,
+          "endLine": 664,
+          "params": []
+        },
+        {
+          "name": "TEST_F",
+          "startLine": 668,
+          "endLine": 696,
+          "params": []
+        }
+      ],
+      "classes": [
+        {
+          "name": "LoggerTest",
+          "startLine": 31,
+          "endLine": 89,
+          "methods": [
+            "SetUp",
+            "TearDown",
+            "CleanupTestFiles",
+            "ReadFileContent",
+            "CreateTestConfigFile",
+            "CountLogLines"
+          ],
+          "properties": [
+            "test_log_dir_",
+            "test_log_file_",
+            "test_config_file_"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "LoggerTest",
+          "line": 31,
+          "isDefault": false
+        },
+        {
+          "name": "TEST_F",
+          "line": 92,
+          "isDefault": false
+        },
+        {
+          "name": "TEST_F",
+          "line": 107,
+          "isDefault": false
+        },
+        {
+          "name": "TEST_F",
+          "line": 126,
+          "isDefault": false
+        },
+        {
+          "name": "TEST_F",
+          "line": 147,
+          "isDefault": false
+        },
+        {
+          "name": "TEST_F",
+          "line": 171,
+          "isDefault": false
+        },
+        {
+          "name": "TEST_F",
+          "line": 201,
+          "isDefault": false
+        },
+        {
+          "name": "TEST_F",
+          "line": 254,
+          "isDefault": false
+        },
+        {
+          "name": "TEST_F",
+          "line": 286,
+          "isDefault": false
+        },
+        {
+          "name": "TEST_F",
+          "line": 303,
+          "isDefault": false
+        },
+        {
+          "name": "TEST_F",
+          "line": 332,
+          "isDefault": false
+        },
+        {
+          "name": "TEST_F",
+          "line": 371,
+          "isDefault": false
+        },
+        {
+          "name": "TEST_F",
+          "line": 396,
+          "isDefault": false
+        },
+        {
+          "name": "TEST_F",
+          "line": 423,
+          "isDefault": false
+        },
+        {
+          "name": "TEST_F",
+          "line": 451,
+          "isDefault": false
+        },
+        {
+          "name": "TEST_F",
+          "line": 469,
+          "isDefault": false
+        },
+        {
+          "name": "TEST_F",
+          "line": 526,
+          "isDefault": false
+        },
+        {
+          "name": "TEST_F",
+          "line": 580,
+          "isDefault": false
+        },
+        {
+          "name": "TEST_F",
+          "line": 628,
+          "isDefault": false
+        },
+        {
+          "name": "TEST_F",
+          "line": 668,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "SetUp",
+          "callee": "CleanupTestFiles",
+          "lineNumber": 36
+        },
+        {
+          "caller": "SetUp",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 37
+        },
+        {
+          "caller": "SetUp",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 37
+        },
+        {
+          "caller": "SetUp",
+          "callee": "fs::create_directory",
+          "lineNumber": 43
+        },
+        {
+          "caller": "TearDown",
+          "callee": "Uninit",
+          "lineNumber": 48
+        },
+        {
+          "caller": "TearDown",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 48
+        },
+        {
+          "caller": "TearDown",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 49
+        },
+        {
+          "caller": "TearDown",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 49
+        },
+        {
+          "caller": "TearDown",
+          "callee": "CleanupTestFiles",
+          "lineNumber": 50
+        },
+        {
+          "caller": "CleanupTestFiles",
+          "callee": "fs::exists",
+          "lineNumber": 55
+        },
+        {
+          "caller": "CleanupTestFiles",
+          "callee": "fs::remove_all",
+          "lineNumber": 56
+        },
+        {
+          "caller": "CleanupTestFiles",
+          "callee": "fs::exists",
+          "lineNumber": 58
+        },
+        {
+          "caller": "CleanupTestFiles",
+          "callee": "fs::remove",
+          "lineNumber": 59
+        },
+        {
+          "caller": "ReadFileContent",
+          "callee": "is_open",
+          "lineNumber": 66
+        },
+        {
+          "caller": "ReadFileContent",
+          "callee": "std::string",
+          "lineNumber": 69
+        },
+        {
+          "caller": "ReadFileContent",
+          "callee": "std::istreambuf_iterator<char>",
+          "lineNumber": 69
+        },
+        {
+          "caller": "ReadFileContent",
+          "callee": "std::istreambuf_iterator<char>",
+          "lineNumber": 70
+        },
+        {
+          "caller": "CreateTestConfigFile",
+          "callee": "dump",
+          "lineNumber": 76
+        },
+        {
+          "caller": "CountLogLines",
+          "callee": "std::count",
+          "lineNumber": 82
+        },
+        {
+          "caller": "CountLogLines",
+          "callee": "std::istreambuf_iterator<char>",
+          "lineNumber": 82
+        },
+        {
+          "caller": "CountLogLines",
+          "callee": "std::istreambuf_iterator<char>",
+          "lineNumber": 82
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "testing::internal::CaptureStdout",
+          "lineNumber": 95
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "ASSERT_TRUE",
+          "lineNumber": 97
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Init",
+          "lineNumber": 97
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 97
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "LOG",
+          "lineNumber": 99
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Uninit",
+          "lineNumber": 100
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 100
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "testing::internal::GetCapturedStdout",
+          "lineNumber": 102
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_TRUE",
+          "lineNumber": 103
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "find",
+          "lineNumber": 103
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "ASSERT_TRUE",
+          "lineNumber": 109
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Init",
+          "lineNumber": 109
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 109
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "LOG",
+          "lineNumber": 111
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "LOG",
+          "lineNumber": 112
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "LOG",
+          "lineNumber": 113
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Uninit",
+          "lineNumber": 115
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 115
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "ASSERT_TRUE",
+          "lineNumber": 117
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "fs::exists",
+          "lineNumber": 117
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "ReadFileContent",
+          "lineNumber": 118
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_TRUE",
+          "lineNumber": 120
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "find",
+          "lineNumber": 120
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_TRUE",
+          "lineNumber": 121
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "find",
+          "lineNumber": 121
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_TRUE",
+          "lineNumber": 122
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "find",
+          "lineNumber": 122
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "testing::internal::CaptureStdout",
+          "lineNumber": 128
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "ASSERT_TRUE",
+          "lineNumber": 130
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Init",
+          "lineNumber": 130
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 130
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "LOG",
+          "lineNumber": 132
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Uninit",
+          "lineNumber": 134
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 134
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "testing::internal::GetCapturedStdout",
+          "lineNumber": 137
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_TRUE",
+          "lineNumber": 138
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "find",
+          "lineNumber": 138
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "ASSERT_TRUE",
+          "lineNumber": 141
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "fs::exists",
+          "lineNumber": 141
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "ReadFileContent",
+          "lineNumber": 142
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_TRUE",
+          "lineNumber": 143
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "find",
+          "lineNumber": 143
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "ASSERT_TRUE",
+          "lineNumber": 149
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Init",
+          "lineNumber": 149
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 149
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "LOG",
+          "lineNumber": 151
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "LOG",
+          "lineNumber": 152
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "LOG",
+          "lineNumber": 153
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "LOG",
+          "lineNumber": 154
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "LOG",
+          "lineNumber": 155
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "LOG",
+          "lineNumber": 156
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Uninit",
+          "lineNumber": 158
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 158
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "ReadFileContent",
+          "lineNumber": 160
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_TRUE",
+          "lineNumber": 162
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "find",
+          "lineNumber": 162
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_TRUE",
+          "lineNumber": 163
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "find",
+          "lineNumber": 163
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_TRUE",
+          "lineNumber": 164
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "find",
+          "lineNumber": 164
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_TRUE",
+          "lineNumber": 165
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "find",
+          "lineNumber": 165
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_TRUE",
+          "lineNumber": 166
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "find",
+          "lineNumber": 166
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_TRUE",
+          "lineNumber": 167
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "find",
+          "lineNumber": 167
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "ASSERT_TRUE",
+          "lineNumber": 175
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Init",
+          "lineNumber": 176
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 176
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::high_resolution_clock::now",
+          "lineNumber": 178
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "LOG",
+          "lineNumber": 181
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Uninit",
+          "lineNumber": 184
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 184
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::high_resolution_clock::now",
+          "lineNumber": 186
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::duration_cast<std::chrono::milliseconds>",
+          "lineNumber": 187
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "count",
+          "lineNumber": 189
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_EQ",
+          "lineNumber": 193
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "CountLogLines",
+          "lineNumber": 193
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_LT",
+          "lineNumber": 196
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "count",
+          "lineNumber": 196
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "count",
+          "lineNumber": 197
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "ASSERT_TRUE",
+          "lineNumber": 205
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Init",
+          "lineNumber": 206
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 206
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::high_resolution_clock::now",
+          "lineNumber": 208
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "LOG",
+          "lineNumber": 211
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::high_resolution_clock::now",
+          "lineNumber": 214
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::duration_cast<std::chrono::milliseconds>",
+          "lineNumber": 216
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "count",
+          "lineNumber": 218
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 222
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 222
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Uninit",
+          "lineNumber": 225
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 225
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 228
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 228
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::high_resolution_clock::now",
+          "lineNumber": 230
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::duration_cast<std::chrono::milliseconds>",
+          "lineNumber": 232
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "count",
+          "lineNumber": 235
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "count",
+          "lineNumber": 236
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "CountLogLines",
+          "lineNumber": 239
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_GE",
+          "lineNumber": 244
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_LE",
+          "lineNumber": 246
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_LT",
+          "lineNumber": 249
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "count",
+          "lineNumber": 249
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "count",
+          "lineNumber": 250
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "CreateTestConfigFile",
+          "lineNumber": 269
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "ASSERT_TRUE",
+          "lineNumber": 271
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Init",
+          "lineNumber": 271
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 271
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "LOG",
+          "lineNumber": 273
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "LOG",
+          "lineNumber": 274
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "LOG",
+          "lineNumber": 275
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Uninit",
+          "lineNumber": 277
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 277
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "ReadFileContent",
+          "lineNumber": 279
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_TRUE",
+          "lineNumber": 280
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "find",
+          "lineNumber": 280
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_TRUE",
+          "lineNumber": 281
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "find",
+          "lineNumber": 281
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_TRUE",
+          "lineNumber": 282
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "find",
+          "lineNumber": 282
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "testing::internal::CaptureStdout",
+          "lineNumber": 291
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Init",
+          "lineNumber": 292
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 292
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "testing::internal::GetCapturedStdout",
+          "lineNumber": 293
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_TRUE",
+          "lineNumber": 296
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "LOG",
+          "lineNumber": 298
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Uninit",
+          "lineNumber": 299
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 299
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "ASSERT_TRUE",
+          "lineNumber": 306
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Init",
+          "lineNumber": 307
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 307
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "LOG",
+          "lineNumber": 308
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Uninit",
+          "lineNumber": 309
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 309
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "ASSERT_TRUE",
+          "lineNumber": 312
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "fs::exists",
+          "lineNumber": 312
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "ReadFileContent",
+          "lineNumber": 313
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_TRUE",
+          "lineNumber": 314
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "find",
+          "lineNumber": 314
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "ASSERT_TRUE",
+          "lineNumber": 317
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Init",
+          "lineNumber": 317
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 317
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "testing::internal::CaptureStdout",
+          "lineNumber": 320
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "LOG",
+          "lineNumber": 321
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Uninit",
+          "lineNumber": 322
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 322
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "testing::internal::GetCapturedStdout",
+          "lineNumber": 325
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_TRUE",
+          "lineNumber": 326
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "find",
+          "lineNumber": 326
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "ASSERT_TRUE",
+          "lineNumber": 335
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Init",
+          "lineNumber": 336
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 336
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "LOG",
+          "lineNumber": 338
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Init",
+          "lineNumber": 342
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 342
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "LOG",
+          "lineNumber": 346
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "LOG",
+          "lineNumber": 350
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Uninit",
+          "lineNumber": 354
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 354
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_TRUE",
+          "lineNumber": 359
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "fs::exists",
+          "lineNumber": 359
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "ReadFileContent",
+          "lineNumber": 360
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_TRUE",
+          "lineNumber": 361
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "find",
+          "lineNumber": 361
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_TRUE",
+          "lineNumber": 364
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "fs::exists",
+          "lineNumber": 364
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "ReadFileContent",
+          "lineNumber": 365
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_TRUE",
+          "lineNumber": 366
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "find",
+          "lineNumber": 366
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "close",
+          "lineNumber": 376
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "testing::internal::CaptureStdout",
+          "lineNumber": 378
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Init",
+          "lineNumber": 379
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 379
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_TRUE",
+          "lineNumber": 382
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "LOG",
+          "lineNumber": 384
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Uninit",
+          "lineNumber": 385
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 385
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "testing::internal::GetCapturedStdout",
+          "lineNumber": 388
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_TRUE",
+          "lineNumber": 389
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "find",
+          "lineNumber": 389
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "ASSERT_TRUE",
+          "lineNumber": 398
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Init",
+          "lineNumber": 398
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 398
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "LOG_TIME",
+          "lineNumber": 403
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 409
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 409
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "LOG_TIME",
+          "lineNumber": 411
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Uninit",
+          "lineNumber": 414
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 414
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "CountLogLines",
+          "lineNumber": 417
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_LT",
+          "lineNumber": 418
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_GE",
+          "lineNumber": 419
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "ASSERT_TRUE",
+          "lineNumber": 425
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Init",
+          "lineNumber": 425
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 425
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "LOG",
+          "lineNumber": 428
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "LOG",
+          "lineNumber": 429
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "SetFlushOnLevel",
+          "lineNumber": 432
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 432
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "SetLogLevel",
+          "lineNumber": 434
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 434
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "SetLogFileLevel",
+          "lineNumber": 435
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 435
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "LOG",
+          "lineNumber": 437
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "LOG",
+          "lineNumber": 438
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Uninit",
+          "lineNumber": 440
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 440
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "ReadFileContent",
+          "lineNumber": 442
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_TRUE",
+          "lineNumber": 444
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "find",
+          "lineNumber": 444
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_TRUE",
+          "lineNumber": 445
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "find",
+          "lineNumber": 445
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_TRUE",
+          "lineNumber": 446
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "find",
+          "lineNumber": 446
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_TRUE",
+          "lineNumber": 447
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "find",
+          "lineNumber": 447
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "ASSERT_TRUE",
+          "lineNumber": 453
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Init",
+          "lineNumber": 453
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 453
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "SetLogPattern",
+          "lineNumber": 456
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 456
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "LOG",
+          "lineNumber": 458
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Uninit",
+          "lineNumber": 459
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 459
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "ReadFileContent",
+          "lineNumber": 461
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_TRUE",
+          "lineNumber": 464
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "find",
+          "lineNumber": 464
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "find",
+          "lineNumber": 465
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "ASSERT_TRUE",
+          "lineNumber": 474
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Init",
+          "lineNumber": 474
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 474
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::high_resolution_clock::now",
+          "lineNumber": 476
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "LOG",
+          "lineNumber": 478
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::high_resolution_clock::now",
+          "lineNumber": 480
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Uninit",
+          "lineNumber": 481
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 481
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::duration_cast<std::chrono::milliseconds>",
+          "lineNumber": 484
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "ASSERT_TRUE",
+          "lineNumber": 487
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Init",
+          "lineNumber": 487
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 487
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::high_resolution_clock::now",
+          "lineNumber": 490
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "LOG",
+          "lineNumber": 492
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::high_resolution_clock::now",
+          "lineNumber": 494
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 497
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 497
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Uninit",
+          "lineNumber": 498
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 498
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::high_resolution_clock::now",
+          "lineNumber": 499
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::duration_cast<std::chrono::milliseconds>",
+          "lineNumber": 502
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::duration_cast<std::chrono::milliseconds>",
+          "lineNumber": 504
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "count",
+          "lineNumber": 507
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "count",
+          "lineNumber": 508
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "count",
+          "lineNumber": 509
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "count",
+          "lineNumber": 511
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "count",
+          "lineNumber": 511
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 517
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 517
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_EQ",
+          "lineNumber": 519
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "CountLogLines",
+          "lineNumber": 519
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_EQ",
+          "lineNumber": 520
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "CountLogLines",
+          "lineNumber": 520
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "ASSERT_TRUE",
+          "lineNumber": 531
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Init",
+          "lineNumber": 532
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 532
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::high_resolution_clock::now",
+          "lineNumber": 537
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "emplace_back",
+          "lineNumber": 540
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "LOG",
+          "lineNumber": 542
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "fetch_add",
+          "lineNumber": 544
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "join",
+          "lineNumber": 550
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::high_resolution_clock::now",
+          "lineNumber": 553
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::duration_cast<std::chrono::milliseconds>",
+          "lineNumber": 555
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 558
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 558
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Uninit",
+          "lineNumber": 559
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 559
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::high_resolution_clock::now",
+          "lineNumber": 561
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::duration_cast<std::chrono::milliseconds>",
+          "lineNumber": 563
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "count",
+          "lineNumber": 567
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "count",
+          "lineNumber": 568
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_EQ",
+          "lineNumber": 571
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "load",
+          "lineNumber": 571
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_EQ",
+          "lineNumber": 574
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "CountLogLines",
+          "lineNumber": 574
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "ASSERT_TRUE",
+          "lineNumber": 584
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Init",
+          "lineNumber": 585
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 585
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "LOG",
+          "lineNumber": 589
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 593
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 593
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "CountLogLines",
+          "lineNumber": 594
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Uninit",
+          "lineNumber": 597
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 597
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "CountLogLines",
+          "lineNumber": 599
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_EQ",
+          "lineNumber": 605
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_LE",
+          "lineNumber": 608
+        },
+        {
+          "caller": "FindMatchingFiles",
+          "callee": "fs::directory_iterator",
+          "lineNumber": 618
+        },
+        {
+          "caller": "FindMatchingFiles",
+          "callee": "string",
+          "lineNumber": 619
+        },
+        {
+          "caller": "FindMatchingFiles",
+          "callee": "filename",
+          "lineNumber": 619
+        },
+        {
+          "caller": "FindMatchingFiles",
+          "callee": "path",
+          "lineNumber": 619
+        },
+        {
+          "caller": "FindMatchingFiles",
+          "callee": "std::regex_match",
+          "lineNumber": 620
+        },
+        {
+          "caller": "FindMatchingFiles",
+          "callee": "push_back",
+          "lineNumber": 621
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "ASSERT_TRUE",
+          "lineNumber": 632
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Init",
+          "lineNumber": 632
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 632
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "LOG",
+          "lineNumber": 636
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Uninit",
+          "lineNumber": 640
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 640
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "FindMatchingFiles",
+          "lineNumber": 644
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_FALSE",
+          "lineNumber": 645
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "empty",
+          "lineNumber": 645
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "readlink",
+          "lineNumber": 652
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "string",
+          "lineNumber": 655
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "filename",
+          "lineNumber": 655
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "fs::path",
+          "lineNumber": 655
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "empty",
+          "lineNumber": 658
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "FindMatchingFiles",
+          "lineNumber": 660
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_TRUE",
+          "lineNumber": 661
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "empty",
+          "lineNumber": 661
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "readlink",
+          "lineNumber": 674
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "ASSERT_GT",
+          "lineNumber": 675
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "string",
+          "lineNumber": 677
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "filename",
+          "lineNumber": 677
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "fs::path",
+          "lineNumber": 677
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "ASSERT_FALSE",
+          "lineNumber": 679
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "empty",
+          "lineNumber": 679
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "ASSERT_TRUE",
+          "lineNumber": 683
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Init",
+          "lineNumber": 683
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 683
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "LOG",
+          "lineNumber": 686
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Uninit",
+          "lineNumber": 690
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Logger::GetInstance",
+          "lineNumber": 690
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "FindMatchingFiles",
+          "lineNumber": 693
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_FALSE",
+          "lineNumber": 694
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "empty",
+          "lineNumber": 694
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 20,
+        "functionCount": 26,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "common/dds_wrapper/dds_abstraction.h",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 58,
+      "nonEmptyLines": 49,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "common/dds_wrapper/dds_idl_wrapper.h",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 46,
+      "nonEmptyLines": 43,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    }
+  ]
+}

@@ -1,0 +1,2238 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 4,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "common/timer_wheel/thread_pool.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 141,
+      "nonEmptyLines": 124,
+      "callGraph": [
+        {
+          "caller": "ThreadPool",
+          "callee": "emplace_back",
+          "lineNumber": 55
+        },
+        {
+          "caller": "ThreadPool",
+          "callee": "std::to_string",
+          "lineNumber": 56
+        },
+        {
+          "caller": "ThreadPool",
+          "callee": "SetThreadDescription",
+          "lineNumber": 58
+        },
+        {
+          "caller": "ThreadPool",
+          "callee": "GetCurrentThread",
+          "lineNumber": 58
+        },
+        {
+          "caller": "ThreadPool",
+          "callee": "c_str",
+          "lineNumber": 59
+        },
+        {
+          "caller": "ThreadPool",
+          "callee": "std::wstring",
+          "lineNumber": 59
+        },
+        {
+          "caller": "ThreadPool",
+          "callee": "begin",
+          "lineNumber": 59
+        },
+        {
+          "caller": "ThreadPool",
+          "callee": "end",
+          "lineNumber": 59
+        },
+        {
+          "caller": "ThreadPool",
+          "callee": "pthread_setname_np",
+          "lineNumber": 62
+        },
+        {
+          "caller": "ThreadPool",
+          "callee": "pthread_self",
+          "lineNumber": 62
+        },
+        {
+          "caller": "ThreadPool",
+          "callee": "c_str",
+          "lineNumber": 62
+        },
+        {
+          "caller": "ThreadPool",
+          "callee": "wait",
+          "lineNumber": 69
+        },
+        {
+          "caller": "ThreadPool",
+          "callee": "empty",
+          "lineNumber": 70
+        },
+        {
+          "caller": "ThreadPool",
+          "callee": "empty",
+          "lineNumber": 71
+        },
+        {
+          "caller": "ThreadPool",
+          "callee": "std::move",
+          "lineNumber": 73
+        },
+        {
+          "caller": "ThreadPool",
+          "callee": "front",
+          "lineNumber": 73
+        },
+        {
+          "caller": "ThreadPool",
+          "callee": "pop",
+          "lineNumber": 74
+        },
+        {
+          "caller": "ThreadPool",
+          "callee": "task",
+          "lineNumber": 77
+        },
+        {
+          "caller": "enqueue",
+          "callee": "std::make_shared<std::packaged_task<return_type()> >",
+          "lineNumber": 91
+        },
+        {
+          "caller": "enqueue",
+          "callee": "std::bind",
+          "lineNumber": 92
+        },
+        {
+          "caller": "enqueue",
+          "callee": "std::forward<F>",
+          "lineNumber": 92
+        },
+        {
+          "caller": "enqueue",
+          "callee": "std::forward<Args>",
+          "lineNumber": 92
+        },
+        {
+          "caller": "enqueue",
+          "callee": "get_future",
+          "lineNumber": 94
+        },
+        {
+          "caller": "enqueue",
+          "callee": "std::runtime_error",
+          "lineNumber": 100
+        },
+        {
+          "caller": "enqueue",
+          "callee": "emplace",
+          "lineNumber": 102
+        },
+        {
+          "caller": "enqueue",
+          "callee": "(*task)",
+          "lineNumber": 102
+        },
+        {
+          "caller": "enqueue",
+          "callee": "notify_one",
+          "lineNumber": 104
+        },
+        {
+          "caller": "enqueue_void",
+          "callee": "push",
+          "lineNumber": 115
+        },
+        {
+          "caller": "enqueue_void",
+          "callee": "std::move",
+          "lineNumber": 115
+        },
+        {
+          "caller": "enqueue_void",
+          "callee": "notify_one",
+          "lineNumber": 117
+        },
+        {
+          "caller": "getQueueSize",
+          "callee": "size",
+          "lineNumber": 125
+        },
+        {
+          "caller": "~ThreadPool",
+          "callee": "notify_all",
+          "lineNumber": 136
+        },
+        {
+          "caller": "~ThreadPool",
+          "callee": "join",
+          "lineNumber": 138
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "common/timer_wheel/timer_scheduler.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 665,
+      "nonEmptyLines": 532,
+      "functions": [
+        {
+          "name": "TimerScheduler",
+          "startLine": 147,
+          "endLine": 147,
+          "params": []
+        },
+        {
+          "name": "TimerScheduler",
+          "startLine": 153,
+          "endLine": 160,
+          "params": [
+            "tick_ms",
+            "thread_pool_size"
+          ]
+        },
+        {
+          "name": "~TimerScheduler",
+          "startLine": 162,
+          "endLine": 178,
+          "params": []
+        },
+        {
+          "name": "Schedule",
+          "startLine": 180,
+          "endLine": 196,
+          "params": [
+            "callback",
+            "delay_ticks"
+          ]
+        },
+        {
+          "name": "ScheduleRecurring",
+          "startLine": 198,
+          "endLine": 216,
+          "params": [
+            "callback",
+            "delay_ticks",
+            "interval_ticks"
+          ]
+        },
+        {
+          "name": "Cancel",
+          "startLine": 218,
+          "endLine": 230,
+          "params": [
+            "timer"
+          ]
+        },
+        {
+          "name": "Pause",
+          "startLine": 232,
+          "endLine": 235,
+          "params": []
+        },
+        {
+          "name": "Resume",
+          "startLine": 237,
+          "endLine": 240,
+          "params": []
+        },
+        {
+          "name": "Stop",
+          "startLine": 242,
+          "endLine": 256,
+          "params": []
+        },
+        {
+          "name": "Post",
+          "startLine": 258,
+          "endLine": 267,
+          "params": [
+            "callback"
+          ]
+        },
+        {
+          "name": "RescheduleRecurring",
+          "startLine": 269,
+          "endLine": 274,
+          "params": [
+            "timer",
+            "delay_ticks"
+          ]
+        },
+        {
+          "name": "RescheduleRecurringNoLock",
+          "startLine": 276,
+          "endLine": 280,
+          "params": [
+            "timer",
+            "delay_ticks"
+          ]
+        },
+        {
+          "name": "TimerLoop",
+          "startLine": 282,
+          "endLine": 319,
+          "params": []
+        },
+        {
+          "name": "CallbackTimer::CallbackTimer",
+          "startLine": 323,
+          "endLine": 326,
+          "params": [
+            "callback",
+            "scheduler"
+          ]
+        },
+        {
+          "name": "CallbackTimer::execute",
+          "startLine": 328,
+          "endLine": 342,
+          "params": []
+        },
+        {
+          "name": "CallbackTimer::cancel",
+          "startLine": 344,
+          "endLine": 348,
+          "params": []
+        },
+        {
+          "name": "RecurringCallbackTimer::RecurringCallbackTimer",
+          "startLine": 352,
+          "endLine": 358,
+          "params": [
+            "callback",
+            "scheduler",
+            "interval_ticks"
+          ]
+        },
+        {
+          "name": "RecurringCallbackTimer::execute",
+          "startLine": 360,
+          "endLine": 376,
+          "params": []
+        },
+        {
+          "name": "RecurringCallbackTimer::cancel",
+          "startLine": 378,
+          "endLine": 382,
+          "params": []
+        },
+        {
+          "name": "RemoveFromActive",
+          "startLine": 385,
+          "endLine": 389,
+          "params": [
+            "timer"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "TimerScheduler",
+          "startLine": 47,
+          "endLine": 149,
+          "methods": [
+            "Schedule",
+            "ScheduleRecurring",
+            "Cancel",
+            "Pause",
+            "Resume",
+            "Stop",
+            "Post",
+            "RemoveFromActive",
+            "RescheduleRecurring",
+            "RescheduleRecurringNoLock",
+            "TimerLoop",
+            "TimerScheduler",
+            "~TimerScheduler",
+            "CallbackTimer::CallbackTimer",
+            "CallbackTimer::execute",
+            "CallbackTimer::cancel",
+            "RecurringCallbackTimer::RecurringCallbackTimer",
+            "RecurringCallbackTimer::execute",
+            "RecurringCallbackTimer::cancel"
+          ],
+          "properties": [
+            "thread_pool_",
+            "timer_wheel_",
+            "should_stop_",
+            "is_paused_",
+            "timer_thread_",
+            "mutex_",
+            "tick_ms_",
+            "active_timers_",
+            "pendingTasks_",
+            "direct_execute_"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "Schedule",
+          "line": 58,
+          "isDefault": false
+        },
+        {
+          "name": "ScheduleRecurring",
+          "line": 61,
+          "isDefault": false
+        },
+        {
+          "name": "Cancel",
+          "line": 65,
+          "isDefault": false
+        },
+        {
+          "name": "Pause",
+          "line": 68,
+          "isDefault": false
+        },
+        {
+          "name": "Resume",
+          "line": 71,
+          "isDefault": false
+        },
+        {
+          "name": "Stop",
+          "line": 74,
+          "isDefault": false
+        },
+        {
+          "name": "Post",
+          "line": 77,
+          "isDefault": false
+        },
+        {
+          "name": "TimerScheduler",
+          "line": 47,
+          "isDefault": false
+        },
+        {
+          "name": "TimerScheduler",
+          "line": 153,
+          "isDefault": false
+        },
+        {
+          "name": "~TimerScheduler",
+          "line": 162,
+          "isDefault": false
+        },
+        {
+          "name": "Schedule",
+          "line": 180,
+          "isDefault": false
+        },
+        {
+          "name": "ScheduleRecurring",
+          "line": 198,
+          "isDefault": false
+        },
+        {
+          "name": "Cancel",
+          "line": 218,
+          "isDefault": false
+        },
+        {
+          "name": "Pause",
+          "line": 232,
+          "isDefault": false
+        },
+        {
+          "name": "Resume",
+          "line": 237,
+          "isDefault": false
+        },
+        {
+          "name": "Stop",
+          "line": 242,
+          "isDefault": false
+        },
+        {
+          "name": "Post",
+          "line": 258,
+          "isDefault": false
+        },
+        {
+          "name": "RescheduleRecurring",
+          "line": 269,
+          "isDefault": false
+        },
+        {
+          "name": "RescheduleRecurringNoLock",
+          "line": 276,
+          "isDefault": false
+        },
+        {
+          "name": "TimerLoop",
+          "line": 282,
+          "isDefault": false
+        },
+        {
+          "name": "CallbackTimer::CallbackTimer",
+          "line": 323,
+          "isDefault": false
+        },
+        {
+          "name": "CallbackTimer::execute",
+          "line": 328,
+          "isDefault": false
+        },
+        {
+          "name": "CallbackTimer::cancel",
+          "line": 344,
+          "isDefault": false
+        },
+        {
+          "name": "RecurringCallbackTimer::RecurringCallbackTimer",
+          "line": 352,
+          "isDefault": false
+        },
+        {
+          "name": "RecurringCallbackTimer::execute",
+          "line": 360,
+          "isDefault": false
+        },
+        {
+          "name": "RecurringCallbackTimer::cancel",
+          "line": 378,
+          "isDefault": false
+        },
+        {
+          "name": "RemoveFromActive",
+          "line": 385,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "TimerScheduler",
+          "callee": "std::thread",
+          "lineNumber": 159
+        },
+        {
+          "caller": "TimerScheduler",
+          "callee": "TimerLoop",
+          "lineNumber": 159
+        },
+        {
+          "caller": "~TimerScheduler",
+          "callee": "store",
+          "lineNumber": 165
+        },
+        {
+          "caller": "~TimerScheduler",
+          "callee": "joinable",
+          "lineNumber": 166
+        },
+        {
+          "caller": "~TimerScheduler",
+          "callee": "join",
+          "lineNumber": 167
+        },
+        {
+          "caller": "~TimerScheduler",
+          "callee": "cancel",
+          "lineNumber": 174
+        },
+        {
+          "caller": "~TimerScheduler",
+          "callee": "clear",
+          "lineNumber": 177
+        },
+        {
+          "caller": "Schedule",
+          "callee": "std::make_shared<CallbackTimer>",
+          "lineNumber": 183
+        },
+        {
+          "caller": "Schedule",
+          "callee": "std::move",
+          "lineNumber": 183
+        },
+        {
+          "caller": "Schedule",
+          "callee": "schedule",
+          "lineNumber": 188
+        },
+        {
+          "caller": "Schedule",
+          "callee": "get",
+          "lineNumber": 188
+        },
+        {
+          "caller": "Schedule",
+          "callee": "insert",
+          "lineNumber": 189
+        },
+        {
+          "caller": "Schedule",
+          "callee": "what",
+          "lineNumber": 191
+        },
+        {
+          "caller": "ScheduleRecurring",
+          "callee": "std::make_shared<RecurringCallbackTimer>",
+          "lineNumber": 202
+        },
+        {
+          "caller": "ScheduleRecurring",
+          "callee": "std::move",
+          "lineNumber": 202
+        },
+        {
+          "caller": "ScheduleRecurring",
+          "callee": "schedule",
+          "lineNumber": 207
+        },
+        {
+          "caller": "ScheduleRecurring",
+          "callee": "get",
+          "lineNumber": 207
+        },
+        {
+          "caller": "ScheduleRecurring",
+          "callee": "insert",
+          "lineNumber": 208
+        },
+        {
+          "caller": "ScheduleRecurring",
+          "callee": "what",
+          "lineNumber": 210
+        },
+        {
+          "caller": "Cancel",
+          "callee": "cancel",
+          "lineNumber": 224
+        },
+        {
+          "caller": "Cancel",
+          "callee": "erase",
+          "lineNumber": 228
+        },
+        {
+          "caller": "Pause",
+          "callee": "store",
+          "lineNumber": 234
+        },
+        {
+          "caller": "Resume",
+          "callee": "store",
+          "lineNumber": 239
+        },
+        {
+          "caller": "Stop",
+          "callee": "store",
+          "lineNumber": 244
+        },
+        {
+          "caller": "Stop",
+          "callee": "joinable",
+          "lineNumber": 245
+        },
+        {
+          "caller": "Stop",
+          "callee": "join",
+          "lineNumber": 246
+        },
+        {
+          "caller": "Stop",
+          "callee": "cancel",
+          "lineNumber": 252
+        },
+        {
+          "caller": "Stop",
+          "callee": "clear",
+          "lineNumber": 255
+        },
+        {
+          "caller": "Post",
+          "callee": "enqueue_void",
+          "lineNumber": 260
+        },
+        {
+          "caller": "Post",
+          "callee": "std::move",
+          "lineNumber": 260
+        },
+        {
+          "caller": "Post",
+          "callee": "callback",
+          "lineNumber": 262
+        },
+        {
+          "caller": "Post",
+          "callee": "what",
+          "lineNumber": 264
+        },
+        {
+          "caller": "RescheduleRecurring",
+          "callee": "schedule",
+          "lineNumber": 273
+        },
+        {
+          "caller": "RescheduleRecurring",
+          "callee": "get",
+          "lineNumber": 273
+        },
+        {
+          "caller": "RescheduleRecurringNoLock",
+          "callee": "schedule",
+          "lineNumber": 279
+        },
+        {
+          "caller": "TimerLoop",
+          "callee": "pthread_setname_np",
+          "lineNumber": 284
+        },
+        {
+          "caller": "TimerLoop",
+          "callee": "pthread_self",
+          "lineNumber": 284
+        },
+        {
+          "caller": "TimerLoop",
+          "callee": "Clock::now",
+          "lineNumber": 286
+        },
+        {
+          "caller": "TimerLoop",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 287
+        },
+        {
+          "caller": "TimerLoop",
+          "callee": "static_cast<int64_t>",
+          "lineNumber": 287
+        },
+        {
+          "caller": "TimerLoop",
+          "callee": "load",
+          "lineNumber": 289
+        },
+        {
+          "caller": "TimerLoop",
+          "callee": "Clock::now",
+          "lineNumber": 290
+        },
+        {
+          "caller": "TimerLoop",
+          "callee": "load",
+          "lineNumber": 293
+        },
+        {
+          "caller": "TimerLoop",
+          "callee": "advance",
+          "lineNumber": 297
+        },
+        {
+          "caller": "TimerLoop",
+          "callee": "task",
+          "lineNumber": 303
+        },
+        {
+          "caller": "TimerLoop",
+          "callee": "enqueue_void",
+          "lineNumber": 305
+        },
+        {
+          "caller": "TimerLoop",
+          "callee": "std::move",
+          "lineNumber": 305
+        },
+        {
+          "caller": "TimerLoop",
+          "callee": "clear",
+          "lineNumber": 308
+        },
+        {
+          "caller": "TimerLoop",
+          "callee": "std::this_thread::sleep_until",
+          "lineNumber": 317
+        },
+        {
+          "caller": "CallbackTimer::CallbackTimer",
+          "callee": "std::move",
+          "lineNumber": 324
+        },
+        {
+          "caller": "CallbackTimer::execute",
+          "callee": "load",
+          "lineNumber": 330
+        },
+        {
+          "caller": "CallbackTimer::execute",
+          "callee": "shared_from_this",
+          "lineNumber": 334
+        },
+        {
+          "caller": "CallbackTimer::execute",
+          "callee": "push_back",
+          "lineNumber": 335
+        },
+        {
+          "caller": "CallbackTimer::execute",
+          "callee": "load",
+          "lineNumber": 337
+        },
+        {
+          "caller": "CallbackTimer::execute",
+          "callee": "callback",
+          "lineNumber": 338
+        },
+        {
+          "caller": "CallbackTimer::execute",
+          "callee": "RemoveFromActive",
+          "lineNumber": 340
+        },
+        {
+          "caller": "CallbackTimer::cancel",
+          "callee": "store",
+          "lineNumber": 346
+        },
+        {
+          "caller": "CallbackTimer::cancel",
+          "callee": "TimerEventInterface::cancel",
+          "lineNumber": 347
+        },
+        {
+          "caller": "RecurringCallbackTimer::RecurringCallbackTimer",
+          "callee": "std::move",
+          "lineNumber": 355
+        },
+        {
+          "caller": "RecurringCallbackTimer::execute",
+          "callee": "load",
+          "lineNumber": 362
+        },
+        {
+          "caller": "RecurringCallbackTimer::execute",
+          "callee": "RescheduleRecurringNoLock",
+          "lineNumber": 366
+        },
+        {
+          "caller": "RecurringCallbackTimer::execute",
+          "callee": "shared_from_this",
+          "lineNumber": 369
+        },
+        {
+          "caller": "RecurringCallbackTimer::execute",
+          "callee": "push_back",
+          "lineNumber": 370
+        },
+        {
+          "caller": "RecurringCallbackTimer::execute",
+          "callee": "load",
+          "lineNumber": 372
+        },
+        {
+          "caller": "RecurringCallbackTimer::execute",
+          "callee": "callback",
+          "lineNumber": 373
+        },
+        {
+          "caller": "RecurringCallbackTimer::cancel",
+          "callee": "store",
+          "lineNumber": 380
+        },
+        {
+          "caller": "RecurringCallbackTimer::cancel",
+          "callee": "TimerEventInterface::cancel",
+          "lineNumber": 381
+        },
+        {
+          "caller": "RemoveFromActive",
+          "callee": "erase",
+          "lineNumber": 388
+        },
+        {
+          "caller": "TestBasicFunctionality",
+          "callee": "Post",
+          "lineNumber": 411
+        },
+        {
+          "caller": "TestBasicFunctionality",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 416
+        },
+        {
+          "caller": "TestBasicFunctionality",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 416
+        },
+        {
+          "caller": "TestSingleTimer",
+          "callee": "std::chrono::steady_clock::now",
+          "lineNumber": 433
+        },
+        {
+          "caller": "TestSingleTimer",
+          "callee": "Schedule",
+          "lineNumber": 436
+        },
+        {
+          "caller": "TestSingleTimer",
+          "callee": "std::chrono::steady_clock::now",
+          "lineNumber": 437
+        },
+        {
+          "caller": "TestSingleTimer",
+          "callee": "std::chrono::duration_cast<std::chrono::milliseconds>",
+          "lineNumber": 438
+        },
+        {
+          "caller": "TestSingleTimer",
+          "callee": "count",
+          "lineNumber": 441
+        },
+        {
+          "caller": "TestSingleTimer",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 447
+        },
+        {
+          "caller": "TestSingleTimer",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 447
+        },
+        {
+          "caller": "TestRecurringTimer",
+          "callee": "ScheduleRecurring",
+          "lineNumber": 465
+        },
+        {
+          "caller": "TestRecurringTimer",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 473
+        },
+        {
+          "caller": "TestRecurringTimer",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 473
+        },
+        {
+          "caller": "TestRecurringTimer",
+          "callee": "Cancel",
+          "lineNumber": 478
+        },
+        {
+          "caller": "TestRecurringTimer",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 482
+        },
+        {
+          "caller": "TestRecurringTimer",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 482
+        },
+        {
+          "caller": "TestTimerCancel",
+          "callee": "Schedule",
+          "lineNumber": 502
+        },
+        {
+          "caller": "TestTimerCancel",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 510
+        },
+        {
+          "caller": "TestTimerCancel",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 510
+        },
+        {
+          "caller": "TestTimerCancel",
+          "callee": "Cancel",
+          "lineNumber": 511
+        },
+        {
+          "caller": "TestTimerCancel",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 515
+        },
+        {
+          "caller": "TestTimerCancel",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 515
+        },
+        {
+          "caller": "TestMultipleTimers",
+          "callee": "push_back",
+          "lineNumber": 535
+        },
+        {
+          "caller": "TestMultipleTimers",
+          "callee": "Schedule",
+          "lineNumber": 535
+        },
+        {
+          "caller": "TestMultipleTimers",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 544
+        },
+        {
+          "caller": "TestMultipleTimers",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 544
+        },
+        {
+          "caller": "TestHighFrequencyTimers",
+          "callee": "ScheduleRecurring",
+          "lineNumber": 573
+        },
+        {
+          "caller": "TestHighFrequencyTimers",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 583
+        },
+        {
+          "caller": "TestHighFrequencyTimers",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 583
+        },
+        {
+          "caller": "TestHighFrequencyTimers",
+          "callee": "Cancel",
+          "lineNumber": 584
+        },
+        {
+          "caller": "TestStressLoad",
+          "callee": "push_back",
+          "lineNumber": 611
+        },
+        {
+          "caller": "TestStressLoad",
+          "callee": "Schedule",
+          "lineNumber": 611
+        },
+        {
+          "caller": "TestStressLoad",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 620
+        },
+        {
+          "caller": "TestStressLoad",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 620
+        },
+        {
+          "caller": "RunAllTests",
+          "callee": "std::chrono::steady_clock::now",
+          "lineNumber": 634
+        },
+        {
+          "caller": "RunAllTests",
+          "callee": "TestBasicFunctionality",
+          "lineNumber": 636
+        },
+        {
+          "caller": "RunAllTests",
+          "callee": "TestSingleTimer",
+          "lineNumber": 637
+        },
+        {
+          "caller": "RunAllTests",
+          "callee": "TestRecurringTimer",
+          "lineNumber": 638
+        },
+        {
+          "caller": "RunAllTests",
+          "callee": "TestTimerCancel",
+          "lineNumber": 639
+        },
+        {
+          "caller": "RunAllTests",
+          "callee": "TestMultipleTimers",
+          "lineNumber": 640
+        },
+        {
+          "caller": "RunAllTests",
+          "callee": "TestHighFrequencyTimers",
+          "lineNumber": 641
+        },
+        {
+          "caller": "RunAllTests",
+          "callee": "TestStressLoad",
+          "lineNumber": 642
+        },
+        {
+          "caller": "RunAllTests",
+          "callee": "std::chrono::steady_clock::now",
+          "lineNumber": 644
+        },
+        {
+          "caller": "RunAllTests",
+          "callee": "std::chrono::duration_cast<std::chrono::milliseconds>",
+          "lineNumber": 645
+        },
+        {
+          "caller": "RunAllTests",
+          "callee": "count",
+          "lineNumber": 648
+        },
+        {
+          "caller": "main",
+          "callee": "RunAllTests",
+          "lineNumber": 657
+        },
+        {
+          "caller": "main",
+          "callee": "what",
+          "lineNumber": 659
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 27,
+        "functionCount": 20,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "common/timer_wheel/timer_scheduler_test.cc",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 359,
+      "nonEmptyLines": 273,
+      "functions": [
+        {
+          "name": "SetUp",
+          "startLine": 13,
+          "endLine": 16,
+          "params": []
+        },
+        {
+          "name": "TearDown",
+          "startLine": 18,
+          "endLine": 18,
+          "params": []
+        },
+        {
+          "name": "TEST_F",
+          "startLine": 24,
+          "endLine": 39,
+          "params": []
+        },
+        {
+          "name": "TEST_F",
+          "startLine": 42,
+          "endLine": 66,
+          "params": []
+        },
+        {
+          "name": "TEST_F",
+          "startLine": 69,
+          "endLine": 88,
+          "params": []
+        },
+        {
+          "name": "TEST_F",
+          "startLine": 91,
+          "endLine": 110,
+          "params": []
+        },
+        {
+          "name": "TEST_F",
+          "startLine": 113,
+          "endLine": 137,
+          "params": []
+        },
+        {
+          "name": "TEST_F",
+          "startLine": 140,
+          "endLine": 150,
+          "params": []
+        },
+        {
+          "name": "TEST_F",
+          "startLine": 153,
+          "endLine": 166,
+          "params": []
+        },
+        {
+          "name": "TEST_F",
+          "startLine": 169,
+          "endLine": 204,
+          "params": []
+        },
+        {
+          "name": "TEST_F",
+          "startLine": 207,
+          "endLine": 228,
+          "params": []
+        },
+        {
+          "name": "TEST_F",
+          "startLine": 231,
+          "endLine": 260,
+          "params": []
+        },
+        {
+          "name": "TEST_F",
+          "startLine": 263,
+          "endLine": 283,
+          "params": []
+        },
+        {
+          "name": "TEST_F",
+          "startLine": 286,
+          "endLine": 323,
+          "params": []
+        },
+        {
+          "name": "TEST_F",
+          "startLine": 326,
+          "endLine": 359,
+          "params": []
+        }
+      ],
+      "classes": [
+        {
+          "name": "TimerSchedulerTest",
+          "startLine": 10,
+          "endLine": 21,
+          "methods": [
+            "SetUp",
+            "TearDown"
+          ],
+          "properties": [
+            "scheduler"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "TimerSchedulerTest",
+          "line": 10,
+          "isDefault": false
+        },
+        {
+          "name": "TEST_F",
+          "line": 24,
+          "isDefault": false
+        },
+        {
+          "name": "TEST_F",
+          "line": 42,
+          "isDefault": false
+        },
+        {
+          "name": "TEST_F",
+          "line": 69,
+          "isDefault": false
+        },
+        {
+          "name": "TEST_F",
+          "line": 91,
+          "isDefault": false
+        },
+        {
+          "name": "TEST_F",
+          "line": 113,
+          "isDefault": false
+        },
+        {
+          "name": "TEST_F",
+          "line": 140,
+          "isDefault": false
+        },
+        {
+          "name": "TEST_F",
+          "line": 153,
+          "isDefault": false
+        },
+        {
+          "name": "TEST_F",
+          "line": 169,
+          "isDefault": false
+        },
+        {
+          "name": "TEST_F",
+          "line": 207,
+          "isDefault": false
+        },
+        {
+          "name": "TEST_F",
+          "line": 231,
+          "isDefault": false
+        },
+        {
+          "name": "TEST_F",
+          "line": 263,
+          "isDefault": false
+        },
+        {
+          "name": "TEST_F",
+          "line": 286,
+          "isDefault": false
+        },
+        {
+          "name": "TEST_F",
+          "line": 326,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "SetUp",
+          "callee": "std::make_unique<TimerScheduler>",
+          "lineNumber": 15
+        },
+        {
+          "caller": "TearDown",
+          "callee": "reset",
+          "lineNumber": 18
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Schedule",
+          "lineNumber": 28
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "fetch_add",
+          "lineNumber": 28
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_TRUE",
+          "lineNumber": 31
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_TRUE",
+          "lineNumber": 32
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "active",
+          "lineNumber": 32
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 35
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 35
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_EQ",
+          "lineNumber": 37
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "load",
+          "lineNumber": 37
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_FALSE",
+          "lineNumber": 38
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "active",
+          "lineNumber": 38
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Schedule",
+          "lineNumber": 50
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "fetch_add",
+          "lineNumber": 50
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "push_back",
+          "lineNumber": 53
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_TRUE",
+          "lineNumber": 54
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "active",
+          "lineNumber": 54
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 58
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 58
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_EQ",
+          "lineNumber": 60
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "load",
+          "lineNumber": 60
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_FALSE",
+          "lineNumber": 64
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "active",
+          "lineNumber": 64
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "ScheduleRecurring",
+          "lineNumber": 74
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "fetch_add",
+          "lineNumber": 74
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_TRUE",
+          "lineNumber": 77
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_TRUE",
+          "lineNumber": 78
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "active",
+          "lineNumber": 78
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 81
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 81
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "load",
+          "lineNumber": 84
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_GE",
+          "lineNumber": 85
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_LE",
+          "lineNumber": 86
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_TRUE",
+          "lineNumber": 87
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "active",
+          "lineNumber": 87
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Schedule",
+          "lineNumber": 95
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "fetch_add",
+          "lineNumber": 95
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_TRUE",
+          "lineNumber": 98
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "active",
+          "lineNumber": 98
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 101
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 101
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Cancel",
+          "lineNumber": 102
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_FALSE",
+          "lineNumber": 104
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "active",
+          "lineNumber": 104
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 107
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 107
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_EQ",
+          "lineNumber": 109
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "load",
+          "lineNumber": 109
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "ScheduleRecurring",
+          "lineNumber": 118
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "fetch_add",
+          "lineNumber": 118
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_TRUE",
+          "lineNumber": 121
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "active",
+          "lineNumber": 121
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 124
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 124
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "load",
+          "lineNumber": 126
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_GE",
+          "lineNumber": 127
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Cancel",
+          "lineNumber": 130
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_FALSE",
+          "lineNumber": 131
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "active",
+          "lineNumber": 131
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 134
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 134
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_EQ",
+          "lineNumber": 136
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "load",
+          "lineNumber": 136
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Post",
+          "lineNumber": 144
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "fetch_add",
+          "lineNumber": 144
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 147
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 147
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_EQ",
+          "lineNumber": 149
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "load",
+          "lineNumber": 149
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Post",
+          "lineNumber": 159
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "fetch_add",
+          "lineNumber": 159
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 163
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 163
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_EQ",
+          "lineNumber": 165
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "load",
+          "lineNumber": 165
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Schedule",
+          "lineNumber": 175
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "push_back",
+          "lineNumber": 178
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Schedule",
+          "lineNumber": 182
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "push_back",
+          "lineNumber": 185
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Schedule",
+          "lineNumber": 189
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "push_back",
+          "lineNumber": 192
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 197
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 197
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_EQ",
+          "lineNumber": 200
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "size",
+          "lineNumber": 200
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_EQ",
+          "lineNumber": 201
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_EQ",
+          "lineNumber": 202
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_EQ",
+          "lineNumber": 203
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Schedule",
+          "lineNumber": 212
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "fetch_add",
+          "lineNumber": 214
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::runtime_error",
+          "lineNumber": 215
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Schedule",
+          "lineNumber": 221
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "fetch_add",
+          "lineNumber": 221
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 224
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 224
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_EQ",
+          "lineNumber": 227
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "load",
+          "lineNumber": 227
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "emplace_back",
+          "lineNumber": 239
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Schedule",
+          "lineNumber": 241
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "fetch_add",
+          "lineNumber": 242
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "join",
+          "lineNumber": 253
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 257
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 257
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_EQ",
+          "lineNumber": 259
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "load",
+          "lineNumber": 259
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Schedule",
+          "lineNumber": 270
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "fetch_add",
+          "lineNumber": 271
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_TRUE",
+          "lineNumber": 273
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "active",
+          "lineNumber": 273
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 279
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 279
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_EQ",
+          "lineNumber": 282
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "load",
+          "lineNumber": 282
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::make_unique<TimerScheduler>",
+          "lineNumber": 288
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "get_future",
+          "lineNumber": 292
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "ScheduleRecurring",
+          "lineNumber": 294
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "fetch_add",
+          "lineNumber": 296
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "set_value",
+          "lineNumber": 297
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "load",
+          "lineNumber": 300
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 301
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 301
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_TRUE",
+          "lineNumber": 306
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "ASSERT_EQ",
+          "lineNumber": 308
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "wait_for",
+          "lineNumber": 308
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::seconds",
+          "lineNumber": 308
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_EQ",
+          "lineNumber": 309
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "load",
+          "lineNumber": 309
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "reset",
+          "lineNumber": 311
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 313
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 313
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "store",
+          "lineNumber": 314
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "join",
+          "lineNumber": 316
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_EQ",
+          "lineNumber": 318
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "load",
+          "lineNumber": 318
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_EQ",
+          "lineNumber": 319
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 321
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 321
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_EQ",
+          "lineNumber": 322
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "load",
+          "lineNumber": 322
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::high_resolution_clock::now",
+          "lineNumber": 331
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "Schedule",
+          "lineNumber": 335
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "fetch_add",
+          "lineNumber": 335
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::high_resolution_clock::now",
+          "lineNumber": 339
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::this_thread::sleep_for",
+          "lineNumber": 342
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::milliseconds",
+          "lineNumber": 342
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::high_resolution_clock::now",
+          "lineNumber": 344
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_EQ",
+          "lineNumber": 346
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "load",
+          "lineNumber": 346
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "count",
+          "lineNumber": 349
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::duration_cast<std::chrono::microseconds>",
+          "lineNumber": 349
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "count",
+          "lineNumber": 351
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "std::chrono::duration_cast<std::chrono::milliseconds>",
+          "lineNumber": 351
+        },
+        {
+          "caller": "TEST_F",
+          "callee": "EXPECT_LT",
+          "lineNumber": 358
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 14,
+        "functionCount": 15,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "common/timer_wheel/timer_wheel.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 536,
+      "nonEmptyLines": 482,
+      "callGraph": [
+        {
+          "caller": "~TimerEventInterface",
+          "callee": "cancel",
+          "lineNumber": 111
+        },
+        {
+          "caller": "execute",
+          "callee": "callback_",
+          "lineNumber": 159
+        },
+        {
+          "caller": "execute",
+          "callee": "(obj_->*MFun)",
+          "lineNumber": 178
+        },
+        {
+          "caller": "cancel",
+          "callee": "relink",
+          "lineNumber": 348
+        },
+        {
+          "caller": "advance",
+          "callee": "process_current_slot",
+          "lineNumber": 362
+        },
+        {
+          "caller": "advance",
+          "callee": "assert",
+          "lineNumber": 380
+        },
+        {
+          "caller": "advance",
+          "callee": "process_current_slot",
+          "lineNumber": 385
+        },
+        {
+          "caller": "process_current_slot",
+          "callee": "advance",
+          "lineNumber": 397
+        },
+        {
+          "caller": "process_current_slot",
+          "callee": "events",
+          "lineNumber": 401
+        },
+        {
+          "caller": "process_current_slot",
+          "callee": "pop_event",
+          "lineNumber": 402
+        },
+        {
+          "caller": "process_current_slot",
+          "callee": "assert",
+          "lineNumber": 404
+        },
+        {
+          "caller": "process_current_slot",
+          "callee": "scheduled_at",
+          "lineNumber": 405
+        },
+        {
+          "caller": "process_current_slot",
+          "callee": "execute",
+          "lineNumber": 406
+        },
+        {
+          "caller": "process_current_slot",
+          "callee": "schedule",
+          "lineNumber": 418
+        },
+        {
+          "caller": "process_current_slot",
+          "callee": "scheduled_at",
+          "lineNumber": 419
+        },
+        {
+          "caller": "process_current_slot",
+          "callee": "execute",
+          "lineNumber": 422
+        },
+        {
+          "caller": "schedule",
+          "callee": "assert",
+          "lineNumber": 432
+        },
+        {
+          "caller": "schedule",
+          "callee": "set_scheduled_at",
+          "lineNumber": 433
+        },
+        {
+          "caller": "schedule",
+          "callee": "relink",
+          "lineNumber": 443
+        },
+        {
+          "caller": "schedule_in_range",
+          "callee": "assert",
+          "lineNumber": 448
+        },
+        {
+          "caller": "schedule_in_range",
+          "callee": "active",
+          "lineNumber": 449
+        },
+        {
+          "caller": "schedule_in_range",
+          "callee": "scheduled_at",
+          "lineNumber": 450
+        },
+        {
+          "caller": "schedule_in_range",
+          "callee": "schedule",
+          "lineNumber": 470
+        },
+        {
+          "caller": "ticks_to_next_event",
+          "callee": "events",
+          "lineNumber": 498
+        },
+        {
+          "caller": "ticks_to_next_event",
+          "callee": "events",
+          "lineNumber": 501
+        },
+        {
+          "caller": "ticks_to_next_event",
+          "callee": "std::min",
+          "lineNumber": 503
+        },
+        {
+          "caller": "ticks_to_next_event",
+          "callee": "scheduled_at",
+          "lineNumber": 503
+        },
+        {
+          "caller": "ticks_to_next_event",
+          "callee": "events",
+          "lineNumber": 509
+        },
+        {
+          "caller": "ticks_to_next_event",
+          "callee": "std::min",
+          "lineNumber": 511
+        },
+        {
+          "caller": "ticks_to_next_event",
+          "callee": "scheduled_at",
+          "lineNumber": 511
+        },
+        {
+          "caller": "ticks_to_next_event",
+          "callee": "ticks_to_next_event",
+          "lineNumber": 530
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    }
+  ]
+}

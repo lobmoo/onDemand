@@ -1,0 +1,31 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/subscriber/DataReaderListener.hpp", "language": "cpp", "sizeLines": 159, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/subscriber/InstanceState.hpp", "language": "cpp", "sizeLines": 87, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/subscriber/qos/DataReaderQos.hpp", "language": "cpp", "sizeLines": 833, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/subscriber/qos/ReaderQos.hpp", "language": "cpp", "sizeLines": 169, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/subscriber/qos/SubscriberQos.hpp", "language": "cpp", "sizeLines": 210, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/subscriber/ReadCondition.hpp", "language": "cpp", "sizeLines": 126, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/subscriber/SampleInfo.hpp", "language": "cpp", "sizeLines": 99, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/subscriber/SampleState.hpp", "language": "cpp", "sizeLines": 60, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/subscriber/Subscriber.hpp", "language": "cpp", "sizeLines": 489, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/subscriber/SubscriberListener.hpp", "language": "cpp", "sizeLines": 76, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/subscriber/ViewState.hpp", "language": "cpp", "sizeLines": 71, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/topic/ContentFilteredTopic.hpp", "language": "cpp", "sizeLines": 144, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/topic/IContentFilter.hpp", "language": "cpp", "sizeLines": 88, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/topic/IContentFilterFactory.hpp", "language": "cpp", "sizeLines": 93, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/topic/qos/TopicQos.hpp", "language": "cpp", "sizeLines": 551, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/topic/Topic.hpp", "language": "cpp", "sizeLines": 156, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/topic/TopicDataType.hpp", "language": "cpp", "sizeLines": 254, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/topic/TopicDescription.hpp", "language": "cpp", "sizeLines": 97, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/topic/TopicListener.hpp", "language": "cpp", "sizeLines": 75, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/topic/TypeSupport.hpp", "language": "cpp", "sizeLines": 279, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/xtypes/common.hpp", "language": "cpp", "sizeLines": 122, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/xtypes/dynamic_types/AnnotationDescriptor.hpp", "language": "cpp", "sizeLines": 131, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/xtypes/dynamic_types/detail/dynamic_language_binding.hpp", "language": "cpp", "sizeLines": 170, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/xtypes/dynamic_types/detail/type_traits.hpp", "language": "cpp", "sizeLines": 65, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/xtypes/dynamic_types/DynamicData.hpp", "language": "cpp", "sizeLines": 1042, "fileCategory": "code"}
+  ],
+  "batchImportData": {}
+}

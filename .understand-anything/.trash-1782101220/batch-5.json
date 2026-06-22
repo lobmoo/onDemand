@@ -1,0 +1,420 @@
+{
+  "nodes": [
+    {
+      "id": "file:common/log/custom_rotating_file_sink.h",
+      "type": "file",
+      "name": "custom_rotating_file_sink.h",
+      "filePath": "common/log/custom_rotating_file_sink.h",
+      "summary": "自定义的 spdlog 按大小轮转文件 sink 模板类，继承自 base_sink，支持日志文件按大小自动轮转和 rename 语义。",
+      "tags": ["logging", "spdlog-sink", "template-class", "utility"],
+      "complexity": "simple",
+      "languageNotes": "使用模板参数 Mutex 区分多线程版本 (mt) 和单线程版本 (st)，并通过 SPDLOG_HEADER_ONLY 宏控制是否包含内联实现。"
+    },
+    {
+      "id": "file:common/log/logger.cc",
+      "type": "file",
+      "name": "logger.cc",
+      "filePath": "common/log/logger.cc",
+      "summary": "Logger 单例类的薄包装实现文件，将所有日志操作委托给内部 LoggerImpl 类，是日志系统的公共 API 入口。",
+      "tags": ["logging", "singleton", "facade", "entry-point"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:common/log/logger.h",
+      "type": "file",
+      "name": "logger.h",
+      "filePath": "common/log/logger.h",
+      "summary": "日志系统的公共头文件，定义了 Logger 单例类、LogStreamOptimized RAII 流式日志辅助类、LogRateLimiter 速率限制器以及 LOG/LOG_TIME 宏。",
+      "tags": ["logging", "public-api", "singleton", "macro", "header"],
+      "complexity": "moderate",
+      "languageNotes": "LOG 宏利用 ShouldLog 短路求值和 LogStreamOptimized 析构函数自动提交日志，实现流式日志语法。LogRateLimiter 使用 thread_local 存储实现线程安全的速率限制。"
+    },
+    {
+      "id": "file:common/log/logger_impl.cc",
+      "type": "file",
+      "name": "logger_impl.cc",
+      "filePath": "common/log/logger_impl.cc",
+      "summary": "LoggerImpl 的核心实现文件，负责 spdlog 的初始化、同步/异步 logger 创建、sink 配置、日志级别管理、配置文件热加载以及环境变量覆盖。",
+      "tags": ["logging", "implementation", "spdlog", "config-hot-reload", "core"],
+      "complexity": "complex",
+      "languageNotes": "Init 方法支持多种 logger 类型（console/file/both），使用 spdlog thread pool 实现异步日志，LoggerConfigChecker 后台线程每秒检测配置文件变更并热重载。"
+    },
+    {
+      "id": "file:common/log/logger_impl.h",
+      "type": "file",
+      "name": "logger_impl.h",
+      "filePath": "common/log/logger_impl.h",
+      "summary": "LoggerImpl 类的头文件，定义了 Logger::LoggerImpl 内部实现类和 LoggerConfig 配置结构体，包含 JSON 配置解析和日志级别映射逻辑。",
+      "tags": ["logging", "implementation", "config-parser", "header"],
+      "complexity": "moderate",
+      "languageNotes": "LoggerConfig 使用 nlohmann/json 解析配置文件，通过 string 到 enum 的映射函数支持灵活的配置格式。"
+    },
+    {
+      "id": "file:common/log/logger_test.cc",
+      "type": "file",
+      "name": "logger_test.cc",
+      "filePath": "common/log/logger_test.cc",
+      "summary": "Logger 日志系统的全面单元测试文件，覆盖初始化、多级别日志输出、异步模式、配置文件加载、日志轮转、并发安全、flush 策略、日志重定向等场景。",
+      "tags": ["test", "logging", "unit-test", "google-test", "concurrency-test"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:common/dds_wrapper/dds_abstraction.h",
+      "type": "file",
+      "name": "dds_abstraction.h",
+      "filePath": "common/dds_wrapper/dds_abstraction.h",
+      "summary": "DDS 中间件抽象层头文件，通过编译时宏 USE_FASTDDS/USE_TXDDS 选择具体 DDS 实现，统一导出 DataNode、DDSTopicWriter、DDSTopicReader 等类型别名。",
+      "tags": ["dds", "abstraction", "compile-time-polymorphism", "header"],
+      "complexity": "simple",
+      "languageNotes": "使用 namespace alias 和 using 声明实现编译时多态，避免运行时开销。"
+    },
+    {
+      "id": "file:common/dds_wrapper/dds_idl_wrapper.h",
+      "type": "file",
+      "name": "dds_idl_wrapper.h",
+      "filePath": "common/dds_wrapper/dds_idl_wrapper.h",
+      "summary": "DDS IDL 生成代码的包装头文件，根据编译时宏选择 FastDDS (.hpp) 或 TXDDS (.h) 格式的 IDL 数据类型和 PubSub 类型定义。",
+      "tags": ["dds", "idl", "code-generation", "header"],
+      "complexity": "simple",
+      "languageNotes": "IDL 文件由 FastDDS/TXDDS 工具链自动生成，本文件仅做条件包含以适配不同 DDS 实现。"
+    },
+    {
+      "id": "class:common/log/logger.h:Logger",
+      "type": "class",
+      "name": "Logger",
+      "filePath": "common/log/logger.h",
+      "lineRange": [49, 140],
+      "summary": "日志系统的单例入口类，提供 Init/Uninit 生命周期管理、流式日志获取 (GetLogStream)、日志级别/模式/缓冲区等动态配置接口。",
+      "tags": ["singleton", "logging", "public-api", "pimpl"],
+      "complexity": "moderate",
+      "languageNotes": "使用 Pimpl 模式（unique_ptr<LoggerImpl>）隐藏实现细节，禁用拷贝构造和赋值以保证单例语义。"
+    },
+    {
+      "id": "class:common/log/logger.h:LogStreamOptimized",
+      "type": "class",
+      "name": "LogStreamOptimized",
+      "filePath": "common/log/logger.h",
+      "lineRange": [142, 168],
+      "summary": "RAII 风格的日志流辅助类，在析构时自动将 ostringstream 内容通过 Logger::Log 提交，配合 LOG 宏实现流式日志语法。",
+      "tags": ["raii", "logging", "stream-helper", "utility"],
+      "complexity": "simple",
+      "languageNotes": "析构函数中检查 stream 内容非空后才提交日志，避免空日志开销。"
+    },
+    {
+      "id": "class:common/log/logger.h:LogRateLimiter",
+      "type": "class",
+      "name": "LogRateLimiter",
+      "filePath": "common/log/logger.h",
+      "lineRange": [170, 188],
+      "summary": "日志速率限制器，使用 thread_local 的时间戳 map 对同一 key 的日志输出进行间隔控制，配合 LOG_TIME 宏防止高频日志刷屏。",
+      "tags": ["rate-limiter", "logging", "thread-local", "utility"],
+      "complexity": "simple",
+      "languageNotes": "使用 thread_local 存储避免锁竞争，每个线程独立维护日志时间戳。"
+    },
+    {
+      "id": "class:common/log/logger_impl.h:LoggerImpl",
+      "type": "class",
+      "name": "LoggerImpl",
+      "filePath": "common/log/logger_impl.h",
+      "lineRange": [37, 192],
+      "summary": "Logger 的内部实现类，封装 spdlog 的同步/异步 logger 创建、sink 管理、日志级别控制、配置文件热加载等核心逻辑。",
+      "tags": ["implementation", "spdlog", "pimpl", "logging"],
+      "complexity": "complex",
+      "languageNotes": "使用 atomic<bool> is_running_ 控制后台配置检查线程的生命周期，支持 console_sink + file_sink 组合输出。"
+    },
+    {
+      "id": "class:common/log/logger_impl.h:LoggerConfig",
+      "type": "class",
+      "name": "LoggerConfig",
+      "filePath": "common/log/logger_impl.h",
+      "lineRange": [40, 155],
+      "summary": "日志配置结构体，从 JSON 文件解析日志参数（文件名、类型、级别、大小限制、异步模式等），提供类型安全的配置访问接口。",
+      "tags": ["config", "json-parser", "logging", "data-model"],
+      "complexity": "moderate",
+      "languageNotes": "构造函数中完成 JSON 解析，解析失败时降级为默认配置并输出警告。"
+    },
+    {
+      "id": "class:common/log/custom_rotating_file_sink.h:custom_rotating_file_sink",
+      "type": "class",
+      "name": "custom_rotating_file_sink",
+      "filePath": "common/log/custom_rotating_file_sink.h",
+      "lineRange": [20, 47],
+      "summary": "自定义的 spdlog 按大小轮转文件 sink 模板类，支持 rotate_on_open 选项，在日志文件达到最大大小时自动轮转。",
+      "tags": ["spdlog-sink", "template-class", "file-rotation", "logging"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:common/log/logger_test.cc:LoggerTest",
+      "type": "class",
+      "name": "LoggerTest",
+      "filePath": "common/log/logger_test.cc",
+      "lineRange": [31, 89],
+      "summary": "Logger 单元测试的 GoogleTest 测试夹具类，提供 SetUp/TearDown 生命周期管理和辅助方法（文件清理、内容读取、配置创建、行数统计）。",
+      "tags": ["test-fixture", "google-test", "logging", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:common/log/logger_impl.cc:LoggerImpl::LoggerConfigChecker",
+      "type": "function",
+      "name": "LoggerImpl::LoggerConfigChecker",
+      "filePath": "common/log/logger_impl.cc",
+      "lineRange": [45, 66],
+      "summary": "后台配置检查线程函数，每秒检测配置文件的最后修改时间，发现变更时重新加载配置并应用到运行中的 logger。",
+      "tags": ["config-hot-reload", "background-thread", "logging"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:common/log/logger_impl.cc:LoggerImpl::Init_config",
+      "type": "function",
+      "name": "LoggerImpl::Init (config file)",
+      "filePath": "common/log/logger_impl.cc",
+      "lineRange": [75, 105],
+      "summary": "通过 JSON 配置文件路径初始化日志系统，解析配置后委托给参数化 Init 方法，并启动后台配置检查线程。",
+      "tags": ["initialization", "config-driven", "logging"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:common/log/logger_impl.cc:LoggerImpl::Init_params",
+      "type": "function",
+      "name": "LoggerImpl::Init (parameters)",
+      "filePath": "common/log/logger_impl.cc",
+      "lineRange": [112, 204],
+      "summary": "核心初始化方法，根据参数创建 console/file/both 类型的 spdlog logger，支持同步和异步模式，配置 sink 级别、日志模式和缓冲区大小。",
+      "tags": ["initialization", "spdlog", "async-logging", "core"],
+      "complexity": "complex",
+      "languageNotes": "异步模式使用 spdlog::init_thread_pool 创建线程池，根据 hardware_concurrency 计算队列大小和线程数。"
+    },
+    {
+      "id": "function:common/log/logger_impl.cc:LoggerImpl::Uninit",
+      "type": "function",
+      "name": "LoggerImpl::Uninit",
+      "filePath": "common/log/logger_impl.cc",
+      "lineRange": [206, 218],
+      "summary": "反初始化日志系统，停止后台检查线程、刷新缓冲区、注销 logger 并释放资源。",
+      "tags": ["cleanup", "resource-management", "logging"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:common/log/logger_impl.cc:LoggerImpl::GetLogLevelFromEnv",
+      "type": "function",
+      "name": "LoggerImpl::GetLogLevelFromEnv",
+      "filePath": "common/log/logger_impl.cc",
+      "lineRange": [234, 244],
+      "summary": "从环境变量读取日志级别配置，支持通过环境变量覆盖配置文件中的日志级别设置。",
+      "tags": ["environment-variable", "config-override", "logging"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:common/log/logger.cc",
+      "target": "file:common/log/logger_impl.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:common/log/logger_impl.cc",
+      "target": "file:common/log/custom_rotating_file_sink.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:common/log/logger_impl.cc",
+      "target": "file:common/log/logger.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:common/log/logger_impl.cc",
+      "target": "file:common/log/logger_impl.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:common/log/logger_test.cc",
+      "target": "file:common/log/logger.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:common/log/logger.h",
+      "target": "class:common/log/logger.h:Logger",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/log/logger.h",
+      "target": "class:common/log/logger.h:LogStreamOptimized",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/log/logger.h",
+      "target": "class:common/log/logger.h:LogRateLimiter",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/log/logger_impl.h",
+      "target": "class:common/log/logger_impl.h:LoggerImpl",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/log/logger_impl.h",
+      "target": "class:common/log/logger_impl.h:LoggerConfig",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/log/custom_rotating_file_sink.h",
+      "target": "class:common/log/custom_rotating_file_sink.h:custom_rotating_file_sink",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/log/logger_test.cc",
+      "target": "class:common/log/logger_test.cc:LoggerTest",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/log/logger_impl.cc",
+      "target": "function:common/log/logger_impl.cc:LoggerImpl::LoggerConfigChecker",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/log/logger_impl.cc",
+      "target": "function:common/log/logger_impl.cc:LoggerImpl::Init_config",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/log/logger_impl.cc",
+      "target": "function:common/log/logger_impl.cc:LoggerImpl::Init_params",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/log/logger_impl.cc",
+      "target": "function:common/log/logger_impl.cc:LoggerImpl::Uninit",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/log/logger_impl.cc",
+      "target": "function:common/log/logger_impl.cc:LoggerImpl::GetLogLevelFromEnv",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/log/logger.h",
+      "target": "class:common/log/logger.h:Logger",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:common/log/logger.h",
+      "target": "class:common/log/logger.h:LogStreamOptimized",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:common/log/logger.h",
+      "target": "class:common/log/logger.h:LogRateLimiter",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:common/log/logger_impl.cc",
+      "target": "function:common/log/logger_impl.cc:LoggerImpl::Init_config",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:common/log/logger_impl.cc",
+      "target": "function:common/log/logger_impl.cc:LoggerImpl::Init_params",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:common/log/logger_impl.cc",
+      "target": "function:common/log/logger_impl.cc:LoggerImpl::Uninit",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:common/log/logger_impl.cc",
+      "target": "function:common/log/logger_impl.cc:LoggerImpl::GetLogLevelFromEnv",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:common/log/logger_impl.cc",
+      "target": "function:common/log/logger_impl.cc:LoggerImpl::LoggerConfigChecker",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:common/log/logger_test.cc",
+      "target": "class:common/log/logger_test.cc:LoggerTest",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:common/log/logger.h",
+      "target": "file:common/log/logger_test.cc",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "class:common/log/logger_impl.h:LoggerImpl",
+      "target": "class:common/log/custom_rotating_file_sink.h:custom_rotating_file_sink",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "class:common/log/logger.h:Logger",
+      "target": "class:common/log/logger_impl.h:LoggerImpl",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "class:common/log/logger.h:LogStreamOptimized",
+      "target": "class:common/log/logger.h:Logger",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    }
+  ]
+}

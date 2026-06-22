@@ -1,0 +1,23 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "common/fastdds_wrapper/fastdds_topic_reader.hpp", "language": "cpp", "sizeLines": 534, "fileCategory": "code"},
+    {"path": "common/fastdds_wrapper/fastdds_topic_writer.hpp", "language": "cpp", "sizeLines": 534, "fileCategory": "code"},
+    {"path": "common/timer_wheel/thread_pool.h", "language": "cpp", "sizeLines": 534, "fileCategory": "code"},
+    {"path": "common/timer_wheel/timer_scheduler.cc", "language": "cpp", "sizeLines": 952, "fileCategory": "code"},
+    {"path": "common/timer_wheel/timer_scheduler.h", "language": "cpp", "sizeLines": 534, "fileCategory": "code"},
+    {"path": "common/timer_wheel/timer_wheel.cc", "language": "cpp", "sizeLines": 952, "fileCategory": "code"},
+    {"path": "common/timer_wheel/timer_wheel.h", "language": "cpp", "sizeLines": 534, "fileCategory": "code"},
+    {"path": "common/log/custom_rotating_file_sink-inl.h", "language": "cpp", "sizeLines": 102, "fileCategory": "code"}
+  ],
+  "batchImportData": {
+    "common/fastdds_wrapper/fastdds_topic_reader.hpp": [],
+    "common/fastdds_wrapper/fastdds_topic_writer.hpp": [],
+    "common/timer_wheel/thread_pool.h": [],
+    "common/timer_wheel/timer_scheduler.cc": ["common/timer_wheel/thread_pool.h", "common/timer_wheel/timer_scheduler.h", "common/timer_wheel/timer_wheel.h"],
+    "common/timer_wheel/timer_scheduler.h": [],
+    "common/timer_wheel/timer_wheel.cc": ["common/timer_wheel/timer_wheel.h"],
+    "common/timer_wheel/timer_wheel.h": [],
+    "common/log/custom_rotating_file_sink-inl.h": []
+  }
+}

@@ -1,0 +1,821 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 7,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "tests/fastdds_test_idl/PerformanceTest.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 317,
+      "nonEmptyLines": 265,
+      "callGraph": [
+        {
+          "caller": "TestMessage",
+          "callee": "std::move",
+          "lineNumber": 106
+        },
+        {
+          "caller": "TestMessage",
+          "callee": "std::move",
+          "lineNumber": 107
+        },
+        {
+          "caller": "message_type",
+          "callee": "std::move",
+          "lineNumber": 242
+        },
+        {
+          "caller": "payload",
+          "callee": "std::move",
+          "lineNumber": 281
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "tests/fastdds_test_idl/PerformanceTestCdrAux.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 46,
+      "nonEmptyLines": 34,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "tests/fastdds_test_idl/PerformanceTestCdrAux.ipp",
+      "language": "ipp",
+      "fileCategory": "code",
+      "totalLines": 158,
+      "nonEmptyLines": 120,
+      "metrics": {}
+    },
+    {
+      "path": "tests/fastdds_test_idl/PerformanceTestPubSubTypes.cxx",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 221,
+      "nonEmptyLines": 190,
+      "functions": [
+        {
+          "name": "TestMessagePubSubType",
+          "startLine": 35,
+          "endLine": 45,
+          "params": []
+        },
+        {
+          "name": "~TestMessagePubSubType",
+          "startLine": 47,
+          "endLine": 53,
+          "params": []
+        },
+        {
+          "name": "serialize",
+          "startLine": 55,
+          "endLine": 90,
+          "params": [
+            "data",
+            "payload",
+            "data_representation"
+          ]
+        },
+        {
+          "name": "deserialize",
+          "startLine": 92,
+          "endLine": 120,
+          "params": [
+            "payload",
+            "data"
+          ]
+        },
+        {
+          "name": "calculate_serialized_size",
+          "startLine": 122,
+          "endLine": 140,
+          "params": [
+            "data",
+            "data_representation"
+          ]
+        },
+        {
+          "name": "delete_data",
+          "startLine": 147,
+          "endLine": 151,
+          "params": [
+            "data"
+          ]
+        },
+        {
+          "name": "compute_key",
+          "startLine": 153,
+          "endLine": 170,
+          "params": [
+            "payload",
+            "handle",
+            "force_md5"
+          ]
+        },
+        {
+          "name": "compute_key",
+          "startLine": 172,
+          "endLine": 210,
+          "params": [
+            "data",
+            "handle",
+            "force_md5"
+          ]
+        },
+        {
+          "name": "register_type_object_representation",
+          "startLine": 212,
+          "endLine": 215,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "TestMessagePubSubType",
+          "line": 35,
+          "isDefault": false
+        },
+        {
+          "name": "~TestMessagePubSubType",
+          "line": 47,
+          "isDefault": false
+        },
+        {
+          "name": "serialize",
+          "line": 55,
+          "isDefault": false
+        },
+        {
+          "name": "deserialize",
+          "line": 92,
+          "isDefault": false
+        },
+        {
+          "name": "calculate_serialized_size",
+          "line": 122,
+          "isDefault": false
+        },
+        {
+          "name": "delete_data",
+          "line": 147,
+          "isDefault": false
+        },
+        {
+          "name": "compute_key",
+          "line": 153,
+          "isDefault": false
+        },
+        {
+          "name": "compute_key",
+          "line": 172,
+          "isDefault": false
+        },
+        {
+          "name": "register_type_object_representation",
+          "line": 212,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "TestMessagePubSubType",
+          "callee": "set_name",
+          "lineNumber": 37
+        },
+        {
+          "caller": "TestMessagePubSubType",
+          "callee": "static_cast<uint32_t>",
+          "lineNumber": 39
+        },
+        {
+          "caller": "TestMessagePubSubType",
+          "callee": "eprosima::fastcdr::Cdr::alignment",
+          "lineNumber": 39
+        },
+        {
+          "caller": "TestMessagePubSubType",
+          "callee": "reinterpret_cast<unsigned char*>",
+          "lineNumber": 43
+        },
+        {
+          "caller": "TestMessagePubSubType",
+          "callee": "malloc",
+          "lineNumber": 43
+        },
+        {
+          "caller": "TestMessagePubSubType",
+          "callee": "memset",
+          "lineNumber": 44
+        },
+        {
+          "caller": "~TestMessagePubSubType",
+          "callee": "free",
+          "lineNumber": 51
+        },
+        {
+          "caller": "serialize",
+          "callee": "static_cast<const TestMessage*>",
+          "lineNumber": 60
+        },
+        {
+          "caller": "serialize",
+          "callee": "reinterpret_cast<char*>",
+          "lineNumber": 63
+        },
+        {
+          "caller": "serialize",
+          "callee": "endianness",
+          "lineNumber": 68
+        },
+        {
+          "caller": "serialize",
+          "callee": "set_encoding_flag",
+          "lineNumber": 69
+        },
+        {
+          "caller": "serialize",
+          "callee": "serialize_encapsulation",
+          "lineNumber": 77
+        },
+        {
+          "caller": "serialize",
+          "callee": "set_dds_cdr_options",
+          "lineNumber": 80
+        },
+        {
+          "caller": "serialize",
+          "callee": "static_cast<uint32_t>",
+          "lineNumber": 88
+        },
+        {
+          "caller": "serialize",
+          "callee": "get_serialized_data_length",
+          "lineNumber": 88
+        },
+        {
+          "caller": "deserialize",
+          "callee": "static_cast<TestMessage*>",
+          "lineNumber": 99
+        },
+        {
+          "caller": "deserialize",
+          "callee": "reinterpret_cast<char*>",
+          "lineNumber": 102
+        },
+        {
+          "caller": "deserialize",
+          "callee": "read_encapsulation",
+          "lineNumber": 108
+        },
+        {
+          "caller": "deserialize",
+          "callee": "endianness",
+          "lineNumber": 109
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "static_cast<uint32_t>",
+          "lineNumber": 132
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "calculate_serialized_size",
+          "lineNumber": 132
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "static_cast<const TestMessage*>",
+          "lineNumber": 133
+        },
+        {
+          "caller": "delete_data",
+          "callee": "reinterpret_cast<TestMessage*>",
+          "lineNumber": 150
+        },
+        {
+          "caller": "compute_key",
+          "callee": "deserialize",
+          "lineNumber": 164
+        },
+        {
+          "caller": "compute_key",
+          "callee": "static_cast<void*>",
+          "lineNumber": 164
+        },
+        {
+          "caller": "compute_key",
+          "callee": "compute_key",
+          "lineNumber": 166
+        },
+        {
+          "caller": "compute_key",
+          "callee": "static_cast<void*>",
+          "lineNumber": 166
+        },
+        {
+          "caller": "compute_key",
+          "callee": "static_cast<const TestMessage*>",
+          "lineNumber": 182
+        },
+        {
+          "caller": "compute_key",
+          "callee": "set_encoding_flag",
+          "lineNumber": 190
+        },
+        {
+          "caller": "compute_key",
+          "callee": "eprosima::fastcdr::serialize_key",
+          "lineNumber": 191
+        },
+        {
+          "caller": "compute_key",
+          "callee": "init",
+          "lineNumber": 194
+        },
+        {
+          "caller": "compute_key",
+          "callee": "update",
+          "lineNumber": 195
+        },
+        {
+          "caller": "compute_key",
+          "callee": "static_cast<unsigned int>",
+          "lineNumber": 195
+        },
+        {
+          "caller": "compute_key",
+          "callee": "get_serialized_data_length",
+          "lineNumber": 195
+        },
+        {
+          "caller": "compute_key",
+          "callee": "finalize",
+          "lineNumber": 196
+        },
+        {
+          "caller": "register_type_object_representation",
+          "callee": "register_TestMessage_type_identifier",
+          "lineNumber": 214
+        }
+      ],
+      "metrics": {
+        "importCount": 4,
+        "exportCount": 9,
+        "functionCount": 9,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "tests/fastdds_test_idl/PerformanceTestPubSubTypes.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 126,
+      "nonEmptyLines": 94,
+      "callGraph": [
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 101
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 111
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "tests/fastdds_test_idl/PerformanceTestTypeObjectSupport.cxx",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 233,
+      "nonEmptyLines": 217,
+      "functions": [
+        {
+          "name": "register_TestMessage_type_identifier",
+          "startLine": 43,
+          "endLine": 230,
+          "params": [
+            "type_ids_TestMessage"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "register_TestMessage_type_identifier",
+          "line": 43,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "get_type_identifiers",
+          "lineNumber": 49
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "type_object_registry",
+          "lineNumber": 49
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "eprosima::fastdds::dds::DomainParticipantFactory::get_instance",
+          "lineNumber": 49
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "TypeObjectUtils::build_struct_type_flag",
+          "lineNumber": 53
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "TypeObjectUtils::build_complete_type_detail",
+          "lineNumber": 58
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "to_string",
+          "lineNumber": 58
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "TypeObjectUtils::build_complete_struct_header",
+          "lineNumber": 60
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "TypeIdentifier",
+          "lineNumber": 60
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "get_type_identifiers",
+          "lineNumber": 66
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "type_object_registry",
+          "lineNumber": 66
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "eprosima::fastdds::dds::DomainParticipantFactory::get_instance",
+          "lineNumber": 66
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "EPROSIMA_LOG_ERROR",
+          "lineNumber": 71
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "TypeObjectUtils::build_struct_member_flag",
+          "lineNumber": 75
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "TypeObjectUtils::build_common_struct_member",
+          "lineNumber": 79
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "TypeObjectUtils::retrieve_complete_type_identifier",
+          "lineNumber": 79
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "EPROSIMA_LOG_ERROR",
+          "lineNumber": 82
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "reset",
+          "lineNumber": 87
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "TypeObjectUtils::build_complete_member_detail",
+          "lineNumber": 88
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "TypeObjectUtils::build_complete_struct_member",
+          "lineNumber": 89
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "TypeObjectUtils::add_complete_struct_member",
+          "lineNumber": 90
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "get_type_identifiers",
+          "lineNumber": 96
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "type_object_registry",
+          "lineNumber": 96
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "eprosima::fastdds::dds::DomainParticipantFactory::get_instance",
+          "lineNumber": 96
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "EPROSIMA_LOG_ERROR",
+          "lineNumber": 101
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "TypeObjectUtils::build_struct_member_flag",
+          "lineNumber": 105
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "TypeObjectUtils::build_common_struct_member",
+          "lineNumber": 109
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "TypeObjectUtils::retrieve_complete_type_identifier",
+          "lineNumber": 109
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "EPROSIMA_LOG_ERROR",
+          "lineNumber": 112
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "reset",
+          "lineNumber": 117
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "TypeObjectUtils::build_complete_member_detail",
+          "lineNumber": 118
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "TypeObjectUtils::build_complete_struct_member",
+          "lineNumber": 119
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "TypeObjectUtils::add_complete_struct_member",
+          "lineNumber": 120
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "get_type_identifiers",
+          "lineNumber": 126
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "type_object_registry",
+          "lineNumber": 126
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "eprosima::fastdds::dds::DomainParticipantFactory::get_instance",
+          "lineNumber": 126
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "TypeObjectUtils::build_string_s_type_defn",
+          "lineNumber": 133
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "TypeObjectUtils::build_and_register_s_string_type_identifier",
+          "lineNumber": 135
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "EPROSIMA_LOG_ERROR",
+          "lineNumber": 138
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "TypeObjectUtils::build_struct_member_flag",
+          "lineNumber": 143
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "TypeObjectUtils::build_common_struct_member",
+          "lineNumber": 147
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "TypeObjectUtils::retrieve_complete_type_identifier",
+          "lineNumber": 147
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "EPROSIMA_LOG_ERROR",
+          "lineNumber": 150
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "reset",
+          "lineNumber": 155
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "TypeObjectUtils::build_complete_member_detail",
+          "lineNumber": 156
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "TypeObjectUtils::build_complete_struct_member",
+          "lineNumber": 157
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "TypeObjectUtils::add_complete_struct_member",
+          "lineNumber": 158
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "get_type_identifiers",
+          "lineNumber": 164
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "type_object_registry",
+          "lineNumber": 164
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "eprosima::fastdds::dds::DomainParticipantFactory::get_instance",
+          "lineNumber": 164
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "get_type_identifiers",
+          "lineNumber": 170
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "type_object_registry",
+          "lineNumber": 170
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "eprosima::fastdds::dds::DomainParticipantFactory::get_instance",
+          "lineNumber": 170
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "EPROSIMA_LOG_ERROR",
+          "lineNumber": 175
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "TypeObjectUtils::retrieve_complete_type_identifier",
+          "lineNumber": 180
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "EPROSIMA_LOG_ERROR",
+          "lineNumber": 183
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "_d",
+          "lineNumber": 187
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "type_identifier2",
+          "lineNumber": 187
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "TypeObjectUtils::build_plain_collection_header",
+          "lineNumber": 192
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "TypeObjectUtils::build_plain_sequence_s_elem_defn",
+          "lineNumber": 195
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "eprosima::fastcdr::external<TypeIdentifier>",
+          "lineNumber": 196
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "TypeObjectUtils::build_and_register_s_sequence_type_identifier",
+          "lineNumber": 198
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "EPROSIMA_LOG_ERROR",
+          "lineNumber": 200
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "TypeObjectUtils::build_struct_member_flag",
+          "lineNumber": 205
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "TypeObjectUtils::build_common_struct_member",
+          "lineNumber": 209
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "TypeObjectUtils::retrieve_complete_type_identifier",
+          "lineNumber": 209
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "EPROSIMA_LOG_ERROR",
+          "lineNumber": 212
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "reset",
+          "lineNumber": 217
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "TypeObjectUtils::build_complete_member_detail",
+          "lineNumber": 218
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "TypeObjectUtils::build_complete_struct_member",
+          "lineNumber": 219
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "TypeObjectUtils::add_complete_struct_member",
+          "lineNumber": 220
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "TypeObjectUtils::build_complete_struct_type",
+          "lineNumber": 222
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "TypeObjectUtils::build_and_register_struct_type_object",
+          "lineNumber": 224
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "to_string",
+          "lineNumber": 224
+        },
+        {
+          "caller": "register_TestMessage_type_identifier",
+          "callee": "EPROSIMA_LOG_ERROR",
+          "lineNumber": 226
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "tests/fastdds_test_idl/PerformanceTestTypeObjectSupport.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 59,
+      "nonEmptyLines": 48,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "thirdparty/spdlog/include/spdlog/details/mpmc_blocking_q.h", "language": "c", "sizeLines": 177, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/details/null_mutex.h", "language": "c", "sizeLines": 35, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/details/os-inl.h", "language": "c", "sizeLines": 606, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/details/os.h", "language": "c", "sizeLines": 127, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/details/periodic_worker-inl.h", "language": "c", "sizeLines": 26, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/details/periodic_worker.h", "language": "c", "sizeLines": 58, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/details/registry-inl.h", "language": "c", "sizeLines": 261, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/details/registry.h", "language": "c", "sizeLines": 129, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/details/synchronous_factory.h", "language": "c", "sizeLines": 22, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/details/tcp_client-windows.h", "language": "c", "sizeLines": 135, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/details/tcp_client.h", "language": "c", "sizeLines": 127, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/details/thread_pool-inl.h", "language": "c", "sizeLines": 127, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/details/thread_pool.h", "language": "c", "sizeLines": 117, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/details/udp_client-windows.h", "language": "c", "sizeLines": 98, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/details/udp_client.h", "language": "c", "sizeLines": 81, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/details/windows_include.h", "language": "c", "sizeLines": 11, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/fmt/bin_to_hex.h", "language": "c", "sizeLines": 224, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/fmt/bundled/args.h", "language": "c", "sizeLines": 220, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/fmt/bundled/base.h", "language": "c", "sizeLines": 2961, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/fmt/bundled/chrono.h", "language": "c", "sizeLines": 2338, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/fmt/bundled/color.h", "language": "c", "sizeLines": 610, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/fmt/bundled/compile.h", "language": "c", "sizeLines": 551, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/fmt/bundled/core.h", "language": "c", "sizeLines": 5, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/fmt/bundled/fmt.license.rst", "language": "markdown", "sizeLines": 27, "fileCategory": "docs"},
+    {"path": "thirdparty/spdlog/include/spdlog/fmt/bundled/format-inl.h", "language": "c", "sizeLines": 1949, "fileCategory": "code"}
+  ],
+  "batchImportData": {}
+}

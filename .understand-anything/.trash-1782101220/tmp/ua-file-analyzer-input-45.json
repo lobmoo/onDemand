@@ -1,0 +1,31 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "thirdparty/arrow/lib/libarrow.so.1400.0.0", "language": "0", "sizeLines": 70240, "fileCategory": "code"},
+    {"path": "thirdparty/CRoaring/include/cmocka_pbc.h", "language": "c", "sizeLines": 62, "fileCategory": "code"},
+    {"path": "thirdparty/CRoaring/include/cmocka.h", "language": "c", "sizeLines": 2384, "fileCategory": "code"},
+    {"path": "thirdparty/CRoaring/include/roaring/array_util.h", "language": "c", "sizeLines": 274, "fileCategory": "code"},
+    {"path": "thirdparty/CRoaring/include/roaring/art/art.h", "language": "c", "sizeLines": 241, "fileCategory": "code"},
+    {"path": "thirdparty/CRoaring/include/roaring/bitset_util.h", "language": "c", "sizeLines": 718, "fileCategory": "code"},
+    {"path": "thirdparty/CRoaring/include/roaring/bitset/bitset.h", "language": "c", "sizeLines": 298, "fileCategory": "code"},
+    {"path": "thirdparty/CRoaring/include/roaring/containers/array.h", "language": "c", "sizeLines": 521, "fileCategory": "code"},
+    {"path": "thirdparty/CRoaring/include/roaring/containers/bitset.h", "language": "c", "sizeLines": 514, "fileCategory": "code"},
+    {"path": "thirdparty/CRoaring/include/roaring/containers/container_defs.h", "language": "c", "sizeLines": 100, "fileCategory": "code"},
+    {"path": "thirdparty/CRoaring/include/roaring/containers/containers.h", "language": "c", "sizeLines": 2486, "fileCategory": "code"},
+    {"path": "thirdparty/CRoaring/include/roaring/containers/convert.h", "language": "c", "sizeLines": 73, "fileCategory": "code"},
+    {"path": "thirdparty/CRoaring/include/roaring/containers/mixed_andnot.h", "language": "c", "sizeLines": 181, "fileCategory": "code"},
+    {"path": "thirdparty/CRoaring/include/roaring/containers/mixed_equal.h", "language": "c", "sizeLines": 42, "fileCategory": "code"},
+    {"path": "thirdparty/CRoaring/include/roaring/containers/mixed_intersection.h", "language": "c", "sizeLines": 101, "fileCategory": "code"},
+    {"path": "thirdparty/CRoaring/include/roaring/containers/mixed_negation.h", "language": "c", "sizeLines": 140, "fileCategory": "code"},
+    {"path": "thirdparty/CRoaring/include/roaring/containers/mixed_subset.h", "language": "c", "sizeLines": 55, "fileCategory": "code"},
+    {"path": "thirdparty/CRoaring/include/roaring/containers/mixed_union.h", "language": "c", "sizeLines": 117, "fileCategory": "code"},
+    {"path": "thirdparty/CRoaring/include/roaring/containers/mixed_xor.h", "language": "c", "sizeLines": 177, "fileCategory": "code"},
+    {"path": "thirdparty/CRoaring/include/roaring/containers/perfparameters.h", "language": "c", "sizeLines": 49, "fileCategory": "code"},
+    {"path": "thirdparty/CRoaring/include/roaring/containers/run.h", "language": "c", "sizeLines": 718, "fileCategory": "code"},
+    {"path": "thirdparty/CRoaring/include/roaring/isadetection.h", "language": "c", "sizeLines": 42, "fileCategory": "code"},
+    {"path": "thirdparty/CRoaring/include/roaring/memory.h", "language": "c", "sizeLines": 39, "fileCategory": "code"},
+    {"path": "thirdparty/CRoaring/include/roaring/misc/configreport.h", "language": "c", "sizeLines": 240, "fileCategory": "code"},
+    {"path": "thirdparty/CRoaring/include/roaring/portability.h", "language": "c", "sizeLines": 604, "fileCategory": "code"}
+  ],
+  "batchImportData": {}
+}

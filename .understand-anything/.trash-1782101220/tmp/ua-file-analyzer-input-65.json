@@ -1,0 +1,31 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "thirdparty/txdds/include/txdds/DCPS/common/ParameterType.h", "language": "c", "sizeLines": 324, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/common/ReturnCode.h", "language": "c", "sizeLines": 31, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/common/StatusKind.h", "language": "c", "sizeLines": 32, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/core/condition/Condition.h", "language": "c", "sizeLines": 11, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/core/condition/GuardCondition.h", "language": "c", "sizeLines": 15, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/core/condition/StatusCondition.h", "language": "c", "sizeLines": 29, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/core/condition/WaitSet.h", "language": "c", "sizeLines": 25, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/core/IDomainEntity.h", "language": "c", "sizeLines": 23, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/core/IEntity.h", "language": "c", "sizeLines": 64, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/core/policy/QosPolicy.h", "language": "c", "sizeLines": 492, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/core/status/BaseStatus.h", "language": "c", "sizeLines": 22, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/core/status/IncompatibleQosStatus.h", "language": "c", "sizeLines": 43, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/core/status/MatchedStatus.h", "language": "c", "sizeLines": 21, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/core/status/PublicationMatchedStatus.h", "language": "c", "sizeLines": 22, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/core/status/SubscriptionMatchedStatus.h", "language": "c", "sizeLines": 18, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/domain/DomainParticipantFactory.h", "language": "c", "sizeLines": 50, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/domain/IDomainParticipant.h", "language": "c", "sizeLines": 81, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/domain/IDomainParticipantListener.h", "language": "c", "sizeLines": 51, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/domain/qos/DomainParticipantFactoryQos.h", "language": "c", "sizeLines": 23, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/domain/qos/DomainParticipantQos.h", "language": "c", "sizeLines": 27, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/dynamicType/DynamicData.h", "language": "c", "sizeLines": 170, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/dynamicType/DynamicDataFactory.h", "language": "c", "sizeLines": 29, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/dynamicType/DynamicTopicDataType.h", "language": "c", "sizeLines": 79, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/dynamicType/DynamicType.h", "language": "c", "sizeLines": 43, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/dynamicType/DynamicTypeBuilder.h", "language": "c", "sizeLines": 47, "fileCategory": "code"}
+  ],
+  "batchImportData": {}
+}

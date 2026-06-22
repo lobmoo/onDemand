@@ -1,0 +1,209 @@
+{
+  "nodes": [
+    {
+      "id": "file:core/ondemand/.gensrc/dsf_define_messages.hpp",
+      "type": "file",
+      "name": "dsf_define_messages.hpp",
+      "filePath": "core/ondemand/.gensrc/dsf_define_messages.hpp",
+      "summary": "Fast DDS 自动生成的 DDS 消息类型头文件，定义了 DSF::Message 命名空间下的核心数据结构，包括 Event、EventTransfer、Control、SubTableRegister、Alarm、CommandRequest、CommandResponse 等 DDS 主题消息类型，以及相关的 DDS Topic 名称常量。",
+      "tags": ["auto-generated", "dds-serialization", "type-definition", "idl-generated", "data-model"],
+      "complexity": "complex",
+      "languageNotes": "由 eProsima fastddsgen 工具从 IDL 文件自动生成，包含 15 个类/枚举定义和 20+ 个 DDS Topic 名称常量，用于系统消息通信。"
+    },
+    {
+      "id": "file:core/ondemand/.gensrc/dsf_define_messagesCdrAux.hpp",
+      "type": "file",
+      "name": "dsf_define_messagesCdrAux.hpp",
+      "filePath": "core/ondemand/.gensrc/dsf_define_messagesCdrAux.hpp",
+      "summary": "CDR 序列化辅助头文件，声明 DSF::Message 消息类型的最大序列化尺寸常量和 serialize_key 函数，用于 Fast CDR 序列化时的缓冲区预分配。",
+      "tags": ["auto-generated", "cdr-serialization", "header", "idl-generated", "serialization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:core/ondemand/.gensrc/dsf_define_messagesCdrAux.ipp",
+      "type": "file",
+      "name": "dsf_define_messagesCdrAux.ipp",
+      "filePath": "core/ondemand/.gensrc/dsf_define_messagesCdrAux.ipp",
+      "summary": "CDR 序列化辅助实现文件，包含 DSF::Message 各消息类型（Event、EventTransfer、Control、Alarm、CommandRequest/Response 等）的 CDR 序列化与反序列化函数实现。",
+      "tags": ["auto-generated", "cdr-serialization", "implementation", "idl-generated", "serialization"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:core/ondemand/.gensrc/dsf_define_messagesPubSubTypes.cxx",
+      "type": "file",
+      "name": "dsf_define_messagesPubSubTypes.cxx",
+      "filePath": "core/ondemand/.gensrc/dsf_define_messagesPubSubTypes.cxx",
+      "summary": "DDS PubSub 类型实现文件，为 DSF::Message 各消息类型实现 TopicDataType 接口的 serialize、deserialize、calculate_serialized_size、compute_key 等方法，使消息类型可作为 DDS 主题数据类型使用。",
+      "tags": ["auto-generated", "dds-pubsub", "serialization", "idl-generated", "implementation"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:core/ondemand/.gensrc/dsf_define_messagesPubSubTypes.hpp",
+      "type": "file",
+      "name": "dsf_define_messagesPubSubTypes.hpp",
+      "filePath": "core/ondemand/.gensrc/dsf_define_messagesPubSubTypes.hpp",
+      "summary": "DDS PubSub 类型声明头文件，为 DSF::Message 各消息类型声明继承自 TopicDataType 的 PubSubType 类（如 EventPubSubType、ControlPubSubType 等），用于 DDS 中间件的类型注册与序列化调度。",
+      "tags": ["auto-generated", "dds-pubsub", "type-definition", "idl-generated", "header"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:core/ondemand/.gensrc/dsf_define_messagesTypeObjectSupport.cxx",
+      "type": "file",
+      "name": "dsf_define_messagesTypeObjectSupport.cxx",
+      "filePath": "core/ondemand/.gensrc/dsf_define_messagesTypeObjectSupport.cxx",
+      "summary": "TypeObject 注册实现文件，为 DSF::Message 各消息类型和枚举（EventCategory、MSGTYPE、Event、EventTransfer、Control 等）实现 TypeIdentifier 注册函数，用于 DDS XTypes 类型发现机制。",
+      "tags": ["auto-generated", "type-object", "dds-xtypes", "idl-generated", "implementation"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:core/ondemand/.gensrc/dsf_define_messagesTypeObjectSupport.hpp",
+      "type": "file",
+      "name": "dsf_define_messagesTypeObjectSupport.hpp",
+      "filePath": "core/ondemand/.gensrc/dsf_define_messagesTypeObjectSupport.hpp",
+      "summary": "TypeObject 注册声明头文件，声明 DSF::Message 各消息类型和枚举的 register_*_type_identifier 函数，用于 DDS XTypes 类型系统中注册类型标识符。",
+      "tags": ["auto-generated", "type-object", "dds-xtypes", "idl-generated", "header"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:core/ondemand/.gensrc/dsf_define_var.hpp",
+      "type": "file",
+      "name": "dsf_define_var.hpp",
+      "filePath": "core/ondemand/.gensrc/dsf_define_var.hpp",
+      "summary": "Fast DDS 自动生成的变量管理类型头文件，定义了 DSF::Var 命名空间下的核心数据结构，包括 AccessControl、Define、Undefine、DataTransfer、PubTableDefine、TableDataTransfer 等变量发布/订阅系统的 DDS 消息类型，以及变量定义、数据传输和表管理相关的 DDS Topic 名称常量。",
+      "tags": ["auto-generated", "dds-serialization", "type-definition", "idl-generated", "data-model"],
+      "complexity": "complex",
+      "languageNotes": "包含 16 个类/枚举定义，是 OnDemand 按需变量发布/订阅系统的核心数据模型，涵盖变量定义、数据传输、表订阅等完整生命周期。"
+    },
+    {
+      "id": "file:core/ondemand/.gensrc/dsf_define_varCdrAux.hpp",
+      "type": "file",
+      "name": "dsf_define_varCdrAux.hpp",
+      "filePath": "core/ondemand/.gensrc/dsf_define_varCdrAux.hpp",
+      "summary": "CDR 序列化辅助头文件，声明 DSF::Var 变量类型的最大序列化尺寸常量和 serialize_key 函数，用于缓冲区预分配和键序列化。",
+      "tags": ["auto-generated", "cdr-serialization", "header", "idl-generated", "serialization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:core/ondemand/.gensrc/dsf_define_varCdrAux.ipp",
+      "type": "file",
+      "name": "dsf_define_varCdrAux.ipp",
+      "filePath": "core/ondemand/.gensrc/dsf_define_varCdrAux.ipp",
+      "summary": "CDR 序列化辅助实现文件，包含 DSF::Var 各变量类型（AccessControl、Define、DataTransfer、PubTableDefine、TableDataTransfer 等）的 CDR 序列化与反序列化函数实现。",
+      "tags": ["auto-generated", "cdr-serialization", "implementation", "idl-generated", "serialization"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:core/ondemand/.gensrc/dsf_define_varPubSubTypes.cxx",
+      "type": "file",
+      "name": "dsf_define_varPubSubTypes.cxx",
+      "filePath": "core/ondemand/.gensrc/dsf_define_varPubSubTypes.cxx",
+      "summary": "DDS PubSub 类型实现文件，为 DSF::Var 各变量类型实现 TopicDataType 接口方法，使变量定义、数据传输、表管理等类型可作为 DDS 主题数据类型使用。",
+      "tags": ["auto-generated", "dds-pubsub", "serialization", "idl-generated", "implementation"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:core/ondemand/.gensrc/dsf_define_varPubSubTypes.hpp",
+      "type": "file",
+      "name": "dsf_define_varPubSubTypes.hpp",
+      "filePath": "core/ondemand/.gensrc/dsf_define_varPubSubTypes.hpp",
+      "summary": "DDS PubSub 类型声明头文件，为 DSF::Var 各变量类型声明继承自 TopicDataType 的 PubSubType 类，用于 DDS 中间件的变量类型注册与序列化调度。",
+      "tags": ["auto-generated", "dds-pubsub", "type-definition", "idl-generated", "header"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:core/ondemand/.gensrc/dsf_define_varTypeObjectSupport.cxx",
+      "type": "file",
+      "name": "dsf_define_varTypeObjectSupport.cxx",
+      "filePath": "core/ondemand/.gensrc/dsf_define_varTypeObjectSupport.cxx",
+      "summary": "TypeObject 注册实现文件，为 DSF::Var 各变量类型和枚举（AccessControl、Define、Undefine、DataTransfer、PubTableDefine、TableDataTransfer 等）实现 TypeIdentifier 注册函数，用于 DDS XTypes 类型发现。",
+      "tags": ["auto-generated", "type-object", "dds-xtypes", "idl-generated", "implementation"],
+      "complexity": "complex"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:core/ondemand/.gensrc/dsf_define_messagesPubSubTypes.cxx",
+      "target": "file:core/ondemand/.gensrc/dsf_define_messagesCdrAux.hpp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/dsf_define_messagesPubSubTypes.cxx",
+      "target": "file:core/ondemand/.gensrc/dsf_define_messagesCdrAux.ipp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/dsf_define_messagesPubSubTypes.cxx",
+      "target": "file:core/ondemand/.gensrc/dsf_define_messagesPubSubTypes.hpp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/dsf_define_messagesPubSubTypes.cxx",
+      "target": "file:core/ondemand/.gensrc/dsf_define_messagesTypeObjectSupport.hpp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/dsf_define_messagesTypeObjectSupport.cxx",
+      "target": "file:core/ondemand/.gensrc/dsf_define_messages.hpp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/dsf_define_messagesTypeObjectSupport.cxx",
+      "target": "file:core/ondemand/.gensrc/dsf_define_messagesTypeObjectSupport.hpp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/dsf_define_varPubSubTypes.cxx",
+      "target": "file:core/ondemand/.gensrc/dsf_define_varCdrAux.hpp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/dsf_define_varPubSubTypes.cxx",
+      "target": "file:core/ondemand/.gensrc/dsf_define_varCdrAux.ipp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/dsf_define_varPubSubTypes.cxx",
+      "target": "file:core/ondemand/.gensrc/dsf_define_varPubSubTypes.hpp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/dsf_define_varPubSubTypes.cxx",
+      "target": "file:core/ondemand/.gensrc/dsf_define_varTypeObjectSupport.hpp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/dsf_define_varTypeObjectSupport.cxx",
+      "target": "file:core/ondemand/.gensrc/dsf_define_var.hpp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/dsf_define_varTypeObjectSupport.cxx",
+      "target": "file:core/ondemand/.gensrc/dsf_define_varTypeObjectSupport.hpp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    }
+  ]
+}

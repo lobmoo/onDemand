@@ -1,0 +1,50 @@
+{
+  "nodes": [
+    {
+      "id": "file:tests/txdds_test_idl/PerformanceTest.cxx",
+      "type": "file",
+      "name": "PerformanceTest.cxx",
+      "filePath": "tests/txdds_test_idl/PerformanceTest.cxx",
+      "summary": "DDS IDL 自动生成的 TestMessage 结构体实现文件，包含构造函数、赋值运算符以及 seq_num、timestamp、message_type、payload 四个成员的 getter/setter 方法。",
+      "tags": ["idl-generated", "dds", "data-model", "serialization", "test"],
+      "complexity": "moderate",
+      "languageNotes": "由 fastddsgen 工具自动生成，使用 eProsima DLL 导出宏，实现了完整的 Rule of Five（默认/拷贝/移动构造与赋值）。"
+    },
+    {
+      "id": "file:tests/txdds_test_idl/PerformanceTest.h",
+      "type": "file",
+      "name": "PerformanceTest.h",
+      "filePath": "tests/txdds_test_idl/PerformanceTest.h",
+      "summary": "DDS IDL 自动生成的 TestMessage 类头文件声明，定义了包含 seq_num(uint32)、timestamp(uint64)、message_type(string)、payload(vector<uint8_t>) 四个成员的 DDS 消息结构体。",
+      "tags": ["idl-generated", "dds", "header", "type-definition", "test"],
+      "complexity": "moderate",
+      "languageNotes": "使用 eProsima DLL 导出宏实现跨平台符号可见性，前向声明 BaoSky::Cdr 命名空间的 Cdr 和 CdrSizeCalculator 类。"
+    },
+    {
+      "id": "file:tests/txdds_test_idl/PerformanceTestCdrAux.ipp",
+      "type": "file",
+      "name": "PerformanceTestCdrAux.ipp",
+      "filePath": "tests/txdds_test_idl/PerformanceTestCdrAux.ipp",
+      "summary": "DDS IDL 自动生成的 CDR 序列化辅助文件，提供 TestMessage 的序列化大小计算、CDR 序列化、CDR 反序列化以及 key 序列化四个模板特化函数。",
+      "tags": ["idl-generated", "dds", "serialization", "cdr", "test"],
+      "complexity": "moderate",
+      "languageNotes": "使用 XCDRv2 编码算法（DELIMIT_CDR2 或 PLAIN_CDR），通过 MemberId 按字段 ID 顺序进行序列化/反序列化。"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:tests/txdds_test_idl/PerformanceTest.cxx",
+      "target": "file:tests/txdds_test_idl/PerformanceTest.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/txdds_test_idl/PerformanceTest.cxx",
+      "target": "file:tests/txdds_test_idl/PerformanceTestCdrAux.ipp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    }
+  ]
+}

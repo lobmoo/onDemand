@@ -1,0 +1,350 @@
+{
+  "nodes": [
+    {
+      "id": "file:sample/data_memory_manger/concurrentqueue.h",
+      "type": "file",
+      "name": "concurrentqueue.h",
+      "filePath": "sample/data_memory_manger/concurrentqueue.h",
+      "summary": "moodycamel::ConcurrentQueue 第三方高性能无锁队列库的头文件实现，支持多生产者多消费者（MPMC）并发访问，采用分层块索引和无锁原子操作实现高吞吐量。",
+      "tags": ["third-party", "lock-free", "concurrent-data-structure", "header-only"],
+      "complexity": "complex",
+      "languageNotes": "4247行的大型 header-only 库，使用 C++11 原子操作和内存序实现无锁队列，支持 ExplicitProducer（显式令牌）和 ImplicitProducer（隐式哈希映射）两种生产者模式。"
+    },
+    {
+      "id": "file:sample/data_memory_manger/variable_store.h",
+      "type": "file",
+      "name": "variable_store.h",
+      "filePath": "sample/data_memory_manger/variable_store.h",
+      "summary": "基于 Seqlock 的无锁变量存储实现，提供变量注册、读写、脏数据追踪功能。使用 64 字节对齐的 arena 内存布局和 ConcurrentQueue 脏队列，支持零拷贝读取和批量脏数据分发。",
+      "tags": ["lock-free", "data-model", "concurrent-data-structure", "seqlock"],
+      "complexity": "moderate",
+      "languageNotes": "采用 Seqlock 模式（atomic seq 奇数=写入中，偶数=稳定），结合 ConcurrentQueue 实现脏变量追踪，ScopedPtr 提供 RAII 式零拷贝读取。"
+    },
+    {
+      "id": "file:sample/data_memory_manger/example.cc",
+      "type": "file",
+      "name": "example.cc",
+      "filePath": "sample/data_memory_manger/example.cc",
+      "summary": "VarStore 性能对比测试程序，比较三种变量访问模式（直接 ID、每次哈希计算、缓存映射表）在百万级点位下的读写和脏数据发布性能。",
+      "tags": ["test", "benchmark", "performance", "example"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:sample/data_memory_manger/concurrentqueue.h:ProducerToken",
+      "type": "class",
+      "name": "ProducerToken",
+      "filePath": "sample/data_memory_manger/concurrentqueue.h",
+      "lineRange": [816, 877],
+      "summary": "生产者令牌类，用于绑定线程到特定生产者以优化入队性能，支持 swap 和 valid 状态查询。",
+      "tags": ["token", "producer", "concurrency"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:sample/data_memory_manger/concurrentqueue.h:ConsumerToken",
+      "type": "class",
+      "name": "ConsumerToken",
+      "filePath": "sample/data_memory_manger/concurrentqueue.h",
+      "lineRange": [879, 925],
+      "summary": "消费者令牌类，维护消费偏移和当前生产者引用，用于优化出队性能。",
+      "tags": ["token", "consumer", "concurrency"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:sample/data_memory_manger/concurrentqueue.h:ConcurrentQueueProducerTypelessBase",
+      "type": "class",
+      "name": "ConcurrentQueueProducerTypelessBase",
+      "filePath": "sample/data_memory_manger/concurrentqueue.h",
+      "lineRange": [562, 568],
+      "summary": "生产者的类型擦除基类，维护链表 next 指针和 inactive 标志，用于队列管理所有生产者。",
+      "tags": ["base-class", "producer", "type-erasure"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:sample/data_memory_manger/concurrentqueue.h:ProducerBase",
+      "type": "class",
+      "name": "ProducerBase",
+      "filePath": "sample/data_memory_manger/concurrentqueue.h",
+      "lineRange": [1956, 2013],
+      "summary": "生产者的模板基类，管理 tail/head 索引、出队优化计数和尾块引用，提供 size_approx 近似大小查询。",
+      "tags": ["base-class", "producer", "template"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:sample/data_memory_manger/concurrentqueue.h:ExplicitProducer",
+      "type": "class",
+      "name": "ExplicitProducer",
+      "filePath": "sample/data_memory_manger/concurrentqueue.h",
+      "lineRange": [2019, 2228],
+      "summary": "显式生产者实现，通过块索引数组管理内存块，支持显式令牌入队和批量入队操作。",
+      "tags": ["producer", "block-index", "explicit"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:sample/data_memory_manger/concurrentqueue.h:ImplicitProducer",
+      "type": "class",
+      "name": "ImplicitProducer",
+      "filePath": "sample/data_memory_manger/concurrentqueue.h",
+      "lineRange": [2777, 2915],
+      "summary": "隐式生产者实现，使用线程哈希自动映射到生产者，通过隐式块索引管理内存分配。",
+      "tags": ["producer", "hash-mapping", "implicit"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:sample/data_memory_manger/concurrentqueue.h:ImplicitProducerKVP",
+      "type": "class",
+      "name": "ImplicitProducerKVP",
+      "filePath": "sample/data_memory_manger/concurrentqueue.h",
+      "lineRange": [3755, 3781],
+      "summary": "隐式生产者的键值对结构，用于哈希表中存储线程 ID 到生产者的映射关系。",
+      "tags": ["data-structure", "hash-table", "internal"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:sample/data_memory_manger/variable_store.h:VarStore",
+      "type": "class",
+      "name": "VarStore",
+      "filePath": "sample/data_memory_manger/variable_store.h",
+      "lineRange": [32, 272],
+      "summary": "无锁变量存储核心类，提供变量注册/注销、Seqlock 读写、脏数据追踪、零拷贝读取等功能。使用 arena 内存布局和 ConcurrentQueue 脏队列实现高性能并发访问。",
+      "tags": ["data-model", "lock-free", "seqlock", "arena-allocator"],
+      "complexity": "complex",
+      "languageNotes": "采用 Seqlock 模式实现无锁读写，ConfigGuard/OpGuard 实现读写-配置互斥，ScopedPtr 提供 RAII 式零拷贝读取接口。"
+    },
+    {
+      "id": "function:sample/data_memory_manger/variable_store.h:register_var",
+      "type": "function",
+      "name": "register_var",
+      "filePath": "sample/data_memory_manger/variable_store.h",
+      "lineRange": [42, 54],
+      "summary": "注册一个新变量到存储中，通过 hash 查找或分配新 ID，累加 arena 大小。重复注册相同 hash 且 size 匹配时返回已有 ID。",
+      "tags": ["registration", "configuration", "hash-map"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:sample/data_memory_manger/variable_store.h:finalize",
+      "type": "function",
+      "name": "finalize",
+      "filePath": "sample/data_memory_manger/variable_store.h",
+      "lineRange": [76, 110],
+      "summary": "完成变量注册阶段，分配 64 字节对齐的 arena 内存并迁移旧数据，重建脏标志数组。调用后不可再注册新变量。",
+      "tags": ["initialization", "memory-allocation", "arena"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:sample/data_memory_manger/variable_store.h:write",
+      "type": "function",
+      "name": "write",
+      "filePath": "sample/data_memory_manger/variable_store.h",
+      "lineRange": [112, 126],
+      "summary": "向指定 ID 的变量写入数据，使用 Seqlock 模式（fetch_add 奇数→memcpy→fetch_add 偶数）保证读写一致性，并标记脏状态入队。",
+      "tags": ["write", "seqlock", "concurrent"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:sample/data_memory_manger/variable_store.h:read",
+      "type": "function",
+      "name": "read",
+      "filePath": "sample/data_memory_manger/variable_store.h",
+      "lineRange": [148, 163],
+      "summary": "从指定 ID 的变量读取数据，使用 Seqlock 重试机制（最多 10 次）确保读取到一致的数据快照。",
+      "tags": ["read", "seqlock", "retry"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:sample/data_memory_manger/example.cc:test_method1_direct_id",
+      "type": "function",
+      "name": "test_method1_direct_id",
+      "filePath": "sample/data_memory_manger/example.cc",
+      "lineRange": [23, 121],
+      "summary": "测试方式1：直接使用整数 ID 访问变量（最快模式），启动 Writer/Reader/Publisher 三个线程进行并发读写和脏数据发布性能测试。",
+      "tags": ["benchmark", "direct-access", "concurrent-test"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:sample/data_memory_manger/example.cc:test_method2_string_hash_every_time",
+      "type": "function",
+      "name": "test_method2_string_hash_every_time",
+      "filePath": "sample/data_memory_manger/example.cc",
+      "lineRange": [124, 244],
+      "summary": "测试方式2：每次操作都通过字符串计算哈希再查询 ID（最慢模式），模拟动态变量名场景下的性能开销。",
+      "tags": ["benchmark", "hash-lookup", "performance-overhead"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:sample/data_memory_manger/example.cc:test_method3_cache_mapping",
+      "type": "function",
+      "name": "test_method3_cache_mapping",
+      "filePath": "sample/data_memory_manger/example.cc",
+      "lineRange": [247, 362],
+      "summary": "测试方式3：缓存 name→id 映射表（推荐模式），初始化时建立映射，运行时通过 unordered_map 查表获取 ID，在灵活性和性能之间取得平衡。",
+      "tags": ["benchmark", "cached-mapping", "recommended"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:sample/data_memory_manger/example.cc:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "sample/data_memory_manger/example.cc",
+      "lineRange": [364, 412],
+      "summary": "程序入口，解析命令行参数（测试方式、点位数、测试时长），依次运行选定的性能测试方法。",
+      "tags": ["entry-point", "benchmark"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:sample/data_memory_manger/concurrentqueue.h",
+      "target": "class:sample/data_memory_manger/concurrentqueue.h:ProducerToken",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:sample/data_memory_manger/concurrentqueue.h",
+      "target": "class:sample/data_memory_manger/concurrentqueue.h:ConsumerToken",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:sample/data_memory_manger/concurrentqueue.h",
+      "target": "class:sample/data_memory_manger/concurrentqueue.h:ConcurrentQueueProducerTypelessBase",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:sample/data_memory_manger/concurrentqueue.h",
+      "target": "class:sample/data_memory_manger/concurrentqueue.h:ProducerBase",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:sample/data_memory_manger/concurrentqueue.h",
+      "target": "class:sample/data_memory_manger/concurrentqueue.h:ExplicitProducer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:sample/data_memory_manger/concurrentqueue.h",
+      "target": "class:sample/data_memory_manger/concurrentqueue.h:ImplicitProducer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:sample/data_memory_manger/concurrentqueue.h",
+      "target": "class:sample/data_memory_manger/concurrentqueue.h:ImplicitProducerKVP",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:sample/data_memory_manger/variable_store.h",
+      "target": "class:sample/data_memory_manger/variable_store.h:VarStore",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:sample/data_memory_manger/variable_store.h",
+      "target": "function:sample/data_memory_manger/variable_store.h:register_var",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:sample/data_memory_manger/variable_store.h",
+      "target": "function:sample/data_memory_manger/variable_store.h:finalize",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:sample/data_memory_manger/variable_store.h",
+      "target": "function:sample/data_memory_manger/variable_store.h:write",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:sample/data_memory_manger/variable_store.h",
+      "target": "function:sample/data_memory_manger/variable_store.h:read",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:sample/data_memory_manger/example.cc",
+      "target": "function:sample/data_memory_manger/example.cc:test_method1_direct_id",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:sample/data_memory_manger/example.cc",
+      "target": "function:sample/data_memory_manger/example.cc:test_method2_string_hash_every_time",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:sample/data_memory_manger/example.cc",
+      "target": "function:sample/data_memory_manger/example.cc:test_method3_cache_mapping",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:sample/data_memory_manger/example.cc",
+      "target": "function:sample/data_memory_manger/example.cc:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:sample/data_memory_manger/concurrentqueue.h:ExplicitProducer",
+      "target": "class:sample/data_memory_manger/concurrentqueue.h:ProducerBase",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "class:sample/data_memory_manger/concurrentqueue.h:ImplicitProducer",
+      "target": "class:sample/data_memory_manger/concurrentqueue.h:ProducerBase",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "file:sample/data_memory_manger/example.cc",
+      "target": "file:sample/data_memory_manger/variable_store.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:sample/data_memory_manger/variable_store.h",
+      "target": "file:sample/data_memory_manger/concurrentqueue.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:sample/data_memory_manger/example.cc",
+      "target": "class:sample/data_memory_manger/variable_store.h:VarStore",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "class:sample/data_memory_manger/variable_store.h:VarStore",
+      "target": "file:sample/data_memory_manger/concurrentqueue.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    }
+  ]
+}

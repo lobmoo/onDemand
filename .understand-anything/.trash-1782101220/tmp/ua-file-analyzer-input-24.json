@@ -1,0 +1,13 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "sample/data_memory_manger/concurrentqueue.h", "language": "c", "sizeLines": 4246, "fileCategory": "code"},
+    {"path": "sample/data_memory_manger/example.cc", "language": "cpp", "sizeLines": 412, "fileCategory": "code"},
+    {"path": "sample/data_memory_manger/variable_store.h", "language": "c", "sizeLines": 274, "fileCategory": "code"}
+  ],
+  "batchImportData": {
+    "sample/data_memory_manger/concurrentqueue.h": [],
+    "sample/data_memory_manger/example.cc": ["sample/data_memory_manger/variable_store.h"],
+    "sample/data_memory_manger/variable_store.h": ["sample/data_memory_manger/concurrentqueue.h"]
+  }
+}

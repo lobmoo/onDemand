@@ -1,0 +1,13 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "core/ondemand/.gensrctx/dsf_define_datatypes.cxx", "language": "cpp", "sizeLines": 2656, "fileCategory": "code"},
+    {"path": "core/ondemand/.gensrctx/dsf_define_datatypes.h", "language": "c", "sizeLines": 1695, "fileCategory": "code"},
+    {"path": "core/ondemand/.gensrctx/dsf_define_datatypesCdrAux.ipp", "language": "ipp", "sizeLines": 1259, "fileCategory": "code"}
+  ],
+  "batchImportData": {
+    "core/ondemand/.gensrctx/dsf_define_datatypes.cxx": ["core/ondemand/.gensrctx/dsf_define_datatypes.h", "core/ondemand/.gensrctx/dsf_define_datatypesCdrAux.ipp"],
+    "core/ondemand/.gensrctx/dsf_define_datatypes.h": [],
+    "core/ondemand/.gensrctx/dsf_define_datatypesCdrAux.ipp": []
+  }
+}

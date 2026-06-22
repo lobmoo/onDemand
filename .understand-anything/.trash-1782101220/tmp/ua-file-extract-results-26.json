@@ -1,0 +1,228 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 3,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "sample/node_example/HelloWorldOneTx/source/HelloWorldOneCdrAux.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 47,
+      "nonEmptyLines": 36,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "sample/node_example/HelloWorldOneTx/source/HelloWorldOnePubSubTypes.cxx",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 126,
+      "nonEmptyLines": 102,
+      "functions": [
+        {
+          "name": "HelloWorldOnePubSubType",
+          "startLine": 35,
+          "endLine": 43,
+          "params": []
+        },
+        {
+          "name": "~HelloWorldOnePubSubType",
+          "startLine": 45,
+          "endLine": 47,
+          "params": []
+        },
+        {
+          "name": "Serialize",
+          "startLine": 49,
+          "endLine": 69,
+          "params": [
+            "data",
+            "payload"
+          ]
+        },
+        {
+          "name": "Deserialize",
+          "startLine": 71,
+          "endLine": 92,
+          "params": [
+            "payload",
+            "data"
+          ]
+        },
+        {
+          "name": "GetSerializedSizeProvider",
+          "startLine": 94,
+          "endLine": 105,
+          "params": [
+            "data"
+          ]
+        },
+        {
+          "name": "DeleteData",
+          "startLine": 112,
+          "endLine": 116,
+          "params": [
+            "data"
+          ]
+        },
+        {
+          "name": "GetKey",
+          "startLine": 118,
+          "endLine": 125,
+          "params": [
+            "data",
+            "handle",
+            "force_md5"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "HelloWorldOnePubSubType",
+          "line": 35,
+          "isDefault": false
+        },
+        {
+          "name": "~HelloWorldOnePubSubType",
+          "line": 45,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 49,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 71,
+          "isDefault": false
+        },
+        {
+          "name": "GetSerializedSizeProvider",
+          "line": 94,
+          "isDefault": false
+        },
+        {
+          "name": "DeleteData",
+          "line": 112,
+          "isDefault": false
+        },
+        {
+          "name": "GetKey",
+          "line": 118,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "HelloWorldOnePubSubType",
+          "callee": "SetName",
+          "lineNumber": 37
+        },
+        {
+          "caller": "HelloWorldOnePubSubType",
+          "callee": "static_cast<uint32_t>",
+          "lineNumber": 40
+        },
+        {
+          "caller": "HelloWorldOnePubSubType",
+          "callee": "BaoSky::Cdr::Cdr::Alignment",
+          "lineNumber": 40
+        },
+        {
+          "caller": "Serialize",
+          "callee": "static_cast<HelloWorldOne *>",
+          "lineNumber": 53
+        },
+        {
+          "caller": "Serialize",
+          "callee": "reinterpret_cast<char*>",
+          "lineNumber": 56
+        },
+        {
+          "caller": "Serialize",
+          "callee": "SerializeEncapsulation",
+          "lineNumber": 62
+        },
+        {
+          "caller": "Serialize",
+          "callee": "Serialize",
+          "lineNumber": 64
+        },
+        {
+          "caller": "Serialize",
+          "callee": "static_cast<uint32_t>",
+          "lineNumber": 67
+        },
+        {
+          "caller": "Serialize",
+          "callee": "GetSerializedDataLength",
+          "lineNumber": 67
+        },
+        {
+          "caller": "Deserialize",
+          "callee": "static_cast<HelloWorldOne *>",
+          "lineNumber": 76
+        },
+        {
+          "caller": "Deserialize",
+          "callee": "reinterpret_cast<char*>",
+          "lineNumber": 79
+        },
+        {
+          "caller": "Deserialize",
+          "callee": "DeserializeEncapsulation",
+          "lineNumber": 85
+        },
+        {
+          "caller": "Deserialize",
+          "callee": "Deserialize",
+          "lineNumber": 89
+        },
+        {
+          "caller": "GetSerializedSizeProvider",
+          "callee": "static_cast<uint32_t>",
+          "lineNumber": 101
+        },
+        {
+          "caller": "GetSerializedSizeProvider",
+          "callee": "CalculateSerializedSize",
+          "lineNumber": 101
+        },
+        {
+          "caller": "GetSerializedSizeProvider",
+          "callee": "static_cast<HelloWorldOne *>",
+          "lineNumber": 102
+        },
+        {
+          "caller": "DeleteData",
+          "callee": "reinterpret_cast<HelloWorldOne *>",
+          "lineNumber": 115
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 7,
+        "functionCount": 7,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "sample/node_example/HelloWorldOneTx/source/HelloWorldOnePubSubTypes.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 59,
+      "nonEmptyLines": 40,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    }
+  ]
+}

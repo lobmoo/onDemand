@@ -1,0 +1,31 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "thirdparty/CRoaring/include/roaring/roaring_array.h", "language": "c", "sizeLines": 305, "fileCategory": "code"},
+    {"path": "thirdparty/CRoaring/include/roaring/roaring_types.h", "language": "c", "sizeLines": 153, "fileCategory": "code"},
+    {"path": "thirdparty/CRoaring/include/roaring/roaring_version.h", "language": "c", "sizeLines": 11, "fileCategory": "code"},
+    {"path": "thirdparty/CRoaring/include/roaring/roaring.h", "language": "c", "sizeLines": 1223, "fileCategory": "code"},
+    {"path": "thirdparty/CRoaring/include/roaring/roaring.hh", "language": "hh", "sizeLines": 1031, "fileCategory": "code"},
+    {"path": "thirdparty/CRoaring/include/roaring/roaring64.h", "language": "c", "sizeLines": 763, "fileCategory": "code"},
+    {"path": "thirdparty/CRoaring/include/roaring/roaring64map.hh", "language": "hh", "sizeLines": 1898, "fileCategory": "code"},
+    {"path": "thirdparty/CRoaring/include/roaring/utilasm.h", "language": "c", "sizeLines": 80, "fileCategory": "code"},
+    {"path": "thirdparty/CRoaring/lib/libcmocka.so", "language": "so", "sizeLines": 189, "fileCategory": "code"},
+    {"path": "thirdparty/CRoaring/lib/libcmocka.so.0", "language": "0", "sizeLines": 189, "fileCategory": "code"},
+    {"path": "thirdparty/CRoaring/lib/libcmocka.so.0.7.0", "language": "0", "sizeLines": 189, "fileCategory": "code"},
+    {"path": "thirdparty/CRoaring/lib/libroaring.a", "language": "a", "sizeLines": 1254, "fileCategory": "code"},
+    {"path": "thirdparty/CRoaring/lib/libroaring.so", "language": "so", "sizeLines": 1086, "fileCategory": "code"},
+    {"path": "thirdparty/CRoaring/lib/libroaring.so.18", "language": "18", "sizeLines": 1086, "fileCategory": "code"},
+    {"path": "thirdparty/CRoaring/lib/libroaring.so.4.3.6", "language": "6", "sizeLines": 1086, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastcdr/Cdr.h", "language": "c", "sizeLines": 3549, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastcdr/cdr/fixed_size_string.hpp", "language": "cpp", "sizeLines": 344, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastcdr/CdrEncoding.hpp", "language": "cpp", "sizeLines": 54, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastcdr/CdrSizeCalculator.hpp", "language": "cpp", "sizeLines": 1345, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastcdr/config.h", "language": "c", "sizeLines": 51, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastcdr/config/doxygen_modules.h", "language": "c", "sizeLines": 34, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastcdr/detail/container_recursive_inspector.hpp", "language": "cpp", "sizeLines": 53, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastcdr/eProsima_auto_link.h", "language": "c", "sizeLines": 67, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastcdr/exceptions/BadOptionalAccessException.hpp", "language": "cpp", "sizeLines": 83, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastcdr/exceptions/BadParamException.h", "language": "c", "sizeLines": 83, "fileCategory": "code"}
+  ],
+  "batchImportData": {}
+}

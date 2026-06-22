@@ -1,0 +1,31 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "thirdparty/txdds/include/txdds/RTPS/message/submessages/InfoTimestamp.h", "language": "c", "sizeLines": 23, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/message/submessages/NackFrag.h", "language": "c", "sizeLines": 24, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/participant/IParticipant.h", "language": "c", "sizeLines": 95, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/participant/IParticipantListener.h", "language": "c", "sizeLines": 51, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/participant/ParticipantDiscoveryInfo.h", "language": "c", "sizeLines": 36, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/reader/IReader.h", "language": "c", "sizeLines": 80, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/reader/IReaderListener.h", "language": "c", "sizeLines": 87, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/reader/IStatefulReader.h", "language": "c", "sizeLines": 46, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/reader/IStatelessReader.h", "language": "c", "sizeLines": 31, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/reader/ReaderDiscoveryInfo.h", "language": "c", "sizeLines": 28, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/reader/WriterProxy.h", "language": "c", "sizeLines": 180, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/resources/ResourceManagement.h", "language": "c", "sizeLines": 23, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/RTPSDomain.h", "language": "c", "sizeLines": 31, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/transport/BasicChannel.h", "language": "c", "sizeLines": 51, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/transport/BasicTransport.h", "language": "c", "sizeLines": 50, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/transport/RecvResource.h", "language": "c", "sizeLines": 52, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/transport/SendResource.h", "language": "c", "sizeLines": 62, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/transport/ThreadConfig.h", "language": "c", "sizeLines": 31, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/transport/ThreadManager.h", "language": "c", "sizeLines": 53, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/transport/TransportConfig.h", "language": "c", "sizeLines": 201, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/transport/TransportStack.h", "language": "c", "sizeLines": 74, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/utils/BitmapRange.h", "language": "c", "sizeLines": 383, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/utils/FixedString.h", "language": "c", "sizeLines": 171, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/utils/InsertByOrder.h", "language": "c", "sizeLines": 31, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/RTPS/utils/IPLocator.h", "language": "c", "sizeLines": 110, "fileCategory": "code"}
+  ],
+  "batchImportData": {}
+}

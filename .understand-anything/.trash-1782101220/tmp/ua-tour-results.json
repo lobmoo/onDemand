@@ -1,0 +1,4207 @@
+{
+  "scriptCompleted": true,
+  "entryPointCandidates": [
+    {
+      "id": "document:README.md",
+      "score": 5,
+      "name": "README.md",
+      "summary": "OnDemand 模块的完整架构文档，详细描述了基于 FastDDS 的高性能按需变量发布/订阅系统，涵盖项目结构、核心组件（OnDemandPub/OnDemandSub/VarStore/BucketManager）、数据结构定义、DDS 通信协议、数据流时序、性能优化设计及使用示例。"
+    },
+    {
+      "id": "file:core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.cxx",
+      "score": 2,
+      "name": "dsf_define_nodeTypeObjectSupport.cxx",
+      "summary": "节点类型 TypeObject 注册实现文件，实现 NetworkInterface、BasicInfo、RuntimeInfo 的 register_*_type_identifier 函数。"
+    },
+    {
+      "id": "file:common/fastdds_wrapper/fastdds_node.cc",
+      "score": 2,
+      "name": "fastdds_node.cc",
+      "summary": "FastDataNode 的实现，封装 FastDDS DomainParticipant 的创建与管理，提供 Publisher/Subscriber/Topic 的创建、QoS 更新和资源清理功能。"
+    },
+    {
+      "id": "file:common/log/logger_impl.cc",
+      "score": 2,
+      "name": "logger_impl.cc",
+      "summary": "LoggerImpl 的核心实现文件，负责 spdlog 的初始化、同步/异步 logger 创建、sink 配置、日志级别管理、配置文件热加载以及环境变量覆盖。"
+    },
+    {
+      "id": "file:common/dds_wrapper/dds_abstraction.h",
+      "score": 2,
+      "name": "dds_abstraction.h",
+      "summary": "DDS 中间件抽象层头文件，通过编译时宏 USE_FASTDDS/USE_TXDDS 选择具体 DDS 实现，统一导出 DataNode、DDSTopicWriter、DDSTopicReader 等类型别名。"
+    }
+  ],
+  "fanInRanking": [
+    {
+      "id": "file:core/ondemand/variable_store.h",
+      "fanIn": 8,
+      "name": "variable_store.h"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/status.h",
+      "fanIn": 8,
+      "name": "status.h"
+    },
+    {
+      "id": "file:core/ondemand/on_demand_common.h",
+      "fanIn": 7,
+      "name": "on_demand_common.h"
+    },
+    {
+      "id": "class:thirdparty/arrow/include/arrow/array/array_base.h:Array",
+      "fanIn": 7,
+      "name": "Array"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/array/builder_base.h",
+      "fanIn": 7,
+      "name": "builder_base.h"
+    },
+    {
+      "id": "file:core/ondemand/on_demand_pub.h",
+      "fanIn": 5,
+      "name": "on_demand_pub.h"
+    },
+    {
+      "id": "file:core/ondemand/on_demand_sub.h",
+      "fanIn": 4,
+      "name": "on_demand_sub.h"
+    },
+    {
+      "id": "file:common/fastdds_wrapper/fastdds_qos_config.h",
+      "fanIn": 4,
+      "name": "fastdds_qos_config.h"
+    },
+    {
+      "id": "class:common/log/logger.h:Logger",
+      "fanIn": 4,
+      "name": "Logger"
+    },
+    {
+      "id": "class:tests/fastdds_test_idl/PerformanceTest.hpp:TestMessage",
+      "fanIn": 4,
+      "name": "TestMessage"
+    },
+    {
+      "id": "pipeline:.github/workflows/ci.yml",
+      "fanIn": 4,
+      "name": "ci.yml"
+    },
+    {
+      "id": "config:CMakeLists.txt",
+      "fanIn": 4,
+      "name": "CMakeLists.txt"
+    },
+    {
+      "id": "file:common/txdds_wrapper/txdds_qos_config.h",
+      "fanIn": 4,
+      "name": "txdds_qos_config.h"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/memory_pool.h",
+      "fanIn": 4,
+      "name": "memory_pool.h"
+    },
+    {
+      "id": "file:core/ondemand/on_demand_pub.cc",
+      "fanIn": 3,
+      "name": "on_demand_pub.cc"
+    },
+    {
+      "id": "file:common/fastdds_wrapper/fastdds_listeners.h",
+      "fanIn": 3,
+      "name": "fastdds_listeners.h"
+    },
+    {
+      "id": "file:common/fastdds_wrapper/fastdds_node.h",
+      "fanIn": 3,
+      "name": "fastdds_node.h"
+    },
+    {
+      "id": "function:core/ondemand/on_demand_pub.cc:tableDefinePublish",
+      "fanIn": 3,
+      "name": "tableDefinePublish"
+    },
+    {
+      "id": "function:common/fastdds_wrapper/fastdds_node.cc:createPublisher",
+      "fanIn": 3,
+      "name": "createPublisher"
+    },
+    {
+      "id": "file:common/timer_wheel/timer_wheel.h",
+      "fanIn": 3,
+      "name": "timer_wheel.h"
+    }
+  ],
+  "fanOutRanking": [
+    {
+      "id": "file:core/ondemand/on_demand_pub.cc",
+      "fanOut": 27,
+      "name": "on_demand_pub.cc"
+    },
+    {
+      "id": "file:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx",
+      "fanOut": 27,
+      "name": "dsf_define_datatypesPubSubTypes.cxx"
+    },
+    {
+      "id": "file:core/ondemand/on_demand_sub.cc",
+      "fanOut": 21,
+      "name": "on_demand_sub.cc"
+    },
+    {
+      "id": "file:common/log/logger_impl.cc",
+      "fanOut": 17,
+      "name": "logger_impl.cc"
+    },
+    {
+      "id": "file:common/fastdds_wrapper/fastdds_node.cc",
+      "fanOut": 15,
+      "name": "fastdds_node.cc"
+    },
+    {
+      "id": "file:common/timer_wheel/timer_scheduler.h",
+      "fanOut": 15,
+      "name": "timer_scheduler.h"
+    },
+    {
+      "id": "file:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx",
+      "fanOut": 14,
+      "name": "dsf_define_varPubSubTypes.cxx"
+    },
+    {
+      "id": "file:core/ondemand/.gensrc/FCVPubSubTypes.cxx",
+      "fanOut": 13,
+      "name": "FCVPubSubTypes.cxx"
+    },
+    {
+      "id": "file:core/ondemand/.gensrc/dsf_define_datatypes.hpp",
+      "fanOut": 12,
+      "name": "dsf_define_datatypes.hpp"
+    },
+    {
+      "id": "file:thirdparty/CRoaring/include/roaring/containers/containers.h",
+      "fanOut": 12,
+      "name": "containers.h"
+    },
+    {
+      "id": "file:core/ondemand/.gensrctx/dsf_define_messages.h",
+      "fanOut": 11,
+      "name": "dsf_define_messages.h"
+    },
+    {
+      "id": "file:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx",
+      "fanOut": 11,
+      "name": "dsf_define_modelPubSubTypes.cxx"
+    },
+    {
+      "id": "file:core/ondemand/.gensrctx/dsf_define_messagesPubSubTypes.h",
+      "fanOut": 10,
+      "name": "dsf_define_messagesPubSubTypes.h"
+    },
+    {
+      "id": "file:common/timer_wheel/timer_wheel.h",
+      "fanOut": 9,
+      "name": "timer_wheel.h"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/array.h",
+      "fanOut": 9,
+      "name": "array.h"
+    },
+    {
+      "id": "file:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.cxx",
+      "fanOut": 8,
+      "name": "HelloWorldOnePubSubTypes.cxx"
+    },
+    {
+      "id": "document:docs/ondemand_architecture.md",
+      "fanOut": 8,
+      "name": "ondemand_architecture.md"
+    },
+    {
+      "id": "file:common/log/logger.h",
+      "fanOut": 7,
+      "name": "logger.h"
+    },
+    {
+      "id": "class:common/timer_wheel/timer_scheduler_test.cc:TimerSchedulerTest",
+      "fanOut": 7,
+      "name": "TimerSchedulerTest"
+    },
+    {
+      "id": "file:core/ondemand/.gensrctx/FCVPubSubTypes.cxx",
+      "fanOut": 7,
+      "name": "FCVPubSubTypes.cxx"
+    }
+  ],
+  "bfsTraversal": {
+    "startNode": "file:core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.cxx",
+    "order": [
+      "file:core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.cxx",
+      "file:core/ondemand/.gensrc/dsf_define_datatypes.hpp",
+      "file:core/ondemand/.gensrc/dsf_define_node.hpp",
+      "file:core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.hpp",
+      "function:core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.cxx:register_NetworkInterface_type_identifier",
+      "function:core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.cxx:register_BasicInfo_type_identifier",
+      "function:core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.cxx:register_RuntimeInfo_type_identifier",
+      "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:Timespec",
+      "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:NamedValue",
+      "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:StructuredDataMapEntry",
+      "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DataBuffer",
+      "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_FILE",
+      "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_TIME",
+      "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_DATE",
+      "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_TIME_OF_DAY",
+      "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_DATE_AND_TIME",
+      "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_LDATE",
+      "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_LTIME_OF_DAY",
+      "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_LDATE_AND_TIME",
+      "class:core/ondemand/.gensrc/dsf_define_node.hpp:NetworkInterface",
+      "class:core/ondemand/.gensrc/dsf_define_node.hpp:BasicInfo",
+      "class:core/ondemand/.gensrc/dsf_define_node.hpp:RuntimeInfo"
+    ],
+    "depthMap": {
+      "file:core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.cxx": 0,
+      "file:core/ondemand/.gensrc/dsf_define_datatypes.hpp": 1,
+      "file:core/ondemand/.gensrc/dsf_define_node.hpp": 1,
+      "file:core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.hpp": 1,
+      "function:core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.cxx:register_NetworkInterface_type_identifier": 1,
+      "function:core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.cxx:register_BasicInfo_type_identifier": 1,
+      "function:core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.cxx:register_RuntimeInfo_type_identifier": 1,
+      "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:Timespec": 2,
+      "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:NamedValue": 2,
+      "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:StructuredDataMapEntry": 2,
+      "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DataBuffer": 2,
+      "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_FILE": 2,
+      "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_TIME": 2,
+      "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_DATE": 2,
+      "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_TIME_OF_DAY": 2,
+      "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_DATE_AND_TIME": 2,
+      "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_LDATE": 2,
+      "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_LTIME_OF_DAY": 2,
+      "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_LDATE_AND_TIME": 2,
+      "class:core/ondemand/.gensrc/dsf_define_node.hpp:NetworkInterface": 2,
+      "class:core/ondemand/.gensrc/dsf_define_node.hpp:BasicInfo": 2,
+      "class:core/ondemand/.gensrc/dsf_define_node.hpp:RuntimeInfo": 2
+    },
+    "byDepth": {
+      "0": [
+        "file:core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.cxx"
+      ],
+      "1": [
+        "file:core/ondemand/.gensrc/dsf_define_datatypes.hpp",
+        "file:core/ondemand/.gensrc/dsf_define_node.hpp",
+        "file:core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.hpp",
+        "function:core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.cxx:register_NetworkInterface_type_identifier",
+        "function:core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.cxx:register_BasicInfo_type_identifier",
+        "function:core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.cxx:register_RuntimeInfo_type_identifier"
+      ],
+      "2": [
+        "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:Timespec",
+        "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:NamedValue",
+        "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:StructuredDataMapEntry",
+        "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DataBuffer",
+        "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_FILE",
+        "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_TIME",
+        "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_DATE",
+        "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_TIME_OF_DAY",
+        "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_DATE_AND_TIME",
+        "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_LDATE",
+        "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_LTIME_OF_DAY",
+        "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_LDATE_AND_TIME",
+        "class:core/ondemand/.gensrc/dsf_define_node.hpp:NetworkInterface",
+        "class:core/ondemand/.gensrc/dsf_define_node.hpp:BasicInfo",
+        "class:core/ondemand/.gensrc/dsf_define_node.hpp:RuntimeInfo"
+      ]
+    }
+  },
+  "nonCodeFiles": {
+    "documentation": [
+      {
+        "id": "document:CLAUDE.md",
+        "name": "CLAUDE.md",
+        "summary": "Claude Code 辅助文件，提供项目构建命令、测试流程、代码格式化配置，以及 OnDemand 系统的核心架构说明（发布/订阅模型、DDS Topics、频率协商机制）和 C++17 遗留代码维护原则。"
+      },
+      {
+        "id": "document:README.md",
+        "name": "README.md",
+        "summary": "OnDemand 模块的完整架构文档，详细描述了基于 FastDDS 的高性能按需变量发布/订阅系统，涵盖项目结构、核心组件（OnDemandPub/OnDemandSub/VarStore/BucketManager）、数据结构定义、DDS 通信协议、数据流时序、性能优化设计及使用示例。"
+      },
+      {
+        "id": "document:docs/design_ondemand_definitions.md",
+        "name": "design_ondemand_definitions.md",
+        "summary": "大规模变量内存优化设计方案文档，详细描述了 Lazy Create（懒创建）方案：通过新增 registerVars() API 延迟分配 VarStore/varIndex_ 等重结构，将 600K 变量场景下 pub 端 ~520MB 内存降至仅在首次 subscribe 时按需创建，涵盖 API 设计、数据结构、实现细节、向后兼容及分阶段实现计划。"
+      },
+      {
+        "id": "document:docs/design_ondemand_lite_broadcast.md",
+        "name": "design_ondemand_lite_broadcast.md",
+        "summary": "轻量广播方案设计文档，提出 Lite Topic + 按需创建策略：pub 端仅存储变量名和大小（LiteVarInfo），通过 PubTableDefineLite 轻量 IDL 广播，subscribe 时才触发真正 createVars 并广播完整 PubTableDefine，将 pub+sub 总内存从 ~502MB 降至 ~20MB，包含 IDL 定义、pub/sub 端设计、时序图及风险分析。"
+      },
+      {
+        "id": "document:docs/onDemand_overview.md",
+        "name": "onDemand_overview.md",
+        "summary": "onDemand 按需发布订阅系统的项目概述文档，涵盖项目定位（DDS 大规模变量框架）、整体架构（分层说明）、分桶机制（hash 分桶 + 调度对齐）、VarStore 无锁存储（Seqlock + 64 字节对齐 arena）、时间轮调度、Pub/Sub 端工作流程、DDS 通信层及性能优化要点。"
+      },
+      {
+        "id": "document:docs/ondemand_architecture.md",
+        "name": "ondemand_architecture.md",
+        "summary": "OnDemand 模块架构文档，全面记录项目结构、整体架构图、核心组件（OnDemandPub/OnDemandSub）、主要数据结构（VarMetadata、VarStore、BucketManager、PublishGroupKey 等）、IDL 消息结构、DDS 通信协议、数据流（订阅建立/数据推送/取消订阅）、性能设计及使用示例。"
+      },
+      {
+        "id": "document:docs/variable_store_design.md",
+        "name": "variable_store_design.md",
+        "summary": "VarStore 组件的专项设计文档，详细描述其 64 字节对齐 arena 内存布局、Seqlock 无锁读写协议、Dirty 追踪机制（脏标记 + ConcurrentQueue）、零拷贝接口（read_ptr/ScopedPtr、write_ptr）、并发模型（单写多读 + 双重检查竞态防护）及关键路径性能分析。"
+      },
+      {
+        "id": "document:.claude/CLAUDE.md",
+        "name": "CLAUDE.md",
+        "summary": "项目级 Claude Code 指令文件，定义了 C++17 遗留代码维护的核心原则：内存安全、性能优化、线程安全和增量重构策略。"
+      },
+      {
+        "id": "document:.claude/skills/cpp-legacy-maintain/SKILL.md",
+        "name": "SKILL.md",
+        "summary": "C++ 遗留代码维护 Skill 定义文件，提供重构前后的安全检查清单和最佳实践指导。"
+      },
+      {
+        "id": "document:common/fastdds_wrapper/readme.md",
+        "name": "readme.md",
+        "summary": "FastDDS 封装模块的简要说明文档。"
+      },
+      {
+        "id": "document:common/log/CMakeLists.txt",
+        "name": "CMakeLists.txt",
+        "summary": "日志模块的 CMake 构建配置文件，定义了 spdlog 依赖和自定义 rotating file sink 的编译目标。"
+      },
+      {
+        "id": "document:core/ondemand/readme.md",
+        "name": "readme.md",
+        "summary": "OnDemand 模块开发笔记，记录已知 TODO 和 bug(线程池退出问题)，以及 VarStore Arena 内存占用分析(500k 变量约 600MB)，指出 64B header 对小变量的 32 倍开销、双缓冲 2x 数据、shared_ptr<Define> 堆分配等优化方向。"
+      }
+    ],
+    "infrastructure": [
+      {
+        "id": "pipeline:.github/workflows/ci.yml",
+        "name": "ci.yml",
+        "summary": "GitHub Actions CI 工作流，在 push（main/dev）和 PR（main）时触发，支持手动选择 DDS 实现（fastdds/txdds）。包含四个阶段：依赖安装、编译构建、单元测试和报告生成。"
+      }
+    ],
+    "data": [
+      {
+        "id": "schema:core/ondemand/idl/dsf_define_datatypes.idl",
+        "name": "dsf_define_datatypes.idl",
+        "summary": "DSF 基础数据类型定义文件，参照 IEC61131-3 标准定义了完整的数据类型体系，包括布尔、整型(8~64位)、浮点、字符串、时间日期等类型，以及 Timespec、DataBuffer 等基础结构体。"
+      },
+      {
+        "id": "schema:core/ondemand/idl/dsf_define_messages.idl",
+        "name": "dsf_define_messages.idl",
+        "summary": "DSF 消息定义文件，定义了事件(Event)、报警(Alarm)、控制(Control)、变量注册/注销(SubTableRegister/Unregister)等消息类型及其 DDS 主题名称常量。"
+      },
+      {
+        "id": "schema:core/ondemand/idl/dsf_define_model.idl",
+        "name": "dsf_define_model.idl",
+        "summary": "DSF 模型定义文件，定义了模型(Model)的结构体 Define，包含模型名称、版本、节点、数据结构描述(XML)、默认值、事件和报警等字段。"
+      },
+      {
+        "id": "schema:core/ondemand/idl/dsf_define_node.idl",
+        "name": "dsf_define_node.idl",
+        "summary": "DSF 节点定义文件，定义了节点基本信息(BasicInfo)和运行时信息(RuntimeInfo)结构体，包含节点名称、PID、主机名、网卡信息等字段及对应的 DDS 主题常量。"
+      },
+      {
+        "id": "schema:core/ondemand/idl/dsf_define_var.idl",
+        "name": "dsf_define_var.idl",
+        "summary": "DSF 变量定义和数据传输文件，定义了变量配置(Define)、变量数据传输(DataTransfer/TableDataTransfer)、表定义(PubTableDefine)等核心结构，是 OnDemand 系统的数据交换基础。"
+      },
+      {
+        "id": "schema:core/ondemand/idl/FCV.idl",
+        "name": "FCV.idl",
+        "summary": "流体调节阀(Flow Control Valve)用户自定义类型定义，包含流量、温度、压力、开关状态、开度和健康度等工业控制字段。"
+      },
+      {
+        "id": "schema:sample/node_example/HelloWorldOneFast/idl/HelloWorldOne.idl",
+        "name": "HelloWorldOne.idl",
+        "summary": "FastDDS 版 HelloWorld 示例 IDL 定义，包含 index 字段和最大 10MB 的 points 数据序列。"
+      },
+      {
+        "id": "schema:sample/node_example/HelloWorldOneTx/idl/HelloWorldOne.idl",
+        "name": "HelloWorldOne.idl",
+        "summary": "TXDDS 版 HelloWorld 示例 IDL 定义，结构与 FastDDS 版相同，包含 index 字段和最大 10MB 的 points 数据序列。"
+      },
+      {
+        "id": "schema:tests/fastdds_test_idl/PerformanceTest.idl",
+        "name": "PerformanceTest.idl",
+        "summary": "FastDDS 性能测试 IDL 定义，包含 TestMessage 结构体(seq_num、timestamp、message_type、payload)用于 DDS wrapper 性能测试。"
+      },
+      {
+        "id": "schema:tests/txdds_test_idl/PerformanceTest.idl",
+        "name": "PerformanceTest.idl",
+        "summary": "TXDDS 性能测试 IDL 定义，结构与 FastDDS 版相同，包含 TestMessage 结构体用于 DDS wrapper 性能测试。"
+      }
+    ],
+    "config": [
+      {
+        "id": "config:.env",
+        "name": ".env",
+        "summary": "Shell 环境配置脚本，自动定位项目根目录并设置 LD_LIBRARY_PATH，指向 FastDDS 和 TXDDS 的第三方库路径，确保运行时能正确加载 DDS 动态链接库。"
+      },
+      {
+        "id": "config:CMakeLists.txt",
+        "name": "CMakeLists.txt",
+        "summary": "CMake 顶层构建配置文件，定义 C++17 标准，提供 FastDDS/TXDDS 双实现切换选项（互斥），并组织 common/log、core、tests、sample 四个子目录的构建。"
+      },
+      {
+        "id": "config:.understand-anything/config.json",
+        "name": "config.json",
+        "summary": "Understand-Anything 工具的输出语言配置文件。"
+      },
+      {
+        "id": "config:config/logConfig.json",
+        "name": "logConfig.json",
+        "summary": "spdlog 日志框架配置文件，定义日志输出文件路径、日志级别(trace)、最大文件大小(1MB)、备份数量(10)、异步模式及日志格式模板。"
+      },
+      {
+        "id": "config:sample/node_example/qosConfig.xml",
+        "name": "qosConfig.xml",
+        "summary": "FastDDS QoS 配置文件，定义 SHMEM+UDPv4 双传输、domainId=10、RELIABLE+TRANSIENT_LOCAL 可靠性策略、KEEP_LAST 历史深度(100)和资源限制。"
+      }
+    ]
+  },
+  "clusters": [
+    {
+      "nodes": [
+        "file:common/log/logger.h",
+        "file:common/log/logger_test.cc",
+        "class:common/log/logger.h:Logger",
+        "class:common/log/logger.h:LogStreamOptimized",
+        "class:common/log/logger.h:LogRateLimiter"
+      ],
+      "edgeCount": 10
+    },
+    {
+      "nodes": [
+        "file:common/log/logger_impl.cc",
+        "function:common/log/logger_impl.cc:LoggerImpl::LoggerConfigChecker",
+        "function:common/log/logger_impl.cc:LoggerImpl::Init_config",
+        "function:common/log/logger_impl.cc:LoggerImpl::Init_params",
+        "function:common/log/logger_impl.cc:LoggerImpl::Uninit"
+      ],
+      "edgeCount": 8
+    },
+    {
+      "nodes": [
+        "file:core/ondemand/.gensrc/FCVPubSubTypes.cxx",
+        "function:core/ondemand/.gensrc/FCVPubSubTypes.cxx:serialize",
+        "function:core/ondemand/.gensrc/FCVPubSubTypes.cxx:deserialize",
+        "function:core/ondemand/.gensrc/FCVPubSubTypes.cxx:compute_key",
+        "function:core/ondemand/.gensrc/FCVPubSubTypes.cxx:register_type_object_representation"
+      ],
+      "edgeCount": 8
+    },
+    {
+      "nodes": [
+        "file:common/timer_wheel/thread_pool.h",
+        "file:common/timer_wheel/timer_scheduler.h",
+        "file:common/timer_wheel/timer_wheel.h"
+      ],
+      "edgeCount": 4
+    },
+    {
+      "nodes": [
+        "class:thirdparty/arrow/include/arrow/util/delimiting.h:BoundaryFinder",
+        "file:thirdparty/arrow/include/arrow/util/delimiting.h",
+        "class:thirdparty/arrow/include/arrow/util/delimiting.h:Chunker"
+      ],
+      "edgeCount": 4
+    },
+    {
+      "nodes": [
+        "class:thirdparty/arrow/include/arrow/util/functional.h:call_traits",
+        "file:thirdparty/arrow/include/arrow/util/functional.h",
+        "class:thirdparty/arrow/include/arrow/util/functional.h:FnOnce"
+      ],
+      "edgeCount": 4
+    },
+    {
+      "nodes": [
+        "file:core/ondemand/.gensrc/FCVTypeObjectSupport.cxx",
+        "function:core/ondemand/.gensrc/FCVTypeObjectSupport.cxx:register_FCVType_type_identifier"
+      ],
+      "edgeCount": 2
+    },
+    {
+      "nodes": [
+        "file:sample/node_example/HelloWorldOneFast/source/HelloWorldOne.hpp",
+        "file:sample/node_example/HelloWorldOneFast/source/HelloWorldOneCdrAux.hpp"
+      ],
+      "edgeCount": 2
+    },
+    {
+      "nodes": [
+        "file:common/fastdds_wrapper/fastdds_listeners.h",
+        "file:common/fastdds_wrapper/fastdds_node.h"
+      ],
+      "edgeCount": 2
+    },
+    {
+      "nodes": [
+        "file:common/txdds_wrapper/txdds_listeners.h",
+        "file:common/txdds_wrapper/txdds_node.h"
+      ],
+      "edgeCount": 2
+    }
+  ],
+  "layers": {
+    "count": 0,
+    "list": []
+  },
+  "nodeSummaryIndex": {
+    "file:core/ondemand/.gensrc/dsf_define_datatypes.hpp": {
+      "name": "dsf_define_datatypes.hpp",
+      "type": "file",
+      "summary": "由 fastddsgen 自动生成的数据类型头文件，定义了 DSF 命名空间下 12 个 IDL 数据结构类，包括 Timespec、NamedValue、DataBuffer、DT_FILE 及各种时间/日期类型，用于 DDS 消息序列化与反序列化。"
+    },
+    "file:core/ondemand/.gensrc/dsf_define_datatypesCdrAux.hpp": {
+      "name": "dsf_define_datatypesCdrAux.hpp",
+      "type": "file",
+      "summary": "CDR 序列化辅助头文件，定义各数据类型的最大 CDR 序列化尺寸常量，并声明 eprosima::fastcdr 命名空间下的 serialize_key 函数。"
+    },
+    "file:core/ondemand/.gensrc/dsf_define_datatypesCdrAux.ipp": {
+      "name": "dsf_define_datatypesCdrAux.ipp",
+      "type": "file",
+      "summary": "CDR 序列化辅助实现文件，包含各数据类型的 CDR 序列化/反序列化函数实现及尺寸计算逻辑。"
+    },
+    "file:core/ondemand/.gensrc/dsf_define_datatypesPubSubTypes.cxx": {
+      "name": "dsf_define_datatypesPubSubTypes.cxx",
+      "type": "file",
+      "summary": "数据类型 PubSubType 实现文件，为每个 IDL 数据类型实现 TopicDataType 接口的 serialize、deserialize、calculate_serialized_size 等方法，用于 DDS 数据传输。"
+    },
+    "file:core/ondemand/.gensrc/dsf_define_datatypesPubSubTypes.hpp": {
+      "name": "dsf_define_datatypesPubSubTypes.hpp",
+      "type": "file",
+      "summary": "数据类型 PubSubType 头文件，声明各 IDL 数据类型对应的 TopicDataType 派生类，继承自 eprosima::fastdds::dds::TopicDataType。"
+    },
+    "file:core/ondemand/.gensrc/dsf_define_datatypesTypeObjectSupport.cxx": {
+      "name": "dsf_define_datatypesTypeObjectSupport.cxx",
+      "type": "file",
+      "summary": "数据类型 TypeObject 注册实现文件，为每个 IDL 数据类型实现 register_*_type_identifier 函数，用于 DDS 类型发现与动态类型支持。"
+    },
+    "file:core/ondemand/.gensrc/dsf_define_datatypesTypeObjectSupport.hpp": {
+      "name": "dsf_define_datatypesTypeObjectSupport.hpp",
+      "type": "file",
+      "summary": "数据类型 TypeObject 注册头文件，声明 39 个 register_*_type_identifier 函数，涵盖所有 IDL 数据类型的 DDS 类型标识符注册接口。"
+    },
+    "file:core/ondemand/.gensrc/dsf_define_node.hpp": {
+      "name": "dsf_define_node.hpp",
+      "type": "file",
+      "summary": "由 fastddsgen 自动生成的节点信息头文件，定义 DSF::Node 命名空间下 NetworkInterface、BasicInfo、RuntimeInfo 三个 IDL 数据结构类，用于描述 DDS 节点的网络接口、基本信息和运行时状态。"
+    },
+    "file:core/ondemand/.gensrc/dsf_define_nodeCdrAux.hpp": {
+      "name": "dsf_define_nodeCdrAux.hpp",
+      "type": "file",
+      "summary": "节点类型 CDR 序列化辅助头文件，定义 NetworkInterface、BasicInfo、RuntimeInfo 的最大 CDR 序列化尺寸常量及 serialize_key 声明。"
+    },
+    "file:core/ondemand/.gensrc/dsf_define_nodeCdrAux.ipp": {
+      "name": "dsf_define_nodeCdrAux.ipp",
+      "type": "file",
+      "summary": "节点类型 CDR 序列化辅助实现文件，包含 NetworkInterface、BasicInfo、RuntimeInfo 的 CDR 序列化/反序列化函数实现。"
+    },
+    "file:core/ondemand/.gensrc/dsf_define_nodePubSubTypes.cxx": {
+      "name": "dsf_define_nodePubSubTypes.cxx",
+      "type": "file",
+      "summary": "节点类型 PubSubType 实现文件，为 NetworkInterface、BasicInfo、RuntimeInfo 实现 TopicDataType 接口的序列化方法。"
+    },
+    "file:core/ondemand/.gensrc/dsf_define_nodePubSubTypes.hpp": {
+      "name": "dsf_define_nodePubSubTypes.hpp",
+      "type": "file",
+      "summary": "节点类型 PubSubType 头文件，声明 NetworkInterfacePubSubType、BasicInfoPubSubType、RuntimeInfoPubSubType 三个 TopicDataType 派生类。"
+    },
+    "file:core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.cxx": {
+      "name": "dsf_define_nodeTypeObjectSupport.cxx",
+      "type": "file",
+      "summary": "节点类型 TypeObject 注册实现文件，实现 NetworkInterface、BasicInfo、RuntimeInfo 的 register_*_type_identifier 函数。"
+    },
+    "file:core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.hpp": {
+      "name": "dsf_define_nodeTypeObjectSupport.hpp",
+      "type": "file",
+      "summary": "节点类型 TypeObject 注册头文件，声明 NetworkInterface、BasicInfo、RuntimeInfo 的 register_*_type_identifier 函数接口。"
+    },
+    "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:Timespec": {
+      "name": "Timespec",
+      "type": "class",
+      "summary": "DDS IDL 时间戳结构体，包含秒级和纳秒级时间字段，用于消息时间标记。"
+    },
+    "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:NamedValue": {
+      "name": "NamedValue",
+      "type": "class",
+      "summary": "命名值结构体，包含名称字符串和值字节序列，用于变量的键值对表示。"
+    },
+    "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:StructuredDataMapEntry": {
+      "name": "StructuredDataMapEntry",
+      "type": "class",
+      "summary": "结构化数据映射条目，包含键值对及其关联的 NamedValue 列表，用于复杂数据的层次化表示。"
+    },
+    "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DataBuffer": {
+      "name": "DataBuffer",
+      "type": "class",
+      "summary": "通用数据缓冲区结构体，封装原始字节数组，用于 DDS 消息中二进制数据的传输。"
+    },
+    "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_FILE": {
+      "name": "DT_FILE",
+      "type": "class",
+      "summary": "文件类型数据结构，包含文件名、文件数据和版本号三个字段，用于 DDS 消息中文件传输。"
+    },
+    "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_TIME": {
+      "name": "DT_TIME",
+      "type": "class",
+      "summary": "时间数据类型，包含起止时间字段 T0 和 T1，支持时间范围表示。"
+    },
+    "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_DATE": {
+      "name": "DT_DATE",
+      "type": "class",
+      "summary": "日期数据类型，包含起止日期字段 D0 和 D1，支持日期范围表示。"
+    },
+    "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_TIME_OF_DAY": {
+      "name": "DT_TIME_OF_DAY",
+      "type": "class",
+      "summary": "日内时间数据类型，表示一天中的时间范围。"
+    },
+    "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_DATE_AND_TIME": {
+      "name": "DT_DATE_AND_TIME",
+      "type": "class",
+      "summary": "日期时间组合数据类型，表示日期与时间的联合范围。"
+    },
+    "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_LDATE": {
+      "name": "DT_LDATE",
+      "type": "class",
+      "summary": "长日期数据类型，支持更大范围的日期表示。"
+    },
+    "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_LTIME_OF_DAY": {
+      "name": "DT_LTIME_OF_DAY",
+      "type": "class",
+      "summary": "长日内时间数据类型，支持更大精度的时间范围表示。"
+    },
+    "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_LDATE_AND_TIME": {
+      "name": "DT_LDATE_AND_TIME",
+      "type": "class",
+      "summary": "长日期时间组合数据类型，支持更大范围的日期时间联合表示。"
+    },
+    "class:core/ondemand/.gensrc/dsf_define_node.hpp:NetworkInterface": {
+      "name": "NetworkInterface",
+      "type": "class",
+      "summary": "网络接口信息结构体，描述 DDS 节点的网络接口属性（如 IP 地址、接口名称等）。"
+    },
+    "class:core/ondemand/.gensrc/dsf_define_node.hpp:BasicInfo": {
+      "name": "BasicInfo",
+      "type": "class",
+      "summary": "节点基本信息结构体，包含节点标识、名称、类型等基础元数据，用于 DDS 节点注册与发现。"
+    },
+    "class:core/ondemand/.gensrc/dsf_define_node.hpp:RuntimeInfo": {
+      "name": "RuntimeInfo",
+      "type": "class",
+      "summary": "节点运行时信息结构体，包含 CPU、内存、网络接口列表等运行时状态数据，用于节点健康监控。"
+    },
+    "function:core/ondemand/.gensrc/dsf_define_datatypesPubSubTypes.cxx:serialize": {
+      "name": "serialize",
+      "type": "function",
+      "summary": "TimespecPubSubType 的序列化方法，将 Timespec 数据序列化为 DDS 负载格式。"
+    },
+    "function:core/ondemand/.gensrc/dsf_define_datatypesTypeObjectSupport.cxx:register_Timespec_type_identifier": {
+      "name": "register_Timespec_type_identifier",
+      "type": "function",
+      "summary": "注册 Timespec 类型的 DDS TypeObject 标识符，用于类型发现和动态类型支持。"
+    },
+    "function:core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.cxx:register_NetworkInterface_type_identifier": {
+      "name": "register_NetworkInterface_type_identifier",
+      "type": "function",
+      "summary": "注册 NetworkInterface 类型的 DDS TypeObject 标识符。"
+    },
+    "function:core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.cxx:register_BasicInfo_type_identifier": {
+      "name": "register_BasicInfo_type_identifier",
+      "type": "function",
+      "summary": "注册 BasicInfo 类型的 DDS TypeObject 标识符。"
+    },
+    "function:core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.cxx:register_RuntimeInfo_type_identifier": {
+      "name": "register_RuntimeInfo_type_identifier",
+      "type": "function",
+      "summary": "注册 RuntimeInfo 类型的 DDS TypeObject 标识符，该函数较大因为 RuntimeInfo 包含嵌套类型和序列。"
+    },
+    "file:core/ondemand/.gensrc/dsf_define_messages.hpp": {
+      "name": "dsf_define_messages.hpp",
+      "type": "file",
+      "summary": "Fast DDS 自动生成的 DDS 消息类型头文件，定义了 DSF::Message 命名空间下的核心数据结构，包括 Event、EventTransfer、Control、SubTableRegister、Alarm、CommandRequest、CommandResponse 等 DDS 主题消息类型，以及相关的 DDS Topic 名称常量。"
+    },
+    "file:core/ondemand/.gensrc/dsf_define_messagesCdrAux.hpp": {
+      "name": "dsf_define_messagesCdrAux.hpp",
+      "type": "file",
+      "summary": "CDR 序列化辅助头文件，声明 DSF::Message 消息类型的最大序列化尺寸常量和 serialize_key 函数，用于 Fast CDR 序列化时的缓冲区预分配。"
+    },
+    "file:core/ondemand/.gensrc/dsf_define_messagesCdrAux.ipp": {
+      "name": "dsf_define_messagesCdrAux.ipp",
+      "type": "file",
+      "summary": "CDR 序列化辅助实现文件，包含 DSF::Message 各消息类型（Event、EventTransfer、Control、Alarm、CommandRequest/Response 等）的 CDR 序列化与反序列化函数实现。"
+    },
+    "file:core/ondemand/.gensrc/dsf_define_messagesPubSubTypes.cxx": {
+      "name": "dsf_define_messagesPubSubTypes.cxx",
+      "type": "file",
+      "summary": "DDS PubSub 类型实现文件，为 DSF::Message 各消息类型实现 TopicDataType 接口的 serialize、deserialize、calculate_serialized_size、compute_key 等方法，使消息类型可作为 DDS 主题数据类型使用。"
+    },
+    "file:core/ondemand/.gensrc/dsf_define_messagesPubSubTypes.hpp": {
+      "name": "dsf_define_messagesPubSubTypes.hpp",
+      "type": "file",
+      "summary": "DDS PubSub 类型声明头文件，为 DSF::Message 各消息类型声明继承自 TopicDataType 的 PubSubType 类（如 EventPubSubType、ControlPubSubType 等），用于 DDS 中间件的类型注册与序列化调度。"
+    },
+    "file:core/ondemand/.gensrc/dsf_define_messagesTypeObjectSupport.cxx": {
+      "name": "dsf_define_messagesTypeObjectSupport.cxx",
+      "type": "file",
+      "summary": "TypeObject 注册实现文件，为 DSF::Message 各消息类型和枚举（EventCategory、MSGTYPE、Event、EventTransfer、Control 等）实现 TypeIdentifier 注册函数，用于 DDS XTypes 类型发现机制。"
+    },
+    "file:core/ondemand/.gensrc/dsf_define_messagesTypeObjectSupport.hpp": {
+      "name": "dsf_define_messagesTypeObjectSupport.hpp",
+      "type": "file",
+      "summary": "TypeObject 注册声明头文件，声明 DSF::Message 各消息类型和枚举的 register_*_type_identifier 函数，用于 DDS XTypes 类型系统中注册类型标识符。"
+    },
+    "file:core/ondemand/.gensrc/dsf_define_var.hpp": {
+      "name": "dsf_define_var.hpp",
+      "type": "file",
+      "summary": "Fast DDS 自动生成的变量管理类型头文件，定义了 DSF::Var 命名空间下的核心数据结构，包括 AccessControl、Define、Undefine、DataTransfer、PubTableDefine、TableDataTransfer 等变量发布/订阅系统的 DDS 消息类型，以及变量定义、数据传输和表管理相关的 DDS Topic 名称常量。"
+    },
+    "file:core/ondemand/.gensrc/dsf_define_varCdrAux.hpp": {
+      "name": "dsf_define_varCdrAux.hpp",
+      "type": "file",
+      "summary": "CDR 序列化辅助头文件，声明 DSF::Var 变量类型的最大序列化尺寸常量和 serialize_key 函数，用于缓冲区预分配和键序列化。"
+    },
+    "file:core/ondemand/.gensrc/dsf_define_varCdrAux.ipp": {
+      "name": "dsf_define_varCdrAux.ipp",
+      "type": "file",
+      "summary": "CDR 序列化辅助实现文件，包含 DSF::Var 各变量类型（AccessControl、Define、DataTransfer、PubTableDefine、TableDataTransfer 等）的 CDR 序列化与反序列化函数实现。"
+    },
+    "file:core/ondemand/.gensrc/dsf_define_varPubSubTypes.cxx": {
+      "name": "dsf_define_varPubSubTypes.cxx",
+      "type": "file",
+      "summary": "DDS PubSub 类型实现文件，为 DSF::Var 各变量类型实现 TopicDataType 接口方法，使变量定义、数据传输、表管理等类型可作为 DDS 主题数据类型使用。"
+    },
+    "file:core/ondemand/.gensrc/dsf_define_varPubSubTypes.hpp": {
+      "name": "dsf_define_varPubSubTypes.hpp",
+      "type": "file",
+      "summary": "DDS PubSub 类型声明头文件，为 DSF::Var 各变量类型声明继承自 TopicDataType 的 PubSubType 类，用于 DDS 中间件的变量类型注册与序列化调度。"
+    },
+    "file:core/ondemand/.gensrc/dsf_define_varTypeObjectSupport.cxx": {
+      "name": "dsf_define_varTypeObjectSupport.cxx",
+      "type": "file",
+      "summary": "TypeObject 注册实现文件，为 DSF::Var 各变量类型和枚举（AccessControl、Define、Undefine、DataTransfer、PubTableDefine、TableDataTransfer 等）实现 TypeIdentifier 注册函数，用于 DDS XTypes 类型发现。"
+    },
+    "file:core/ondemand/.gensrc/dsf_define_varTypeObjectSupport.hpp": {
+      "name": "dsf_define_varTypeObjectSupport.hpp",
+      "type": "file",
+      "summary": "自动生成的 DDS 类型支持头文件，为 dsf_define_var IDL 消息类型提供 TypeObject 和 TypeIdentifier 注册功能。"
+    },
+    "file:core/ondemand/on_demand_common.h": {
+      "name": "on_demand_common.h",
+      "type": "file",
+      "summary": "按需发布/订阅系统的公共头文件，定义 BucketManager（变量分桶管理）、fast_hash 哈希函数、DDS Topic 注册模板以及默认 QoS 配置。"
+    },
+    "file:core/ondemand/on_demand_pub.cc": {
+      "name": "on_demand_pub.cc",
+      "type": "file",
+      "summary": "OnDemandPub 发布者的核心实现，负责变量注册、订阅请求处理、频率协商和定时批量数据发布。使用 TimerScheduler 实现按频率分组的周期性发布任务。"
+    },
+    "file:core/ondemand/on_demand_pub.h": {
+      "name": "on_demand_pub.h",
+      "type": "file",
+      "summary": "OnDemandPub 发布者的头文件，声明 OnDemandPub 类及其成员变量、内部数据结构（VarMetadata、GroupVarInfo）和公共/私有接口。"
+    },
+    "file:core/ondemand/on_demand_sub.cc": {
+      "name": "on_demand_sub.cc",
+      "type": "file",
+      "summary": "OnDemandSub 订阅者的核心实现，负责接收变量定义、发送订阅请求、接收数据写入 VarStore，并通过 TimerScheduler 触发用户回调。"
+    },
+    "file:core/ondemand/on_demand_sub.h": {
+      "name": "on_demand_sub.h",
+      "type": "file",
+      "summary": "OnDemandSub 订阅者的头文件，声明 OnDemandSub 类及其内部数据结构（SubVarInfo、CallbackVarInfo）和公共/私有接口。"
+    },
+    "file:core/ondemand/variable_store.h": {
+      "name": "variable_store.h",
+      "type": "file",
+      "summary": "高性能无锁变量存储 VarStore，使用 Seqlock（原子序列计数器）实现并发读写，64 字节对齐的 arena 内存分配，支持零拷贝读取和批量脏变量追踪。"
+    },
+    "file:common/fastdds_wrapper/fastdds_listeners.h": {
+      "name": "fastdds_listeners.h",
+      "type": "file",
+      "summary": "FastDDS 监听器模板封装，提供 PublisherListener 和 SubscriberListener 的模板化实现，将 DDS 事件（发现、匹配、数据到达）转发为用户回调。"
+    },
+    "file:common/fastdds_wrapper/fastdds_node.cc": {
+      "name": "fastdds_node.cc",
+      "type": "file",
+      "summary": "FastDataNode 的实现，封装 FastDDS DomainParticipant 的创建与管理，提供 Publisher/Subscriber/Topic 的创建、QoS 更新和资源清理功能。"
+    },
+    "file:common/fastdds_wrapper/fastdds_node.h": {
+      "name": "fastdds_node.h",
+      "type": "file",
+      "summary": "FastDataNode 的头文件，声明 DDS 节点抽象接口 DataNode 和具体实现 FastDataNode，管理 DomainParticipant、Publisher、Subscriber 和 Topic 的生命周期。"
+    },
+    "file:common/fastdds_wrapper/fastdds_qos_config.cc": {
+      "name": "fastdds_qos_config.cc",
+      "type": "file",
+      "summary": "FastDDS QoS 配置工具的实现，提供从 XML 配置文件加载 QoS 策略、创建默认 QoS 配置以及各种 QoS 参数设置的辅助函数。"
+    },
+    "file:common/fastdds_wrapper/fastdds_qos_config.h": {
+      "name": "fastdds_qos_config.h",
+      "type": "file",
+      "summary": "FastDDS QoS 配置工具的头文件，声明 QoS 配置相关的类型和函数接口。"
+    },
+    "function:core/ondemand/on_demand_pub.cc:init": {
+      "name": "init",
+      "type": "function",
+      "summary": "初始化发布者：创建 DDS 节点、Publisher、TableDefine Writer 和 SubTableRegister Reader，设置 Liveliness 断言。"
+    },
+    "function:core/ondemand/on_demand_pub.cc:start": {
+      "name": "start",
+      "type": "function",
+      "summary": "启动发布者：设置运行标志，创建 TimerScheduler，启动订阅处理、发布调度和频率回调三个后台线程。"
+    },
+    "function:core/ondemand/on_demand_pub.cc:createTableDefineWriter": {
+      "name": "createTableDefineWriter",
+      "type": "function",
+      "summary": "创建 TableDefine DDS Writer，配置 RELIABLE 保活策略和 TRANSIENT_LOCAL 持久化，用于广播变量定义。"
+    },
+    "function:core/ondemand/on_demand_pub.cc:createSubTableRegisterReader": {
+      "name": "createSubTableRegisterReader",
+      "type": "function",
+      "summary": "创建 SubTableRegister DDS Reader，配置 RELIABLE 策略，注册数据接收回调用于处理订阅/退订请求。"
+    },
+    "function:core/ondemand/on_demand_pub.cc:createDataTransferWriter": {
+      "name": "createDataTransferWriter",
+      "type": "function",
+      "summary": "为指定 bucket 创建 TableDataTransfer DDS Writer，使用异步发布模式以提高吞吐量，支持 20 个 bucket 的并行数据传输。"
+    },
+    "function:core/ondemand/on_demand_pub.cc:processReceiveRegister": {
+      "name": "processReceiveRegister",
+      "type": "function",
+      "summary": "后台线程处理订阅注册请求队列，解析 SubTableRegister 消息，按消息类型分发到 handleSubscribe 或 handleUnsubscribe，并实现消息合并以减少锁竞争。"
+    },
+    "function:core/ondemand/on_demand_pub.cc:processPublishTaskScheduler": {
+      "name": "processPublishTaskScheduler",
+      "type": "function",
+      "summary": "后台线程扫描脏标志并重建发布定时器：diff 当前定时器组与期望组，取消已移除的定时器，添加新的 ScheduleRecurring 定时器按 (bucketIndex, freqMs) 分组发布数据。"
+    },
+    "function:core/ondemand/on_demand_pub.cc:publishGroupData": {
+      "name": "publishGroupData",
+      "type": "function",
+      "summary": "定时器回调：按 bucket 和频率分组批量读取变量数据，构建 Roaring64Map 位图掩码，序列化为 TableDataTransfer 消息并通过 DDS 发送。"
+    },
+    "function:core/ondemand/on_demand_pub.cc:createVars": {
+      "name": "createVars",
+      "type": "function",
+      "summary": "批量创建变量：计算哈希分配 bucket，在 VarStore 中注册，构建 VarMetadata 和 VarDefine，并通过 DDS 广播变量定义给所有订阅者。"
+    },
+    "function:core/ondemand/on_demand_pub.cc:deleteVars": {
+      "name": "deleteVars",
+      "type": "function",
+      "summary": "批量删除变量：从 varIndex_ 和 BucketManager 中移除，注销 VarStore 中的注册，并通过 DDS 广播删除通知。"
+    },
+    "function:core/ondemand/on_demand_pub.cc:handleSubscribe": {
+      "name": "handleSubscribe",
+      "type": "function",
+      "summary": "处理订阅请求：验证变量存在性，分配节点位掩码，更新 VarMetadata 的频率订阅列表，重新计算最小发布频率，扩展 VarStore 容量并标记脏标志触发调度器重建。"
+    },
+    "function:core/ondemand/on_demand_pub.cc:handleUnsubscribe": {
+      "name": "handleUnsubscribe",
+      "type": "function",
+      "summary": "处理退订请求：从 VarMetadata 的频率订阅列表中移除节点，重新计算发布频率（可能升高或变为无订阅状态），标记脏标志触发调度器重建。"
+    },
+    "function:core/ondemand/on_demand_pub.cc:stop": {
+      "name": "stop",
+      "type": "function",
+      "summary": "停止发布者：设置停止标志，取消所有定时器，停止 TimerScheduler，join 所有后台线程，清理队列和 DDS 资源。"
+    },
+    "function:core/ondemand/on_demand_pub.cc:processFreqChangeCallback": {
+      "name": "processFreqChangeCallback",
+      "type": "function",
+      "summary": "后台线程处理频率变化回调队列，当变量的最小发布频率因订阅变化而改变时通知用户。"
+    },
+    "function:core/ondemand/on_demand_pub.cc:setVarData": {
+      "name": "setVarData",
+      "type": "function",
+      "summary": "按变量名设置数据：通过 fast_hash 查找变量 ID，写入 VarStore 并记录性能日志。"
+    },
+    "function:core/ondemand/on_demand_pub.cc:setVarDataBatch": {
+      "name": "setVarDataBatch",
+      "type": "function",
+      "summary": "批量设置变量数据：使用 VarStore 的 write_batch 接口一次性写入多个变量，减少锁开销提高吞吐量。"
+    },
+    "function:core/ondemand/on_demand_pub.cc:getOrAssignNodeBit": {
+      "name": "getOrAssignNodeBit",
+      "type": "function",
+      "summary": "为订阅节点分配位掩码位：查找或创建 nodeBitMap_ 条目，用于 Roaring64Map 中标识各订阅者。"
+    },
+    "function:core/ondemand/on_demand_pub.cc:recalcCurrentFreq": {
+      "name": "recalcCurrentFreq",
+      "type": "function",
+      "summary": "重新计算变量的最小发布频率：遍历 freqSubs 找出所有订阅者请求的最小频率值。"
+    },
+    "function:core/ondemand/on_demand_pub.cc:cancelAllPublishTimers": {
+      "name": "cancelAllPublishTimers",
+      "type": "function",
+      "summary": "取消所有发布定时器并清空定时器句柄映射表。"
+    },
+    "function:core/ondemand/on_demand_pub.cc:cleanupParticipantSubscriptions": {
+      "name": "cleanupParticipantSubscriptions",
+      "type": "function",
+      "summary": "当 DDS Participant 离线时清理其所有订阅：查找该节点的位掩码，调用 forceUnsubscribeNode 强制退订所有变量。"
+    },
+    "function:core/ondemand/on_demand_pub.cc:forceUnsubscribeNode": {
+      "name": "forceUnsubscribeNode",
+      "type": "function",
+      "summary": "强制退订指定节点的所有变量订阅：遍历 varIndex_ 移除该节点的频率订阅条目，重新计算频率并标记脏标志。"
+    },
+    "function:core/ondemand/on_demand_pub.cc:tableDefinePublish": {
+      "name": "tableDefinePublish",
+      "type": "function",
+      "summary": "通过 DDS Writer 发布变量定义消息（PubTableDefine）给所有订阅者。"
+    },
+    "function:core/ondemand/on_demand_pub.cc:getVarId": {
+      "name": "getVarId",
+      "type": "function",
+      "summary": "按变量名查找并返回其内部 ID（哈希值），用于后续通过 ID 高效设置数据。"
+    },
+    "function:core/ondemand/on_demand_pub.cc:getVarIds": {
+      "name": "getVarIds",
+      "type": "function",
+      "summary": "批量查找多个变量名对应的内部 ID。"
+    },
+    "function:core/ondemand/on_demand_sub.cc:init": {
+      "name": "init",
+      "type": "function",
+      "summary": "初始化订阅者：创建 DDS 节点、TableDefine Reader、SubTableRegister Writer 和 Subscriber，设置 Liveliness 断言。"
+    },
+    "function:core/ondemand/on_demand_sub.cc:createTableDefineReader": {
+      "name": "createTableDefineReader",
+      "type": "function",
+      "summary": "创建 TableDefine DDS Reader，配置 RELIABLE 和 TRANSIENT_LOCAL 策略，注册数据接收回调用于接收变量定义。"
+    },
+    "function:core/ondemand/on_demand_sub.cc:createSubTableRegisterWriter": {
+      "name": "createSubTableRegisterWriter",
+      "type": "function",
+      "summary": "创建 SubTableRegister DDS Writer，配置 RELIABLE 策略，用于发送订阅/退订请求。"
+    },
+    "function:core/ondemand/on_demand_sub.cc:createDataTransferReader": {
+      "name": "createDataTransferReader",
+      "type": "function",
+      "summary": "为指定 bucket 创建 TableDataTransfer DDS Reader，注册数据接收回调，支持按需订阅特定 bucket。"
+    },
+    "function:core/ondemand/on_demand_sub.cc:processDataTransfer": {
+      "name": "processDataTransfer",
+      "type": "function",
+      "summary": "后台线程处理接收到的数据传输消息：反序列化 Roaring64Map 掩码，遍历已注册变量将数据写入 VarStore，更新时间戳和写入计数。"
+    },
+    "function:core/ondemand/on_demand_sub.cc:processTableDefine": {
+      "name": "processTableDefine",
+      "type": "function",
+      "summary": "后台线程处理变量定义消息：解析 PubTableDefine 中的变量列表，在 VarStore 中注册新变量，处理变量更新和删除，构建本地变量索引并触发数据传输 Reader 的创建。"
+    },
+    "function:core/ondemand/on_demand_sub.cc:start": {
+      "name": "start",
+      "type": "function",
+      "summary": "启动订阅者：设置运行标志，启动数据处理和表定义处理后台线程，创建 TimerScheduler 和回调调度线程。"
+    },
+    "function:core/ondemand/on_demand_sub.cc:subscribe": {
+      "name": "subscribe",
+      "type": "function",
+      "summary": "订阅变量：验证变量可用性，构建 SubTableRegister 消息通过 DDS 发送给发布者，本地记录订阅信息并设置分区。"
+    },
+    "function:core/ondemand/on_demand_sub.cc:unsubscribe": {
+      "name": "unsubscribe",
+      "type": "function",
+      "summary": "退订变量：构建退订消息通过 DDS 发送给发布者，清理本地订阅记录。"
+    },
+    "function:core/ondemand/on_demand_sub.cc:processCallbackScheduler": {
+      "name": "processCallbackScheduler",
+      "type": "function",
+      "summary": "后台线程扫描脏标志并重建回调定时器：diff 当前定时器组与期望组，为每个 (bucket, freqMs) 分组创建 ScheduleRecurring 定时器触发用户回调。"
+    },
+    "function:core/ondemand/on_demand_sub.cc:callbackGroupData": {
+      "name": "callbackGroupData",
+      "type": "function",
+      "summary": "定时器回调：按分组读取变量数据（支持零拷贝和批量读取），只在数据实际变化时（writeCount 比较）触发用户回调，避免重复通知。"
+    },
+    "function:core/ondemand/on_demand_sub.cc:varReadSync": {
+      "name": "varReadSync",
+      "type": "function",
+      "summary": "同步读取变量数据：使用零拷贝读取 VarStore，支持超时等待数据就绪，返回变量元数据（时间戳、类型等）。"
+    },
+    "function:core/ondemand/on_demand_sub.cc:stop": {
+      "name": "stop",
+      "type": "function",
+      "summary": "停止订阅者：设置停止标志，停止 TimerScheduler，join 所有后台线程，清理队列和 DDS 资源。"
+    },
+    "function:core/ondemand/on_demand_sub.cc:getAvailableVars": {
+      "name": "getAvailableVars",
+      "type": "function",
+      "summary": "获取所有可用变量列表：遍历已注册的变量定义，返回 (nodeName, varName) 对的列表。"
+    },
+    "function:core/ondemand/on_demand_sub.cc:cleanupParticipantPublish": {
+      "name": "cleanupParticipantPublish",
+      "type": "function",
+      "summary": "当发布者 Participant 离线时清理其发布的所有变量：注销 VarStore 中的注册，移除本地变量索引，标记脏标志。"
+    },
+    "function:core/ondemand/on_demand_sub.cc:setPartition": {
+      "name": "setPartition",
+      "type": "function",
+      "summary": "设置 DDS 分区名称，用于隔离不同域的订阅者。"
+    },
+    "function:core/ondemand/on_demand_sub.cc:cancelAllCallbackTimers": {
+      "name": "cancelAllCallbackTimers",
+      "type": "function",
+      "summary": "取消所有回调定时器并清空定时器句柄映射表。"
+    },
+    "function:common/fastdds_wrapper/fastdds_node.cc:initDomainParticipant": {
+      "name": "initDomainParticipant",
+      "type": "function",
+      "summary": "初始化 DDS DomainParticipant：创建 Participant、Publisher 和 Subscriber，配置 QoS 并处理异常回滚。"
+    },
+    "function:common/fastdds_wrapper/fastdds_node.cc:createPublisher": {
+      "name": "createPublisher",
+      "type": "function",
+      "summary": "创建 DDS Publisher，支持自定义 QoS 或使用默认配置。"
+    },
+    "function:common/fastdds_wrapper/fastdds_node.cc:createSubscriber": {
+      "name": "createSubscriber",
+      "type": "function",
+      "summary": "创建 DDS Subscriber，支持自定义 QoS 或使用默认配置。"
+    },
+    "function:common/fastdds_wrapper/fastdds_node.cc:updatePublisherQos": {
+      "name": "updatePublisherQos",
+      "type": "function",
+      "summary": "运行时更新指定 Publisher 的 QoS 配置，支持修改 EntityFactory 自动启用行为。"
+    },
+    "function:common/fastdds_wrapper/fastdds_node.cc:updateSubscriberQos": {
+      "name": "updateSubscriberQos",
+      "type": "function",
+      "summary": "运行时更新指定 Subscriber 的 QoS 配置，支持修改 EntityFactory 自动启用行为。"
+    },
+    "function:common/fastdds_wrapper/fastdds_node.cc:createTopic": {
+      "name": "createTopic",
+      "type": "function",
+      "summary": "创建 DDS Topic：注册类型（如未注册），创建 Topic 实例并缓存到内部映射表。"
+    },
+    "function:common/fastdds_wrapper/fastdds_node.cc:cleanup": {
+      "name": "cleanup",
+      "type": "function",
+      "summary": "清理所有 DDS 资源：删除 Topic、清空映射表，然后销毁 Publisher、Subscriber 和 Participant。"
+    },
+    "function:common/fastdds_wrapper/fastdds_node.cc:destroyParticipantResources": {
+      "name": "destroyParticipantResources",
+      "type": "function",
+      "summary": "销毁 Participant 级别的资源：删除 Publisher、Subscriber 和 Participant 本身。"
+    },
+    "function:common/fastdds_wrapper/fastdds_node.cc:initDomainParticipantForXml": {
+      "name": "initDomainParticipantForXml",
+      "type": "function",
+      "summary": "从 XML 配置文件初始化 DDS DomainParticipant，使用 FastDDS 的 XML profiles 机制加载 QoS 配置。"
+    },
+    "file:common/fastdds_wrapper/fastdds_topic_reader.hpp": {
+      "name": "fastdds_topic_reader.hpp",
+      "type": "file",
+      "summary": "FastDDS 订阅端模板封装类，通过 DDS Subscriber 创建 DataReader 并注册消息回调，支持外部注入或内部默认 Listener 两种模式。"
+    },
+    "file:common/fastdds_wrapper/fastdds_topic_writer.hpp": {
+      "name": "fastdds_topic_writer.hpp",
+      "type": "file",
+      "summary": "FastDDS 发布端模板封装类，通过 DDS Publisher 创建 DataWriter，提供 writeMessage、clear_history、wait_for_acknowledgments 等数据发送与确认接口。"
+    },
+    "file:common/timer_wheel/thread_pool.h": {
+      "name": "thread_pool.h",
+      "type": "file",
+      "summary": "通用线程池实现，支持有返回值（enqueue）和无返回值（enqueue_void）两种任务投递方式，使用 condition_variable 进行任务通知，析构时自动 join 所有工作线程。"
+    },
+    "file:common/timer_wheel/timer_scheduler.h": {
+      "name": "timer_scheduler.h",
+      "type": "file",
+      "summary": "高级定时器调度器，封装 TimerWheel 和 ThreadPool，提供 Schedule（单次）、ScheduleRecurring（周期性）、Cancel、Pause/Resume/Stop、Post 等接口。支持 direct_execute 模式（pub 场景直接在 timer 线程执行）和线程池投递模式（sub 场景避免阻塞），含 CallbackTimer 和 RecurringCallbackTimer 两个内部实现类。"
+    },
+    "file:common/timer_wheel/timer_wheel.h": {
+      "name": "timer_wheel.h",
+      "type": "file",
+      "summary": "8 层分级时间轮算法实现（源自 Ratas 库），每层 256 槽位，支持 1 tick 到多天范围的定时器调度。提供 schedule、schedule_in_range、advance 等核心操作，事件通过双向链表挂载在对应槽位，高层轮事件在底层轮旋转时逐级下放执行。"
+    },
+    "file:common/log/custom_rotating_file_sink-inl.h": {
+      "name": "custom_rotating_file_sink-inl.h",
+      "type": "file",
+      "summary": "自定义 spdlog 轮转文件 sink 实现，在标准轮转逻辑基础上增加按进程名和时间戳命名归档日志文件的功能，支持自动清理超出 max_files 限制的旧日志。"
+    },
+    "class:common/timer_wheel/timer_scheduler.h:TimerScheduler": {
+      "name": "TimerScheduler",
+      "type": "class",
+      "summary": "定时器调度器主类，整合 TimerWheel（时间轮算法）和 ThreadPool（异步执行），支持单次/周期性定时器调度、暂停/恢复、直接执行或线程池投递两种回调模式。被 OnDemandPub 和 OnDemandSub 使用。"
+    },
+    "class:common/timer_wheel/timer_scheduler.h:CallbackTimer": {
+      "name": "CallbackTimer",
+      "type": "class",
+      "summary": "TimerScheduler 的内部类，实现单次执行定时器。继承 TimerEventInterface，execute 时将回调推入 pendingTasks_ 延迟执行，避免持锁期间触发 syscall。"
+    },
+    "class:common/timer_wheel/timer_scheduler.h:RecurringCallbackTimer": {
+      "name": "RecurringCallbackTimer",
+      "type": "class",
+      "summary": "TimerScheduler 的内部类，实现周期性执行定时器。继承 TimerEventInterface，execute 时先通过 RescheduleRecurringNoLock 在 timer 线程内重新调度自身，再将回调推入 pendingTasks_。"
+    },
+    "class:common/timer_wheel/timer_wheel.h:TimerEventInterface": {
+      "name": "TimerEventInterface",
+      "type": "class",
+      "summary": "定时器事件抽象基类，定义 execute() 纯虚接口和 cancel/active/scheduled_at 等状态查询方法。使用侵入式双向链表挂载在 TimerWheelSlot 上，支持 O(1) cancel（通过 relink(NULL)）。"
+    },
+    "class:common/timer_wheel/timer_wheel.h:TimerWheelSlot": {
+      "name": "TimerWheelSlot",
+      "type": "class",
+      "summary": "时间轮槽位实现细节类，维护事件双向链表的头指针，提供 events() 和 pop_event() 用于遍历和取出待执行事件。"
+    },
+    "class:common/timer_wheel/timer_wheel.h:TimerWheel": {
+      "name": "TimerWheel",
+      "type": "class",
+      "summary": "分级时间轮核心类，8 层 x 256 槽位。提供 schedule（按 delta 调度事件到对应层级槽位）、advance（推进时间并执行到期事件，支持 max_execute 限流）、ticks_to_next_event 等接口。内层轮旋转时自动将外层轮事件下放。"
+    },
+    "class:common/timer_wheel/thread_pool.h:ThreadPool": {
+      "name": "ThreadPool",
+      "type": "class",
+      "summary": "通用线程池类，维护工作线程队列和任务队列。支持模板化的 enqueue（返回 std::future）和轻量级 enqueue_void（省去 packaged_task 堆分配），使用 mutex + condition_variable 同步。"
+    },
+    "class:common/fastdds_wrapper/fastdds_topic_reader.hpp:FastDDSTopicReader": {
+      "name": "FastDDSTopicReader",
+      "type": "class",
+      "summary": "FastDDS DataReader 模板封装，构造时创建 DDS DataReader 并绑定消息回调（支持外部 Listener 或内部默认 Listener），析构时自动删除 DataReader。"
+    },
+    "class:common/fastdds_wrapper/fastdds_topic_writer.hpp:FastDDSTopicWriter": {
+      "name": "FastDDSTopicWriter",
+      "type": "class",
+      "summary": "FastDDS DataWriter 模板封装，构造时创建 DDS DataWriter，提供 writeMessage 发送数据、clear_history 清理历史、wait_for_acknowledgments 等待确认、get_matched_subscriptions 获取匹配订阅者等操作。"
+    },
+    "function:common/timer_wheel/timer_scheduler.h:TimerScheduler::Schedule": {
+      "name": "TimerScheduler::Schedule",
+      "type": "function",
+      "summary": "调度单次执行定时器，创建 CallbackTimer 实例，注册到 TimerWheel 和 active_timers_ 集合中，返回 shared_ptr 供后续取消使用。"
+    },
+    "function:common/timer_wheel/timer_scheduler.h:TimerScheduler::ScheduleRecurring": {
+      "name": "TimerScheduler::ScheduleRecurring",
+      "type": "function",
+      "summary": "调度周期性执行定时器，创建 RecurringCallbackTimer 实例（含 interval_ticks），注册到 TimerWheel 和 active_timers_，回调执行后自动重新调度。"
+    },
+    "function:common/timer_wheel/timer_scheduler.h:TimerScheduler::Cancel": {
+      "name": "TimerScheduler::Cancel",
+      "type": "function",
+      "summary": "取消定时器，调用 timer->cancel() 标记取消并从时间轮移除，同时从 active_timers_ 集合中删除。"
+    },
+    "function:common/timer_wheel/timer_scheduler.h:TimerScheduler::Stop": {
+      "name": "TimerScheduler::Stop",
+      "type": "function",
+      "summary": "停止调度器，设置 should_stop 标志，等待 timer 线程退出，取消所有活跃定时器并清空 active_timers_。"
+    },
+    "function:common/timer_wheel/timer_scheduler.h:TimerScheduler::TimerLoop": {
+      "name": "TimerScheduler::TimerLoop",
+      "type": "function",
+      "summary": "定时器主循环，运行在独立 timer 线程上。按 tick_ms 周期推进 TimerWheel，到期事件的回调被收集到 pendingTasks_，然后根据 direct_execute_ 标志决定直接执行或投递到线程池。支持暂停/恢复。"
+    },
+    "function:common/timer_wheel/timer_scheduler.h:CallbackTimer::execute": {
+      "name": "CallbackTimer::execute",
+      "type": "function",
+      "summary": "单次定时器的 execute 实现，在 mutex 持有期间仅将回调 lambda 推入 pendingTasks_（含 shared_from_this 防止悬空引用），不在持锁期间触发任何 syscall。"
+    },
+    "function:common/timer_wheel/timer_scheduler.h:RecurringCallbackTimer::execute": {
+      "name": "RecurringCallbackTimer::execute",
+      "type": "function",
+      "summary": "周期性定时器的 execute 实现，先在 timer 线程内（已持锁）通过 RescheduleRecurringNoLock 重新调度自身，再将回调推入 pendingTasks_ 延迟执行。"
+    },
+    "function:common/timer_wheel/timer_wheel.h:TimerEventInterface::relink": {
+      "name": "TimerEventInterface::relink",
+      "type": "function",
+      "summary": "将定时器事件从当前槽位移动到新槽位（双向链表的 unlink + insert 操作），传入 NULL 时等效于 cancel。这是 TimerWheel 中事件调度和取消的核心低级操作。"
+    },
+    "function:common/timer_wheel/timer_wheel.h:TimerWheel::advance": {
+      "name": "TimerWheel::advance",
+      "type": "function",
+      "summary": "推进时间轮 delta 个 tick，逐 tick 处理当前槽位的到期事件。支持 ticks_pending_ 机制处理上一次未完成的推进，以及 max_execute 限流防止单次调用处理过多事件。"
+    },
+    "function:common/timer_wheel/timer_wheel.h:TimerWheel::process_current_slot": {
+      "name": "TimerWheel::process_current_slot",
+      "type": "function",
+      "summary": "处理当前槽位中的所有事件：对顶层轮直接执行，对外层轮先检查是否到达执行时间再决定执行或重新调度到底层轮。槽位 0 时递归触发上一层轮的 advance。"
+    },
+    "function:common/timer_wheel/timer_wheel.h:TimerWheel::schedule": {
+      "name": "TimerWheel::schedule",
+      "type": "function",
+      "summary": "将事件调度到 delta 个 tick 后执行，通过 while 循环将 delta 右移确定目标层级，计算槽位索引后调用 relink 将事件挂载到对应槽位。"
+    },
+    "function:common/timer_wheel/timer_wheel.h:TimerWheel::schedule_in_range": {
+      "name": "TimerWheel::schedule_in_range",
+      "type": "function",
+      "summary": "在 [start, end] 范围内选择最优执行时间调度事件。如果事件已在范围内则跳过，否则通过位掩码找到 start 和 end 的公共前缀来确定最小区间，再调用 schedule。"
+    },
+    "function:common/timer_wheel/timer_wheel.h:TimerWheel::ticks_to_next_event": {
+      "name": "TimerWheel::ticks_to_next_event",
+      "type": "function",
+      "summary": "计算距离下一个事件触发的最小 tick 数，遍历当前层及外层轮的所有相关槽位查找最早 scheduled_at，用于优化 sleep 时间避免空转。"
+    },
+    "function:common/timer_wheel/thread_pool.h:ThreadPool::ThreadPool": {
+      "name": "ThreadPool::ThreadPool",
+      "type": "function",
+      "summary": "线程池构造函数，创建指定数量的工作线程，每个线程设置线程名（ondemand_pl_N），循环等待任务队列中的可调用对象并执行。"
+    },
+    "function:common/timer_wheel/thread_pool.h:ThreadPool::enqueue": {
+      "name": "ThreadPool::enqueue",
+      "type": "function",
+      "summary": "模板化任务投递接口，使用 packaged_task + std::bind 将可调用对象和参数打包，返回 std::future 供调用方获取结果。任务加入队列后 notify_one 唤醒一个工作线程。"
+    },
+    "function:common/timer_wheel/thread_pool.h:ThreadPool::enqueue_void": {
+      "name": "ThreadPool::enqueue_void",
+      "type": "function",
+      "summary": "轻量级无返回值任务投递接口，直接 push std::function<void()> 到队列，省去 packaged_task 和 std::bind 的两次堆分配开销。"
+    },
+    "function:common/log/custom_rotating_file_sink-inl.h:get_process_name": {
+      "name": "get_process_name",
+      "type": "function",
+      "summary": "跨平台获取当前进程名称的辅助函数。Windows 下使用 GetModuleFileNameA，Linux 下通过 readlink /proc/self/exe 获取可执行文件路径后提取文件名。"
+    },
+    "file:common/log/custom_rotating_file_sink.h": {
+      "name": "custom_rotating_file_sink.h",
+      "type": "file",
+      "summary": "自定义的 spdlog 按大小轮转文件 sink 模板类，继承自 base_sink，支持日志文件按大小自动轮转和 rename 语义。"
+    },
+    "file:common/log/logger.cc": {
+      "name": "logger.cc",
+      "type": "file",
+      "summary": "Logger 单例类的薄包装实现文件，将所有日志操作委托给内部 LoggerImpl 类，是日志系统的公共 API 入口。"
+    },
+    "file:common/log/logger.h": {
+      "name": "logger.h",
+      "type": "file",
+      "summary": "日志系统的公共头文件，定义了 Logger 单例类、LogStreamOptimized RAII 流式日志辅助类、LogRateLimiter 速率限制器以及 LOG/LOG_TIME 宏。"
+    },
+    "file:common/log/logger_impl.cc": {
+      "name": "logger_impl.cc",
+      "type": "file",
+      "summary": "LoggerImpl 的核心实现文件，负责 spdlog 的初始化、同步/异步 logger 创建、sink 配置、日志级别管理、配置文件热加载以及环境变量覆盖。"
+    },
+    "file:common/log/logger_impl.h": {
+      "name": "logger_impl.h",
+      "type": "file",
+      "summary": "LoggerImpl 类的头文件，定义了 Logger::LoggerImpl 内部实现类和 LoggerConfig 配置结构体，包含 JSON 配置解析和日志级别映射逻辑。"
+    },
+    "file:common/log/logger_test.cc": {
+      "name": "logger_test.cc",
+      "type": "file",
+      "summary": "Logger 日志系统的全面单元测试文件，覆盖初始化、多级别日志输出、异步模式、配置文件加载、日志轮转、并发安全、flush 策略、日志重定向等场景。"
+    },
+    "file:common/dds_wrapper/dds_abstraction.h": {
+      "name": "dds_abstraction.h",
+      "type": "file",
+      "summary": "DDS 中间件抽象层头文件，通过编译时宏 USE_FASTDDS/USE_TXDDS 选择具体 DDS 实现，统一导出 DataNode、DDSTopicWriter、DDSTopicReader 等类型别名。"
+    },
+    "file:common/dds_wrapper/dds_idl_wrapper.h": {
+      "name": "dds_idl_wrapper.h",
+      "type": "file",
+      "summary": "DDS IDL 生成代码的包装头文件，根据编译时宏选择 FastDDS (.hpp) 或 TXDDS (.h) 格式的 IDL 数据类型和 PubSub 类型定义。"
+    },
+    "class:common/log/logger.h:Logger": {
+      "name": "Logger",
+      "type": "class",
+      "summary": "日志系统的单例入口类，提供 Init/Uninit 生命周期管理、流式日志获取 (GetLogStream)、日志级别/模式/缓冲区等动态配置接口。"
+    },
+    "class:common/log/logger.h:LogStreamOptimized": {
+      "name": "LogStreamOptimized",
+      "type": "class",
+      "summary": "RAII 风格的日志流辅助类，在析构时自动将 ostringstream 内容通过 Logger::Log 提交，配合 LOG 宏实现流式日志语法。"
+    },
+    "class:common/log/logger.h:LogRateLimiter": {
+      "name": "LogRateLimiter",
+      "type": "class",
+      "summary": "日志速率限制器，使用 thread_local 的时间戳 map 对同一 key 的日志输出进行间隔控制，配合 LOG_TIME 宏防止高频日志刷屏。"
+    },
+    "class:common/log/logger_impl.h:LoggerImpl": {
+      "name": "LoggerImpl",
+      "type": "class",
+      "summary": "Logger 的内部实现类，封装 spdlog 的同步/异步 logger 创建、sink 管理、日志级别控制、配置文件热加载等核心逻辑。"
+    },
+    "class:common/log/logger_impl.h:LoggerConfig": {
+      "name": "LoggerConfig",
+      "type": "class",
+      "summary": "日志配置结构体，从 JSON 文件解析日志参数（文件名、类型、级别、大小限制、异步模式等），提供类型安全的配置访问接口。"
+    },
+    "class:common/log/custom_rotating_file_sink.h:custom_rotating_file_sink": {
+      "name": "custom_rotating_file_sink",
+      "type": "class",
+      "summary": "自定义的 spdlog 按大小轮转文件 sink 模板类，支持 rotate_on_open 选项，在日志文件达到最大大小时自动轮转。"
+    },
+    "class:common/log/logger_test.cc:LoggerTest": {
+      "name": "LoggerTest",
+      "type": "class",
+      "summary": "Logger 单元测试的 GoogleTest 测试夹具类，提供 SetUp/TearDown 生命周期管理和辅助方法（文件清理、内容读取、配置创建、行数统计）。"
+    },
+    "function:common/log/logger_impl.cc:LoggerImpl::LoggerConfigChecker": {
+      "name": "LoggerImpl::LoggerConfigChecker",
+      "type": "function",
+      "summary": "后台配置检查线程函数，每秒检测配置文件的最后修改时间，发现变更时重新加载配置并应用到运行中的 logger。"
+    },
+    "function:common/log/logger_impl.cc:LoggerImpl::Init_config": {
+      "name": "LoggerImpl::Init (config file)",
+      "type": "function",
+      "summary": "通过 JSON 配置文件路径初始化日志系统，解析配置后委托给参数化 Init 方法，并启动后台配置检查线程。"
+    },
+    "function:common/log/logger_impl.cc:LoggerImpl::Init_params": {
+      "name": "LoggerImpl::Init (parameters)",
+      "type": "function",
+      "summary": "核心初始化方法，根据参数创建 console/file/both 类型的 spdlog logger，支持同步和异步模式，配置 sink 级别、日志模式和缓冲区大小。"
+    },
+    "function:common/log/logger_impl.cc:LoggerImpl::Uninit": {
+      "name": "LoggerImpl::Uninit",
+      "type": "function",
+      "summary": "反初始化日志系统，停止后台检查线程、刷新缓冲区、注销 logger 并释放资源。"
+    },
+    "function:common/log/logger_impl.cc:LoggerImpl::GetLogLevelFromEnv": {
+      "name": "LoggerImpl::GetLogLevelFromEnv",
+      "type": "function",
+      "summary": "从环境变量读取日志级别配置，支持通过环境变量覆盖配置文件中的日志级别设置。"
+    },
+    "file:core/ondemand/.gensrc/FCV.hpp": {
+      "name": "FCV.hpp",
+      "type": "file",
+      "summary": "FastDDS 自动生成的 IDL 数据类型头文件，定义了 FCVType 结构体，包含 flow、temp、press、isopen、openvalue、healthlevel 六个成员变量，用于表示流量控制阀（FCV）的运行状态数据。"
+    },
+    "class:core/ondemand/.gensrc/FCV.hpp:FCVType": {
+      "name": "FCVType",
+      "type": "class",
+      "summary": "由 IDL 文件定义的流量控制阀数据结构，包含流量（flow）、温度（temp）、压力（press）、开关状态（isopen）、开度值（openvalue）和健康等级（healthlevel）六个字段，提供完整的拷贝/移动语义支持。"
+    },
+    "file:core/ondemand/.gensrc/FCVCdrAux.hpp": {
+      "name": "FCVCdrAux.hpp",
+      "type": "file",
+      "summary": "CDR 序列化辅助头文件，定义了 FCVType 的最大序列化尺寸常量和 serialize_key 函数声明，用于 FastCDR 序列化框架。"
+    },
+    "file:core/ondemand/.gensrc/FCVCdrAux.ipp": {
+      "name": "FCVCdrAux.ipp",
+      "type": "file",
+      "summary": "CDR 序列化辅助的模板实现文件，包含 FCVType 的 calculate_serialized_size、serialize、deserialize 和 serialize_key 四个函数的模板特化实现，支持 XCDRv1/v2 编码格式。"
+    },
+    "file:core/ondemand/.gensrc/FCVPubSubTypes.cxx": {
+      "name": "FCVPubSubTypes.cxx",
+      "type": "file",
+      "summary": "FCVTypePubSubType 类的完整实现文件，提供 FCVType 在 FastDDS 中的序列化、反序列化、尺寸计算、键值计算和类型注册等功能，是 FCVType 与 DDS 中间件集成的核心桥接层。"
+    },
+    "function:core/ondemand/.gensrc/FCVPubSubTypes.cxx:serialize": {
+      "name": "serialize",
+      "type": "function",
+      "summary": "将 FCVType 对象序列化为 DDS SerializedPayload，使用 FastCDR 进行 CDR 编码，支持 XCDRv1 和 XCDRv2 两种数据表示格式。"
+    },
+    "function:core/ondemand/.gensrc/FCVPubSubTypes.cxx:deserialize": {
+      "name": "deserialize",
+      "type": "function",
+      "summary": "从 DDS SerializedPayload 反序列化还原 FCVType 对象，读取 CDR 编码的数据并填充到目标结构体中。"
+    },
+    "function:core/ondemand/.gensrc/FCVPubSubTypes.cxx:compute_key": {
+      "name": "compute_key",
+      "type": "function",
+      "summary": "从 FCVType 数据对象计算实例键值（InstanceHandle），使用 MD5 哈希算法生成唯一标识，用于 DDS 实例管理。"
+    },
+    "function:core/ondemand/.gensrc/FCVPubSubTypes.cxx:register_type_object_representation": {
+      "name": "register_type_object_representation",
+      "type": "function",
+      "summary": "向 FastDDS TypeObjectRegistry 注册 FCVType 的类型对象表示，调用 register_FCVType_type_identifier 完成类型系统注册。"
+    },
+    "file:core/ondemand/.gensrc/FCVPubSubTypes.hpp": {
+      "name": "FCVPubSubTypes.hpp",
+      "type": "file",
+      "summary": "FCVTypePubSubType 类的头文件，声明了继承自 eprosima::fastdds::dds::TopicDataType 的发布/订阅类型类，提供序列化、反序列化、键值计算等 DDS Topic 数据类型接口。"
+    },
+    "class:core/ondemand/.gensrc/FCVPubSubTypes.hpp:FCVTypePubSubType": {
+      "name": "FCVTypePubSubType",
+      "type": "class",
+      "summary": "继承自 FastDDS TopicDataType 的 FCVType 发布/订阅类型适配器类，封装了 FCVType 的序列化/反序列化逻辑、键值计算和类型注册功能，使 FCVType 能够通过 DDS 中间件进行数据传输。"
+    },
+    "file:core/ondemand/.gensrc/FCVTypeObjectSupport.cxx": {
+      "name": "FCVTypeObjectSupport.cxx",
+      "type": "file",
+      "summary": "FCVType 的 TypeObject 注册实现文件，通过 FastDDS TypeObjectUtils 逐个成员构建完整的结构体类型描述，并注册到 TypeObjectRegistry，支持 DDS XTypes 动态类型发现机制。"
+    },
+    "function:core/ondemand/.gensrc/FCVTypeObjectSupport.cxx:register_FCVType_type_identifier": {
+      "name": "register_FCVType_type_identifier",
+      "type": "function",
+      "summary": "向 FastDDS TypeObjectRegistry 注册 FCVType 的完整类型标识符，逐个构建 6 个成员的类型描述（flow/temp/press/isopen/openvalue/healthlevel），最终生成结构体 TypeObject 并注册。"
+    },
+    "file:core/ondemand/.gensrc/FCVTypeObjectSupport.hpp": {
+      "name": "FCVTypeObjectSupport.hpp",
+      "type": "file",
+      "summary": "FCVType TypeObject 注册函数的头文件，声明了 register_FCVType_type_identifier 函数接口，用于向 FastDDS XTypes 系统注册 FCVType 的类型标识符。"
+    },
+    "file:sample/node_example/HelloWorldOneFast/source/HelloWorldOne.hpp": {
+      "name": "HelloWorldOne.hpp",
+      "type": "file",
+      "summary": "由 fastddsgen 自动生成的 IDL 数据结构头文件，定义了 HelloWorldOne 类，包含 index（uint32_t）和 points（vector<uint8_t>）两个成员，并提供完整的拷贝/移动构造、赋值运算符和访问器。"
+    },
+    "file:sample/node_example/HelloWorldOneFast/source/HelloWorldOneCdrAux.hpp": {
+      "name": "HelloWorldOneCdrAux.hpp",
+      "type": "file",
+      "summary": "CDR 序列化辅助头文件，声明 HelloWorldOne 的最大序列化大小常量和 serialize_key 函数，供 CDR 编解码使用。"
+    },
+    "file:sample/node_example/HelloWorldOneFast/source/HelloWorldOneCdrAux.ipp": {
+      "name": "HelloWorldOneCdrAux.ipp",
+      "type": "file",
+      "summary": "CDR 序列化辅助实现文件，提供 HelloWorldOne 的 calculate_serialized_size、serialize、deserialize 和 serialize_key 模板函数特化，支持 XCDRv2 和 PLAIN_CDR 两种编码。"
+    },
+    "file:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.cxx": {
+      "name": "HelloWorldOnePubSubTypes.cxx",
+      "type": "file",
+      "summary": "HelloWorldOnePubSubType 类的实现文件，提供 DDS TopicDataType 接口的 serialize、deserialize、calculate_serialized_size、compute_key 和 register_type_object_representation 方法，是 DDS 通信的类型序列化核心。"
+    },
+    "file:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.hpp": {
+      "name": "HelloWorldOnePubSubTypes.hpp",
+      "type": "file",
+      "summary": "HelloWorldOnePubSubType 类的头文件，继承自 eprosima::fastdds::dds::TopicDataType，声明 DDS 数据类型注册和序列化接口。"
+    },
+    "file:sample/node_example/HelloWorldOneFast/source/HelloWorldOneTypeObjectSupport.cxx": {
+      "name": "HelloWorldOneTypeObjectSupport.cxx",
+      "type": "file",
+      "summary": "TypeObject 注册实现文件，提供 register_HelloWorldOne_type_identifier 函数，构建并注册 HelloWorldOne 的完整 TypeObject 结构体定义，包括成员 index 和 points 的类型标识。"
+    },
+    "file:sample/node_example/HelloWorldOneFast/source/HelloWorldOneTypeObjectSupport.hpp": {
+      "name": "HelloWorldOneTypeObjectSupport.hpp",
+      "type": "file",
+      "summary": "TypeObject 注册头文件，声明 register_HelloWorldOne_type_identifier 函数，用于在 FastDDS TypeObjectRegistry 中注册 HelloWorldOne 的类型标识。"
+    },
+    "class:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.hpp:HelloWorldOnePubSubType": {
+      "name": "HelloWorldOnePubSubType",
+      "type": "class",
+      "summary": "DDS TopicDataType 实现类，继承 eprosima::fastdds::dds::TopicDataType，为 HelloWorldOne 提供序列化、反序列化、大小计算、key 计算和 TypeObject 注册能力。"
+    },
+    "function:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.cxx:serialize": {
+      "name": "serialize",
+      "type": "function",
+      "summary": "将 HelloWorldOne 对象序列化为 DDS SerializedPayload，处理封装头、字节序和 CDR 编码。"
+    },
+    "function:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.cxx:deserialize": {
+      "name": "deserialize",
+      "type": "function",
+      "summary": "从 DDS SerializedPayload 反序列化出 HelloWorldOne 对象，处理封装头读取和字节序转换。"
+    },
+    "function:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.cxx:calculate_serialized_size": {
+      "name": "calculate_serialized_size",
+      "type": "function",
+      "summary": "计算 HelloWorldOne 对象的序列化后字节大小。"
+    },
+    "function:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.cxx:compute_key": {
+      "name": "compute_key",
+      "type": "function",
+      "summary": "两个重载：从 payload 或 data 计算 HelloWorldOne 的 InstanceHandle，使用 MD5 哈希标识实例。"
+    },
+    "function:sample/node_example/HelloWorldOneFast/source/HelloWorldOneTypeObjectSupport.cxx:register_HelloWorldOne_type_identifier": {
+      "name": "register_HelloWorldOne_type_identifier",
+      "type": "function",
+      "summary": "构建 HelloWorldOne 的完整 TypeObject 定义并注册到 FastDDS TypeObjectRegistry，包括结构体成员 index 和 points（uint8_t 序列）的类型标识。"
+    },
+    "file:tests/fastdds_test_idl/PerformanceTest.hpp": {
+      "name": "PerformanceTest.hpp",
+      "type": "file",
+      "summary": "由 fastddsgen 自动生成的 IDL 数据类型头文件，定义了 PerformanceTest::TestMessage 结构体，包含 seq_num、timestamp、message_type、payload 四个字段，用于性能测试场景下的 DDS 数据传输。"
+    },
+    "class:tests/fastdds_test_idl/PerformanceTest.hpp:TestMessage": {
+      "name": "TestMessage",
+      "type": "class",
+      "summary": "IDL 定义的性能测试消息结构体，包含序列号（seq_num）、时间戳（timestamp）、消息类型（message_type）和负载数据（payload）四个成员，支持拷贝/移动语义和相等比较。"
+    },
+    "file:tests/fastdds_test_idl/PerformanceTestCdrAux.hpp": {
+      "name": "PerformanceTestCdrAux.hpp",
+      "type": "file",
+      "summary": "CDR 序列化辅助头文件，声明 TestMessage 的最大序列化大小常量和 serialize_key 函数原型，供 CDR 序列化/反序列化实现使用。"
+    },
+    "file:tests/fastdds_test_idl/PerformanceTestCdrAux.ipp": {
+      "name": "PerformanceTestCdrAux.ipp",
+      "type": "file",
+      "summary": "CDR 序列化实现文件，包含 TestMessage 的 calculate_serialized_size、serialize、deserialize 和 serialize_key 四个模板特化函数，支持 XCDRv2 和 PLAIN_CDR 两种编码格式。"
+    },
+    "file:tests/fastdds_test_idl/PerformanceTestPubSubTypes.cxx": {
+      "name": "PerformanceTestPubSubTypes.cxx",
+      "type": "file",
+      "summary": "DDS TopicDataType 实现文件，实现 TestMessagePubSubType 类的序列化、反序列化、大小计算、键值计算和类型注册等方法，是 FastDDS 数据发布/订阅的核心类型支持代码。"
+    },
+    "class:tests/fastdds_test_idl/PerformanceTestPubSubTypes.cxx:TestMessagePubSubType": {
+      "name": "TestMessagePubSubType",
+      "type": "class",
+      "summary": "FastDDS TopicDataType 实现类，提供 TestMessage 的序列化/反序列化、序列化大小计算、MD5 键值计算和 TypeObject 注册功能，是 DDS 中间件与应用层之间的类型适配器。"
+    },
+    "file:tests/fastdds_test_idl/PerformanceTestPubSubTypes.hpp": {
+      "name": "PerformanceTestPubSubTypes.hpp",
+      "type": "file",
+      "summary": "TestMessagePubSubType 类的头文件，声明继承自 eprosima::fastdds::dds::TopicDataType 的 DDS 主题数据类型类，包含 serialize、deserialize、compute_key 等虚函数重写声明。"
+    },
+    "file:tests/fastdds_test_idl/PerformanceTestTypeObjectSupport.cxx": {
+      "name": "PerformanceTestTypeObjectSupport.cxx",
+      "type": "file",
+      "summary": "TypeObject 注册实现文件，实现 register_TestMessage_type_identifier 函数，向 FastDDS TypeObjectRegistry 注册 TestMessage 的完整类型信息，包括结构体成员、字符串类型和序列类型定义。"
+    },
+    "function:tests/fastdds_test_idl/PerformanceTestTypeObjectSupport.cxx:register_TestMessage_type_identifier": {
+      "name": "register_TestMessage_type_identifier",
+      "type": "function",
+      "summary": "向 FastDDS TypeObjectRegistry 注册 TestMessage 的完整类型标识符，包括构建结构体类型、成员类型（uint32、uint64、string、sequence<uint8>）并注册到全局类型注册表。"
+    },
+    "file:tests/fastdds_test_idl/PerformanceTestTypeObjectSupport.hpp": {
+      "name": "PerformanceTestTypeObjectSupport.hpp",
+      "type": "file",
+      "summary": "TypeObject 注册函数的头文件，声明 register_TestMessage_type_identifier 函数原型，用于在 DDS 应用启动时注册 TestMessage 的类型标识符。"
+    },
+    "function:common/log/logger_impl.cc:Init": {
+      "name": "Init(config_file)",
+      "type": "function",
+      "summary": "配置文件式初始化入口。解析 JSON 配置后调用参数式 Init，然后设置额外的配置项（flush 级别、模式、缓冲区大小），并通过环境变量覆盖控制台/文件日志级别。最后启动后台配置热重载监控线程。"
+    },
+    "function:common/log/logger_impl.cc:Init_params": {
+      "name": "Init(params)",
+      "type": "function",
+      "summary": "参数式初始化，是日志系统的核心构建函数。根据 LoggerType 创建对应的 spdlog sink（控制台/文件/双输出），配置异步模式（线程池 + overrun_oldest 策略）或同步模式，注册 spdlog 全局 logger。支持环境变量覆盖日志级别。"
+    },
+    "function:common/log/logger_impl.cc:LoggerConfigChecker": {
+      "name": "LoggerConfigChecker",
+      "type": "function",
+      "summary": "后台配置热重载监控线程。每秒检查配置文件的修改时间，当检测到变更时重新解析配置并应用（仅更新 flush 级别和控制台/文件日志级别）。忽略文件系统错误，持续运行直到 is_running_ 为 false。"
+    },
+    "function:common/log/logger_impl.cc:Uninit": {
+      "name": "Uninit",
+      "type": "function",
+      "summary": "日志系统反初始化。停止后台监控线程，刷新并释放 spdlog logger，调用 spdlog::shutdown 清理全局状态。包含异常安全保护。"
+    },
+    "function:common/timer_wheel/thread_pool.h:enqueue": {
+      "name": "enqueue",
+      "type": "function",
+      "summary": "模板方法，将可调用对象及其参数封装为 packaged_task 入队，返回 std::future 以便调用者获取异步结果。线程池已停止时抛出 runtime_error。"
+    },
+    "function:common/timer_wheel/timer_scheduler.h:Schedule": {
+      "name": "Schedule",
+      "type": "function",
+      "summary": "调度一次性定时器，在 delay_ticks 个 tick 后执行回调。创建 CallbackTimer 并注册到 TimerWheel，返回事件对象供后续取消使用。"
+    },
+    "function:common/timer_wheel/timer_scheduler.h:ScheduleRecurring": {
+      "name": "ScheduleRecurring",
+      "type": "function",
+      "summary": "调度周期性定时器，首次在 delay_ticks 后触发，之后每 interval_ticks 重复触发。创建 RecurringCallbackTimer 并注册到 TimerWheel。"
+    },
+    "function:common/timer_wheel/timer_scheduler.h:Cancel": {
+      "name": "Cancel",
+      "type": "function",
+      "summary": "取消指定定时器，调用事件的 cancel 方法并从活跃定时器集合中移除。"
+    },
+    "function:common/timer_wheel/timer_scheduler.h:Stop": {
+      "name": "Stop",
+      "type": "function",
+      "summary": "停止调度器，设置停止标志、终止定时循环线程、取消所有活跃定时器并清空线程池任务队列。"
+    },
+    "function:common/timer_wheel/timer_scheduler.h:TimerLoop": {
+      "name": "TimerLoop",
+      "type": "function",
+      "summary": "定时器主循环，在独立线程中运行。按 tick_ms 间隔推进 TimerWheel，将到期回调通过 ThreadPool 派发执行，支持暂停和停止。"
+    },
+    "file:common/timer_wheel/timer_scheduler_test.cc": {
+      "name": "timer_scheduler_test.cc",
+      "type": "file",
+      "summary": "TimerScheduler 的 GoogleTest 单元测试文件，覆盖一次性定时、周期定时、取消、Post 即时任务、多定时器并发、高频定时和压力负载等场景。"
+    },
+    "class:common/timer_wheel/timer_scheduler_test.cc:TimerSchedulerTest": {
+      "name": "TimerSchedulerTest",
+      "type": "class",
+      "summary": "GoogleTest 测试夹具类，在 SetUp 中创建 TimerScheduler 实例（1ms tick, 8 线程池），在 TearDown 中停止并销毁。"
+    },
+    "function:common/timer_wheel/timer_scheduler_test.cc:TestBasicFunctionality": {
+      "name": "TestBasicFunctionality",
+      "type": "function",
+      "summary": "测试 Post 即时任务的基本功能，验证回调被正确执行且定时器状态正确。"
+    },
+    "function:common/timer_wheel/timer_scheduler_test.cc:TestSingleTimer": {
+      "name": "TestSingleTimer",
+      "type": "function",
+      "summary": "测试一次性定时器的调度和执行，验证定时器在指定延迟后触发且回调计数正确。"
+    },
+    "function:common/timer_wheel/timer_scheduler_test.cc:TestRecurringTimer": {
+      "name": "TestRecurringTimer",
+      "type": "function",
+      "summary": "测试周期性定时器，验证多次触发的计数和时间间隔在预期范围内，以及取消后停止触发。"
+    },
+    "function:common/timer_wheel/timer_scheduler_test.cc:TestTimerCancel": {
+      "name": "TestTimerCancel",
+      "type": "function",
+      "summary": "测试定时器取消功能，验证一次性定时器和周期性定时器在取消后不再触发且回调计数不再增加。"
+    },
+    "function:common/timer_wheel/timer_scheduler_test.cc:TestMultipleTimers": {
+      "name": "TestMultipleTimers",
+      "type": "function",
+      "summary": "测试多个定时器同时调度的场景，验证不同延迟的定时器各自独立触发且计数正确。"
+    },
+    "function:common/timer_wheel/timer_scheduler_test.cc:TestHighFrequencyTimers": {
+      "name": "TestHighFrequencyTimers",
+      "type": "function",
+      "summary": "测试高频周期定时器（5ms 间隔），验证执行次数和回调在调度器重置后正确停止。"
+    },
+    "function:common/timer_wheel/timer_scheduler_test.cc:TestStressLoad": {
+      "name": "TestStressLoad",
+      "type": "function",
+      "summary": "压力测试，调度大量定时器并测量总执行时间，验证系统在高负载下的吞吐量和正确性。"
+    },
+    "file:thirdparty/txdds/include/txdds/DCPS/dynamicType/CommonType.h": {
+      "name": "CommonType.h",
+      "type": "file",
+      "summary": "定义 DDS 动态类型系统的基础常量，包括 TypeKind（BOOLEAN、INT32、STRUCT 等）枚举值、TypeIdentiferKind 常量以及对应的类型名称字符串映射，位于 BaoSky::dds 命名空间。"
+    },
+    "file:thirdparty/txdds/include/txdds/DCPS/dynamicType/TypeIdentifier.h": {
+      "name": "TypeIdentifier.h",
+      "type": "file",
+      "summary": "定义 DDS 类型标识符系统的核心类 TypeIdentifier 及其关联的集合类型定义类（字符串、序列、数组、映射），每个类均实现 CDR 序列化/反序列化接口，用于标识和描述 DDS 动态数据类型。"
+    },
+    "file:thirdparty/txdds/include/txdds/DCPS/dynamicType/TypeInformation.h": {
+      "name": "TypeInformation.h",
+      "type": "file",
+      "summary": "定义 TypeInformation 类，聚合最小化（minimal）和完整（complete）两种 TypeIdentifierWithDependencies，用于描述 DDS 类型的完整依赖关系信息。"
+    },
+    "file:thirdparty/txdds/include/txdds/DCPS/dynamicType/TypeObject.h": {
+      "name": "TypeObject.h",
+      "type": "file",
+      "summary": "定义 DDS 类型对象系统的全部类，包括结构体、联合体、枚举、别名、位集、位掩码、序列、数组、映射、注解等类型的完整（Complete）表示，以及顶层 TypeObject 包装类，是 DDS-XTypes 动态类型系统的核心实现。"
+    },
+    "class:thirdparty/txdds/include/txdds/DCPS/dynamicType/TypeIdentifier.h:TypeIdentifier": {
+      "name": "TypeIdentifier",
+      "type": "class",
+      "summary": "DDS 类型标识符核心类，通过 discriminator 字段 m__d 选择不同的类型定义（字符串、序列、数组、映射、强连通分量等），同时包含等价哈希值用于类型比较，是 DDS-XTypes 类型系统的关键标识结构。"
+    },
+    "class:thirdparty/txdds/include/txdds/DCPS/dynamicType/TypeObject.h:TypeObject": {
+      "name": "TypeObject",
+      "type": "class",
+      "summary": "DDS 类型对象的顶层包装类，通过 discriminator 字段 m_d 区分最小化和完整两种表示形式，当前仅实现 CompleteTypeObject 变体，是类型对象注册和交换的入口类。"
+    },
+    "class:thirdparty/txdds/include/txdds/DCPS/dynamicType/TypeObject.h:CompleteTypeObject": {
+      "name": "CompleteTypeObject",
+      "type": "class",
+      "summary": "完整类型对象聚合类，通过 discriminator 字段 m__d 选择具体的类型变体（结构体、联合体、枚举、别名、位集、序列、数组、映射、位掩码、注解、扩展类型），是 DDS-XTypes Complete 类型对象的核心容器。"
+    },
+    "file:core/ondemand/.gensrctx/dsf_define_datatypes.cxx": {
+      "name": "dsf_define_datatypes.cxx",
+      "type": "file",
+      "summary": "由 fastddsgen 自动生成的 DDS 数据类型实现文件，包含 DSF 命名空间下 Timespec、NamedValue、StructuredDataMapEntry、DataBuffer、DT_FILE、DT_TIME、DT_DATE、DT_TIME_OF_DAY、DT_DATE_AND_TIME、DT_LDATE、DT_LTIME_OF_DAY、DT_LDATE_AND_TIME 等 12 种数据结构的构造函数、析构函数、移动构造函数、赋值运算符和比较运算符。"
+    },
+    "file:core/ondemand/.gensrctx/dsf_define_datatypes.h": {
+      "name": "dsf_define_datatypes.h",
+      "type": "file",
+      "summary": "由 fastddsgen 自动生成的 DDS 数据类型头文件，声明 DSF 命名空间下的 12 种 IDL 数据结构（Timespec、NamedValue、DataBuffer、DT_FILE、DT_TIME、DT_DATE 等），包含成员变量、访问器方法及 DLL 导出宏定义。"
+    },
+    "file:core/ondemand/.gensrctx/dsf_define_datatypesCdrAux.ipp": {
+      "name": "dsf_define_datatypesCdrAux.ipp",
+      "type": "file",
+      "summary": "由 fastddsgen 自动生成的 CDR 序列化辅助实现文件，提供 DSF 命名空间下所有数据类型的序列化大小计算（CalculateSerializedSizeUserDefined）、序列化（Serialize）和反序列化（Deserialize）模板函数特化。"
+    },
+    "file:core/ondemand/.gensrctx/dsf_define_datatypesCdrAux.hpp": {
+      "name": "dsf_define_datatypesCdrAux.hpp",
+      "type": "file",
+      "summary": "由 fastddsgen 自动生成的 CDR 辅助头文件，定义各 DDS 数据类型（Timespec、NamedValue、StructuredDataMapEntry、DataBuffer、DT_FILE）的最大序列化尺寸常量，并在 BaoSky::Cdr 命名空间中声明 SerializeKey 函数重载。"
+    },
+    "file:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h": {
+      "name": "dsf_define_datatypesPubSubTypes.h",
+      "type": "file",
+      "summary": "由 fastddsgen 自动生成的 PubSub 类型声明头文件，定义 5 个继承自 BaoSky::dds::TopicDataType 的序列化类型类（TimespecPubSubType、NamedValuePubSubType、StructuredDataMapEntryPubSubType、DataBufferPubSubType、DT_FILEPubSubType），并包含 DSF 命名空间下的各种数据类型别名（GUID_t、DT_BLOB、DT_BOOLEAN 等）。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h:TimespecPubSubType": {
+      "name": "TimespecPubSubType",
+      "type": "class",
+      "summary": "DDS TopicDataType 实现类，负责 DSF::Timespec 类型的序列化、反序列化、数据创建/销毁和键提取。继承自 BaoSky::dds::TopicDataType。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h:NamedValuePubSubType": {
+      "name": "NamedValuePubSubType",
+      "type": "class",
+      "summary": "DDS TopicDataType 实现类，负责 DSF::NamedValue 类型的序列化、反序列化、数据创建/销毁和键提取。继承自 BaoSky::dds::TopicDataType。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h:StructuredDataMapEntryPubSubType": {
+      "name": "StructuredDataMapEntryPubSubType",
+      "type": "class",
+      "summary": "DDS TopicDataType 实现类，负责 DSF::StructuredDataMapEntry 类型的序列化、反序列化、数据创建/销毁和键提取。继承自 BaoSky::dds::TopicDataType。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h:DataBufferPubSubType": {
+      "name": "DataBufferPubSubType",
+      "type": "class",
+      "summary": "DDS TopicDataType 实现类，负责 DSF::DataBuffer 类型的序列化、反序列化、数据创建/销毁和键提取。继承自 BaoSky::dds::TopicDataType。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.h:DT_FILEPubSubType": {
+      "name": "DT_FILEPubSubType",
+      "type": "class",
+      "summary": "DDS TopicDataType 实现类，负责 DSF::DataTypes::DT_FILE 类型的序列化、反序列化、数据创建/销毁和键提取。位于 DSF::DataTypes 子命名空间，继承自 BaoSky::dds::TopicDataType。"
+    },
+    "file:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx": {
+      "name": "dsf_define_datatypesPubSubTypes.cxx",
+      "type": "file",
+      "summary": "由 fastddsgen 自动生成的 PubSub 类型实现文件，包含 5 个 DDS TopicDataType 子类（TimespecPubSubType、NamedValuePubSubType、StructuredDataMapEntryPubSubType、DataBufferPubSubType、DT_FILEPubSubType）的完整方法实现，涵盖 CDR 序列化/反序列化、数据生命周期管理和键提取逻辑。"
+    },
+    "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:TimespecPubSubType": {
+      "name": "TimespecPubSubType::TimespecPubSubType",
+      "type": "function",
+      "summary": "TimespecPubSubType 构造函数，设置 DDS 类型名为 \"DSF::Timespec\"，计算 CDR 序列化大小，分配并清零 mKeyBuffer。"
+    },
+    "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:~TimespecPubSubType": {
+      "name": "TimespecPubSubType::~TimespecPubSubType",
+      "type": "function",
+      "summary": "TimespecPubSubType 析构函数，释放构造函数中通过 malloc 分配的 mKeyBuffer。"
+    },
+    "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:Serialize_Timespec": {
+      "name": "TimespecPubSubType::Serialize",
+      "type": "function",
+      "summary": "将 DSF::Timespec 数据序列化为 CDR 格式的 SerializedPayload，使用 XCDRv1 编码并包含封装头。"
+    },
+    "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:Deserialize_Timespec": {
+      "name": "TimespecPubSubType::Deserialize",
+      "type": "function",
+      "summary": "从 CDR 格式的 SerializedPayload 反序列化出 DSF::Timespec 数据，解析封装头并使用 XCDRv1 编码。"
+    },
+    "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:GetKey_Timespec": {
+      "name": "TimespecPubSubType::GetKey",
+      "type": "function",
+      "summary": "从 DSF::Timespec 数据中提取键，通过 SerializeKey 序列化键字段并填充 InstanceHandle。当 mIsGetKeyDefined 为 false 时直接返回。"
+    },
+    "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:NamedValuePubSubType": {
+      "name": "NamedValuePubSubType::NamedValuePubSubType",
+      "type": "function",
+      "summary": "NamedValuePubSubType 构造函数，设置 DDS 类型名为 \"DSF::NamedValue\"，计算 CDR 序列化大小，分配并清零 mKeyBuffer。"
+    },
+    "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:~NamedValuePubSubType": {
+      "name": "NamedValuePubSubType::~NamedValuePubSubType",
+      "type": "function",
+      "summary": "NamedValuePubSubType 析构函数，释放构造函数中通过 malloc 分配的 mKeyBuffer。"
+    },
+    "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:Serialize_NamedValue": {
+      "name": "NamedValuePubSubType::Serialize",
+      "type": "function",
+      "summary": "将 DSF::NamedValue 数据序列化为 CDR 格式的 SerializedPayload，使用 XCDRv1 编码并包含封装头。"
+    },
+    "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:Deserialize_NamedValue": {
+      "name": "NamedValuePubSubType::Deserialize",
+      "type": "function",
+      "summary": "从 CDR 格式的 SerializedPayload 反序列化出 DSF::NamedValue 数据，解析封装头并使用 XCDRv1 编码。"
+    },
+    "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:GetKey_NamedValue": {
+      "name": "NamedValuePubSubType::GetKey",
+      "type": "function",
+      "summary": "从 DSF::NamedValue 数据中提取键，通过 SerializeKey 序列化键字段并填充 InstanceHandle。"
+    },
+    "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:StructuredDataMapEntryPubSubType": {
+      "name": "StructuredDataMapEntryPubSubType::StructuredDataMapEntryPubSubType",
+      "type": "function",
+      "summary": "StructuredDataMapEntryPubSubType 构造函数，设置 DDS 类型名为 \"DSF::StructuredDataMapEntry\"，计算 CDR 序列化大小，分配并清零 mKeyBuffer。"
+    },
+    "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:~StructuredDataMapEntryPubSubType": {
+      "name": "StructuredDataMapEntryPubSubType::~StructuredDataMapEntryPubSubType",
+      "type": "function",
+      "summary": "StructuredDataMapEntryPubSubType 析构函数，释放构造函数中通过 malloc 分配的 mKeyBuffer。"
+    },
+    "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:Serialize_StructuredDataMapEntry": {
+      "name": "StructuredDataMapEntryPubSubType::Serialize",
+      "type": "function",
+      "summary": "将 DSF::StructuredDataMapEntry 数据序列化为 CDR 格式的 SerializedPayload，使用 XCDRv1 编码并包含封装头。"
+    },
+    "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:Deserialize_StructuredDataMapEntry": {
+      "name": "StructuredDataMapEntryPubSubType::Deserialize",
+      "type": "function",
+      "summary": "从 CDR 格式的 SerializedPayload 反序列化出 DSF::StructuredDataMapEntry 数据。"
+    },
+    "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:GetKey_StructuredDataMapEntry": {
+      "name": "StructuredDataMapEntryPubSubType::GetKey",
+      "type": "function",
+      "summary": "从 DSF::StructuredDataMapEntry 数据中提取键，通过 SerializeKey 序列化键字段并填充 InstanceHandle。"
+    },
+    "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:DataBufferPubSubType": {
+      "name": "DataBufferPubSubType::DataBufferPubSubType",
+      "type": "function",
+      "summary": "DataBufferPubSubType 构造函数，设置 DDS 类型名为 \"DSF::DataBuffer\"，计算 CDR 序列化大小，分配并清零 mKeyBuffer。"
+    },
+    "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:~DataBufferPubSubType": {
+      "name": "DataBufferPubSubType::~DataBufferPubSubType",
+      "type": "function",
+      "summary": "DataBufferPubSubType 析构函数，释放构造函数中通过 malloc 分配的 mKeyBuffer。"
+    },
+    "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:Serialize_DataBuffer": {
+      "name": "DataBufferPubSubType::Serialize",
+      "type": "function",
+      "summary": "将 DSF::DataBuffer 数据序列化为 CDR 格式的 SerializedPayload，使用 XCDRv1 编码并包含封装头。"
+    },
+    "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:Deserialize_DataBuffer": {
+      "name": "DataBufferPubSubType::Deserialize",
+      "type": "function",
+      "summary": "从 CDR 格式的 SerializedPayload 反序列化出 DSF::DataBuffer 数据。"
+    },
+    "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:GetKey_DataBuffer": {
+      "name": "DataBufferPubSubType::GetKey",
+      "type": "function",
+      "summary": "从 DSF::DataBuffer 数据中提取键，通过 SerializeKey 序列化键字段并填充 InstanceHandle。"
+    },
+    "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:DT_FILEPubSubType": {
+      "name": "DT_FILEPubSubType::DT_FILEPubSubType",
+      "type": "function",
+      "summary": "DT_FILEPubSubType 构造函数，设置 DDS 类型名为 \"DSF::DataTypes::DT_FILE\"，计算 CDR 序列化大小，分配并清零 mKeyBuffer。"
+    },
+    "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:~DT_FILEPubSubType": {
+      "name": "DT_FILEPubSubType::~DT_FILEPubSubType",
+      "type": "function",
+      "summary": "DT_FILEPubSubType 析构函数，释放构造函数中通过 malloc 分配的 mKeyBuffer。"
+    },
+    "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:Serialize_DT_FILE": {
+      "name": "DT_FILEPubSubType::Serialize",
+      "type": "function",
+      "summary": "将 DSF::DataTypes::DT_FILE 数据序列化为 CDR 格式的 SerializedPayload，使用 XCDRv1 编码并包含封装头。"
+    },
+    "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:Deserialize_DT_FILE": {
+      "name": "DT_FILEPubSubType::Deserialize",
+      "type": "function",
+      "summary": "从 CDR 格式的 SerializedPayload 反序列化出 DSF::DataTypes::DT_FILE 数据。"
+    },
+    "function:core/ondemand/.gensrctx/dsf_define_datatypesPubSubTypes.cxx:GetKey_DT_FILE": {
+      "name": "DT_FILEPubSubType::GetKey",
+      "type": "function",
+      "summary": "从 DSF::DataTypes::DT_FILE 数据中提取键，通过 SerializeKey 序列化键字段并填充 InstanceHandle。"
+    },
+    "file:core/ondemand/.gensrctx/dsf_define_messages.cxx": {
+      "name": "dsf_define_messages.cxx",
+      "type": "file",
+      "summary": "由 fastddsgen 工具自动生成的 DDS 消息类型实现文件，包含 DSF::Message 命名空间下所有消息类（Event、EventTransfer、Control、SubTableRegister、Alarm、CommandRequest、CommandResponse 等）的构造函数、析构函数、拷贝/移动语义、比较运算符及 getter/setter 方法的实现。"
+    },
+    "file:core/ondemand/.gensrctx/dsf_define_messages.h": {
+      "name": "dsf_define_messages.h",
+      "type": "file",
+      "summary": "由 fastddsgen 工具自动生成的 DDS 消息类型声明头文件，定义了 DSF::Message 命名空间下的核心消息结构体（Event、EventTransfer、Control、SubTableRegister、SubTableUnregister、Alarm、CommandRequest、CommandResponse）以及相关枚举类型（EventCategory、MSGTYPE、CONTROL_VAR_TYPE、CommandResponseRetcode），同时声明了 DDS Topic 名称常量。"
+    },
+    "file:core/ondemand/.gensrctx/dsf_define_messagesCdrAux.ipp": {
+      "name": "dsf_define_messagesCdrAux.ipp",
+      "type": "file",
+      "summary": "由 fastddsgen 工具自动生成的 CDR（Common Data Representation）序列化辅助文件，包含所有 DDS 消息类型的序列化大小计算、序列化和反序列化模板特化函数实现。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_messages.h:Event": {
+      "name": "Event",
+      "type": "class",
+      "summary": "DDS 消息基类，表示事件信息，包含事件代码、载荷类型、描述、分类、创建时间、消息类型等字段，以及关联变量和关联节点列表。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_messages.h:EventTransfer": {
+      "name": "EventTransfer",
+      "type": "class",
+      "summary": "事件传输消息类，扩展 Event 的字段，增加了源节点、序列号、发送时间、载荷数据、节点信息等用于网络传输的元数据。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_messages.h:NamedBlob": {
+      "name": "NamedBlob",
+      "type": "class",
+      "summary": "命名二进制数据块类，包含名称（name）和二进制数据（blob）两个字段，用于在 DDS 消息中传递命名的二进制数据。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_messages.h:ControlVar": {
+      "name": "ControlVar",
+      "type": "class",
+      "summary": "控制变量类，包含节点名称、变量类型和命名值三个字段，用于描述单个控制变量的属性。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_messages.h:Control": {
+      "name": "Control",
+      "type": "class",
+      "summary": "控制消息类，包含消息 ID、当前时间、消息类型、变量列表、源节点、写入令牌和用户信息，用于发送控制命令。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_messages.h:SubTableRegister": {
+      "name": "SubTableRegister",
+      "type": "class",
+      "summary": "订阅表注册消息类，包含消息类型、变量频率映射（varFreqs）、表名、节点名和用户信息，用于订阅端向发布端注册变量订阅请求。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_messages.h:SubTableUnregister": {
+      "name": "SubTableUnregister",
+      "type": "class",
+      "summary": "订阅表注销消息类，包含消息类型、变量名列表（varNames）、表名、节点名和用户信息，用于订阅端向发布端注销变量订阅。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_messages.h:Alarm": {
+      "name": "Alarm",
+      "type": "class",
+      "summary": "告警消息类，继承自 Event，增加了优先级、状态、确认时间、确认人、恢复时间和恢复命名值等告警特有字段。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_messages.h:NamedRetcode": {
+      "name": "NamedRetcode",
+      "type": "class",
+      "summary": "命名返回码类，包含节点名、名称、返回码和原生返回码，用于在命令响应中携带操作结果信息。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_messages.h:CommandRequest": {
+      "name": "CommandRequest",
+      "type": "class",
+      "summary": "命令请求联合体类，使用 discriminator (_d) 字段区分消息类型，可承载 Control、Event 或 Alarm 三种消息之一，是 DDS 命令通信的顶层请求消息。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_messages.h:CommandResponse": {
+      "name": "CommandResponse",
+      "type": "class",
+      "summary": "命令响应类，包含消息 ID、节点信息、返回码、原生返回码、状态消息和控制返回信息，用于回复 CommandRequest。"
+    },
+    "file:core/ondemand/.gensrctx/dsf_define_messagesCdrAux.hpp": {
+      "name": "dsf_define_messagesCdrAux.hpp",
+      "type": "file",
+      "summary": "由 fastddsgen 自动生成的 CDR 辅助头文件，定义了 10 种 DSF 消息类型的最大序列化尺寸常量（max_cdr_typesize / max_key_cdr_typesize），并声明了 BaoSky::Cdr 命名空间下的 SerializeKey 函数族，供 PubSubTypes 实现中的 GetKey 方法调用。"
+    },
+    "file:core/ondemand/.gensrctx/dsf_define_messagesPubSubTypes.h": {
+      "name": "dsf_define_messagesPubSubTypes.h",
+      "type": "file",
+      "summary": "由 fastddsgen 自动生成的 DDS TopicDataType 头文件，声明了 10 个 PubSubType 类（Event、EventTransfer、NamedBlob、ControlVar、Control、SubTableRegister、SubTableUnregister、Alarm、NamedRetcode、CommandResponse），每个类继承自 BaoSky::dds::TopicDataType 并重写 Serialize/Deserialize/GetKey 等虚函数。"
+    },
+    "file:core/ondemand/.gensrctx/dsf_define_messagesPubSubTypes.cxx": {
+      "name": "dsf_define_messagesPubSubTypes.cxx",
+      "type": "file",
+      "summary": "由 fastddsgen 自动生成的 DDS TopicDataType 实现文件（1342 行），为 10 种 DSF 消息类型提供完整的序列化/反序列化实现。每个类型实现构造函数（分配 key 缓冲区并设置类型大小）、Serialize（CDR XCDRv1 编码）、Deserialize、GetSerializedSizeProvider（返回 lambda）、CreateData/DeleteData（new/delete）、GetKey（调用 SerializeKey）。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_messagesPubSubTypes.h:EventPubSubType": {
+      "name": "EventPubSubType",
+      "type": "class",
+      "summary": "Event 消息类型的 DDS TopicDataType 实现类，负责 Event 结构体的 CDR 序列化/反序列化和 key 计算，用于事件传输 DDS Topic。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_messagesPubSubTypes.h:EventTransferPubSubType": {
+      "name": "EventTransferPubSubType",
+      "type": "class",
+      "summary": "EventTransfer 消息类型的 DDS TopicDataType 实现类，负责批量事件传输数据的 CDR 序列化/反序列化。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_messagesPubSubTypes.h:NamedBlobPubSubType": {
+      "name": "NamedBlobPubSubType",
+      "type": "class",
+      "summary": "NamedBlob 消息类型的 DDS TopicDataType 实现类，负责命名二进制数据块的 CDR 序列化/反序列化，无 key 定义。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_messagesPubSubTypes.h:ControlVarPubSubType": {
+      "name": "ControlVarPubSubType",
+      "type": "class",
+      "summary": "ControlVar 消息类型的 DDS TopicDataType 实现类，负责控制变量数据的 CDR 序列化/反序列化，无 key 定义。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_messagesPubSubTypes.h:ControlPubSubType": {
+      "name": "ControlPubSubType",
+      "type": "class",
+      "summary": "Control 消息类型的 DDS TopicDataType 实现类，负责控制指令数据的 CDR 序列化/反序列化，无 key 定义。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_messagesPubSubTypes.h:SubTableRegisterPubSubType": {
+      "name": "SubTableRegisterPubSubType",
+      "type": "class",
+      "summary": "SubTableRegister 消息类型的 DDS TopicDataType 实现类，负责订阅表注册请求的 CDR 序列化/反序列化，用于 subscriber 向 publisher 发送订阅请求。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_messagesPubSubTypes.h:SubTableUnregisterPubSubType": {
+      "name": "SubTableUnregisterPubSubType",
+      "type": "class",
+      "summary": "SubTableUnregister 消息类型的 DDS TopicDataType 实现类，负责订阅表注销请求的 CDR 序列化/反序列化。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_messagesPubSubTypes.h:AlarmPubSubType": {
+      "name": "AlarmPubSubType",
+      "type": "class",
+      "summary": "Alarm 消息类型的 DDS TopicDataType 实现类，负责告警数据的 CDR 序列化/反序列化，支持 key 计算。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_messagesPubSubTypes.h:NamedRetcodePubSubType": {
+      "name": "NamedRetcodePubSubType",
+      "type": "class",
+      "summary": "NamedRetcode 消息类型的 DDS TopicDataType 实现类，负责命名返回码数据的 CDR 序列化/反序列化，无 key 定义。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_messagesPubSubTypes.h:CommandResponsePubSubType": {
+      "name": "CommandResponsePubSubType",
+      "type": "class",
+      "summary": "CommandResponse 消息类型的 DDS TopicDataType 实现类，负责命令响应数据的 CDR 序列化/反序列化，无 key 定义。"
+    },
+    "file:core/ondemand/.gensrctx/dsf_define_model.cxx": {
+      "name": "dsf_define_model.cxx",
+      "type": "file",
+      "summary": "fastddsgen 自动生成的 DDS 数据类型实现文件，包含 DSF::Model::Define、Undefine、ModelRequest 和 ModelRequestEnvelope 四个类的构造函数、拷贝/移动语义、比较运算符及成员访问器的完整实现。"
+    },
+    "file:core/ondemand/.gensrctx/dsf_define_model.h": {
+      "name": "dsf_define_model.h",
+      "type": "file",
+      "summary": "DDS IDL 生成的头文件，声明了 DSF::Model 命名空间下的四个核心数据类型：Define（模型定义，含 name、version、nodeName、dataSchema 等字段）、Undefine（模型注销）、ModelRequest（Discriminated Union，按 DEFINE_TYPE 区分 Define/Undefine）、ModelRequestEnvelope（请求封装），并定义了 DDS Topic 名称常量。"
+    },
+    "file:core/ondemand/.gensrctx/dsf_define_modelCdrAux.ipp": {
+      "name": "dsf_define_modelCdrAux.ipp",
+      "type": "file",
+      "summary": "fastddsgen 自动生成的 CDR 序列化/反序列化辅助文件，为 DSF::Model::Define、Undefine、ModelRequest、ModelRequestEnvelope 提供 CalculateSerializedSize、Serialize、Deserialize 三个模板函数特化，支持 XCDRv1/XCDRv2 编码格式。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_model.h:Define": {
+      "name": "Define",
+      "type": "class",
+      "summary": "DDS 数据结构，表示模型定义。包含 name、version、nodeName、description、dataSchema 五个必选 string 字段，以及 defaultValue、referenceValue（可选 string）、events、alarms（可选 vector）四个可选字段。用于通过 Topic \"dsf/sys/model/define\" 广播变量模型定义。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_model.h:Undefine": {
+      "name": "Undefine",
+      "type": "class",
+      "summary": "DDS 数据结构，表示模型注销请求。包含 modelIndex 和 nodeName 两个 string 字段，用于通知订阅方某个模型定义已被移除。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_model.h:ModelRequest": {
+      "name": "ModelRequest",
+      "type": "class",
+      "summary": "DDS Discriminated Union，使用 DEFINE_TYPE 枚举作为判别器，在 modelDefine（Define）和 modelUndefine（Undefine）两个成员之间切换，用于统一表示模型定义或注销操作。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_model.h:ModelRequestEnvelope": {
+      "name": "ModelRequestEnvelope",
+      "type": "class",
+      "summary": "DDS 数据结构，作为 ModelRequest 的外层封装，仅包含一个 request 字段，用于在 DDS Topic 传输中包裹实际的模型请求。"
+    },
+    "file:core/ondemand/.gensrctx/dsf_define_modelCdrAux.hpp": {
+      "name": "dsf_define_modelCdrAux.hpp",
+      "type": "file",
+      "summary": "fastddsgen 自动生成的 CDR 辅助头文件，定义了 Define、Undefine、ModelRequestEnvelope 三种 DDS 消息类型的最大序列化尺寸常量，并声明 BaoSky::Cdr 命名空间下的 SerializeKey 函数。"
+    },
+    "file:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.h": {
+      "name": "dsf_define_modelPubSubTypes.h",
+      "type": "file",
+      "summary": "fastddsgen 自动生成的 DDS TopicDataType 头文件，声明了 DefinePubSubType、UndefinePubSubType、ModelRequestEnvelopePubSubType 三个序列化/反序列化类，均继承自 BaoSky::dds::TopicDataType。"
+    },
+    "file:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx": {
+      "name": "dsf_define_modelPubSubTypes.cxx",
+      "type": "file",
+      "summary": "fastddsgen 自动生成的 DDS TopicDataType 实现文件，为 Define、Undefine、ModelRequestEnvelope 三种消息类型提供完整的 Serialize、Deserialize、GetKey、CreateData、DeleteData 等方法实现，使用 XCDRv1 编码格式。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.h:DefinePubSubType": {
+      "name": "DefinePubSubType",
+      "type": "class",
+      "summary": "DSF::Model::Define 消息的 DDS TopicDataType 实现类，提供该消息类型的序列化、反序列化、Key 获取及数据生命周期管理功能。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.h:UndefinePubSubType": {
+      "name": "UndefinePubSubType",
+      "type": "class",
+      "summary": "DSF::Model::Undefine 消息的 DDS TopicDataType 实现类，提供该消息类型的序列化、反序列化、Key 获取及数据生命周期管理功能。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.h:ModelRequestEnvelopePubSubType": {
+      "name": "ModelRequestEnvelopePubSubType",
+      "type": "class",
+      "summary": "DSF::Model::ModelRequestEnvelope 消息的 DDS TopicDataType 实现类，提供该消息类型的序列化、反序列化、Key 获取及数据生命周期管理功能。"
+    },
+    "function:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx:DefinePubSubType::Serialize": {
+      "name": "DefinePubSubType::Serialize",
+      "type": "function",
+      "summary": "将 Define 类型数据序列化为 XCDRv1 格式的 CDR 字节流，写入 DDS SerializedPayload。"
+    },
+    "function:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx:DefinePubSubType::Deserialize": {
+      "name": "DefinePubSubType::Deserialize",
+      "type": "function",
+      "summary": "从 DDS SerializedPayload 中反序列化 XCDRv1 格式的字节流，还原为 Define 类型数据。"
+    },
+    "function:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx:DefinePubSubType::GetKey": {
+      "name": "DefinePubSubType::GetKey",
+      "type": "function",
+      "summary": "计算 Define 类型数据的实例 Key 并填充到 InstanceHandle 中，用于 DDS 实例标识。"
+    },
+    "function:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx:UndefinePubSubType::Serialize": {
+      "name": "UndefinePubSubType::Serialize",
+      "type": "function",
+      "summary": "将 Undefine 类型数据序列化为 XCDRv1 格式的 CDR 字节流，写入 DDS SerializedPayload。"
+    },
+    "function:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx:UndefinePubSubType::Deserialize": {
+      "name": "UndefinePubSubType::Deserialize",
+      "type": "function",
+      "summary": "从 DDS SerializedPayload 中反序列化 XCDRv1 格式的字节流，还原为 Undefine 类型数据。"
+    },
+    "function:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx:UndefinePubSubType::GetKey": {
+      "name": "UndefinePubSubType::GetKey",
+      "type": "function",
+      "summary": "计算 Undefine 类型数据的实例 Key 并填充到 InstanceHandle 中，用于 DDS 实例标识。"
+    },
+    "function:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx:ModelRequestEnvelopePubSubType::Serialize": {
+      "name": "ModelRequestEnvelopePubSubType::Serialize",
+      "type": "function",
+      "summary": "将 ModelRequestEnvelope 类型数据序列化为 XCDRv1 格式的 CDR 字节流，写入 DDS SerializedPayload。"
+    },
+    "function:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx:ModelRequestEnvelopePubSubType::Deserialize": {
+      "name": "ModelRequestEnvelopePubSubType::Deserialize",
+      "type": "function",
+      "summary": "从 DDS SerializedPayload 中反序列化 XCDRv1 格式的字节流，还原为 ModelRequestEnvelope 类型数据。"
+    },
+    "function:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx:ModelRequestEnvelopePubSubType::GetKey": {
+      "name": "ModelRequestEnvelopePubSubType::GetKey",
+      "type": "function",
+      "summary": "计算 ModelRequestEnvelope 类型数据的实例 Key 并填充到 InstanceHandle 中，用于 DDS 实例标识。"
+    },
+    "file:core/ondemand/.gensrctx/dsf_define_node.h": {
+      "name": "dsf_define_node.h",
+      "type": "file",
+      "summary": "FastDDSGen 自动生成的 IDL 数据类型头文件，声明了 DSF 命名空间下的 NetworkInterface、BasicInfo 和 RuntimeInfo 三个 DDS 数据结构类，以及相关的 topic 名称和字段名常量。"
+    },
+    "file:core/ondemand/.gensrctx/dsf_define_node.cxx": {
+      "name": "dsf_define_node.cxx",
+      "type": "file",
+      "summary": "FastDDSGen 自动生成的 IDL 数据类型实现文件，包含 NetworkInterface、BasicInfo 和 RuntimeInfo 三个类的构造函数、析构函数、赋值运算符、比较运算符以及所有成员变量的 getter/setter 方法实现。"
+    },
+    "file:core/ondemand/.gensrctx/dsf_define_nodeCdrAux.ipp": {
+      "name": "dsf_define_nodeCdrAux.ipp",
+      "type": "file",
+      "summary": "FastDDSGen 自动生成的 CDR 序列化辅助文件，为 NetworkInterface、BasicInfo 和 RuntimeInfo 提供 CDR 格式的序列化大小计算、序列化写入和反序列化读取的模板特化实现。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_node.h:NetworkInterface": {
+      "name": "NetworkInterface",
+      "type": "class",
+      "summary": "DDS 数据结构类，表示网络接口信息，包含接口名称（interfaceName）和 IP 地址（ipAddress）两个字段。用于 RuntimeInfo 中描述节点的网络配置。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_node.h:BasicInfo": {
+      "name": "BasicInfo",
+      "type": "class",
+      "summary": "DDS 数据结构类，表示节点的基本静态信息，包含节点名称（nodeName）、描述（description）、版本（version）和发布时间（pubtime）四个字段。通过 dsf/node/basicInfo topic 广播。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_node.h:RuntimeInfo": {
+      "name": "RuntimeInfo",
+      "type": "class",
+      "summary": "DDS 数据结构类，表示节点的运行时动态信息，包含节点名称、进程 ID、主机名、可执行文件路径、执行时间戳、用户名、公网地址、属性列表和网络接口列表等 9 个字段。通过 dsf/node/runtimeInfo topic 广播。"
+    },
+    "file:core/ondemand/.gensrctx/dsf_define_nodeCdrAux.hpp": {
+      "name": "dsf_define_nodeCdrAux.hpp",
+      "type": "file",
+      "summary": "fastddsgen 自动生成的 CDR 序列化辅助头文件，定义了 NetworkInterface、BasicInfo、RuntimeInfo 三种 DDS 数据类型的最大 CDR 类型尺寸常量，并声明了对应的 SerializeKey 函数。"
+    },
+    "file:core/ondemand/.gensrctx/dsf_define_nodePubSubTypes.cxx": {
+      "name": "dsf_define_nodePubSubTypes.cxx",
+      "type": "file",
+      "summary": "fastddsgen 自动生成的 DDS TopicDataType 实现文件，为 NetworkInterface、BasicInfo、RuntimeInfo 三种数据类型提供完整的序列化、反序列化、大小计算、数据创建/删除及 Key 获取等方法实现。"
+    },
+    "file:core/ondemand/.gensrctx/dsf_define_nodePubSubTypes.h": {
+      "name": "dsf_define_nodePubSubTypes.h",
+      "type": "file",
+      "summary": "fastddsgen 自动生成的 DDS TopicDataType 头文件，声明了 NetworkInterfacePubSubType、BasicInfoPubSubType、RuntimeInfoPubSubType 三个类，均继承自 BaoSky::dds::TopicDataType，用于 DDS 数据的序列化/反序列化。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_nodePubSubTypes.h:NetworkInterfacePubSubType": {
+      "name": "NetworkInterfacePubSubType",
+      "type": "class",
+      "summary": "DDS TopicDataType 子类，负责 DSF::NetworkInterface 数据类型的序列化/反序列化，包含 Serialize、Deserialize、GetKey 等虚函数实现，使用 mKeyBuffer 存储 Key 数据。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_nodePubSubTypes.h:BasicInfoPubSubType": {
+      "name": "BasicInfoPubSubType",
+      "type": "class",
+      "summary": "DDS TopicDataType 子类，负责 DSF::Node::BasicInfo 数据类型的序列化/反序列化，位于 DSF::Node 命名空间下，包含完整的序列化生命周期方法。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_nodePubSubTypes.h:RuntimeInfoPubSubType": {
+      "name": "RuntimeInfoPubSubType",
+      "type": "class",
+      "summary": "DDS TopicDataType 子类，负责 DSF::Node::RuntimeInfo 数据类型的序列化/反序列化，位于 DSF::Node 命名空间下，最大 CDR 类型尺寸为 1612 字节。"
+    },
+    "file:core/ondemand/.gensrctx/dsf_define_var.cxx": {
+      "name": "dsf_define_var.cxx",
+      "type": "file",
+      "summary": "由 fastddsgen 自动生成的 DDS IDL 数据类型实现文件，包含 DSF::Var 命名空间下所有消息结构体（AccessControl、Define、Undefine、VarRequest、VarRequestEnvelope、DataTransfer、DataTransferEx、VarPubSubInfo、PubTableVarDefine、PubTableDefine、TableDataTransfer、TableUpdateBatch、TableDataTransferEx）的构造函数、析构函数、拷贝/移动赋值、比较运算符和属性 setter/getter 实现。"
+    },
+    "file:core/ondemand/.gensrctx/dsf_define_var.h": {
+      "name": "dsf_define_var.h",
+      "type": "file",
+      "summary": "由 fastddsgen 自动生成的 DDS IDL 数据类型头文件，声明了 DSF::Var 命名空间下所有消息结构体（AccessControl、Define、Undefine、VarRequest、VarRequestEnvelope、DataTransfer、DataTransferEx、VarPubSubInfo、PubTableVarDefine、PubTableDefine、TableDataTransfer、TableUpdateBatch、TableDataTransferEx）的类定义、枚举类型（DEFINE_TYPE、BLOB_TYPE）以及 DDS Topic 名称常量。"
+    },
+    "file:core/ondemand/.gensrctx/dsf_define_varCdrAux.ipp": {
+      "name": "dsf_define_varCdrAux.ipp",
+      "type": "file",
+      "summary": "由 fastddsgen 自动生成的 CDR（Common Data Representation）序列化辅助实现文件，包含 DSF::Var 命名空间下所有 DDS 消息结构体的 CDR 序列化和反序列化函数，用于 DDS 数据的网络传输编解码。"
+    },
+    "file:core/ondemand/.gensrctx/dsf_define_varCdrAux.hpp": {
+      "name": "dsf_define_varCdrAux.hpp",
+      "type": "file",
+      "summary": "FastDDS 自动生成的 CDR 序列化辅助头文件，为 onDemand 系统中的 IDL 消息类型提供 Cdr 序列化/反序列化的函数声明。"
+    },
+    "file:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx": {
+      "name": "dsf_define_varPubSubTypes.cxx",
+      "type": "file",
+      "summary": "FastDDS 自动生成的 PubSubType 实现文件，包含 11 个 DDS 消息类型的序列化/反序列化/键值提取等操作，是 onDemand 变量发布订阅系统的 DDS 数据传输核心。"
+    },
+    "file:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.h": {
+      "name": "dsf_define_varPubSubTypes.h",
+      "type": "file",
+      "summary": "FastDDS 自动生成的 PubSubType 头文件，声明 11 个 DDS 消息类型的 PubSubType 类，用于 DDS 中间件的数据类型注册和序列化接口。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx:AccessControlPubSubType": {
+      "name": "AccessControlPubSubType",
+      "type": "class",
+      "summary": "AccessControl 消息的 DDS PubSubType 实现，提供该消息类型的序列化、反序列化、大小计算和键值提取功能。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx:DefinePubSubType": {
+      "name": "DefinePubSubType",
+      "type": "class",
+      "summary": "Define 消息的 DDS PubSubType 实现，处理变量定义消息的 DDS 序列化和反序列化。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx:UndefinePubSubType": {
+      "name": "UndefinePubSubType",
+      "type": "class",
+      "summary": "Undefine 消息的 DDS PubSubType 实现，处理变量取消定义消息的 DDS 序列化和反序列化。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx:VarRequestEnvelopePubSubType": {
+      "name": "VarRequestEnvelopePubSubType",
+      "type": "class",
+      "summary": "VarRequestEnvelope 消息的 DDS PubSubType 实现，处理变量订阅请求信封消息的 DDS 序列化和反序列化。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx:DataTransferPubSubType": {
+      "name": "DataTransferPubSubType",
+      "type": "class",
+      "summary": "DataTransfer 消息的 DDS PubSubType 实现，处理变量数据传输消息的 DDS 序列化和反序列化。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx:DataTransferExPubSubType": {
+      "name": "DataTransferExPubSubType",
+      "type": "class",
+      "summary": "DataTransferEx 扩展消息的 DDS PubSubType 实现，处理扩展变量数据传输消息的 DDS 序列化和反序列化。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx:VarPubSubInfoPubSubType": {
+      "name": "VarPubSubInfoPubSubType",
+      "type": "class",
+      "summary": "VarPubSubInfo 消息的 DDS PubSubType 实现，处理变量发布订阅信息消息的 DDS 序列化和反序列化。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx:PubTableVarDefinePubSubType": {
+      "name": "PubTableVarDefinePubSubType",
+      "type": "class",
+      "summary": "PubTableVarDefine 消息的 DDS PubSubType 实现，处理发布表变量定义消息的 DDS 序列化和反序列化。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx:PubTableDefinePubSubType": {
+      "name": "PubTableDefinePubSubType",
+      "type": "class",
+      "summary": "PubTableDefine 消息的 DDS PubSubType 实现，处理发布表定义消息的 DDS 序列化和反序列化。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx:TableDataTransferPubSubType": {
+      "name": "TableDataTransferPubSubType",
+      "type": "class",
+      "summary": "TableDataTransfer 消息的 DDS PubSubType 实现，处理表数据传输消息的 DDS 序列化和反序列化，用于按 bucket 批量传输变量数据。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx:TableUpdateBatchPubSubType": {
+      "name": "TableUpdateBatchPubSubType",
+      "type": "class",
+      "summary": "TableUpdateBatch 消息的 DDS PubSubType 实现，处理表批量更新消息的 DDS 序列化和反序列化。"
+    },
+    "class:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx:TableDataTransferExPubSubType": {
+      "name": "TableDataTransferExPubSubType",
+      "type": "class",
+      "summary": "TableDataTransferEx 扩展消息的 DDS PubSubType 实现，处理扩展表数据传输消息的 DDS 序列化和反序列化。"
+    },
+    "file:core/ondemand/.gensrctx/FCV.h": {
+      "name": "FCV.h",
+      "type": "file",
+      "summary": "由 fastddsgen 自动生成的 IDL 类型头文件，声明了 FCVType 类（流量控制阀数据类型），包含 flow、temp、press、isopen、openvalue、healthlevel 六个成员及其 getter/setter 方法。"
+    },
+    "class:core/ondemand/.gensrctx/FCV.h:FCVType": {
+      "name": "FCVType",
+      "type": "class",
+      "summary": "DDS IDL 定义的流量控制阀数据结构，包含流量(flow)、温度(temp)、压力(press)、开关状态(isopen)、开度值(openvalue)和健康等级(healthlevel) 六个字段，提供完整的拷贝/移动语义和比较运算符。"
+    },
+    "file:core/ondemand/.gensrctx/FCV.cxx": {
+      "name": "FCV.cxx",
+      "type": "file",
+      "summary": "FCVType 类的实现文件，包含构造函数、拷贝/移动赋值运算符、相等比较运算符以及六个字段的 getter/setter 方法。文件末尾 include 了 FCVCdrAux.ipp 以引入 CDR 序列化辅助函数。"
+    },
+    "file:core/ondemand/.gensrctx/FCVCdrAux.ipp": {
+      "name": "FCVCdrAux.ipp",
+      "type": "file",
+      "summary": "FCVType 的 CDR 序列化/反序列化辅助函数模板特化文件，包含序列化大小计算、序列化和反序列化三个模板特化函数，以及空的 SerializeKey 实现。通过 #include 方式被 FCV.cxx 包含。"
+    },
+    "file:core/ondemand/.gensrctx/FCVCdrAux.hpp": {
+      "name": "FCVCdrAux.hpp",
+      "type": "file",
+      "summary": "由 fastddsgen 工具自动生成的 CDR 辅助头文件，声明 FCVType 的最大序列化尺寸常量和 SerializeKey 函数。"
+    },
+    "file:core/ondemand/.gensrctx/FCVPubSubTypes.h": {
+      "name": "FCVPubSubTypes.h",
+      "type": "file",
+      "summary": "由 fastddsgen 工具自动生成的头文件，声明 FCVTypePubSubType 类，该类继承自 BaoSky::dds::TopicDataType，为 FCVType 提供 DDS 序列化/反序列化接口。"
+    },
+    "class:core/ondemand/.gensrctx/FCVPubSubTypes.h:FCVTypePubSubType": {
+      "name": "FCVTypePubSubType",
+      "type": "class",
+      "summary": "DDS TopicDataType 实现类，为 FCVType 提供 CDR 序列化、反序列化、数据创建/销毁和 Key 获取功能，是 FCVType 与 DDS 中间件之间的桥接层。"
+    },
+    "file:core/ondemand/.gensrctx/FCVPubSubTypes.cxx": {
+      "name": "FCVPubSubTypes.cxx",
+      "type": "file",
+      "summary": "由 fastddsgen 工具自动生成的实现文件，包含 FCVTypePubSubType 类的序列化、反序列化、数据管理和 Key 获取等方法的具体实现。"
+    },
+    "function:core/ondemand/.gensrctx/FCVPubSubTypes.cxx:FCVTypePubSubType": {
+      "name": "FCVTypePubSubType",
+      "type": "function",
+      "summary": "构造函数，初始化类型名称为 FCVType，计算类型大小（含 CDR 对齐），分配 Key 缓冲区并清零。"
+    },
+    "function:core/ondemand/.gensrctx/FCVPubSubTypes.cxx:Serialize": {
+      "name": "Serialize",
+      "type": "function",
+      "summary": "将 FCVType 数据序列化为 CDR 格式的 SerializedPayload，包含封装头序列化和字节序标识设置。"
+    },
+    "function:core/ondemand/.gensrctx/FCVPubSubTypes.cxx:Deserialize": {
+      "name": "Deserialize",
+      "type": "function",
+      "summary": "从 CDR 格式的 SerializedPayload 反序列化数据到 FCVType 对象，处理封装头解码和字节序标识。"
+    },
+    "function:core/ondemand/.gensrctx/FCVPubSubTypes.cxx:GetSerializedSizeProvider": {
+      "name": "GetSerializedSizeProvider",
+      "type": "function",
+      "summary": "返回一个 lambda 函数，用于计算 FCVType 数据的 CDR 序列化大小（含 4 字节封装头）。"
+    },
+    "function:core/ondemand/.gensrctx/FCVPubSubTypes.cxx:GetKey": {
+      "name": "GetKey",
+      "type": "function",
+      "summary": "获取 FCVType 数据的 InstanceHandle Key，通过 SerializeKey 将 Key 序列化到内部缓冲区，然后复制前 16 字节到 handle。"
+    },
+    "file:sample/data_memory_manger/concurrentqueue.h": {
+      "name": "concurrentqueue.h",
+      "type": "file",
+      "summary": "moodycamel::ConcurrentQueue 第三方高性能无锁队列库的头文件实现，支持多生产者多消费者（MPMC）并发访问，采用分层块索引和无锁原子操作实现高吞吐量。"
+    },
+    "file:sample/data_memory_manger/variable_store.h": {
+      "name": "variable_store.h",
+      "type": "file",
+      "summary": "基于 Seqlock 的无锁变量存储实现，提供变量注册、读写、脏数据追踪功能。使用 64 字节对齐的 arena 内存布局和 ConcurrentQueue 脏队列，支持零拷贝读取和批量脏数据分发。"
+    },
+    "file:sample/data_memory_manger/example.cc": {
+      "name": "example.cc",
+      "type": "file",
+      "summary": "VarStore 性能对比测试程序，比较三种变量访问模式（直接 ID、每次哈希计算、缓存映射表）在百万级点位下的读写和脏数据发布性能。"
+    },
+    "class:sample/data_memory_manger/concurrentqueue.h:ProducerToken": {
+      "name": "ProducerToken",
+      "type": "class",
+      "summary": "生产者令牌类，用于绑定线程到特定生产者以优化入队性能，支持 swap 和 valid 状态查询。"
+    },
+    "class:sample/data_memory_manger/concurrentqueue.h:ConsumerToken": {
+      "name": "ConsumerToken",
+      "type": "class",
+      "summary": "消费者令牌类，维护消费偏移和当前生产者引用，用于优化出队性能。"
+    },
+    "class:sample/data_memory_manger/concurrentqueue.h:ConcurrentQueueProducerTypelessBase": {
+      "name": "ConcurrentQueueProducerTypelessBase",
+      "type": "class",
+      "summary": "生产者的类型擦除基类，维护链表 next 指针和 inactive 标志，用于队列管理所有生产者。"
+    },
+    "class:sample/data_memory_manger/concurrentqueue.h:ProducerBase": {
+      "name": "ProducerBase",
+      "type": "class",
+      "summary": "生产者的模板基类，管理 tail/head 索引、出队优化计数和尾块引用，提供 size_approx 近似大小查询。"
+    },
+    "class:sample/data_memory_manger/concurrentqueue.h:ExplicitProducer": {
+      "name": "ExplicitProducer",
+      "type": "class",
+      "summary": "显式生产者实现，通过块索引数组管理内存块，支持显式令牌入队和批量入队操作。"
+    },
+    "class:sample/data_memory_manger/concurrentqueue.h:ImplicitProducer": {
+      "name": "ImplicitProducer",
+      "type": "class",
+      "summary": "隐式生产者实现，使用线程哈希自动映射到生产者，通过隐式块索引管理内存分配。"
+    },
+    "class:sample/data_memory_manger/concurrentqueue.h:ImplicitProducerKVP": {
+      "name": "ImplicitProducerKVP",
+      "type": "class",
+      "summary": "隐式生产者的键值对结构，用于哈希表中存储线程 ID 到生产者的映射关系。"
+    },
+    "class:sample/data_memory_manger/variable_store.h:VarStore": {
+      "name": "VarStore",
+      "type": "class",
+      "summary": "无锁变量存储核心类，提供变量注册/注销、Seqlock 读写、脏数据追踪、零拷贝读取等功能。使用 arena 内存布局和 ConcurrentQueue 脏队列实现高性能并发访问。"
+    },
+    "function:sample/data_memory_manger/variable_store.h:register_var": {
+      "name": "register_var",
+      "type": "function",
+      "summary": "注册一个新变量到存储中，通过 hash 查找或分配新 ID，累加 arena 大小。重复注册相同 hash 且 size 匹配时返回已有 ID。"
+    },
+    "function:sample/data_memory_manger/variable_store.h:finalize": {
+      "name": "finalize",
+      "type": "function",
+      "summary": "完成变量注册阶段，分配 64 字节对齐的 arena 内存并迁移旧数据，重建脏标志数组。调用后不可再注册新变量。"
+    },
+    "function:sample/data_memory_manger/variable_store.h:write": {
+      "name": "write",
+      "type": "function",
+      "summary": "向指定 ID 的变量写入数据，使用 Seqlock 模式（fetch_add 奇数→memcpy→fetch_add 偶数）保证读写一致性，并标记脏状态入队。"
+    },
+    "function:sample/data_memory_manger/variable_store.h:read": {
+      "name": "read",
+      "type": "function",
+      "summary": "从指定 ID 的变量读取数据，使用 Seqlock 重试机制（最多 10 次）确保读取到一致的数据快照。"
+    },
+    "function:sample/data_memory_manger/example.cc:test_method1_direct_id": {
+      "name": "test_method1_direct_id",
+      "type": "function",
+      "summary": "测试方式1：直接使用整数 ID 访问变量（最快模式），启动 Writer/Reader/Publisher 三个线程进行并发读写和脏数据发布性能测试。"
+    },
+    "function:sample/data_memory_manger/example.cc:test_method2_string_hash_every_time": {
+      "name": "test_method2_string_hash_every_time",
+      "type": "function",
+      "summary": "测试方式2：每次操作都通过字符串计算哈希再查询 ID（最慢模式），模拟动态变量名场景下的性能开销。"
+    },
+    "function:sample/data_memory_manger/example.cc:test_method3_cache_mapping": {
+      "name": "test_method3_cache_mapping",
+      "type": "function",
+      "summary": "测试方式3：缓存 name→id 映射表（推荐模式），初始化时建立映射，运行时通过 unordered_map 查表获取 ID，在灵活性和性能之间取得平衡。"
+    },
+    "function:sample/data_memory_manger/example.cc:main": {
+      "name": "main",
+      "type": "function",
+      "summary": "程序入口，解析命令行参数（测试方式、点位数、测试时长），依次运行选定的性能测试方法。"
+    },
+    "file:sample/node_example/HelloWorldOneTx/source/HelloWorldOne.cxx": {
+      "name": "HelloWorldOne.cxx",
+      "type": "file",
+      "summary": "HelloWorldOne DDS 数据类型的实现文件，包含构造函数、赋值运算符、比较运算符以及 index/points 成员的 getter/setter 方法。该文件由 fastddsgen 工具自动生成，末尾通过 #include 引入 CDR 序列化辅助代码。"
+    },
+    "file:sample/node_example/HelloWorldOneTx/source/HelloWorldOne.h": {
+      "name": "HelloWorldOne.h",
+      "type": "file",
+      "summary": "HelloWorldOne DDS 数据类型的头文件声明，定义了包含 index (uint32_t) 和 points (vector<uint8_t>) 两个成员的数据结构。由 fastddsgen 工具自动生成，提供 DLL 导出宏和完整的类接口声明。"
+    },
+    "file:sample/node_example/HelloWorldOneTx/source/HelloWorldOneCdrAux.ipp": {
+      "name": "HelloWorldOneCdrAux.ipp",
+      "type": "file",
+      "summary": "HelloWorldOne 的 CDR 序列化/反序列化辅助函数实现，提供序列化大小计算、Serialize 和 Deserialize 三个模板特化函数，支持 XCDRv2 编码格式。由 fastddsgen 自动生成，以 .ipp 形式在 .cxx 文件末尾被 #include 引入。"
+    },
+    "class:sample/node_example/HelloWorldOneTx/source/HelloWorldOne.h:HelloWorldOne": {
+      "name": "HelloWorldOne",
+      "type": "class",
+      "summary": "IDL 定义的 DDS 数据传输类，包含 index（变量哈希索引）和 points（字节数组数据）两个成员，用于 OnDemand 系统中变量数据的序列化传输。提供完整的拷贝/移动语义和比较运算符。"
+    },
+    "file:sample/node_example/HelloWorldOneTx/source/HelloWorldOneCdrAux.hpp": {
+      "name": "HelloWorldOneCdrAux.hpp",
+      "type": "file",
+      "summary": "fastddsgen 自动生成的 CDR 辅助头文件，定义了 HelloWorldOne 类型的最大序列化尺寸常量，并前向声明了 serialize_key 函数。"
+    },
+    "file:sample/node_example/HelloWorldOneTx/source/HelloWorldOnePubSubTypes.cxx": {
+      "name": "HelloWorldOnePubSubTypes.cxx",
+      "type": "file",
+      "summary": "fastddsgen 自动生成的序列化实现文件，为 HelloWorldOne 类型实现了 CDR 序列化、反序列化、尺寸计算及数据创建/删除等 DDS TopicDataType 接口方法。"
+    },
+    "file:sample/node_example/HelloWorldOneTx/source/HelloWorldOnePubSubTypes.h": {
+      "name": "HelloWorldOnePubSubTypes.h",
+      "type": "file",
+      "summary": "fastddsgen 自动生成的头文件，声明了 HelloWorldOnePubSubType 类，该类继承自 BaoSky::dds::TopicDataType，为 HelloWorldOne 数据类型提供 DDS 序列化支持。"
+    },
+    "class:sample/node_example/HelloWorldOneTx/source/HelloWorldOnePubSubTypes.h:HelloWorldOnePubSubType": {
+      "name": "HelloWorldOnePubSubType",
+      "type": "class",
+      "summary": "DDS TopicDataType 实现类，为 HelloWorldOne IDL 数据类型提供 CDR 序列化/反序列化能力，用于 DDS 数据传输。"
+    },
+    "function:sample/node_example/HelloWorldOneTx/source/HelloWorldOnePubSubTypes.cxx:Serialize": {
+      "name": "Serialize",
+      "type": "function",
+      "summary": "将 HelloWorldOne 数据对象序列化为 CDR 格式的 SerializedPayload，使用 XCDRv1 编码并自动处理封装头和字节序。"
+    },
+    "function:sample/node_example/HelloWorldOneTx/source/HelloWorldOnePubSubTypes.cxx:Deserialize": {
+      "name": "Deserialize",
+      "type": "function",
+      "summary": "从 CDR 格式的 SerializedPayload 反序列化数据到 HelloWorldOne 对象，处理封装头解析和字节序检测。"
+    },
+    "function:sample/node_example/HelloWorldOneTx/source/HelloWorldOnePubSubTypes.cxx:GetSerializedSizeProvider": {
+      "name": "GetSerializedSizeProvider",
+      "type": "function",
+      "summary": "返回一个 lambda 函数，用于延迟计算 HelloWorldOne 对象的 CDR 序列化大小（含 4 字节封装开销）。"
+    },
+    "file:tests/txdds_test_idl/PerformanceTest.cxx": {
+      "name": "PerformanceTest.cxx",
+      "type": "file",
+      "summary": "DDS IDL 自动生成的 TestMessage 结构体实现文件，包含构造函数、赋值运算符以及 seq_num、timestamp、message_type、payload 四个成员的 getter/setter 方法。"
+    },
+    "file:tests/txdds_test_idl/PerformanceTest.h": {
+      "name": "PerformanceTest.h",
+      "type": "file",
+      "summary": "DDS IDL 自动生成的 TestMessage 类头文件声明，定义了包含 seq_num(uint32)、timestamp(uint64)、message_type(string)、payload(vector<uint8_t>) 四个成员的 DDS 消息结构体。"
+    },
+    "file:tests/txdds_test_idl/PerformanceTestCdrAux.ipp": {
+      "name": "PerformanceTestCdrAux.ipp",
+      "type": "file",
+      "summary": "DDS IDL 自动生成的 CDR 序列化辅助文件，提供 TestMessage 的序列化大小计算、CDR 序列化、CDR 反序列化以及 key 序列化四个模板特化函数。"
+    },
+    "file:tests/txdds_test_idl/PerformanceTestCdrAux.hpp": {
+      "name": "PerformanceTestCdrAux.hpp",
+      "type": "file",
+      "summary": "由 fastddsgen 自动生成的 CDR 辅助头文件，定义 PerformanceTest::TestMessage 的最大 CDR 序列化尺寸常量，并声明 serialize_key 函数。"
+    },
+    "file:tests/txdds_test_idl/PerformanceTestPubSubTypes.cxx": {
+      "name": "PerformanceTestPubSubTypes.cxx",
+      "type": "file",
+      "summary": "TestMessagePubSubType 类的序列化/反序列化实现文件，由 fastddsgen 自动生成，使用 BaoSky::Cdr 的 XCDRv1 格式进行 CDR 序列化。"
+    },
+    "file:tests/txdds_test_idl/PerformanceTestPubSubTypes.h": {
+      "name": "PerformanceTestPubSubTypes.h",
+      "type": "file",
+      "summary": "TestMessagePubSubType 类声明头文件，继承自 BaoSky::dds::TopicDataType，声明 DDS 主题数据类型的序列化接口。"
+    },
+    "class:tests/txdds_test_idl/PerformanceTestPubSubTypes.cxx:TestMessagePubSubType": {
+      "name": "TestMessagePubSubType",
+      "type": "class",
+      "summary": "DDS 主题数据类型实现类，负责 TestMessage 的 CDR 序列化、反序列化、大小计算及内存管理，继承自 TopicDataType。"
+    },
+    "function:tests/txdds_test_idl/PerformanceTestPubSubTypes.cxx:Serialize": {
+      "name": "Serialize",
+      "type": "function",
+      "summary": "将 TestMessage 对象序列化为 CDR 格式的 SerializedPayload，使用 XCDRv1 编码并处理封装头和字节序。"
+    },
+    "function:tests/txdds_test_idl/PerformanceTestPubSubTypes.cxx:Deserialize": {
+      "name": "Deserialize",
+      "type": "function",
+      "summary": "从 SerializedPayload 反序列化 CDR 数据到 TestMessage 对象，处理封装头解析和字节序检测。"
+    },
+    "file:thirdparty/spdlog/include/spdlog/sinks/base_sink.h": {
+      "name": "base_sink.h",
+      "type": "file",
+      "summary": "spdlog sink 基类模板，以 Mutex 为模板参数提供线程安全的日志 sink 抽象基类，封装了 log/flush/set_pattern/set_formatter 的线程安全调用，子类只需实现 sink_it_() 和 flush_() 纯虚函数。"
+    },
+    "class:thirdparty/spdlog/include/spdlog/sinks/base_sink.h:base_sink": {
+      "name": "base_sink",
+      "type": "class",
+      "summary": "spdlog 日志 sink 的线程安全基类模板。提供 log/flush/set_pattern/set_formatter 的 final override（内部加锁后委托给子类的 sink_it_/flush_ 等纯虚函数）。禁止拷贝和移动。"
+    },
+    "file:thirdparty/spdlog/include/spdlog/sinks/dist_sink.h": {
+      "name": "dist_sink.h",
+      "type": "file",
+      "summary": "分布式 sink（多路复用器），将日志消息分发到一组子 sink。支持动态添加/移除子 sink，并将 formatter 设置传播到所有子 sink。"
+    },
+    "class:thirdparty/spdlog/include/spdlog/sinks/dist_sink.h:dist_sink": {
+      "name": "dist_sink",
+      "type": "class",
+      "summary": "日志消息分发 sink，继承 base_sink，维护子 sink 列表并在 sink_it_() 中遍历分发到所有满足日志级别的子 sink。支持 add_sink/remove_sink/set_sinks 动态管理子 sink。"
+    },
+    "file:thirdparty/spdlog/include/spdlog/sinks/dup_filter_sink.h": {
+      "name": "dup_filter_sink.h",
+      "type": "file",
+      "summary": "重复消息过滤 sink，在指定时间窗口内跳过与上一条相同的消息，并在出现新消息时输出一条 'Skipped N duplicate messages..' 通知。"
+    },
+    "class:thirdparty/spdlog/include/spdlog/sinks/dup_filter_sink.h:dup_filter_sink": {
+      "name": "dup_filter_sink",
+      "type": "class",
+      "summary": "重复日志消息过滤器，继承 dist_sink。在 max_skip_duration 时间窗口内，如果连续收到相同 payload 的消息则跳过，直到出现不同消息时输出跳过计数通知。"
+    },
+    "pipeline:.github/workflows/ci.yml": {
+      "name": "ci.yml",
+      "type": "pipeline",
+      "summary": "GitHub Actions CI 工作流，在 push（main/dev）和 PR（main）时触发，支持手动选择 DDS 实现（fastdds/txdds）。包含四个阶段：依赖安装、编译构建、单元测试和报告生成。"
+    },
+    "step:.github/workflows/ci.yml:prepare": {
+      "name": "prepare",
+      "type": "step",
+      "summary": "安装系统依赖（build-essential、cmake、libgtest-dev 等）并编译安装 Google Test 框架，为后续构建和测试做准备。"
+    },
+    "step:.github/workflows/ci.yml:build": {
+      "name": "build",
+      "type": "step",
+      "summary": "根据选择的 DDS 实现（fastdds 或 txdds）配置 CMake、编译项目，并上传构建产物。txdds 模式下会自动创建版本化的 .so 符号链接。"
+    },
+    "step:.github/workflows/ci.yml:test": {
+      "name": "test",
+      "type": "step",
+      "summary": "下载构建产物并运行四个测试套件（test_log、test_timer、test_ddswrapper、test_ondemand），排除已知的不稳定恢复测试用例，上传 GoogleTest XML 测试结果。"
+    },
+    "step:.github/workflows/ci.yml:report": {
+      "name": "report",
+      "type": "step",
+      "summary": "解析 GoogleTest XML 测试结果，生成包含概览卡片和详细用例表格的 HTML 报告和 Markdown 摘要，上传为 CI artifact 并写入 GitHub Step Summary。"
+    },
+    "config:.env": {
+      "name": ".env",
+      "type": "config",
+      "summary": "Shell 环境配置脚本，自动定位项目根目录并设置 LD_LIBRARY_PATH，指向 FastDDS 和 TXDDS 的第三方库路径，确保运行时能正确加载 DDS 动态链接库。"
+    },
+    "document:CLAUDE.md": {
+      "name": "CLAUDE.md",
+      "type": "document",
+      "summary": "Claude Code 辅助文件，提供项目构建命令、测试流程、代码格式化配置，以及 OnDemand 系统的核心架构说明（发布/订阅模型、DDS Topics、频率协商机制）和 C++17 遗留代码维护原则。"
+    },
+    "config:CMakeLists.txt": {
+      "name": "CMakeLists.txt",
+      "type": "config",
+      "summary": "CMake 顶层构建配置文件，定义 C++17 标准，提供 FastDDS/TXDDS 双实现切换选项（互斥），并组织 common/log、core、tests、sample 四个子目录的构建。"
+    },
+    "document:README.md": {
+      "name": "README.md",
+      "type": "document",
+      "summary": "OnDemand 模块的完整架构文档，详细描述了基于 FastDDS 的高性能按需变量发布/订阅系统，涵盖项目结构、核心组件（OnDemandPub/OnDemandSub/VarStore/BucketManager）、数据结构定义、DDS 通信协议、数据流时序、性能优化设计及使用示例。"
+    },
+    "document:docs/design_ondemand_definitions.md": {
+      "name": "design_ondemand_definitions.md",
+      "type": "document",
+      "summary": "大规模变量内存优化设计方案文档，详细描述了 Lazy Create（懒创建）方案：通过新增 registerVars() API 延迟分配 VarStore/varIndex_ 等重结构，将 600K 变量场景下 pub 端 ~520MB 内存降至仅在首次 subscribe 时按需创建，涵盖 API 设计、数据结构、实现细节、向后兼容及分阶段实现计划。"
+    },
+    "document:docs/design_ondemand_lite_broadcast.md": {
+      "name": "design_ondemand_lite_broadcast.md",
+      "type": "document",
+      "summary": "轻量广播方案设计文档，提出 Lite Topic + 按需创建策略：pub 端仅存储变量名和大小（LiteVarInfo），通过 PubTableDefineLite 轻量 IDL 广播，subscribe 时才触发真正 createVars 并广播完整 PubTableDefine，将 pub+sub 总内存从 ~502MB 降至 ~20MB，包含 IDL 定义、pub/sub 端设计、时序图及风险分析。"
+    },
+    "document:docs/onDemand_overview.md": {
+      "name": "onDemand_overview.md",
+      "type": "document",
+      "summary": "onDemand 按需发布订阅系统的项目概述文档，涵盖项目定位（DDS 大规模变量框架）、整体架构（分层说明）、分桶机制（hash 分桶 + 调度对齐）、VarStore 无锁存储（Seqlock + 64 字节对齐 arena）、时间轮调度、Pub/Sub 端工作流程、DDS 通信层及性能优化要点。"
+    },
+    "document:docs/ondemand_architecture.md": {
+      "name": "ondemand_architecture.md",
+      "type": "document",
+      "summary": "OnDemand 模块架构文档，全面记录项目结构、整体架构图、核心组件（OnDemandPub/OnDemandSub）、主要数据结构（VarMetadata、VarStore、BucketManager、PublishGroupKey 等）、IDL 消息结构、DDS 通信协议、数据流（订阅建立/数据推送/取消订阅）、性能设计及使用示例。"
+    },
+    "document:docs/variable_store_design.md": {
+      "name": "variable_store_design.md",
+      "type": "document",
+      "summary": "VarStore 组件的专项设计文档，详细描述其 64 字节对齐 arena 内存布局、Seqlock 无锁读写协议、Dirty 追踪机制（脏标记 + ConcurrentQueue）、零拷贝接口（read_ptr/ScopedPtr、write_ptr）、并发模型（单写多读 + 双重检查竞态防护）及关键路径性能分析。"
+    },
+    "file:.clang-format": {
+      "name": ".clang-format",
+      "type": "file",
+      "summary": "clang-format 代码格式化配置文件，定义了 LLVM 风格的 4 空格缩进及 C++ 代码排版规则。"
+    },
+    "document:.claude/CLAUDE.md": {
+      "name": "CLAUDE.md",
+      "type": "document",
+      "summary": "项目级 Claude Code 指令文件，定义了 C++17 遗留代码维护的核心原则：内存安全、性能优化、线程安全和增量重构策略。"
+    },
+    "document:.claude/skills/cpp-legacy-maintain/SKILL.md": {
+      "name": "SKILL.md",
+      "type": "document",
+      "summary": "C++ 遗留代码维护 Skill 定义文件，提供重构前后的安全检查清单和最佳实践指导。"
+    },
+    "file:.understand-anything/.understandignore": {
+      "name": ".understandignore",
+      "type": "file",
+      "summary": "Understand-Anything 工具的忽略规则配置，定义了项目分析时应排除的文件和目录模式。"
+    },
+    "config:.understand-anything/config.json": {
+      "name": "config.json",
+      "type": "config",
+      "summary": "Understand-Anything 工具的输出语言配置文件。"
+    },
+    "class:common/fastdds_wrapper/fastdds_node.cc:FastDataNode": {
+      "name": "FastDataNode",
+      "type": "class",
+      "summary": "FastDDS 数据通信节点类，封装 DomainParticipant、Publisher、Subscriber 的生命周期管理，支持多种构造方式（默认 QoS、自定义 QoS、XML 配置）和模板化的 DataWriter/DataReader 创建。"
+    },
+    "document:common/fastdds_wrapper/readme.md": {
+      "name": "readme.md",
+      "type": "document",
+      "summary": "FastDDS 封装模块的简要说明文档。"
+    },
+    "document:common/log/CMakeLists.txt": {
+      "name": "CMakeLists.txt",
+      "type": "document",
+      "summary": "日志模块的 CMake 构建配置文件，定义了 spdlog 依赖和自定义 rotating file sink 的编译目标。"
+    },
+    "file:common/txdds_wrapper/txdds_listeners.h": {
+      "name": "txdds_listeners.h",
+      "type": "file",
+      "summary": "TXDDS 监听器封装头文件，结构与 fastdds_listeners.h 对齐，将 BaoSky TXDDS 原生回调桥接到 std::function 回调机制，支持 Participant/Writer/Reader 发现和数据到达事件。"
+    },
+    "file:common/txdds_wrapper/txdds_node.cc": {
+      "name": "txdds_node.cc",
+      "type": "file",
+      "summary": "TXDDSNode 类的实现文件，负责 BaoSky TXDDS DomainParticipant 的创建与初始化、Publisher/Subscriber 管理、Topic 注册及资源清理。结构与 fastdds_node.cc 对齐。"
+    },
+    "class:common/txdds_wrapper/txdds_node.cc:TXDDSNode": {
+      "name": "TXDDSNode",
+      "type": "class",
+      "summary": "TXDDS 数据通信节点类，封装 BaoSky DDS 的 DomainParticipant、Publisher、Subscriber 生命周期管理，与 FastDataNode 保持对称的接口设计。"
+    },
+    "file:common/txdds_wrapper/txdds_node.h": {
+      "name": "txdds_node.h",
+      "type": "file",
+      "summary": "TXDDSNode 类声明头文件，定义了基于 BaoSky TXDDS 的数据通信节点公共接口，与 fastdds_node.h 保持对称的 API 设计。"
+    },
+    "file:common/txdds_wrapper/txdds_qos_config.cc": {
+      "name": "txdds_qos_config.cc",
+      "type": "file",
+      "summary": "TXDDS QoS 配置构建器实现文件，包含五个 Builder 类的实现和 toDuration/makeIPv4Locator 工具函数。额外支持 UDP 传输配置和 Locator 设置。"
+    },
+    "file:common/txdds_wrapper/txdds_qos_config.h": {
+      "name": "txdds_qos_config.h",
+      "type": "file",
+      "summary": "TXDDS QoS 配置构建器头文件，定义了与 fastdds_qos_config.h 对齐的 Builder 类体系，支持 BaoSky TXDDS 的 QoS 策略配置。"
+    },
+    "file:common/txdds_wrapper/txdds_topic_reader.hpp": {
+      "name": "txdds_topic_reader.hpp",
+      "type": "file",
+      "summary": "TXDDS 主题读取器模板类，封装 BaoSky DataReader 的创建和消息回调注册，与 FastDDSTopicReader 保持对称接口。"
+    },
+    "file:common/txdds_wrapper/txdds_topic_writer.hpp": {
+      "name": "txdds_topic_writer.hpp",
+      "type": "file",
+      "summary": "TXDDS 主题写入器模板类，封装 BaoSky DataWriter 的创建和消息发送功能，与 FastDDSTopicWriter 保持对称接口。"
+    },
+    "config:config/logConfig.json": {
+      "name": "logConfig.json",
+      "type": "config",
+      "summary": "spdlog 日志框架配置文件，定义日志输出文件路径、日志级别(trace)、最大文件大小(1MB)、备份数量(10)、异步模式及日志格式模板。"
+    },
+    "file:core/CMakeLists.txt": {
+      "name": "CMakeLists.txt",
+      "type": "file",
+      "summary": "核心库的 CMake 构建配置，根据 DDS_IMPL 变量选择 FastDDS 或 TXDDS 实现，编译 ondemand 模块、DDS wrapper 和 IDL 生成代码，链接 CRoaring、spdlog 等依赖库。"
+    },
+    "file:core/ondemand/sub-pub.cc11": {
+      "name": "sub-pub.cc11",
+      "type": "file",
+      "summary": "OnDemand 发布/订阅系统演示程序，实现两个 DDS 节点(NodeA/NodeB)互相发布和订阅 1000 个变量，演示批量写入、频率协商和时间戳监控。"
+    },
+    "schema:core/ondemand/idl/dsf_define_datatypes.idl": {
+      "name": "dsf_define_datatypes.idl",
+      "type": "schema",
+      "summary": "DSF 基础数据类型定义文件，参照 IEC61131-3 标准定义了完整的数据类型体系，包括布尔、整型(8~64位)、浮点、字符串、时间日期等类型，以及 Timespec、DataBuffer 等基础结构体。"
+    },
+    "schema:core/ondemand/idl/dsf_define_messages.idl": {
+      "name": "dsf_define_messages.idl",
+      "type": "schema",
+      "summary": "DSF 消息定义文件，定义了事件(Event)、报警(Alarm)、控制(Control)、变量注册/注销(SubTableRegister/Unregister)等消息类型及其 DDS 主题名称常量。"
+    },
+    "schema:core/ondemand/idl/dsf_define_model.idl": {
+      "name": "dsf_define_model.idl",
+      "type": "schema",
+      "summary": "DSF 模型定义文件，定义了模型(Model)的结构体 Define，包含模型名称、版本、节点、数据结构描述(XML)、默认值、事件和报警等字段。"
+    },
+    "schema:core/ondemand/idl/dsf_define_node.idl": {
+      "name": "dsf_define_node.idl",
+      "type": "schema",
+      "summary": "DSF 节点定义文件，定义了节点基本信息(BasicInfo)和运行时信息(RuntimeInfo)结构体，包含节点名称、PID、主机名、网卡信息等字段及对应的 DDS 主题常量。"
+    },
+    "schema:core/ondemand/idl/dsf_define_var.idl": {
+      "name": "dsf_define_var.idl",
+      "type": "schema",
+      "summary": "DSF 变量定义和数据传输文件，定义了变量配置(Define)、变量数据传输(DataTransfer/TableDataTransfer)、表定义(PubTableDefine)等核心结构，是 OnDemand 系统的数据交换基础。"
+    },
+    "schema:core/ondemand/idl/FCV.idl": {
+      "name": "FCV.idl",
+      "type": "schema",
+      "summary": "流体调节阀(Flow Control Valve)用户自定义类型定义，包含流量、温度、压力、开关状态、开度和健康度等工业控制字段。"
+    },
+    "file:core/ondemand/idl/generate.sh": {
+      "name": "generate.sh",
+      "type": "file",
+      "summary": "IDL 代码生成脚本，调用 fastddsgen 工具将 .idl 文件编译为 C++ 源码，输出到 .gensrc 目录。"
+    },
+    "file:core/ondemand/on_demand_listener.h": {
+      "name": "on_demand_listener.h",
+      "type": "file",
+      "summary": "DDS 统一事件监听器头文件，定义 OnDemandListener 类继承 ParticipantListener 和 DataWriterListener，集中处理 participant 上下线、writer/reader 匹配事件，支持回调注册和 DataReader 监听器工厂模式。"
+    },
+    "file:core/ondemand/ondemand_pubsub_test.cc": {
+      "name": "ondemand_pubsub_test.cc",
+      "type": "file",
+      "summary": "OnDemand 系统综合集成测试文件(4601行)，包含 27 个测试用例(TC1-TC27)，覆盖生命周期管理、频率协商、通信恢复、多 pub 场景、动态变量变更、批量写入、发布控制、同步读取、Matched/Unmatched 回调、资源限制等全部核心功能。"
+    },
+    "document:core/ondemand/readme.md": {
+      "name": "readme.md",
+      "type": "document",
+      "summary": "OnDemand 模块开发笔记，记录已知 TODO 和 bug(线程池退出问题)，以及 VarStore Arena 内存占用分析(500k 变量约 600MB)，指出 64B header 对小变量的 32 倍开销、双缓冲 2x 数据、shared_ptr<Define> 堆分配等优化方向。"
+    },
+    "file:sample/data_memory_manger/CMakeLists.txt": {
+      "name": "CMakeLists.txt",
+      "type": "file",
+      "summary": "数据内存管理示例的 CMake 构建配置，编译目录下的 .cc 源文件为独立可执行文件，链接 spdlog 和 pthread。"
+    },
+    "file:sample/node_example/CMakeLists.txt": {
+      "name": "CMakeLists.txt",
+      "type": "file",
+      "summary": "DDS 节点示例的 CMake 构建配置，根据 DDS_IMPL 选择 FastDDS 或 TXDDS 的 IDL 生成源码和 wrapper 源码，编译 HelloWorld 示例程序。"
+    },
+    "file:sample/node_example/example.cpp": {
+      "name": "example.cpp",
+      "type": "file",
+      "summary": "DDS wrapper 使用示例程序，演示 DataWriter/DataReader 创建、QoS 配置、分区(partition)发布订阅、多 writer/reader 等 DDS 基础功能。"
+    },
+    "schema:sample/node_example/HelloWorldOneFast/idl/HelloWorldOne.idl": {
+      "name": "HelloWorldOne.idl",
+      "type": "schema",
+      "summary": "FastDDS 版 HelloWorld 示例 IDL 定义，包含 index 字段和最大 10MB 的 points 数据序列。"
+    },
+    "schema:sample/node_example/HelloWorldOneTx/idl/HelloWorldOne.idl": {
+      "name": "HelloWorldOne.idl",
+      "type": "schema",
+      "summary": "TXDDS 版 HelloWorld 示例 IDL 定义，结构与 FastDDS 版相同，包含 index 字段和最大 10MB 的 points 数据序列。"
+    },
+    "config:sample/node_example/qosConfig.xml": {
+      "name": "qosConfig.xml",
+      "type": "config",
+      "summary": "FastDDS QoS 配置文件，定义 SHMEM+UDPv4 双传输、domainId=10、RELIABLE+TRANSIENT_LOCAL 可靠性策略、KEEP_LAST 历史深度(100)和资源限制。"
+    },
+    "file:tests/CMakeLists.txt": {
+      "name": "CMakeLists.txt",
+      "type": "file",
+      "summary": "测试套件 CMake 构建配置，定义 4 个测试目标：test_log(日志)、test_timer(定时器)、test_ddswrapper(DDS wrapper)、test_ondemand(OnDemand 集成测试)，根据 DDS_IMPL 选择对应的 wrapper 源码和库。"
+    },
+    "file:tests/dds_wrapper_test.cc": {
+      "name": "dds_wrapper_test.cc",
+      "type": "file",
+      "summary": "DDS 抽象层 wrapper 单元测试文件(1493行)，使用 GTest 框架测试 DataNode、DDSTopicWriter/Reader 的创建、发布订阅、QoS 配置、多 topic 并发等 23 个测试用例。"
+    },
+    "schema:tests/fastdds_test_idl/PerformanceTest.idl": {
+      "name": "PerformanceTest.idl",
+      "type": "schema",
+      "summary": "FastDDS 性能测试 IDL 定义，包含 TestMessage 结构体(seq_num、timestamp、message_type、payload)用于 DDS wrapper 性能测试。"
+    },
+    "schema:tests/txdds_test_idl/PerformanceTest.idl": {
+      "name": "PerformanceTest.idl",
+      "type": "schema",
+      "summary": "TXDDS 性能测试 IDL 定义，结构与 FastDDS 版相同，包含 TestMessage 结构体用于 DDS wrapper 性能测试。"
+    },
+    "file:thirdparty/arrow/include/arrow/api.h": {
+      "name": "api.h",
+      "type": "file",
+      "summary": "Apache Arrow C++ API 顶层聚合头文件，通过 IWYU pragma export 包含 array、buffer、builder、table、type 等核心模块头文件。"
+    },
+    "function:core/ondemand/ sub-pub.cc11:dataNodeA": {
+      "name": "dataNodeA",
+      "type": "function",
+      "summary": "节点 A 的发布/订阅逻辑，创建 1000 个变量并批量写入，同时订阅节点 B 的变量，监控时间戳间隔并记录异常。"
+    },
+    "function:core/ondemand/ sub-pub.cc11:dataNodeB": {
+      "name": "dataNodeB",
+      "type": "function",
+      "summary": "节点 B 的发布/订阅逻辑，创建 1000 个变量并批量写入，同时订阅节点 A 的变量，监控时间戳间隔。"
+    },
+    "function:core/ondemand/ sub-pub.cc11:main": {
+      "name": "main",
+      "type": "function",
+      "summary": "程序入口，初始化日志系统，根据命令行参数(A/B)选择启动节点 A 或节点 B。"
+    },
+    "class:tests/dds_wrapper_test.cc:ScopedTestDir": {
+      "name": "ScopedTestDir",
+      "type": "class",
+      "summary": "RAII 测试目录管理类，构造时在系统临时目录创建唯一命名的测试目录，析构时自动清理。"
+    },
+    "class:tests/dds_wrapper_test.cc:ChildProc": {
+      "name": "ChildProc",
+      "type": "class",
+      "summary": "子进程信息结构体，存储子进程名称用于 fork 模式测试。"
+    },
+    "class:tests/dds_wrapper_test.cc:DdsWrapperNodeTEST": {
+      "name": "DdsWrapperNodeTEST",
+      "type": "class",
+      "summary": "DDS wrapper 测试夹具类，继承 GTest Test，提供 SetUp/TearDown 生命周期管理。"
+    },
+    "function:sample/node_example/example.cpp:run_dds_data_writer": {
+      "name": "run_dds_data_writer",
+      "type": "function",
+      "summary": "DDS DataWriter 示例，演示创建节点、writer、QoS 配置和循环发布 HelloWorldOne 消息。"
+    },
+    "function:sample/node_example/example.cpp:run_dds_data_reader": {
+      "name": "run_dds_data_reader",
+      "type": "function",
+      "summary": "DDS DataReader 示例，演示创建节点、reader、QoS 配置和接收 HelloWorldOne 消息回调。"
+    },
+    "function:sample/node_example/example.cpp:test_partition_pub": {
+      "name": "test_partition_pub",
+      "type": "function",
+      "summary": "分区(partition)发布示例，演示使用 PublisherQoSBuilder 设置分区名称进行定向发布。"
+    },
+    "function:sample/node_example/example.cpp:test_partition_sub": {
+      "name": "test_partition_sub",
+      "type": "function",
+      "summary": "分区(partition)订阅示例，演示使用 SubscriberQoSBuilder 设置分区名称进行定向订阅。"
+    },
+    "function:sample/node_example/example.cpp:main": {
+      "name": "main",
+      "type": "function",
+      "summary": "示例程序入口，直接调用 test_multi_sub_pub 启动多订阅发布演示。"
+    },
+    "file:thirdparty/arrow/include/arrow/array.h": {
+      "name": "array.h",
+      "type": "file",
+      "summary": "Arrow 数组模块的聚合头文件，include 了所有具体数组类型（primitive、binary、nested、dict、run-end）和 ArrayData、工具函数。"
+    },
+    "file:thirdparty/arrow/include/arrow/array/array_base.h": {
+      "name": "array_base.h",
+      "type": "file",
+      "summary": "定义 Arrow Array 基类及 PrimitiveArray、NullArray，提供 null bitmap 判定、length、Slice 等核心接口，是所有具体数组类型的根基。"
+    },
+    "class:thirdparty/arrow/include/arrow/array/array_base.h:Array": {
+      "name": "Array",
+      "type": "class",
+      "summary": "不可变数组基类，持有 ArrayData 引用和 null bitmap，提供 IsValid/IsNull/Slice/type_id 等核心方法，所有具体数组类型均继承此类。"
+    },
+    "class:thirdparty/arrow/include/arrow/array/array_base.h:PrimitiveArray": {
+      "name": "PrimitiveArray",
+      "type": "class",
+      "summary": "原始类型数组基类，持有 raw_values 缓冲区指针，为 NumericArray 和 BooleanArray 提供共同的 SetData 实现。"
+    },
+    "class:thirdparty/arrow/include/arrow/array/array_base.h:NullArray": {
+      "name": "NullArray",
+      "type": "class",
+      "summary": "全空值数组，所有元素均为 null，不持有任何数据缓冲区。"
+    },
+    "file:thirdparty/arrow/include/arrow/array/array_binary.h": {
+      "name": "array_binary.h",
+      "type": "file",
+      "summary": "定义二进制和字符串数组类型：BinaryArray、StringArray、LargeBinaryArray、LargeStringArray、FixedSizeBinaryArray，提供 offset 访问、GetView/GetString 零拷贝读取和迭代器支持。"
+    },
+    "file:thirdparty/arrow/include/arrow/array/array_decimal.h": {
+      "name": "array_decimal.h",
+      "type": "file",
+      "summary": "定义 Decimal128Array 和 Decimal256Array，继承 FixedSizeBinaryArray，用于精确十进制数值的列式存储。"
+    },
+    "file:thirdparty/arrow/include/arrow/array/array_dict.h": {
+      "name": "array_dict.h",
+      "type": "file",
+      "summary": "定义 DictionaryArray，以 indices + dictionary 的编码方式高效存储低基数数据，支持 FromArrays 工厂方法。"
+    },
+    "file:thirdparty/arrow/include/arrow/array/array_nested.h": {
+      "name": "array_nested.h",
+      "type": "file",
+      "summary": "定义所有嵌套/复合数组类型：ListArray、LargeListArray、FixedSizeListArray、MapArray、StructArray、SparseUnionArray、DenseUnionArray，支持 value_offset/value_length/child 访问。"
+    },
+    "file:thirdparty/arrow/include/arrow/array/array_primitive.h": {
+      "name": "array_primitive.h",
+      "type": "file",
+      "summary": "定义 BooleanArray 和 NumericArray<T> 模板（Int8/16/32/64、UInt8/16/32/64、Float/Double），提供 Value/GetView/迭代器等高效元素访问。"
+    },
+    "file:thirdparty/arrow/include/arrow/array/array_run_end.h": {
+      "name": "array_run_end.h",
+      "type": "file",
+      "summary": "定义 RunEndEncodedArray，通过 run_ends + values 两子数组实现行程编码压缩，适用于大量连续重复值的场景。"
+    },
+    "file:thirdparty/arrow/include/arrow/array/builder_adaptive.h": {
+      "name": "builder_adaptive.h",
+      "type": "file",
+      "summary": "定义 AdaptiveIntBuilder 和 AdaptiveUIntBuilder，根据实际追加值的范围自动选择最小整数宽度（8/16/32/64 位），避免预先知道数据范围。"
+    },
+    "file:thirdparty/arrow/include/arrow/array/builder_base.h": {
+      "name": "builder_base.h",
+      "type": "file",
+      "summary": "定义 ArrayBuilder 基类，提供 Reserve/Resize/AppendNull/Finish 等通用构建接口，以及 MakeBuilder/MakeDictionaryBuilder 工厂函数。"
+    },
+    "class:thirdparty/arrow/include/arrow/array/builder_base.h:ArrayBuilder": {
+      "name": "ArrayBuilder",
+      "type": "class",
+      "summary": "数组构建器基类，管理内存池、长度、null bitmap，提供 Append/Reserve/Finish 等通用接口，所有具体 Builder 均继承此类。"
+    },
+    "file:thirdparty/arrow/include/arrow/array/builder_binary.h": {
+      "name": "builder_binary.h",
+      "type": "file",
+      "summary": "定义二进制/字符串构建器：BaseBinaryBuilder、BinaryBuilder、StringBuilder、LargeBinaryBuilder、LargeStringBuilder、FixedSizeBinaryBuilder，支持增量 Append 和批量 AppendValues。"
+    },
+    "file:thirdparty/arrow/include/arrow/array/builder_decimal.h": {
+      "name": "builder_decimal.h",
+      "type": "file",
+      "summary": "定义 Decimal128Builder 和 Decimal256Builder，继承 FixedSizeBinaryBuilder，用于构建精确十进制数组。"
+    },
+    "file:thirdparty/arrow/include/arrow/array/builder_dict.h": {
+      "name": "builder_dict.h",
+      "type": "file",
+      "summary": "定义 DictionaryBuilderBase 和 NullDictionaryBuilder，通过 memo table 自动维护字典编码，支持多种索引类型（Int8~UInt64）和 Delta 增量构建。"
+    },
+    "file:thirdparty/arrow/include/arrow/array/builder_nested.h": {
+      "name": "builder_nested.h",
+      "type": "file",
+      "summary": "定义嵌套数组构建器：BaseListBuilder、ListBuilder、LargeListBuilder、FixedSizeListBuilder、MapBuilder、StructBuilder，支持递归子 Builder 管理。"
+    },
+    "file:thirdparty/arrow/include/arrow/array/builder_primitive.h": {
+      "name": "builder_primitive.h",
+      "type": "file",
+      "summary": "定义 NullBuilder、NumericBuilder<T>、BooleanBuilder，用于构建原始类型数组，支持 Append/AppendValues/UnsafeAppend 等高性能追加操作。"
+    },
+    "file:thirdparty/arrow/include/arrow/array/builder_run_end.h": {
+      "name": "builder_run_end.h",
+      "type": "file",
+      "summary": "定义 RunCompressorBuilder 和 RunEndEncodedBuilder，将普通数组压缩为行程编码格式，自动合并相邻相同值。"
+    },
+    "file:thirdparty/arrow/include/arrow/array/builder_time.h": {
+      "name": "builder_time.h",
+      "type": "file",
+      "summary": "定义时间类型构建器类型别名：Date32Builder、Date64Builder、TimestampBuilder、Time32Builder、Time64Builder、DurationBuilder。"
+    },
+    "file:thirdparty/arrow/include/arrow/array/builder_union.h": {
+      "name": "builder_union.h",
+      "type": "file",
+      "summary": "定义 SparseUnionBuilder 和 DenseUnionBuilder，用于构建联合类型数组，支持多个子 Builder 的动态类型分发。"
+    },
+    "file:thirdparty/arrow/include/arrow/array/concatenate.h": {
+      "name": "concatenate.h",
+      "type": "file",
+      "summary": "声明 Concatenate 函数，将多个同类型 Array 合并为一个连续数组。"
+    },
+    "file:thirdparty/arrow/include/arrow/array/data.h": {
+      "name": "data.h",
+      "type": "file",
+      "summary": "定义 ArrayData 结构体（数组的底层表示）和 ArrayDataVector、ScalarSlotReference 等辅助类型，是 Arrow 内存布局的核心。"
+    },
+    "class:thirdparty/arrow/include/arrow/array/data.h:ArrayData": {
+      "name": "ArrayData",
+      "type": "class",
+      "summary": "数组的底层数据容器，持有 type、length、null_count、offset、buffers 和 child_data，是 Array 类的内部存储结构。"
+    },
+    "file:thirdparty/arrow/include/arrow/array/diff.h": {
+      "name": "diff.h",
+      "type": "file",
+      "summary": "声明 Diff 函数，比较两个同类型 Array 并输出 UnifiedDiff 格式的差异字符串。"
+    },
+    "file:thirdparty/arrow/include/arrow/array/util.h": {
+      "name": "util.h",
+      "type": "file",
+      "summary": "声明数组工具函数：SliceArraySafe、ArrayFromJSON（从 JSON 字符串创建数组）、LoadArrayFromStream 等。"
+    },
+    "file:thirdparty/arrow/include/arrow/array/validate.h": {
+      "name": "validate.h",
+      "type": "file",
+      "summary": "声明数组验证函数：ValidateArray、ValidateArrayFull、ValidateUTF8，用于检查数组结构一致性和编码正确性。"
+    },
+    "file:thirdparty/arrow/include/arrow/buffer_builder.h": {
+      "name": "buffer_builder.h",
+      "type": "file",
+      "summary": "定义 TypedBufferBuilder<T> 模板和布尔特化版本，提供 Append/Reserve/Finish/Reset 等底层缓冲区构建接口，是所有 ArrayBuilder 的基础设施。"
+    },
+    "class:thirdparty/arrow/include/arrow/buffer_builder.h:TypedBufferBuilder": {
+      "name": "TypedBufferBuilder",
+      "type": "class",
+      "summary": "类型化缓冲区构建器模板，封装 BufferBuilder 提供类型安全的 Append/Reserve/Finish 操作，ArrayBuilder 的底层内存管理组件。"
+    },
+    "file:thirdparty/arrow/include/arrow/buffer.h": {
+      "name": "buffer.h",
+      "type": "file",
+      "summary": "定义 Buffer、MutableBuffer、PoolBuffer 等内存缓冲区类，提供引用计数、零拷贝 Slice、内存池分配等机制，是 Arrow 内存管理的基石。"
+    },
+    "class:thirdparty/arrow/include/arrow/buffer.h:Buffer": {
+      "name": "Buffer",
+      "type": "class",
+      "summary": "不可变内存缓冲区基类，持有 data 指针和 size，支持引用计数共享和零拷贝 Slice，是 Arrow 内存管理的核心类。"
+    },
+    "file:thirdparty/arrow/include/arrow/builder.h": {
+      "name": "builder.h",
+      "type": "file",
+      "summary": "Arrow 数组构建器的统一头文件，聚合包含所有 ArrayBuilder 子类（如 StringBuilder、Int32Builder 等）的头文件。"
+    },
+    "file:thirdparty/arrow/include/arrow/c/abi.h": {
+      "name": "abi.h",
+      "type": "file",
+      "summary": "定义 Arrow C 数据接口（C Data Interface）的标准 ABI 结构体，包括 ArrowSchema、ArrowArray 和 ArrowArrayStream，用于跨语言零拷贝数据交换。"
+    },
+    "file:thirdparty/arrow/include/arrow/c/bridge.h": {
+      "name": "bridge.h",
+      "type": "file",
+      "summary": "提供 C++ Arrow 数据类型与 C Data Interface 之间的双向桥接函数，实现 ArrowSchema/ArrowArray/ArrowArrayStream 与 C++ 对象的相互转换。"
+    },
+    "file:thirdparty/arrow/include/arrow/c/helpers.h": {
+      "name": "helpers.h",
+      "type": "file",
+      "summary": "为 Arrow C Data Interface 结构体提供内联辅助函数，包括 ArrowSchema/ArrowArray/ArrowArrayStream 的移动（Move）、释放（Release）和状态检查（IsReleased）操作。"
+    },
+    "file:thirdparty/arrow/include/arrow/chunk_resolver.h": {
+      "name": "chunk_resolver.h",
+      "type": "file",
+      "summary": "定义 ChunkResolver 工具类，用于将扁平化的逻辑索引高效解析到分块数组（ChunkedArray）中的具体 chunk 索引和偏移量，支持缓存和二分查找。"
+    },
+    "file:thirdparty/arrow/include/arrow/chunked_array.h": {
+      "name": "chunked_array.h",
+      "type": "file",
+      "summary": "定义 ChunkedArray 类，表示由多个 Array 块组成的逻辑数组，支持迭代访问各 chunk 及二元分块遍历（ApplyBinaryChunked）等操作。"
+    },
+    "file:thirdparty/arrow/include/arrow/compare.h": {
+      "name": "compare.h",
+      "type": "file",
+      "summary": "定义 EqualOptions 配置类，用于控制 Arrow 数组/类型/张量之间的相等比较行为，包括 NaN 处理、有符号零和绝对容差设置。"
+    },
+    "class:thirdparty/arrow/include/arrow/compare.h:EqualOptions": {
+      "name": "EqualOptions",
+      "type": "class",
+      "summary": "配置类，控制 Arrow 数组比较行为，包括 nans_equal（NaN 相等）、signed_zeros_equal（有符号零相等）、atol（绝对容差）和 diff_sink（差异输出）选项。"
+    },
+    "file:thirdparty/arrow/include/arrow/compute/api_aggregate.h": {
+      "name": "api_aggregate.h",
+      "type": "file",
+      "summary": "声明 Arrow Compute 模块中所有聚合函数（如 Sum、Mean、Count、MinMax 等）的 API，以及 Aggregate 结构体和 HashAggregate 相关选项。"
+    },
+    "file:thirdparty/arrow/include/arrow/compute/api_scalar.h": {
+      "name": "api_scalar.h",
+      "type": "file",
+      "summary": "声明 Arrow Compute 模块中所有标量函数的 API，涵盖算术运算、字符串处理、时间日期、逻辑运算、类型转换等大量函数及其选项类。"
+    },
+    "file:thirdparty/arrow/include/arrow/compute/api_vector.h": {
+      "name": "api_vector.h",
+      "type": "file",
+      "summary": "声明 Arrow Compute 模块中所有向量函数的 API，包括 Filter、Take、Sort、SelectK、RunEndEncode 等操作及其选项类。"
+    },
+    "file:thirdparty/arrow/include/arrow/compute/api.h": {
+      "name": "api.h",
+      "type": "file",
+      "summary": "Arrow Compute 模块的统一入口头文件，聚合包含 api_scalar.h、api_vector.h、api_aggregate.h、cast.h、exec.h 和 expression.h。"
+    },
+    "file:thirdparty/arrow/include/arrow/compute/cast.h": {
+      "name": "cast.h",
+      "type": "file",
+      "summary": "声明 Arrow 数据类型转换函数（Cast），支持安全（Safe）和不安全（Unsafe）两种模式，以及 CastOptions 配置。"
+    },
+    "file:thirdparty/arrow/include/arrow/compute/exec.h": {
+      "name": "exec.h",
+      "type": "file",
+      "summary": "定义 Arrow Compute 执行层的核心数据结构：ExecBatch（执行批次）、ExecValue（标量或数组值）、ExecSpan（执行视图）以及 ExecNode 等执行管道组件。"
+    },
+    "class:thirdparty/arrow/include/arrow/compute/exec.h:ExecValue": {
+      "name": "ExecValue",
+      "type": "class",
+      "summary": "表示计算执行过程中的单个值，可以是标量（Scalar）或数组（ArraySpan），提供 length、is_array、null_count 等访问方法。"
+    },
+    "file:thirdparty/arrow/include/arrow/compute/expression.h": {
+      "name": "expression.h",
+      "type": "file",
+      "summary": "定义 Arrow 计算表达式树（Expression），支持字面量、字段引用和函数调用三种节点类型，用于谓词下推和查询优化。"
+    },
+    "file:thirdparty/arrow/include/arrow/compute/function.h": {
+      "name": "function.h",
+      "type": "file",
+      "summary": "定义 Arrow Compute 函数类层次结构，包括 Function 基类及 ScalarFunction、VectorFunction、ScalarAggregateFunction、HashAggregateFunction、MetaFunction 等子类。"
+    },
+    "file:thirdparty/arrow/include/arrow/compute/kernel.h": {
+      "name": "kernel.h",
+      "type": "file",
+      "summary": "定义 Arrow Compute 内核（Kernel）体系结构，包括 Kernel 基类、KernelSignature、InputType/OutputType 类型匹配，以及 ScalarKernel、VectorKernel、ScalarAggregateKernel、HashAggregateKernel 等特化内核。"
+    },
+    "file:thirdparty/arrow/include/arrow/compute/key_hash.h": {
+      "name": "key_hash.h",
+      "type": "file",
+      "summary": "提供 Arrow Compute 中用于哈希聚合和连接操作的键哈希工具，支持多列组合键的高效哈希计算。"
+    },
+    "file:thirdparty/arrow/include/arrow/compute/key_map.h": {
+      "name": "key_map.h",
+      "type": "file",
+      "summary": "实现 SwissTable 风格的哈希映射（SwissTable），用于 Arrow Compute 的分组聚合操作，支持 group_id 的高效查找和插入。"
+    },
+    "function:thirdparty/arrow/include/arrow/compute/key_map.h:extract_group_id": {
+      "name": "extract_group_id",
+      "type": "function",
+      "summary": "从 SwissTable 的控制块中提取指定 slot 的 group_id，通过 popcount 计算实际偏移量。"
+    },
+    "function:thirdparty/arrow/include/arrow/compute/key_map.h:insert_into_empty_slot": {
+      "name": "insert_into_empty_slot",
+      "type": "function",
+      "summary": "向 SwissTable 的空 slot 中插入新的 group_id 和哈希值，更新控制字节和 group_id 存储区域。"
+    },
+    "file:thirdparty/arrow/include/arrow/compute/light_array.h": {
+      "name": "light_array.h",
+      "type": "file",
+      "summary": "定义轻量级数组操作工具，包括 LightContext（硬件标志和栈管理）、ResizableArrayData（可调整大小的数组数据）以及 ColumnMetadata 等结构。"
+    },
+    "file:thirdparty/arrow/include/arrow/compute/ordering.h": {
+      "name": "ordering.h",
+      "type": "file",
+      "summary": "定义 Ordering 类，用于描述 Arrow 数据集的排序状态，支持有序（Ordered）和无序（Unordered）两种模式，用于查询优化和流式执行。"
+    },
+    "file:thirdparty/arrow/include/arrow/compute/registry.h": {
+      "name": "registry.h",
+      "type": "file",
+      "summary": "定义 FunctionRegistry 接口，用于注册和查找 Arrow Compute 函数，支持自定义函数扩展。"
+    },
+    "file:thirdparty/arrow/include/arrow/compute/row/grouper.h": {
+      "name": "grouper.h",
+      "type": "file",
+      "summary": "定义 Grouper 接口，用于将多列数据按行分组，是哈希聚合和分组操作的核心组件，支持 Segment 结构表示连续相等行的范围。"
+    },
+    "file:thirdparty/arrow/include/arrow/compute/type_fwd.h": {
+      "name": "type_fwd.h",
+      "type": "file",
+      "summary": "Arrow Compute 模块的前向声明头文件，声明 Datum、Function、FunctionOptions、ExecBatch、Kernel 等核心类型，避免循环依赖。"
+    },
+    "file:thirdparty/arrow/include/arrow/compute/util.h": {
+      "name": "util.h",
+      "type": "file",
+      "summary": "提供 Arrow Compute 内部使用的工具类和函数，包括 MiniBatch（小批量处理常量）、TempVectorHolder（临时向量管理）、ModifyExpression（表达式变换）以及 SIMD 对齐的尾部跳过工具（TailSkipForSIMD）。"
+    },
+    "class:thirdparty/arrow/include/arrow/compute/util.h:TailSkipForSIMD": {
+      "name": "TailSkipForSIMD",
+      "type": "class",
+      "summary": "提供 SIMD 对齐辅助函数，用于计算位访问、定长二进制和变长二进制数据的安全访问边界，以及选择向量的安全处理范围。"
+    },
+    "function:thirdparty/arrow/include/arrow/compute/util.h:FixVarBinaryAccess": {
+      "name": "FixVarBinaryAccess",
+      "type": "function",
+      "summary": "计算变长二进制数据在 SIMD 处理时的安全访问边界，通过偏移量数组确定不会越界访问的最大行数。"
+    },
+    "file:thirdparty/arrow/include/arrow/config.h": {
+      "name": "config.h",
+      "type": "file",
+      "summary": "定义 Arrow 库的构建信息（BuildInfo）和运行时信息（RuntimeInfo）结构体，包括版本号、编译器信息、SIMD 支持级别和时区数据库配置。"
+    },
+    "class:thirdparty/arrow/include/arrow/config.h:BuildInfo": {
+      "name": "BuildInfo",
+      "type": "class",
+      "summary": "存储 Arrow 库的编译时构建信息，包括版本号（major/minor/patch）、SO 版本、编译器 ID/版本/标志、Git 信息和构建类型。"
+    },
+    "class:thirdparty/arrow/include/arrow/config.h:RuntimeInfo": {
+      "name": "RuntimeInfo",
+      "type": "class",
+      "summary": "存储 Arrow 库的运行时信息，包括当前 SIMD 级别、检测到的 SIMD 级别、是否使用操作系统时区数据库及时区数据库路径。"
+    },
+    "file:thirdparty/arrow/include/arrow/ipc/test_common.h": {
+      "name": "test_common.h",
+      "type": "file",
+      "summary": "IPC 测试公共辅助头文件，声明用于 Arrow IPC 序列化/反序列化测试的通用工具函数，如批量生成 RecordBatch 和 Schema。"
+    },
+    "file:thirdparty/arrow/include/arrow/ipc/type_fwd.h": {
+      "name": "type_fwd.h",
+      "type": "file",
+      "summary": "IPC 模块前向声明头文件，为 Message、IpcReadOptions、IpcWriteOptions、RecordBatchStreamReader/Writer 等核心 IPC 类型提供前向声明。"
+    },
+    "file:thirdparty/arrow/include/arrow/ipc/util.h": {
+      "name": "util.h",
+      "type": "file",
+      "summary": "IPC 工具头文件，定义 PaddedLength 函数用于计算 IPC 消息的内存对齐填充长度。"
+    },
+    "file:thirdparty/arrow/include/arrow/ipc/writer.h": {
+      "name": "writer.h",
+      "type": "file",
+      "summary": "IPC 写入器头文件，定义 RecordBatchWriter、IpcPayload、WriteStats 等类型，支持将 Arrow 数据结构序列化为 IPC 流格式或文件格式。"
+    },
+    "file:thirdparty/arrow/include/arrow/memory_pool_test.h": {
+      "name": "memory_pool_test.h",
+      "type": "file",
+      "summary": "内存池测试基类头文件，定义 TestMemoryPoolBase 测试夹具，包含内存跟踪、OOM 处理、重新分配和对齐等测试方法。"
+    },
+    "file:thirdparty/arrow/include/arrow/memory_pool.h": {
+      "name": "memory_pool.h",
+      "type": "file",
+      "summary": "内存池核心头文件，定义 MemoryPoolStats 统计类和 MemoryPool 抽象基类接口，提供线程安全的内存分配/释放/重新分配及统计功能。"
+    },
+    "file:thirdparty/arrow/include/arrow/pch.h": {
+      "name": "pch.h",
+      "type": "file",
+      "summary": "预编译头文件，包含 Arrow 库常用的标准库头文件以加速编译。"
+    },
+    "file:thirdparty/arrow/include/arrow/pretty_print.h": {
+      "name": "pretty_print.h",
+      "type": "file",
+      "summary": "格式化打印头文件，定义 PrettyPrintOptions 和 PrettyPrintDelimiters 配置，以及 Array、RecordBatch、Schema、Table 等对象的格式化输出函数。"
+    },
+    "file:thirdparty/arrow/include/arrow/record_batch.h": {
+      "name": "record_batch.h",
+      "type": "file",
+      "summary": "RecordBatch 核心头文件，定义 RecordBatch 抽象基类和 RecordBatchReader 迭代器，提供列式数据批次的创建、访问、序列化和流式读取功能。"
+    },
+    "file:thirdparty/arrow/include/arrow/result.h": {
+      "name": "result.h",
+      "type": "file",
+      "summary": "Result 类型头文件，定义泛型 Result<T> 类，用于表示可能包含值或错误状态的结果，支持 Map、ValueOr、ValueOrElse 等函数式操作。"
+    },
+    "file:thirdparty/arrow/include/arrow/scalar.h": {
+      "name": "scalar.h",
+      "type": "file",
+      "summary": "标量值类型头文件，定义 Scalar 基类及其所有派生类型（BooleanScalar、NumericScalar、StringScalar、TimestampScalar、DecimalScalar、StructScalar、DictionaryScalar 等），以及 MakeScalar 工厂函数。"
+    },
+    "file:thirdparty/arrow/include/arrow/sparse_tensor.h": {
+      "name": "sparse_tensor.h",
+      "type": "file",
+      "summary": "稀疏张量头文件，定义 SparseTensor、SparseIndex、SparseCSRIndex、SparseCSCIndex、SparseCSXIndex 等类型，支持 COO/CSR/CSC 等稀疏格式的张量存储和转换。"
+    },
+    "file:thirdparty/arrow/include/arrow/status.h": {
+      "name": "status.h",
+      "type": "file",
+      "summary": "Status 错误状态头文件，定义 Status 类用于表示操作结果（成功或各种错误类型），提供 OutOfMemory、Invalid、TypeError 等静态工厂方法和错误码查询接口。"
+    },
+    "file:thirdparty/arrow/include/arrow/stl_allocator.h": {
+      "name": "stl_allocator.h",
+      "type": "file",
+      "summary": "STL 分配器适配头文件，定义 STLAllocator 模板类，将 Arrow MemoryPool 适配为标准库兼容的分配器接口，使 STL 容器可使用 Arrow 内存池。"
+    },
+    "file:thirdparty/arrow/include/arrow/stl_iterator.h": {
+      "name": "stl_iterator.h",
+      "type": "file",
+      "summary": "STL 迭代器适配头文件，定义 ArrayIterator 和 ChunkedArrayIterator 模板类，将 Arrow Array 和 ChunkedArray 适配为标准库兼容的迭代器接口。"
+    },
+    "file:thirdparty/arrow/include/arrow/stl.h": {
+      "name": "stl.h",
+      "type": "file",
+      "summary": "STL 集成头文件，定义 ConversionTraits 模板特化和 FromSTL/ToSTL 转换函数，支持在 Arrow 数据结构与 C++ STL 容器之间进行双向转换。"
+    },
+    "file:thirdparty/arrow/include/arrow/table_builder.h": {
+      "name": "table_builder.h",
+      "type": "file",
+      "summary": "表构建器头文件，定义 RecordBatchBuilder 工厂类，提供从 Schema 创建 RecordBatch 构建器的便捷接口。"
+    },
+    "file:thirdparty/arrow/include/arrow/table.h": {
+      "name": "table.h",
+      "type": "file",
+      "summary": "Table 核心头文件，定义 Table 和 ChunkedArray 抽象基类，提供列式表格数据的创建、列访问、切片、合并和过滤操作。"
+    },
+    "file:thirdparty/arrow/include/arrow/tensor.h": {
+      "name": "tensor.h",
+      "type": "file",
+      "summary": "张量核心头文件，定义 Tensor 类，支持多维数组的创建、形状/步幅管理、元素访问和与 NumPy 的兼容性。"
+    },
+    "file:thirdparty/arrow/include/arrow/tensor/converter.h": {
+      "name": "converter.h",
+      "type": "file",
+      "summary": "张量转换器头文件，定义 SparseTensorConverterMixin 模板类，提供 Dense 到 Sparse 张量的转换功能。"
+    },
+    "file:thirdparty/arrow/include/arrow/testing/async_test_util.h": {
+      "name": "async_test_util.h",
+      "type": "file",
+      "summary": "异步测试工具头文件，提供用于 Arrow 异步操作测试的辅助宏和工具函数。"
+    },
+    "file:thirdparty/arrow/include/arrow/testing/builder.h": {
+      "name": "builder.h",
+      "type": "file",
+      "summary": "测试构建器头文件，声明用于测试的 ArrayBuilder 辅助函数，支持从原始数据快速构建各类 Arrow 数组。"
+    },
+    "file:thirdparty/arrow/include/arrow/testing/executor_util.h": {
+      "name": "executor_util.h",
+      "type": "file",
+      "summary": "执行器测试工具头文件，定义 MockExecutor 和 DelayedExecutor 测试替身，用于异步执行器的单元测试。"
+    },
+    "file:thirdparty/arrow/include/arrow/testing/extension_type.h": {
+      "name": "extension_type.h",
+      "type": "file",
+      "summary": "扩展类型测试头文件，声明用于测试 Arrow 扩展类型机制的示例扩展类型和辅助函数。"
+    },
+    "file:thirdparty/arrow/include/arrow/testing/future_util.h": {
+      "name": "future_util.h",
+      "type": "file",
+      "summary": "Future 测试工具头文件，提供用于测试 Arrow Future/Promise 异步模式的辅助宏和断言函数。"
+    },
+    "class:thirdparty/arrow/include/arrow/ipc/writer.h:IpcPayload": {
+      "name": "IpcPayload",
+      "type": "class",
+      "summary": "IPC 消息负载结构体，封装序列化后的消息类型、元数据缓冲区、body 缓冲区数组以及 body 长度信息。"
+    },
+    "class:thirdparty/arrow/include/arrow/ipc/writer.h:WriteStats": {
+      "name": "WriteStats",
+      "type": "class",
+      "summary": "IPC 写入统计结构体，跟踪写入的消息数、RecordBatch 数、字典批次数、字典增量数及原始/序列化 body 大小。"
+    },
+    "class:thirdparty/arrow/include/arrow/memory_pool_test.h:TestMemoryPoolBase": {
+      "name": "TestMemoryPoolBase",
+      "type": "class",
+      "summary": "内存池测试基类，提供内存跟踪验证、OOM 测试、重新分配测试和对齐测试等通用测试方法。"
+    },
+    "class:thirdparty/arrow/include/arrow/memory_pool.h:MemoryPoolStats": {
+      "name": "MemoryPoolStats",
+      "type": "class",
+      "summary": "内存池统计类，使用原子计数器线程安全地跟踪当前分配字节数、峰值内存、总分配字节数和分配次数。"
+    },
+    "function:thirdparty/arrow/include/arrow/memory_pool.h:UpdateAllocatedBytes": {
+      "name": "UpdateAllocatedBytes",
+      "type": "function",
+      "summary": "原子更新内存池的分配字节统计，使用 fetch_add 和 compare_exchange_weak 循环确保线程安全地更新当前值和峰值。"
+    },
+    "function:thirdparty/arrow/include/arrow/status.h:Equals": {
+      "name": "Equals",
+      "type": "function",
+      "summary": "比较两个 Status 对象是否相等，检查错误码、detail 指针和错误消息是否相同。"
+    },
+    "class:thirdparty/arrow/include/arrow/tensor/converter.h:SparseTensorConverterMixin": {
+      "name": "SparseTensorConverterMixin",
+      "type": "class",
+      "summary": "稀疏张量转换器混入模板类，为 Dense 到 Sparse 张量转换提供通用的 Convert 方法实现。"
+    },
+    "file:thirdparty/arrow/include/arrow/testing/generator.h": {
+      "name": "generator.h",
+      "type": "file",
+      "summary": "Apache Arrow 测试数据生成器头文件，提供用于生成各种 Arrow 数组类型的工厂函数和辅助工具。"
+    },
+    "file:thirdparty/arrow/include/arrow/testing/gtest_compat.h": {
+      "name": "gtest_compat.h",
+      "type": "file",
+      "summary": "GoogleTest 兼容性层头文件，提供跨版本 gtest 宏和类型的统一接口。"
+    },
+    "file:thirdparty/arrow/include/arrow/testing/gtest_util.h": {
+      "name": "gtest_util.h",
+      "type": "file",
+      "summary": "GoogleTest 测试工具头文件，提供 PrintTo 辅助函数、MoveOnlyDataType 测试类以及 Arrow 数据结构的比较和断言宏。"
+    },
+    "class:thirdparty/arrow/include/arrow/testing/gtest_util.h:MoveOnlyDataType": {
+      "name": "MoveOnlyDataType",
+      "type": "class",
+      "summary": "仅移动语义的测试数据类型，用于验证 Arrow 容器对移动语义的正确支持。"
+    },
+    "file:thirdparty/arrow/include/arrow/testing/matchers.h": {
+      "name": "matchers.h",
+      "type": "file",
+      "summary": "GoogleTest 自定义匹配器头文件，提供 DataEq、AnyOfJSON、Error、Ok 等匹配器用于 Arrow 数据结构的断言验证。"
+    },
+    "class:thirdparty/arrow/include/arrow/testing/matchers.h:AnyOfJSONMatcher": {
+      "name": "AnyOfJSONMatcher",
+      "type": "class",
+      "summary": "JSON 数组匹配器，验证 Arrow 数组是否包含指定 JSON 表示的所有元素。"
+    },
+    "class:thirdparty/arrow/include/arrow/testing/matchers.h:ErrorMatcher": {
+      "name": "ErrorMatcher",
+      "type": "class",
+      "summary": "错误状态匹配器，验证 Result/Future 是否返回指定错误码和消息。"
+    },
+    "class:thirdparty/arrow/include/arrow/testing/matchers.h:DataEqMatcher": {
+      "name": "DataEqMatcher",
+      "type": "class",
+      "summary": "数据相等匹配器，深度比较 Arrow Datum 与期望值，支持数组、标量和 RecordBatch。"
+    },
+    "file:thirdparty/arrow/include/arrow/testing/pch.h": {
+      "name": "pch.h",
+      "type": "file",
+      "summary": "测试模块预编译头文件，聚合常用标准库和 Arrow 头文件以加速编译。"
+    },
+    "file:thirdparty/arrow/include/arrow/testing/random.h": {
+      "name": "random.h",
+      "type": "file",
+      "summary": "随机数据生成器头文件，提供 RandomArrayGenerator 类用于生成各种类型的随机 Arrow 数组，支持数值、字符串、日期等类型。"
+    },
+    "file:thirdparty/arrow/include/arrow/testing/uniform_real.h": {
+      "name": "uniform_real.h",
+      "type": "file",
+      "summary": "均匀实数分布头文件，提供跨平台一致的 uniform_real_distribution 实现，解决不同标准库的数值差异。"
+    },
+    "class:thirdparty/arrow/include/arrow/testing/uniform_real.h:bernoulli_distribution": {
+      "name": "bernoulli_distribution",
+      "type": "class",
+      "summary": "伯努利分布实现，用于生成指定概率的布尔随机数。"
+    },
+    "file:thirdparty/arrow/include/arrow/testing/util.h": {
+      "name": "util.h",
+      "type": "file",
+      "summary": "测试工具头文件，提供 BatchIterator 类用于迭代 RecordBatch 序列，以及 CopyBufferFromVector 等辅助函数。"
+    },
+    "class:thirdparty/arrow/include/arrow/testing/util.h:BatchIterator": {
+      "name": "BatchIterator",
+      "type": "class",
+      "summary": "RecordBatch 迭代器，用于按顺序读取预定义的 RecordBatch 向量。"
+    },
+    "file:thirdparty/arrow/include/arrow/testing/visibility.h": {
+      "name": "visibility.h",
+      "type": "file",
+      "summary": "测试库可见性宏定义头文件，控制测试符号的导出/导入属性。"
+    },
+    "file:thirdparty/arrow/include/arrow/type_fwd.h": {
+      "name": "type_fwd.h",
+      "type": "file",
+      "summary": "Arrow 类型系统前向声明头文件，声明所有核心数据类型（DataType、Array、Builder、Scalar 等）及其特化版本。"
+    },
+    "file:thirdparty/arrow/include/arrow/type_traits.h": {
+      "name": "type_traits.h",
+      "type": "file",
+      "summary": "Arrow 类型特征头文件，提供 CTypeTraits/TypeTraits 模板特化以及 is_integer、is_floating、is_temporal 等类型分类函数。"
+    },
+    "file:thirdparty/arrow/include/arrow/type.h": {
+      "name": "type.h",
+      "type": "file",
+      "summary": "Arrow 核心类型系统实现头文件，定义 DataType 基类、Field、Schema 以及所有具体类型类（FixedWidthType、BinaryType、ListType 等）。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/algorithm.h": {
+      "name": "algorithm.h",
+      "type": "file",
+      "summary": "Arrow 算法工具头文件，提供 MaybeTransform 等函数式编程辅助工具。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/align_util.h": {
+      "name": "align_util.h",
+      "type": "file",
+      "summary": "位图对齐工具头文件，提供 BitmapWordAlignParams 结构和 BitmapWordAlign 函数用于高效位图操作的内存对齐计算。"
+    },
+    "class:thirdparty/arrow/include/arrow/util/align_util.h:BitmapWordAlignParams": {
+      "name": "BitmapWordAlignParams",
+      "type": "class",
+      "summary": "位图字对齐参数结构，存储前导位、尾部位和对齐后的起始地址等信息。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/aligned_storage.h": {
+      "name": "aligned_storage.h",
+      "type": "file",
+      "summary": "对齐存储工具头文件，提供 AlignedStorage 模板类用于在对齐的内存中构造和管理对象。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/async_generator_fwd.h": {
+      "name": "async_generator_fwd.h",
+      "type": "file",
+      "summary": "异步生成器前向声明头文件，声明 AsyncGenerator<T> 类型别名和相关 traits。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/async_generator.h": {
+      "name": "async_generator.h",
+      "type": "file",
+      "summary": "异步生成器实现头文件，提供 MappingGenerator、SequencingGenerator、ReadaheadGenerator、BackgroundGenerator 等丰富的异步流处理组合子。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/async_util.h": {
+      "name": "async_util.h",
+      "type": "file",
+      "summary": "异步工具头文件，提供 AsyncTaskGroup 类用于管理并发异步任务的生命周期和完成状态。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/base64.h": {
+      "name": "base64.h",
+      "type": "file",
+      "summary": "Base64 编解码工具头文件，声明 Base64Encode 和 Base64Decode 函数。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/basic_decimal.h": {
+      "name": "basic_decimal.h",
+      "type": "file",
+      "summary": "基础十进制类型头文件，定义 BasicDecimal128 和 BasicDecimal256 类，支持定点十进制算术运算。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/benchmark_util.h": {
+      "name": "benchmark_util.h",
+      "type": "file",
+      "summary": "基准测试工具头文件，提供 BenchmarkSettings、DatumGenerator 等类用于 Arrow 性能测试。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/bit_block_counter.h": {
+      "name": "bit_block_counter.h",
+      "type": "file",
+      "summary": "位块计数器头文件，提供 BitBlockCounter 和 OptionalBitBlockCounter 类用于高效统计位图中连续 1/0 块的数量。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/bit_run_reader.h": {
+      "name": "bit_run_reader.h",
+      "type": "file",
+      "summary": "位运行读取器头文件，提供 BitRunReader 和 OptionalBitRunReader 类用于顺序读取位图中的连续相同位段。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/bit_stream_utils.h": {
+      "name": "bit_stream_utils.h",
+      "type": "file",
+      "summary": "位流工具头文件，提供 BitWriter 和 BitReader 类用于按位读写紧凑的位流数据。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/bit_util.h": {
+      "name": "bit_util.h",
+      "type": "file",
+      "summary": "位操作工具头文件，提供 CountLeadingZeros、PopCount、CeilDiv、BytesForBits 等底层位操作函数。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/converter.h": {
+      "name": "converter.h",
+      "type": "file",
+      "summary": "提供通用的 Arrow 数据类型转换器基类 Converter 和工厂函数 MakeConverter，支持将各种输入类型转换为 Arrow 数组。"
+    },
+    "class:thirdparty/arrow/include/arrow/util/converter.h:Converter": {
+      "name": "Converter",
+      "type": "class",
+      "summary": "泛型转换器基类模板，提供 Append/Extend/ExtendMasked 等虚方法接口，用于将输入数据转换为 Arrow 数组。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/counting_semaphore.h": {
+      "name": "counting_semaphore.h",
+      "type": "file",
+      "summary": "声明基于互斥锁的计数信号量 CountingSemaphore，支持带超时的 Acquire/Release 操作和等待者同步。"
+    },
+    "class:thirdparty/arrow/include/arrow/util/counting_semaphore.h:CountingSemaphore": {
+      "name": "CountingSemaphore",
+      "type": "class",
+      "summary": "基于互斥锁的计数信号量实现，支持带超时的 Acquire/Release 以及 Close 操作。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/cpu_info.h": {
+      "name": "cpu_info.h",
+      "type": "file",
+      "summary": "定义 CpuInfo 单例类，用于运行时查询 CPU 特性（SSE/AVX/NEON 等指令集支持）和缓存信息。"
+    },
+    "class:thirdparty/arrow/include/arrow/util/cpu_info.h:CpuInfo": {
+      "name": "CpuInfo",
+      "type": "class",
+      "summary": "CPU 信息查询单例，检测 SSE4.2/AVX2/AVX512/NEON 等指令集支持，提供缓存大小和核心数查询。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/crc32.h": {
+      "name": "crc32.h",
+      "type": "file",
+      "summary": "声明 CRC32 校验和计算函数，使用多项式 0x04C11DB7（与 zlib 兼容）。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/debug.h": {
+      "name": "debug.h",
+      "type": "file",
+      "summary": "声明 DebugTrap 函数，用于在调试时触发断点中断。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/decimal.h": {
+      "name": "decimal.h",
+      "type": "file",
+      "summary": "定义 Decimal128 类，表示 128 位有符号十进制数，支持算术运算、字符串转换和精度/缩放处理。"
+    },
+    "class:thirdparty/arrow/include/arrow/util/decimal.h:Decimal128": {
+      "name": "Decimal128",
+      "type": "class",
+      "summary": "128 位有符号十进制数类，继承自 BasicDecimal128，提供除法、字符串解析和格式化等功能。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/delimiting.h": {
+      "name": "delimiting.h",
+      "type": "file",
+      "summary": "定义分隔符查找器 BoundaryFinder 和数据分块器 Chunker，用于将分隔数据流切割为完整记录。"
+    },
+    "class:thirdparty/arrow/include/arrow/util/delimiting.h:BoundaryFinder": {
+      "name": "BoundaryFinder",
+      "type": "class",
+      "summary": "抽象分隔符查找器基类，提供 FindFirst/FindLast/FindNth 虚方法用于在数据块中定位分隔符。"
+    },
+    "class:thirdparty/arrow/include/arrow/util/delimiting.h:Chunker": {
+      "name": "Chunker",
+      "type": "class",
+      "summary": "可复用的分隔数据分块器，将数据流切割为完整记录和部分记录，支持跳行操作。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/dispatch.h": {
+      "name": "dispatch.h",
+      "type": "file",
+      "summary": "提供动态分派机制 DynamicDispatch，根据运行时 CPU 能力自动选择最优指令集实现（SSE4.2/AVX2/AVX512）。"
+    },
+    "class:thirdparty/arrow/include/arrow/util/dispatch.h:DynamicDispatch": {
+      "name": "DynamicDispatch",
+      "type": "class",
+      "summary": "模板类，根据 CpuInfo 检测结果选择最高可用指令集级别的函数实现。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/double_conversion.h": {
+      "name": "double_conversion.h",
+      "type": "file",
+      "summary": "Re-export 头文件，将 vendored double-conversion 库的类型导入 arrow::util::double_conversion 命名空间。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/endian.h": {
+      "name": "endian.h",
+      "type": "file",
+      "summary": "提供字节序转换工具函数（ByteSwap/ToBigEndian/FromLittleEndian 等）和小端数组读写适配器。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/formatting.h": {
+      "name": "formatting.h",
+      "type": "file",
+      "summary": "提供类型到字符串的格式化工具 StringFormatter 模板特化，覆盖布尔、十进制、数值、时间等类型的字符串转换。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/functional.h": {
+      "name": "functional.h",
+      "type": "file",
+      "summary": "提供 callable 类型萃取工具 call_traits 和一次性调用包装器 FnOnce，用于 Lambda 和函数对象的类型擦除。"
+    },
+    "class:thirdparty/arrow/include/arrow/util/functional.h:call_traits": {
+      "name": "call_traits",
+      "type": "class",
+      "summary": "Callable 类型萃取工具结构，提取函数对象的参数类型、返回类型和参数数量。"
+    },
+    "class:thirdparty/arrow/include/arrow/util/functional.h:FnOnce": {
+      "name": "FnOnce",
+      "type": "class",
+      "summary": "一次性调用的类型擦除包装器，调用后立即销毁内部 Lambda，释放所有状态和引用。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/future.h": {
+      "name": "future.h",
+      "type": "file",
+      "summary": "定义 Arrow 的异步 Future 模板类，支持 then 链式回调、状态标记和同步等待，是 Arrow 异步编程的核心基础设施。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/hash_util.h": {
+      "name": "hash_util.h",
+      "type": "file",
+      "summary": "提供 hash_combine 工具函数（移植自 Boost），用于组合多个值的哈希码。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/hashing.h": {
+      "name": "hashing.h",
+      "type": "file",
+      "summary": "提供高性能哈希工具，包括字符串哈希（基于 XXH3）、位图哈希和标量值哈希辅助模板。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/int_util_overflow.h": {
+      "name": "int_util_overflow.h",
+      "type": "file",
+      "summary": "定义带溢出检测的整数算术函数（AddWithOverflow/SubtractWithOverflow/MultiplyWithOverflow 等）和安全位移操作。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/int_util.h": {
+      "name": "int_util.h",
+      "type": "file",
+      "summary": "提供整数宽度检测（DetectIntWidth）、类型转换（DowncastInts/UpcastInts/TransposeInts）和边界检查工具。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/io_util.h": {
+      "name": "io_util.h",
+      "type": "file",
+      "summary": "提供跨平台文件系统操作工具，包括 PlatformFilename 路径封装、目录创建/删除、临时文件管理和信号处理。"
+    },
+    "class:thirdparty/arrow/include/arrow/util/io_util.h:PlatformFilename": {
+      "name": "PlatformFilename",
+      "type": "class",
+      "summary": "跨平台文件名/路径封装类，处理 Windows 宽字符和 Unix UTF-8 编码差异，提供路径拼接和规范化操作。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/iterator.h": {
+      "name": "iterator.h",
+      "type": "file",
+      "summary": "定义泛型 Iterator 模板类和迭代器组合工具（Flatten/Filter/Map），支持带错误返回的惰性迭代模式。"
+    },
+    "class:thirdparty/arrow/include/arrow/util/iterator.h:Iterator": {
+      "name": "Iterator",
+      "type": "class",
+      "summary": "泛型迭代器模板类，通过类型擦除实现，支持 Result<T> 返回值和惰性求值。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/key_value_metadata.h": {
+      "name": "key_value_metadata.h",
+      "type": "file",
+      "summary": "定义 KeyValueMetadata 键值对元数据容器，支持查找、追加、删除、合并等操作，用于 Arrow Schema 和数组的自定义元数据。"
+    },
+    "class:thirdparty/arrow/include/arrow/util/key_value_metadata.h:KeyValueMetadata": {
+      "name": "KeyValueMetadata",
+      "type": "class",
+      "summary": "键值对元数据容器，基于平行的 keys/values 向量实现，支持 CRUD 操作和合并。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/launder.h": {
+      "name": "launder.h",
+      "type": "file",
+      "summary": "提供 std::launder 的 C++17 兼容性封装，用于在 placement new 后获取合法的对象指针。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/logging.h": {
+      "name": "logging.h",
+      "type": "file",
+      "summary": "定义 Arrow 日志框架，包括 ArrowLog 类、日志级别枚举和 DCHECK/CHECK 系列断言宏，支持 Gandiva IR 模式。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/macros.h": {
+      "name": "macros.h",
+      "type": "file",
+      "summary": "定义 Arrow 跨平台编译器宏，包括 DISALLOW_COPY_AND_ASSIGN、PREDICT_TRUE/FALSE、NOINLINE、内存对齐和 UBSan 禁用等。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/map.h": {
+      "name": "map.h",
+      "type": "file",
+      "summary": "提供 GetOrInsertGenerated 模板辅助函数，实现 map/unordered_map 的单次查找条件插入语义。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/math_constants.h": {
+      "name": "math_constants.h",
+      "type": "file",
+      "summary": "定义 M_PI/M_PI_2/M_PI_4 等数学常量宏，兼容 MSVC 等未提供默认定义的编译器。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/trie.h": {
+      "name": "trie.h",
+      "type": "file",
+      "summary": "提供基于前缀树（Trie）的字符串查找数据结构，用于高效的键值映射和自动补全场景。包含 SmallString 辅助类和 Trie 模板类，支持快速前缀匹配和精确查找。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/type_fwd.h": {
+      "name": "type_fwd.h",
+      "type": "file",
+      "summary": "Arrow 库核心类型的前向声明头文件，声明了 Empty、FutureWaiter、TimestampParser、Executor、TaskGroup、ThreadPool、CpuInfo、Compression 等关键类和枚举。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/type_traits.h": {
+      "name": "type_traits.h",
+      "type": "file",
+      "summary": "Arrow 库的类型特征工具头文件，提供编译期类型检查和类型推导的辅助模板。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/ubsan.h": {
+      "name": "ubsan.h",
+      "type": "file",
+      "summary": "提供规避未定义行为 sanitizer (UBSan) 警告的安全内存操作函数，包括 SafeLoadAs、SafeLoad、SafeCopy 和 SafeStore，通过 std::memcpy 实现类型安全的内存读写。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/union_util.h": {
+      "name": "union_util.h",
+      "type": "file",
+      "summary": "Arrow 联合类型（Union）的工具函数头文件，提供联合数组类型的操作辅助功能。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/unreachable.h": {
+      "name": "unreachable.h",
+      "type": "file",
+      "summary": "提供标记不可达代码路径的宏或内联函数，用于编译器优化和断言检查。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/uri.h": {
+      "name": "uri.h",
+      "type": "file",
+      "summary": "URI 解析和操作工具头文件，提供统一资源标识符（URI）的解析、组件提取和构建功能。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/utf8.h": {
+      "name": "utf8.h",
+      "type": "file",
+      "summary": "UTF-8 编码处理工具头文件，提供 UTF-8 字符串的验证、遍历和操作功能。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/value_parsing.h": {
+      "name": "value_parsing.h",
+      "type": "file",
+      "summary": "高性能数值和时间戳解析工具头文件，提供从字符串到各种数值类型（整数、浮点数、时间戳）的快速转换函数，支持 ISO8601 和 strptime 格式的时间戳解析。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/vector.h": {
+      "name": "vector.h",
+      "type": "file",
+      "summary": "std::vector 的高级操作工具函数集，提供 DeleteVectorElement、AddVectorElement、ReplaceVectorElement、FilterVector、MapVector、FlattenVectors、UnwrapOrRaise 等安全且高效的向量操作。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/visibility.h": {
+      "name": "visibility.h",
+      "type": "file",
+      "summary": "Arrow 库的符号可见性控制头文件，定义 DLL 导出/导入宏，支持 Windows 和 Unix 平台的动态链接。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/windows_compatibility.h": {
+      "name": "windows_compatibility.h",
+      "type": "file",
+      "summary": "Windows 平台兼容性头文件，处理 Windows 特定的宏定义和头文件包含顺序问题。"
+    },
+    "file:thirdparty/arrow/include/arrow/util/windows_fixup.h": {
+      "name": "windows_fixup.h",
+      "type": "file",
+      "summary": "Windows 平台头文件修复宏，取消 Windows.h 中定义的冲突宏（如 min/max/ERROR 等），防止与标准库和用户代码冲突。"
+    },
+    "file:thirdparty/arrow/include/arrow/vendored/datetime.h": {
+      "name": "datetime.h",
+      "type": "file",
+      "summary": "Arrow 内置的 datetime 库入口头文件，重定向到 arrow_vendored::date 命名空间下的日期时间处理功能。"
+    },
+    "file:thirdparty/arrow/include/arrow/vendored/datetime/date.h": {
+      "name": "date.h",
+      "type": "file",
+      "summary": "Howard Hinnant 的 date 库核心头文件（Arrow 内置版本），提供 C++11/14/17 兼容的日期和时间处理功能，包括 year、month、day、weekday 等日历类型，以及 sys_days、local_days 时间点类型和 duration 截断/舍入函数。"
+    },
+    "file:thirdparty/arrow/include/arrow/vendored/datetime/ios.h": {
+      "name": "ios.h",
+      "type": "file",
+      "summary": "iOS 平台的 datetime 库兼容性头文件，处理 Apple 平台特定的编译器和运行时差异。"
+    },
+    "file:thirdparty/arrow/include/arrow/vendored/datetime/tz_private.h": {
+      "name": "tz_private.h",
+      "type": "file",
+      "summary": "时区库的私有实现头文件，定义 MonthDayTime 结构体和 zonelet 数据结构，用于内部时区规则解析和存储。"
+    },
+    "file:thirdparty/arrow/include/arrow/vendored/datetime/tz.h": {
+      "name": "tz.h",
+      "type": "file",
+      "summary": "Howard Hinnant 的时区库核心头文件（Arrow 内置版本），提供完整的 IANA 时区数据库支持，包括 time_zone、zoned_time、sys_info、local_info 等类型，以及 sys/local/UTC/TAI/GPS 时钟间的转换功能。"
+    },
+    "file:thirdparty/arrow/include/arrow/vendored/datetime/visibility.h": {
+      "name": "visibility.h",
+      "type": "file",
+      "summary": "datetime 库的符号可见性控制头文件，定义 DATE_BUILDING_DLL 等宏控制动态链接时的符号导出。"
+    },
+    "file:thirdparty/arrow/include/arrow/vendored/double-conversion/bignum-dtoa.h": {
+      "name": "bignum-dtoa.h",
+      "type": "file",
+      "summary": "大数双精度浮点数到字符串转换的头文件，提供 BignumDtoa 函数声明，支持最短表示和精确表示两种模式。"
+    },
+    "file:thirdparty/arrow/include/arrow/vendored/double-conversion/bignum.h": {
+      "name": "bignum.h",
+      "type": "file",
+      "summary": "大数算术运算类 Bignum 的头文件，提供高精度整数的加法、乘法、比较等运算，用于浮点数转换的中间计算。"
+    },
+    "file:thirdparty/arrow/include/arrow/vendored/double-conversion/cached-powers.h": {
+      "name": "cached-powers.h",
+      "type": "file",
+      "summary": "预缓存的 10 的幂次表头文件，用于浮点数与字符串转换时快速查找最接近的 10 的幂次。"
+    },
+    "file:thirdparty/arrow/include/arrow/vendored/double-conversion/diy-fp.h": {
+      "name": "diy-fp.h",
+      "type": "file",
+      "summary": "DIY 浮点数（Do-It-Yourself floating point）结构体头文件，提供双精度浮点数的尾数-指数分解和基本算术运算，是 double-conversion 算法的核心数据结构。"
+    },
+    "file:thirdparty/arrow/include/arrow/vendored/double-conversion/double-conversion.h": {
+      "name": "double-conversion.h",
+      "type": "file",
+      "summary": "Google double-conversion 库的入口头文件（Arrow 内置版本），提供双精度浮点数与字符串之间的高精度转换。"
+    },
+    "file:thirdparty/arrow/include/arrow/vendored/double-conversion/double-to-string.h": {
+      "name": "double-to-string.h",
+      "type": "file",
+      "summary": "双精度浮点数到字符串转换器 DoubleToStringConverter 的头文件，支持最短表示、固定精度、指数表示等多种转换模式，以及特殊值（NaN、Infinity）的自定义处理。"
+    },
+    "file:thirdparty/arrow/include/arrow/vendored/double-conversion/fast-dtoa.h": {
+      "name": "fast-dtoa.h",
+      "type": "file",
+      "summary": "V8 double-conversion 库的快速 double-to-ASCII 转换头文件，声明 FastDtoa 函数，支持最短表示和精度模式两种浮点数到字符串的转换方式。"
+    },
+    "file:thirdparty/arrow/include/arrow/vendored/double-conversion/fixed-dtoa.h": {
+      "name": "fixed-dtoa.h",
+      "type": "file",
+      "summary": "V8 double-conversion 库的定点格式 double-to-ASCII 转换头文件，声明 FastFixedDtoa 函数，按指定小数位数输出浮点数的十进制表示。"
+    },
+    "file:thirdparty/arrow/include/arrow/vendored/double-conversion/ieee.h": {
+      "name": "ieee.h",
+      "type": "file",
+      "summary": "V8 double-conversion 库的 IEEE 754 浮点数位操作头文件，提供 Double 和 Single 类用于位级访问浮点数的符号、指数、尾数字段，支持 NaN/Infinity 检测和 DiyFp 转换。"
+    },
+    "file:thirdparty/arrow/include/arrow/vendored/double-conversion/string-to-double.h": {
+      "name": "string-to-double.h",
+      "type": "file",
+      "summary": "V8 double-conversion 库的字符串到浮点数转换器头文件，定义 StringToDoubleConverter 类，支持十六进制、八进制、千分位分隔符等多种解析选项。"
+    },
+    "file:thirdparty/arrow/include/arrow/vendored/double-conversion/strtod.h": {
+      "name": "strtod.h",
+      "type": "file",
+      "summary": "V8 double-conversion 库的字符串转 double/float 函数头文件，声明 Strtod、Strtof 及其 Trimmed 变体，以及 TrimTrailingZeros 辅助函数。"
+    },
+    "file:thirdparty/arrow/include/arrow/vendored/double-conversion/utils.h": {
+      "name": "utils.h",
+      "type": "file",
+      "summary": "V8 double-conversion 库的基础工具头文件，定义 Vector 模板类（轻量数组视图）、StringBuilder 字符串构建器、BitCast 类型位转换函数，以及跨平台的编译器宏和类型定义。"
+    },
+    "file:thirdparty/arrow/include/arrow/vendored/pcg/pcg_extras.hpp": {
+      "name": "pcg_extras.hpp",
+      "type": "file",
+      "summary": "PCG 随机数生成器的扩展工具头文件，提供位操作辅助函数（如 count-leading-zeros、population-count）、种子序列支持和平台相关的整数类型定义。"
+    },
+    "file:thirdparty/arrow/include/arrow/vendored/pcg/pcg_random.hpp": {
+      "name": "pcg_random.hpp",
+      "type": "file",
+      "summary": "PCG 随机数生成器的核心实现头文件，定义多种 PCG 变体（PCG32、PCG64 等），提供符合 C++ <random> 接口的高性能伪随机数生成器。"
+    },
+    "file:thirdparty/arrow/include/arrow/vendored/pcg/pcg_uint128.hpp": {
+      "name": "pcg_uint128.hpp",
+      "type": "file",
+      "summary": "PCG 库的 128 位无符号整数实现头文件，定义 uint_x4 类型及其算术运算，提供 flog2 和 trailingzeros 等位操作函数。"
+    },
+    "file:thirdparty/arrow/include/arrow/vendored/portable-snippets/debug-trap.h": {
+      "name": "debug-trap.h",
+      "type": "file",
+      "summary": "跨平台调试断点头文件，定义 psnip_trap() 宏，在多种编译器和架构（x86、ARM、MIPS 等）上触发调试器断点，以及 psnip_dbg_assert 调试断言宏。"
+    },
+    "file:thirdparty/arrow/include/arrow/vendored/portable-snippets/safe-math.h": {
+      "name": "safe-math.h",
+      "type": "file",
+      "summary": "跨平台安全数学运算头文件，提供溢出检测的加减乘除运算宏，支持多种整数类型，在算术溢出时返回错误标志而非未定义行为。"
+    },
+    "file:thirdparty/arrow/include/arrow/vendored/ProducerConsumerQueue.h": {
+      "name": "ProducerConsumerQueue.h",
+      "type": "file",
+      "summary": "Facebook Folly 库的无锁单生产者单消费者环形队列模板类，使用原子操作和缓存行填充避免 false sharing，支持 Write/Read/FrontPtr/PopFront 等操作。"
+    },
+    "file:thirdparty/arrow/include/arrow/vendored/strptime.h": {
+      "name": "strptime.h",
+      "type": "file",
+      "summary": "跨平台 strptime 函数声明头文件，为 Windows 等缺少标准 strptime 实现的平台提供 arrow_strptime 替代函数。"
+    },
+    "file:thirdparty/arrow/include/arrow/vendored/xxhash.h": {
+      "name": "xxhash.h",
+      "type": "file",
+      "summary": "Arrow 的 xxHash 转发头文件，通过 #include 将请求转发到 xxhash/xxhash.h 的实际实现。"
+    },
+    "file:thirdparty/arrow/include/arrow/vendored/xxhash/xxhash.h": {
+      "name": "xxhash.h",
+      "type": "file",
+      "summary": "xxHash 极速非加密哈希算法的完整单头文件实现，支持 32/64/128 位哈希、流式处理和自定义种子，性能接近 memcpy 速度。"
+    },
+    "file:thirdparty/arrow/include/arrow/visit_array_inline.h": {
+      "name": "visit_array_inline.h",
+      "type": "file",
+      "summary": "Arrow 的数组内联分发头文件，定义 VisitArrayInline 模板函数，通过 switch-case 将 Array 按 type_id 分派到 visitor 的对应 Visit 方法。"
+    },
+    "file:thirdparty/arrow/include/arrow/visit_data_inline.h": {
+      "name": "visit_data_inline.h",
+      "type": "file",
+      "summary": "Arrow 的数据内联访问头文件，定义 ArraySpanInlineVisitor 模板，支持对 ArraySpan 进行零拷贝的 valid/null 回调遍历，针对数值、布尔、字符串等类型特化。"
+    },
+    "file:thirdparty/arrow/include/arrow/visit_scalar_inline.h": {
+      "name": "visit_scalar_inline.h",
+      "type": "file",
+      "summary": "Arrow 的标量内联分发头文件，定义 VisitScalarInline 模板函数，通过 switch-case 将 Scalar 按 type_id 分派到 visitor 的对应 Visit 方法。"
+    },
+    "file:thirdparty/arrow/include/arrow/visit_type_inline.h": {
+      "name": "visit_type_inline.h",
+      "type": "file",
+      "summary": "Arrow 的类型内联分发头文件，定义 VisitTypeInline、VisitType 和 VisitTypeIdInline 三个模板函数，支持按 DataType 的 type_id 进行 visitor 分派。"
+    },
+    "file:thirdparty/arrow/include/arrow/visitor_generate.h": {
+      "name": "visitor_generate.h",
+      "type": "file",
+      "summary": "Arrow 的类型列表生成宏头文件，定义 ARROW_GENERATE_FOR_ALL_TYPES 等宏，枚举所有 Arrow 数据类型（Null、Boolean、Int8~UInt64、String、List、Struct 等），供 visitor 分派机制使用。"
+    },
+    "file:thirdparty/arrow/include/arrow/visitor.h": {
+      "name": "visitor.h",
+      "type": "file",
+      "summary": "Arrow 的抽象 visitor 基类头文件，定义 ArrayVisitor、TypeVisitor 和 ScalarVisitor 三个抽象基类，为所有 Arrow 数据类型提供虚函数 Visit 接口。"
+    },
+    "file:thirdparty/arrow/lib/libarrow_bundled_dependencies.a": {
+      "name": "libarrow_bundled_dependencies.a",
+      "type": "file",
+      "summary": "Arrow 的捆绑第三方依赖静态库，包含 Arrow 编译时静态链接的所有第三方库（如 double-conversion、xxhash 等）的目标文件归档。"
+    },
+    "file:thirdparty/arrow/lib/libarrow.a": {
+      "name": "libarrow.a",
+      "type": "file",
+      "summary": "Apache Arrow C++ 核心库的静态库归档文件，包含 Arrow 列式内存格式、IPC 序列化、计算内核等功能的编译目标文件。"
+    },
+    "file:thirdparty/arrow/lib/libarrow.so": {
+      "name": "libarrow.so",
+      "type": "file",
+      "summary": "Apache Arrow C++ 核心库的动态链接库（符号链接），指向 libarrow.so.1400 版本化库文件。"
+    },
+    "file:thirdparty/arrow/lib/libarrow.so.1400": {
+      "name": "libarrow.so.1400",
+      "type": "file",
+      "summary": "Apache Arrow C++ 核心库的版本化动态链接库（SO version 1400），提供列式内存格式、IPC、计算内核等运行时功能。"
+    },
+    "file:thirdparty/arrow/lib/libarrow.so.1400.0.0": {
+      "name": "libarrow.so.1400.0.0",
+      "type": "file",
+      "summary": "Apache Arrow C++ 共享库的预编译二进制文件（ELF 64-bit x86-64），提供高性能列式内存数据结构和跨语言数据交换能力。"
+    },
+    "file:thirdparty/CRoaring/include/cmocka_pbc.h": {
+      "name": "cmocka_pbc.h",
+      "type": "file",
+      "summary": "契约式编程（Design by Contract）宏定义头文件，提供 REQUIRE/ENSURE/INVARIANT 断言宏，仅在 UNIT_TESTING 或 DEBUG 模式下生效。"
+    },
+    "file:thirdparty/CRoaring/include/cmocka.h": {
+      "name": "cmocka.h",
+      "type": "file",
+      "summary": "cmocka 单元测试框架的核心头文件，提供测试用例定义、断言宏、mock 函数和测试运行器等完整的 C 语言单元测试基础设施。"
+    },
+    "file:thirdparty/CRoaring/include/roaring/array_util.h": {
+      "name": "array_util.h",
+      "type": "file",
+      "summary": "有序 uint16 数组的工具函数集，提供二分查找（binarySearch）、区间计数（count_less/count_greater）、数组合并/交集/差集等高效操作，是 Roaring Bitmap 数组容器的核心算法基础。"
+    },
+    "file:thirdparty/CRoaring/include/roaring/art/art.h": {
+      "name": "art.h",
+      "type": "file",
+      "summary": "自适应基数树（Adaptive Radix Tree, ART）实现的头文件，采用固定 48 位键长度、键压缩和无指针设计（通过索引引用节点），支持高效的前缀查找和有序遍历。"
+    },
+    "file:thirdparty/CRoaring/include/roaring/bitset_util.h": {
+      "name": "bitset_util.h",
+      "type": "file",
+      "summary": "底层位集合（bitset）操作工具集，提供范围设置/翻转/重置、基数计算和 Harley-Seal popcount 等 SIMD 优化的位操作函数，是 bitset 容器的性能核心。"
+    },
+    "file:thirdparty/CRoaring/include/roaring/bitset/bitset.h": {
+      "name": "bitset.h",
+      "type": "file",
+      "summary": "独立的位集合（bitset）库头文件，提供完整的 bitset 数据结构和操作接口，包括创建、销毁、集合运算、序列化等功能。"
+    },
+    "file:thirdparty/CRoaring/include/roaring/containers/array.h": {
+      "name": "array.h",
+      "type": "file",
+      "summary": "Roaring Bitmap 的数组容器实现，使用有序 uint16 数组存储稀疏位集合，适用于元素数量较少的区间，提供插入、查找、集合运算等完整操作。"
+    },
+    "file:thirdparty/CRoaring/include/roaring/containers/bitset.h": {
+      "name": "bitset.h",
+      "type": "file",
+      "summary": "Roaring Bitmap 的位集合容器实现，使用固定大小的 uint64 位图存储密集位集合，适用于元素数量较多的区间，提供位操作和 SIMD 加速的基数计算。"
+    },
+    "file:thirdparty/CRoaring/include/roaring/containers/container_defs.h": {
+      "name": "container_defs.h",
+      "type": "file",
+      "summary": "容器类型基础定义头文件，定义 container_t 基类、STRUCT_CONTAINER 宏和类型安全的 CAST/movable_CAST 转换宏，是所有容器类型的公共基础设施。"
+    },
+    "file:thirdparty/CRoaring/include/roaring/containers/containers.h": {
+      "name": "containers.h",
+      "type": "file",
+      "summary": "容器子系统的核心聚合头文件，汇总所有容器类型（array、bitset、run）及其混合运算（intersection、union、andnot、xor、negation、subset、equal），定义容器类型码和 PAIR_CONTAINER_TYPES 宏用于双类型 switch 分派。"
+    },
+    "file:thirdparty/CRoaring/include/roaring/containers/convert.h": {
+      "name": "convert.h",
+      "type": "file",
+      "summary": "容器类型转换函数声明头文件，提供 array/bitset/run 三种容器之间的相互转换接口。"
+    },
+    "file:thirdparty/CRoaring/include/roaring/containers/mixed_andnot.h": {
+      "name": "mixed_andnot.h",
+      "type": "file",
+      "summary": "混合容器 AND-NOT（差集）运算声明头文件，提供任意两种容器类型之间的 andnot 操作函数接口。"
+    },
+    "file:thirdparty/CRoaring/include/roaring/containers/mixed_equal.h": {
+      "name": "mixed_equal.h",
+      "type": "file",
+      "summary": "混合容器相等性比较声明头文件，提供任意两种容器类型之间的 equality 判断函数接口。"
+    },
+    "file:thirdparty/CRoaring/include/roaring/containers/mixed_intersection.h": {
+      "name": "mixed_intersection.h",
+      "type": "file",
+      "summary": "混合容器交集运算声明头文件，提供任意两种容器类型之间的 intersection 操作函数接口。"
+    },
+    "file:thirdparty/CRoaring/include/roaring/containers/mixed_negation.h": {
+      "name": "mixed_negation.h",
+      "type": "file",
+      "summary": "混合容器取反运算声明头文件，提供容器范围取反（negation/range negation）操作函数接口。"
+    },
+    "file:thirdparty/CRoaring/include/roaring/containers/mixed_subset.h": {
+      "name": "mixed_subset.h",
+      "type": "file",
+      "summary": "混合容器子集判断声明头文件，提供任意两种容器类型之间的 subset 关系判断函数接口。"
+    },
+    "file:thirdparty/CRoaring/include/roaring/containers/mixed_union.h": {
+      "name": "mixed_union.h",
+      "type": "file",
+      "summary": "混合容器并集运算声明头文件，提供任意两种容器类型之间的 union 操作函数接口。"
+    },
+    "file:thirdparty/CRoaring/include/roaring/containers/mixed_xor.h": {
+      "name": "mixed_xor.h",
+      "type": "file",
+      "summary": "混合容器异或运算声明头文件，提供任意两种容器类型之间的 symmetric difference（XOR）操作函数接口。"
+    },
+    "file:thirdparty/CRoaring/include/roaring/containers/perfparameters.h": {
+      "name": "perfparameters.h",
+      "type": "file",
+      "summary": "性能调优参数定义头文件，包含容器转换阈值（ARRAY_LAZY_LOWERBOUND=1024）、默认初始大小和惰性求值时的自动转换策略。"
+    },
+    "file:thirdparty/CRoaring/include/roaring/containers/run.h": {
+      "name": "run.h",
+      "type": "file",
+      "summary": "Roaring Bitmap 的游程编码（run-length encoding）容器实现，使用连续区间对数组存储高度压缩的位集合，适用于包含大量连续区间的场景。"
+    },
+    "file:thirdparty/CRoaring/include/roaring/isadetection.h": {
+      "name": "isadetection.h",
+      "type": "file",
+      "summary": "CPU 指令集检测头文件，定义 AVX2/AVX512 支持标志和 croaring_hardware_support() 检测函数，用于运行时 SIMD 指令分派。"
+    },
+    "file:thirdparty/CRoaring/include/roaring/memory.h": {
+      "name": "memory.h",
+      "type": "file",
+      "summary": "自定义内存分配器钩子头文件，定义 roaring_memory_t 结构体和可替换的 malloc/realloc/calloc/free/aligned_malloc/aligned_free 函数指针，支持用户自定义内存管理策略。"
+    },
+    "file:thirdparty/CRoaring/include/roaring/misc/configreport.h": {
+      "name": "configreport.h",
+      "type": "file",
+      "summary": "硬件配置报告工具头文件，通过 CPUID 指令检测 CPU 缓存行大小、指令集支持等硬件特性，并提供编译时和运行时的配置信息输出函数。"
+    },
+    "file:thirdparty/CRoaring/include/roaring/portability.h": {
+      "name": "portability.h",
+      "type": "file",
+      "summary": "跨平台兼容性基础头文件，定义编译器检测宏（MSVC/GCC/Clang）、平台检测宏（x64/ARM）、内联属性、对齐分配、字节序和 endianness 处理等可移植性基础设施。"
+    },
+    "file:thirdparty/CRoaring/include/roaring/roaring_array.h": {
+      "name": "roaring_array.h",
+      "type": "file",
+      "summary": "CRoaring 库的底层 roaring array 数据结构头文件，定义了 roaring_array_t 的操作函数，包括创建、拷贝、序列化、容器管理等核心操作，是 roaring bitmap 的内部实现基础。"
+    },
+    "file:thirdparty/CRoaring/include/roaring/roaring_types.h": {
+      "name": "roaring_types.h",
+      "type": "file",
+      "summary": "CRoaring 库的核心类型定义头文件，定义了 roaring_array_t（roaring bitmap 的并行数组结构）、roaring_statistics_t（bitmap 统计信息）、迭代器类型和 COW 标志等基础类型。"
+    },
+    "file:thirdparty/CRoaring/include/roaring/roaring_version.h": {
+      "name": "roaring_version.h",
+      "type": "file",
+      "summary": "CRoaring 库的版本定义头文件，由 release.py 自动生成，定义版本号 4.3.6。"
+    },
+    "file:thirdparty/CRoaring/include/roaring/roaring.h": {
+      "name": "roaring.h",
+      "type": "file",
+      "summary": "CRoaring 库的主公共 API 头文件，提供 32 位 roaring bitmap 的完整接口，包括创建、添加/删除元素、集合运算（并集、交集、差集、异或）、序列化、迭代器和统计等功能。"
+    },
+    "file:thirdparty/CRoaring/include/roaring/roaring.hh": {
+      "name": "roaring.hh",
+      "type": "file",
+      "summary": "CRoaring 库的 C++ 封装头文件，提供 Roaring 类作为 32 位 roaring bitmap 的面向对象包装，支持 STL 风格的迭代器、集合运算、序列化和异常处理。"
+    },
+    "file:thirdparty/CRoaring/include/roaring/roaring64.h": {
+      "name": "roaring64.h",
+      "type": "file",
+      "summary": "CRoaring 库的 64 位 roaring bitmap C API 头文件，提供 roaring64_bitmap_t 的完整操作接口，包括创建、集合运算、序列化、迭代器和批量操作。"
+    },
+    "file:thirdparty/CRoaring/include/roaring/roaring64map.hh": {
+      "name": "roaring64map.hh",
+      "type": "file",
+      "summary": "CRoaring 库的 64 位 roaring bitmap C++ 实现，通过 std::map<uint32_t, Roaring> 将 64 位键拆分为高 32 位索引和低 32 位 Roaring bitmap，提供完整的面向对象接口。"
+    },
+    "file:thirdparty/CRoaring/include/roaring/utilasm.h": {
+      "name": "utilasm.h",
+      "type": "file",
+      "summary": "CRoaring 库的 x86 内联汇编优化宏定义头文件，提供位移、位测试和位计数等 SIMD/位操作指令的内联汇编封装，用于性能关键路径。"
+    },
+    "file:thirdparty/CRoaring/lib/libcmocka.so": {
+      "name": "libcmocka.so",
+      "type": "file",
+      "summary": "cmocka 测试框架的共享库符号链接，指向 libcmocka.so.0，用于 CRoaring 库的单元测试。"
+    },
+    "file:thirdparty/CRoaring/lib/libcmocka.so.0": {
+      "name": "libcmocka.so.0",
+      "type": "file",
+      "summary": "cmocka 测试框架的共享库符号链接，指向 libcmocka.so.0.7.0，版本化 soname 链接。"
+    },
+    "file:thirdparty/CRoaring/lib/libcmocka.so.0.7.0": {
+      "name": "libcmocka.so.0.7.0",
+      "type": "file",
+      "summary": "cmocka 测试框架 0.7.0 版本的共享库二进制文件，提供 C 语言单元测试的 mock 和断言功能。"
+    },
+    "file:thirdparty/CRoaring/lib/libroaring.a": {
+      "name": "libroaring.a",
+      "type": "file",
+      "summary": "CRoaring 库的静态库归档文件，包含 roaring bitmap 的完整 C 实现，用于静态链接。"
+    },
+    "file:thirdparty/CRoaring/lib/libroaring.so": {
+      "name": "libroaring.so",
+      "type": "file",
+      "summary": "CRoaring 库的共享库符号链接，指向 libroaring.so.18，用于动态链接。"
+    },
+    "file:thirdparty/CRoaring/lib/libroaring.so.18": {
+      "name": "libroaring.so.18",
+      "type": "file",
+      "summary": "CRoaring 库的共享库符号链接，指向 libroaring.so.4.3.6，版本化 soname 链接。"
+    },
+    "file:thirdparty/CRoaring/lib/libroaring.so.4.3.6": {
+      "name": "libroaring.so.4.3.6",
+      "type": "file",
+      "summary": "CRoaring 库 4.3.6 版本的共享库二进制文件，包含 roaring bitmap 的完整 C 实现。"
+    },
+    "file:thirdparty/fast_dds/include/fastcdr/Cdr.h": {
+      "name": "Cdr.h",
+      "type": "file",
+      "summary": "FastCDR 序列化库的核心 Cdr 类头文件，提供基于 CDR 协议的序列化/反序列化接口，支持基本类型、STL 容器、字符串、嵌套结构和多种编码格式（XCDRv1/v2、PL_CDR 等）。"
+    },
+    "file:thirdparty/fast_dds/include/fastcdr/cdr/fixed_size_string.hpp": {
+      "name": "fixed_size_string.hpp",
+      "type": "file",
+      "summary": "FastCDR 库的固定大小字符串模板类，提供编译期确定大小的非分配字符串实现，用于 DDS 序列化中的 bounded string 类型，避免动态内存分配。"
+    },
+    "file:thirdparty/fast_dds/include/fastcdr/CdrEncoding.hpp": {
+      "name": "CdrEncoding.hpp",
+      "type": "file",
+      "summary": "FastCDR 库的编码类型枚举定义头文件，定义 CdrVersion（CORBA CDR、DDS CDR、XCDRv1、XCDRv2）和 EncodingAlgorithmFlag（PLAIN_CDR、PL_CDR 等编码算法标志）。"
+    },
+    "file:thirdparty/fast_dds/include/fastcdr/CdrSizeCalculator.hpp": {
+      "name": "CdrSizeCalculator.hpp",
+      "type": "file",
+      "summary": "FastCDR 库的序列化大小计算器，提供 CdrSizeCalculator 类和一组模板函数，用于在实际序列化前精确计算各种类型（基本类型、容器、嵌套结构、optional 等）的编码后字节数。"
+    },
+    "file:thirdparty/fast_dds/include/fastcdr/config.h": {
+      "name": "config.h",
+      "type": "file",
+      "summary": "FastCDR 库的配置头文件，定义版本号（2.3.0）、C++11 支持标志、字节序检测、float128 支持、long double 大小和平台特定宏。"
+    },
+    "file:thirdparty/fast_dds/include/fastcdr/config/doxygen_modules.h": {
+      "name": "doxygen_modules.h",
+      "type": "file",
+      "summary": "FastCDR 库的 Doxygen 文档模块定义头文件，定义 FASTCDRAPIREFERENCE 和 EXCEPTIONMODULE 两个文档分组。"
+    },
+    "file:thirdparty/fast_dds/include/fastcdr/detail/container_recursive_inspector.hpp": {
+      "name": "container_recursive_inspector.hpp",
+      "type": "file",
+      "summary": "FastCDR 库的容器递归检查工具，提供 constexpr 函数 is_multi_array_primitive 用于编译期判断类型是否为基本类型或基本类型的多维 std::array，以优化序列化路径。"
+    },
+    "file:thirdparty/fast_dds/include/fastcdr/eProsima_auto_link.h": {
+      "name": "eProsima_auto_link.h",
+      "type": "file",
+      "summary": "FastCDR 库的 MSVC 自动链接头文件，在 Windows 平台上通过 #pragma comment(lib, ...) 自动链接正确版本的 FastCDR 静态/动态库。"
+    },
+    "file:thirdparty/fast_dds/include/fastcdr/exceptions/BadOptionalAccessException.hpp": {
+      "name": "BadOptionalAccessException.hpp",
+      "type": "file",
+      "summary": "FastCDR 库的异常类，在访问空 optional 值时抛出，继承自 Exception 基类，提供默认构造、拷贝/移动构造和赋值操作。"
+    },
+    "file:thirdparty/fast_dds/include/fastcdr/exceptions/BadParamException.h": {
+      "name": "BadParamException.h",
+      "type": "file",
+      "summary": "FastCDR 库的异常类，在序列化无效参数时抛出，继承自 Exception 基类，提供默认构造、拷贝/移动构造和赋值操作。"
+    },
+    "function:core/ondemand/on_demand_sub.cc:onParticipantDiscovery": {
+      "name": "onParticipantDiscovery",
+      "type": "function",
+      "summary": "DDS 参与者发现回调函数，当检测到发布者节点被移除(REMOVED)或掉线(DROPPED)时，调用 cleanupParticipantPublish 清理该发布者的所有变量订阅。"
+    }
+  },
+  "totalNodes": 729,
+  "totalEdges": 698
+}

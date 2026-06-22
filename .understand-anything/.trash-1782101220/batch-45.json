@@ -1,0 +1,375 @@
+{
+  "nodes": [
+    {
+      "id": "file:thirdparty/arrow/lib/libarrow.so.1400.0.0",
+      "type": "file",
+      "name": "libarrow.so.1400.0.0",
+      "filePath": "thirdparty/arrow/lib/libarrow.so.1400.0.0",
+      "summary": "Apache Arrow C++ 共享库的预编译二进制文件（ELF 64-bit x86-64），提供高性能列式内存数据结构和跨语言数据交换能力。",
+      "tags": ["third-party", "shared-library", "binary", "arrow"],
+      "complexity": "complex",
+      "languageNotes": "预编译的 ELF 共享对象，包含调试信息（not stripped），版本 1400.0.0。"
+    },
+    {
+      "id": "file:thirdparty/CRoaring/include/cmocka_pbc.h",
+      "type": "file",
+      "name": "cmocka_pbc.h",
+      "filePath": "thirdparty/CRoaring/include/cmocka_pbc.h",
+      "summary": "契约式编程（Design by Contract）宏定义头文件，提供 REQUIRE/ENSURE/INVARIANT 断言宏，仅在 UNIT_TESTING 或 DEBUG 模式下生效。",
+      "tags": ["third-party", "testing", "macros", "contract-programming"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/CRoaring/include/cmocka.h",
+      "type": "file",
+      "name": "cmocka.h",
+      "filePath": "thirdparty/CRoaring/include/cmocka.h",
+      "summary": "cmocka 单元测试框架的核心头文件，提供测试用例定义、断言宏、mock 函数和测试运行器等完整的 C 语言单元测试基础设施。",
+      "tags": ["third-party", "testing", "unit-test-framework", "mock"],
+      "complexity": "complex",
+      "languageNotes": "包含 CMUnitTest 结构体和大量测试断言宏（assert_int_equal、assert_string_equal 等），是 CRoaring 项目测试子系统的依赖。"
+    },
+    {
+      "id": "file:thirdparty/CRoaring/include/roaring/array_util.h",
+      "type": "file",
+      "name": "array_util.h",
+      "filePath": "thirdparty/CRoaring/include/roaring/array_util.h",
+      "summary": "有序 uint16 数组的工具函数集，提供二分查找（binarySearch）、区间计数（count_less/count_greater）、数组合并/交集/差集等高效操作，是 Roaring Bitmap 数组容器的核心算法基础。",
+      "tags": ["third-party", "utility", "algorithm", "binary-search", "array-operations"],
+      "complexity": "moderate",
+      "languageNotes": "所有函数均为 static inline，支持 C/C++ 双模式编译，使用 roaring::internal 命名空间。"
+    },
+    {
+      "id": "file:thirdparty/CRoaring/include/roaring/art/art.h",
+      "type": "file",
+      "name": "art.h",
+      "filePath": "thirdparty/CRoaring/include/roaring/art/art.h",
+      "summary": "自适应基数树（Adaptive Radix Tree, ART）实现的头文件，采用固定 48 位键长度、键压缩和无指针设计（通过索引引用节点），支持高效的前缀查找和有序遍历。",
+      "tags": ["third-party", "data-structure", "radix-tree", "indexing"],
+      "complexity": "moderate",
+      "languageNotes": "基于 Leis et al. 论文《The Adaptive Radix Tree》实现，节点通过 art_ref_t（类型码 + 数组索引）而非指针引用，支持零拷贝反序列化。"
+    },
+    {
+      "id": "file:thirdparty/CRoaring/include/roaring/bitset_util.h",
+      "type": "file",
+      "name": "bitset_util.h",
+      "filePath": "thirdparty/CRoaring/include/roaring/bitset_util.h",
+      "summary": "底层位集合（bitset）操作工具集，提供范围设置/翻转/重置、基数计算和 Harley-Seal popcount 等 SIMD 优化的位操作函数，是 bitset 容器的性能核心。",
+      "tags": ["third-party", "utility", "bitset", "simd", "popcount", "performance"],
+      "complexity": "complex",
+      "languageNotes": "包含 AVX2 优化的 Harley-Seal popcount 实现（popcount256、avx2_harley_seal_popcount256），使用 CSA（Carry-Save Adder）技术加速位计数。"
+    },
+    {
+      "id": "file:thirdparty/CRoaring/include/roaring/bitset/bitset.h",
+      "type": "file",
+      "name": "bitset.h",
+      "filePath": "thirdparty/CRoaring/include/roaring/bitset/bitset.h",
+      "summary": "独立的位集合（bitset）库头文件，提供完整的 bitset 数据结构和操作接口，包括创建、销毁、集合运算、序列化等功能。",
+      "tags": ["third-party", "data-structure", "bitset", "container"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/CRoaring/include/roaring/containers/array.h",
+      "type": "file",
+      "name": "array.h",
+      "filePath": "thirdparty/CRoaring/include/roaring/containers/array.h",
+      "summary": "Roaring Bitmap 的数组容器实现，使用有序 uint16 数组存储稀疏位集合，适用于元素数量较少的区间，提供插入、查找、集合运算等完整操作。",
+      "tags": ["third-party", "data-structure", "container", "array", "roaring"],
+      "complexity": "moderate",
+      "languageNotes": "array_container_t 结构体包含 cardinality、capacity 和 uint16_t* 数组，当元素超过 ARRAY_LAZY_LOWERBOUND（1024）时可自动转换为 bitset 容器。"
+    },
+    {
+      "id": "file:thirdparty/CRoaring/include/roaring/containers/bitset.h",
+      "type": "file",
+      "name": "bitset.h",
+      "filePath": "thirdparty/CRoaring/include/roaring/containers/bitset.h",
+      "summary": "Roaring Bitmap 的位集合容器实现，使用固定大小的 uint64 位图存储密集位集合，适用于元素数量较多的区间，提供位操作和 SIMD 加速的基数计算。",
+      "tags": ["third-party", "data-structure", "container", "bitset", "roaring"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/CRoaring/include/roaring/containers/container_defs.h",
+      "type": "file",
+      "name": "container_defs.h",
+      "filePath": "thirdparty/CRoaring/include/roaring/containers/container_defs.h",
+      "summary": "容器类型基础定义头文件，定义 container_t 基类、STRUCT_CONTAINER 宏和类型安全的 CAST/movable_CAST 转换宏，是所有容器类型的公共基础设施。",
+      "tags": ["third-party", "type-definition", "container", "macros", "base-class"],
+      "complexity": "simple",
+      "languageNotes": "使用 C++ 模板实现 movable_CAST_HELPER 的编译期类型安全检查（std::is_base_of），C 模式下退化为普通类型转换。"
+    },
+    {
+      "id": "file:thirdparty/CRoaring/include/roaring/containers/containers.h",
+      "type": "file",
+      "name": "containers.h",
+      "filePath": "thirdparty/CRoaring/include/roaring/containers/containers.h",
+      "summary": "容器子系统的核心聚合头文件，汇总所有容器类型（array、bitset、run）及其混合运算（intersection、union、andnot、xor、negation、subset、equal），定义容器类型码和 PAIR_CONTAINER_TYPES 宏用于双类型 switch 分派。",
+      "tags": ["third-party", "aggregation-header", "container", "dispatcher", "roaring"],
+      "complexity": "complex",
+      "languageNotes": "定义 BITSET_CONTAINER_TYPE=1、ARRAY_CONTAINER_TYPE=2、RUN_CONTAINER_TYPE=3、SHARED_CONTAINER_TYPE=4，通过 PAIR_CONTAINER_TYPES 宏实现 O(1) 的双容器类型分派。"
+    },
+    {
+      "id": "file:thirdparty/CRoaring/include/roaring/containers/convert.h",
+      "type": "file",
+      "name": "convert.h",
+      "filePath": "thirdparty/CRoaring/include/roaring/containers/convert.h",
+      "summary": "容器类型转换函数声明头文件，提供 array/bitset/run 三种容器之间的相互转换接口。",
+      "tags": ["third-party", "conversion", "container", "type-conversion"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/CRoaring/include/roaring/containers/mixed_andnot.h",
+      "type": "file",
+      "name": "mixed_andnot.h",
+      "filePath": "thirdparty/CRoaring/include/roaring/containers/mixed_andnot.h",
+      "summary": "混合容器 AND-NOT（差集）运算声明头文件，提供任意两种容器类型之间的 andnot 操作函数接口。",
+      "tags": ["third-party", "set-operation", "container", "andnot"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/CRoaring/include/roaring/containers/mixed_equal.h",
+      "type": "file",
+      "name": "mixed_equal.h",
+      "filePath": "thirdparty/CRoaring/include/roaring/containers/mixed_equal.h",
+      "summary": "混合容器相等性比较声明头文件，提供任意两种容器类型之间的 equality 判断函数接口。",
+      "tags": ["third-party", "comparison", "container", "equality"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/CRoaring/include/roaring/containers/mixed_intersection.h",
+      "type": "file",
+      "name": "mixed_intersection.h",
+      "filePath": "thirdparty/CRoaring/include/roaring/containers/mixed_intersection.h",
+      "summary": "混合容器交集运算声明头文件，提供任意两种容器类型之间的 intersection 操作函数接口。",
+      "tags": ["third-party", "set-operation", "container", "intersection"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/CRoaring/include/roaring/containers/mixed_negation.h",
+      "type": "file",
+      "name": "mixed_negation.h",
+      "filePath": "thirdparty/CRoaring/include/roaring/containers/mixed_negation.h",
+      "summary": "混合容器取反运算声明头文件，提供容器范围取反（negation/range negation）操作函数接口。",
+      "tags": ["third-party", "set-operation", "container", "negation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/CRoaring/include/roaring/containers/mixed_subset.h",
+      "type": "file",
+      "name": "mixed_subset.h",
+      "filePath": "thirdparty/CRoaring/include/roaring/containers/mixed_subset.h",
+      "summary": "混合容器子集判断声明头文件，提供任意两种容器类型之间的 subset 关系判断函数接口。",
+      "tags": ["third-party", "set-operation", "container", "subset"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/CRoaring/include/roaring/containers/mixed_union.h",
+      "type": "file",
+      "name": "mixed_union.h",
+      "filePath": "thirdparty/CRoaring/include/roaring/containers/mixed_union.h",
+      "summary": "混合容器并集运算声明头文件，提供任意两种容器类型之间的 union 操作函数接口。",
+      "tags": ["third-party", "set-operation", "container", "union"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/CRoaring/include/roaring/containers/mixed_xor.h",
+      "type": "file",
+      "name": "mixed_xor.h",
+      "filePath": "thirdparty/CRoaring/include/roaring/containers/mixed_xor.h",
+      "summary": "混合容器异或运算声明头文件，提供任意两种容器类型之间的 symmetric difference（XOR）操作函数接口。",
+      "tags": ["third-party", "set-operation", "container", "xor"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/CRoaring/include/roaring/containers/perfparameters.h",
+      "type": "file",
+      "name": "perfparameters.h",
+      "filePath": "thirdparty/CRoaring/include/roaring/containers/perfparameters.h",
+      "summary": "性能调优参数定义头文件，包含容器转换阈值（ARRAY_LAZY_LOWERBOUND=1024）、默认初始大小和惰性求值时的自动转换策略。",
+      "tags": ["third-party", "configuration", "performance", "tuning-parameters"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/CRoaring/include/roaring/containers/run.h",
+      "type": "file",
+      "name": "run.h",
+      "filePath": "thirdparty/CRoaring/include/roaring/containers/run.h",
+      "summary": "Roaring Bitmap 的游程编码（run-length encoding）容器实现，使用连续区间对数组存储高度压缩的位集合，适用于包含大量连续区间的场景。",
+      "tags": ["third-party", "data-structure", "container", "rle", "compression"],
+      "complexity": "moderate",
+      "languageNotes": "run_container_t 使用 uint16_t* values 和 uint16_t* lengths 数组存储游程，当全范围被覆盖时可标记为 fullrun 以跳过实际存储。"
+    },
+    {
+      "id": "file:thirdparty/CRoaring/include/roaring/isadetection.h",
+      "type": "file",
+      "name": "isadetection.h",
+      "filePath": "thirdparty/CRoaring/include/roaring/isadetection.h",
+      "summary": "CPU 指令集检测头文件，定义 AVX2/AVX512 支持标志和 croaring_hardware_support() 检测函数，用于运行时 SIMD 指令分派。",
+      "tags": ["third-party", "hardware-detection", "simd", "avx2", "avx512"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/CRoaring/include/roaring/memory.h",
+      "type": "file",
+      "name": "memory.h",
+      "filePath": "thirdparty/CRoaring/include/roaring/memory.h",
+      "summary": "自定义内存分配器钩子头文件，定义 roaring_memory_t 结构体和可替换的 malloc/realloc/calloc/free/aligned_malloc/aligned_free 函数指针，支持用户自定义内存管理策略。",
+      "tags": ["third-party", "memory-management", "allocator", "customization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/CRoaring/include/roaring/misc/configreport.h",
+      "type": "file",
+      "name": "configreport.h",
+      "filePath": "thirdparty/CRoaring/include/roaring/misc/configreport.h",
+      "summary": "硬件配置报告工具头文件，通过 CPUID 指令检测 CPU 缓存行大小、指令集支持等硬件特性，并提供编译时和运行时的配置信息输出函数。",
+      "tags": ["third-party", "hardware-detection", "cpuid", "diagnostics"],
+      "complexity": "moderate",
+      "languageNotes": "使用内联汇编（__asm volatile）执行 CPUID 指令，仅在 x64 平台可用。"
+    },
+    {
+      "id": "file:thirdparty/CRoaring/include/roaring/portability.h",
+      "type": "file",
+      "name": "portability.h",
+      "filePath": "thirdparty/CRoaring/include/roaring/portability.h",
+      "summary": "跨平台兼容性基础头文件，定义编译器检测宏（MSVC/GCC/Clang）、平台检测宏（x64/ARM）、内联属性、对齐分配、字节序和 endianness 处理等可移植性基础设施。",
+      "tags": ["third-party", "portability", "cross-platform", "compiler-detection"],
+      "complexity": "moderate",
+      "languageNotes": "包含 CROARING_VISUAL_STUDIO、CROARING_IS_X64、CROARING_IS_ARM 等平台检测宏，以及 CROARING_DEPRECATED 宏和 roaring_aligned_malloc 等跨平台内存分配封装。"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:thirdparty/CRoaring/include/roaring/containers/containers.h",
+      "target": "file:thirdparty/CRoaring/include/roaring/containers/array.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:thirdparty/CRoaring/include/roaring/containers/containers.h",
+      "target": "file:thirdparty/CRoaring/include/roaring/containers/bitset.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:thirdparty/CRoaring/include/roaring/containers/containers.h",
+      "target": "file:thirdparty/CRoaring/include/roaring/containers/run.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:thirdparty/CRoaring/include/roaring/containers/containers.h",
+      "target": "file:thirdparty/CRoaring/include/roaring/containers/convert.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:thirdparty/CRoaring/include/roaring/containers/containers.h",
+      "target": "file:thirdparty/CRoaring/include/roaring/containers/mixed_andnot.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:thirdparty/CRoaring/include/roaring/containers/containers.h",
+      "target": "file:thirdparty/CRoaring/include/roaring/containers/mixed_equal.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:thirdparty/CRoaring/include/roaring/containers/containers.h",
+      "target": "file:thirdparty/CRoaring/include/roaring/containers/mixed_intersection.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:thirdparty/CRoaring/include/roaring/containers/containers.h",
+      "target": "file:thirdparty/CRoaring/include/roaring/containers/mixed_negation.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:thirdparty/CRoaring/include/roaring/containers/containers.h",
+      "target": "file:thirdparty/CRoaring/include/roaring/containers/mixed_subset.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:thirdparty/CRoaring/include/roaring/containers/containers.h",
+      "target": "file:thirdparty/CRoaring/include/roaring/containers/mixed_union.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:thirdparty/CRoaring/include/roaring/containers/containers.h",
+      "target": "file:thirdparty/CRoaring/include/roaring/containers/mixed_xor.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:thirdparty/CRoaring/include/roaring/containers/containers.h",
+      "target": "file:thirdparty/CRoaring/include/roaring/bitset_util.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:thirdparty/CRoaring/include/roaring/array_util.h",
+      "target": "file:thirdparty/CRoaring/include/roaring/portability.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:thirdparty/CRoaring/include/roaring/bitset_util.h",
+      "target": "file:thirdparty/CRoaring/include/roaring/portability.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:thirdparty/CRoaring/include/roaring/containers/array.h",
+      "target": "file:thirdparty/CRoaring/include/roaring/containers/container_defs.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:thirdparty/CRoaring/include/roaring/containers/bitset.h",
+      "target": "file:thirdparty/CRoaring/include/roaring/containers/container_defs.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:thirdparty/CRoaring/include/roaring/containers/run.h",
+      "target": "file:thirdparty/CRoaring/include/roaring/containers/container_defs.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:thirdparty/CRoaring/include/roaring/containers/container_defs.h",
+      "target": "file:thirdparty/CRoaring/include/roaring/containers/perfparameters.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:thirdparty/CRoaring/include/roaring/misc/configreport.h",
+      "target": "file:thirdparty/CRoaring/include/roaring/portability.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    }
+  ]
+}

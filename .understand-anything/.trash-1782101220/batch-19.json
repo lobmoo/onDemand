@@ -1,0 +1,100 @@
+{
+  "nodes": [
+    {
+      "id": "file:core/ondemand/.gensrctx/dsf_define_nodeCdrAux.hpp",
+      "type": "file",
+      "name": "dsf_define_nodeCdrAux.hpp",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_nodeCdrAux.hpp",
+      "summary": "fastddsgen 自动生成的 CDR 序列化辅助头文件，定义了 NetworkInterface、BasicInfo、RuntimeInfo 三种 DDS 数据类型的最大 CDR 类型尺寸常量，并声明了对应的 SerializeKey 函数。",
+      "tags": ["auto-generated", "serialization", "dds", "cdr"],
+      "complexity": "simple",
+      "languageNotes": "由 fastddsgen 工具自动生成，包含 constexpr 常量定义和 BaoSky::Cdr 命名空间下的 SerializeKey 函数声明。"
+    },
+    {
+      "id": "file:core/ondemand/.gensrctx/dsf_define_nodePubSubTypes.cxx",
+      "type": "file",
+      "name": "dsf_define_nodePubSubTypes.cxx",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_nodePubSubTypes.cxx",
+      "summary": "fastddsgen 自动生成的 DDS TopicDataType 实现文件，为 NetworkInterface、BasicInfo、RuntimeInfo 三种数据类型提供完整的序列化、反序列化、大小计算、数据创建/删除及 Key 获取等方法实现。",
+      "tags": ["auto-generated", "serialization", "dds", "topic-data-type"],
+      "complexity": "complex",
+      "languageNotes": "使用 BaoSky::Cdr 命名空间下的 SerializeCdr/DeserializeCdr/CdrSizeCalculator 进行 XCDRv1 格式的序列化。构造函数使用 malloc/memset 分配 mKeyBuffer，析构函数使用 free 释放，存在 C 风格内存管理模式。"
+    },
+    {
+      "id": "file:core/ondemand/.gensrctx/dsf_define_nodePubSubTypes.h",
+      "type": "file",
+      "name": "dsf_define_nodePubSubTypes.h",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_nodePubSubTypes.h",
+      "summary": "fastddsgen 自动生成的 DDS TopicDataType 头文件，声明了 NetworkInterfacePubSubType、BasicInfoPubSubType、RuntimeInfoPubSubType 三个类，均继承自 BaoSky::dds::TopicDataType，用于 DDS 数据的序列化/反序列化。",
+      "tags": ["auto-generated", "dds", "topic-data-type", "type-definition"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:core/ondemand/.gensrctx/dsf_define_nodePubSubTypes.h:NetworkInterfacePubSubType",
+      "type": "class",
+      "name": "NetworkInterfacePubSubType",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_nodePubSubTypes.h",
+      "lineRange": [41, 64],
+      "summary": "DDS TopicDataType 子类，负责 DSF::NetworkInterface 数据类型的序列化/反序列化，包含 Serialize、Deserialize、GetKey 等虚函数实现，使用 mKeyBuffer 存储 Key 数据。",
+      "tags": ["dds", "serialization", "topic-data-type", "auto-generated"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:core/ondemand/.gensrctx/dsf_define_nodePubSubTypes.h:BasicInfoPubSubType",
+      "type": "class",
+      "name": "BasicInfoPubSubType",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_nodePubSubTypes.h",
+      "lineRange": [72, 95],
+      "summary": "DDS TopicDataType 子类，负责 DSF::Node::BasicInfo 数据类型的序列化/反序列化，位于 DSF::Node 命名空间下，包含完整的序列化生命周期方法。",
+      "tags": ["dds", "serialization", "topic-data-type", "auto-generated"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:core/ondemand/.gensrctx/dsf_define_nodePubSubTypes.h:RuntimeInfoPubSubType",
+      "type": "class",
+      "name": "RuntimeInfoPubSubType",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_nodePubSubTypes.h",
+      "lineRange": [101, 124],
+      "summary": "DDS TopicDataType 子类，负责 DSF::Node::RuntimeInfo 数据类型的序列化/反序列化，位于 DSF::Node 命名空间下，最大 CDR 类型尺寸为 1612 字节。",
+      "tags": ["dds", "serialization", "topic-data-type", "auto-generated"],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_nodePubSubTypes.cxx",
+      "target": "file:core/ondemand/.gensrctx/dsf_define_nodeCdrAux.hpp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_nodePubSubTypes.cxx",
+      "target": "file:core/ondemand/.gensrctx/dsf_define_nodePubSubTypes.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_nodePubSubTypes.h",
+      "target": "class:core/ondemand/.gensrctx/dsf_define_nodePubSubTypes.h:NetworkInterfacePubSubType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_nodePubSubTypes.h",
+      "target": "class:core/ondemand/.gensrctx/dsf_define_nodePubSubTypes.h:BasicInfoPubSubType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_nodePubSubTypes.h",
+      "target": "class:core/ondemand/.gensrctx/dsf_define_nodePubSubTypes.h:RuntimeInfoPubSubType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "nodes": [
+    {
+      "id": "config:.env",
+      "type": "config",
+      "name": ".env",
+      "filePath": ".env",
+      "summary": "Shell 环境配置脚本，自动定位项目根目录并设置 LD_LIBRARY_PATH，指向 FastDDS 和 TXDDS 的第三方库路径，确保运行时能正确加载 DDS 动态链接库。",
+      "tags": ["configuration", "environment", "build-system", "dds"],
+      "complexity": "simple",
+      "languageNotes": "使用 bash 脚本实现向上查找项目根目录的逻辑，通过 source 命令在当前 shell 中导出环境变量。"
+    },
+    {
+      "id": "document:CLAUDE.md",
+      "type": "document",
+      "name": "CLAUDE.md",
+      "filePath": "CLAUDE.md",
+      "summary": "Claude Code 辅助文件，提供项目构建命令、测试流程、代码格式化配置，以及 OnDemand 系统的核心架构说明（发布/订阅模型、DDS Topics、频率协商机制）和 C++17 遗留代码维护原则。",
+      "tags": ["documentation", "development", "architecture", "maintenance"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "config:CMakeLists.txt",
+      "type": "config",
+      "name": "CMakeLists.txt",
+      "filePath": "CMakeLists.txt",
+      "summary": "CMake 顶层构建配置文件，定义 C++17 标准，提供 FastDDS/TXDDS 双实现切换选项（互斥），并组织 common/log、core、tests、sample 四个子目录的构建。",
+      "tags": ["build-system", "cmake", "configuration", "infrastructure"],
+      "complexity": "simple",
+      "languageNotes": "通过 USE_FASTDDS/USE_TXDDS 两个互斥 option 控制 DDS 实现选择，并通过 add_definitions 注入编译宏。"
+    },
+    {
+      "id": "document:README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "README.md",
+      "summary": "OnDemand 模块的完整架构文档，详细描述了基于 FastDDS 的高性能按需变量发布/订阅系统，涵盖项目结构、核心组件（OnDemandPub/OnDemandSub/VarStore/BucketManager）、数据结构定义、DDS 通信协议、数据流时序、性能优化设计及使用示例。",
+      "tags": ["documentation", "architecture", "overview", "entry-point"],
+      "complexity": "complex",
+      "languageNotes": "文档包含大量 C++ 代码片段和 IDL 定义，使用 ASCII 图表展示系统架构和数据流时序，是理解整个 OnDemand 系统的核心参考。"
+    }
+  ],
+  "edges": [
+    {
+      "source": "config:.env",
+      "target": "config:CMakeLists.txt",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:CLAUDE.md",
+      "target": "config:CMakeLists.txt",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "config:CMakeLists.txt",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "document:CLAUDE.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

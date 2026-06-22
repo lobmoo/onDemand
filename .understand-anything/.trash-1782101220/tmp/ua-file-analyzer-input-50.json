@@ -1,0 +1,31 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/domain/DomainParticipantListener.hpp", "language": "cpp", "sizeLines": 154, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/domain/qos/DomainParticipantExtendedQos.hpp", "language": "cpp", "sizeLines": 102, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp", "language": "cpp", "sizeLines": 171, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/domain/qos/DomainParticipantQos.hpp", "language": "cpp", "sizeLines": 568, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/domain/qos/ReplierQos.hpp", "language": "cpp", "sizeLines": 93, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/domain/qos/RequesterQos.hpp", "language": "cpp", "sizeLines": 93, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/log/Colors.hpp", "language": "cpp", "sizeLines": 60, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/log/FileConsumer.hpp", "language": "cpp", "sizeLines": 72, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/log/Log.hpp", "language": "cpp", "sizeLines": 395, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/log/OStreamConsumer.hpp", "language": "cpp", "sizeLines": 58, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/log/StdoutConsumer.hpp", "language": "cpp", "sizeLines": 45, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/log/StdoutErrConsumer.hpp", "language": "cpp", "sizeLines": 80, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/publisher/DataWriter.hpp", "language": "cpp", "sizeLines": 644, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/publisher/DataWriterListener.hpp", "language": "cpp", "sizeLines": 132, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/publisher/Publisher.hpp", "language": "cpp", "sizeLines": 472, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/publisher/PublisherListener.hpp", "language": "cpp", "sizeLines": 62, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/publisher/qos/DataWriterQos.hpp", "language": "cpp", "sizeLines": 845, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/publisher/qos/PublisherQos.hpp", "language": "cpp", "sizeLines": 209, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/publisher/qos/WriterQos.hpp", "language": "cpp", "sizeLines": 169, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/rpc/exceptions.hpp", "language": "cpp", "sizeLines": 33, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/rpc/exceptions/RemoteInvalidArgumentError.hpp", "language": "cpp", "sizeLines": 82, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/rpc/exceptions/RemoteOutOfResourcesError.hpp", "language": "cpp", "sizeLines": 82, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/rpc/exceptions/RemoteUnknownExceptionError.hpp", "language": "cpp", "sizeLines": 82, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/rpc/exceptions/RemoteUnknownOperationError.hpp", "language": "cpp", "sizeLines": 82, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/dds/rpc/exceptions/RemoteUnsupportedError.hpp", "language": "cpp", "sizeLines": 82, "fileCategory": "code"}
+  ],
+  "batchImportData": {}
+}
