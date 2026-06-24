@@ -304,16 +304,6 @@ public:
 
                     m_publishMask = x.m_publishMask;
 
-                    m_events = x.m_events;
-
-                    m_alarms = x.m_alarms;
-
-                    m_initialValues = x.m_initialValues;
-
-                    m_startIndexes = x.m_startIndexes;
-
-                    m_permission = x.m_permission;
-
     }
 
     /*!
@@ -331,11 +321,6 @@ public:
         m_nodeName = std::move(x.m_nodeName);
         m_isReadonly = x.m_isReadonly;
         m_publishMask = std::move(x.m_publishMask);
-        m_events = std::move(x.m_events);
-        m_alarms = std::move(x.m_alarms);
-        m_initialValues = std::move(x.m_initialValues);
-        m_startIndexes = std::move(x.m_startIndexes);
-        m_permission = std::move(x.m_permission);
     }
 
     /*!
@@ -362,16 +347,6 @@ public:
 
                     m_publishMask = x.m_publishMask;
 
-                    m_events = x.m_events;
-
-                    m_alarms = x.m_alarms;
-
-                    m_initialValues = x.m_initialValues;
-
-                    m_startIndexes = x.m_startIndexes;
-
-                    m_permission = x.m_permission;
-
         return *this;
     }
 
@@ -391,11 +366,6 @@ public:
         m_nodeName = std::move(x.m_nodeName);
         m_isReadonly = x.m_isReadonly;
         m_publishMask = std::move(x.m_publishMask);
-        m_events = std::move(x.m_events);
-        m_alarms = std::move(x.m_alarms);
-        m_initialValues = std::move(x.m_initialValues);
-        m_startIndexes = std::move(x.m_startIndexes);
-        m_permission = std::move(x.m_permission);
         return *this;
     }
 
@@ -413,12 +383,7 @@ public:
            m_description == x.m_description &&
            m_nodeName == x.m_nodeName &&
            m_isReadonly == x.m_isReadonly &&
-           m_publishMask == x.m_publishMask &&
-           m_events == x.m_events &&
-           m_alarms == x.m_alarms &&
-           m_initialValues == x.m_initialValues &&
-           m_startIndexes == x.m_startIndexes &&
-           m_permission == x.m_permission);
+           m_publishMask == x.m_publishMask);
     }
 
     /*!
@@ -723,201 +688,6 @@ public:
     }
 
 
-    /*!
-     * @brief This function copies the value in member events
-     * @param _events New value to be copied in member events
-     */
-    eProsima_user_DllExport void events(
-            const eprosima::fastcdr::optional<std::vector<DSF::Message::Event>>& _events)
-    {
-        m_events = _events;
-    }
-
-    /*!
-     * @brief This function moves the value in member events
-     * @param _events New value to be moved in member events
-     */
-    eProsima_user_DllExport void events(
-            eprosima::fastcdr::optional<std::vector<DSF::Message::Event>>&& _events)
-    {
-        m_events = std::move(_events);
-    }
-
-    /*!
-     * @brief This function returns a constant reference to member events
-     * @return Constant reference to member events
-     */
-    eProsima_user_DllExport const eprosima::fastcdr::optional<std::vector<DSF::Message::Event>>& events() const
-    {
-        return m_events;
-    }
-
-    /*!
-     * @brief This function returns a reference to member events
-     * @return Reference to member events
-     */
-    eProsima_user_DllExport eprosima::fastcdr::optional<std::vector<DSF::Message::Event>>& events()
-    {
-        return m_events;
-    }
-
-
-    /*!
-     * @brief This function copies the value in member alarms
-     * @param _alarms New value to be copied in member alarms
-     */
-    eProsima_user_DllExport void alarms(
-            const eprosima::fastcdr::optional<std::vector<DSF::Message::Alarm>>& _alarms)
-    {
-        m_alarms = _alarms;
-    }
-
-    /*!
-     * @brief This function moves the value in member alarms
-     * @param _alarms New value to be moved in member alarms
-     */
-    eProsima_user_DllExport void alarms(
-            eprosima::fastcdr::optional<std::vector<DSF::Message::Alarm>>&& _alarms)
-    {
-        m_alarms = std::move(_alarms);
-    }
-
-    /*!
-     * @brief This function returns a constant reference to member alarms
-     * @return Constant reference to member alarms
-     */
-    eProsima_user_DllExport const eprosima::fastcdr::optional<std::vector<DSF::Message::Alarm>>& alarms() const
-    {
-        return m_alarms;
-    }
-
-    /*!
-     * @brief This function returns a reference to member alarms
-     * @return Reference to member alarms
-     */
-    eProsima_user_DllExport eprosima::fastcdr::optional<std::vector<DSF::Message::Alarm>>& alarms()
-    {
-        return m_alarms;
-    }
-
-
-    /*!
-     * @brief This function copies the value in member initialValues
-     * @param _initialValues New value to be copied in member initialValues
-     */
-    eProsima_user_DllExport void initialValues(
-            const eprosima::fastcdr::optional<std::vector<DSF::NamedValue>>& _initialValues)
-    {
-        m_initialValues = _initialValues;
-    }
-
-    /*!
-     * @brief This function moves the value in member initialValues
-     * @param _initialValues New value to be moved in member initialValues
-     */
-    eProsima_user_DllExport void initialValues(
-            eprosima::fastcdr::optional<std::vector<DSF::NamedValue>>&& _initialValues)
-    {
-        m_initialValues = std::move(_initialValues);
-    }
-
-    /*!
-     * @brief This function returns a constant reference to member initialValues
-     * @return Constant reference to member initialValues
-     */
-    eProsima_user_DllExport const eprosima::fastcdr::optional<std::vector<DSF::NamedValue>>& initialValues() const
-    {
-        return m_initialValues;
-    }
-
-    /*!
-     * @brief This function returns a reference to member initialValues
-     * @return Reference to member initialValues
-     */
-    eProsima_user_DllExport eprosima::fastcdr::optional<std::vector<DSF::NamedValue>>& initialValues()
-    {
-        return m_initialValues;
-    }
-
-
-    /*!
-     * @brief This function copies the value in member startIndexes
-     * @param _startIndexes New value to be copied in member startIndexes
-     */
-    eProsima_user_DllExport void startIndexes(
-            const eprosima::fastcdr::optional<std::vector<DSF::NamedValue>>& _startIndexes)
-    {
-        m_startIndexes = _startIndexes;
-    }
-
-    /*!
-     * @brief This function moves the value in member startIndexes
-     * @param _startIndexes New value to be moved in member startIndexes
-     */
-    eProsima_user_DllExport void startIndexes(
-            eprosima::fastcdr::optional<std::vector<DSF::NamedValue>>&& _startIndexes)
-    {
-        m_startIndexes = std::move(_startIndexes);
-    }
-
-    /*!
-     * @brief This function returns a constant reference to member startIndexes
-     * @return Constant reference to member startIndexes
-     */
-    eProsima_user_DllExport const eprosima::fastcdr::optional<std::vector<DSF::NamedValue>>& startIndexes() const
-    {
-        return m_startIndexes;
-    }
-
-    /*!
-     * @brief This function returns a reference to member startIndexes
-     * @return Reference to member startIndexes
-     */
-    eProsima_user_DllExport eprosima::fastcdr::optional<std::vector<DSF::NamedValue>>& startIndexes()
-    {
-        return m_startIndexes;
-    }
-
-
-    /*!
-     * @brief This function copies the value in member permission
-     * @param _permission New value to be copied in member permission
-     */
-    eProsima_user_DllExport void permission(
-            const eprosima::fastcdr::optional<AccessControl>& _permission)
-    {
-        m_permission = _permission;
-    }
-
-    /*!
-     * @brief This function moves the value in member permission
-     * @param _permission New value to be moved in member permission
-     */
-    eProsima_user_DllExport void permission(
-            eprosima::fastcdr::optional<AccessControl>&& _permission)
-    {
-        m_permission = std::move(_permission);
-    }
-
-    /*!
-     * @brief This function returns a constant reference to member permission
-     * @return Constant reference to member permission
-     */
-    eProsima_user_DllExport const eprosima::fastcdr::optional<AccessControl>& permission() const
-    {
-        return m_permission;
-    }
-
-    /*!
-     * @brief This function returns a reference to member permission
-     * @return Reference to member permission
-     */
-    eProsima_user_DllExport eprosima::fastcdr::optional<AccessControl>& permission()
-    {
-        return m_permission;
-    }
-
-
 
 private:
 
@@ -929,11 +699,6 @@ private:
     std::string m_nodeName;
     bool m_isReadonly{false};
     VarPublishMask m_publishMask{0};
-    eprosima::fastcdr::optional<std::vector<DSF::Message::Event>> m_events;
-    eprosima::fastcdr::optional<std::vector<DSF::Message::Alarm>> m_alarms;
-    eprosima::fastcdr::optional<std::vector<DSF::NamedValue>> m_initialValues;
-    eprosima::fastcdr::optional<std::vector<DSF::NamedValue>> m_startIndexes;
-    eprosima::fastcdr::optional<AccessControl> m_permission;
 
 };
 /*!

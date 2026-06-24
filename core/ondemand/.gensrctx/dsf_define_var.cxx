@@ -187,11 +187,6 @@ Define::Define(
     m_nodeName = x.m_nodeName;
     m_isReadonly = x.m_isReadonly;
     m_publishMask = x.m_publishMask;
-    m_events = x.m_events;
-    m_alarms = x.m_alarms;
-    m_initialValues = x.m_initialValues;
-    m_startIndexes = x.m_startIndexes;
-    m_permission = x.m_permission;
 }
 
 Define::Define(
@@ -205,11 +200,6 @@ Define::Define(
     m_nodeName = std::move(x.m_nodeName);
     m_isReadonly = x.m_isReadonly;
     m_publishMask = std::move(x.m_publishMask);
-    m_events = std::move(x.m_events);
-    m_alarms = std::move(x.m_alarms);
-    m_initialValues = std::move(x.m_initialValues);
-    m_startIndexes = std::move(x.m_startIndexes);
-    m_permission = std::move(x.m_permission);
 }
 
 Define& Define::operator =(
@@ -224,11 +214,6 @@ Define& Define::operator =(
     m_nodeName = x.m_nodeName;
     m_isReadonly = x.m_isReadonly;
     m_publishMask = x.m_publishMask;
-    m_events = x.m_events;
-    m_alarms = x.m_alarms;
-    m_initialValues = x.m_initialValues;
-    m_startIndexes = x.m_startIndexes;
-    m_permission = x.m_permission;
     return *this;
 }
 
@@ -244,11 +229,6 @@ Define& Define::operator =(
     m_nodeName = std::move(x.m_nodeName);
     m_isReadonly = x.m_isReadonly;
     m_publishMask = std::move(x.m_publishMask);
-    m_events = std::move(x.m_events);
-    m_alarms = std::move(x.m_alarms);
-    m_initialValues = std::move(x.m_initialValues);
-    m_startIndexes = std::move(x.m_startIndexes);
-    m_permission = std::move(x.m_permission);
     return *this;
 }
 
@@ -262,12 +242,7 @@ bool Define::operator ==(
            m_description == x.m_description &&
            m_nodeName == x.m_nodeName &&
            m_isReadonly == x.m_isReadonly &&
-           m_publishMask == x.m_publishMask &&
-           m_events == x.m_events &&
-           m_alarms == x.m_alarms &&
-           m_initialValues == x.m_initialValues &&
-           m_startIndexes == x.m_startIndexes &&
-           m_permission == x.m_permission);
+           m_publishMask == x.m_publishMask);
 }
 
 bool Define::operator !=(
@@ -565,201 +540,6 @@ const DSF::Var::VarPublishMask& Define::publishMask() const
 DSF::Var::VarPublishMask& Define::publishMask()
 {
     return m_publishMask;
-}
-
-
-/*!
- * @brief This function copies the value in member events
- * @param _events New value to be copied in member events
- */
-void Define::events(
-        const BaoSky::Cdr::optional<std::vector<DSF::Message::Event>>& _events)
-{
-    m_events = _events;
-}
-
-/*!
- * @brief This function moves the value in member events
- * @param _events New value to be moved in member events
- */
-void Define::events(
-        BaoSky::Cdr::optional<std::vector<DSF::Message::Event>>&& _events)
-{
-    m_events = std::move(_events);
-}
-
-/*!
- * @brief This function returns a constant reference to member events
- * @return Constant reference to member events
- */
-const BaoSky::Cdr::optional<std::vector<DSF::Message::Event>>& Define::events() const
-{
-    return m_events;
-}
-
-/*!
- * @brief This function returns a reference to member events
- * @return Reference to member events
- */
-BaoSky::Cdr::optional<std::vector<DSF::Message::Event>>& Define::events()
-{
-    return m_events;
-}
-
-
-/*!
- * @brief This function copies the value in member alarms
- * @param _alarms New value to be copied in member alarms
- */
-void Define::alarms(
-        const BaoSky::Cdr::optional<std::vector<DSF::Message::Alarm>>& _alarms)
-{
-    m_alarms = _alarms;
-}
-
-/*!
- * @brief This function moves the value in member alarms
- * @param _alarms New value to be moved in member alarms
- */
-void Define::alarms(
-        BaoSky::Cdr::optional<std::vector<DSF::Message::Alarm>>&& _alarms)
-{
-    m_alarms = std::move(_alarms);
-}
-
-/*!
- * @brief This function returns a constant reference to member alarms
- * @return Constant reference to member alarms
- */
-const BaoSky::Cdr::optional<std::vector<DSF::Message::Alarm>>& Define::alarms() const
-{
-    return m_alarms;
-}
-
-/*!
- * @brief This function returns a reference to member alarms
- * @return Reference to member alarms
- */
-BaoSky::Cdr::optional<std::vector<DSF::Message::Alarm>>& Define::alarms()
-{
-    return m_alarms;
-}
-
-
-/*!
- * @brief This function copies the value in member initialValues
- * @param _initialValues New value to be copied in member initialValues
- */
-void Define::initialValues(
-        const BaoSky::Cdr::optional<std::vector<DSF::NamedValue>>& _initialValues)
-{
-    m_initialValues = _initialValues;
-}
-
-/*!
- * @brief This function moves the value in member initialValues
- * @param _initialValues New value to be moved in member initialValues
- */
-void Define::initialValues(
-        BaoSky::Cdr::optional<std::vector<DSF::NamedValue>>&& _initialValues)
-{
-    m_initialValues = std::move(_initialValues);
-}
-
-/*!
- * @brief This function returns a constant reference to member initialValues
- * @return Constant reference to member initialValues
- */
-const BaoSky::Cdr::optional<std::vector<DSF::NamedValue>>& Define::initialValues() const
-{
-    return m_initialValues;
-}
-
-/*!
- * @brief This function returns a reference to member initialValues
- * @return Reference to member initialValues
- */
-BaoSky::Cdr::optional<std::vector<DSF::NamedValue>>& Define::initialValues()
-{
-    return m_initialValues;
-}
-
-
-/*!
- * @brief This function copies the value in member startIndexes
- * @param _startIndexes New value to be copied in member startIndexes
- */
-void Define::startIndexes(
-        const BaoSky::Cdr::optional<std::vector<DSF::NamedValue>>& _startIndexes)
-{
-    m_startIndexes = _startIndexes;
-}
-
-/*!
- * @brief This function moves the value in member startIndexes
- * @param _startIndexes New value to be moved in member startIndexes
- */
-void Define::startIndexes(
-        BaoSky::Cdr::optional<std::vector<DSF::NamedValue>>&& _startIndexes)
-{
-    m_startIndexes = std::move(_startIndexes);
-}
-
-/*!
- * @brief This function returns a constant reference to member startIndexes
- * @return Constant reference to member startIndexes
- */
-const BaoSky::Cdr::optional<std::vector<DSF::NamedValue>>& Define::startIndexes() const
-{
-    return m_startIndexes;
-}
-
-/*!
- * @brief This function returns a reference to member startIndexes
- * @return Reference to member startIndexes
- */
-BaoSky::Cdr::optional<std::vector<DSF::NamedValue>>& Define::startIndexes()
-{
-    return m_startIndexes;
-}
-
-
-/*!
- * @brief This function copies the value in member permission
- * @param _permission New value to be copied in member permission
- */
-void Define::permission(
-        const BaoSky::Cdr::optional<DSF::Var::AccessControl>& _permission)
-{
-    m_permission = _permission;
-}
-
-/*!
- * @brief This function moves the value in member permission
- * @param _permission New value to be moved in member permission
- */
-void Define::permission(
-        BaoSky::Cdr::optional<DSF::Var::AccessControl>&& _permission)
-{
-    m_permission = std::move(_permission);
-}
-
-/*!
- * @brief This function returns a constant reference to member permission
- * @return Constant reference to member permission
- */
-const BaoSky::Cdr::optional<DSF::Var::AccessControl>& Define::permission() const
-{
-    return m_permission;
-}
-
-/*!
- * @brief This function returns a reference to member permission
- * @return Reference to member permission
- */
-BaoSky::Cdr::optional<DSF::Var::AccessControl>& Define::permission()
-{
-    return m_permission;
 }
 
 

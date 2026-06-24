@@ -163,21 +163,6 @@ eProsima_user_DllExport size_t CalculateSerializedSizeUserDefined(
         calculated_size += calculator.CalculateMemberSerializedSize(BaoSky::Cdr::MemberId(7),
                 data.publishMask(), current_alignment);
 
-        calculated_size += calculator.CalculateMemberSerializedSize(BaoSky::Cdr::MemberId(8),
-                data.events(), current_alignment);
-
-        calculated_size += calculator.CalculateMemberSerializedSize(BaoSky::Cdr::MemberId(9),
-                data.alarms(), current_alignment);
-
-        calculated_size += calculator.CalculateMemberSerializedSize(BaoSky::Cdr::MemberId(10),
-                data.initialValues(), current_alignment);
-
-        calculated_size += calculator.CalculateMemberSerializedSize(BaoSky::Cdr::MemberId(11),
-                data.startIndexes(), current_alignment);
-
-        calculated_size += calculator.CalculateMemberSerializedSize(BaoSky::Cdr::MemberId(12),
-                data.permission(), current_alignment);
-
 
     calculated_size += calculator.EndCalculateTypeSerializedSize(previous_encoding, current_alignment);
 
@@ -216,21 +201,6 @@ eProsima_user_DllExport void SerializeUserDefined(
 
         scdr.Serialize(BaoSky::Cdr::MemberId(7));
         scdr.Serialize(data.publishMask());
-
-        scdr.Serialize(BaoSky::Cdr::MemberId(8));
-        scdr.Serialize(data.events());
-
-        scdr.Serialize(BaoSky::Cdr::MemberId(9));
-        scdr.Serialize(data.alarms());
-
-        scdr.Serialize(BaoSky::Cdr::MemberId(10));
-        scdr.Serialize(data.initialValues());
-
-        scdr.Serialize(BaoSky::Cdr::MemberId(11));
-        scdr.Serialize(data.startIndexes());
-
-        scdr.Serialize(BaoSky::Cdr::MemberId(12));
-        scdr.Serialize(data.permission());
 
     scdr.CdrEndSerializeType();
 }
@@ -286,31 +256,6 @@ eProsima_user_DllExport void DeserializeUserDefined(
                                 case 7:
                                         dcdr.Deserialize(BaoSky::Cdr::MemberId(7));
                                         dcdr.Deserialize(data.publishMask());
-                                    break;
-
-                                case 8:
-                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(8));
-                                        dcdr.Deserialize(data.events());
-                                    break;
-
-                                case 9:
-                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(9));
-                                        dcdr.Deserialize(data.alarms());
-                                    break;
-
-                                case 10:
-                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(10));
-                                        dcdr.Deserialize(data.initialValues());
-                                    break;
-
-                                case 11:
-                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(11));
-                                        dcdr.Deserialize(data.startIndexes());
-                                    break;
-
-                                case 12:
-                                        dcdr.Deserialize(BaoSky::Cdr::MemberId(12));
-                                        dcdr.Deserialize(data.permission());
                                     break;
 
                 default:
@@ -1216,6 +1161,8 @@ void BaoSky::Cdr::SerializeKey(
                             scdr.Serialize(data.name());
 
                             scdr.Serialize(data.nodeName());
+
+
 
 }
 
