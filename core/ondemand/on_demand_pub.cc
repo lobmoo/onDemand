@@ -1022,14 +1022,17 @@ namespace ondemand
         if (it != nodeSlotMap_.end()) {
             return it->second;
         }
-        if (nextNodeSlot_ >= 64) {
-            /* 超过 64 个订阅节点：返回 kInvalidSlot，调用方需检查并拒绝该订阅，
-             * 避免多节点共享同一 bit 导致 unsubscribe 时错误清除其他节点的订阅 */
+        if (nodeSlotMap_.size() >= 64) {
             ONDEMANDLOG(error) << "Node slot overflow! Max 64 subscriber nodes supported."
                                << " nodeHash=" << nodeHash;
             return 0xFF; // kInvalidNodeSlot
         }
-        uint8_t slot = nextNodeSlot_++;
+        /* 从 nodeSlotMap_ 已占用的 slot 中找第一个空位 */
+        uint64_t used = 0;
+        for (const auto &[_, s] : nodeSlotMap_) {
+            used |= (1ULL << s);
+        }
+        uint8_t slot = static_cast<uint8_t>(__builtin_ctzll(~used));
         nodeSlotMap_.emplace(nodeHash, slot);
         return slot;
     }
@@ -1341,9 +1344,7 @@ namespace ondemand
 
         uint64_t nodeMask = uint64_t(1) << slotIt->second;
         auto freqChanges = forceUnsubscribeNode(nodeMask);
-
         nodeSlotMap_.erase(slotIt);
-
         lock.unlock();
 
         ONDEMANDLOG(info) << "Participant cleanup: " << participantName << ", force-unsubscribed "
@@ -1431,7 +1432,6 @@ namespace ondemand
             defineLookup_.clear();
             bucketManager_.Clear();
             nodeSlotMap_.clear();
-            nextNodeSlot_ = 0;
         }
 
         /*重置 varStore_，清空 table/metas/arena，避免重新注册时 id 冲突*/

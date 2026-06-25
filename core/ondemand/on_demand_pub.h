@@ -348,7 +348,6 @@ namespace ondemand
             static_cast<uint32_t>(DSF::Var::BLOB_TYPE::STRUCTS)}; // 全局序列化类型
         std::atomic<bool> paused_{false};                         // 暂停发布标志
         std::unordered_map<uint64_t, uint8_t> nodeSlotMap_;
-        uint8_t nextNodeSlot_ = 0;
 
         FreqChangeCallback freqChangeCb_;
         mutable std::mutex freqChangeCbMutex_;
