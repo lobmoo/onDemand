@@ -293,7 +293,7 @@ void TXDDSNode::destroyParticipantResources()
     subscribers_.clear();
 
     /*按前缀删除 dsfconnector_ 相关的 config，不影响其他 node*/
-    const std::string kCfgPrefix = "dsfconnector_";
+    const std::string kCfgPrefix = "dsfc_";
     for (const auto &name : BaoSky::rtps::ThreadManager::GetInstance()->GetConfigList()) {
         if (name.compare(0, kCfgPrefix.size(), kCfgPrefix) == 0) {
             BaoSky::rtps::ThreadManager::GetInstance()->DeleteResource(name);
