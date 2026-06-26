@@ -459,7 +459,12 @@ namespace ondemand
                     std::atomic_thread_fence(std::memory_order_acquire);
                     if (s1 == slot->seq.load(std::memory_order_acquire)) {
                         uint32_t actual = slot->valid_size[idx];
-                        if (actual == 0 || actual > size)
+                        if (actual == 0) {
+                            /* valid_size==0 表示从未写过，跳过（与 read_zero_copy 语义一致） */
+                            fn(i, nullptr, 0u);
+                            break;
+                        }
+                        if (actual > size)
                             actual = size;
                         fn(i, reinterpret_cast<const void *>(slot->data + idx * size), actual);
                         break;

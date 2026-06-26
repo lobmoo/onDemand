@@ -557,13 +557,17 @@ namespace ondemand
         std::vector<uint32_t> ids(n);
         for (size_t i = 0; i < n; ++i) {
             ids[i] = (*members)[i].varId;
-        }
+        }     
         varStore_.read_batch(ids.data(), n, [&](size_t i, const void *ptr, uint32_t sz) {
             if (!ptr || sz == 0) {
                 if (skippedCount == 0) {
                     for (size_t j = 0; j < i; ++j)
                         actualMask.add((*members)[j].varHash);
                 }
+                ONDEMANDLOG_TIME(warning, 3000)
+                    << "Variable has no data: varHash=" << (*members)[i].varHash
+                    << " varId=" << (*members)[i].varId << " bucket=" << bucketIndex
+                    << " freq=" << freqMs << "ms";
                 ++skippedCount;
                 return;
             }
@@ -576,7 +580,7 @@ namespace ondemand
 
         /*如果所有变量都没数据，跳过本次发送*/
         if (msg.varData().empty()) {
-            ONDEMANDLOG_TIME(warning, 30000)
+            ONDEMANDLOG_TIME(warning, 3000)
                 << "All " << members->size() << " variables in bucket=" << bucketIndex
                 << " freq=" << freqMs << "ms have no data, skipping publish";
             return;
@@ -584,7 +588,7 @@ namespace ondemand
 
         /* 如果有部分变量被跳过，打印一次警告*/
         if (skippedCount > 0) {
-            ONDEMANDLOG_TIME(warning, 30000) << "Skipped " << skippedCount << "/" << members->size()
+            ONDEMANDLOG_TIME(warning, 3000) << "Skipped " << skippedCount << "/" << members->size()
                                              << " variables without data in bucket=" << bucketIndex
                                              << " freq=" << freqMs << "ms";
         }
