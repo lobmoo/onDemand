@@ -1152,7 +1152,7 @@ namespace ondemand
             auto idxIt = defineLookup_.find(varHash);
             if (idxIt != defineLookup_.end()) {
                 uint32_t defineSize = static_cast<uint32_t>(defineCache_[idxIt->second].size());
-                uint32_t targetSize = defineSize > 0 ? defineSize : 32u;
+                uint32_t targetSize = defineSize > 0 ? defineSize : 2u;
                 if (varStore_.slot_size(meta.varId) < targetSize) {
                     expandIds.push_back(meta.varId);
                     expandSizes.push_back(targetSize);
