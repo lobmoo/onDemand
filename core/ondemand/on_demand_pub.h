@@ -69,6 +69,17 @@ namespace ondemand
         bool createVars(const std::vector<DSF::Var::Define> &VarDefines);
 
         /**
+         * @brief 轻量注册变量（不分配 VarStore/varIndex_/BucketManager）
+         *
+         * 只提取 name + size 存入 liteBucketMembers_，广播 PubTableDefine（最小 Define）。
+         * 变量在首次被 subscribe 触发时才真正 createVars（懒创建）。
+         *
+         * @param  VarDefines  变量定义列表
+         * @return true 成功
+         */
+        bool registerVars(const std::vector<DSF::Var::Define> &VarDefines);
+
+        /**
          * @brief 删除变量并发布更新的表定义，支持增量更新
          * @param  varNames       变量名称列表，指定要删除的变量
          * @return true 
@@ -238,6 +249,9 @@ namespace ondemand
         void handleUnsubscribe(const std::string &nodeName,
                                const std::vector<DSF::NamedValue> &varFreqs);
 
+        void broadcastLiteTableDefines(const std::unordered_set<uint32_t> &bucketIds,
+                                       bool forceEmpty = false);
+
         /**
          * @brief  获取或分配订阅者节点的位图位置，支持最多 256 个订阅者
          * @param  nodeHash        订阅者节点名称的 hash 值
@@ -319,6 +333,19 @@ namespace ondemand
         std::vector<DSF::Var::Define> defineCache_;
         std::unordered_map<uint64_t, uint32_t> defineLookup_;
         BucketManager bucketManager_;
+
+        /*轻量变量索引（registerVars 使用）：按 bucket 预分组，O(1) 去重*/
+        struct LiteVarEntry {
+            uint64_t hash;
+            uint32_t nameOffset; // name 在 namePool_ 中的偏移
+        };
+        struct LiteBucket {
+            std::vector<LiteVarEntry> entries;
+            std::unordered_set<uint64_t> hashSet;
+        };
+        std::array<LiteBucket, ONDEMAND_BUCKET_SIZE> liteBucketMembers_;
+        std::vector<char> namePool_;
+        mutable std::shared_mutex liteVarIndexMutex_;
 
         std::atomic<bool> initialized_;
         std::atomic<bool> running_;

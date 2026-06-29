@@ -21,17 +21,19 @@
 #include "ondemand/on_demand_pub.h"
 #include "ondemand/on_demand_sub.h"
 
-namespace {
-constexpr uint32_t kDefaultCount = 50000U;
+namespace
+{
+constexpr uint32_t kDefaultCount = 600000U;
 
-uint32_t getConfiguredCount() {
-    const char* env = std::getenv("COUNT");
+uint32_t getConfiguredCount()
+{
+    const char *env = std::getenv("COUNT");
     if (env == nullptr || *env == '\0') {
         return kDefaultCount;
     }
 
     uint32_t parsed = 0;
-    const char* end = env + std::strlen(env);
+    const char *end = env + std::strlen(env);
     auto result = std::from_chars(env, end, parsed);
     if (result.ec != std::errc() || result.ptr != end) {
         return kDefaultCount;
@@ -223,61 +225,66 @@ void publish()
     dsf::ondemand::OnDemandPub pub;
     pub.init("pubNode");
     pub.start();
-    std::vector<DSF::Var::Define> vars;
-    for (int i = 0; i < count; ++i) {
-        DSF::Var::Define var;
-        var.name("var" + std::to_string(i));
-        var.nodeName("pubNode");
-        var.modelName("int");
-        var.size(sizeof(int));
-        vars.push_back(std::move(var));
-    }
-    pub.createVars(vars);
+    {
+        std::vector<DSF::Var::Define> vars;
+        for (int i = 0; i < count; ++i) {
+            DSF::Var::Define var;
+            var.name("var" + std::to_string(i));
+            var.nodeName("pubNode");
+            var.modelName("int");
+            var.size(sizeof(int));
+            vars.push_back(std::move(var));
 
-    pub.setFreqChangeCallback([](const std::string &varName, uint32_t freq) {
-        LOG(info) << "FreqChangeCallback: var=" << varName << " newFreq=" << freq;
-    });
-    std::vector<std::string> varDelNames;
-    for (int i = 0; i < count; ++i) {
-        std::string varName = "var" + std::to_string(i);
-        varDelNames.push_back(varName);
+        }
+        pub.registerVars(vars);
+        //pub.createVars(vars);
+        vars.clear();
+        vars.shrink_to_fit();
     }
-     
+//     pub.setFreqChangeCallback([&pub](const std::string &varName, uint32_t freq) {
+//         LOG(info) << "FreqChangeCallback: var=" << varName << " newFreq=" << freq;
+
+//         static std::once_flag cacheOnce;
+//         static std::vector<dsf::ondemand::OnDemandPub::VarWriteItem> batchItems;
+//         static std::vector<int> vals;
+
+//         std::call_once(cacheOnce, [&]() {
+//             // 只在第一次回调时把 varId 预缓存起来，后续直接复用。
+//             std::vector<uint32_t> varIds(count);
+//             for (int i = 0; i < count; ++i) {
+//                 varIds[i] = pub.getVarId(("var" + std::to_string(i)).c_str());
+//             }
+
+//             batchItems.resize(count);
+//             vals.resize(count);
+//             for (int i = 0; i < count; ++i) {
+//                 vals[i] = i + 30;
+//                 batchItems[i].id = varIds[i];
+//                 batchItems[i].data = &vals[i];
+//                 batchItems[i].size = sizeof(int);
+//             }
+//         });
+
+//         std::thread setVarThread([&pub]() {
+// #if defined(__linux__)
+//             pthread_setname_np(pthread_self(), "setvar");
+// #endif
+//             while (true) {
+//                 pub.setVarDataBatch(batchItems.data(), count);
+//                 std::this_thread::sleep_for(std::chrono::milliseconds(10));
+//             }
+//         });
+//         setVarThread.detach();
+
+//     });
+//     std::vector<std::string> varDelNames;
+//     for (int i = 0; i < count; ++i) {
+//         std::string varName = "var" + std::to_string(i);
+//         varDelNames.push_back(varName);
+//     }
 
     // std::this_thread::sleep_for(std::chrono::seconds(5));
     // pub.deleteVars(varDelNames);
-
-    // 预缓存 varId
-    std::vector<uint32_t> varIds(count);
-    for (int i = 0; i < count; ++i)
-        varIds[i] = pub.getVarId(("var" + std::to_string(i)).c_str());
-
-    // 预分配 batch items，热循环只更新 data 指针
-    std::vector<dsf::ondemand::OnDemandPub::VarWriteItem> batchItems(count);
-    std::vector<int> vals(count);
-    for (int i = 0; i < count; ++i) {
-        vals[i] = i + 30;
-        batchItems[i].id = varIds[i];
-        batchItems[i].data = &vals[i];
-        batchItems[i].size = sizeof(int);
-    }
-    // pub.setOnPublicationMatchedCallback([](const std::string &topicName, int currentCount,
-    //                                       int currentCountChange, int totalCount) {
-    //     LOG(critical) << "Publication matched: topic=" << topicName
-    //               << " current=" << currentCount << " change=" << currentCountChange
-    //               << " total=" << totalCount;
-    // });
-    std::thread setVarThread([&pub, &batchItems]() {
-#if defined(__linux__)
-        pthread_setname_np(pthread_self(), "setvar");
-#endif
-        while (true) {
-            pub.setVarDataBatch(batchItems.data(), count);
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
-        }
-    });
-
-    setVarThread.join();
 
     std::this_thread::sleep_for(std::chrono::seconds(100000));
 }
@@ -297,7 +304,6 @@ void subscribe()
     //     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     // }
 
-    LOG(critical) << "Waiting for vars... received=" << sub.getTotalReceivedVars();
     std::vector<dsf::ondemand::SubscriptionItem> items;
     std::vector<std::string> unitems;
     for (int i = 0; i < count; ++i) {
