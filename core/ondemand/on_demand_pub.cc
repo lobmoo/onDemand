@@ -806,7 +806,6 @@ namespace ondemand
                         const char *nameStr = namePool_.data() + entry.nameOffset;
                         DSF::Var::Define liteDefine;
                         liteDefine.name(nameStr);
-                        liteDefine.size(entry.size);
                         liteDefine.nodeName(nodeName_);
 
                         DSF::Var::PubTableVarDefine pubTableVarDefine;
@@ -852,7 +851,7 @@ namespace ondemand
                 namePool_.insert(namePool_.end(), name.begin(), name.end());
                 namePool_.push_back('\0');
 
-                bucket.entries.push_back(LiteVarEntry{varHash, def.size(), nameOffset});
+                bucket.entries.push_back(LiteVarEntry{varHash, nameOffset});
                 affectedBuckets.insert(bucketIdx);
             }
 
@@ -862,10 +861,6 @@ namespace ondemand
         if (!affectedBuckets.empty())
             broadcastLiteTableDefines(affectedBuckets);
 
-            .
-
-
-            
         ONDEMANDLOG(info) << "registerVars: done, " << VarDefines.size() << " vars, "
                           << affectedBuckets.size() << " buckets";
         return true;
@@ -889,10 +884,9 @@ namespace ondemand
             for (const auto &entry : members) {
                 const char *nameStr = namePool_.data() + entry.nameOffset;
 
-                // 构造最小 Define（仅 name/size/nodeName，足够 sub 注册）
+                // 构造最小 Define（仅 name/nodeName，足够 sub 注册）
                 DSF::Var::Define define;
                 define.name(nameStr);
-                define.size(entry.size);
                 define.nodeName(nodeName_);
 
                 DSF::Var::PubTableVarDefine pubTableVarDefine;
@@ -1260,7 +1254,6 @@ namespace ondemand
                             if (found) {
                                 DSF::Var::Define def;
                                 def.name(namePool_.data() + found->nameOffset);
-                                def.size(found->size);
                                 def.nodeName(nodeName_);
                                 pendingCreates.push_back(std::move(def));
                             }
