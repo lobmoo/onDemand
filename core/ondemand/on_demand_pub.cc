@@ -314,7 +314,8 @@ namespace ondemand
             switch (data->msgType()) {
                 case DSF::Message::MSGTYPE::SUB_TABLE_REGISTER: {
                     const std::string nodeName = data->nodeName();
-                    uint32_t missing = handleSubscribe(nodeName, data->varFreqs());
+                    std::vector<DSF::NamedValue> missingVarFreqs;
+                    uint32_t missing = handleSubscribe(nodeName, data->varFreqs(), &missingVarFreqs);
                     if (missing > 0) {
                         /*指数退避，不丢弃，持续重试直到变量被创建*/
                         const size_t total = data->varFreqs().size();
@@ -344,8 +345,8 @@ namespace ondemand
                         retryData->msgType(data->msgType());
                         retryData->nodeName(data->nodeName());
                         retryData->tableName(data->tableName());
-                        for (const auto &vf : data->varFreqs()) {
-                            retryData->varFreqs().push_back(vf);
+                        for (auto &vf : missingVarFreqs) {
+                            retryData->varFreqs().push_back(std::move(vf));
                         }
                         std::this_thread::sleep_for(std::chrono::milliseconds(backoffMs));
                         {
@@ -357,10 +358,25 @@ namespace ondemand
                     }
                     break;
                 }
-                case DSF::Message::MSGTYPE::SUB_TABLE_UNREGISTER:
-                    retryBackoffMsByNode.erase(data->nodeName());
-                    handleUnsubscribe(data->nodeName(), data->varFreqs());
+                case DSF::Message::MSGTYPE::SUB_TABLE_UNREGISTER: {
+                    const std::string unsubNode = data->nodeName();
+                    retryBackoffMsByNode.erase(unsubNode);
+                    /*清空重试队列中该节点的所有待重试消息，防止注销后被重新订阅*/
+                    {
+                        std::lock_guard<std::mutex> lk(pubTableDefRetryQueueMutex_);
+                        std::queue<std::shared_ptr<DSF::Message::SubTableRegister>> remaining;
+                        while (!pubTableDefRetryQueue_.empty()) {
+                            auto item = std::move(pubTableDefRetryQueue_.front());
+                            pubTableDefRetryQueue_.pop();
+                            if (item->nodeName() != unsubNode) {
+                                remaining.push(std::move(item));
+                            }
+                        }
+                        pubTableDefRetryQueue_ = std::move(remaining);
+                    }
+                    handleUnsubscribe(unsubNode, data->varFreqs());
                     break;
+                }
                 default:
                     ONDEMANDLOG(error) << "Unknown registered type.";
                     break;
@@ -1058,7 +1074,8 @@ namespace ondemand
      * @param  varFreqs 周期
      */
     uint32_t OnDemandPub::handleSubscribe(const std::string &nodeName,
-                                          const std::vector<DSF::NamedValue> &varFreqs)
+                                          const std::vector<DSF::NamedValue> &varFreqs,
+                                          std::vector<DSF::NamedValue> *missingVarFreqs)
     {
         uint64_t nodeHash = fast_hash(nodeName);
         const std::string ownPrefix = nodeName_ + "_";
@@ -1142,6 +1159,9 @@ namespace ondemand
             if (it == varIndex_.end()) {
                 ONDEMANDLOG(debug) << "handleSubscribe: var not yet created, will retry"
                                    << " var=" << metaName << " node=" << nodeName;
+                if (missingVarFreqs) {
+                    missingVarFreqs->push_back(varFreq);
+                }
                 ++missingCount;
                 continue;
             }
@@ -1350,6 +1370,20 @@ namespace ondemand
         auto freqChanges = forceUnsubscribeNode(nodeMask);
         nodeSlotMap_.erase(slotIt);
         lock.unlock();
+
+        /*清空重试队列中该节点的所有待重试消息，防止离线后被重新订阅*/
+        {
+            std::lock_guard<std::mutex> lk(pubTableDefRetryQueueMutex_);
+            std::queue<std::shared_ptr<DSF::Message::SubTableRegister>> remaining;
+            while (!pubTableDefRetryQueue_.empty()) {
+                auto item = std::move(pubTableDefRetryQueue_.front());
+                pubTableDefRetryQueue_.pop();
+                if (item->nodeName() != participantName) {
+                    remaining.push(std::move(item));
+                }
+            }
+            pubTableDefRetryQueue_ = std::move(remaining);
+        }
 
         ONDEMANDLOG(info) << "Participant cleanup: " << participantName << ", force-unsubscribed "
                           << freqChanges.size() << " vars";
