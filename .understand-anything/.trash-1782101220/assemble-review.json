@@ -1,0 +1,18 @@
+{
+  "fixedSectionOk": true,
+  "nodesRecovered": 1,
+  "edgesRestored": 2,
+  "crossBatchEdgesAdded": 6,
+  "typesRemapped": 0,
+  "complexityRemapped": 0,
+  "notes": [
+    "合并脚本报告中 759 个节点去重为 728 个（31 个重复），713 条边过滤为 689 条（24 条悬挂边被丢弃），属于正常的去重和清理操作。",
+    "所有节点均有 id 和 type 字段，所有 complexity 值均为有效值（simple/moderate/complex），无需类型或复杂度重映射。",
+    "恢复了缺失的函数节点 onParticipantDiscovery（on_demand_sub.cc 第 1048 行），该函数是 DDS 参与者发现回调，调用 cleanupParticipantPublish 清理断开的发布者。此函数被某个 batch 分析时遗漏。",
+    "修复了管道节点 pipeline:.github/workflows/ci.yml 到根 CMakeLists.txt 的 triggers 边。根 CMakeLists.txt 被识别为 config:CMakeLists.txt（type=config），导致边目标 ID 不匹配。",
+    "补充了 6 条跨 batch 的 imports 边：on_demand_sub.h 和 on_demand_pub.h 各自到 on_demand_common.h、on_demand_listener.h、variable_store.h 的头文件包含关系。这些头文件在不同 batch 中被分析，导致跨 batch 引用缺失。",
+    "修复了 file:core/ondemand/ sub-pub.cc11 的畸形文件名（含前导空格），更正为 file:core/ondemand/sub-pub.cc11，并更新了所有关联节点和边。",
+    "43/71 个 batch 完成（28 个因 API 错误失败），图谱为部分结果。缺失的 batch 主要覆盖 thirdparty 依赖和部分 sample 文件，核心功能模块已基本覆盖。",
+    "729 个最终节点、698 条最终边，无悬挂引用。"
+  ]
+}

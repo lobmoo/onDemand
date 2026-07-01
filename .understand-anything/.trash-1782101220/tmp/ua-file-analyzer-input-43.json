@@ -1,0 +1,31 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "thirdparty/arrow/include/arrow/util/trie.h", "language": "c", "sizeLines": 243, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/type_fwd.h", "language": "c", "sizeLines": 69, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/type_traits.h", "language": "c", "sizeLines": 46, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/ubsan.h", "language": "c", "sizeLines": 87, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/union_util.h", "language": "c", "sizeLines": 31, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/unreachable.h", "language": "c", "sizeLines": 30, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/uri.h", "language": "c", "sizeLines": 118, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/utf8.h", "language": "c", "sizeLines": 59, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/value_parsing.h", "language": "c", "sizeLines": 928, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/vector.h", "language": "c", "sizeLines": 172, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/visibility.h", "language": "c", "sizeLines": 83, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/windows_compatibility.h", "language": "c", "sizeLines": 40, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/util/windows_fixup.h", "language": "c", "sizeLines": 52, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/vendored/datetime.h", "language": "c", "sizeLines": 26, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/vendored/datetime/date.h", "language": "c", "sizeLines": 8237, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/vendored/datetime/ios.h", "language": "c", "sizeLines": 53, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/vendored/datetime/tz_private.h", "language": "c", "sizeLines": 319, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/vendored/datetime/tz.h", "language": "c", "sizeLines": 2801, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/vendored/datetime/visibility.h", "language": "c", "sizeLines": 26, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/vendored/double-conversion/bignum-dtoa.h", "language": "c", "sizeLines": 86, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/vendored/double-conversion/bignum.h", "language": "c", "sizeLines": 154, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/vendored/double-conversion/cached-powers.h", "language": "c", "sizeLines": 66, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/vendored/double-conversion/diy-fp.h", "language": "c", "sizeLines": 139, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/vendored/double-conversion/double-conversion.h", "language": "c", "sizeLines": 34, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/vendored/double-conversion/double-to-string.h", "language": "c", "sizeLines": 472, "fileCategory": "code"}
+  ],
+  "batchImportData": {}
+}

@@ -1,0 +1,239 @@
+{
+  "nodes": [
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/trie.h",
+      "type": "file",
+      "name": "trie.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/trie.h",
+      "summary": "提供基于前缀树（Trie）的字符串查找数据结构，用于高效的键值映射和自动补全场景。包含 SmallString 辅助类和 Trie 模板类，支持快速前缀匹配和精确查找。",
+      "tags": ["utility", "data-structure", "string-processing", "thirdparty"],
+      "complexity": "moderate",
+      "languageNotes": "C++ 模板实现的前缀树，使用 SmallString 优化短字符串存储，支持 fast_index_type 加速索引。"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/type_fwd.h",
+      "type": "file",
+      "name": "type_fwd.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/type_fwd.h",
+      "summary": "Arrow 库核心类型的前向声明头文件，声明了 Empty、FutureWaiter、TimestampParser、Executor、TaskGroup、ThreadPool、CpuInfo、Compression 等关键类和枚举。",
+      "tags": ["type-definition", "forward-declaration", "thirdparty"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/type_traits.h",
+      "type": "file",
+      "name": "type_traits.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/type_traits.h",
+      "summary": "Arrow 库的类型特征工具头文件，提供编译期类型检查和类型推导的辅助模板。",
+      "tags": ["utility", "type-traits", "template", "thirdparty"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/ubsan.h",
+      "type": "file",
+      "name": "ubsan.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/ubsan.h",
+      "summary": "提供规避未定义行为 sanitizer (UBSan) 警告的安全内存操作函数，包括 SafeLoadAs、SafeLoad、SafeCopy 和 SafeStore，通过 std::memcpy 实现类型安全的内存读写。",
+      "tags": ["utility", "memory-safety", "sanitizer", "thirdparty"],
+      "complexity": "simple",
+      "languageNotes": "使用 std::memcpy 规避严格别名规则（strict aliasing）导致的未定义行为，是高性能 C++ 代码的常见模式。"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/union_util.h",
+      "type": "file",
+      "name": "union_util.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/union_util.h",
+      "summary": "Arrow 联合类型（Union）的工具函数头文件，提供联合数组类型的操作辅助功能。",
+      "tags": ["utility", "union", "array", "thirdparty"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/unreachable.h",
+      "type": "file",
+      "name": "unreachable.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/unreachable.h",
+      "summary": "提供标记不可达代码路径的宏或内联函数，用于编译器优化和断言检查。",
+      "tags": ["utility", "debug", "assertion", "thirdparty"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/uri.h",
+      "type": "file",
+      "name": "uri.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/uri.h",
+      "summary": "URI 解析和操作工具头文件，提供统一资源标识符（URI）的解析、组件提取和构建功能。",
+      "tags": ["utility", "uri", "parsing", "thirdparty"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/utf8.h",
+      "type": "file",
+      "name": "utf8.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/utf8.h",
+      "summary": "UTF-8 编码处理工具头文件，提供 UTF-8 字符串的验证、遍历和操作功能。",
+      "tags": ["utility", "utf8", "encoding", "string-processing", "thirdparty"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/value_parsing.h",
+      "type": "file",
+      "name": "value_parsing.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/value_parsing.h",
+      "summary": "高性能数值和时间戳解析工具头文件，提供从字符串到各种数值类型（整数、浮点数、时间戳）的快速转换函数，支持 ISO8601 和 strptime 格式的时间戳解析。",
+      "tags": ["utility", "parsing", "timestamp", "serialization", "thirdparty"],
+      "complexity": "complex",
+      "languageNotes": "大量使用 ARROW_PREDICT_TRUE/FALSE 分支预测提示优化热路径，支持多种时间戳格式的高性能解析。"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/vector.h",
+      "type": "file",
+      "name": "vector.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/vector.h",
+      "summary": "std::vector 的高级操作工具函数集，提供 DeleteVectorElement、AddVectorElement、ReplaceVectorElement、FilterVector、MapVector、FlattenVectors、UnwrapOrRaise 等安全且高效的向量操作。",
+      "tags": ["utility", "container", "algorithm", "thirdparty"],
+      "complexity": "moderate",
+      "languageNotes": "大量使用 move 语义和 reserve 预分配优化性能，提供带错误处理的 MaybeMapVector 变体。"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/visibility.h",
+      "type": "file",
+      "name": "visibility.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/visibility.h",
+      "summary": "Arrow 库的符号可见性控制头文件，定义 DLL 导出/导入宏，支持 Windows 和 Unix 平台的动态链接。",
+      "tags": ["configuration", "visibility", "cross-platform", "thirdparty"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/windows_compatibility.h",
+      "type": "file",
+      "name": "windows_compatibility.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/windows_compatibility.h",
+      "summary": "Windows 平台兼容性头文件，处理 Windows 特定的宏定义和头文件包含顺序问题。",
+      "tags": ["configuration", "windows", "compatibility", "thirdparty"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/windows_fixup.h",
+      "type": "file",
+      "name": "windows_fixup.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/windows_fixup.h",
+      "summary": "Windows 平台头文件修复宏，取消 Windows.h 中定义的冲突宏（如 min/max/ERROR 等），防止与标准库和用户代码冲突。",
+      "tags": ["configuration", "windows", "macro-fix", "thirdparty"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/vendored/datetime.h",
+      "type": "file",
+      "name": "datetime.h",
+      "filePath": "thirdparty/arrow/include/arrow/vendored/datetime.h",
+      "summary": "Arrow 内置的 datetime 库入口头文件，重定向到 arrow_vendored::date 命名空间下的日期时间处理功能。",
+      "tags": ["barrel", "datetime", "vendored", "thirdparty"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/vendored/datetime/date.h",
+      "type": "file",
+      "name": "date.h",
+      "filePath": "thirdparty/arrow/include/arrow/vendored/datetime/date.h",
+      "summary": "Howard Hinnant 的 date 库核心头文件（Arrow 内置版本），提供 C++11/14/17 兼容的日期和时间处理功能，包括 year、month、day、weekday 等日历类型，以及 sys_days、local_days 时间点类型和 duration 截断/舍入函数。",
+      "tags": ["datetime", "calendar", "chrono", "vendored", "thirdparty"],
+      "complexity": "complex",
+      "languageNotes": "8237 行的大型头文件，实现了完整的 C++ 日期时间库，兼容 C++11 至 C++17，大量使用 SFINAE 和 constexpr。"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/vendored/datetime/ios.h",
+      "type": "file",
+      "name": "ios.h",
+      "filePath": "thirdparty/arrow/include/arrow/vendored/datetime/ios.h",
+      "summary": "iOS 平台的 datetime 库兼容性头文件，处理 Apple 平台特定的编译器和运行时差异。",
+      "tags": ["configuration", "ios", "compatibility", "vendored", "thirdparty"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/vendored/datetime/tz_private.h",
+      "type": "file",
+      "name": "tz_private.h",
+      "filePath": "thirdparty/arrow/include/arrow/vendored/datetime/tz_private.h",
+      "summary": "时区库的私有实现头文件，定义 MonthDayTime 结构体和 zonelet 数据结构，用于内部时区规则解析和存储。",
+      "tags": ["timezone", "internal", "vendored", "thirdparty"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/vendored/datetime/tz.h",
+      "type": "file",
+      "name": "tz.h",
+      "filePath": "thirdparty/arrow/include/arrow/vendored/datetime/tz.h",
+      "summary": "Howard Hinnant 的时区库核心头文件（Arrow 内置版本），提供完整的 IANA 时区数据库支持，包括 time_zone、zoned_time、sys_info、local_info 等类型，以及 sys/local/UTC/TAI/GPS 时钟间的转换功能。",
+      "tags": ["timezone", "clock", "iana", "vendored", "thirdparty"],
+      "complexity": "complex",
+      "languageNotes": "2801 行的大型头文件，实现了完整的时区处理系统，支持多种时钟（system、utc、tai、gps）间的转换。"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/vendored/datetime/visibility.h",
+      "type": "file",
+      "name": "visibility.h",
+      "filePath": "thirdparty/arrow/include/arrow/vendored/datetime/visibility.h",
+      "summary": "datetime 库的符号可见性控制头文件，定义 DATE_BUILDING_DLL 等宏控制动态链接时的符号导出。",
+      "tags": ["configuration", "visibility", "vendored", "thirdparty"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/vendored/double-conversion/bignum-dtoa.h",
+      "type": "file",
+      "name": "bignum-dtoa.h",
+      "filePath": "thirdparty/arrow/include/arrow/vendored/double-conversion/bignum-dtoa.h",
+      "summary": "大数双精度浮点数到字符串转换的头文件，提供 BignumDtoa 函数声明，支持最短表示和精确表示两种模式。",
+      "tags": ["conversion", "floating-point", "vendored", "thirdparty"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/vendored/double-conversion/bignum.h",
+      "type": "file",
+      "name": "bignum.h",
+      "filePath": "thirdparty/arrow/include/arrow/vendored/double-conversion/bignum.h",
+      "summary": "大数算术运算类 Bignum 的头文件，提供高精度整数的加法、乘法、比较等运算，用于浮点数转换的中间计算。",
+      "tags": ["bignum", "arithmetic", "precision", "vendored", "thirdparty"],
+      "complexity": "moderate",
+      "languageNotes": "使用固定大小的 uint64_t 数组存储大数，支持原位运算优化性能。"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/vendored/double-conversion/cached-powers.h",
+      "type": "file",
+      "name": "cached-powers.h",
+      "filePath": "thirdparty/arrow/include/arrow/vendored/double-conversion/cached-powers.h",
+      "summary": "预缓存的 10 的幂次表头文件，用于浮点数与字符串转换时快速查找最接近的 10 的幂次。",
+      "tags": ["optimization", "cache", "lookup-table", "vendored", "thirdparty"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/vendored/double-conversion/diy-fp.h",
+      "type": "file",
+      "name": "diy-fp.h",
+      "filePath": "thirdparty/arrow/include/arrow/vendored/double-conversion/diy-fp.h",
+      "summary": "DIY 浮点数（Do-It-Yourself floating point）结构体头文件，提供双精度浮点数的尾数-指数分解和基本算术运算，是 double-conversion 算法的核心数据结构。",
+      "tags": ["floating-point", "ieee754", "vendored", "thirdparty"],
+      "complexity": "moderate",
+      "languageNotes": "diy_fp 结构体将 double 分解为 64 位尾数和 11 位指数，避免浮点运算的精度损失。"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/vendored/double-conversion/double-conversion.h",
+      "type": "file",
+      "name": "double-conversion.h",
+      "filePath": "thirdparty/arrow/include/arrow/vendored/double-conversion/double-conversion.h",
+      "summary": "Google double-conversion 库的入口头文件（Arrow 内置版本），提供双精度浮点数与字符串之间的高精度转换。",
+      "tags": ["barrel", "conversion", "floating-point", "vendored", "thirdparty"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/vendored/double-conversion/double-to-string.h",
+      "type": "file",
+      "name": "double-to-string.h",
+      "filePath": "thirdparty/arrow/include/arrow/vendored/double-conversion/double-to-string.h",
+      "summary": "双精度浮点数到字符串转换器 DoubleToStringConverter 的头文件，支持最短表示、固定精度、指数表示等多种转换模式，以及特殊值（NaN、Infinity）的自定义处理。",
+      "tags": ["conversion", "floating-point", "formatting", "vendored", "thirdparty"],
+      "complexity": "complex",
+      "languageNotes": "支持多种转换标志（EMIT_POSITIVE_EXPONENT_SIGN、UNIQUE_ZERO 等）和自定义特殊值字符串。"
+    }
+  ],
+  "edges": []
+}

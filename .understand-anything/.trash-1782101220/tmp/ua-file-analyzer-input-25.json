@@ -1,0 +1,13 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "sample/node_example/HelloWorldOneTx/source/HelloWorldOne.cxx", "language": "cpp", "sizeLines": 159, "fileCategory": "code"},
+    {"path": "sample/node_example/HelloWorldOneTx/source/HelloWorldOne.h", "language": "c", "sizeLines": 182, "fileCategory": "code"},
+    {"path": "sample/node_example/HelloWorldOneTx/source/HelloWorldOneCdrAux.ipp", "language": "ipp", "sizeLines": 118, "fileCategory": "code"}
+  ],
+  "batchImportData": {
+    "sample/node_example/HelloWorldOneTx/source/HelloWorldOne.cxx": ["sample/node_example/HelloWorldOneTx/source/HelloWorldOne.h", "sample/node_example/HelloWorldOneTx/source/HelloWorldOneCdrAux.ipp"],
+    "sample/node_example/HelloWorldOneTx/source/HelloWorldOne.h": [],
+    "sample/node_example/HelloWorldOneTx/source/HelloWorldOneCdrAux.ipp": []
+  }
+}

@@ -1,0 +1,149 @@
+{
+  "nodes": [
+    {
+      "id": "file:core/ondemand/.gensrctx/FCVCdrAux.hpp",
+      "type": "file",
+      "name": "FCVCdrAux.hpp",
+      "filePath": "core/ondemand/.gensrctx/FCVCdrAux.hpp",
+      "summary": "由 fastddsgen 工具自动生成的 CDR 辅助头文件，声明 FCVType 的最大序列化尺寸常量和 SerializeKey 函数。",
+      "tags": ["auto-generated", "serialization", "cdr", "type-definition"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:core/ondemand/.gensrctx/FCVPubSubTypes.h",
+      "type": "file",
+      "name": "FCVPubSubTypes.h",
+      "filePath": "core/ondemand/.gensrctx/FCVPubSubTypes.h",
+      "summary": "由 fastddsgen 工具自动生成的头文件，声明 FCVTypePubSubType 类，该类继承自 BaoSky::dds::TopicDataType，为 FCVType 提供 DDS 序列化/反序列化接口。",
+      "tags": ["auto-generated", "dds", "pubsub", "type-definition"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:core/ondemand/.gensrctx/FCVPubSubTypes.h:FCVTypePubSubType",
+      "type": "class",
+      "name": "FCVTypePubSubType",
+      "filePath": "core/ondemand/.gensrctx/FCVPubSubTypes.h",
+      "lineRange": [38, 61],
+      "summary": "DDS TopicDataType 实现类，为 FCVType 提供 CDR 序列化、反序列化、数据创建/销毁和 Key 获取功能，是 FCVType 与 DDS 中间件之间的桥接层。",
+      "tags": ["dds", "serialization", "pubsub", "auto-generated"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:core/ondemand/.gensrctx/FCVPubSubTypes.cxx",
+      "type": "file",
+      "name": "FCVPubSubTypes.cxx",
+      "filePath": "core/ondemand/.gensrctx/FCVPubSubTypes.cxx",
+      "summary": "由 fastddsgen 工具自动生成的实现文件，包含 FCVTypePubSubType 类的序列化、反序列化、数据管理和 Key 获取等方法的具体实现。",
+      "tags": ["auto-generated", "dds", "serialization", "implementation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/ondemand/.gensrctx/FCVPubSubTypes.cxx:FCVTypePubSubType",
+      "type": "function",
+      "name": "FCVTypePubSubType",
+      "filePath": "core/ondemand/.gensrctx/FCVPubSubTypes.cxx",
+      "lineRange": [35, 48],
+      "summary": "构造函数，初始化类型名称为 FCVType，计算类型大小（含 CDR 对齐），分配 Key 缓冲区并清零。",
+      "tags": ["constructor", "initialization", "memory-allocation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:core/ondemand/.gensrctx/FCVPubSubTypes.cxx:Serialize",
+      "type": "function",
+      "name": "Serialize",
+      "filePath": "core/ondemand/.gensrctx/FCVPubSubTypes.cxx",
+      "lineRange": [58, 78],
+      "summary": "将 FCVType 数据序列化为 CDR 格式的 SerializedPayload，包含封装头序列化和字节序标识设置。",
+      "tags": ["serialization", "cdr", "dds"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/ondemand/.gensrctx/FCVPubSubTypes.cxx:Deserialize",
+      "type": "function",
+      "name": "Deserialize",
+      "filePath": "core/ondemand/.gensrctx/FCVPubSubTypes.cxx",
+      "lineRange": [80, 101],
+      "summary": "从 CDR 格式的 SerializedPayload 反序列化数据到 FCVType 对象，处理封装头解码和字节序标识。",
+      "tags": ["deserialization", "cdr", "dds"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/ondemand/.gensrctx/FCVPubSubTypes.cxx:GetSerializedSizeProvider",
+      "type": "function",
+      "name": "GetSerializedSizeProvider",
+      "filePath": "core/ondemand/.gensrctx/FCVPubSubTypes.cxx",
+      "lineRange": [103, 114],
+      "summary": "返回一个 lambda 函数，用于计算 FCVType 数据的 CDR 序列化大小（含 4 字节封装头）。",
+      "tags": ["size-calculation", "cdr", "lambda"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:core/ondemand/.gensrctx/FCVPubSubTypes.cxx:GetKey",
+      "type": "function",
+      "name": "GetKey",
+      "filePath": "core/ondemand/.gensrctx/FCVPubSubTypes.cxx",
+      "lineRange": [127, 163],
+      "summary": "获取 FCVType 数据的 InstanceHandle Key，通过 SerializeKey 将 Key 序列化到内部缓冲区，然后复制前 16 字节到 handle。",
+      "tags": ["key-generation", "dds", "instance-handle"],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:core/ondemand/.gensrctx/FCVPubSubTypes.cxx",
+      "target": "file:core/ondemand/.gensrctx/FCVCdrAux.hpp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/FCVPubSubTypes.cxx",
+      "target": "file:core/ondemand/.gensrctx/FCVPubSubTypes.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/FCVPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrctx/FCVPubSubTypes.cxx:FCVTypePubSubType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/FCVPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrctx/FCVPubSubTypes.cxx:Serialize",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/FCVPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrctx/FCVPubSubTypes.cxx:Deserialize",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/FCVPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrctx/FCVPubSubTypes.cxx:GetSerializedSizeProvider",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/FCVPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrctx/FCVPubSubTypes.cxx:GetKey",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/FCVPubSubTypes.h",
+      "target": "class:core/ondemand/.gensrctx/FCVPubSubTypes.h:FCVTypePubSubType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    }
+  ]
+}

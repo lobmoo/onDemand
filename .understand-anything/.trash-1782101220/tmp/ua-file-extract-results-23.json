@@ -1,0 +1,258 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 3,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "core/ondemand/.gensrctx/FCVCdrAux.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 49,
+      "nonEmptyLines": 37,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "core/ondemand/.gensrctx/FCVPubSubTypes.cxx",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 164,
+      "nonEmptyLines": 136,
+      "functions": [
+        {
+          "name": "FCVTypePubSubType",
+          "startLine": 35,
+          "endLine": 48,
+          "params": []
+        },
+        {
+          "name": "~FCVTypePubSubType",
+          "startLine": 50,
+          "endLine": 56,
+          "params": []
+        },
+        {
+          "name": "Serialize",
+          "startLine": 58,
+          "endLine": 78,
+          "params": [
+            "data",
+            "payload"
+          ]
+        },
+        {
+          "name": "Deserialize",
+          "startLine": 80,
+          "endLine": 101,
+          "params": [
+            "payload",
+            "data"
+          ]
+        },
+        {
+          "name": "GetSerializedSizeProvider",
+          "startLine": 103,
+          "endLine": 114,
+          "params": [
+            "data"
+          ]
+        },
+        {
+          "name": "DeleteData",
+          "startLine": 121,
+          "endLine": 125,
+          "params": [
+            "data"
+          ]
+        },
+        {
+          "name": "GetKey",
+          "startLine": 127,
+          "endLine": 163,
+          "params": [
+            "data",
+            "handle",
+            "force_md5"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "FCVTypePubSubType",
+          "line": 35,
+          "isDefault": false
+        },
+        {
+          "name": "~FCVTypePubSubType",
+          "line": 50,
+          "isDefault": false
+        },
+        {
+          "name": "Serialize",
+          "line": 58,
+          "isDefault": false
+        },
+        {
+          "name": "Deserialize",
+          "line": 80,
+          "isDefault": false
+        },
+        {
+          "name": "GetSerializedSizeProvider",
+          "line": 103,
+          "isDefault": false
+        },
+        {
+          "name": "DeleteData",
+          "line": 121,
+          "isDefault": false
+        },
+        {
+          "name": "GetKey",
+          "line": 127,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "FCVTypePubSubType",
+          "callee": "SetName",
+          "lineNumber": 37
+        },
+        {
+          "caller": "FCVTypePubSubType",
+          "callee": "static_cast<uint32_t>",
+          "lineNumber": 40
+        },
+        {
+          "caller": "FCVTypePubSubType",
+          "callee": "BaoSky::Cdr::Cdr::Alignment",
+          "lineNumber": 40
+        },
+        {
+          "caller": "FCVTypePubSubType",
+          "callee": "reinterpret_cast<unsigned char*>",
+          "lineNumber": 46
+        },
+        {
+          "caller": "FCVTypePubSubType",
+          "callee": "malloc",
+          "lineNumber": 46
+        },
+        {
+          "caller": "FCVTypePubSubType",
+          "callee": "memset",
+          "lineNumber": 47
+        },
+        {
+          "caller": "~FCVTypePubSubType",
+          "callee": "free",
+          "lineNumber": 54
+        },
+        {
+          "caller": "Serialize",
+          "callee": "static_cast<FCVType *>",
+          "lineNumber": 62
+        },
+        {
+          "caller": "Serialize",
+          "callee": "reinterpret_cast<char*>",
+          "lineNumber": 65
+        },
+        {
+          "caller": "Serialize",
+          "callee": "SerializeEncapsulation",
+          "lineNumber": 71
+        },
+        {
+          "caller": "Serialize",
+          "callee": "Serialize",
+          "lineNumber": 73
+        },
+        {
+          "caller": "Serialize",
+          "callee": "static_cast<uint32_t>",
+          "lineNumber": 76
+        },
+        {
+          "caller": "Serialize",
+          "callee": "GetSerializedDataLength",
+          "lineNumber": 76
+        },
+        {
+          "caller": "Deserialize",
+          "callee": "static_cast<FCVType *>",
+          "lineNumber": 85
+        },
+        {
+          "caller": "Deserialize",
+          "callee": "reinterpret_cast<char*>",
+          "lineNumber": 88
+        },
+        {
+          "caller": "Deserialize",
+          "callee": "DeserializeEncapsulation",
+          "lineNumber": 94
+        },
+        {
+          "caller": "Deserialize",
+          "callee": "Deserialize",
+          "lineNumber": 100
+        },
+        {
+          "caller": "GetSerializedSizeProvider",
+          "callee": "static_cast<uint32_t>",
+          "lineNumber": 110
+        },
+        {
+          "caller": "GetSerializedSizeProvider",
+          "callee": "CalculateSerializedSize",
+          "lineNumber": 110
+        },
+        {
+          "caller": "GetSerializedSizeProvider",
+          "callee": "static_cast<FCVType *>",
+          "lineNumber": 111
+        },
+        {
+          "caller": "DeleteData",
+          "callee": "reinterpret_cast<FCVType *>",
+          "lineNumber": 124
+        },
+        {
+          "caller": "GetKey",
+          "callee": "static_cast<FCVType*>",
+          "lineNumber": 137
+        },
+        {
+          "caller": "GetKey",
+          "callee": "SerializeKey",
+          "lineNumber": 144
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 7,
+        "functionCount": 7,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "core/ondemand/.gensrctx/FCVPubSubTypes.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 64,
+      "nonEmptyLines": 45,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    }
+  ]
+}

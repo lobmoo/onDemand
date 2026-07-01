@@ -1,0 +1,263 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 3,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "core/ondemand/.gensrctx/FCV.cxx",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 285,
+      "nonEmptyLines": 243,
+      "functions": [
+        {
+          "name": "FCVType",
+          "startLine": 36,
+          "endLine": 38,
+          "params": []
+        },
+        {
+          "name": "~FCVType",
+          "startLine": 40,
+          "endLine": 42,
+          "params": []
+        },
+        {
+          "name": "FCVType",
+          "startLine": 44,
+          "endLine": 53,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "FCVType",
+          "startLine": 55,
+          "endLine": 64,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator ==",
+          "startLine": 92,
+          "endLine": 101,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator !=",
+          "startLine": 103,
+          "endLine": 107,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "flow",
+          "startLine": 113,
+          "endLine": 117,
+          "params": [
+            "_flow"
+          ]
+        },
+        {
+          "name": "flow",
+          "startLine": 123,
+          "endLine": 126,
+          "params": []
+        },
+        {
+          "name": "temp",
+          "startLine": 142,
+          "endLine": 146,
+          "params": [
+            "_temp"
+          ]
+        },
+        {
+          "name": "temp",
+          "startLine": 152,
+          "endLine": 155,
+          "params": []
+        },
+        {
+          "name": "press",
+          "startLine": 171,
+          "endLine": 175,
+          "params": [
+            "_press"
+          ]
+        },
+        {
+          "name": "press",
+          "startLine": 181,
+          "endLine": 184,
+          "params": []
+        },
+        {
+          "name": "isopen",
+          "startLine": 200,
+          "endLine": 204,
+          "params": [
+            "_isopen"
+          ]
+        },
+        {
+          "name": "isopen",
+          "startLine": 210,
+          "endLine": 213,
+          "params": []
+        },
+        {
+          "name": "openvalue",
+          "startLine": 229,
+          "endLine": 233,
+          "params": [
+            "_openvalue"
+          ]
+        },
+        {
+          "name": "openvalue",
+          "startLine": 239,
+          "endLine": 242,
+          "params": []
+        },
+        {
+          "name": "healthlevel",
+          "startLine": 258,
+          "endLine": 262,
+          "params": [
+            "_healthlevel"
+          ]
+        },
+        {
+          "name": "healthlevel",
+          "startLine": 268,
+          "endLine": 271,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "FCVType",
+          "line": 36,
+          "isDefault": false
+        },
+        {
+          "name": "~FCVType",
+          "line": 40,
+          "isDefault": false
+        },
+        {
+          "name": "FCVType",
+          "line": 44,
+          "isDefault": false
+        },
+        {
+          "name": "FCVType",
+          "line": 55,
+          "isDefault": false
+        },
+        {
+          "name": "operator ==",
+          "line": 92,
+          "isDefault": false
+        },
+        {
+          "name": "operator !=",
+          "line": 103,
+          "isDefault": false
+        },
+        {
+          "name": "flow",
+          "line": 113,
+          "isDefault": false
+        },
+        {
+          "name": "flow",
+          "line": 123,
+          "isDefault": false
+        },
+        {
+          "name": "temp",
+          "line": 142,
+          "isDefault": false
+        },
+        {
+          "name": "temp",
+          "line": 152,
+          "isDefault": false
+        },
+        {
+          "name": "press",
+          "line": 171,
+          "isDefault": false
+        },
+        {
+          "name": "press",
+          "line": 181,
+          "isDefault": false
+        },
+        {
+          "name": "isopen",
+          "line": 200,
+          "isDefault": false
+        },
+        {
+          "name": "isopen",
+          "line": 210,
+          "isDefault": false
+        },
+        {
+          "name": "openvalue",
+          "line": 229,
+          "isDefault": false
+        },
+        {
+          "name": "openvalue",
+          "line": 239,
+          "isDefault": false
+        },
+        {
+          "name": "healthlevel",
+          "line": 258,
+          "isDefault": false
+        },
+        {
+          "name": "healthlevel",
+          "line": 268,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 18,
+        "functionCount": 18,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "core/ondemand/.gensrctx/FCV.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 261,
+      "nonEmptyLines": 210,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "core/ondemand/.gensrctx/FCVCdrAux.ipp",
+      "language": "ipp",
+      "fileCategory": "code",
+      "totalLines": 164,
+      "nonEmptyLines": 127,
+      "metrics": {}
+    }
+  ]
+}

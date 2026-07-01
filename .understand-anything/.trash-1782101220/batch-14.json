@@ -1,0 +1,244 @@
+{
+  "nodes": [
+    {
+      "id": "file:core/ondemand/.gensrctx/dsf_define_messages.cxx",
+      "type": "file",
+      "name": "dsf_define_messages.cxx",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_messages.cxx",
+      "summary": "由 fastddsgen 工具自动生成的 DDS 消息类型实现文件，包含 DSF::Message 命名空间下所有消息类（Event、EventTransfer、Control、SubTableRegister、Alarm、CommandRequest、CommandResponse 等）的构造函数、析构函数、拷贝/移动语义、比较运算符及 getter/setter 方法的实现。",
+      "tags": ["auto-generated", "dds-message", "serialization", "type-definition", "idl-generated"],
+      "complexity": "complex",
+      "languageNotes": "由 fastddsgen 从 IDL 文件自动生成的 C++ 实现，包含 182 个成员函数实现，涵盖完整的 Rule-of-Five（默认构造、拷贝构造、移动构造、拷贝赋值、移动赋值）和比较运算符重载。"
+    },
+    {
+      "id": "file:core/ondemand/.gensrctx/dsf_define_messages.h",
+      "type": "file",
+      "name": "dsf_define_messages.h",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_messages.h",
+      "summary": "由 fastddsgen 工具自动生成的 DDS 消息类型声明头文件，定义了 DSF::Message 命名空间下的核心消息结构体（Event、EventTransfer、Control、SubTableRegister、SubTableUnregister、Alarm、CommandRequest、CommandResponse）以及相关枚举类型（EventCategory、MSGTYPE、CONTROL_VAR_TYPE、CommandResponseRetcode），同时声明了 DDS Topic 名称常量。",
+      "tags": ["auto-generated", "dds-message", "header", "type-definition", "idl-generated"],
+      "complexity": "complex",
+      "languageNotes": "头文件声明了所有 DDS 消息类及其成员变量（使用 C++17 std::string、std::vector、std::map 等容器），并定义了 DDS Topic 名称常量用于消息路由。Alarm 类继承自 Event 类。"
+    },
+    {
+      "id": "file:core/ondemand/.gensrctx/dsf_define_messagesCdrAux.ipp",
+      "type": "file",
+      "name": "dsf_define_messagesCdrAux.ipp",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_messagesCdrAux.ipp",
+      "summary": "由 fastddsgen 工具自动生成的 CDR（Common Data Representation）序列化辅助文件，包含所有 DDS 消息类型的序列化大小计算、序列化和反序列化模板特化函数实现。",
+      "tags": ["auto-generated", "cdr-serialization", "dds-message", "template", "idl-generated"],
+      "complexity": "complex",
+      "languageNotes": "使用 CDR v2 编码协议，通过模板特化实现 CalculateSerializedSizeUserDefined、SerializeUserDefined、DeserializeUserDefined 等函数，支持 DELIMIT_CDR2 和 PLAIN_CDR 编码算法。"
+    },
+    {
+      "id": "class:core/ondemand/.gensrctx/dsf_define_messages.h:Event",
+      "type": "class",
+      "name": "Event",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_messages.h",
+      "lineRange": [125, 332],
+      "summary": "DDS 消息基类，表示事件信息，包含事件代码、载荷类型、描述、分类、创建时间、消息类型等字段，以及关联变量和关联节点列表。",
+      "tags": ["dds-message", "data-model", "event"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:core/ondemand/.gensrctx/dsf_define_messages.h:EventTransfer",
+      "type": "class",
+      "name": "EventTransfer",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_messages.h",
+      "lineRange": [335, 654],
+      "summary": "事件传输消息类，扩展 Event 的字段，增加了源节点、序列号、发送时间、载荷数据、节点信息等用于网络传输的元数据。",
+      "tags": ["dds-message", "data-model", "transfer"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:core/ondemand/.gensrctx/dsf_define_messages.h:NamedBlob",
+      "type": "class",
+      "name": "NamedBlob",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_messages.h",
+      "lineRange": [666, 782],
+      "summary": "命名二进制数据块类，包含名称（name）和二进制数据（blob）两个字段，用于在 DDS 消息中传递命名的二进制数据。",
+      "tags": ["dds-message", "data-model", "binary-data"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:core/ondemand/.gensrctx/dsf_define_messages.h:ControlVar",
+      "type": "class",
+      "name": "ControlVar",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_messages.h",
+      "lineRange": [785, 922],
+      "summary": "控制变量类，包含节点名称、变量类型和命名值三个字段，用于描述单个控制变量的属性。",
+      "tags": ["dds-message", "data-model", "control"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:core/ondemand/.gensrctx/dsf_define_messages.h:Control",
+      "type": "class",
+      "name": "Control",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_messages.h",
+      "lineRange": [925, 1174],
+      "summary": "控制消息类，包含消息 ID、当前时间、消息类型、变量列表、源节点、写入令牌和用户信息，用于发送控制命令。",
+      "tags": ["dds-message", "data-model", "command"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:core/ondemand/.gensrctx/dsf_define_messages.h:SubTableRegister",
+      "type": "class",
+      "name": "SubTableRegister",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_messages.h",
+      "lineRange": [1177, 1370],
+      "summary": "订阅表注册消息类，包含消息类型、变量频率映射（varFreqs）、表名、节点名和用户信息，用于订阅端向发布端注册变量订阅请求。",
+      "tags": ["dds-message", "data-model", "subscription"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:core/ondemand/.gensrctx/dsf_define_messages.h:SubTableUnregister",
+      "type": "class",
+      "name": "SubTableUnregister",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_messages.h",
+      "lineRange": [1373, 1566],
+      "summary": "订阅表注销消息类，包含消息类型、变量名列表（varNames）、表名、节点名和用户信息，用于订阅端向发布端注销变量订阅。",
+      "tags": ["dds-message", "data-model", "subscription"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:core/ondemand/.gensrctx/dsf_define_messages.h:Alarm",
+      "type": "class",
+      "name": "Alarm",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_messages.h",
+      "lineRange": [1569, 1783],
+      "summary": "告警消息类，继承自 Event，增加了优先级、状态、确认时间、确认人、恢复时间和恢复命名值等告警特有字段。",
+      "tags": ["dds-message", "data-model", "alarm", "inherits-event"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:core/ondemand/.gensrctx/dsf_define_messages.h:NamedRetcode",
+      "type": "class",
+      "name": "NamedRetcode",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_messages.h",
+      "lineRange": [1795, 1953],
+      "summary": "命名返回码类，包含节点名、名称、返回码和原生返回码，用于在命令响应中携带操作结果信息。",
+      "tags": ["dds-message", "data-model", "response"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:core/ondemand/.gensrctx/dsf_define_messages.h:CommandRequest",
+      "type": "class",
+      "name": "CommandRequest",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_messages.h",
+      "lineRange": [1956, 2127],
+      "summary": "命令请求联合体类，使用 discriminator (_d) 字段区分消息类型，可承载 Control、Event 或 Alarm 三种消息之一，是 DDS 命令通信的顶层请求消息。",
+      "tags": ["dds-message", "data-model", "union-type", "command"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:core/ondemand/.gensrctx/dsf_define_messages.h:CommandResponse",
+      "type": "class",
+      "name": "CommandResponse",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_messages.h",
+      "lineRange": [2130, 2348],
+      "summary": "命令响应类，包含消息 ID、节点信息、返回码、原生返回码、状态消息和控制返回信息，用于回复 CommandRequest。",
+      "tags": ["dds-message", "data-model", "response"],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_messages.cxx",
+      "target": "file:core/ondemand/.gensrctx/dsf_define_messages.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_messages.cxx",
+      "target": "file:core/ondemand/.gensrctx/dsf_define_messagesCdrAux.ipp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_messages.h",
+      "target": "class:core/ondemand/.gensrctx/dsf_define_messages.h:Event",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_messages.h",
+      "target": "class:core/ondemand/.gensrctx/dsf_define_messages.h:EventTransfer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_messages.h",
+      "target": "class:core/ondemand/.gensrctx/dsf_define_messages.h:NamedBlob",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_messages.h",
+      "target": "class:core/ondemand/.gensrctx/dsf_define_messages.h:ControlVar",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_messages.h",
+      "target": "class:core/ondemand/.gensrctx/dsf_define_messages.h:Control",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_messages.h",
+      "target": "class:core/ondemand/.gensrctx/dsf_define_messages.h:SubTableRegister",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_messages.h",
+      "target": "class:core/ondemand/.gensrctx/dsf_define_messages.h:SubTableUnregister",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_messages.h",
+      "target": "class:core/ondemand/.gensrctx/dsf_define_messages.h:Alarm",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_messages.h",
+      "target": "class:core/ondemand/.gensrctx/dsf_define_messages.h:NamedRetcode",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_messages.h",
+      "target": "class:core/ondemand/.gensrctx/dsf_define_messages.h:CommandRequest",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_messages.h",
+      "target": "class:core/ondemand/.gensrctx/dsf_define_messages.h:CommandResponse",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:core/ondemand/.gensrctx/dsf_define_messages.h:Alarm",
+      "target": "class:core/ondemand/.gensrctx/dsf_define_messages.h:Event",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    }
+  ]
+}

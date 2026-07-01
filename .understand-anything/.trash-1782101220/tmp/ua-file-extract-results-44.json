@@ -1,0 +1,6868 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 25,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "thirdparty/arrow/include/arrow/vendored/double-conversion/fast-dtoa.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 90,
+      "nonEmptyLines": 82,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/vendored/double-conversion/fixed-dtoa.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 58,
+      "nonEmptyLines": 52,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/vendored/double-conversion/ieee.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 449,
+      "nonEmptyLines": 388,
+      "callGraph": [
+        {
+          "caller": "double_to_uint64",
+          "callee": "BitCast<uint64_t>",
+          "lineNumber": 37
+        },
+        {
+          "caller": "uint64_to_double",
+          "callee": "BitCast<double>",
+          "lineNumber": 38
+        },
+        {
+          "caller": "float_to_uint32",
+          "callee": "BitCast<uint32_t>",
+          "lineNumber": 39
+        },
+        {
+          "caller": "uint32_to_float",
+          "callee": "BitCast<float>",
+          "lineNumber": 40
+        },
+        {
+          "caller": "Double",
+          "callee": "double_to_uint64",
+          "lineNumber": 56
+        },
+        {
+          "caller": "Double",
+          "callee": "DiyFpToUint64",
+          "lineNumber": 59
+        },
+        {
+          "caller": "AsDiyFp",
+          "callee": "DOUBLE_CONVERSION_ASSERT",
+          "lineNumber": 64
+        },
+        {
+          "caller": "AsDiyFp",
+          "callee": "Sign",
+          "lineNumber": 64
+        },
+        {
+          "caller": "AsDiyFp",
+          "callee": "DOUBLE_CONVERSION_ASSERT",
+          "lineNumber": 65
+        },
+        {
+          "caller": "AsDiyFp",
+          "callee": "IsSpecial",
+          "lineNumber": 65
+        },
+        {
+          "caller": "AsDiyFp",
+          "callee": "DiyFp",
+          "lineNumber": 66
+        },
+        {
+          "caller": "AsDiyFp",
+          "callee": "Significand",
+          "lineNumber": 66
+        },
+        {
+          "caller": "AsDiyFp",
+          "callee": "Exponent",
+          "lineNumber": 66
+        },
+        {
+          "caller": "AsNormalizedDiyFp",
+          "callee": "DOUBLE_CONVERSION_ASSERT",
+          "lineNumber": 71
+        },
+        {
+          "caller": "AsNormalizedDiyFp",
+          "callee": "value",
+          "lineNumber": 71
+        },
+        {
+          "caller": "AsNormalizedDiyFp",
+          "callee": "Significand",
+          "lineNumber": 72
+        },
+        {
+          "caller": "AsNormalizedDiyFp",
+          "callee": "Exponent",
+          "lineNumber": 73
+        },
+        {
+          "caller": "AsNormalizedDiyFp",
+          "callee": "DiyFp",
+          "lineNumber": 83
+        },
+        {
+          "caller": "NextDouble",
+          "callee": "value",
+          "lineNumber": 93
+        },
+        {
+          "caller": "NextDouble",
+          "callee": "Double",
+          "lineNumber": 93
+        },
+        {
+          "caller": "NextDouble",
+          "callee": "Sign",
+          "lineNumber": 94
+        },
+        {
+          "caller": "NextDouble",
+          "callee": "Significand",
+          "lineNumber": 94
+        },
+        {
+          "caller": "NextDouble",
+          "callee": "Sign",
+          "lineNumber": 98
+        },
+        {
+          "caller": "NextDouble",
+          "callee": "value",
+          "lineNumber": 99
+        },
+        {
+          "caller": "NextDouble",
+          "callee": "Double",
+          "lineNumber": 99
+        },
+        {
+          "caller": "NextDouble",
+          "callee": "value",
+          "lineNumber": 101
+        },
+        {
+          "caller": "NextDouble",
+          "callee": "Double",
+          "lineNumber": 101
+        },
+        {
+          "caller": "PreviousDouble",
+          "callee": "Infinity",
+          "lineNumber": 106
+        },
+        {
+          "caller": "PreviousDouble",
+          "callee": "Sign",
+          "lineNumber": 107
+        },
+        {
+          "caller": "PreviousDouble",
+          "callee": "value",
+          "lineNumber": 108
+        },
+        {
+          "caller": "PreviousDouble",
+          "callee": "Double",
+          "lineNumber": 108
+        },
+        {
+          "caller": "PreviousDouble",
+          "callee": "Significand",
+          "lineNumber": 110
+        },
+        {
+          "caller": "PreviousDouble",
+          "callee": "value",
+          "lineNumber": 111
+        },
+        {
+          "caller": "PreviousDouble",
+          "callee": "Double",
+          "lineNumber": 111
+        },
+        {
+          "caller": "Exponent",
+          "callee": "IsDenormal",
+          "lineNumber": 116
+        },
+        {
+          "caller": "Exponent",
+          "callee": "AsUint64",
+          "lineNumber": 118
+        },
+        {
+          "caller": "Exponent",
+          "callee": "static_cast<int>",
+          "lineNumber": 120
+        },
+        {
+          "caller": "Significand",
+          "callee": "AsUint64",
+          "lineNumber": 125
+        },
+        {
+          "caller": "Significand",
+          "callee": "IsDenormal",
+          "lineNumber": 127
+        },
+        {
+          "caller": "IsDenormal",
+          "callee": "AsUint64",
+          "lineNumber": 136
+        },
+        {
+          "caller": "IsSpecial",
+          "callee": "AsUint64",
+          "lineNumber": 143
+        },
+        {
+          "caller": "IsNan",
+          "callee": "AsUint64",
+          "lineNumber": 148
+        },
+        {
+          "caller": "IsQuietNan",
+          "callee": "IsNan",
+          "lineNumber": 155
+        },
+        {
+          "caller": "IsQuietNan",
+          "callee": "AsUint64",
+          "lineNumber": 155
+        },
+        {
+          "caller": "IsQuietNan",
+          "callee": "IsNan",
+          "lineNumber": 157
+        },
+        {
+          "caller": "IsQuietNan",
+          "callee": "AsUint64",
+          "lineNumber": 157
+        },
+        {
+          "caller": "IsSignalingNan",
+          "callee": "IsNan",
+          "lineNumber": 163
+        },
+        {
+          "caller": "IsSignalingNan",
+          "callee": "AsUint64",
+          "lineNumber": 163
+        },
+        {
+          "caller": "IsSignalingNan",
+          "callee": "IsNan",
+          "lineNumber": 165
+        },
+        {
+          "caller": "IsSignalingNan",
+          "callee": "AsUint64",
+          "lineNumber": 165
+        },
+        {
+          "caller": "IsInfinite",
+          "callee": "AsUint64",
+          "lineNumber": 171
+        },
+        {
+          "caller": "Sign",
+          "callee": "AsUint64",
+          "lineNumber": 177
+        },
+        {
+          "caller": "UpperBoundary",
+          "callee": "DOUBLE_CONVERSION_ASSERT",
+          "lineNumber": 184
+        },
+        {
+          "caller": "UpperBoundary",
+          "callee": "Sign",
+          "lineNumber": 184
+        },
+        {
+          "caller": "UpperBoundary",
+          "callee": "DiyFp",
+          "lineNumber": 185
+        },
+        {
+          "caller": "UpperBoundary",
+          "callee": "Significand",
+          "lineNumber": 185
+        },
+        {
+          "caller": "UpperBoundary",
+          "callee": "Exponent",
+          "lineNumber": 185
+        },
+        {
+          "caller": "NormalizedBoundaries",
+          "callee": "DOUBLE_CONVERSION_ASSERT",
+          "lineNumber": 193
+        },
+        {
+          "caller": "NormalizedBoundaries",
+          "callee": "value",
+          "lineNumber": 193
+        },
+        {
+          "caller": "NormalizedBoundaries",
+          "callee": "AsDiyFp",
+          "lineNumber": 194
+        },
+        {
+          "caller": "NormalizedBoundaries",
+          "callee": "DiyFp::Normalize",
+          "lineNumber": 195
+        },
+        {
+          "caller": "NormalizedBoundaries",
+          "callee": "DiyFp",
+          "lineNumber": 195
+        },
+        {
+          "caller": "NormalizedBoundaries",
+          "callee": "f",
+          "lineNumber": 195
+        },
+        {
+          "caller": "NormalizedBoundaries",
+          "callee": "e",
+          "lineNumber": 195
+        },
+        {
+          "caller": "NormalizedBoundaries",
+          "callee": "LowerBoundaryIsCloser",
+          "lineNumber": 197
+        },
+        {
+          "caller": "NormalizedBoundaries",
+          "callee": "DiyFp",
+          "lineNumber": 198
+        },
+        {
+          "caller": "NormalizedBoundaries",
+          "callee": "f",
+          "lineNumber": 198
+        },
+        {
+          "caller": "NormalizedBoundaries",
+          "callee": "e",
+          "lineNumber": 198
+        },
+        {
+          "caller": "NormalizedBoundaries",
+          "callee": "DiyFp",
+          "lineNumber": 200
+        },
+        {
+          "caller": "NormalizedBoundaries",
+          "callee": "f",
+          "lineNumber": 200
+        },
+        {
+          "caller": "NormalizedBoundaries",
+          "callee": "e",
+          "lineNumber": 200
+        },
+        {
+          "caller": "NormalizedBoundaries",
+          "callee": "set_f",
+          "lineNumber": 202
+        },
+        {
+          "caller": "NormalizedBoundaries",
+          "callee": "f",
+          "lineNumber": 202
+        },
+        {
+          "caller": "NormalizedBoundaries",
+          "callee": "e",
+          "lineNumber": 202
+        },
+        {
+          "caller": "NormalizedBoundaries",
+          "callee": "e",
+          "lineNumber": 202
+        },
+        {
+          "caller": "NormalizedBoundaries",
+          "callee": "set_e",
+          "lineNumber": 203
+        },
+        {
+          "caller": "NormalizedBoundaries",
+          "callee": "e",
+          "lineNumber": 203
+        },
+        {
+          "caller": "LowerBoundaryIsCloser",
+          "callee": "AsUint64",
+          "lineNumber": 217
+        },
+        {
+          "caller": "LowerBoundaryIsCloser",
+          "callee": "Exponent",
+          "lineNumber": 218
+        },
+        {
+          "caller": "value",
+          "callee": "uint64_to_double",
+          "lineNumber": 221
+        },
+        {
+          "caller": "Infinity",
+          "callee": "value",
+          "lineNumber": 238
+        },
+        {
+          "caller": "Infinity",
+          "callee": "Double",
+          "lineNumber": 238
+        },
+        {
+          "caller": "NaN",
+          "callee": "value",
+          "lineNumber": 242
+        },
+        {
+          "caller": "NaN",
+          "callee": "Double",
+          "lineNumber": 242
+        },
+        {
+          "caller": "DiyFpToUint64",
+          "callee": "f",
+          "lineNumber": 258
+        },
+        {
+          "caller": "DiyFpToUint64",
+          "callee": "e",
+          "lineNumber": 259
+        },
+        {
+          "caller": "DiyFpToUint64",
+          "callee": "static_cast<uint64_t>",
+          "lineNumber": 278
+        },
+        {
+          "caller": "Single",
+          "callee": "float_to_uint32",
+          "lineNumber": 298
+        },
+        {
+          "caller": "AsDiyFp",
+          "callee": "DOUBLE_CONVERSION_ASSERT",
+          "lineNumber": 304
+        },
+        {
+          "caller": "AsDiyFp",
+          "callee": "Sign",
+          "lineNumber": 304
+        },
+        {
+          "caller": "AsDiyFp",
+          "callee": "DOUBLE_CONVERSION_ASSERT",
+          "lineNumber": 305
+        },
+        {
+          "caller": "AsDiyFp",
+          "callee": "IsSpecial",
+          "lineNumber": 305
+        },
+        {
+          "caller": "AsDiyFp",
+          "callee": "DiyFp",
+          "lineNumber": 306
+        },
+        {
+          "caller": "AsDiyFp",
+          "callee": "Significand",
+          "lineNumber": 306
+        },
+        {
+          "caller": "AsDiyFp",
+          "callee": "Exponent",
+          "lineNumber": 306
+        },
+        {
+          "caller": "Exponent",
+          "callee": "IsDenormal",
+          "lineNumber": 315
+        },
+        {
+          "caller": "Exponent",
+          "callee": "AsUint32",
+          "lineNumber": 317
+        },
+        {
+          "caller": "Exponent",
+          "callee": "static_cast<int>",
+          "lineNumber": 319
+        },
+        {
+          "caller": "Significand",
+          "callee": "AsUint32",
+          "lineNumber": 324
+        },
+        {
+          "caller": "Significand",
+          "callee": "IsDenormal",
+          "lineNumber": 326
+        },
+        {
+          "caller": "IsDenormal",
+          "callee": "AsUint32",
+          "lineNumber": 335
+        },
+        {
+          "caller": "IsSpecial",
+          "callee": "AsUint32",
+          "lineNumber": 342
+        },
+        {
+          "caller": "IsNan",
+          "callee": "AsUint32",
+          "lineNumber": 347
+        },
+        {
+          "caller": "IsQuietNan",
+          "callee": "IsNan",
+          "lineNumber": 354
+        },
+        {
+          "caller": "IsQuietNan",
+          "callee": "AsUint32",
+          "lineNumber": 354
+        },
+        {
+          "caller": "IsQuietNan",
+          "callee": "IsNan",
+          "lineNumber": 356
+        },
+        {
+          "caller": "IsQuietNan",
+          "callee": "AsUint32",
+          "lineNumber": 356
+        },
+        {
+          "caller": "IsSignalingNan",
+          "callee": "IsNan",
+          "lineNumber": 362
+        },
+        {
+          "caller": "IsSignalingNan",
+          "callee": "AsUint32",
+          "lineNumber": 362
+        },
+        {
+          "caller": "IsSignalingNan",
+          "callee": "IsNan",
+          "lineNumber": 364
+        },
+        {
+          "caller": "IsSignalingNan",
+          "callee": "AsUint32",
+          "lineNumber": 364
+        },
+        {
+          "caller": "IsInfinite",
+          "callee": "AsUint32",
+          "lineNumber": 370
+        },
+        {
+          "caller": "Sign",
+          "callee": "AsUint32",
+          "lineNumber": 376
+        },
+        {
+          "caller": "NormalizedBoundaries",
+          "callee": "DOUBLE_CONVERSION_ASSERT",
+          "lineNumber": 385
+        },
+        {
+          "caller": "NormalizedBoundaries",
+          "callee": "value",
+          "lineNumber": 385
+        },
+        {
+          "caller": "NormalizedBoundaries",
+          "callee": "AsDiyFp",
+          "lineNumber": 386
+        },
+        {
+          "caller": "NormalizedBoundaries",
+          "callee": "DiyFp::Normalize",
+          "lineNumber": 387
+        },
+        {
+          "caller": "NormalizedBoundaries",
+          "callee": "DiyFp",
+          "lineNumber": 387
+        },
+        {
+          "caller": "NormalizedBoundaries",
+          "callee": "f",
+          "lineNumber": 387
+        },
+        {
+          "caller": "NormalizedBoundaries",
+          "callee": "e",
+          "lineNumber": 387
+        },
+        {
+          "caller": "NormalizedBoundaries",
+          "callee": "LowerBoundaryIsCloser",
+          "lineNumber": 389
+        },
+        {
+          "caller": "NormalizedBoundaries",
+          "callee": "DiyFp",
+          "lineNumber": 390
+        },
+        {
+          "caller": "NormalizedBoundaries",
+          "callee": "f",
+          "lineNumber": 390
+        },
+        {
+          "caller": "NormalizedBoundaries",
+          "callee": "e",
+          "lineNumber": 390
+        },
+        {
+          "caller": "NormalizedBoundaries",
+          "callee": "DiyFp",
+          "lineNumber": 392
+        },
+        {
+          "caller": "NormalizedBoundaries",
+          "callee": "f",
+          "lineNumber": 392
+        },
+        {
+          "caller": "NormalizedBoundaries",
+          "callee": "e",
+          "lineNumber": 392
+        },
+        {
+          "caller": "NormalizedBoundaries",
+          "callee": "set_f",
+          "lineNumber": 394
+        },
+        {
+          "caller": "NormalizedBoundaries",
+          "callee": "f",
+          "lineNumber": 394
+        },
+        {
+          "caller": "NormalizedBoundaries",
+          "callee": "e",
+          "lineNumber": 394
+        },
+        {
+          "caller": "NormalizedBoundaries",
+          "callee": "e",
+          "lineNumber": 394
+        },
+        {
+          "caller": "NormalizedBoundaries",
+          "callee": "set_e",
+          "lineNumber": 395
+        },
+        {
+          "caller": "NormalizedBoundaries",
+          "callee": "e",
+          "lineNumber": 395
+        },
+        {
+          "caller": "UpperBoundary",
+          "callee": "DOUBLE_CONVERSION_ASSERT",
+          "lineNumber": 403
+        },
+        {
+          "caller": "UpperBoundary",
+          "callee": "Sign",
+          "lineNumber": 403
+        },
+        {
+          "caller": "UpperBoundary",
+          "callee": "DiyFp",
+          "lineNumber": 404
+        },
+        {
+          "caller": "UpperBoundary",
+          "callee": "Significand",
+          "lineNumber": 404
+        },
+        {
+          "caller": "UpperBoundary",
+          "callee": "Exponent",
+          "lineNumber": 404
+        },
+        {
+          "caller": "LowerBoundaryIsCloser",
+          "callee": "AsUint32",
+          "lineNumber": 416
+        },
+        {
+          "caller": "LowerBoundaryIsCloser",
+          "callee": "Exponent",
+          "lineNumber": 417
+        },
+        {
+          "caller": "value",
+          "callee": "uint32_to_float",
+          "lineNumber": 420
+        },
+        {
+          "caller": "Infinity",
+          "callee": "value",
+          "lineNumber": 423
+        },
+        {
+          "caller": "Infinity",
+          "callee": "Single",
+          "lineNumber": 423
+        },
+        {
+          "caller": "NaN",
+          "callee": "value",
+          "lineNumber": 427
+        },
+        {
+          "caller": "NaN",
+          "callee": "Single",
+          "lineNumber": 427
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/vendored/double-conversion/string-to-double.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 240,
+      "nonEmptyLines": 223,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/vendored/double-conversion/strtod.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 66,
+      "nonEmptyLines": 56,
+      "callGraph": [
+        {
+          "caller": "TrimTrailingZeros",
+          "callee": "length",
+          "lineNumber": 55
+        },
+        {
+          "caller": "TrimTrailingZeros",
+          "callee": "SubVector",
+          "lineNumber": 57
+        },
+        {
+          "caller": "TrimTrailingZeros",
+          "callee": "Vector<const char>",
+          "lineNumber": 60
+        },
+        {
+          "caller": "TrimTrailingZeros",
+          "callee": "start",
+          "lineNumber": 60
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/vendored/double-conversion/utils.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 420,
+      "nonEmptyLines": 364,
+      "callGraph": [
+        {
+          "caller": "abort_noreturn",
+          "callee": "abort",
+          "lineNumber": 74
+        },
+        {
+          "caller": "StrLength",
+          "callee": "strlen",
+          "lineNumber": 243
+        },
+        {
+          "caller": "StrLength",
+          "callee": "DOUBLE_CONVERSION_ASSERT",
+          "lineNumber": 244
+        },
+        {
+          "caller": "StrLength",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 244
+        },
+        {
+          "caller": "StrLength",
+          "callee": "static_cast<int>",
+          "lineNumber": 244
+        },
+        {
+          "caller": "StrLength",
+          "callee": "static_cast<int>",
+          "lineNumber": 245
+        },
+        {
+          "caller": "Vector",
+          "callee": "DOUBLE_CONVERSION_ASSERT",
+          "lineNumber": 254
+        },
+        {
+          "caller": "SubVector",
+          "callee": "DOUBLE_CONVERSION_ASSERT",
+          "lineNumber": 260
+        },
+        {
+          "caller": "SubVector",
+          "callee": "DOUBLE_CONVERSION_ASSERT",
+          "lineNumber": 261
+        },
+        {
+          "caller": "SubVector",
+          "callee": "DOUBLE_CONVERSION_ASSERT",
+          "lineNumber": 262
+        },
+        {
+          "caller": "SubVector",
+          "callee": "Vector<T>",
+          "lineNumber": 263
+        },
+        {
+          "caller": "SubVector",
+          "callee": "start",
+          "lineNumber": 263
+        },
+        {
+          "caller": "pop_back",
+          "callee": "DOUBLE_CONVERSION_ASSERT",
+          "lineNumber": 286
+        },
+        {
+          "caller": "pop_back",
+          "callee": "is_empty",
+          "lineNumber": 286
+        },
+        {
+          "caller": "~StringBuilder",
+          "callee": "is_finalized",
+          "lineNumber": 304
+        },
+        {
+          "caller": "~StringBuilder",
+          "callee": "Finalize",
+          "lineNumber": 304
+        },
+        {
+          "caller": "size",
+          "callee": "length",
+          "lineNumber": 306
+        },
+        {
+          "caller": "position",
+          "callee": "DOUBLE_CONVERSION_ASSERT",
+          "lineNumber": 310
+        },
+        {
+          "caller": "position",
+          "callee": "is_finalized",
+          "lineNumber": 310
+        },
+        {
+          "caller": "AddCharacter",
+          "callee": "DOUBLE_CONVERSION_ASSERT",
+          "lineNumber": 321
+        },
+        {
+          "caller": "AddCharacter",
+          "callee": "DOUBLE_CONVERSION_ASSERT",
+          "lineNumber": 322
+        },
+        {
+          "caller": "AddCharacter",
+          "callee": "is_finalized",
+          "lineNumber": 322
+        },
+        {
+          "caller": "AddCharacter",
+          "callee": "length",
+          "lineNumber": 322
+        },
+        {
+          "caller": "AddString",
+          "callee": "AddSubstring",
+          "lineNumber": 329
+        },
+        {
+          "caller": "AddString",
+          "callee": "StrLength",
+          "lineNumber": 329
+        },
+        {
+          "caller": "AddSubstring",
+          "callee": "DOUBLE_CONVERSION_ASSERT",
+          "lineNumber": 335
+        },
+        {
+          "caller": "AddSubstring",
+          "callee": "is_finalized",
+          "lineNumber": 335
+        },
+        {
+          "caller": "AddSubstring",
+          "callee": "length",
+          "lineNumber": 335
+        },
+        {
+          "caller": "AddSubstring",
+          "callee": "DOUBLE_CONVERSION_ASSERT",
+          "lineNumber": 336
+        },
+        {
+          "caller": "AddSubstring",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 336
+        },
+        {
+          "caller": "AddSubstring",
+          "callee": "strlen",
+          "lineNumber": 336
+        },
+        {
+          "caller": "AddSubstring",
+          "callee": "memmove",
+          "lineNumber": 337
+        },
+        {
+          "caller": "AddSubstring",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 337
+        },
+        {
+          "caller": "AddPadding",
+          "callee": "AddCharacter",
+          "lineNumber": 346
+        },
+        {
+          "caller": "BitCast",
+          "callee": "memmove",
+          "lineNumber": 408
+        },
+        {
+          "caller": "BitCast",
+          "callee": "BitCast<Dest>",
+          "lineNumber": 414
+        },
+        {
+          "caller": "BitCast",
+          "callee": "reinterpret_cast<uintptr_t>",
+          "lineNumber": 414
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/vendored/pcg/pcg_extras.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 649,
+      "nonEmptyLines": 560,
+      "callGraph": [
+        {
+          "caller": "unxorshift",
+          "callee": "itype",
+          "lineNumber": 272
+        },
+        {
+          "caller": "unxorshift",
+          "callee": "itype",
+          "lineNumber": 279
+        },
+        {
+          "caller": "unxorshift",
+          "callee": "unxorshift",
+          "lineNumber": 281
+        },
+        {
+          "caller": "rotr",
+          "callee": "_rotr8",
+          "lineNumber": 361
+        },
+        {
+          "caller": "rotr",
+          "callee": "_rotr16",
+          "lineNumber": 366
+        },
+        {
+          "caller": "rotr",
+          "callee": "_rotr",
+          "lineNumber": 371
+        },
+        {
+          "caller": "rotr",
+          "callee": "_rotr64",
+          "lineNumber": 376
+        },
+        {
+          "caller": "uneven_copy_impl",
+          "callee": "dest_t",
+          "lineNumber": 431
+        },
+        {
+          "caller": "uneven_copy_impl",
+          "callee": "dest_t",
+          "lineNumber": 456
+        },
+        {
+          "caller": "uneven_copy",
+          "callee": "uneven_copy_impl",
+          "lineNumber": 476
+        },
+        {
+          "caller": "generate_to_impl",
+          "callee": "generate",
+          "lineNumber": 488
+        },
+        {
+          "caller": "generate_to_impl",
+          "callee": "generate",
+          "lineNumber": 510
+        },
+        {
+          "caller": "generate_to_impl",
+          "callee": "uneven_copy",
+          "lineNumber": 511
+        },
+        {
+          "caller": "generate_to_impl",
+          "callee": "static_cast<uint32_t*>",
+          "lineNumber": 513
+        },
+        {
+          "caller": "generate_to_impl",
+          "callee": "malloc",
+          "lineNumber": 513
+        },
+        {
+          "caller": "generate_to_impl",
+          "callee": "generate",
+          "lineNumber": 514
+        },
+        {
+          "caller": "generate_to_impl",
+          "callee": "uneven_copy",
+          "lineNumber": 515
+        },
+        {
+          "caller": "generate_to_impl",
+          "callee": "free",
+          "lineNumber": 516
+        },
+        {
+          "caller": "generate_to_impl",
+          "callee": "static_cast<void*>",
+          "lineNumber": 516
+        },
+        {
+          "caller": "generate_to",
+          "callee": "generate_to_impl<size>",
+          "lineNumber": 526
+        },
+        {
+          "caller": "generate_to",
+          "callee": "std::forward<SeedSeq>",
+          "lineNumber": 526
+        },
+        {
+          "caller": "generate_one",
+          "callee": "generate_to<N>",
+          "lineNumber": 539
+        },
+        {
+          "caller": "generate_one",
+          "callee": "std::forward<SeedSeq>",
+          "lineNumber": 539
+        },
+        {
+          "caller": "bounded_rand",
+          "callee": "RngType::max",
+          "lineNumber": 548
+        },
+        {
+          "caller": "bounded_rand",
+          "callee": "RngType::min",
+          "lineNumber": 548
+        },
+        {
+          "caller": "bounded_rand",
+          "callee": "rtype",
+          "lineNumber": 548
+        },
+        {
+          "caller": "bounded_rand",
+          "callee": "rng",
+          "lineNumber": 551
+        },
+        {
+          "caller": "bounded_rand",
+          "callee": "RngType::min",
+          "lineNumber": 551
+        },
+        {
+          "caller": "shuffle",
+          "callee": "delta_t",
+          "lineNumber": 564
+        },
+        {
+          "caller": "shuffle",
+          "callee": "bounded_rand",
+          "lineNumber": 564
+        },
+        {
+          "caller": "shuffle",
+          "callee": "result_t",
+          "lineNumber": 564
+        },
+        {
+          "caller": "shuffle",
+          "callee": "swap",
+          "lineNumber": 568
+        },
+        {
+          "caller": "seed_seq_from",
+          "callee": "std::forward<Args>",
+          "lineNumber": 594
+        },
+        {
+          "caller": "generate",
+          "callee": "result_type",
+          "lineNumber": 603
+        },
+        {
+          "caller": "generate",
+          "callee": "rng_",
+          "lineNumber": 603
+        },
+        {
+          "caller": "size",
+          "callee": "RngType::max",
+          "lineNumber": 609
+        },
+        {
+          "caller": "size",
+          "callee": "size_t",
+          "lineNumber": 609
+        },
+        {
+          "caller": "size",
+          "callee": "size_t",
+          "lineNumber": 610
+        },
+        {
+          "caller": "size",
+          "callee": "size_t",
+          "lineNumber": 611
+        },
+        {
+          "caller": "size",
+          "callee": "RngType::max",
+          "lineNumber": 611
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/vendored/pcg/pcg_random.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 1954,
+      "nonEmptyLines": 1645,
+      "callGraph": [
+        {
+          "caller": "set_stream",
+          "callee": "abort",
+          "lineNumber": 288
+        },
+        {
+          "caller": "stream",
+          "callee": "default_increment<itype>::increment",
+          "lineNumber": 296
+        },
+        {
+          "caller": "PCG_DEFINE_CONSTANT",
+          "callee": "specific_stream",
+          "lineNumber": 350
+        },
+        {
+          "caller": "PCG_DEFINE_CONSTANT",
+          "callee": "inc_",
+          "lineNumber": 351
+        },
+        {
+          "caller": "PCG_DEFINE_CONSTANT",
+          "callee": "itype",
+          "lineNumber": 351
+        },
+        {
+          "caller": "PCG_DEFINE_CONSTANT",
+          "callee": "itype",
+          "lineNumber": 351
+        },
+        {
+          "caller": "PCG_DEFINE_CONSTANT",
+          "callee": "multiplier",
+          "lineNumber": 416
+        },
+        {
+          "caller": "PCG_DEFINE_CONSTANT",
+          "callee": "increment",
+          "lineNumber": 416
+        },
+        {
+          "caller": "base_generate",
+          "callee": "bump",
+          "lineNumber": 421
+        },
+        {
+          "caller": "base_generate0",
+          "callee": "bump",
+          "lineNumber": 427
+        },
+        {
+          "caller": "operator()",
+          "callee": "bounded_rand",
+          "lineNumber": 442
+        },
+        {
+          "caller": "distance",
+          "callee": "itype",
+          "lineNumber": 452
+        },
+        {
+          "caller": "distance",
+          "callee": "itype",
+          "lineNumber": 452
+        },
+        {
+          "caller": "distance",
+          "callee": "distance",
+          "lineNumber": 454
+        },
+        {
+          "caller": "distance",
+          "callee": "multiplier",
+          "lineNumber": 454
+        },
+        {
+          "caller": "distance",
+          "callee": "increment",
+          "lineNumber": 454
+        },
+        {
+          "caller": "backstep",
+          "callee": "advance",
+          "lineNumber": 465
+        },
+        {
+          "caller": "discard",
+          "callee": "advance",
+          "lineNumber": 470
+        },
+        {
+          "caller": "engine",
+          "callee": "itype",
+          "lineNumber": 485
+        },
+        {
+          "caller": "engine",
+          "callee": "state_type",
+          "lineNumber": 486
+        },
+        {
+          "caller": "engine",
+          "callee": "bump",
+          "lineNumber": 487
+        },
+        {
+          "caller": "engine",
+          "callee": "increment",
+          "lineNumber": 487
+        },
+        {
+          "caller": "engine",
+          "callee": "state_type",
+          "lineNumber": 498
+        },
+        {
+          "caller": "engine",
+          "callee": "bump",
+          "lineNumber": 499
+        },
+        {
+          "caller": "engine",
+          "callee": "increment",
+          "lineNumber": 499
+        },
+        {
+          "caller": "engine",
+          "callee": "generate_one<itype>",
+          "lineNumber": 510
+        },
+        {
+          "caller": "engine",
+          "callee": "std::forward<SeedSeq>",
+          "lineNumber": 510
+        },
+        {
+          "caller": "engine",
+          "callee": "generate_to<2>",
+          "lineNumber": 523
+        },
+        {
+          "caller": "engine",
+          "callee": "std::forward<SeedSeq>",
+          "lineNumber": 523
+        },
+        {
+          "caller": "engine",
+          "callee": "seed",
+          "lineNumber": 524
+        },
+        {
+          "caller": "seed",
+          "callee": "std::forward<Args>",
+          "lineNumber": 531
+        },
+        {
+          "caller": "distance",
+          "callee": "itype",
+          "lineNumber": 680
+        },
+        {
+          "caller": "distance",
+          "callee": "itype",
+          "lineNumber": 681
+        },
+        {
+          "caller": "distance",
+          "callee": "itype",
+          "lineNumber": 681
+        },
+        {
+          "caller": "distance",
+          "callee": "assert",
+          "lineNumber": 688
+        },
+        {
+          "caller": "operator-",
+          "callee": "increment",
+          "lineNumber": 711
+        },
+        {
+          "caller": "operator-",
+          "callee": "increment",
+          "lineNumber": 711
+        },
+        {
+          "caller": "operator-",
+          "callee": "distance",
+          "lineNumber": 712
+        },
+        {
+          "caller": "operator-",
+          "callee": "increment",
+          "lineNumber": 715
+        },
+        {
+          "caller": "operator-",
+          "callee": "multiplier",
+          "lineNumber": 715
+        },
+        {
+          "caller": "operator-",
+          "callee": "increment",
+          "lineNumber": 716
+        },
+        {
+          "caller": "operator-",
+          "callee": "multiplier",
+          "lineNumber": 716
+        },
+        {
+          "caller": "operator-",
+          "callee": "itype",
+          "lineNumber": 717
+        },
+        {
+          "caller": "operator-",
+          "callee": "itype",
+          "lineNumber": 717
+        },
+        {
+          "caller": "operator-",
+          "callee": "distance",
+          "lineNumber": 720
+        },
+        {
+          "caller": "operator-",
+          "callee": "multiplier",
+          "lineNumber": 720
+        },
+        {
+          "caller": "operator-",
+          "callee": "itype",
+          "lineNumber": 720
+        },
+        {
+          "caller": "operator==",
+          "callee": "multiplier",
+          "lineNumber": 736
+        },
+        {
+          "caller": "operator==",
+          "callee": "multiplier",
+          "lineNumber": 736
+        },
+        {
+          "caller": "operator==",
+          "callee": "increment",
+          "lineNumber": 737
+        },
+        {
+          "caller": "operator==",
+          "callee": "increment",
+          "lineNumber": 737
+        },
+        {
+          "caller": "output",
+          "callee": "bitcount_t",
+          "lineNumber": 816
+        },
+        {
+          "caller": "output",
+          "callee": "bitcount_t",
+          "lineNumber": 817
+        },
+        {
+          "caller": "output",
+          "callee": "bitcount_t",
+          "lineNumber": 832
+        },
+        {
+          "caller": "output",
+          "callee": "xtype",
+          "lineNumber": 834
+        },
+        {
+          "caller": "output",
+          "callee": "bitcount_t",
+          "lineNumber": 849
+        },
+        {
+          "caller": "output",
+          "callee": "bitcount_t",
+          "lineNumber": 850
+        },
+        {
+          "caller": "output",
+          "callee": "bitcount_t",
+          "lineNumber": 866
+        },
+        {
+          "caller": "output",
+          "callee": "xtype",
+          "lineNumber": 870
+        },
+        {
+          "caller": "output",
+          "callee": "rotr",
+          "lineNumber": 871
+        },
+        {
+          "caller": "output_rxs",
+          "callee": "bitcount_t",
+          "lineNumber": 884
+        },
+        {
+          "caller": "output_rxs",
+          "callee": "bitcount_t",
+          "lineNumber": 885
+        },
+        {
+          "caller": "output",
+          "callee": "bitcount_t",
+          "lineNumber": 950
+        },
+        {
+          "caller": "output",
+          "callee": "bitcount_t",
+          "lineNumber": 951
+        },
+        {
+          "caller": "output",
+          "callee": "bitcount_t",
+          "lineNumber": 960
+        },
+        {
+          "caller": "output",
+          "callee": "mcg_multiplier<itype>::multiplier",
+          "lineNumber": 962
+        },
+        {
+          "caller": "unoutput",
+          "callee": "bitcount_t",
+          "lineNumber": 970
+        },
+        {
+          "caller": "unoutput",
+          "callee": "unxorshift",
+          "lineNumber": 978
+        },
+        {
+          "caller": "unoutput",
+          "callee": "mcg_unmultiplier<itype>::unmultiplier",
+          "lineNumber": 980
+        },
+        {
+          "caller": "unoutput",
+          "callee": "unxorshift",
+          "lineNumber": 983
+        },
+        {
+          "caller": "PCG_DEFINE_CONSTANT",
+          "callee": "template <typename xtype, typename itype>\nstruct dxsm_mixin {\n    inline xtype output(itype internal)\n    {\n        constexpr bitcount_t xtypebits = bitcount_t(sizeof(xtype) * 8);\n        constexpr bitcount_t itypebits = bitcount_t(sizeof(itype) * 8);\n        static_assert(xtypebits <= itypebits/2,\n                      \"Output type must be half the size of the state type.\");\n        \n        xtype hi = xtype(internal >> (itypebits - xtypebits));\n        xtype lo = xtype(internal);\n\n        lo |= 1;\n        hi ^= hi >> (xtypebits/2);\n\thi *= xtype(cheap_multiplier<itype>::multiplier",
+          "lineNumber": 1032
+        },
+        {
+          "caller": "PCG_DEFINE_CONSTANT",
+          "callee": "xtype",
+          "lineNumber": 1041
+        },
+        {
+          "caller": "PCG_DEFINE_CONSTANT",
+          "callee": "xtype",
+          "lineNumber": 1042
+        },
+        {
+          "caller": "output",
+          "callee": "bitcount_t",
+          "lineNumber": 1064
+        },
+        {
+          "caller": "output",
+          "callee": "bitcount_t",
+          "lineNumber": 1065
+        },
+        {
+          "caller": "output",
+          "callee": "bitcount_t",
+          "lineNumber": 1081
+        },
+        {
+          "caller": "output",
+          "callee": "xtype",
+          "lineNumber": 1084
+        },
+        {
+          "caller": "output",
+          "callee": "rotr",
+          "lineNumber": 1085
+        },
+        {
+          "caller": "output",
+          "callee": "bitcount_t",
+          "lineNumber": 1110
+        },
+        {
+          "caller": "output",
+          "callee": "bitcount_t",
+          "lineNumber": 1111
+        },
+        {
+          "caller": "output",
+          "callee": "bitcount_t",
+          "lineNumber": 1126
+        },
+        {
+          "caller": "output",
+          "callee": "htype",
+          "lineNumber": 1129
+        },
+        {
+          "caller": "output",
+          "callee": "rotr",
+          "lineNumber": 1130
+        },
+        {
+          "caller": "output",
+          "callee": "htype",
+          "lineNumber": 1131
+        },
+        {
+          "caller": "output",
+          "callee": "rotr",
+          "lineNumber": 1134
+        },
+        {
+          "caller": "output",
+          "callee": "itype",
+          "lineNumber": 1135
+        },
+        {
+          "caller": "output",
+          "callee": "itype",
+          "lineNumber": 1135
+        },
+        {
+          "caller": "PCG_DEFINE_CONSTANT",
+          "callee": "baseclass::multiplier",
+          "lineNumber": 1202
+        },
+        {
+          "caller": "PCG_DEFINE_CONSTANT",
+          "callee": "baseclass::increment",
+          "lineNumber": 1202
+        },
+        {
+          "caller": "PCG_DEFINE_CONSTANT",
+          "callee": "state_type",
+          "lineNumber": 1203
+        },
+        {
+          "caller": "PCG_DEFINE_CONSTANT",
+          "callee": "baseclass::output",
+          "lineNumber": 1204
+        },
+        {
+          "caller": "PCG_DEFINE_CONSTANT",
+          "callee": "state_type",
+          "lineNumber": 1207
+        },
+        {
+          "caller": "PCG_DEFINE_CONSTANT",
+          "callee": "state_type",
+          "lineNumber": 1207
+        },
+        {
+          "caller": "PCG_DEFINE_CONSTANT",
+          "callee": "external_advance",
+          "lineNumber": 1211
+        },
+        {
+          "caller": "PCG_DEFINE_CONSTANT",
+          "callee": "baseclass::unoutput",
+          "lineNumber": 1214
+        },
+        {
+          "caller": "PCG_DEFINE_CONSTANT",
+          "callee": "baseclass::multiplier",
+          "lineNumber": 1215
+        },
+        {
+          "caller": "PCG_DEFINE_CONSTANT",
+          "callee": "baseclass::increment",
+          "lineNumber": 1216
+        },
+        {
+          "caller": "PCG_DEFINE_CONSTANT",
+          "callee": "state_type",
+          "lineNumber": 1216
+        },
+        {
+          "caller": "PCG_DEFINE_CONSTANT",
+          "callee": "state_type",
+          "lineNumber": 1218
+        },
+        {
+          "caller": "PCG_DEFINE_CONSTANT",
+          "callee": "state_type",
+          "lineNumber": 1218
+        },
+        {
+          "caller": "PCG_DEFINE_CONSTANT",
+          "callee": "baseclass::distance",
+          "lineNumber": 1219
+        },
+        {
+          "caller": "PCG_DEFINE_CONSTANT",
+          "callee": "crosses_zero =\n            forwards ? dist_to_zero <= delta\n                     : (-dist_to_zero) <= delta",
+          "lineNumber": 1220
+        },
+        {
+          "caller": "PCG_DEFINE_CONSTANT",
+          "callee": "baseclass::advance",
+          "lineNumber": 1225
+        },
+        {
+          "caller": "PCG_DEFINE_CONSTANT",
+          "callee": "baseclass::output",
+          "lineNumber": 1226
+        },
+        {
+          "caller": "PCG_DEFINE_CONSTANT",
+          "callee": "state_type",
+          "lineNumber": 1248
+        },
+        {
+          "caller": "PCG_DEFINE_CONSTANT",
+          "callee": "state_type",
+          "lineNumber": 1248
+        },
+        {
+          "caller": "PCG_DEFINE_CONSTANT",
+          "callee": "state_type",
+          "lineNumber": 1254
+        },
+        {
+          "caller": "PCG_DEFINE_CONSTANT",
+          "callee": "uint64_t",
+          "lineNumber": 1255
+        },
+        {
+          "caller": "PCG_DEFINE_CONSTANT",
+          "callee": "state_type",
+          "lineNumber": 1257
+        },
+        {
+          "caller": "PCG_DEFINE_CONSTANT",
+          "callee": "advance_table",
+          "lineNumber": 1263
+        },
+        {
+          "caller": "PCG_DEFINE_CONSTANT",
+          "callee": "get_extended_value",
+          "lineNumber": 1267
+        },
+        {
+          "caller": "PCG_DEFINE_CONSTANT",
+          "callee": "state_type state = this->state_",
+          "lineNumber": 1269
+        },
+        {
+          "caller": "PCG_DEFINE_CONSTANT",
+          "callee": "index       = kdd ? state &  table_mask\n                                 : state >> table_shift",
+          "lineNumber": 1274
+        },
+        {
+          "caller": "PCG_DEFINE_CONSTANT",
+          "callee": "tick = kdd ? (state & tick_mask) == state_type(0u)\n                            : (state >> tick_shift) == state_type(0u)",
+          "lineNumber": 1278
+        },
+        {
+          "caller": "PCG_DEFINE_CONSTANT",
+          "callee": "state_type",
+          "lineNumber": 1278
+        },
+        {
+          "caller": "PCG_DEFINE_CONSTANT",
+          "callee": "state_type",
+          "lineNumber": 1279
+        },
+        {
+          "caller": "PCG_DEFINE_CONSTANT",
+          "callee": "advance_table",
+          "lineNumber": 1281
+        },
+        {
+          "caller": "PCG_DEFINE_CONSTANT",
+          "callee": "tock = state == state_type(0u)",
+          "lineNumber": 1284
+        },
+        {
+          "caller": "PCG_DEFINE_CONSTANT",
+          "callee": "state_type",
+          "lineNumber": 1284
+        },
+        {
+          "caller": "PCG_DEFINE_CONSTANT",
+          "callee": "advance_table",
+          "lineNumber": 1286
+        },
+        {
+          "caller": "PCG_DEFINE_CONSTANT",
+          "callee": "extvalclass::period_pow2",
+          "lineNumber": 1294
+        },
+        {
+          "caller": "PCG_DEFINE_CONSTANT",
+          "callee": "get_extended_value",
+          "lineNumber": 1311
+        },
+        {
+          "caller": "backstep",
+          "callee": "advance",
+          "lineNumber": 1320
+        },
+        {
+          "caller": "extended",
+          "callee": "datainit",
+          "lineNumber": 1326
+        },
+        {
+          "caller": "extended",
+          "callee": "datainit",
+          "lineNumber": 1332
+        },
+        {
+          "caller": "extended",
+          "callee": "datainit",
+          "lineNumber": 1343
+        },
+        {
+          "caller": "extended",
+          "callee": "selfinit",
+          "lineNumber": 1349
+        },
+        {
+          "caller": "extended",
+          "callee": "selfinit",
+          "lineNumber": 1355
+        },
+        {
+          "caller": "extended",
+          "callee": "selfinit",
+          "lineNumber": 1365
+        },
+        {
+          "caller": "baseclass",
+          "callee": "generate_to<table_size>",
+          "lineNumber": 1380
+        },
+        {
+          "caller": "seed",
+          "callee": "std::forward<Args>",
+          "lineNumber": 1386
+        },
+        {
+          "caller": "selfinit",
+          "callee": "baseclass::operator()",
+          "lineNumber": 1438
+        },
+        {
+          "caller": "selfinit",
+          "callee": "baseclass::operator()",
+          "lineNumber": 1439
+        },
+        {
+          "caller": "selfinit",
+          "callee": "baseclass::operator()",
+          "lineNumber": 1442
+        },
+        {
+          "caller": "operator==",
+          "callee": "static_cast<const baseclass&>",
+          "lineNumber": 1453
+        },
+        {
+          "caller": "operator==",
+          "callee": "static_cast<const baseclass&>",
+          "lineNumber": 1454
+        },
+        {
+          "caller": "operator==",
+          "callee": "std::equal",
+          "lineNumber": 1456
+        },
+        {
+          "caller": "operator==",
+          "callee": "std::begin",
+          "lineNumber": 1457
+        },
+        {
+          "caller": "operator==",
+          "callee": "std::end",
+          "lineNumber": 1457
+        },
+        {
+          "caller": "operator==",
+          "callee": "std::begin",
+          "lineNumber": 1458
+        },
+        {
+          "caller": "advance_table",
+          "callee": "insideout::external_step",
+          "lineNumber": 1540
+        },
+        {
+          "caller": "advance_table",
+          "callee": "insideout::external_step",
+          "lineNumber": 1542
+        },
+        {
+          "caller": "advance_table",
+          "callee": "ext_state_t",
+          "lineNumber": 1563
+        },
+        {
+          "caller": "advance_table",
+          "callee": "insideout::external_advance",
+          "lineNumber": 1570
+        },
+        {
+          "caller": "advance",
+          "callee": "state_type",
+          "lineNumber": 1583
+        },
+        {
+          "caller": "advance",
+          "callee": "state_type",
+          "lineNumber": 1583
+        },
+        {
+          "caller": "advance",
+          "callee": "distance",
+          "lineNumber": 1590
+        },
+        {
+          "caller": "advance",
+          "callee": "advance_table",
+          "lineNumber": 1597
+        },
+        {
+          "caller": "advance",
+          "callee": "distance",
+          "lineNumber": 1600
+        },
+        {
+          "caller": "advance",
+          "callee": "advance_table",
+          "lineNumber": 1601
+        },
+        {
+          "caller": "advance",
+          "callee": "baseclass::advance",
+          "lineNumber": 1602
+        },
+        {
+          "caller": "advance",
+          "callee": "distance",
+          "lineNumber": 1604
+        },
+        {
+          "caller": "advance",
+          "callee": "advance_table",
+          "lineNumber": 1605
+        },
+        {
+          "caller": "advance",
+          "callee": "state_type",
+          "lineNumber": 1605
+        },
+        {
+          "caller": "advance",
+          "callee": "baseclass::advance",
+          "lineNumber": 1606
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/vendored/pcg/pcg_uint128.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 1008,
+      "nonEmptyLines": 846,
+      "functions": [
+        {
+          "name": "flog2",
+          "startLine": 238,
+          "endLine": 241,
+          "params": [
+            "v"
+          ]
+        },
+        {
+          "name": "flog2",
+          "startLine": 243,
+          "endLine": 246,
+          "params": [
+            "v"
+          ]
+        },
+        {
+          "name": "trailingzeros",
+          "startLine": 258,
+          "endLine": 261,
+          "params": [
+            "v"
+          ]
+        },
+        {
+          "name": "trailingzeros",
+          "startLine": 263,
+          "endLine": 266,
+          "params": [
+            "v"
+          ]
+        },
+        {
+          "name": "uint_x4",
+          "startLine": 329,
+          "endLine": 329,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "flog2",
+          "line": 238,
+          "isDefault": false
+        },
+        {
+          "name": "flog2",
+          "line": 243,
+          "isDefault": false
+        },
+        {
+          "name": "trailingzeros",
+          "line": 258,
+          "isDefault": false
+        },
+        {
+          "name": "trailingzeros",
+          "line": 263,
+          "isDefault": false
+        },
+        {
+          "name": "uint_x4",
+          "line": 329,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "flog2",
+          "callee": "__builtin_clz",
+          "lineNumber": 109
+        },
+        {
+          "caller": "trailingzeros",
+          "callee": "__builtin_ctz",
+          "lineNumber": 114
+        },
+        {
+          "caller": "flog2",
+          "callee": "__builtin_clzl",
+          "lineNumber": 120
+        },
+        {
+          "caller": "flog2",
+          "callee": "__builtin_clzll",
+          "lineNumber": 122
+        },
+        {
+          "caller": "trailingzeros",
+          "callee": "__builtin_ctzl",
+          "lineNumber": 131
+        },
+        {
+          "caller": "trailingzeros",
+          "callee": "__builtin_ctzll",
+          "lineNumber": 133
+        },
+        {
+          "caller": "flog2",
+          "callee": "_BitScanReverse",
+          "lineNumber": 149
+        },
+        {
+          "caller": "flog2",
+          "callee": "bitcount_t",
+          "lineNumber": 150
+        },
+        {
+          "caller": "trailingzeros",
+          "callee": "_BitScanForward",
+          "lineNumber": 156
+        },
+        {
+          "caller": "trailingzeros",
+          "callee": "bitcount_t",
+          "lineNumber": 157
+        },
+        {
+          "caller": "flog2",
+          "callee": "_BitScanReverse64",
+          "lineNumber": 164
+        },
+        {
+          "caller": "flog2",
+          "callee": "bitcount_t",
+          "lineNumber": 165
+        },
+        {
+          "caller": "flog2",
+          "callee": "uint32_t",
+          "lineNumber": 169
+        },
+        {
+          "caller": "flog2",
+          "callee": "flog2",
+          "lineNumber": 170
+        },
+        {
+          "caller": "flog2",
+          "callee": "flog2",
+          "lineNumber": 170
+        },
+        {
+          "caller": "trailingzeros",
+          "callee": "_BitScanForward64",
+          "lineNumber": 178
+        },
+        {
+          "caller": "trailingzeros",
+          "callee": "bitcount_t",
+          "lineNumber": 179
+        },
+        {
+          "caller": "trailingzeros",
+          "callee": "uint32_t",
+          "lineNumber": 183
+        },
+        {
+          "caller": "trailingzeros",
+          "callee": "trailingzeros",
+          "lineNumber": 184
+        },
+        {
+          "caller": "trailingzeros",
+          "callee": "trailingzeros",
+          "lineNumber": 184
+        },
+        {
+          "caller": "flog2",
+          "callee": "uint32_t",
+          "lineNumber": 223
+        },
+        {
+          "caller": "flog2",
+          "callee": "flog2",
+          "lineNumber": 225
+        },
+        {
+          "caller": "flog2",
+          "callee": "flog2",
+          "lineNumber": 225
+        },
+        {
+          "caller": "trailingzeros",
+          "callee": "uint32_t",
+          "lineNumber": 231
+        },
+        {
+          "caller": "trailingzeros",
+          "callee": "trailingzeros",
+          "lineNumber": 233
+        },
+        {
+          "caller": "trailingzeros",
+          "callee": "trailingzeros",
+          "lineNumber": 233
+        },
+        {
+          "caller": "flog2",
+          "callee": "flog2",
+          "lineNumber": 240
+        },
+        {
+          "caller": "flog2",
+          "callee": "uint32_t",
+          "lineNumber": 240
+        },
+        {
+          "caller": "flog2",
+          "callee": "flog2",
+          "lineNumber": 245
+        },
+        {
+          "caller": "flog2",
+          "callee": "uint32_t",
+          "lineNumber": 245
+        },
+        {
+          "caller": "flog2",
+          "callee": "uint64_t",
+          "lineNumber": 251
+        },
+        {
+          "caller": "flog2",
+          "callee": "uint64_t",
+          "lineNumber": 252
+        },
+        {
+          "caller": "flog2",
+          "callee": "flog2",
+          "lineNumber": 254
+        },
+        {
+          "caller": "flog2",
+          "callee": "flog2",
+          "lineNumber": 254
+        },
+        {
+          "caller": "trailingzeros",
+          "callee": "trailingzeros",
+          "lineNumber": 260
+        },
+        {
+          "caller": "trailingzeros",
+          "callee": "uint32_t",
+          "lineNumber": 260
+        },
+        {
+          "caller": "trailingzeros",
+          "callee": "trailingzeros",
+          "lineNumber": 265
+        },
+        {
+          "caller": "trailingzeros",
+          "callee": "uint32_t",
+          "lineNumber": 265
+        },
+        {
+          "caller": "trailingzeros",
+          "callee": "uint64_t",
+          "lineNumber": 271
+        },
+        {
+          "caller": "trailingzeros",
+          "callee": "uint64_t",
+          "lineNumber": 272
+        },
+        {
+          "caller": "trailingzeros",
+          "callee": "trailingzeros",
+          "lineNumber": 273
+        },
+        {
+          "caller": "trailingzeros",
+          "callee": "trailingzeros",
+          "lineNumber": 273
+        },
+        {
+          "caller": "clog2",
+          "callee": "flog2",
+          "lineNumber": 280
+        },
+        {
+          "caller": "flog2",
+          "callee": "flog2",
+          "lineNumber": 574
+        },
+        {
+          "caller": "flog2",
+          "callee": "flog2",
+          "lineNumber": 575
+        },
+        {
+          "caller": "trailingzeros",
+          "callee": "trailingzeros",
+          "lineNumber": 581
+        },
+        {
+          "caller": "trailingzeros",
+          "callee": "trailingzeros",
+          "lineNumber": 582
+        },
+        {
+          "caller": "divmod",
+          "callee": "uint_x4<UInt,UIntX2>",
+          "lineNumber": 596
+        },
+        {
+          "caller": "divmod",
+          "callee": "UIntX2",
+          "lineNumber": 596
+        },
+        {
+          "caller": "divmod",
+          "callee": "flog2",
+          "lineNumber": 600
+        },
+        {
+          "caller": "divmod",
+          "callee": "flog2",
+          "lineNumber": 601
+        },
+        {
+          "caller": "divmod",
+          "callee": "UIntX2",
+          "lineNumber": 605
+        },
+        {
+          "caller": "divmod",
+          "callee": "UIntX2",
+          "lineNumber": 614
+        },
+        {
+          "caller": "operator/",
+          "callee": "divmod",
+          "lineNumber": 635
+        },
+        {
+          "caller": "operator%",
+          "callee": "divmod",
+          "lineNumber": 642
+        },
+        {
+          "caller": "operator*",
+          "callee": "UIntX2",
+          "lineNumber": 654
+        },
+        {
+          "caller": "operator*",
+          "callee": "UIntX2",
+          "lineNumber": 654
+        },
+        {
+          "caller": "operator*",
+          "callee": "UInt",
+          "lineNumber": 655
+        },
+        {
+          "caller": "operator*",
+          "callee": "UInt",
+          "lineNumber": 656
+        },
+        {
+          "caller": "operator*",
+          "callee": "UIntX2",
+          "lineNumber": 658
+        },
+        {
+          "caller": "operator*",
+          "callee": "UIntX2",
+          "lineNumber": 658
+        },
+        {
+          "caller": "operator*",
+          "callee": "UInt",
+          "lineNumber": 659
+        },
+        {
+          "caller": "operator*",
+          "callee": "addwithcarry",
+          "lineNumber": 660
+        },
+        {
+          "caller": "operator*",
+          "callee": "UInt",
+          "lineNumber": 660
+        },
+        {
+          "caller": "operator*",
+          "callee": "addwithcarry",
+          "lineNumber": 662
+        },
+        {
+          "caller": "operator*",
+          "callee": "UInt",
+          "lineNumber": 662
+        },
+        {
+          "caller": "operator*",
+          "callee": "addwithcarry",
+          "lineNumber": 664
+        },
+        {
+          "caller": "operator*",
+          "callee": "UInt",
+          "lineNumber": 664
+        },
+        {
+          "caller": "operator*",
+          "callee": "UIntX2",
+          "lineNumber": 666
+        },
+        {
+          "caller": "operator*",
+          "callee": "UIntX2",
+          "lineNumber": 666
+        },
+        {
+          "caller": "operator*",
+          "callee": "addwithcarry",
+          "lineNumber": 668
+        },
+        {
+          "caller": "operator*",
+          "callee": "UInt",
+          "lineNumber": 668
+        },
+        {
+          "caller": "operator*",
+          "callee": "addwithcarry",
+          "lineNumber": 670
+        },
+        {
+          "caller": "operator*",
+          "callee": "UInt",
+          "lineNumber": 670
+        },
+        {
+          "caller": "operator*",
+          "callee": "addwithcarry",
+          "lineNumber": 673
+        },
+        {
+          "caller": "operator*",
+          "callee": "UInt",
+          "lineNumber": 673
+        },
+        {
+          "caller": "operator*",
+          "callee": "addwithcarry",
+          "lineNumber": 675
+        },
+        {
+          "caller": "operator*",
+          "callee": "UInt",
+          "lineNumber": 675
+        },
+        {
+          "caller": "operator*",
+          "callee": "addwithcarry",
+          "lineNumber": 677
+        },
+        {
+          "caller": "operator*",
+          "callee": "UInt",
+          "lineNumber": 677
+        },
+        {
+          "caller": "operator*",
+          "callee": "UIntX2",
+          "lineNumber": 679
+        },
+        {
+          "caller": "operator*",
+          "callee": "UIntX2",
+          "lineNumber": 679
+        },
+        {
+          "caller": "operator*",
+          "callee": "addwithcarry",
+          "lineNumber": 681
+        },
+        {
+          "caller": "operator*",
+          "callee": "UInt",
+          "lineNumber": 681
+        },
+        {
+          "caller": "operator*",
+          "callee": "addwithcarry",
+          "lineNumber": 683
+        },
+        {
+          "caller": "operator*",
+          "callee": "UInt",
+          "lineNumber": 683
+        },
+        {
+          "caller": "operator*",
+          "callee": "UIntX2",
+          "lineNumber": 699
+        },
+        {
+          "caller": "operator*",
+          "callee": "UIntX2",
+          "lineNumber": 699
+        },
+        {
+          "caller": "operator*",
+          "callee": "UInt",
+          "lineNumber": 699
+        },
+        {
+          "caller": "operator*",
+          "callee": "UInt",
+          "lineNumber": 700
+        },
+        {
+          "caller": "operator*",
+          "callee": "UInt",
+          "lineNumber": 701
+        },
+        {
+          "caller": "operator*",
+          "callee": "UIntX2",
+          "lineNumber": 703
+        },
+        {
+          "caller": "operator*",
+          "callee": "UIntX2",
+          "lineNumber": 703
+        },
+        {
+          "caller": "operator*",
+          "callee": "UInt",
+          "lineNumber": 703
+        },
+        {
+          "caller": "operator*",
+          "callee": "UInt",
+          "lineNumber": 704
+        },
+        {
+          "caller": "operator*",
+          "callee": "addwithcarry",
+          "lineNumber": 705
+        },
+        {
+          "caller": "operator*",
+          "callee": "UInt",
+          "lineNumber": 705
+        },
+        {
+          "caller": "operator*",
+          "callee": "addwithcarry",
+          "lineNumber": 707
+        },
+        {
+          "caller": "operator*",
+          "callee": "UInt",
+          "lineNumber": 707
+        },
+        {
+          "caller": "operator*",
+          "callee": "addwithcarry",
+          "lineNumber": 709
+        },
+        {
+          "caller": "operator*",
+          "callee": "UInt",
+          "lineNumber": 709
+        },
+        {
+          "caller": "operator*",
+          "callee": "UIntX2",
+          "lineNumber": 711
+        },
+        {
+          "caller": "operator*",
+          "callee": "UIntX2",
+          "lineNumber": 711
+        },
+        {
+          "caller": "operator*",
+          "callee": "addwithcarry",
+          "lineNumber": 713
+        },
+        {
+          "caller": "operator*",
+          "callee": "UInt",
+          "lineNumber": 713
+        },
+        {
+          "caller": "operator*",
+          "callee": "addwithcarry",
+          "lineNumber": 715
+        },
+        {
+          "caller": "operator*",
+          "callee": "UInt",
+          "lineNumber": 715
+        },
+        {
+          "caller": "operator*",
+          "callee": "addwithcarry",
+          "lineNumber": 718
+        },
+        {
+          "caller": "operator*",
+          "callee": "UInt",
+          "lineNumber": 718
+        },
+        {
+          "caller": "operator*",
+          "callee": "addwithcarry",
+          "lineNumber": 720
+        },
+        {
+          "caller": "operator*",
+          "callee": "UInt",
+          "lineNumber": 720
+        },
+        {
+          "caller": "operator*",
+          "callee": "addwithcarry",
+          "lineNumber": 722
+        },
+        {
+          "caller": "operator*",
+          "callee": "UInt",
+          "lineNumber": 722
+        },
+        {
+          "caller": "operator*",
+          "callee": "UIntX2",
+          "lineNumber": 724
+        },
+        {
+          "caller": "operator*",
+          "callee": "UIntX2",
+          "lineNumber": 724
+        },
+        {
+          "caller": "operator*",
+          "callee": "addwithcarry",
+          "lineNumber": 726
+        },
+        {
+          "caller": "operator*",
+          "callee": "UInt",
+          "lineNumber": 726
+        },
+        {
+          "caller": "operator*",
+          "callee": "addwithcarry",
+          "lineNumber": 728
+        },
+        {
+          "caller": "operator*",
+          "callee": "UInt",
+          "lineNumber": 728
+        },
+        {
+          "caller": "operator*",
+          "callee": "_umul128",
+          "lineNumber": 747
+        },
+        {
+          "caller": "operator*",
+          "callee": "__uint128_t",
+          "lineNumber": 749
+        },
+        {
+          "caller": "operator*",
+          "callee": "__uint128_t",
+          "lineNumber": 749
+        },
+        {
+          "caller": "operator*",
+          "callee": "uint64_t",
+          "lineNumber": 750
+        },
+        {
+          "caller": "operator+",
+          "callee": "addwithcarry",
+          "lineNumber": 768
+        },
+        {
+          "caller": "operator+",
+          "callee": "addwithcarry",
+          "lineNumber": 770
+        },
+        {
+          "caller": "operator+",
+          "callee": "addwithcarry",
+          "lineNumber": 772
+        },
+        {
+          "caller": "operator+",
+          "callee": "addwithcarry",
+          "lineNumber": 774
+        },
+        {
+          "caller": "operator-",
+          "callee": "subwithcarry",
+          "lineNumber": 787
+        },
+        {
+          "caller": "operator-",
+          "callee": "subwithcarry",
+          "lineNumber": 789
+        },
+        {
+          "caller": "operator-",
+          "callee": "subwithcarry",
+          "lineNumber": 791
+        },
+        {
+          "caller": "operator-",
+          "callee": "subwithcarry",
+          "lineNumber": 793
+        },
+        {
+          "caller": "operator+",
+          "callee": "uint64_t",
+          "lineNumber": 803
+        },
+        {
+          "caller": "operator+",
+          "callee": "uint64_t",
+          "lineNumber": 803
+        },
+        {
+          "caller": "operator+",
+          "callee": "addwithcarry",
+          "lineNumber": 807
+        },
+        {
+          "caller": "operator+",
+          "callee": "addwithcarry",
+          "lineNumber": 809
+        },
+        {
+          "caller": "operator-",
+          "callee": "uint64_t",
+          "lineNumber": 818
+        },
+        {
+          "caller": "operator-",
+          "callee": "uint64_t",
+          "lineNumber": 818
+        },
+        {
+          "caller": "operator-",
+          "callee": "subwithcarry",
+          "lineNumber": 822
+        },
+        {
+          "caller": "operator-",
+          "callee": "subwithcarry",
+          "lineNumber": 824
+        },
+        {
+          "caller": "operator&",
+          "callee": "uint_x4<UInt,UIntX2>",
+          "lineNumber": 834
+        },
+        {
+          "caller": "operator|",
+          "callee": "uint_x4<UInt,UIntX2>",
+          "lineNumber": 841
+        },
+        {
+          "caller": "operator^",
+          "callee": "uint_x4<UInt,UIntX2>",
+          "lineNumber": 848
+        },
+        {
+          "caller": "operator~",
+          "callee": "uint_x4<UInt,UIntX2>",
+          "lineNumber": 854
+        },
+        {
+          "caller": "operator-",
+          "callee": "uint_x4<UInt,UIntX2>",
+          "lineNumber": 860
+        },
+        {
+          "caller": "operator<<",
+          "callee": "uint64_t",
+          "lineNumber": 981
+        },
+        {
+          "caller": "operator>>",
+          "callee": "uint64_t",
+          "lineNumber": 996
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 5,
+        "functionCount": 5,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/vendored/portable-snippets/debug-trap.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 83,
+      "nonEmptyLines": 77,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/vendored/portable-snippets/safe-math.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 1072,
+      "nonEmptyLines": 977,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/vendored/ProducerConsumerQueue.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 217,
+      "nonEmptyLines": 184,
+      "callGraph": [
+        {
+          "caller": "ProducerConsumerQueue",
+          "callee": "static_cast<T*>",
+          "lineNumber": 82
+        },
+        {
+          "caller": "ProducerConsumerQueue",
+          "callee": "std::malloc",
+          "lineNumber": 82
+        },
+        {
+          "caller": "ProducerConsumerQueue",
+          "callee": "assert",
+          "lineNumber": 85
+        },
+        {
+          "caller": "ProducerConsumerQueue",
+          "callee": "std::bad_alloc",
+          "lineNumber": 87
+        },
+        {
+          "caller": "~ProducerConsumerQueue",
+          "callee": "~T",
+          "lineNumber": 99
+        },
+        {
+          "caller": "~ProducerConsumerQueue",
+          "callee": "std::free",
+          "lineNumber": 106
+        },
+        {
+          "caller": "Write",
+          "callee": "load",
+          "lineNumber": 111
+        },
+        {
+          "caller": "Write",
+          "callee": "load",
+          "lineNumber": 116
+        },
+        {
+          "caller": "Write",
+          "callee": "std::forward<Args>",
+          "lineNumber": 117
+        },
+        {
+          "caller": "Write",
+          "callee": "store",
+          "lineNumber": 118
+        },
+        {
+          "caller": "Read",
+          "callee": "load",
+          "lineNumber": 128
+        },
+        {
+          "caller": "Read",
+          "callee": "load",
+          "lineNumber": 129
+        },
+        {
+          "caller": "Read",
+          "callee": "std::move",
+          "lineNumber": 138
+        },
+        {
+          "caller": "Read",
+          "callee": "~T",
+          "lineNumber": 139
+        },
+        {
+          "caller": "Read",
+          "callee": "store",
+          "lineNumber": 140
+        },
+        {
+          "caller": "PopFront",
+          "callee": "load",
+          "lineNumber": 157
+        },
+        {
+          "caller": "PopFront",
+          "callee": "assert",
+          "lineNumber": 158
+        },
+        {
+          "caller": "PopFront",
+          "callee": "load",
+          "lineNumber": 158
+        },
+        {
+          "caller": "PopFront",
+          "callee": "~T",
+          "lineNumber": 164
+        },
+        {
+          "caller": "PopFront",
+          "callee": "store",
+          "lineNumber": 165
+        },
+        {
+          "caller": "IsEmpty",
+          "callee": "load",
+          "lineNumber": 169
+        },
+        {
+          "caller": "IsEmpty",
+          "callee": "load",
+          "lineNumber": 170
+        },
+        {
+          "caller": "IsFull",
+          "callee": "load",
+          "lineNumber": 174
+        },
+        {
+          "caller": "IsFull",
+          "callee": "load",
+          "lineNumber": 178
+        },
+        {
+          "caller": "SizeGuess",
+          "callee": "load",
+          "lineNumber": 191
+        },
+        {
+          "caller": "SizeGuess",
+          "callee": "load",
+          "lineNumber": 192
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/vendored/strptime.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 35,
+      "nonEmptyLines": 29,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/vendored/xxhash.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 18,
+      "nonEmptyLines": 17,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/vendored/xxhash/xxhash.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 6773,
+      "nonEmptyLines": 6175,
+      "callGraph": [
+        {
+          "caller": "XXH_free",
+          "callee": "free",
+          "lineNumber": 2076
+        },
+        {
+          "caller": "XXH_read32",
+          "callee": "XXH_memcpy",
+          "lineNumber": 2315
+        },
+        {
+          "caller": "XXH_readLE32",
+          "callee": "XXH_read32",
+          "lineNumber": 2521
+        },
+        {
+          "caller": "XXH_readLE32",
+          "callee": "XXH_swap32",
+          "lineNumber": 2521
+        },
+        {
+          "caller": "XXH_readLE32",
+          "callee": "XXH_read32",
+          "lineNumber": 2521
+        },
+        {
+          "caller": "XXH_readBE32",
+          "callee": "XXH_swap32",
+          "lineNumber": 2526
+        },
+        {
+          "caller": "XXH_readBE32",
+          "callee": "XXH_read32",
+          "lineNumber": 2526
+        },
+        {
+          "caller": "XXH_readBE32",
+          "callee": "XXH_read32",
+          "lineNumber": 2526
+        },
+        {
+          "caller": "XXH_readLE32_align",
+          "callee": "XXH_readLE32",
+          "lineNumber": 2534
+        },
+        {
+          "caller": "XXH_readLE32_align",
+          "callee": "XXH_swap32",
+          "lineNumber": 2536
+        },
+        {
+          "caller": "XXH32_round",
+          "callee": "XXH_rotl32",
+          "lineNumber": 2588
+        },
+        {
+          "caller": "XXH32_round",
+          "callee": "XXH_COMPILER_GUARD",
+          "lineNumber": 2627
+        },
+        {
+          "caller": "XXH32_finalize",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 2683
+        },
+        {
+          "caller": "XXH32_finalize",
+          "callee": "XXH32_avalanche",
+          "lineNumber": 2696
+        },
+        {
+          "caller": "XXH32_finalize",
+          "callee": "XXH32_avalanche",
+          "lineNumber": 2704
+        },
+        {
+          "caller": "XXH32_finalize",
+          "callee": "XXH32_avalanche",
+          "lineNumber": 2712
+        },
+        {
+          "caller": "XXH32_finalize",
+          "callee": "XXH32_avalanche",
+          "lineNumber": 2721
+        },
+        {
+          "caller": "XXH32_finalize",
+          "callee": "XXH32_avalanche",
+          "lineNumber": 2735
+        },
+        {
+          "caller": "XXH32_finalize",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 2737
+        },
+        {
+          "caller": "XXH32_endian_align",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 2763
+        },
+        {
+          "caller": "XXH32_endian_align",
+          "callee": "XXH32_round",
+          "lineNumber": 2774
+        },
+        {
+          "caller": "XXH32_endian_align",
+          "callee": "XXH_get32bits",
+          "lineNumber": 2774
+        },
+        {
+          "caller": "XXH32_endian_align",
+          "callee": "XXH32_round",
+          "lineNumber": 2775
+        },
+        {
+          "caller": "XXH32_endian_align",
+          "callee": "XXH_get32bits",
+          "lineNumber": 2775
+        },
+        {
+          "caller": "XXH32_endian_align",
+          "callee": "XXH32_round",
+          "lineNumber": 2776
+        },
+        {
+          "caller": "XXH32_endian_align",
+          "callee": "XXH_get32bits",
+          "lineNumber": 2776
+        },
+        {
+          "caller": "XXH32_endian_align",
+          "callee": "XXH32_round",
+          "lineNumber": 2777
+        },
+        {
+          "caller": "XXH32_endian_align",
+          "callee": "XXH_get32bits",
+          "lineNumber": 2777
+        },
+        {
+          "caller": "XXH32_endian_align",
+          "callee": "XXH_rotl32",
+          "lineNumber": 2780
+        },
+        {
+          "caller": "XXH32_endian_align",
+          "callee": "XXH_rotl32",
+          "lineNumber": 2780
+        },
+        {
+          "caller": "XXH32_endian_align",
+          "callee": "XXH_rotl32",
+          "lineNumber": 2781
+        },
+        {
+          "caller": "XXH32_endian_align",
+          "callee": "XXH_rotl32",
+          "lineNumber": 2781
+        },
+        {
+          "caller": "XXH32_endian_align",
+          "callee": "XXH32_finalize",
+          "lineNumber": 2788
+        },
+        {
+          "caller": "XXH32_hash_t",
+          "callee": "XXH32_reset",
+          "lineNumber": 2797
+        },
+        {
+          "caller": "XXH32_hash_t",
+          "callee": "XXH32_update",
+          "lineNumber": 2798
+        },
+        {
+          "caller": "XXH32_hash_t",
+          "callee": "XXH32_digest",
+          "lineNumber": 2799
+        },
+        {
+          "caller": "XXH32_hash_t",
+          "callee": "XXH32_endian_align",
+          "lineNumber": 2803
+        },
+        {
+          "caller": "XXH32_hash_t",
+          "callee": "XXH32_endian_align",
+          "lineNumber": 2806
+        },
+        {
+          "caller": "XXH32_freeState",
+          "callee": "XXH_free",
+          "lineNumber": 2822
+        },
+        {
+          "caller": "XXH32_copyState",
+          "callee": "XXH_memcpy",
+          "lineNumber": 2829
+        },
+        {
+          "caller": "XXH32_reset",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 2835
+        },
+        {
+          "caller": "XXH32_reset",
+          "callee": "memset",
+          "lineNumber": 2836
+        },
+        {
+          "caller": "XXH32_update",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 2850
+        },
+        {
+          "caller": "XXH32_update",
+          "callee": "(XXH32_hash_t)",
+          "lineNumber": 2858
+        },
+        {
+          "caller": "XXH32_update",
+          "callee": "XXH_memcpy",
+          "lineNumber": 2861
+        },
+        {
+          "caller": "XXH32_update",
+          "callee": "XXH_memcpy",
+          "lineNumber": 2867
+        },
+        {
+          "caller": "XXH32_update",
+          "callee": "XXH32_round",
+          "lineNumber": 2869
+        },
+        {
+          "caller": "XXH32_update",
+          "callee": "XXH_readLE32",
+          "lineNumber": 2869
+        },
+        {
+          "caller": "XXH32_update",
+          "callee": "XXH32_round",
+          "lineNumber": 2870
+        },
+        {
+          "caller": "XXH32_update",
+          "callee": "XXH_readLE32",
+          "lineNumber": 2870
+        },
+        {
+          "caller": "XXH32_update",
+          "callee": "XXH32_round",
+          "lineNumber": 2871
+        },
+        {
+          "caller": "XXH32_update",
+          "callee": "XXH_readLE32",
+          "lineNumber": 2871
+        },
+        {
+          "caller": "XXH32_update",
+          "callee": "XXH32_round",
+          "lineNumber": 2872
+        },
+        {
+          "caller": "XXH32_update",
+          "callee": "XXH_readLE32",
+          "lineNumber": 2872
+        },
+        {
+          "caller": "XXH32_update",
+          "callee": "XXH32_round",
+          "lineNumber": 2882
+        },
+        {
+          "caller": "XXH32_update",
+          "callee": "XXH_readLE32",
+          "lineNumber": 2882
+        },
+        {
+          "caller": "XXH32_update",
+          "callee": "XXH32_round",
+          "lineNumber": 2883
+        },
+        {
+          "caller": "XXH32_update",
+          "callee": "XXH_readLE32",
+          "lineNumber": 2883
+        },
+        {
+          "caller": "XXH32_update",
+          "callee": "XXH32_round",
+          "lineNumber": 2884
+        },
+        {
+          "caller": "XXH32_update",
+          "callee": "XXH_readLE32",
+          "lineNumber": 2884
+        },
+        {
+          "caller": "XXH32_update",
+          "callee": "XXH32_round",
+          "lineNumber": 2885
+        },
+        {
+          "caller": "XXH32_update",
+          "callee": "XXH_readLE32",
+          "lineNumber": 2885
+        },
+        {
+          "caller": "XXH32_update",
+          "callee": "XXH_memcpy",
+          "lineNumber": 2891
+        },
+        {
+          "caller": "XXH32_digest",
+          "callee": "XXH_rotl32",
+          "lineNumber": 2906
+        },
+        {
+          "caller": "XXH32_digest",
+          "callee": "XXH_rotl32",
+          "lineNumber": 2907
+        },
+        {
+          "caller": "XXH32_digest",
+          "callee": "XXH_rotl32",
+          "lineNumber": 2908
+        },
+        {
+          "caller": "XXH32_digest",
+          "callee": "XXH_rotl32",
+          "lineNumber": 2909
+        },
+        {
+          "caller": "XXH32_digest",
+          "callee": "XXH32_finalize",
+          "lineNumber": 2916
+        },
+        {
+          "caller": "XXH32_canonicalFromHash",
+          "callee": "XXH_STATIC_ASSERT",
+          "lineNumber": 2938
+        },
+        {
+          "caller": "XXH32_canonicalFromHash",
+          "callee": "XXH_swap32",
+          "lineNumber": 2939
+        },
+        {
+          "caller": "XXH32_canonicalFromHash",
+          "callee": "XXH_memcpy",
+          "lineNumber": 2940
+        },
+        {
+          "caller": "XXH32_hashFromCanonical",
+          "callee": "XXH_readBE32",
+          "lineNumber": 2945
+        },
+        {
+          "caller": "XXH_read64",
+          "callee": "XXH_memcpy",
+          "lineNumber": 3007
+        },
+        {
+          "caller": "XXH_readLE64",
+          "callee": "XXH_read64",
+          "lineNumber": 3064
+        },
+        {
+          "caller": "XXH_readLE64",
+          "callee": "XXH_swap64",
+          "lineNumber": 3064
+        },
+        {
+          "caller": "XXH_readLE64",
+          "callee": "XXH_read64",
+          "lineNumber": 3064
+        },
+        {
+          "caller": "XXH_readBE64",
+          "callee": "XXH_swap64",
+          "lineNumber": 3069
+        },
+        {
+          "caller": "XXH_readBE64",
+          "callee": "XXH_read64",
+          "lineNumber": 3069
+        },
+        {
+          "caller": "XXH_readBE64",
+          "callee": "XXH_read64",
+          "lineNumber": 3069
+        },
+        {
+          "caller": "XXH_readLE64_align",
+          "callee": "XXH_readLE64",
+          "lineNumber": 3077
+        },
+        {
+          "caller": "XXH_readLE64_align",
+          "callee": "XXH_swap64",
+          "lineNumber": 3079
+        },
+        {
+          "caller": "XXH64_round",
+          "callee": "XXH_rotl64",
+          "lineNumber": 3111
+        },
+        {
+          "caller": "XXH64_mergeRound",
+          "callee": "XXH64_round",
+          "lineNumber": 3118
+        },
+        {
+          "caller": "XXH64_finalize",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 3156
+        },
+        {
+          "caller": "XXH64_finalize",
+          "callee": "XXH64_round",
+          "lineNumber": 3159
+        },
+        {
+          "caller": "XXH64_finalize",
+          "callee": "XXH_get64bits",
+          "lineNumber": 3159
+        },
+        {
+          "caller": "XXH64_finalize",
+          "callee": "XXH_rotl64",
+          "lineNumber": 3162
+        },
+        {
+          "caller": "XXH64_finalize",
+          "callee": "(xxh_u64)",
+          "lineNumber": 3166
+        },
+        {
+          "caller": "XXH64_finalize",
+          "callee": "XXH_get32bits",
+          "lineNumber": 3166
+        },
+        {
+          "caller": "XXH64_finalize",
+          "callee": "XXH_rotl64",
+          "lineNumber": 3168
+        },
+        {
+          "caller": "XXH64_finalize",
+          "callee": "XXH_rotl64",
+          "lineNumber": 3173
+        },
+        {
+          "caller": "XXH64_finalize",
+          "callee": "XXH64_avalanche",
+          "lineNumber": 3176
+        },
+        {
+          "caller": "XXH64_endian_align",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 3201
+        },
+        {
+          "caller": "XXH64_endian_align",
+          "callee": "XXH64_round",
+          "lineNumber": 3212
+        },
+        {
+          "caller": "XXH64_endian_align",
+          "callee": "XXH_get64bits",
+          "lineNumber": 3212
+        },
+        {
+          "caller": "XXH64_endian_align",
+          "callee": "XXH64_round",
+          "lineNumber": 3213
+        },
+        {
+          "caller": "XXH64_endian_align",
+          "callee": "XXH_get64bits",
+          "lineNumber": 3213
+        },
+        {
+          "caller": "XXH64_endian_align",
+          "callee": "XXH64_round",
+          "lineNumber": 3214
+        },
+        {
+          "caller": "XXH64_endian_align",
+          "callee": "XXH_get64bits",
+          "lineNumber": 3214
+        },
+        {
+          "caller": "XXH64_endian_align",
+          "callee": "XXH64_round",
+          "lineNumber": 3215
+        },
+        {
+          "caller": "XXH64_endian_align",
+          "callee": "XXH_get64bits",
+          "lineNumber": 3215
+        },
+        {
+          "caller": "XXH64_endian_align",
+          "callee": "XXH_rotl64",
+          "lineNumber": 3218
+        },
+        {
+          "caller": "XXH64_endian_align",
+          "callee": "XXH_rotl64",
+          "lineNumber": 3218
+        },
+        {
+          "caller": "XXH64_endian_align",
+          "callee": "XXH_rotl64",
+          "lineNumber": 3218
+        },
+        {
+          "caller": "XXH64_endian_align",
+          "callee": "XXH_rotl64",
+          "lineNumber": 3218
+        },
+        {
+          "caller": "XXH64_endian_align",
+          "callee": "XXH64_mergeRound",
+          "lineNumber": 3219
+        },
+        {
+          "caller": "XXH64_endian_align",
+          "callee": "XXH64_mergeRound",
+          "lineNumber": 3220
+        },
+        {
+          "caller": "XXH64_endian_align",
+          "callee": "XXH64_mergeRound",
+          "lineNumber": 3221
+        },
+        {
+          "caller": "XXH64_endian_align",
+          "callee": "XXH64_mergeRound",
+          "lineNumber": 3222
+        },
+        {
+          "caller": "XXH64_endian_align",
+          "callee": "XXH64_finalize",
+          "lineNumber": 3230
+        },
+        {
+          "caller": "XXH64_hash_t",
+          "callee": "XXH64_reset",
+          "lineNumber": 3240
+        },
+        {
+          "caller": "XXH64_hash_t",
+          "callee": "XXH64_update",
+          "lineNumber": 3241
+        },
+        {
+          "caller": "XXH64_hash_t",
+          "callee": "XXH64_digest",
+          "lineNumber": 3242
+        },
+        {
+          "caller": "XXH64_hash_t",
+          "callee": "XXH64_endian_align",
+          "lineNumber": 3246
+        },
+        {
+          "caller": "XXH64_hash_t",
+          "callee": "XXH64_endian_align",
+          "lineNumber": 3249
+        },
+        {
+          "caller": "XXH64_freeState",
+          "callee": "XXH_free",
+          "lineNumber": 3264
+        },
+        {
+          "caller": "XXH64_copyState",
+          "callee": "XXH_memcpy",
+          "lineNumber": 3271
+        },
+        {
+          "caller": "XXH64_reset",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 3277
+        },
+        {
+          "caller": "XXH64_reset",
+          "callee": "memset",
+          "lineNumber": 3278
+        },
+        {
+          "caller": "XXH64_update",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 3291
+        },
+        {
+          "caller": "XXH64_update",
+          "callee": "XXH_memcpy",
+          "lineNumber": 3301
+        },
+        {
+          "caller": "XXH64_update",
+          "callee": "XXH_memcpy",
+          "lineNumber": 3307
+        },
+        {
+          "caller": "XXH64_update",
+          "callee": "XXH64_round",
+          "lineNumber": 3308
+        },
+        {
+          "caller": "XXH64_update",
+          "callee": "XXH_readLE64",
+          "lineNumber": 3308
+        },
+        {
+          "caller": "XXH64_update",
+          "callee": "XXH64_round",
+          "lineNumber": 3309
+        },
+        {
+          "caller": "XXH64_update",
+          "callee": "XXH_readLE64",
+          "lineNumber": 3309
+        },
+        {
+          "caller": "XXH64_update",
+          "callee": "XXH64_round",
+          "lineNumber": 3310
+        },
+        {
+          "caller": "XXH64_update",
+          "callee": "XXH_readLE64",
+          "lineNumber": 3310
+        },
+        {
+          "caller": "XXH64_update",
+          "callee": "XXH64_round",
+          "lineNumber": 3311
+        },
+        {
+          "caller": "XXH64_update",
+          "callee": "XXH_readLE64",
+          "lineNumber": 3311
+        },
+        {
+          "caller": "XXH64_update",
+          "callee": "XXH64_round",
+          "lineNumber": 3320
+        },
+        {
+          "caller": "XXH64_update",
+          "callee": "XXH_readLE64",
+          "lineNumber": 3320
+        },
+        {
+          "caller": "XXH64_update",
+          "callee": "XXH64_round",
+          "lineNumber": 3321
+        },
+        {
+          "caller": "XXH64_update",
+          "callee": "XXH_readLE64",
+          "lineNumber": 3321
+        },
+        {
+          "caller": "XXH64_update",
+          "callee": "XXH64_round",
+          "lineNumber": 3322
+        },
+        {
+          "caller": "XXH64_update",
+          "callee": "XXH_readLE64",
+          "lineNumber": 3322
+        },
+        {
+          "caller": "XXH64_update",
+          "callee": "XXH64_round",
+          "lineNumber": 3323
+        },
+        {
+          "caller": "XXH64_update",
+          "callee": "XXH_readLE64",
+          "lineNumber": 3323
+        },
+        {
+          "caller": "XXH64_update",
+          "callee": "XXH_memcpy",
+          "lineNumber": 3329
+        },
+        {
+          "caller": "XXH64_digest",
+          "callee": "XXH_rotl64",
+          "lineNumber": 3344
+        },
+        {
+          "caller": "XXH64_digest",
+          "callee": "XXH_rotl64",
+          "lineNumber": 3344
+        },
+        {
+          "caller": "XXH64_digest",
+          "callee": "XXH_rotl64",
+          "lineNumber": 3344
+        },
+        {
+          "caller": "XXH64_digest",
+          "callee": "XXH_rotl64",
+          "lineNumber": 3344
+        },
+        {
+          "caller": "XXH64_digest",
+          "callee": "XXH64_mergeRound",
+          "lineNumber": 3345
+        },
+        {
+          "caller": "XXH64_digest",
+          "callee": "XXH64_mergeRound",
+          "lineNumber": 3346
+        },
+        {
+          "caller": "XXH64_digest",
+          "callee": "XXH64_mergeRound",
+          "lineNumber": 3347
+        },
+        {
+          "caller": "XXH64_digest",
+          "callee": "XXH64_mergeRound",
+          "lineNumber": 3348
+        },
+        {
+          "caller": "XXH64_digest",
+          "callee": "XXH64_finalize",
+          "lineNumber": 3355
+        },
+        {
+          "caller": "XXH64_canonicalFromHash",
+          "callee": "XXH_STATIC_ASSERT",
+          "lineNumber": 3364
+        },
+        {
+          "caller": "XXH64_canonicalFromHash",
+          "callee": "XXH_swap64",
+          "lineNumber": 3365
+        },
+        {
+          "caller": "XXH64_canonicalFromHash",
+          "callee": "XXH_memcpy",
+          "lineNumber": 3366
+        },
+        {
+          "caller": "XXH64_hashFromCanonical",
+          "callee": "XXH_readBE64",
+          "lineNumber": 3372
+        },
+        {
+          "caller": "XXH_vld1q_u64",
+          "callee": "vreinterpretq_u64_u8",
+          "lineNumber": 3723
+        },
+        {
+          "caller": "XXH_vld1q_u64",
+          "callee": "vld1q_u8",
+          "lineNumber": 3723
+        },
+        {
+          "caller": "XXH_vmlal_high_u32",
+          "callee": "vmlal_high_u32",
+          "lineNumber": 3747
+        },
+        {
+          "caller": "XXH_vmlal_low_u32",
+          "callee": "vmlal_u32",
+          "lineNumber": 3754
+        },
+        {
+          "caller": "XXH_vmlal_low_u32",
+          "callee": "vget_low_u32",
+          "lineNumber": 3754
+        },
+        {
+          "caller": "XXH_vmlal_low_u32",
+          "callee": "vget_low_u32",
+          "lineNumber": 3754
+        },
+        {
+          "caller": "XXH_vmlal_high_u32",
+          "callee": "vmlal_u32",
+          "lineNumber": 3761
+        },
+        {
+          "caller": "XXH_vmlal_high_u32",
+          "callee": "vget_high_u32",
+          "lineNumber": 3761
+        },
+        {
+          "caller": "XXH_vmlal_high_u32",
+          "callee": "vget_high_u32",
+          "lineNumber": 3761
+        },
+        {
+          "caller": "XXH_vec_revb",
+          "callee": "vec_perm",
+          "lineNumber": 3881
+        },
+        {
+          "caller": "XXH_vec_loadu",
+          "callee": "XXH_memcpy",
+          "lineNumber": 3892
+        },
+        {
+          "caller": "XXH_vec_loadu",
+          "callee": "XXH_vec_revb",
+          "lineNumber": 3894
+        },
+        {
+          "caller": "XXH_mult64to128",
+          "callee": "(xxh_u64)",
+          "lineNumber": 4065
+        },
+        {
+          "caller": "XXH_mult64to128",
+          "callee": "(xxh_u64)",
+          "lineNumber": 4066
+        },
+        {
+          "caller": "XXH_mult64to128",
+          "callee": "_umul128",
+          "lineNumber": 4082
+        },
+        {
+          "caller": "XXH_mult64to128",
+          "callee": "__umulh",
+          "lineNumber": 4100
+        },
+        {
+          "caller": "XXH_mult64to128",
+          "callee": "XXH_mult32to64",
+          "lineNumber": 4148
+        },
+        {
+          "caller": "XXH_mult64to128",
+          "callee": "XXH_mult32to64",
+          "lineNumber": 4149
+        },
+        {
+          "caller": "XXH_mult64to128",
+          "callee": "XXH_mult32to64",
+          "lineNumber": 4150
+        },
+        {
+          "caller": "XXH_mult64to128",
+          "callee": "XXH_mult32to64",
+          "lineNumber": 4151
+        },
+        {
+          "caller": "XXH3_mul128_fold64",
+          "callee": "XXH_mult64to128",
+          "lineNumber": 4178
+        },
+        {
+          "caller": "XXH_xorshift64",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 4185
+        },
+        {
+          "caller": "XXH3_avalanche",
+          "callee": "XXH_xorshift64",
+          "lineNumber": 4195
+        },
+        {
+          "caller": "XXH3_avalanche",
+          "callee": "XXH_xorshift64",
+          "lineNumber": 4197
+        },
+        {
+          "caller": "XXH3_rrmxmx",
+          "callee": "XXH_rotl64",
+          "lineNumber": 4209
+        },
+        {
+          "caller": "XXH3_rrmxmx",
+          "callee": "XXH_rotl64",
+          "lineNumber": 4209
+        },
+        {
+          "caller": "XXH3_rrmxmx",
+          "callee": "XXH_xorshift64",
+          "lineNumber": 4213
+        },
+        {
+          "caller": "XXH3_len_1to3_64b",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 4253
+        },
+        {
+          "caller": "XXH3_len_1to3_64b",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 4254
+        },
+        {
+          "caller": "XXH3_len_1to3_64b",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 4255
+        },
+        {
+          "caller": "XXH3_len_1to3_64b",
+          "callee": "XXH_readLE32",
+          "lineNumber": 4266
+        },
+        {
+          "caller": "XXH3_len_1to3_64b",
+          "callee": "XXH_readLE32",
+          "lineNumber": 4266
+        },
+        {
+          "caller": "XXH3_len_1to3_64b",
+          "callee": "XXH64_avalanche",
+          "lineNumber": 4268
+        },
+        {
+          "caller": "XXH3_len_4to8_64b",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 4275
+        },
+        {
+          "caller": "XXH3_len_4to8_64b",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 4276
+        },
+        {
+          "caller": "XXH3_len_4to8_64b",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 4277
+        },
+        {
+          "caller": "XXH3_len_4to8_64b",
+          "callee": "XXH_swap32",
+          "lineNumber": 4278
+        },
+        {
+          "caller": "XXH3_len_4to8_64b",
+          "callee": "XXH_readLE32",
+          "lineNumber": 4279
+        },
+        {
+          "caller": "XXH3_len_4to8_64b",
+          "callee": "XXH_readLE32",
+          "lineNumber": 4280
+        },
+        {
+          "caller": "XXH3_len_4to8_64b",
+          "callee": "XXH_readLE64",
+          "lineNumber": 4281
+        },
+        {
+          "caller": "XXH3_len_4to8_64b",
+          "callee": "XXH_readLE64",
+          "lineNumber": 4281
+        },
+        {
+          "caller": "XXH3_len_4to8_64b",
+          "callee": "XXH3_rrmxmx",
+          "lineNumber": 4284
+        },
+        {
+          "caller": "XXH3_len_9to16_64b",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 4291
+        },
+        {
+          "caller": "XXH3_len_9to16_64b",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 4292
+        },
+        {
+          "caller": "XXH3_len_9to16_64b",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 4293
+        },
+        {
+          "caller": "XXH3_len_9to16_64b",
+          "callee": "XXH_readLE64",
+          "lineNumber": 4294
+        },
+        {
+          "caller": "XXH3_len_9to16_64b",
+          "callee": "XXH_readLE64",
+          "lineNumber": 4294
+        },
+        {
+          "caller": "XXH3_len_9to16_64b",
+          "callee": "XXH_readLE64",
+          "lineNumber": 4295
+        },
+        {
+          "caller": "XXH3_len_9to16_64b",
+          "callee": "XXH_readLE64",
+          "lineNumber": 4295
+        },
+        {
+          "caller": "XXH3_len_9to16_64b",
+          "callee": "XXH_readLE64",
+          "lineNumber": 4296
+        },
+        {
+          "caller": "XXH3_len_9to16_64b",
+          "callee": "XXH_readLE64",
+          "lineNumber": 4297
+        },
+        {
+          "caller": "XXH3_len_9to16_64b",
+          "callee": "XXH_swap64",
+          "lineNumber": 4299
+        },
+        {
+          "caller": "XXH3_len_9to16_64b",
+          "callee": "XXH3_mul128_fold64",
+          "lineNumber": 4300
+        },
+        {
+          "caller": "XXH3_len_9to16_64b",
+          "callee": "XXH3_avalanche",
+          "lineNumber": 4301
+        },
+        {
+          "caller": "XXH3_len_0to16_64b",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 4308
+        },
+        {
+          "caller": "XXH3_len_0to16_64b",
+          "callee": "XXH_likely",
+          "lineNumber": 4309
+        },
+        {
+          "caller": "XXH3_len_0to16_64b",
+          "callee": "XXH3_len_9to16_64b",
+          "lineNumber": 4309
+        },
+        {
+          "caller": "XXH3_len_0to16_64b",
+          "callee": "XXH_likely",
+          "lineNumber": 4310
+        },
+        {
+          "caller": "XXH3_len_0to16_64b",
+          "callee": "XXH3_len_4to8_64b",
+          "lineNumber": 4310
+        },
+        {
+          "caller": "XXH3_len_0to16_64b",
+          "callee": "XXH3_len_1to3_64b",
+          "lineNumber": 4311
+        },
+        {
+          "caller": "XXH3_len_0to16_64b",
+          "callee": "XXH64_avalanche",
+          "lineNumber": 4312
+        },
+        {
+          "caller": "XXH3_len_0to16_64b",
+          "callee": "XXH_readLE64",
+          "lineNumber": 4312
+        },
+        {
+          "caller": "XXH3_len_0to16_64b",
+          "callee": "XXH_readLE64",
+          "lineNumber": 4312
+        },
+        {
+          "caller": "XXH3_mix16B",
+          "callee": "XXH_COMPILER_GUARD",
+          "lineNumber": 4363
+        },
+        {
+          "caller": "XXH3_mix16B",
+          "callee": "XXH_readLE64",
+          "lineNumber": 4365
+        },
+        {
+          "caller": "XXH3_mix16B",
+          "callee": "XXH_readLE64",
+          "lineNumber": 4366
+        },
+        {
+          "caller": "XXH3_mix16B",
+          "callee": "XXH3_mul128_fold64",
+          "lineNumber": 4367
+        },
+        {
+          "caller": "XXH3_mix16B",
+          "callee": "XXH_readLE64",
+          "lineNumber": 4368
+        },
+        {
+          "caller": "XXH3_mix16B",
+          "callee": "XXH_readLE64",
+          "lineNumber": 4369
+        },
+        {
+          "caller": "XXH3_len_17to128_64b",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 4380
+        },
+        {
+          "caller": "XXH3_len_17to128_64b",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 4381
+        },
+        {
+          "caller": "XXH3_len_17to128_64b",
+          "callee": "XXH3_mix16B",
+          "lineNumber": 4388
+        },
+        {
+          "caller": "XXH3_len_17to128_64b",
+          "callee": "XXH3_mix16B",
+          "lineNumber": 4389
+        },
+        {
+          "caller": "XXH3_len_17to128_64b",
+          "callee": "XXH3_mix16B",
+          "lineNumber": 4395
+        },
+        {
+          "caller": "XXH3_len_17to128_64b",
+          "callee": "XXH3_mix16B",
+          "lineNumber": 4396
+        },
+        {
+          "caller": "XXH3_len_17to128_64b",
+          "callee": "XXH3_mix16B",
+          "lineNumber": 4398
+        },
+        {
+          "caller": "XXH3_len_17to128_64b",
+          "callee": "XXH3_mix16B",
+          "lineNumber": 4399
+        },
+        {
+          "caller": "XXH3_len_17to128_64b",
+          "callee": "XXH3_mix16B",
+          "lineNumber": 4401
+        },
+        {
+          "caller": "XXH3_len_17to128_64b",
+          "callee": "XXH3_mix16B",
+          "lineNumber": 4402
+        },
+        {
+          "caller": "XXH3_len_17to128_64b",
+          "callee": "XXH3_mix16B",
+          "lineNumber": 4404
+        },
+        {
+          "caller": "XXH3_len_17to128_64b",
+          "callee": "XXH3_mix16B",
+          "lineNumber": 4405
+        },
+        {
+          "caller": "XXH3_len_17to128_64b",
+          "callee": "XXH3_avalanche",
+          "lineNumber": 4407
+        },
+        {
+          "caller": "XXH3_len_129to240_64b",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 4418
+        },
+        {
+          "caller": "XXH3_len_129to240_64b",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 4419
+        },
+        {
+          "caller": "XXH3_len_129to240_64b",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 4428
+        },
+        {
+          "caller": "XXH3_len_129to240_64b",
+          "callee": "XXH3_mix16B",
+          "lineNumber": 4430
+        },
+        {
+          "caller": "XXH3_len_129to240_64b",
+          "callee": "XXH3_mix16B",
+          "lineNumber": 4433
+        },
+        {
+          "caller": "XXH3_len_129to240_64b",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 4434
+        },
+        {
+          "caller": "XXH3_len_129to240_64b",
+          "callee": "XXH3_avalanche",
+          "lineNumber": 4435
+        },
+        {
+          "caller": "XXH3_len_129to240_64b",
+          "callee": "XXH_COMPILER_GUARD",
+          "lineNumber": 4465
+        },
+        {
+          "caller": "XXH3_len_129to240_64b",
+          "callee": "XXH3_mix16B",
+          "lineNumber": 4466
+        },
+        {
+          "caller": "XXH3_len_129to240_64b",
+          "callee": "XXH3_avalanche",
+          "lineNumber": 4468
+        },
+        {
+          "caller": "XXH_writeLE64",
+          "callee": "XXH_swap64",
+          "lineNumber": 4527
+        },
+        {
+          "caller": "XXH_writeLE64",
+          "callee": "XXH_memcpy",
+          "lineNumber": 4528
+        },
+        {
+          "caller": "XXH3_accumulate_512_avx512",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 4582
+        },
+        {
+          "caller": "XXH3_accumulate_512_avx512",
+          "callee": "XXH_STATIC_ASSERT",
+          "lineNumber": 4583
+        },
+        {
+          "caller": "XXH3_accumulate_512_avx512",
+          "callee": "_mm512_loadu_si512",
+          "lineNumber": 4587
+        },
+        {
+          "caller": "XXH3_accumulate_512_avx512",
+          "callee": "_mm512_loadu_si512",
+          "lineNumber": 4589
+        },
+        {
+          "caller": "XXH3_accumulate_512_avx512",
+          "callee": "_mm512_xor_si512",
+          "lineNumber": 4591
+        },
+        {
+          "caller": "XXH3_accumulate_512_avx512",
+          "callee": "_mm512_srli_epi64",
+          "lineNumber": 4593
+        },
+        {
+          "caller": "XXH3_accumulate_512_avx512",
+          "callee": "_mm512_mul_epu32",
+          "lineNumber": 4595
+        },
+        {
+          "caller": "XXH3_accumulate_512_avx512",
+          "callee": "_mm512_shuffle_epi32",
+          "lineNumber": 4597
+        },
+        {
+          "caller": "XXH3_accumulate_512_avx512",
+          "callee": "_MM_SHUFFLE",
+          "lineNumber": 4597
+        },
+        {
+          "caller": "XXH3_accumulate_512_avx512",
+          "callee": "_mm512_add_epi64",
+          "lineNumber": 4598
+        },
+        {
+          "caller": "XXH3_accumulate_512_avx512",
+          "callee": "_mm512_add_epi64",
+          "lineNumber": 4600
+        },
+        {
+          "caller": "XXH3_scrambleAcc_avx512",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 4629
+        },
+        {
+          "caller": "XXH3_scrambleAcc_avx512",
+          "callee": "XXH_STATIC_ASSERT",
+          "lineNumber": 4630
+        },
+        {
+          "caller": "XXH3_scrambleAcc_avx512",
+          "callee": "_mm512_set1_epi32",
+          "lineNumber": 4632
+        },
+        {
+          "caller": "XXH3_scrambleAcc_avx512",
+          "callee": "_mm512_srli_epi64",
+          "lineNumber": 4636
+        },
+        {
+          "caller": "XXH3_scrambleAcc_avx512",
+          "callee": "_mm512_loadu_si512",
+          "lineNumber": 4638
+        },
+        {
+          "caller": "XXH3_scrambleAcc_avx512",
+          "callee": "_mm512_ternarylogic_epi32",
+          "lineNumber": 4639
+        },
+        {
+          "caller": "XXH3_scrambleAcc_avx512",
+          "callee": "_mm512_srli_epi64",
+          "lineNumber": 4642
+        },
+        {
+          "caller": "XXH3_scrambleAcc_avx512",
+          "callee": "_mm512_mul_epu32",
+          "lineNumber": 4643
+        },
+        {
+          "caller": "XXH3_scrambleAcc_avx512",
+          "callee": "_mm512_mul_epu32",
+          "lineNumber": 4644
+        },
+        {
+          "caller": "XXH3_scrambleAcc_avx512",
+          "callee": "_mm512_add_epi64",
+          "lineNumber": 4645
+        },
+        {
+          "caller": "XXH3_scrambleAcc_avx512",
+          "callee": "_mm512_slli_epi64",
+          "lineNumber": 4645
+        },
+        {
+          "caller": "XXH3_initCustomSecret_avx512",
+          "callee": "XXH_STATIC_ASSERT",
+          "lineNumber": 4652
+        },
+        {
+          "caller": "XXH3_initCustomSecret_avx512",
+          "callee": "XXH_STATIC_ASSERT",
+          "lineNumber": 4653
+        },
+        {
+          "caller": "XXH3_initCustomSecret_avx512",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 4654
+        },
+        {
+          "caller": "XXH3_initCustomSecret_avx512",
+          "callee": "_mm512_set1_epi64",
+          "lineNumber": 4657
+        },
+        {
+          "caller": "XXH3_initCustomSecret_avx512",
+          "callee": "_mm512_mask_sub_epi64",
+          "lineNumber": 4658
+        },
+        {
+          "caller": "XXH3_initCustomSecret_avx512",
+          "callee": "_mm512_set1_epi8",
+          "lineNumber": 4658
+        },
+        {
+          "caller": "XXH3_initCustomSecret_avx512",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 4663
+        },
+        {
+          "caller": "XXH3_initCustomSecret_avx512",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 4664
+        },
+        {
+          "caller": "XXH3_initCustomSecret_avx512",
+          "callee": "_mm512_add_epi64",
+          "lineNumber": 4666
+        },
+        {
+          "caller": "XXH3_initCustomSecret_avx512",
+          "callee": "_mm512_load_si512",
+          "lineNumber": 4666
+        },
+        {
+          "caller": "XXH3_accumulate_512_avx2",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 4684
+        },
+        {
+          "caller": "XXH3_accumulate_512_avx2",
+          "callee": "_mm256_loadu_si256",
+          "lineNumber": 4696
+        },
+        {
+          "caller": "XXH3_accumulate_512_avx2",
+          "callee": "_mm256_loadu_si256",
+          "lineNumber": 4698
+        },
+        {
+          "caller": "XXH3_accumulate_512_avx2",
+          "callee": "_mm256_xor_si256",
+          "lineNumber": 4700
+        },
+        {
+          "caller": "XXH3_accumulate_512_avx2",
+          "callee": "_mm256_srli_epi64",
+          "lineNumber": 4702
+        },
+        {
+          "caller": "XXH3_accumulate_512_avx2",
+          "callee": "_mm256_mul_epu32",
+          "lineNumber": 4704
+        },
+        {
+          "caller": "XXH3_accumulate_512_avx2",
+          "callee": "_mm256_shuffle_epi32",
+          "lineNumber": 4706
+        },
+        {
+          "caller": "XXH3_accumulate_512_avx2",
+          "callee": "_MM_SHUFFLE",
+          "lineNumber": 4706
+        },
+        {
+          "caller": "XXH3_accumulate_512_avx2",
+          "callee": "_mm256_add_epi64",
+          "lineNumber": 4707
+        },
+        {
+          "caller": "XXH3_accumulate_512_avx2",
+          "callee": "_mm256_add_epi64",
+          "lineNumber": 4709
+        },
+        {
+          "caller": "XXH3_scrambleAcc_avx2",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 4717
+        },
+        {
+          "caller": "XXH3_scrambleAcc_avx2",
+          "callee": "_mm256_set1_epi32",
+          "lineNumber": 4722
+        },
+        {
+          "caller": "XXH3_scrambleAcc_avx2",
+          "callee": "_mm256_srli_epi64",
+          "lineNumber": 4728
+        },
+        {
+          "caller": "XXH3_scrambleAcc_avx2",
+          "callee": "_mm256_xor_si256",
+          "lineNumber": 4729
+        },
+        {
+          "caller": "XXH3_scrambleAcc_avx2",
+          "callee": "_mm256_loadu_si256",
+          "lineNumber": 4731
+        },
+        {
+          "caller": "XXH3_scrambleAcc_avx2",
+          "callee": "_mm256_xor_si256",
+          "lineNumber": 4732
+        },
+        {
+          "caller": "XXH3_scrambleAcc_avx2",
+          "callee": "_mm256_srli_epi64",
+          "lineNumber": 4735
+        },
+        {
+          "caller": "XXH3_scrambleAcc_avx2",
+          "callee": "_mm256_mul_epu32",
+          "lineNumber": 4736
+        },
+        {
+          "caller": "XXH3_scrambleAcc_avx2",
+          "callee": "_mm256_mul_epu32",
+          "lineNumber": 4737
+        },
+        {
+          "caller": "XXH3_scrambleAcc_avx2",
+          "callee": "_mm256_add_epi64",
+          "lineNumber": 4738
+        },
+        {
+          "caller": "XXH3_scrambleAcc_avx2",
+          "callee": "_mm256_slli_epi64",
+          "lineNumber": 4738
+        },
+        {
+          "caller": "XXH3_initCustomSecret_avx2",
+          "callee": "XXH_STATIC_ASSERT",
+          "lineNumber": 4745
+        },
+        {
+          "caller": "XXH3_initCustomSecret_avx2",
+          "callee": "XXH_STATIC_ASSERT",
+          "lineNumber": 4746
+        },
+        {
+          "caller": "XXH3_initCustomSecret_avx2",
+          "callee": "XXH_STATIC_ASSERT",
+          "lineNumber": 4747
+        },
+        {
+          "caller": "XXH3_initCustomSecret_avx2",
+          "callee": "XXH_PREFETCH",
+          "lineNumber": 4749
+        },
+        {
+          "caller": "XXH3_initCustomSecret_avx2",
+          "callee": "_mm256_set_epi64x",
+          "lineNumber": 4750
+        },
+        {
+          "caller": "XXH3_initCustomSecret_avx2",
+          "callee": "(xxh_i64)",
+          "lineNumber": 4750
+        },
+        {
+          "caller": "XXH3_initCustomSecret_avx2",
+          "callee": "(xxh_i64)",
+          "lineNumber": 4750
+        },
+        {
+          "caller": "XXH3_initCustomSecret_avx2",
+          "callee": "XXH_COMPILER_GUARD",
+          "lineNumber": 4761
+        },
+        {
+          "caller": "XXH3_initCustomSecret_avx2",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 4763
+        },
+        {
+          "caller": "XXH3_initCustomSecret_avx2",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 4764
+        },
+        {
+          "caller": "XXH3_initCustomSecret_avx2",
+          "callee": "_mm256_add_epi64",
+          "lineNumber": 4767
+        },
+        {
+          "caller": "XXH3_initCustomSecret_avx2",
+          "callee": "_mm256_load_si256",
+          "lineNumber": 4767
+        },
+        {
+          "caller": "XXH3_initCustomSecret_avx2",
+          "callee": "_mm256_add_epi64",
+          "lineNumber": 4768
+        },
+        {
+          "caller": "XXH3_initCustomSecret_avx2",
+          "callee": "_mm256_load_si256",
+          "lineNumber": 4768
+        },
+        {
+          "caller": "XXH3_initCustomSecret_avx2",
+          "callee": "_mm256_add_epi64",
+          "lineNumber": 4769
+        },
+        {
+          "caller": "XXH3_initCustomSecret_avx2",
+          "callee": "_mm256_load_si256",
+          "lineNumber": 4769
+        },
+        {
+          "caller": "XXH3_initCustomSecret_avx2",
+          "callee": "_mm256_add_epi64",
+          "lineNumber": 4770
+        },
+        {
+          "caller": "XXH3_initCustomSecret_avx2",
+          "callee": "_mm256_load_si256",
+          "lineNumber": 4770
+        },
+        {
+          "caller": "XXH3_initCustomSecret_avx2",
+          "callee": "_mm256_add_epi64",
+          "lineNumber": 4771
+        },
+        {
+          "caller": "XXH3_initCustomSecret_avx2",
+          "callee": "_mm256_load_si256",
+          "lineNumber": 4771
+        },
+        {
+          "caller": "XXH3_initCustomSecret_avx2",
+          "callee": "_mm256_add_epi64",
+          "lineNumber": 4772
+        },
+        {
+          "caller": "XXH3_initCustomSecret_avx2",
+          "callee": "_mm256_load_si256",
+          "lineNumber": 4772
+        },
+        {
+          "caller": "XXH3_accumulate_512_sse2",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 4791
+        },
+        {
+          "caller": "XXH3_accumulate_512_sse2",
+          "callee": "_mm_loadu_si128",
+          "lineNumber": 4803
+        },
+        {
+          "caller": "XXH3_accumulate_512_sse2",
+          "callee": "_mm_loadu_si128",
+          "lineNumber": 4805
+        },
+        {
+          "caller": "XXH3_accumulate_512_sse2",
+          "callee": "_mm_xor_si128",
+          "lineNumber": 4807
+        },
+        {
+          "caller": "XXH3_accumulate_512_sse2",
+          "callee": "_mm_shuffle_epi32",
+          "lineNumber": 4809
+        },
+        {
+          "caller": "XXH3_accumulate_512_sse2",
+          "callee": "_MM_SHUFFLE",
+          "lineNumber": 4809
+        },
+        {
+          "caller": "XXH3_accumulate_512_sse2",
+          "callee": "_mm_mul_epu32",
+          "lineNumber": 4811
+        },
+        {
+          "caller": "XXH3_accumulate_512_sse2",
+          "callee": "_mm_shuffle_epi32",
+          "lineNumber": 4813
+        },
+        {
+          "caller": "XXH3_accumulate_512_sse2",
+          "callee": "_MM_SHUFFLE",
+          "lineNumber": 4813
+        },
+        {
+          "caller": "XXH3_accumulate_512_sse2",
+          "callee": "_mm_add_epi64",
+          "lineNumber": 4814
+        },
+        {
+          "caller": "XXH3_accumulate_512_sse2",
+          "callee": "_mm_add_epi64",
+          "lineNumber": 4816
+        },
+        {
+          "caller": "XXH3_scrambleAcc_sse2",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 4824
+        },
+        {
+          "caller": "XXH3_scrambleAcc_sse2",
+          "callee": "_mm_set1_epi32",
+          "lineNumber": 4829
+        },
+        {
+          "caller": "XXH3_scrambleAcc_sse2",
+          "callee": "_mm_srli_epi64",
+          "lineNumber": 4835
+        },
+        {
+          "caller": "XXH3_scrambleAcc_sse2",
+          "callee": "_mm_xor_si128",
+          "lineNumber": 4836
+        },
+        {
+          "caller": "XXH3_scrambleAcc_sse2",
+          "callee": "_mm_loadu_si128",
+          "lineNumber": 4838
+        },
+        {
+          "caller": "XXH3_scrambleAcc_sse2",
+          "callee": "_mm_xor_si128",
+          "lineNumber": 4839
+        },
+        {
+          "caller": "XXH3_scrambleAcc_sse2",
+          "callee": "_mm_shuffle_epi32",
+          "lineNumber": 4842
+        },
+        {
+          "caller": "XXH3_scrambleAcc_sse2",
+          "callee": "_MM_SHUFFLE",
+          "lineNumber": 4842
+        },
+        {
+          "caller": "XXH3_scrambleAcc_sse2",
+          "callee": "_mm_mul_epu32",
+          "lineNumber": 4843
+        },
+        {
+          "caller": "XXH3_scrambleAcc_sse2",
+          "callee": "_mm_mul_epu32",
+          "lineNumber": 4844
+        },
+        {
+          "caller": "XXH3_scrambleAcc_sse2",
+          "callee": "_mm_add_epi64",
+          "lineNumber": 4845
+        },
+        {
+          "caller": "XXH3_scrambleAcc_sse2",
+          "callee": "_mm_slli_epi64",
+          "lineNumber": 4845
+        },
+        {
+          "caller": "XXH3_initCustomSecret_sse2",
+          "callee": "XXH_STATIC_ASSERT",
+          "lineNumber": 4852
+        },
+        {
+          "caller": "XXH3_initCustomSecret_sse2",
+          "callee": "XXH_ALIGN",
+          "lineNumber": 4858
+        },
+        {
+          "caller": "XXH3_initCustomSecret_sse2",
+          "callee": "(xxh_i64)",
+          "lineNumber": 4858
+        },
+        {
+          "caller": "XXH3_initCustomSecret_sse2",
+          "callee": "_mm_load_si128",
+          "lineNumber": 4859
+        },
+        {
+          "caller": "XXH3_initCustomSecret_sse2",
+          "callee": "_mm_set_epi64x",
+          "lineNumber": 4861
+        },
+        {
+          "caller": "XXH3_initCustomSecret_sse2",
+          "callee": "(xxh_i64)",
+          "lineNumber": 4861
+        },
+        {
+          "caller": "XXH3_initCustomSecret_sse2",
+          "callee": "XXH_COMPILER_GUARD",
+          "lineNumber": 4873
+        },
+        {
+          "caller": "XXH3_initCustomSecret_sse2",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 4875
+        },
+        {
+          "caller": "XXH3_initCustomSecret_sse2",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 4876
+        },
+        {
+          "caller": "XXH3_initCustomSecret_sse2",
+          "callee": "_mm_add_epi64",
+          "lineNumber": 4879
+        },
+        {
+          "caller": "XXH3_initCustomSecret_sse2",
+          "callee": "_mm_load_si128",
+          "lineNumber": 4879
+        },
+        {
+          "caller": "XXH3_accumulate_512_neon",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 4925
+        },
+        {
+          "caller": "XXH3_accumulate_512_neon",
+          "callee": "XXH_STATIC_ASSERT",
+          "lineNumber": 4926
+        },
+        {
+          "caller": "XXH3_accumulate_512_neon",
+          "callee": "XXH_COMPILER_GUARD",
+          "lineNumber": 4952
+        },
+        {
+          "caller": "XXH3_accumulate_512_neon",
+          "callee": "XXH3_scalarRound",
+          "lineNumber": 4956
+        },
+        {
+          "caller": "XXH3_accumulate_512_neon",
+          "callee": "XXH_vld1q_u64",
+          "lineNumber": 4962
+        },
+        {
+          "caller": "XXH3_accumulate_512_neon",
+          "callee": "XXH_vld1q_u64",
+          "lineNumber": 4963
+        },
+        {
+          "caller": "XXH3_accumulate_512_neon",
+          "callee": "XXH_vld1q_u64",
+          "lineNumber": 4965
+        },
+        {
+          "caller": "XXH3_accumulate_512_neon",
+          "callee": "XXH_vld1q_u64",
+          "lineNumber": 4966
+        },
+        {
+          "caller": "XXH3_accumulate_512_neon",
+          "callee": "vextq_u64",
+          "lineNumber": 4968
+        },
+        {
+          "caller": "XXH3_accumulate_512_neon",
+          "callee": "vextq_u64",
+          "lineNumber": 4969
+        },
+        {
+          "caller": "XXH3_accumulate_512_neon",
+          "callee": "veorq_u64",
+          "lineNumber": 4971
+        },
+        {
+          "caller": "XXH3_accumulate_512_neon",
+          "callee": "veorq_u64",
+          "lineNumber": 4972
+        },
+        {
+          "caller": "XXH3_accumulate_512_neon",
+          "callee": "vuzpq_u32",
+          "lineNumber": 4987
+        },
+        {
+          "caller": "XXH3_accumulate_512_neon",
+          "callee": "vreinterpretq_u32_u64",
+          "lineNumber": 4988
+        },
+        {
+          "caller": "XXH3_accumulate_512_neon",
+          "callee": "vreinterpretq_u32_u64",
+          "lineNumber": 4989
+        },
+        {
+          "caller": "XXH3_accumulate_512_neon",
+          "callee": "XXH_vmlal_low_u32",
+          "lineNumber": 5002
+        },
+        {
+          "caller": "XXH3_accumulate_512_neon",
+          "callee": "XXH_vmlal_high_u32",
+          "lineNumber": 5003
+        },
+        {
+          "caller": "XXH3_accumulate_512_neon",
+          "callee": "XXH_COMPILER_GUARD_CLANG_NEON",
+          "lineNumber": 5016
+        },
+        {
+          "caller": "XXH3_accumulate_512_neon",
+          "callee": "XXH_COMPILER_GUARD_CLANG_NEON",
+          "lineNumber": 5017
+        },
+        {
+          "caller": "XXH3_accumulate_512_neon",
+          "callee": "vaddq_u64",
+          "lineNumber": 5019
+        },
+        {
+          "caller": "XXH3_accumulate_512_neon",
+          "callee": "vaddq_u64",
+          "lineNumber": 5020
+        },
+        {
+          "caller": "XXH3_accumulate_512_neon",
+          "callee": "XXH_vld1q_u64",
+          "lineNumber": 5025
+        },
+        {
+          "caller": "XXH3_accumulate_512_neon",
+          "callee": "XXH_vld1q_u64",
+          "lineNumber": 5027
+        },
+        {
+          "caller": "XXH3_accumulate_512_neon",
+          "callee": "vextq_u64",
+          "lineNumber": 5029
+        },
+        {
+          "caller": "XXH3_accumulate_512_neon",
+          "callee": "veorq_u64",
+          "lineNumber": 5031
+        },
+        {
+          "caller": "XXH3_accumulate_512_neon",
+          "callee": "vmovn_u64",
+          "lineNumber": 5034
+        },
+        {
+          "caller": "XXH3_accumulate_512_neon",
+          "callee": "vshrn_n_u64",
+          "lineNumber": 5036
+        },
+        {
+          "caller": "XXH3_accumulate_512_neon",
+          "callee": "vmlal_u32",
+          "lineNumber": 5038
+        },
+        {
+          "caller": "XXH3_accumulate_512_neon",
+          "callee": "XXH_COMPILER_GUARD_CLANG_NEON",
+          "lineNumber": 5040
+        },
+        {
+          "caller": "XXH3_accumulate_512_neon",
+          "callee": "vaddq_u64",
+          "lineNumber": 5042
+        },
+        {
+          "caller": "XXH3_scrambleAcc_neon",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 5051
+        },
+        {
+          "caller": "XXH3_scrambleAcc_neon",
+          "callee": "vdup_n_u32",
+          "lineNumber": 5060
+        },
+        {
+          "caller": "XXH3_scrambleAcc_neon",
+          "callee": "vreinterpretq_u32_u64",
+          "lineNumber": 5062
+        },
+        {
+          "caller": "XXH3_scrambleAcc_neon",
+          "callee": "vdupq_n_u64",
+          "lineNumber": 5062
+        },
+        {
+          "caller": "XXH3_scrambleAcc_neon",
+          "callee": "XXH3_scalarScrambleRound",
+          "lineNumber": 5067
+        },
+        {
+          "caller": "XXH3_scrambleAcc_neon",
+          "callee": "vshrq_n_u64",
+          "lineNumber": 5072
+        },
+        {
+          "caller": "XXH3_scrambleAcc_neon",
+          "callee": "veorq_u64",
+          "lineNumber": 5073
+        },
+        {
+          "caller": "XXH3_scrambleAcc_neon",
+          "callee": "XXH_vld1q_u64",
+          "lineNumber": 5076
+        },
+        {
+          "caller": "XXH3_scrambleAcc_neon",
+          "callee": "veorq_u64",
+          "lineNumber": 5077
+        },
+        {
+          "caller": "XXH3_scrambleAcc_neon",
+          "callee": "vmulq_u32",
+          "lineNumber": 5094
+        },
+        {
+          "caller": "XXH3_scrambleAcc_neon",
+          "callee": "vreinterpretq_u32_u64",
+          "lineNumber": 5094
+        },
+        {
+          "caller": "XXH3_scrambleAcc_neon",
+          "callee": "vmovn_u64",
+          "lineNumber": 5096
+        },
+        {
+          "caller": "XXH3_scrambleAcc_neon",
+          "callee": "vmlal_u32",
+          "lineNumber": 5098
+        },
+        {
+          "caller": "XXH3_scrambleAcc_neon",
+          "callee": "vreinterpretq_u64_u32",
+          "lineNumber": 5098
+        },
+        {
+          "caller": "XXH3_accumulate_512_vsx",
+          "callee": "XXH_vec_loadu",
+          "lineNumber": 5120
+        },
+        {
+          "caller": "XXH3_accumulate_512_vsx",
+          "callee": "XXH_vec_loadu",
+          "lineNumber": 5122
+        },
+        {
+          "caller": "XXH3_accumulate_512_vsx",
+          "callee": "vec_rl",
+          "lineNumber": 5125
+        },
+        {
+          "caller": "XXH3_accumulate_512_vsx",
+          "callee": "XXH_vec_mulo",
+          "lineNumber": 5127
+        },
+        {
+          "caller": "XXH3_accumulate_512_vsx",
+          "callee": "vec_permi",
+          "lineNumber": 5134
+        },
+        {
+          "caller": "XXH3_accumulate_512_vsx",
+          "callee": "vec_xxpermdi",
+          "lineNumber": 5136
+        },
+        {
+          "caller": "XXH3_scrambleAcc_vsx",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 5146
+        },
+        {
+          "caller": "XXH3_scrambleAcc_vsx",
+          "callee": "XXH_vec_loadu",
+          "lineNumber": 5161
+        },
+        {
+          "caller": "XXH3_scrambleAcc_vsx",
+          "callee": "XXH_vec_mule",
+          "lineNumber": 5166
+        },
+        {
+          "caller": "XXH3_scrambleAcc_vsx",
+          "callee": "XXH_vec_mulo",
+          "lineNumber": 5168
+        },
+        {
+          "caller": "XXH3_accumulate_512_sve",
+          "callee": "sveor_n_u64_z",
+          "lineNumber": 5185
+        },
+        {
+          "caller": "XXH3_accumulate_512_sve",
+          "callee": "svptrue_b64",
+          "lineNumber": 5185
+        },
+        {
+          "caller": "XXH3_accumulate_512_sve",
+          "callee": "svindex_u64",
+          "lineNumber": 5185
+        },
+        {
+          "caller": "XXH3_accumulate_512_sve",
+          "callee": "svcntd",
+          "lineNumber": 5186
+        },
+        {
+          "caller": "XXH3_accumulate_512_sve",
+          "callee": "svptrue_pat_b64",
+          "lineNumber": 5188
+        },
+        {
+          "caller": "XXH3_accumulate_512_sve",
+          "callee": "svld1_u64",
+          "lineNumber": 5189
+        },
+        {
+          "caller": "XXH3_accumulate_512_sve",
+          "callee": "ACCRND",
+          "lineNumber": 5190
+        },
+        {
+          "caller": "XXH3_accumulate_512_sve",
+          "callee": "svst1_u64",
+          "lineNumber": 5191
+        },
+        {
+          "caller": "XXH3_accumulate_512_sve",
+          "callee": "svptrue_pat_b64",
+          "lineNumber": 5193
+        },
+        {
+          "caller": "XXH3_accumulate_512_sve",
+          "callee": "svld1_u64",
+          "lineNumber": 5194
+        },
+        {
+          "caller": "XXH3_accumulate_512_sve",
+          "callee": "svld1_u64",
+          "lineNumber": 5195
+        },
+        {
+          "caller": "XXH3_accumulate_512_sve",
+          "callee": "svld1_u64",
+          "lineNumber": 5196
+        },
+        {
+          "caller": "XXH3_accumulate_512_sve",
+          "callee": "svld1_u64",
+          "lineNumber": 5197
+        },
+        {
+          "caller": "XXH3_accumulate_512_sve",
+          "callee": "ACCRND",
+          "lineNumber": 5198
+        },
+        {
+          "caller": "XXH3_accumulate_512_sve",
+          "callee": "ACCRND",
+          "lineNumber": 5199
+        },
+        {
+          "caller": "XXH3_accumulate_512_sve",
+          "callee": "ACCRND",
+          "lineNumber": 5200
+        },
+        {
+          "caller": "XXH3_accumulate_512_sve",
+          "callee": "ACCRND",
+          "lineNumber": 5201
+        },
+        {
+          "caller": "XXH3_accumulate_512_sve",
+          "callee": "svst1_u64",
+          "lineNumber": 5202
+        },
+        {
+          "caller": "XXH3_accumulate_512_sve",
+          "callee": "svst1_u64",
+          "lineNumber": 5203
+        },
+        {
+          "caller": "XXH3_accumulate_512_sve",
+          "callee": "svst1_u64",
+          "lineNumber": 5204
+        },
+        {
+          "caller": "XXH3_accumulate_512_sve",
+          "callee": "svst1_u64",
+          "lineNumber": 5205
+        },
+        {
+          "caller": "XXH3_accumulate_512_sve",
+          "callee": "svptrue_pat_b64",
+          "lineNumber": 5207
+        },
+        {
+          "caller": "XXH3_accumulate_512_sve",
+          "callee": "svld1_u64",
+          "lineNumber": 5208
+        },
+        {
+          "caller": "XXH3_accumulate_512_sve",
+          "callee": "svld1_u64",
+          "lineNumber": 5209
+        },
+        {
+          "caller": "XXH3_accumulate_512_sve",
+          "callee": "ACCRND",
+          "lineNumber": 5210
+        },
+        {
+          "caller": "XXH3_accumulate_512_sve",
+          "callee": "ACCRND",
+          "lineNumber": 5211
+        },
+        {
+          "caller": "XXH3_accumulate_512_sve",
+          "callee": "svst1_u64",
+          "lineNumber": 5212
+        },
+        {
+          "caller": "XXH3_accumulate_512_sve",
+          "callee": "svst1_u64",
+          "lineNumber": 5213
+        },
+        {
+          "caller": "XXH_mult32to64_add64",
+          "callee": "XXH_mult32to64",
+          "lineNumber": 5313
+        },
+        {
+          "caller": "XXH3_scalarRound",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 5333
+        },
+        {
+          "caller": "XXH3_scalarRound",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 5334
+        },
+        {
+          "caller": "XXH3_scalarRound",
+          "callee": "XXH_readLE64",
+          "lineNumber": 5336
+        },
+        {
+          "caller": "XXH3_scalarRound",
+          "callee": "XXH_readLE64",
+          "lineNumber": 5337
+        },
+        {
+          "caller": "XXH3_scalarRound",
+          "callee": "XXH_mult32to64_add64",
+          "lineNumber": 5339
+        },
+        {
+          "caller": "XXH3_accumulate_512_scalar",
+          "callee": "XXH3_scalarRound",
+          "lineNumber": 5361
+        },
+        {
+          "caller": "XXH3_scalarScrambleRound",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 5380
+        },
+        {
+          "caller": "XXH3_scalarScrambleRound",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 5381
+        },
+        {
+          "caller": "XXH3_scalarScrambleRound",
+          "callee": "XXH_readLE64",
+          "lineNumber": 5383
+        },
+        {
+          "caller": "XXH3_scalarScrambleRound",
+          "callee": "XXH_xorshift64",
+          "lineNumber": 5385
+        },
+        {
+          "caller": "XXH3_scrambleAcc_scalar",
+          "callee": "XXH3_scalarScrambleRound",
+          "lineNumber": 5401
+        },
+        {
+          "caller": "XXH3_initCustomSecret_scalar",
+          "callee": "XXH_STATIC_ASSERT",
+          "lineNumber": 5414
+        },
+        {
+          "caller": "XXH3_initCustomSecret_scalar",
+          "callee": "XXH_COMPILER_GUARD",
+          "lineNumber": 5449
+        },
+        {
+          "caller": "XXH3_initCustomSecret_scalar",
+          "callee": "XXH_readLE64",
+          "lineNumber": 5460
+        },
+        {
+          "caller": "XXH3_initCustomSecret_scalar",
+          "callee": "XXH_readLE64",
+          "lineNumber": 5461
+        },
+        {
+          "caller": "XXH3_initCustomSecret_scalar",
+          "callee": "XXH_writeLE64",
+          "lineNumber": 5462
+        },
+        {
+          "caller": "XXH3_initCustomSecret_scalar",
+          "callee": "XXH_writeLE64",
+          "lineNumber": 5463
+        },
+        {
+          "caller": "XXH3_mix2Accs",
+          "callee": "XXH3_mul128_fold64",
+          "lineNumber": 5564
+        },
+        {
+          "caller": "XXH3_mix2Accs",
+          "callee": "XXH_readLE64",
+          "lineNumber": 5565
+        },
+        {
+          "caller": "XXH3_mix2Accs",
+          "callee": "XXH_readLE64",
+          "lineNumber": 5566
+        },
+        {
+          "caller": "XXH3_mergeAccs",
+          "callee": "XXH3_mix2Accs",
+          "lineNumber": 5576
+        },
+        {
+          "caller": "XXH3_mergeAccs",
+          "callee": "XXH_COMPILER_GUARD",
+          "lineNumber": 5589
+        },
+        {
+          "caller": "XXH3_mergeAccs",
+          "callee": "XXH3_avalanche",
+          "lineNumber": 5593
+        },
+        {
+          "caller": "XXH3_hashLong_64b_internal",
+          "callee": "XXH_ALIGN",
+          "lineNumber": 5605
+        },
+        {
+          "caller": "XXH3_hashLong_64b_internal",
+          "callee": "XXH3_hashLong_internal_loop",
+          "lineNumber": 5607
+        },
+        {
+          "caller": "XXH3_hashLong_64b_internal",
+          "callee": "XXH_STATIC_ASSERT",
+          "lineNumber": 5610
+        },
+        {
+          "caller": "XXH3_hashLong_64b_internal",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 5613
+        },
+        {
+          "caller": "XXH3_hashLong_64b_internal",
+          "callee": "XXH3_mergeAccs",
+          "lineNumber": 5614
+        },
+        {
+          "caller": "XXH3_hashLong_64b_withSecret",
+          "callee": "XXH3_hashLong_64b_internal",
+          "lineNumber": 5629
+        },
+        {
+          "caller": "XXH3_hashLong_64b_default",
+          "callee": "XXH3_hashLong_64b_internal",
+          "lineNumber": 5643
+        },
+        {
+          "caller": "XXH3_hashLong_64b_withSeed_internal",
+          "callee": "XXH3_hashLong_64b_internal",
+          "lineNumber": 5666
+        },
+        {
+          "caller": "XXH3_hashLong_64b_withSeed_internal",
+          "callee": "XXH_ALIGN",
+          "lineNumber": 5670
+        },
+        {
+          "caller": "XXH3_hashLong_64b_withSeed_internal",
+          "callee": "f_initSec",
+          "lineNumber": 5671
+        },
+        {
+          "caller": "XXH3_hashLong_64b_withSeed_internal",
+          "callee": "XXH3_hashLong_64b_internal",
+          "lineNumber": 5672
+        },
+        {
+          "caller": "XXH3_hashLong_64b_withSeed",
+          "callee": "XXH3_hashLong_64b_withSeed_internal",
+          "lineNumber": 5685
+        },
+        {
+          "caller": "XXH3_64bits_internal",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 5698
+        },
+        {
+          "caller": "XXH3_64bits_internal",
+          "callee": "XXH3_len_0to16_64b",
+          "lineNumber": 5707
+        },
+        {
+          "caller": "XXH3_64bits_internal",
+          "callee": "XXH3_len_17to128_64b",
+          "lineNumber": 5709
+        },
+        {
+          "caller": "XXH3_64bits_internal",
+          "callee": "XXH3_len_129to240_64b",
+          "lineNumber": 5711
+        },
+        {
+          "caller": "XXH3_64bits_internal",
+          "callee": "f_hashLong",
+          "lineNumber": 5712
+        },
+        {
+          "caller": "XXH3_64bits",
+          "callee": "XXH3_64bits_internal",
+          "lineNumber": 5721
+        },
+        {
+          "caller": "XXH3_64bits_withSecret",
+          "callee": "XXH3_64bits_internal",
+          "lineNumber": 5728
+        },
+        {
+          "caller": "XXH3_64bits_withSeed",
+          "callee": "XXH3_64bits_internal",
+          "lineNumber": 5735
+        },
+        {
+          "caller": "XXH3_64bits_withSecretandSeed",
+          "callee": "XXH3_64bits_internal",
+          "lineNumber": 5742
+        },
+        {
+          "caller": "XXH3_64bits_withSecretandSeed",
+          "callee": "XXH3_hashLong_64b_withSecret",
+          "lineNumber": 5743
+        },
+        {
+          "caller": "XXH_alignedFree",
+          "callee": "XXH_free",
+          "lineNumber": 5811
+        },
+        {
+          "caller": "XXH3_freeState",
+          "callee": "XXH_alignedFree",
+          "lineNumber": 5839
+        },
+        {
+          "caller": "XXH3_copyState",
+          "callee": "XXH_memcpy",
+          "lineNumber": 5847
+        },
+        {
+          "caller": "XXH3_reset_internal",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 5857
+        },
+        {
+          "caller": "XXH3_reset_internal",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 5858
+        },
+        {
+          "caller": "XXH3_reset_internal",
+          "callee": "memset",
+          "lineNumber": 5860
+        },
+        {
+          "caller": "XXH3_reset_internal",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 5872
+        },
+        {
+          "caller": "XXH3_64bits_reset",
+          "callee": "XXH3_reset_internal",
+          "lineNumber": 5882
+        },
+        {
+          "caller": "XXH3_64bits_reset_withSecret",
+          "callee": "XXH3_reset_internal",
+          "lineNumber": 5891
+        },
+        {
+          "caller": "XXH3_64bits_reset_withSeed",
+          "callee": "XXH3_64bits_reset",
+          "lineNumber": 5902
+        },
+        {
+          "caller": "XXH3_64bits_reset_withSeed",
+          "callee": "XXH3_initCustomSecret",
+          "lineNumber": 5904
+        },
+        {
+          "caller": "XXH3_64bits_reset_withSeed",
+          "callee": "XXH3_reset_internal",
+          "lineNumber": 5905
+        },
+        {
+          "caller": "XXH3_64bits_reset_withSecretandSeed",
+          "callee": "XXH3_reset_internal",
+          "lineNumber": 5916
+        },
+        {
+          "caller": "XXH3_64bits_update",
+          "callee": "XXH3_update",
+          "lineNumber": 6065
+        },
+        {
+          "caller": "XXH3_digest_long",
+          "callee": "XXH_memcpy",
+          "lineNumber": 6082
+        },
+        {
+          "caller": "XXH3_digest_long",
+          "callee": "XXH3_consumeStripes",
+          "lineNumber": 6087
+        },
+        {
+          "caller": "XXH3_digest_long",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 6096
+        },
+        {
+          "caller": "XXH3_digest_long",
+          "callee": "XXH_memcpy",
+          "lineNumber": 6097
+        },
+        {
+          "caller": "XXH3_digest_long",
+          "callee": "XXH_memcpy",
+          "lineNumber": 6098
+        },
+        {
+          "caller": "XXH3_digest_long",
+          "callee": "XXH3_accumulate_512",
+          "lineNumber": 6102
+        },
+        {
+          "caller": "XXH3_64bits_digest",
+          "callee": "XXH_ALIGN",
+          "lineNumber": 6112
+        },
+        {
+          "caller": "XXH3_64bits_digest",
+          "callee": "XXH3_digest_long",
+          "lineNumber": 6113
+        },
+        {
+          "caller": "XXH3_64bits_digest",
+          "callee": "XXH3_mergeAccs",
+          "lineNumber": 6114
+        },
+        {
+          "caller": "XXH3_64bits_digest",
+          "callee": "XXH3_64bits_withSeed",
+          "lineNumber": 6120
+        },
+        {
+          "caller": "XXH3_64bits_digest",
+          "callee": "XXH3_64bits_withSecret",
+          "lineNumber": 6121
+        },
+        {
+          "caller": "XXH3_len_1to3_128b",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 6148
+        },
+        {
+          "caller": "XXH3_len_1to3_128b",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 6149
+        },
+        {
+          "caller": "XXH3_len_1to3_128b",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 6150
+        },
+        {
+          "caller": "XXH3_len_1to3_128b",
+          "callee": "XXH_rotl32",
+          "lineNumber": 6161
+        },
+        {
+          "caller": "XXH3_len_1to3_128b",
+          "callee": "XXH_swap32",
+          "lineNumber": 6161
+        },
+        {
+          "caller": "XXH3_len_1to3_128b",
+          "callee": "XXH_readLE32",
+          "lineNumber": 6162
+        },
+        {
+          "caller": "XXH3_len_1to3_128b",
+          "callee": "XXH_readLE32",
+          "lineNumber": 6162
+        },
+        {
+          "caller": "XXH3_len_1to3_128b",
+          "callee": "XXH_readLE32",
+          "lineNumber": 6163
+        },
+        {
+          "caller": "XXH3_len_1to3_128b",
+          "callee": "XXH_readLE32",
+          "lineNumber": 6163
+        },
+        {
+          "caller": "XXH3_len_1to3_128b",
+          "callee": "XXH64_avalanche",
+          "lineNumber": 6167
+        },
+        {
+          "caller": "XXH3_len_1to3_128b",
+          "callee": "XXH64_avalanche",
+          "lineNumber": 6168
+        },
+        {
+          "caller": "XXH3_len_4to8_128b",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 6176
+        },
+        {
+          "caller": "XXH3_len_4to8_128b",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 6177
+        },
+        {
+          "caller": "XXH3_len_4to8_128b",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 6178
+        },
+        {
+          "caller": "XXH3_len_4to8_128b",
+          "callee": "XXH_swap32",
+          "lineNumber": 6179
+        },
+        {
+          "caller": "XXH3_len_4to8_128b",
+          "callee": "XXH_readLE32",
+          "lineNumber": 6180
+        },
+        {
+          "caller": "XXH3_len_4to8_128b",
+          "callee": "XXH_readLE32",
+          "lineNumber": 6181
+        },
+        {
+          "caller": "XXH3_len_4to8_128b",
+          "callee": "XXH_readLE64",
+          "lineNumber": 6183
+        },
+        {
+          "caller": "XXH3_len_4to8_128b",
+          "callee": "XXH_readLE64",
+          "lineNumber": 6183
+        },
+        {
+          "caller": "XXH3_len_4to8_128b",
+          "callee": "XXH_mult64to128",
+          "lineNumber": 6187
+        },
+        {
+          "caller": "XXH3_len_4to8_128b",
+          "callee": "XXH_xorshift64",
+          "lineNumber": 6192
+        },
+        {
+          "caller": "XXH3_len_4to8_128b",
+          "callee": "XXH_xorshift64",
+          "lineNumber": 6194
+        },
+        {
+          "caller": "XXH3_len_4to8_128b",
+          "callee": "XXH3_avalanche",
+          "lineNumber": 6195
+        },
+        {
+          "caller": "XXH3_len_9to16_128b",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 6203
+        },
+        {
+          "caller": "XXH3_len_9to16_128b",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 6204
+        },
+        {
+          "caller": "XXH3_len_9to16_128b",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 6205
+        },
+        {
+          "caller": "XXH3_len_9to16_128b",
+          "callee": "XXH_readLE64",
+          "lineNumber": 6206
+        },
+        {
+          "caller": "XXH3_len_9to16_128b",
+          "callee": "XXH_readLE64",
+          "lineNumber": 6206
+        },
+        {
+          "caller": "XXH3_len_9to16_128b",
+          "callee": "XXH_readLE64",
+          "lineNumber": 6207
+        },
+        {
+          "caller": "XXH3_len_9to16_128b",
+          "callee": "XXH_readLE64",
+          "lineNumber": 6207
+        },
+        {
+          "caller": "XXH3_len_9to16_128b",
+          "callee": "XXH_readLE64",
+          "lineNumber": 6208
+        },
+        {
+          "caller": "XXH3_len_9to16_128b",
+          "callee": "XXH_readLE64",
+          "lineNumber": 6209
+        },
+        {
+          "caller": "XXH3_len_9to16_128b",
+          "callee": "XXH_mult64to128",
+          "lineNumber": 6210
+        },
+        {
+          "caller": "XXH3_len_9to16_128b",
+          "callee": "(xxh_u64)",
+          "lineNumber": 6215
+        },
+        {
+          "caller": "XXH3_len_9to16_128b",
+          "callee": "XXH_mult32to64",
+          "lineNumber": 6231
+        },
+        {
+          "caller": "XXH3_len_9to16_128b",
+          "callee": "XXH_mult32to64",
+          "lineNumber": 6257
+        },
+        {
+          "caller": "XXH3_len_9to16_128b",
+          "callee": "XXH_swap64",
+          "lineNumber": 6260
+        },
+        {
+          "caller": "XXH3_len_9to16_128b",
+          "callee": "XXH_mult64to128",
+          "lineNumber": 6263
+        },
+        {
+          "caller": "XXH3_len_9to16_128b",
+          "callee": "XXH3_avalanche",
+          "lineNumber": 6266
+        },
+        {
+          "caller": "XXH3_len_9to16_128b",
+          "callee": "XXH3_avalanche",
+          "lineNumber": 6267
+        },
+        {
+          "caller": "XXH3_len_0to16_128b",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 6278
+        },
+        {
+          "caller": "XXH3_len_0to16_128b",
+          "callee": "XXH3_len_9to16_128b",
+          "lineNumber": 6279
+        },
+        {
+          "caller": "XXH3_len_0to16_128b",
+          "callee": "XXH3_len_4to8_128b",
+          "lineNumber": 6280
+        },
+        {
+          "caller": "XXH3_len_0to16_128b",
+          "callee": "XXH3_len_1to3_128b",
+          "lineNumber": 6281
+        },
+        {
+          "caller": "XXH3_len_0to16_128b",
+          "callee": "XXH_readLE64",
+          "lineNumber": 6283
+        },
+        {
+          "caller": "XXH3_len_0to16_128b",
+          "callee": "XXH_readLE64",
+          "lineNumber": 6283
+        },
+        {
+          "caller": "XXH3_len_0to16_128b",
+          "callee": "XXH_readLE64",
+          "lineNumber": 6284
+        },
+        {
+          "caller": "XXH3_len_0to16_128b",
+          "callee": "XXH_readLE64",
+          "lineNumber": 6284
+        },
+        {
+          "caller": "XXH3_len_0to16_128b",
+          "callee": "XXH64_avalanche",
+          "lineNumber": 6285
+        },
+        {
+          "caller": "XXH3_len_0to16_128b",
+          "callee": "XXH64_avalanche",
+          "lineNumber": 6286
+        },
+        {
+          "caller": "XXH128_mix32B",
+          "callee": "XXH3_mix16B",
+          "lineNumber": 6298
+        },
+        {
+          "caller": "XXH128_mix32B",
+          "callee": "XXH_readLE64",
+          "lineNumber": 6299
+        },
+        {
+          "caller": "XXH128_mix32B",
+          "callee": "XXH_readLE64",
+          "lineNumber": 6299
+        },
+        {
+          "caller": "XXH128_mix32B",
+          "callee": "XXH3_mix16B",
+          "lineNumber": 6300
+        },
+        {
+          "caller": "XXH128_mix32B",
+          "callee": "XXH_readLE64",
+          "lineNumber": 6301
+        },
+        {
+          "caller": "XXH128_mix32B",
+          "callee": "XXH_readLE64",
+          "lineNumber": 6301
+        },
+        {
+          "caller": "XXH3_len_17to128_128b",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 6311
+        },
+        {
+          "caller": "XXH3_len_17to128_128b",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 6312
+        },
+        {
+          "caller": "XXH3_len_17to128_128b",
+          "callee": "XXH128_mix32B",
+          "lineNumber": 6323
+        },
+        {
+          "caller": "XXH3_len_17to128_128b",
+          "callee": "XXH128_mix32B",
+          "lineNumber": 6330
+        },
+        {
+          "caller": "XXH3_len_17to128_128b",
+          "callee": "XXH128_mix32B",
+          "lineNumber": 6332
+        },
+        {
+          "caller": "XXH3_len_17to128_128b",
+          "callee": "XXH128_mix32B",
+          "lineNumber": 6334
+        },
+        {
+          "caller": "XXH3_len_17to128_128b",
+          "callee": "XXH128_mix32B",
+          "lineNumber": 6336
+        },
+        {
+          "caller": "XXH3_len_17to128_128b",
+          "callee": "XXH3_avalanche",
+          "lineNumber": 6343
+        },
+        {
+          "caller": "XXH3_len_17to128_128b",
+          "callee": "XXH3_avalanche",
+          "lineNumber": 6344
+        },
+        {
+          "caller": "XXH3_len_129to240_128b",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 6355
+        },
+        {
+          "caller": "XXH3_len_129to240_128b",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 6356
+        },
+        {
+          "caller": "XXH3_len_129to240_128b",
+          "callee": "XXH128_mix32B",
+          "lineNumber": 6369
+        },
+        {
+          "caller": "XXH3_len_129to240_128b",
+          "callee": "XXH3_avalanche",
+          "lineNumber": 6375
+        },
+        {
+          "caller": "XXH3_len_129to240_128b",
+          "callee": "XXH3_avalanche",
+          "lineNumber": 6376
+        },
+        {
+          "caller": "XXH3_len_129to240_128b",
+          "callee": "XXH128_mix32B",
+          "lineNumber": 6383
+        },
+        {
+          "caller": "XXH3_len_129to240_128b",
+          "callee": "XXH128_mix32B",
+          "lineNumber": 6390
+        },
+        {
+          "caller": "XXH3_len_129to240_128b",
+          "callee": "XXH3_avalanche",
+          "lineNumber": 6401
+        },
+        {
+          "caller": "XXH3_len_129to240_128b",
+          "callee": "XXH3_avalanche",
+          "lineNumber": 6402
+        },
+        {
+          "caller": "XXH3_hashLong_128b_internal",
+          "callee": "XXH_ALIGN",
+          "lineNumber": 6414
+        },
+        {
+          "caller": "XXH3_hashLong_128b_internal",
+          "callee": "XXH3_hashLong_internal_loop",
+          "lineNumber": 6416
+        },
+        {
+          "caller": "XXH3_hashLong_128b_internal",
+          "callee": "XXH_STATIC_ASSERT",
+          "lineNumber": 6419
+        },
+        {
+          "caller": "XXH3_hashLong_128b_internal",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 6420
+        },
+        {
+          "caller": "XXH3_hashLong_128b_internal",
+          "callee": "XXH3_mergeAccs",
+          "lineNumber": 6422
+        },
+        {
+          "caller": "XXH3_hashLong_128b_internal",
+          "callee": "XXH3_mergeAccs",
+          "lineNumber": 6425
+        },
+        {
+          "caller": "XXH3_hashLong_128b_default",
+          "callee": "XXH3_hashLong_128b_internal",
+          "lineNumber": 6442
+        },
+        {
+          "caller": "XXH3_hashLong_128b_withSecret",
+          "callee": "XXH3_hashLong_128b_internal",
+          "lineNumber": 6459
+        },
+        {
+          "caller": "XXH3_hashLong_128b_withSeed_internal",
+          "callee": "XXH3_hashLong_128b_internal",
+          "lineNumber": 6471
+        },
+        {
+          "caller": "XXH3_hashLong_128b_withSeed_internal",
+          "callee": "XXH_ALIGN",
+          "lineNumber": 6474
+        },
+        {
+          "caller": "XXH3_hashLong_128b_withSeed_internal",
+          "callee": "f_initSec",
+          "lineNumber": 6475
+        },
+        {
+          "caller": "XXH3_hashLong_128b_withSeed_internal",
+          "callee": "XXH3_hashLong_128b_internal",
+          "lineNumber": 6476
+        },
+        {
+          "caller": "XXH3_hashLong_128b_withSeed",
+          "callee": "XXH3_hashLong_128b_withSeed_internal",
+          "lineNumber": 6489
+        },
+        {
+          "caller": "XXH3_128bits_internal",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 6501
+        },
+        {
+          "caller": "XXH3_128bits_internal",
+          "callee": "XXH3_len_0to16_128b",
+          "lineNumber": 6509
+        },
+        {
+          "caller": "XXH3_128bits_internal",
+          "callee": "XXH3_len_17to128_128b",
+          "lineNumber": 6511
+        },
+        {
+          "caller": "XXH3_128bits_internal",
+          "callee": "XXH3_len_129to240_128b",
+          "lineNumber": 6513
+        },
+        {
+          "caller": "XXH3_128bits_internal",
+          "callee": "f_hl128",
+          "lineNumber": 6514
+        },
+        {
+          "caller": "XXH3_128bits",
+          "callee": "XXH3_128bits_internal",
+          "lineNumber": 6523
+        },
+        {
+          "caller": "XXH3_128bits_withSecret",
+          "callee": "XXH3_128bits_internal",
+          "lineNumber": 6532
+        },
+        {
+          "caller": "XXH3_128bits_withSeed",
+          "callee": "XXH3_128bits_internal",
+          "lineNumber": 6541
+        },
+        {
+          "caller": "XXH3_128bits_withSecretandSeed",
+          "callee": "XXH3_128bits_internal",
+          "lineNumber": 6551
+        },
+        {
+          "caller": "XXH3_128bits_withSecretandSeed",
+          "callee": "XXH3_hashLong_128b_withSecret",
+          "lineNumber": 6552
+        },
+        {
+          "caller": "XXH128",
+          "callee": "XXH3_128bits_withSeed",
+          "lineNumber": 6559
+        },
+        {
+          "caller": "XXH3_128bits_reset",
+          "callee": "XXH3_64bits_reset",
+          "lineNumber": 6574
+        },
+        {
+          "caller": "XXH3_128bits_reset_withSecret",
+          "callee": "XXH3_64bits_reset_withSecret",
+          "lineNumber": 6581
+        },
+        {
+          "caller": "XXH3_128bits_reset_withSeed",
+          "callee": "XXH3_64bits_reset_withSeed",
+          "lineNumber": 6588
+        },
+        {
+          "caller": "XXH3_128bits_reset_withSecretandSeed",
+          "callee": "XXH3_64bits_reset_withSecretandSeed",
+          "lineNumber": 6595
+        },
+        {
+          "caller": "XXH3_128bits_update",
+          "callee": "XXH3_64bits_update",
+          "lineNumber": 6602
+        },
+        {
+          "caller": "XXH3_128bits_digest",
+          "callee": "XXH_ALIGN",
+          "lineNumber": 6610
+        },
+        {
+          "caller": "XXH3_128bits_digest",
+          "callee": "XXH3_digest_long",
+          "lineNumber": 6611
+        },
+        {
+          "caller": "XXH3_128bits_digest",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 6612
+        },
+        {
+          "caller": "XXH3_128bits_digest",
+          "callee": "XXH3_mergeAccs",
+          "lineNumber": 6614
+        },
+        {
+          "caller": "XXH3_128bits_digest",
+          "callee": "XXH3_mergeAccs",
+          "lineNumber": 6617
+        },
+        {
+          "caller": "XXH3_128bits_digest",
+          "callee": "XXH3_128bits_withSeed",
+          "lineNumber": 6626
+        },
+        {
+          "caller": "XXH3_128bits_digest",
+          "callee": "XXH3_128bits_withSecret",
+          "lineNumber": 6627
+        },
+        {
+          "caller": "XXH128_isEqual",
+          "callee": "memcmp",
+          "lineNumber": 6640
+        },
+        {
+          "caller": "XXH128_canonicalFromHash",
+          "callee": "XXH_STATIC_ASSERT",
+          "lineNumber": 6664
+        },
+        {
+          "caller": "XXH128_canonicalFromHash",
+          "callee": "XXH_swap64",
+          "lineNumber": 6666
+        },
+        {
+          "caller": "XXH128_canonicalFromHash",
+          "callee": "XXH_swap64",
+          "lineNumber": 6667
+        },
+        {
+          "caller": "XXH128_canonicalFromHash",
+          "callee": "XXH_memcpy",
+          "lineNumber": 6669
+        },
+        {
+          "caller": "XXH128_canonicalFromHash",
+          "callee": "XXH_memcpy",
+          "lineNumber": 6670
+        },
+        {
+          "caller": "XXH128_hashFromCanonical",
+          "callee": "XXH_readBE64",
+          "lineNumber": 6678
+        },
+        {
+          "caller": "XXH128_hashFromCanonical",
+          "callee": "XXH_readBE64",
+          "lineNumber": 6679
+        },
+        {
+          "caller": "XXH3_combine16",
+          "callee": "XXH_writeLE64",
+          "lineNumber": 6693
+        },
+        {
+          "caller": "XXH3_combine16",
+          "callee": "XXH_readLE64",
+          "lineNumber": 6693
+        },
+        {
+          "caller": "XXH3_combine16",
+          "callee": "XXH_writeLE64",
+          "lineNumber": 6694
+        },
+        {
+          "caller": "XXH3_combine16",
+          "callee": "XXH_readLE64",
+          "lineNumber": 6694
+        },
+        {
+          "caller": "XXH3_generateSecret",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 6702
+        },
+        {
+          "caller": "XXH3_generateSecret",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 6703
+        },
+        {
+          "caller": "XXH3_generateSecret",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 6715
+        },
+        {
+          "caller": "XXH3_generateSecret",
+          "callee": "XXH_MIN",
+          "lineNumber": 6723
+        },
+        {
+          "caller": "XXH3_generateSecret",
+          "callee": "memcpy",
+          "lineNumber": 6724
+        },
+        {
+          "caller": "XXH3_generateSecret",
+          "callee": "XXH128_canonicalFromHash",
+          "lineNumber": 6731
+        },
+        {
+          "caller": "XXH3_generateSecret",
+          "callee": "XXH128",
+          "lineNumber": 6731
+        },
+        {
+          "caller": "XXH3_generateSecret",
+          "callee": "XXH128",
+          "lineNumber": 6733
+        },
+        {
+          "caller": "XXH3_generateSecret",
+          "callee": "XXH3_combine16",
+          "lineNumber": 6734
+        },
+        {
+          "caller": "XXH3_generateSecret",
+          "callee": "XXH3_combine16",
+          "lineNumber": 6737
+        },
+        {
+          "caller": "XXH3_generateSecret",
+          "callee": "XXH128_hashFromCanonical",
+          "lineNumber": 6737
+        },
+        {
+          "caller": "XXH3_generateSecret_fromSeed",
+          "callee": "XXH_ALIGN",
+          "lineNumber": 6746
+        },
+        {
+          "caller": "XXH3_generateSecret_fromSeed",
+          "callee": "XXH3_initCustomSecret",
+          "lineNumber": 6747
+        },
+        {
+          "caller": "XXH3_generateSecret_fromSeed",
+          "callee": "XXH_ASSERT",
+          "lineNumber": 6748
+        },
+        {
+          "caller": "XXH3_generateSecret_fromSeed",
+          "callee": "memcpy",
+          "lineNumber": 6749
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/visit_array_inline.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 64,
+      "nonEmptyLines": 57,
+      "callGraph": [
+        {
+          "caller": "VisitArrayInline",
+          "callee": "type_id",
+          "lineNumber": 54
+        },
+        {
+          "caller": "VisitArrayInline",
+          "callee": "ARROW_GENERATE_FOR_ALL_TYPES",
+          "lineNumber": 55
+        },
+        {
+          "caller": "VisitArrayInline",
+          "callee": "Status::NotImplemented",
+          "lineNumber": 59
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/visit_data_inline.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 301,
+      "nonEmptyLines": 274,
+      "callGraph": [
+        {
+          "caller": "VisitStatus",
+          "callee": "VisitBitBlocks",
+          "lineNumber": 48
+        },
+        {
+          "caller": "VisitStatus",
+          "callee": "valid_func",
+          "lineNumber": 50
+        },
+        {
+          "caller": "VisitStatus",
+          "callee": "bit_util::GetBit",
+          "lineNumber": 50
+        },
+        {
+          "caller": "VisitStatus",
+          "callee": "std::forward<NullFunc>",
+          "lineNumber": 51
+        },
+        {
+          "caller": "VisitStatus",
+          "callee": "GetValues<c_type>",
+          "lineNumber": 53
+        },
+        {
+          "caller": "VisitStatus",
+          "callee": "valid_func",
+          "lineNumber": 54
+        },
+        {
+          "caller": "VisitStatus",
+          "callee": "VisitBitBlocks",
+          "lineNumber": 55
+        },
+        {
+          "caller": "VisitStatus",
+          "callee": "std::move",
+          "lineNumber": 56
+        },
+        {
+          "caller": "VisitStatus",
+          "callee": "std::forward<NullFunc>",
+          "lineNumber": 56
+        },
+        {
+          "caller": "VisitVoid",
+          "callee": "VisitBitBlocksVoid",
+          "lineNumber": 66
+        },
+        {
+          "caller": "VisitVoid",
+          "callee": "valid_func",
+          "lineNumber": 68
+        },
+        {
+          "caller": "VisitVoid",
+          "callee": "bit_util::GetBit",
+          "lineNumber": 68
+        },
+        {
+          "caller": "VisitVoid",
+          "callee": "std::forward<NullFunc>",
+          "lineNumber": 69
+        },
+        {
+          "caller": "VisitVoid",
+          "callee": "GetValues<c_type>",
+          "lineNumber": 71
+        },
+        {
+          "caller": "VisitVoid",
+          "callee": "valid_func",
+          "lineNumber": 72
+        },
+        {
+          "caller": "VisitVoid",
+          "callee": "VisitBitBlocksVoid",
+          "lineNumber": 73
+        },
+        {
+          "caller": "VisitVoid",
+          "callee": "std::move",
+          "lineNumber": 74
+        },
+        {
+          "caller": "VisitVoid",
+          "callee": "std::forward<NullFunc>",
+          "lineNumber": 74
+        },
+        {
+          "caller": "VisitStatus",
+          "callee": "Status::OK",
+          "lineNumber": 91
+        },
+        {
+          "caller": "VisitStatus",
+          "callee": "GetValues<offset_type>",
+          "lineNumber": 93
+        },
+        {
+          "caller": "VisitStatus",
+          "callee": "GetValues<char>",
+          "lineNumber": 100
+        },
+        {
+          "caller": "VisitStatus",
+          "callee": "VisitBitBlocks",
+          "lineNumber": 103
+        },
+        {
+          "caller": "VisitStatus",
+          "callee": "ARROW_UNUSED",
+          "lineNumber": 106
+        },
+        {
+          "caller": "VisitStatus",
+          "callee": "std::string_view",
+          "lineNumber": 107
+        },
+        {
+          "caller": "VisitStatus",
+          "callee": "valid_func",
+          "lineNumber": 109
+        },
+        {
+          "caller": "VisitStatus",
+          "callee": "null_func",
+          "lineNumber": 113
+        },
+        {
+          "caller": "VisitVoid",
+          "callee": "GetValues<offset_type>",
+          "lineNumber": 126
+        },
+        {
+          "caller": "VisitVoid",
+          "callee": "GetValues<uint8_t>",
+          "lineNumber": 133
+        },
+        {
+          "caller": "VisitVoid",
+          "callee": "VisitBitBlocksVoid",
+          "lineNumber": 136
+        },
+        {
+          "caller": "VisitVoid",
+          "callee": "std::string_view",
+          "lineNumber": 139
+        },
+        {
+          "caller": "VisitVoid",
+          "callee": "reinterpret_cast<const char*>",
+          "lineNumber": 139
+        },
+        {
+          "caller": "VisitVoid",
+          "callee": "valid_func",
+          "lineNumber": 141
+        },
+        {
+          "caller": "VisitVoid",
+          "callee": "std::forward<NullFunc>",
+          "lineNumber": 143
+        },
+        {
+          "caller": "VisitStatus",
+          "callee": "byte_width",
+          "lineNumber": 155
+        },
+        {
+          "caller": "VisitStatus",
+          "callee": "GetValues<char>",
+          "lineNumber": 156
+        },
+        {
+          "caller": "VisitStatus",
+          "callee": "VisitBitBlocks",
+          "lineNumber": 158
+        },
+        {
+          "caller": "VisitStatus",
+          "callee": "std::string_view",
+          "lineNumber": 161
+        },
+        {
+          "caller": "VisitStatus",
+          "callee": "valid_func",
+          "lineNumber": 163
+        },
+        {
+          "caller": "VisitStatus",
+          "callee": "null_func",
+          "lineNumber": 167
+        },
+        {
+          "caller": "VisitVoid",
+          "callee": "byte_width",
+          "lineNumber": 174
+        },
+        {
+          "caller": "VisitVoid",
+          "callee": "GetValues<char>",
+          "lineNumber": 175
+        },
+        {
+          "caller": "VisitVoid",
+          "callee": "VisitBitBlocksVoid",
+          "lineNumber": 177
+        },
+        {
+          "caller": "VisitVoid",
+          "callee": "valid_func",
+          "lineNumber": 180
+        },
+        {
+          "caller": "VisitVoid",
+          "callee": "std::string_view",
+          "lineNumber": 180
+        },
+        {
+          "caller": "VisitVoid",
+          "callee": "null_func",
+          "lineNumber": 185
+        },
+        {
+          "caller": "VisitArraySpanInline",
+          "callee": "internal::ArraySpanInlineVisitor<T>::VisitStatus",
+          "lineNumber": 195
+        },
+        {
+          "caller": "VisitArraySpanInline",
+          "callee": "std::forward<ValidFunc>",
+          "lineNumber": 196
+        },
+        {
+          "caller": "VisitArraySpanInline",
+          "callee": "std::forward<NullFunc>",
+          "lineNumber": 196
+        },
+        {
+          "caller": "VisitArraySpanInline",
+          "callee": "internal::ArraySpanInlineVisitor<T>::VisitVoid",
+          "lineNumber": 202
+        },
+        {
+          "caller": "VisitArraySpanInline",
+          "callee": "std::forward<ValidFunc>",
+          "lineNumber": 203
+        },
+        {
+          "caller": "VisitArraySpanInline",
+          "callee": "std::forward<NullFunc>",
+          "lineNumber": 203
+        },
+        {
+          "caller": "Visit",
+          "callee": "InlineVisitorType::VisitStatus",
+          "lineNumber": 224
+        },
+        {
+          "caller": "Visit",
+          "callee": "VisitValue",
+          "lineNumber": 225
+        },
+        {
+          "caller": "Visit",
+          "callee": "VisitNull",
+          "lineNumber": 226
+        },
+        {
+          "caller": "VisitNullBitmapInline",
+          "callee": "ARROW_UNUSED",
+          "lineNumber": 243
+        },
+        {
+          "caller": "VisitNullBitmapInline",
+          "callee": "NextBlock",
+          "lineNumber": 249
+        },
+        {
+          "caller": "VisitNullBitmapInline",
+          "callee": "AllSet",
+          "lineNumber": 250
+        },
+        {
+          "caller": "VisitNullBitmapInline",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 252
+        },
+        {
+          "caller": "VisitNullBitmapInline",
+          "callee": "valid_func",
+          "lineNumber": 252
+        },
+        {
+          "caller": "VisitNullBitmapInline",
+          "callee": "NoneSet",
+          "lineNumber": 254
+        },
+        {
+          "caller": "VisitNullBitmapInline",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 256
+        },
+        {
+          "caller": "VisitNullBitmapInline",
+          "callee": "null_func",
+          "lineNumber": 256
+        },
+        {
+          "caller": "VisitNullBitmapInline",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 260
+        },
+        {
+          "caller": "VisitNullBitmapInline",
+          "callee": "bit_util::GetBit",
+          "lineNumber": 260
+        },
+        {
+          "caller": "VisitNullBitmapInline",
+          "callee": "valid_func",
+          "lineNumber": 261
+        },
+        {
+          "caller": "VisitNullBitmapInline",
+          "callee": "null_func",
+          "lineNumber": 262
+        },
+        {
+          "caller": "VisitNullBitmapInline",
+          "callee": "Status::OK",
+          "lineNumber": 268
+        },
+        {
+          "caller": "VisitNullBitmapInline",
+          "callee": "ARROW_UNUSED",
+          "lineNumber": 276
+        },
+        {
+          "caller": "VisitNullBitmapInline",
+          "callee": "NextBlock",
+          "lineNumber": 282
+        },
+        {
+          "caller": "VisitNullBitmapInline",
+          "callee": "AllSet",
+          "lineNumber": 283
+        },
+        {
+          "caller": "VisitNullBitmapInline",
+          "callee": "valid_func",
+          "lineNumber": 285
+        },
+        {
+          "caller": "VisitNullBitmapInline",
+          "callee": "NoneSet",
+          "lineNumber": 287
+        },
+        {
+          "caller": "VisitNullBitmapInline",
+          "callee": "null_func",
+          "lineNumber": 289
+        },
+        {
+          "caller": "VisitNullBitmapInline",
+          "callee": "bit_util::GetBit",
+          "lineNumber": 293
+        },
+        {
+          "caller": "VisitNullBitmapInline",
+          "callee": "valid_func",
+          "lineNumber": 293
+        },
+        {
+          "caller": "VisitNullBitmapInline",
+          "callee": "null_func",
+          "lineNumber": 293
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/visit_scalar_inline.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 68,
+      "nonEmptyLines": 59,
+      "callGraph": [
+        {
+          "caller": "VisitScalarInline",
+          "callee": "id",
+          "lineNumber": 57
+        },
+        {
+          "caller": "VisitScalarInline",
+          "callee": "ARROW_GENERATE_FOR_ALL_TYPES",
+          "lineNumber": 58
+        },
+        {
+          "caller": "VisitScalarInline",
+          "callee": "Status::NotImplemented",
+          "lineNumber": 62
+        },
+        {
+          "caller": "VisitScalarInline",
+          "callee": "ToString",
+          "lineNumber": 63
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/visit_type_inline.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 117,
+      "nonEmptyLines": 104,
+      "callGraph": [
+        {
+          "caller": "VisitTypeInline",
+          "callee": "id",
+          "lineNumber": 53
+        },
+        {
+          "caller": "VisitTypeInline",
+          "callee": "ARROW_GENERATE_FOR_ALL_TYPES",
+          "lineNumber": 54
+        },
+        {
+          "caller": "VisitTypeInline",
+          "callee": "Status::NotImplemented",
+          "lineNumber": 58
+        },
+        {
+          "caller": "VisitType",
+          "callee": "std::forward<VISITOR>(visitor)",
+          "lineNumber": 82
+        },
+        {
+          "caller": "VisitType",
+          "callee": "std::forward<VISITOR>",
+          "lineNumber": 82
+        },
+        {
+          "caller": "VisitType",
+          "callee": "id",
+          "lineNumber": 83
+        },
+        {
+          "caller": "VisitType",
+          "callee": "ARROW_GENERATE_FOR_ALL_TYPES",
+          "lineNumber": 84
+        },
+        {
+          "caller": "VisitType",
+          "callee": "std::forward<VISITOR>(visitor)",
+          "lineNumber": 88
+        },
+        {
+          "caller": "VisitType",
+          "callee": "std::forward<VISITOR>",
+          "lineNumber": 88
+        },
+        {
+          "caller": "VisitType",
+          "callee": "std::forward<ARGS>",
+          "lineNumber": 88
+        },
+        {
+          "caller": "VisitTypeIdInline",
+          "callee": "ARROW_GENERATE_FOR_ALL_TYPES",
+          "lineNumber": 108
+        },
+        {
+          "caller": "VisitTypeIdInline",
+          "callee": "Status::NotImplemented",
+          "lineNumber": 112
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/visitor_generate.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 69,
+      "nonEmptyLines": 63,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/visitor.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 173,
+      "nonEmptyLines": 163,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/lib/libarrow_bundled_dependencies.a",
+      "language": "a",
+      "fileCategory": "code",
+      "totalLines": 597312,
+      "nonEmptyLines": 597158,
+      "metrics": {}
+    },
+    {
+      "path": "thirdparty/arrow/lib/libarrow.a",
+      "language": "a",
+      "fileCategory": "code",
+      "totalLines": 39260,
+      "nonEmptyLines": 39225,
+      "metrics": {}
+    },
+    {
+      "path": "thirdparty/arrow/lib/libarrow.so",
+      "language": "so",
+      "fileCategory": "code",
+      "totalLines": 70241,
+      "nonEmptyLines": 70009,
+      "metrics": {}
+    },
+    {
+      "path": "thirdparty/arrow/lib/libarrow.so.1400",
+      "language": "1400",
+      "fileCategory": "code",
+      "totalLines": 70241,
+      "nonEmptyLines": 70009,
+      "metrics": {}
+    }
+  ]
+}

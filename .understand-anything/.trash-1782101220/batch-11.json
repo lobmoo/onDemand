@@ -1,0 +1,96 @@
+{
+  "nodes": [
+    {
+      "id": "file:thirdparty/txdds/include/txdds/DCPS/dynamicType/CommonType.h",
+      "type": "file",
+      "name": "CommonType.h",
+      "filePath": "thirdparty/txdds/include/txdds/DCPS/dynamicType/CommonType.h",
+      "summary": "定义 DDS 动态类型系统的基础常量，包括 TypeKind（BOOLEAN、INT32、STRUCT 等）枚举值、TypeIdentiferKind 常量以及对应的类型名称字符串映射，位于 BaoSky::dds 命名空间。",
+      "tags": ["type-definition", "constants", "dds"],
+      "complexity": "simple",
+      "languageNotes": "纯常量定义头文件，使用 const 全局变量定义类型标识符，遵循 DDS-XTypes 规范的 TypeKind 编码。"
+    },
+    {
+      "id": "file:thirdparty/txdds/include/txdds/DCPS/dynamicType/TypeIdentifier.h",
+      "type": "file",
+      "name": "TypeIdentifier.h",
+      "filePath": "thirdparty/txdds/include/txdds/DCPS/dynamicType/TypeIdentifier.h",
+      "summary": "定义 DDS 类型标识符系统的核心类 TypeIdentifier 及其关联的集合类型定义类（字符串、序列、数组、映射），每个类均实现 CDR 序列化/反序列化接口，用于标识和描述 DDS 动态数据类型。",
+      "tags": ["type-definition", "serialization", "dds", "dynamic-type"],
+      "complexity": "complex",
+      "languageNotes": "所有类遵循统一的 Serialize/Deserialize/GetCdrSerializedSize 三方法模式实现 CDR 序列化。TypeIdentifier 使用联合体模式（discriminator m__d）选择不同的类型定义成员。"
+    },
+    {
+      "id": "file:thirdparty/txdds/include/txdds/DCPS/dynamicType/TypeInformation.h",
+      "type": "file",
+      "name": "TypeInformation.h",
+      "filePath": "thirdparty/txdds/include/txdds/DCPS/dynamicType/TypeInformation.h",
+      "summary": "定义 TypeInformation 类，聚合最小化（minimal）和完整（complete）两种 TypeIdentifierWithDependencies，用于描述 DDS 类型的完整依赖关系信息。",
+      "tags": ["type-definition", "dds", "data-model"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/txdds/include/txdds/DCPS/dynamicType/TypeObject.h",
+      "type": "file",
+      "name": "TypeObject.h",
+      "filePath": "thirdparty/txdds/include/txdds/DCPS/dynamicType/TypeObject.h",
+      "summary": "定义 DDS 类型对象系统的全部类，包括结构体、联合体、枚举、别名、位集、位掩码、序列、数组、映射、注解等类型的完整（Complete）表示，以及顶层 TypeObject 包装类，是 DDS-XTypes 动态类型系统的核心实现。",
+      "tags": ["type-definition", "serialization", "dds", "dynamic-type", "data-model"],
+      "complexity": "complex",
+      "languageNotes": "文件包含 40+ 个类，均遵循 Common/Complete 两层结构模式（Common 层提供基础字段，Complete 层添加注解和详细信息）。TypeObject 使用 discriminator 模式选择具体的类型变体。"
+    },
+    {
+      "id": "class:thirdparty/txdds/include/txdds/DCPS/dynamicType/TypeIdentifier.h:TypeIdentifier",
+      "type": "class",
+      "name": "TypeIdentifier",
+      "filePath": "thirdparty/txdds/include/txdds/DCPS/dynamicType/TypeIdentifier.h",
+      "lineRange": [200, 235],
+      "summary": "DDS 类型标识符核心类，通过 discriminator 字段 m__d 选择不同的类型定义（字符串、序列、数组、映射、强连通分量等），同时包含等价哈希值用于类型比较，是 DDS-XTypes 类型系统的关键标识结构。",
+      "tags": ["dds", "type-identifier", "serialization", "discriminator-union"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:thirdparty/txdds/include/txdds/DCPS/dynamicType/TypeObject.h:TypeObject",
+      "type": "class",
+      "name": "TypeObject",
+      "filePath": "thirdparty/txdds/include/txdds/DCPS/dynamicType/TypeObject.h",
+      "lineRange": [577, 587],
+      "summary": "DDS 类型对象的顶层包装类，通过 discriminator 字段 m_d 区分最小化和完整两种表示形式，当前仅实现 CompleteTypeObject 变体，是类型对象注册和交换的入口类。",
+      "tags": ["dds", "type-object", "serialization", "wrapper"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:thirdparty/txdds/include/txdds/DCPS/dynamicType/TypeObject.h:CompleteTypeObject",
+      "type": "class",
+      "name": "CompleteTypeObject",
+      "filePath": "thirdparty/txdds/include/txdds/DCPS/dynamicType/TypeObject.h",
+      "lineRange": [558, 576],
+      "summary": "完整类型对象聚合类，通过 discriminator 字段 m__d 选择具体的类型变体（结构体、联合体、枚举、别名、位集、序列、数组、映射、位掩码、注解、扩展类型），是 DDS-XTypes Complete 类型对象的核心容器。",
+      "tags": ["dds", "type-object", "aggregation", "discriminator-union"],
+      "complexity": "complex"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:thirdparty/txdds/include/txdds/DCPS/dynamicType/TypeIdentifier.h",
+      "target": "class:thirdparty/txdds/include/txdds/DCPS/dynamicType/TypeIdentifier.h:TypeIdentifier",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:thirdparty/txdds/include/txdds/DCPS/dynamicType/TypeObject.h",
+      "target": "class:thirdparty/txdds/include/txdds/DCPS/dynamicType/TypeObject.h:TypeObject",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:thirdparty/txdds/include/txdds/DCPS/dynamicType/TypeObject.h",
+      "target": "class:thirdparty/txdds/include/txdds/DCPS/dynamicType/TypeObject.h:CompleteTypeObject",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    }
+  ]
+}

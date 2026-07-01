@@ -1,0 +1,5508 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 25,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "thirdparty/arrow/include/arrow/util/trie.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 243,
+      "nonEmptyLines": 202,
+      "callGraph": [
+        {
+          "caller": "SmallString",
+          "callee": "std::string_view",
+          "lineNumber": 48
+        },
+        {
+          "caller": "operator[]",
+          "callee": "assert",
+          "lineNumber": 77
+        },
+        {
+          "caller": "substr",
+          "callee": "SmallString",
+          "lineNumber": 83
+        },
+        {
+          "caller": "substr",
+          "callee": "substr",
+          "lineNumber": 83
+        },
+        {
+          "caller": "substr",
+          "callee": "std::string_view",
+          "lineNumber": 83
+        },
+        {
+          "caller": "substr",
+          "callee": "SmallString",
+          "lineNumber": 87
+        },
+        {
+          "caller": "substr",
+          "callee": "substr",
+          "lineNumber": 87
+        },
+        {
+          "caller": "substr",
+          "callee": "std::string_view",
+          "lineNumber": 87
+        },
+        {
+          "caller": "operator==",
+          "callee": "std::string_view",
+          "lineNumber": 92
+        },
+        {
+          "caller": "operator==",
+          "callee": "std::string_view",
+          "lineNumber": 92
+        },
+        {
+          "caller": "operator==",
+          "callee": "std::forward<T>",
+          "lineNumber": 92
+        },
+        {
+          "caller": "operator!=",
+          "callee": "std::string_view",
+          "lineNumber": 97
+        },
+        {
+          "caller": "operator!=",
+          "callee": "std::string_view",
+          "lineNumber": 97
+        },
+        {
+          "caller": "operator!=",
+          "callee": "std::forward<T>",
+          "lineNumber": 97
+        },
+        {
+          "caller": "CheckSize",
+          "callee": "assert",
+          "lineNumber": 104
+        },
+        {
+          "caller": "Find",
+          "callee": "length",
+          "lineNumber": 127
+        },
+        {
+          "caller": "Find",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 127
+        },
+        {
+          "caller": "Find",
+          "callee": "static_cast<fast_index_type>",
+          "lineNumber": 130
+        },
+        {
+          "caller": "Find",
+          "callee": "length",
+          "lineNumber": 130
+        },
+        {
+          "caller": "Find",
+          "callee": "substring_length",
+          "lineNumber": 133
+        },
+        {
+          "caller": "Find",
+          "callee": "substring_data",
+          "lineNumber": 135
+        },
+        {
+          "caller": "Find",
+          "callee": "static_cast<uint8_t>",
+          "lineNumber": 157
+        },
+        {
+          "caller": "Find",
+          "callee": "empty",
+          "lineNumber": 168
+        },
+        {
+          "caller": "substring_length",
+          "callee": "static_cast<fast_index_type>",
+          "lineNumber": 194
+        },
+        {
+          "caller": "substring_length",
+          "callee": "length",
+          "lineNumber": 194
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/util/type_fwd.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 69,
+      "nonEmptyLines": 56,
+      "classes": [
+        {
+          "name": "Empty",
+          "startLine": 23,
+          "endLine": 23,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "FutureWaiter",
+          "startLine": 28,
+          "endLine": 28,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "TimestampParser",
+          "startLine": 30,
+          "endLine": 30,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "Executor",
+          "startLine": 34,
+          "endLine": 34,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "TaskGroup",
+          "startLine": 35,
+          "endLine": 35,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "ThreadPool",
+          "startLine": 36,
+          "endLine": 36,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "CpuInfo",
+          "startLine": 37,
+          "endLine": 37,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "Scope",
+          "startLine": 41,
+          "endLine": 41,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "Compression",
+          "startLine": 46,
+          "endLine": 60,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "AsyncTaskScheduler",
+          "startLine": 63,
+          "endLine": 63,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "Compressor",
+          "startLine": 64,
+          "endLine": 64,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "Decompressor",
+          "startLine": 65,
+          "endLine": 65,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "Codec",
+          "startLine": 66,
+          "endLine": 66,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "Empty",
+          "line": 23,
+          "isDefault": false
+        },
+        {
+          "name": "FutureWaiter",
+          "line": 28,
+          "isDefault": false
+        },
+        {
+          "name": "TimestampParser",
+          "line": 30,
+          "isDefault": false
+        },
+        {
+          "name": "Executor",
+          "line": 34,
+          "isDefault": false
+        },
+        {
+          "name": "TaskGroup",
+          "line": 35,
+          "isDefault": false
+        },
+        {
+          "name": "ThreadPool",
+          "line": 36,
+          "isDefault": false
+        },
+        {
+          "name": "CpuInfo",
+          "line": 37,
+          "isDefault": false
+        },
+        {
+          "name": "Scope",
+          "line": 41,
+          "isDefault": false
+        },
+        {
+          "name": "Compression",
+          "line": 46,
+          "isDefault": false
+        },
+        {
+          "name": "AsyncTaskScheduler",
+          "line": 63,
+          "isDefault": false
+        },
+        {
+          "name": "Compressor",
+          "line": 64,
+          "isDefault": false
+        },
+        {
+          "name": "Decompressor",
+          "line": 65,
+          "isDefault": false
+        },
+        {
+          "name": "Codec",
+          "line": 66,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 13,
+        "functionCount": 0,
+        "classCount": 13
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/util/type_traits.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 46,
+      "nonEmptyLines": 38,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/util/ubsan.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 87,
+      "nonEmptyLines": 72,
+      "callGraph": [
+        {
+          "caller": "SafeLoadAs",
+          "callee": "std::memcpy",
+          "lineNumber": 59
+        },
+        {
+          "caller": "SafeLoad",
+          "callee": "std::memcpy",
+          "lineNumber": 66
+        },
+        {
+          "caller": "SafeCopy",
+          "callee": "std::memcpy",
+          "lineNumber": 76
+        },
+        {
+          "caller": "SafeStore",
+          "callee": "std::memcpy",
+          "lineNumber": 83
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/util/union_util.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 31,
+      "nonEmptyLines": 26,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/util/unreachable.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 30,
+      "nonEmptyLines": 23,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/util/uri.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 118,
+      "nonEmptyLines": 95,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/util/utf8.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 59,
+      "nonEmptyLines": 45,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/util/value_parsing.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 928,
+      "nonEmptyLines": 815,
+      "functions": [
+        {
+          "name": "ParseDecimalDigit",
+          "startLine": 168,
+          "endLine": 168,
+          "params": [
+            "c"
+          ]
+        },
+        {
+          "name": "ParseUnsigned",
+          "startLine": 208,
+          "endLine": 218,
+          "params": [
+            "s",
+            "length",
+            "out"
+          ]
+        },
+        {
+          "name": "ParseUnsigned",
+          "startLine": 220,
+          "endLine": 231,
+          "params": [
+            "s",
+            "length",
+            "out"
+          ]
+        },
+        {
+          "name": "ParseUnsigned",
+          "startLine": 233,
+          "endLine": 251,
+          "params": [
+            "s",
+            "length",
+            "out"
+          ]
+        },
+        {
+          "name": "ParseUnsigned",
+          "startLine": 253,
+          "endLine": 283,
+          "params": [
+            "s",
+            "length",
+            "out"
+          ]
+        },
+        {
+          "name": "ParseSubSeconds",
+          "startLine": 536,
+          "endLine": 613,
+          "params": [
+            "s",
+            "length",
+            "unit",
+            "out"
+          ]
+        },
+        {
+          "name": "ParseTimestampISO8601",
+          "startLine": 644,
+          "endLine": 772,
+          "params": [
+            "s",
+            "length",
+            "unit",
+            "out"
+          ]
+        },
+        {
+          "name": "ParseTimestampStrptime",
+          "startLine": 781,
+          "endLine": 814,
+          "params": [
+            "buf",
+            "length",
+            "format",
+            "ignore_time_in_day",
+            "allow_trailing_chars",
+            "unit",
+            "out"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ParseDecimalDigit",
+          "line": 168,
+          "isDefault": false
+        },
+        {
+          "name": "ParseUnsigned",
+          "line": 208,
+          "isDefault": false
+        },
+        {
+          "name": "ParseUnsigned",
+          "line": 220,
+          "isDefault": false
+        },
+        {
+          "name": "ParseUnsigned",
+          "line": 233,
+          "isDefault": false
+        },
+        {
+          "name": "ParseUnsigned",
+          "line": 253,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "Convert",
+          "callee": "ARROW_PREDICT_TRUE",
+          "lineNumber": 145
+        },
+        {
+          "caller": "Convert",
+          "callee": "StringToFloat",
+          "lineNumber": 145
+        },
+        {
+          "caller": "Convert",
+          "callee": "ARROW_PREDICT_TRUE",
+          "lineNumber": 159
+        },
+        {
+          "caller": "Convert",
+          "callee": "StringToFloat",
+          "lineNumber": 159
+        },
+        {
+          "caller": "ParseDecimalDigit",
+          "callee": "static_cast<uint8_t>",
+          "lineNumber": 168
+        },
+        {
+          "caller": "ParseHex",
+          "callee": "ARROW_PREDICT_TRUE",
+          "lineNumber": 291
+        },
+        {
+          "caller": "ParseHex",
+          "callee": "static_cast<T>",
+          "lineNumber": 296
+        },
+        {
+          "caller": "ParseHex",
+          "callee": "static_cast<T>",
+          "lineNumber": 298
+        },
+        {
+          "caller": "ParseHex",
+          "callee": "static_cast<T>",
+          "lineNumber": 300
+        },
+        {
+          "caller": "ParseHex",
+          "callee": "static_cast<T>",
+          "lineNumber": 302
+        },
+        {
+          "caller": "Convert",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 317
+        },
+        {
+          "caller": "Convert",
+          "callee": "ARROW_PREDICT_TRUE",
+          "lineNumber": 325
+        },
+        {
+          "caller": "Convert",
+          "callee": "ParseHex",
+          "lineNumber": 325
+        },
+        {
+          "caller": "Convert",
+          "callee": "ParseUnsigned",
+          "lineNumber": 332
+        },
+        {
+          "caller": "Convert",
+          "callee": "static_cast<unsigned_type>",
+          "lineNumber": 366
+        },
+        {
+          "caller": "Convert",
+          "callee": "std::numeric_limits<value_type>::max",
+          "lineNumber": 366
+        },
+        {
+          "caller": "Convert",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 372
+        },
+        {
+          "caller": "Convert",
+          "callee": "ARROW_PREDICT_TRUE",
+          "lineNumber": 380
+        },
+        {
+          "caller": "Convert",
+          "callee": "ParseHex",
+          "lineNumber": 380
+        },
+        {
+          "caller": "Convert",
+          "callee": "static_cast<value_type>",
+          "lineNumber": 383
+        },
+        {
+          "caller": "Convert",
+          "callee": "ARROW_PREDICT_TRUE",
+          "lineNumber": 399
+        },
+        {
+          "caller": "Convert",
+          "callee": "ParseUnsigned",
+          "lineNumber": 399
+        },
+        {
+          "caller": "Convert",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 403
+        },
+        {
+          "caller": "Convert",
+          "callee": "static_cast<value_type>",
+          "lineNumber": 409
+        },
+        {
+          "caller": "Convert",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 411
+        },
+        {
+          "caller": "Convert",
+          "callee": "static_cast<value_type>",
+          "lineNumber": 414
+        },
+        {
+          "caller": "ParseHH",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 449
+        },
+        {
+          "caller": "ParseHH",
+          "callee": "ParseUnsigned",
+          "lineNumber": 449
+        },
+        {
+          "caller": "ParseHH",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 452
+        },
+        {
+          "caller": "ParseHH",
+          "callee": "std::chrono::duration_cast<Duration>",
+          "lineNumber": 455
+        },
+        {
+          "caller": "ParseHH",
+          "callee": "std::chrono::hours",
+          "lineNumber": 455
+        },
+        {
+          "caller": "ParseHH_MM",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 463
+        },
+        {
+          "caller": "ParseHH_MM",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 466
+        },
+        {
+          "caller": "ParseHH_MM",
+          "callee": "ParseUnsigned",
+          "lineNumber": 466
+        },
+        {
+          "caller": "ParseHH_MM",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 469
+        },
+        {
+          "caller": "ParseHH_MM",
+          "callee": "ParseUnsigned",
+          "lineNumber": 469
+        },
+        {
+          "caller": "ParseHH_MM",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 472
+        },
+        {
+          "caller": "ParseHH_MM",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 475
+        },
+        {
+          "caller": "ParseHH_MM",
+          "callee": "std::chrono::duration_cast<Duration>",
+          "lineNumber": 478
+        },
+        {
+          "caller": "ParseHH_MM",
+          "callee": "std::chrono::hours",
+          "lineNumber": 478
+        },
+        {
+          "caller": "ParseHH_MM",
+          "callee": "std::chrono::minutes",
+          "lineNumber": 479
+        },
+        {
+          "caller": "ParseHHMM",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 487
+        },
+        {
+          "caller": "ParseHHMM",
+          "callee": "ParseUnsigned",
+          "lineNumber": 487
+        },
+        {
+          "caller": "ParseHHMM",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 490
+        },
+        {
+          "caller": "ParseHHMM",
+          "callee": "ParseUnsigned",
+          "lineNumber": 490
+        },
+        {
+          "caller": "ParseHHMM",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 493
+        },
+        {
+          "caller": "ParseHHMM",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 496
+        },
+        {
+          "caller": "ParseHHMM",
+          "callee": "std::chrono::duration_cast<Duration>",
+          "lineNumber": 499
+        },
+        {
+          "caller": "ParseHHMM",
+          "callee": "std::chrono::hours",
+          "lineNumber": 499
+        },
+        {
+          "caller": "ParseHHMM",
+          "callee": "std::chrono::minutes",
+          "lineNumber": 500
+        },
+        {
+          "caller": "ParseHH_MM_SS",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 509
+        },
+        {
+          "caller": "ParseHH_MM_SS",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 509
+        },
+        {
+          "caller": "ParseHH_MM_SS",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 512
+        },
+        {
+          "caller": "ParseHH_MM_SS",
+          "callee": "ParseUnsigned",
+          "lineNumber": 512
+        },
+        {
+          "caller": "ParseHH_MM_SS",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 515
+        },
+        {
+          "caller": "ParseHH_MM_SS",
+          "callee": "ParseUnsigned",
+          "lineNumber": 515
+        },
+        {
+          "caller": "ParseHH_MM_SS",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 518
+        },
+        {
+          "caller": "ParseHH_MM_SS",
+          "callee": "ParseUnsigned",
+          "lineNumber": 518
+        },
+        {
+          "caller": "ParseHH_MM_SS",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 521
+        },
+        {
+          "caller": "ParseHH_MM_SS",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 524
+        },
+        {
+          "caller": "ParseHH_MM_SS",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 527
+        },
+        {
+          "caller": "ParseHH_MM_SS",
+          "callee": "std::chrono::duration_cast<Duration>",
+          "lineNumber": 530
+        },
+        {
+          "caller": "ParseHH_MM_SS",
+          "callee": "std::chrono::hours",
+          "lineNumber": 530
+        },
+        {
+          "caller": "ParseHH_MM_SS",
+          "callee": "std::chrono::minutes",
+          "lineNumber": 531
+        },
+        {
+          "caller": "ParseHH_MM_SS",
+          "callee": "std::chrono::seconds",
+          "lineNumber": 532
+        },
+        {
+          "caller": "ParseSubSeconds",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 546
+        },
+        {
+          "caller": "ParseSubSeconds",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 554
+        },
+        {
+          "caller": "ParseSubSeconds",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 562
+        },
+        {
+          "caller": "ParseSubSeconds",
+          "callee": "ARROW_PREDICT_TRUE",
+          "lineNumber": 573
+        },
+        {
+          "caller": "ParseSubSeconds",
+          "callee": "ParseUnsigned",
+          "lineNumber": 574
+        },
+        {
+          "caller": "ParseSubSeconds",
+          "callee": "ParseUnsigned",
+          "lineNumber": 577
+        },
+        {
+          "caller": "ParseSubSeconds",
+          "callee": "ARROW_PREDICT_TRUE",
+          "lineNumber": 578
+        },
+        {
+          "caller": "ParseYYYY_MM_DD",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 622
+        },
+        {
+          "caller": "ParseYYYY_MM_DD",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 622
+        },
+        {
+          "caller": "ParseYYYY_MM_DD",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 625
+        },
+        {
+          "caller": "ParseYYYY_MM_DD",
+          "callee": "ParseUnsigned",
+          "lineNumber": 625
+        },
+        {
+          "caller": "ParseYYYY_MM_DD",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 628
+        },
+        {
+          "caller": "ParseYYYY_MM_DD",
+          "callee": "ParseUnsigned",
+          "lineNumber": 628
+        },
+        {
+          "caller": "ParseYYYY_MM_DD",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 631
+        },
+        {
+          "caller": "ParseYYYY_MM_DD",
+          "callee": "ParseUnsigned",
+          "lineNumber": 631
+        },
+        {
+          "caller": "ParseYYYY_MM_DD",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 637
+        },
+        {
+          "caller": "ParseYYYY_MM_DD",
+          "callee": "ok",
+          "lineNumber": 637
+        },
+        {
+          "caller": "ParseYYYY_MM_DD",
+          "callee": "std::chrono::duration_cast<Duration>",
+          "lineNumber": 639
+        },
+        {
+          "caller": "ParseYYYY_MM_DD",
+          "callee": "time_since_epoch",
+          "lineNumber": 640
+        },
+        {
+          "caller": "ParseTimestampISO8601",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 672
+        },
+        {
+          "caller": "ParseTimestampISO8601",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 675
+        },
+        {
+          "caller": "ParseTimestampISO8601",
+          "callee": "ParseYYYY_MM_DD",
+          "lineNumber": 675
+        },
+        {
+          "caller": "ParseTimestampISO8601",
+          "callee": "util::CastSecondsToUnit",
+          "lineNumber": 680
+        },
+        {
+          "caller": "ParseTimestampISO8601",
+          "callee": "count",
+          "lineNumber": 680
+        },
+        {
+          "caller": "ParseTimestampISO8601",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 684
+        },
+        {
+          "caller": "ParseTimestampISO8601",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 684
+        },
+        {
+          "caller": "ParseTimestampISO8601",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 699
+        },
+        {
+          "caller": "ParseTimestampISO8601",
+          "callee": "detail::ParseHH",
+          "lineNumber": 699
+        },
+        {
+          "caller": "ParseTimestampISO8601",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 707
+        },
+        {
+          "caller": "ParseTimestampISO8601",
+          "callee": "detail::ParseHHMM",
+          "lineNumber": 707
+        },
+        {
+          "caller": "ParseTimestampISO8601",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 715
+        },
+        {
+          "caller": "ParseTimestampISO8601",
+          "callee": "detail::ParseHH_MM",
+          "lineNumber": 715
+        },
+        {
+          "caller": "ParseTimestampISO8601",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 725
+        },
+        {
+          "caller": "ParseTimestampISO8601",
+          "callee": "detail::ParseHH",
+          "lineNumber": 725
+        },
+        {
+          "caller": "ParseTimestampISO8601",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 730
+        },
+        {
+          "caller": "ParseTimestampISO8601",
+          "callee": "detail::ParseHH_MM",
+          "lineNumber": 730
+        },
+        {
+          "caller": "ParseTimestampISO8601",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 744
+        },
+        {
+          "caller": "ParseTimestampISO8601",
+          "callee": "detail::ParseHH_MM_SS",
+          "lineNumber": 744
+        },
+        {
+          "caller": "ParseTimestampISO8601",
+          "callee": "util::CastSecondsToUnit",
+          "lineNumber": 756
+        },
+        {
+          "caller": "ParseTimestampISO8601",
+          "callee": "count",
+          "lineNumber": 756
+        },
+        {
+          "caller": "ParseTimestampISO8601",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 760
+        },
+        {
+          "caller": "ParseTimestampISO8601",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 765
+        },
+        {
+          "caller": "ParseTimestampISO8601",
+          "callee": "detail::ParseSubSeconds",
+          "lineNumber": 766
+        },
+        {
+          "caller": "ParseTimestampISO8601",
+          "callee": "util::CastSecondsToUnit",
+          "lineNumber": 770
+        },
+        {
+          "caller": "ParseTimestampISO8601",
+          "callee": "count",
+          "lineNumber": 770
+        },
+        {
+          "caller": "ParseTimestampStrptime",
+          "callee": "memset",
+          "lineNumber": 789
+        },
+        {
+          "caller": "ParseTimestampStrptime",
+          "callee": "arrow_strptime",
+          "lineNumber": 791
+        },
+        {
+          "caller": "ParseTimestampStrptime",
+          "callee": "c_str",
+          "lineNumber": 791
+        },
+        {
+          "caller": "ParseTimestampStrptime",
+          "callee": "strptime",
+          "lineNumber": 793
+        },
+        {
+          "caller": "ParseTimestampStrptime",
+          "callee": "c_str",
+          "lineNumber": 793
+        },
+        {
+          "caller": "ParseTimestampStrptime",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 798
+        },
+        {
+          "caller": "ParseTimestampStrptime",
+          "callee": "c_str",
+          "lineNumber": 798
+        },
+        {
+          "caller": "ParseTimestampStrptime",
+          "callee": "arrow_vendored::date::sys_days",
+          "lineNumber": 803
+        },
+        {
+          "caller": "ParseTimestampStrptime",
+          "callee": "arrow_vendored::date::year",
+          "lineNumber": 803
+        },
+        {
+          "caller": "ParseTimestampStrptime",
+          "callee": "std::max",
+          "lineNumber": 804
+        },
+        {
+          "caller": "ParseTimestampStrptime",
+          "callee": "std::chrono::hours",
+          "lineNumber": 806
+        },
+        {
+          "caller": "ParseTimestampStrptime",
+          "callee": "std::chrono::minutes",
+          "lineNumber": 806
+        },
+        {
+          "caller": "ParseTimestampStrptime",
+          "callee": "std::chrono::seconds",
+          "lineNumber": 807
+        },
+        {
+          "caller": "ParseTimestampStrptime",
+          "callee": "std::chrono::seconds",
+          "lineNumber": 809
+        },
+        {
+          "caller": "ParseTimestampStrptime",
+          "callee": "util::CastSecondsToUnit",
+          "lineNumber": 812
+        },
+        {
+          "caller": "ParseTimestampStrptime",
+          "callee": "count",
+          "lineNumber": 812
+        },
+        {
+          "caller": "ParseTimestampStrptime",
+          "callee": "time_since_epoch",
+          "lineNumber": 812
+        },
+        {
+          "caller": "Convert",
+          "callee": "ParseTimestampISO8601",
+          "lineNumber": 821
+        },
+        {
+          "caller": "Convert",
+          "callee": "unit",
+          "lineNumber": 821
+        },
+        {
+          "caller": "Convert",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 841
+        },
+        {
+          "caller": "Convert",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 846
+        },
+        {
+          "caller": "Convert",
+          "callee": "ParseYYYY_MM_DD",
+          "lineNumber": 846
+        },
+        {
+          "caller": "Convert",
+          "callee": "static_cast<value_type>",
+          "lineNumber": 850
+        },
+        {
+          "caller": "Convert",
+          "callee": "count",
+          "lineNumber": 850
+        },
+        {
+          "caller": "Convert",
+          "callee": "unit",
+          "lineNumber": 873
+        },
+        {
+          "caller": "Convert",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 877
+        },
+        {
+          "caller": "Convert",
+          "callee": "detail::ParseHH_MM",
+          "lineNumber": 877
+        },
+        {
+          "caller": "Convert",
+          "callee": "static_cast<value_type>",
+          "lineNumber": 881
+        },
+        {
+          "caller": "Convert",
+          "callee": "util::CastSecondsToUnit",
+          "lineNumber": 881
+        },
+        {
+          "caller": "Convert",
+          "callee": "count",
+          "lineNumber": 881
+        },
+        {
+          "caller": "Convert",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 885
+        },
+        {
+          "caller": "Convert",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 888
+        },
+        {
+          "caller": "Convert",
+          "callee": "detail::ParseHH_MM_SS",
+          "lineNumber": 888
+        },
+        {
+          "caller": "Convert",
+          "callee": "static_cast<value_type>",
+          "lineNumber": 892
+        },
+        {
+          "caller": "Convert",
+          "callee": "util::CastSecondsToUnit",
+          "lineNumber": 892
+        },
+        {
+          "caller": "Convert",
+          "callee": "count",
+          "lineNumber": 892
+        },
+        {
+          "caller": "Convert",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 898
+        },
+        {
+          "caller": "Convert",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 903
+        },
+        {
+          "caller": "Convert",
+          "callee": "detail::ParseSubSeconds",
+          "lineNumber": 904
+        },
+        {
+          "caller": "ParseValue",
+          "callee": "Convert",
+          "lineNumber": 917
+        },
+        {
+          "caller": "ParseValue",
+          "callee": "Convert",
+          "lineNumber": 924
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 5,
+        "functionCount": 8,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/util/vector.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 172,
+      "nonEmptyLines": 156,
+      "callGraph": [
+        {
+          "caller": "DeleteVectorElement",
+          "callee": "DCHECK",
+          "lineNumber": 34
+        },
+        {
+          "caller": "DeleteVectorElement",
+          "callee": "empty",
+          "lineNumber": 34
+        },
+        {
+          "caller": "DeleteVectorElement",
+          "callee": "DCHECK_LT",
+          "lineNumber": 35
+        },
+        {
+          "caller": "DeleteVectorElement",
+          "callee": "size",
+          "lineNumber": 35
+        },
+        {
+          "caller": "DeleteVectorElement",
+          "callee": "reserve",
+          "lineNumber": 37
+        },
+        {
+          "caller": "DeleteVectorElement",
+          "callee": "size",
+          "lineNumber": 37
+        },
+        {
+          "caller": "DeleteVectorElement",
+          "callee": "push_back",
+          "lineNumber": 39
+        },
+        {
+          "caller": "DeleteVectorElement",
+          "callee": "size",
+          "lineNumber": 41
+        },
+        {
+          "caller": "DeleteVectorElement",
+          "callee": "push_back",
+          "lineNumber": 42
+        },
+        {
+          "caller": "AddVectorElement",
+          "callee": "DCHECK_LE",
+          "lineNumber": 50
+        },
+        {
+          "caller": "AddVectorElement",
+          "callee": "size",
+          "lineNumber": 50
+        },
+        {
+          "caller": "AddVectorElement",
+          "callee": "reserve",
+          "lineNumber": 52
+        },
+        {
+          "caller": "AddVectorElement",
+          "callee": "size",
+          "lineNumber": 52
+        },
+        {
+          "caller": "AddVectorElement",
+          "callee": "push_back",
+          "lineNumber": 54
+        },
+        {
+          "caller": "AddVectorElement",
+          "callee": "emplace_back",
+          "lineNumber": 56
+        },
+        {
+          "caller": "AddVectorElement",
+          "callee": "std::move",
+          "lineNumber": 56
+        },
+        {
+          "caller": "AddVectorElement",
+          "callee": "size",
+          "lineNumber": 57
+        },
+        {
+          "caller": "AddVectorElement",
+          "callee": "push_back",
+          "lineNumber": 58
+        },
+        {
+          "caller": "ReplaceVectorElement",
+          "callee": "DCHECK_LE",
+          "lineNumber": 66
+        },
+        {
+          "caller": "ReplaceVectorElement",
+          "callee": "size",
+          "lineNumber": 66
+        },
+        {
+          "caller": "ReplaceVectorElement",
+          "callee": "reserve",
+          "lineNumber": 68
+        },
+        {
+          "caller": "ReplaceVectorElement",
+          "callee": "size",
+          "lineNumber": 68
+        },
+        {
+          "caller": "ReplaceVectorElement",
+          "callee": "push_back",
+          "lineNumber": 70
+        },
+        {
+          "caller": "ReplaceVectorElement",
+          "callee": "emplace_back",
+          "lineNumber": 72
+        },
+        {
+          "caller": "ReplaceVectorElement",
+          "callee": "std::move",
+          "lineNumber": 72
+        },
+        {
+          "caller": "ReplaceVectorElement",
+          "callee": "size",
+          "lineNumber": 73
+        },
+        {
+          "caller": "ReplaceVectorElement",
+          "callee": "push_back",
+          "lineNumber": 74
+        },
+        {
+          "caller": "FilterVector",
+          "callee": "std::remove_if",
+          "lineNumber": 81
+        },
+        {
+          "caller": "FilterVector",
+          "callee": "begin",
+          "lineNumber": 81
+        },
+        {
+          "caller": "FilterVector",
+          "callee": "end",
+          "lineNumber": 81
+        },
+        {
+          "caller": "FilterVector",
+          "callee": "predicate",
+          "lineNumber": 82
+        },
+        {
+          "caller": "FilterVector",
+          "callee": "erase",
+          "lineNumber": 83
+        },
+        {
+          "caller": "FilterVector",
+          "callee": "end",
+          "lineNumber": 83
+        },
+        {
+          "caller": "MapVector",
+          "callee": "reserve",
+          "lineNumber": 91
+        },
+        {
+          "caller": "MapVector",
+          "callee": "size",
+          "lineNumber": 91
+        },
+        {
+          "caller": "MapVector",
+          "callee": "std::transform",
+          "lineNumber": 92
+        },
+        {
+          "caller": "MapVector",
+          "callee": "begin",
+          "lineNumber": 92
+        },
+        {
+          "caller": "MapVector",
+          "callee": "end",
+          "lineNumber": 92
+        },
+        {
+          "caller": "MapVector",
+          "callee": "std::back_inserter",
+          "lineNumber": 92
+        },
+        {
+          "caller": "MapVector",
+          "callee": "std::forward<Fn>",
+          "lineNumber": 93
+        },
+        {
+          "caller": "MapVector",
+          "callee": "reserve",
+          "lineNumber": 101
+        },
+        {
+          "caller": "MapVector",
+          "callee": "size",
+          "lineNumber": 101
+        },
+        {
+          "caller": "MapVector",
+          "callee": "std::transform",
+          "lineNumber": 102
+        },
+        {
+          "caller": "MapVector",
+          "callee": "std::make_move_iterator",
+          "lineNumber": 102
+        },
+        {
+          "caller": "MapVector",
+          "callee": "begin",
+          "lineNumber": 102
+        },
+        {
+          "caller": "MapVector",
+          "callee": "std::make_move_iterator",
+          "lineNumber": 103
+        },
+        {
+          "caller": "MapVector",
+          "callee": "end",
+          "lineNumber": 103
+        },
+        {
+          "caller": "MapVector",
+          "callee": "std::back_inserter",
+          "lineNumber": 103
+        },
+        {
+          "caller": "MapVector",
+          "callee": "std::forward<Fn>",
+          "lineNumber": 104
+        },
+        {
+          "caller": "MaybeMapVector",
+          "callee": "reserve",
+          "lineNumber": 113
+        },
+        {
+          "caller": "MaybeMapVector",
+          "callee": "size",
+          "lineNumber": 113
+        },
+        {
+          "caller": "MaybeMapVector",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 114
+        },
+        {
+          "caller": "MaybeMapVector",
+          "callee": "MaybeTransform",
+          "lineNumber": 114
+        },
+        {
+          "caller": "MaybeMapVector",
+          "callee": "begin",
+          "lineNumber": 114
+        },
+        {
+          "caller": "MaybeMapVector",
+          "callee": "end",
+          "lineNumber": 114
+        },
+        {
+          "caller": "MaybeMapVector",
+          "callee": "std::back_inserter",
+          "lineNumber": 115
+        },
+        {
+          "caller": "MaybeMapVector",
+          "callee": "std::forward<Fn>",
+          "lineNumber": 115
+        },
+        {
+          "caller": "MaybeMapVector",
+          "callee": "std::move",
+          "lineNumber": 116
+        },
+        {
+          "caller": "MaybeMapVector",
+          "callee": "reserve",
+          "lineNumber": 123
+        },
+        {
+          "caller": "MaybeMapVector",
+          "callee": "size",
+          "lineNumber": 123
+        },
+        {
+          "caller": "MaybeMapVector",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 124
+        },
+        {
+          "caller": "MaybeMapVector",
+          "callee": "MaybeTransform",
+          "lineNumber": 124
+        },
+        {
+          "caller": "MaybeMapVector",
+          "callee": "std::make_move_iterator",
+          "lineNumber": 124
+        },
+        {
+          "caller": "MaybeMapVector",
+          "callee": "begin",
+          "lineNumber": 124
+        },
+        {
+          "caller": "MaybeMapVector",
+          "callee": "std::make_move_iterator",
+          "lineNumber": 125
+        },
+        {
+          "caller": "MaybeMapVector",
+          "callee": "end",
+          "lineNumber": 125
+        },
+        {
+          "caller": "MaybeMapVector",
+          "callee": "std::back_inserter",
+          "lineNumber": 126
+        },
+        {
+          "caller": "MaybeMapVector",
+          "callee": "std::forward<Fn>",
+          "lineNumber": 126
+        },
+        {
+          "caller": "MaybeMapVector",
+          "callee": "std::move",
+          "lineNumber": 127
+        },
+        {
+          "caller": "FlattenVectors",
+          "callee": "size",
+          "lineNumber": 134
+        },
+        {
+          "caller": "FlattenVectors",
+          "callee": "reserve",
+          "lineNumber": 137
+        },
+        {
+          "caller": "FlattenVectors",
+          "callee": "insert",
+          "lineNumber": 139
+        },
+        {
+          "caller": "FlattenVectors",
+          "callee": "end",
+          "lineNumber": 139
+        },
+        {
+          "caller": "FlattenVectors",
+          "callee": "begin",
+          "lineNumber": 139
+        },
+        {
+          "caller": "FlattenVectors",
+          "callee": "end",
+          "lineNumber": 139
+        },
+        {
+          "caller": "UnwrapOrRaise",
+          "callee": "reserve",
+          "lineNumber": 147
+        },
+        {
+          "caller": "UnwrapOrRaise",
+          "callee": "size",
+          "lineNumber": 147
+        },
+        {
+          "caller": "UnwrapOrRaise",
+          "callee": "std::make_move_iterator",
+          "lineNumber": 148
+        },
+        {
+          "caller": "UnwrapOrRaise",
+          "callee": "end",
+          "lineNumber": 148
+        },
+        {
+          "caller": "UnwrapOrRaise",
+          "callee": "std::make_move_iterator",
+          "lineNumber": 149
+        },
+        {
+          "caller": "UnwrapOrRaise",
+          "callee": "begin",
+          "lineNumber": 149
+        },
+        {
+          "caller": "UnwrapOrRaise",
+          "callee": "ok",
+          "lineNumber": 150
+        },
+        {
+          "caller": "UnwrapOrRaise",
+          "callee": "status",
+          "lineNumber": 151
+        },
+        {
+          "caller": "UnwrapOrRaise",
+          "callee": "push_back",
+          "lineNumber": 153
+        },
+        {
+          "caller": "UnwrapOrRaise",
+          "callee": "MoveValueUnsafe",
+          "lineNumber": 153
+        },
+        {
+          "caller": "UnwrapOrRaise",
+          "callee": "std::move",
+          "lineNumber": 155
+        },
+        {
+          "caller": "UnwrapOrRaise",
+          "callee": "reserve",
+          "lineNumber": 161
+        },
+        {
+          "caller": "UnwrapOrRaise",
+          "callee": "size",
+          "lineNumber": 161
+        },
+        {
+          "caller": "UnwrapOrRaise",
+          "callee": "ok",
+          "lineNumber": 163
+        },
+        {
+          "caller": "UnwrapOrRaise",
+          "callee": "status",
+          "lineNumber": 164
+        },
+        {
+          "caller": "UnwrapOrRaise",
+          "callee": "push_back",
+          "lineNumber": 166
+        },
+        {
+          "caller": "UnwrapOrRaise",
+          "callee": "ValueUnsafe",
+          "lineNumber": 166
+        },
+        {
+          "caller": "UnwrapOrRaise",
+          "callee": "std::move",
+          "lineNumber": 168
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/util/visibility.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 83,
+      "nonEmptyLines": 71,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/util/windows_compatibility.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 40,
+      "nonEmptyLines": 33,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/util/windows_fixup.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 52,
+      "nonEmptyLines": 45,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/vendored/datetime.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 26,
+      "nonEmptyLines": 23,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/vendored/datetime/date.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 8237,
+      "nonEmptyLines": 7447,
+      "callGraph": [
+        {
+          "caller": "~save_istream",
+          "callee": "fill",
+          "lineNumber": 1035
+        },
+        {
+          "caller": "~save_istream",
+          "callee": "flags",
+          "lineNumber": 1036
+        },
+        {
+          "caller": "~save_istream",
+          "callee": "precision",
+          "lineNumber": 1037
+        },
+        {
+          "caller": "~save_istream",
+          "callee": "width",
+          "lineNumber": 1038
+        },
+        {
+          "caller": "~save_istream",
+          "callee": "imbue",
+          "lineNumber": 1039
+        },
+        {
+          "caller": "~save_istream",
+          "callee": "tie",
+          "lineNumber": 1040
+        },
+        {
+          "caller": "save_istream",
+          "callee": "fill",
+          "lineNumber": 1048
+        },
+        {
+          "caller": "save_istream",
+          "callee": "flags",
+          "lineNumber": 1049
+        },
+        {
+          "caller": "save_istream",
+          "callee": "precision",
+          "lineNumber": 1050
+        },
+        {
+          "caller": "save_istream",
+          "callee": "width",
+          "lineNumber": 1051
+        },
+        {
+          "caller": "save_istream",
+          "callee": "tie",
+          "lineNumber": 1052
+        },
+        {
+          "caller": "save_istream",
+          "callee": "getloc",
+          "lineNumber": 1053
+        },
+        {
+          "caller": "save_istream",
+          "callee": "flush",
+          "lineNumber": 1056
+        },
+        {
+          "caller": "~save_ostream",
+          "callee": "pubsync",
+          "lineNumber": 1069
+        },
+        {
+          "caller": "~save_ostream",
+          "callee": "rdbuf",
+          "lineNumber": 1069
+        },
+        {
+          "caller": "~save_ostream",
+          "callee": "std::uncaught_exceptions",
+          "lineNumber": 1069
+        },
+        {
+          "caller": "~save_ostream",
+          "callee": "std::uncaught_exception",
+          "lineNumber": 1071
+        },
+        {
+          "caller": "~save_ostream",
+          "callee": "good",
+          "lineNumber": 1073
+        },
+        {
+          "caller": "enable_if\n<\n    std::chrono::treat_as_floating_point<T>::value,\n    T\n>::type\ntrunc",
+          "callee": "static_cast<T>",
+          "lineNumber": 1139
+        },
+        {
+          "caller": "enable_if\n<\n    std::chrono::treat_as_floating_point<T>::value,\n    T\n>::type\ntrunc",
+          "callee": "static_cast<I>",
+          "lineNumber": 1139
+        },
+        {
+          "caller": "enable_if\n<\n    detail::no_overflow<Period, typename To::period>::value,\n    To\n>::type\ntrunc",
+          "callee": "detail::trunc",
+          "lineNumber": 1211
+        },
+        {
+          "caller": "enable_if\n<\n    detail::no_overflow<Period, typename To::period>::value,\n    To\n>::type\ntrunc",
+          "callee": "count",
+          "lineNumber": 1211
+        },
+        {
+          "caller": "enable_if\n<\n    detail::no_overflow<Period, typename To::period>::value,\n    To\n>::type\ntrunc",
+          "callee": "std::chrono::duration_cast<To>",
+          "lineNumber": 1211
+        },
+        {
+          "caller": "enable_if\n<\n    !detail::no_overflow<Period, typename To::period>::value,\n    To\n>::type\ntrunc",
+          "callee": "detail::trunc",
+          "lineNumber": 1227
+        },
+        {
+          "caller": "enable_if\n<\n    !detail::no_overflow<Period, typename To::period>::value,\n    To\n>::type\ntrunc",
+          "callee": "count",
+          "lineNumber": 1227
+        },
+        {
+          "caller": "enable_if\n<\n    !detail::no_overflow<Period, typename To::period>::value,\n    To\n>::type\ntrunc",
+          "callee": "duration_cast<To>",
+          "lineNumber": 1227
+        },
+        {
+          "caller": "enable_if\n<\n    !detail::no_overflow<Period, typename To::period>::value,\n    To\n>::type\ntrunc",
+          "callee": "duration_cast<duration<rep>>",
+          "lineNumber": 1227
+        },
+        {
+          "caller": "enable_if\n<\n    detail::no_overflow<Period, typename To::period>::value,\n    To\n>::type\nfloor",
+          "callee": "trunc<To>",
+          "lineNumber": 1255
+        },
+        {
+          "caller": "enable_if\n<\n    !detail::no_overflow<Period, typename To::period>::value,\n    To\n>::type\nfloor",
+          "callee": "floor<To>",
+          "lineNumber": 1272
+        },
+        {
+          "caller": "enable_if\n<\n    !detail::no_overflow<Period, typename To::period>::value,\n    To\n>::type\nfloor",
+          "callee": "floor<std::chrono::duration<rep>>",
+          "lineNumber": 1272
+        },
+        {
+          "caller": "round",
+          "callee": "floor<To>",
+          "lineNumber": 1282
+        },
+        {
+          "caller": "round",
+          "callee": "trunc<To>",
+          "lineNumber": 1290
+        },
+        {
+          "caller": "ceil",
+          "callee": "trunc<To>",
+          "lineNumber": 1306
+        },
+        {
+          "caller": "chrono::duration<Rep, Period>\nabs",
+          "callee": "zero",
+          "lineNumber": 1321
+        },
+        {
+          "caller": "chrono::duration<Rep, Period>\nabs",
+          "callee": "static_cast<decltype(d)>",
+          "lineNumber": 1321
+        },
+        {
+          "caller": "chrono::time_point<Clock, To>\nfloor",
+          "callee": "date::floor<To>",
+          "lineNumber": 1332
+        },
+        {
+          "caller": "chrono::time_point<Clock, To>\nfloor",
+          "callee": "time_since_epoch",
+          "lineNumber": 1332
+        },
+        {
+          "caller": "chrono::time_point<Clock, To>\nround",
+          "callee": "round<To>",
+          "lineNumber": 1343
+        },
+        {
+          "caller": "chrono::time_point<Clock, To>\nround",
+          "callee": "time_since_epoch",
+          "lineNumber": 1343
+        },
+        {
+          "caller": "chrono::time_point<Clock, To>\nceil",
+          "callee": "ceil<To>",
+          "lineNumber": 1354
+        },
+        {
+          "caller": "chrono::time_point<Clock, To>\nceil",
+          "callee": "time_since_epoch",
+          "lineNumber": 1354
+        },
+        {
+          "caller": "enable_if\n<\n    !std::chrono::treat_as_floating_point<typename To::rep>::value,\n    To\n>::type\nround_i",
+          "callee": "round<To>",
+          "lineNumber": 1379
+        },
+        {
+          "caller": "chrono::time_point<Clock, To>\nround_i",
+          "callee": "round_i<To>",
+          "lineNumber": 1402
+        },
+        {
+          "caller": "chrono::time_point<Clock, To>\nround_i",
+          "callee": "time_since_epoch",
+          "lineNumber": 1402
+        },
+        {
+          "caller": "chrono::time_point<Clock, To>\ntrunc",
+          "callee": "trunc<To>",
+          "lineNumber": 1415
+        },
+        {
+          "caller": "chrono::time_point<Clock, To>\ntrunc",
+          "callee": "time_since_epoch",
+          "lineNumber": 1415
+        },
+        {
+          "caller": "operator-",
+          "callee": "static_cast<unsigned>",
+          "lineNumber": 1621
+        },
+        {
+          "caller": "operator-",
+          "callee": "static_cast<unsigned>",
+          "lineNumber": 1621
+        },
+        {
+          "caller": "operator-",
+          "callee": "months",
+          "lineNumber": 1622
+        },
+        {
+          "caller": "operator+",
+          "callee": "static_cast<long long>",
+          "lineNumber": 1919
+        },
+        {
+          "caller": "operator+",
+          "callee": "static_cast<unsigned>",
+          "lineNumber": 1919
+        },
+        {
+          "caller": "operator+",
+          "callee": "count",
+          "lineNumber": 1919
+        },
+        {
+          "caller": "operator+",
+          "callee": "static_cast<unsigned>",
+          "lineNumber": 1921
+        },
+        {
+          "caller": "day\noperator \"\" _d",
+          "callee": "static_cast<unsigned>",
+          "lineNumber": 1979
+        },
+        {
+          "caller": "year\noperator \"\" _y",
+          "callee": "date::year",
+          "lineNumber": 1987
+        },
+        {
+          "caller": "year\noperator \"\" _y",
+          "callee": "static_cast<int>",
+          "lineNumber": 1987
+        },
+        {
+          "caller": "weekday_indexed::weekday",
+          "callee": "static_cast<unsigned>",
+          "lineNumber": 2046
+        },
+        {
+          "caller": "operator+",
+          "callee": "static_cast<int>",
+          "lineNumber": 2282
+        },
+        {
+          "caller": "operator+",
+          "callee": "static_cast<unsigned>",
+          "lineNumber": 2282
+        },
+        {
+          "caller": "operator+",
+          "callee": "month",
+          "lineNumber": 2282
+        },
+        {
+          "caller": "operator+",
+          "callee": "count",
+          "lineNumber": 2282
+        },
+        {
+          "caller": "operator+",
+          "callee": "year",
+          "lineNumber": 2285
+        },
+        {
+          "caller": "operator+",
+          "callee": "years",
+          "lineNumber": 2285
+        },
+        {
+          "caller": "operator+",
+          "callee": "month",
+          "lineNumber": 2285
+        },
+        {
+          "caller": "operator+",
+          "callee": "static_cast<unsigned>",
+          "lineNumber": 2285
+        },
+        {
+          "caller": "operator-",
+          "callee": "year",
+          "lineNumber": 2311
+        },
+        {
+          "caller": "operator-",
+          "callee": "year",
+          "lineNumber": 2311
+        },
+        {
+          "caller": "operator-",
+          "callee": "months",
+          "lineNumber": 2312
+        },
+        {
+          "caller": "operator-",
+          "callee": "static_cast<unsigned>",
+          "lineNumber": 2312
+        },
+        {
+          "caller": "operator-",
+          "callee": "month",
+          "lineNumber": 2312
+        },
+        {
+          "caller": "operator-",
+          "callee": "static_cast<unsigned>",
+          "lineNumber": 2312
+        },
+        {
+          "caller": "operator-",
+          "callee": "month",
+          "lineNumber": 2312
+        },
+        {
+          "caller": "operator+",
+          "callee": "year",
+          "lineNumber": 2320
+        },
+        {
+          "caller": "operator+",
+          "callee": "month",
+          "lineNumber": 2320
+        },
+        {
+          "caller": "sys_days",
+          "callee": "sys_days",
+          "lineNumber": 2756
+        },
+        {
+          "caller": "sys_days",
+          "callee": "year",
+          "lineNumber": 2756
+        },
+        {
+          "caller": "sys_days",
+          "callee": "month",
+          "lineNumber": 2756
+        },
+        {
+          "caller": "sys_days",
+          "callee": "day",
+          "lineNumber": 2756
+        },
+        {
+          "caller": "local_days",
+          "callee": "local_days",
+          "lineNumber": 2763
+        },
+        {
+          "caller": "local_days",
+          "callee": "year",
+          "lineNumber": 2763
+        },
+        {
+          "caller": "local_days",
+          "callee": "month",
+          "lineNumber": 2763
+        },
+        {
+          "caller": "local_days",
+          "callee": "day",
+          "lineNumber": 2763
+        },
+        {
+          "caller": "operator+",
+          "callee": "year",
+          "lineNumber": 2854
+        },
+        {
+          "caller": "operator+",
+          "callee": "month",
+          "lineNumber": 2854
+        },
+        {
+          "caller": "operator+",
+          "callee": "year",
+          "lineNumber": 2880
+        },
+        {
+          "caller": "operator+",
+          "callee": "month_day_last",
+          "lineNumber": 2880
+        },
+        {
+          "caller": "sys_days",
+          "callee": "to_days",
+          "lineNumber": 2995
+        },
+        {
+          "caller": "local_days",
+          "callee": "to_days",
+          "lineNumber": 3002
+        },
+        {
+          "caller": "year_month_day::from_days",
+          "callee": "count",
+          "lineNumber": 3095
+        },
+        {
+          "caller": "year_month_day::from_days",
+          "callee": "static_cast<unsigned>",
+          "lineNumber": 3097
+        },
+        {
+          "caller": "year_month_day::from_days",
+          "callee": "static_cast<days::rep>",
+          "lineNumber": 3099
+        },
+        {
+          "caller": "year_month_day::from_days",
+          "callee": "date::month",
+          "lineNumber": 3104
+        },
+        {
+          "caller": "year_month_day::from_days",
+          "callee": "date::day",
+          "lineNumber": 3104
+        },
+        {
+          "caller": "operator+",
+          "callee": "year",
+          "lineNumber": 3113
+        },
+        {
+          "caller": "operator+",
+          "callee": "month",
+          "lineNumber": 3113
+        },
+        {
+          "caller": "operator+",
+          "callee": "day",
+          "lineNumber": 3113
+        },
+        {
+          "caller": "operator+",
+          "callee": "year",
+          "lineNumber": 3139
+        },
+        {
+          "caller": "operator+",
+          "callee": "month",
+          "lineNumber": 3139
+        },
+        {
+          "caller": "operator+",
+          "callee": "day",
+          "lineNumber": 3139
+        },
+        {
+          "caller": "year_month_weekday::weekday",
+          "callee": "weekday",
+          "lineNumber": 3228
+        },
+        {
+          "caller": "year_month_weekday::index",
+          "callee": "index",
+          "lineNumber": 3236
+        },
+        {
+          "caller": "sys_days",
+          "callee": "to_days",
+          "lineNumber": 3251
+        },
+        {
+          "caller": "local_days",
+          "callee": "to_days",
+          "lineNumber": 3258
+        },
+        {
+          "caller": "year_month_weekday::from_days",
+          "callee": "date::weekday",
+          "lineNumber": 3281
+        },
+        {
+          "caller": "year_month_weekday::from_days",
+          "callee": "year_month_day",
+          "lineNumber": 3282
+        },
+        {
+          "caller": "year_month_weekday::from_days",
+          "callee": "year",
+          "lineNumber": 3283
+        },
+        {
+          "caller": "year_month_weekday::from_days",
+          "callee": "month",
+          "lineNumber": 3283
+        },
+        {
+          "caller": "year_month_weekday::from_days",
+          "callee": "static_cast<unsigned>",
+          "lineNumber": 3283
+        },
+        {
+          "caller": "year_month_weekday::from_days",
+          "callee": "day",
+          "lineNumber": 3283
+        },
+        {
+          "caller": "operator+",
+          "callee": "year",
+          "lineNumber": 3332
+        },
+        {
+          "caller": "operator+",
+          "callee": "month",
+          "lineNumber": 3332
+        },
+        {
+          "caller": "operator+",
+          "callee": "weekday_indexed",
+          "lineNumber": 3332
+        },
+        {
+          "caller": "operator+",
+          "callee": "year",
+          "lineNumber": 3358
+        },
+        {
+          "caller": "operator+",
+          "callee": "month",
+          "lineNumber": 3358
+        },
+        {
+          "caller": "operator+",
+          "callee": "weekday_indexed",
+          "lineNumber": 3358
+        },
+        {
+          "caller": "year_month_weekday_last::weekday",
+          "callee": "weekday",
+          "lineNumber": 3435
+        },
+        {
+          "caller": "sys_days",
+          "callee": "to_days",
+          "lineNumber": 3450
+        },
+        {
+          "caller": "local_days",
+          "callee": "to_days",
+          "lineNumber": 3457
+        },
+        {
+          "caller": "operator+",
+          "callee": "year",
+          "lineNumber": 3513
+        },
+        {
+          "caller": "operator+",
+          "callee": "month",
+          "lineNumber": 3513
+        },
+        {
+          "caller": "operator+",
+          "callee": "weekday_last",
+          "lineNumber": 3513
+        },
+        {
+          "caller": "operator+",
+          "callee": "year",
+          "lineNumber": 3539
+        },
+        {
+          "caller": "operator+",
+          "callee": "month",
+          "lineNumber": 3539
+        },
+        {
+          "caller": "operator+",
+          "callee": "weekday_last",
+          "lineNumber": 3539
+        },
+        {
+          "caller": "operator/",
+          "callee": "month",
+          "lineNumber": 3573
+        },
+        {
+          "caller": "operator/",
+          "callee": "static_cast<unsigned>",
+          "lineNumber": 3573
+        },
+        {
+          "caller": "operator/",
+          "callee": "day",
+          "lineNumber": 3599
+        },
+        {
+          "caller": "operator/",
+          "callee": "static_cast<unsigned>",
+          "lineNumber": 3599
+        },
+        {
+          "caller": "operator/",
+          "callee": "month",
+          "lineNumber": 3607
+        },
+        {
+          "caller": "operator/",
+          "callee": "static_cast<unsigned>",
+          "lineNumber": 3607
+        },
+        {
+          "caller": "operator/",
+          "callee": "month",
+          "lineNumber": 3635
+        },
+        {
+          "caller": "operator/",
+          "callee": "static_cast<unsigned>",
+          "lineNumber": 3635
+        },
+        {
+          "caller": "operator/",
+          "callee": "month",
+          "lineNumber": 3669
+        },
+        {
+          "caller": "operator/",
+          "callee": "static_cast<unsigned>",
+          "lineNumber": 3669
+        },
+        {
+          "caller": "operator/",
+          "callee": "month",
+          "lineNumber": 3703
+        },
+        {
+          "caller": "operator/",
+          "callee": "static_cast<unsigned>",
+          "lineNumber": 3703
+        },
+        {
+          "caller": "operator/",
+          "callee": "year",
+          "lineNumber": 3721
+        },
+        {
+          "caller": "operator/",
+          "callee": "month",
+          "lineNumber": 3721
+        },
+        {
+          "caller": "operator/",
+          "callee": "day",
+          "lineNumber": 3729
+        },
+        {
+          "caller": "operator/",
+          "callee": "static_cast<unsigned>",
+          "lineNumber": 3729
+        },
+        {
+          "caller": "operator/",
+          "callee": "month",
+          "lineNumber": 3737
+        },
+        {
+          "caller": "operator/",
+          "callee": "day",
+          "lineNumber": 3737
+        },
+        {
+          "caller": "operator/",
+          "callee": "year",
+          "lineNumber": 3745
+        },
+        {
+          "caller": "operator/",
+          "callee": "year",
+          "lineNumber": 3761
+        },
+        {
+          "caller": "operator/",
+          "callee": "year",
+          "lineNumber": 3771
+        },
+        {
+          "caller": "operator/",
+          "callee": "month",
+          "lineNumber": 3771
+        },
+        {
+          "caller": "operator/",
+          "callee": "year",
+          "lineNumber": 3787
+        },
+        {
+          "caller": "operator/",
+          "callee": "year",
+          "lineNumber": 3803
+        },
+        {
+          "caller": "operator/",
+          "callee": "year",
+          "lineNumber": 3813
+        },
+        {
+          "caller": "operator/",
+          "callee": "month",
+          "lineNumber": 3813
+        },
+        {
+          "caller": "operator/",
+          "callee": "month",
+          "lineNumber": 3821
+        },
+        {
+          "caller": "operator/",
+          "callee": "weekday_indexed",
+          "lineNumber": 3821
+        },
+        {
+          "caller": "operator/",
+          "callee": "year",
+          "lineNumber": 3829
+        },
+        {
+          "caller": "operator/",
+          "callee": "year",
+          "lineNumber": 3845
+        },
+        {
+          "caller": "operator/",
+          "callee": "year",
+          "lineNumber": 3855
+        },
+        {
+          "caller": "operator/",
+          "callee": "month",
+          "lineNumber": 3855
+        },
+        {
+          "caller": "operator/",
+          "callee": "month",
+          "lineNumber": 3863
+        },
+        {
+          "caller": "operator/",
+          "callee": "weekday_last",
+          "lineNumber": 3863
+        },
+        {
+          "caller": "operator/",
+          "callee": "year",
+          "lineNumber": 3871
+        },
+        {
+          "caller": "operator/",
+          "callee": "year",
+          "lineNumber": 3887
+        },
+        {
+          "caller": "decimal_format_seconds",
+          "callee": "std::chrono::duration_cast<std::chrono::seconds>",
+          "lineNumber": 3973
+        },
+        {
+          "caller": "decimal_format_seconds",
+          "callee": "std::chrono::duration_cast<precision>",
+          "lineNumber": 3974
+        },
+        {
+          "caller": "enable_if\n         <\n            std::numeric_limits<Rep>::is_signed,\n            std::chrono::duration<Rep, Period>\n         >::type\nabs",
+          "callee": "zero",
+          "lineNumber": 4047
+        },
+        {
+          "caller": "hh_mm_ss",
+          "callee": "hh_mm_ss",
+          "lineNumber": 4081
+        },
+        {
+          "caller": "hh_mm_ss",
+          "callee": "Duration::zero",
+          "lineNumber": 4081
+        },
+        {
+          "caller": "hh_mm_ss",
+          "callee": "std::chrono::duration_cast<std::chrono::hours>",
+          "lineNumber": 4085
+        },
+        {
+          "caller": "hh_mm_ss",
+          "callee": "detail::abs",
+          "lineNumber": 4085
+        },
+        {
+          "caller": "hh_mm_ss",
+          "callee": "std::chrono::duration_cast<std::chrono::minutes>",
+          "lineNumber": 4086
+        },
+        {
+          "caller": "hh_mm_ss",
+          "callee": "detail::abs",
+          "lineNumber": 4086
+        },
+        {
+          "caller": "hh_mm_ss",
+          "callee": "detail::abs",
+          "lineNumber": 4087
+        },
+        {
+          "caller": "hh_mm_ss",
+          "callee": "Duration::zero",
+          "lineNumber": 4088
+        },
+        {
+          "caller": "subseconds",
+          "callee": "subseconds",
+          "lineNumber": 4096
+        },
+        {
+          "caller": "to_duration",
+          "callee": "to_duration",
+          "lineNumber": 4101
+        },
+        {
+          "caller": "make_time",
+          "callee": "hh_mm_ss<std::chrono::duration<Rep, Period>>",
+          "lineNumber": 4204
+        },
+        {
+          "caller": "operator<<",
+          "callee": "date::floor<days>",
+          "lineNumber": 4216
+        },
+        {
+          "caller": "operator<<",
+          "callee": "year_month_day",
+          "lineNumber": 4217
+        },
+        {
+          "caller": "operator<<",
+          "callee": "make_time",
+          "lineNumber": 4217
+        },
+        {
+          "caller": "size_t size",
+          "callee": "string_literal",
+          "lineNumber": 4273
+        },
+        {
+          "caller": "size_t size",
+          "callee": "string_literal",
+          "lineNumber": 4280
+        },
+        {
+          "caller": "operator+",
+          "callee": "string_literal<CharT, 3>",
+          "lineNumber": 4343
+        },
+        {
+          "caller": "operator+",
+          "callee": "string_literal<CharT, 4>",
+          "lineNumber": 4352
+        },
+        {
+          "caller": "operator+",
+          "callee": "CT",
+          "lineNumber": 4367
+        },
+        {
+          "caller": "operator+",
+          "callee": "CT",
+          "lineNumber": 4369
+        },
+        {
+          "caller": "operator+",
+          "callee": "append",
+          "lineNumber": 4380
+        },
+        {
+          "caller": "operator+",
+          "callee": "data",
+          "lineNumber": 4380
+        },
+        {
+          "caller": "operator+",
+          "callee": "size",
+          "lineNumber": 4380
+        },
+        {
+          "caller": "enable_if_t\n<\n    N < 10,\n    string_literal<char, to_string_len(N)+1>\n>\nmsl",
+          "callee": "to_string_len",
+          "lineNumber": 4420
+        },
+        {
+          "caller": "enable_if_t\n<\n    N < 10,\n    string_literal<char, to_string_len(N)+1>\n>\nmsl",
+          "callee": "msl",
+          "lineNumber": 4424
+        },
+        {
+          "caller": "enable_if_t\n<\n    N < 10,\n    string_literal<char, to_string_len(N)+1>\n>\nmsl",
+          "callee": "char",
+          "lineNumber": 4424
+        },
+        {
+          "caller": "enable_if_t\n<\n    10 <= N,\n    string_literal<char, to_string_len(N)+1>\n>\nmsl",
+          "callee": "to_string_len",
+          "lineNumber": 4433
+        },
+        {
+          "caller": "enable_if_t\n<\n    10 <= N,\n    string_literal<char, to_string_len(N)+1>\n>\nmsl",
+          "callee": "msl<N/10>",
+          "lineNumber": 4437
+        },
+        {
+          "caller": "enable_if_t\n<\n    10 <= N,\n    string_literal<char, to_string_len(N)+1>\n>\nmsl",
+          "callee": "msl",
+          "lineNumber": 4437
+        },
+        {
+          "caller": "enable_if_t\n<\n    10 <= N,\n    string_literal<char, to_string_len(N)+1>\n>\nmsl",
+          "callee": "char",
+          "lineNumber": 4437
+        },
+        {
+          "caller": "to_string",
+          "callee": "std::to_string",
+          "lineNumber": 4477
+        },
+        {
+          "caller": "to_string",
+          "callee": "std::to_string",
+          "lineNumber": 4485
+        },
+        {
+          "caller": "to_string",
+          "callee": "std::basic_string<CharT>",
+          "lineNumber": 4486
+        },
+        {
+          "caller": "to_string",
+          "callee": "begin",
+          "lineNumber": 4486
+        },
+        {
+          "caller": "to_string",
+          "callee": "end",
+          "lineNumber": 4486
+        },
+        {
+          "caller": "msl",
+          "callee": "std::basic_string<CharT>",
+          "lineNumber": 4499
+        },
+        {
+          "caller": "msl",
+          "callee": "to_string<CharT>",
+          "lineNumber": 4499
+        },
+        {
+          "caller": "msl",
+          "callee": "to_string<CharT>",
+          "lineNumber": 4500
+        },
+        {
+          "caller": "msl",
+          "callee": "std::basic_string<CharT>",
+          "lineNumber": 4513
+        },
+        {
+          "caller": "msl",
+          "callee": "to_string<CharT>",
+          "lineNumber": 4513
+        },
+        {
+          "caller": "enable_if\n<\n    !std::is_same<CharT, char>::value,\n    string_literal<CharT, 2>\n>::type\nmsl",
+          "callee": "static_cast<unsigned char>",
+          "lineNumber": 4577
+        },
+        {
+          "caller": "get_units",
+          "callee": "msl<CharT>",
+          "lineNumber": 4684
+        },
+        {
+          "caller": "get_units",
+          "callee": "msl<CharT>",
+          "lineNumber": 4686
+        },
+        {
+          "caller": "from",
+          "callee": "std::to_string",
+          "lineNumber": 4736
+        },
+        {
+          "caller": "from",
+          "callee": "std::to_string",
+          "lineNumber": 4748
+        },
+        {
+          "caller": "from",
+          "callee": "std::basic_string<char, Traits>",
+          "lineNumber": 4749
+        },
+        {
+          "caller": "from",
+          "callee": "begin",
+          "lineNumber": 4749
+        },
+        {
+          "caller": "from",
+          "callee": "end",
+          "lineNumber": 4749
+        },
+        {
+          "caller": "from",
+          "callee": "std::to_wstring",
+          "lineNumber": 4761
+        },
+        {
+          "caller": "from",
+          "callee": "std::to_wstring",
+          "lineNumber": 4773
+        },
+        {
+          "caller": "from",
+          "callee": "std::basic_string<wchar_t, Traits>",
+          "lineNumber": 4774
+        },
+        {
+          "caller": "from",
+          "callee": "begin",
+          "lineNumber": 4774
+        },
+        {
+          "caller": "from",
+          "callee": "end",
+          "lineNumber": 4774
+        },
+        {
+          "caller": "extract_weekday",
+          "callee": "ok",
+          "lineNumber": 4823
+        },
+        {
+          "caller": "extract_weekday",
+          "callee": "ok",
+          "lineNumber": 4823
+        },
+        {
+          "caller": "extract_weekday",
+          "callee": "setstate",
+          "lineNumber": 4826
+        },
+        {
+          "caller": "extract_weekday",
+          "callee": "ok",
+          "lineNumber": 4830
+        },
+        {
+          "caller": "extract_weekday",
+          "callee": "sys_days",
+          "lineNumber": 4832
+        },
+        {
+          "caller": "extract_weekday",
+          "callee": "ok",
+          "lineNumber": 4833
+        },
+        {
+          "caller": "extract_weekday",
+          "callee": "setstate",
+          "lineNumber": 4836
+        },
+        {
+          "caller": "extract_weekday",
+          "callee": "static_cast<unsigned>",
+          "lineNumber": 4842
+        },
+        {
+          "caller": "extract_weekday",
+          "callee": "count",
+          "lineNumber": 4842
+        },
+        {
+          "caller": "extract_month",
+          "callee": "ok",
+          "lineNumber": 4849
+        },
+        {
+          "caller": "extract_month",
+          "callee": "month",
+          "lineNumber": 4849
+        },
+        {
+          "caller": "extract_month",
+          "callee": "setstate",
+          "lineNumber": 4852
+        },
+        {
+          "caller": "extract_month",
+          "callee": "static_cast<unsigned>",
+          "lineNumber": 4855
+        },
+        {
+          "caller": "extract_month",
+          "callee": "month",
+          "lineNumber": 4855
+        },
+        {
+          "caller": "weekday_names",
+          "callee": "std::make_pair",
+          "lineNumber": 4886
+        },
+        {
+          "caller": "month_names",
+          "callee": "std::make_pair",
+          "lineNumber": 4920
+        },
+        {
+          "caller": "ampm_names",
+          "callee": "std::make_pair",
+          "lineNumber": 4932
+        },
+        {
+          "caller": "scan_keyword",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 4939
+        },
+        {
+          "caller": "scan_keyword",
+          "callee": "std::distance",
+          "lineNumber": 4939
+        },
+        {
+          "caller": "scan_keyword",
+          "callee": "std::malloc",
+          "lineNumber": 4948
+        },
+        {
+          "caller": "scan_keyword",
+          "callee": "std::bad_alloc",
+          "lineNumber": 4950
+        },
+        {
+          "caller": "scan_keyword",
+          "callee": "reset",
+          "lineNumber": 4951
+        },
+        {
+          "caller": "scan_keyword",
+          "callee": "empty",
+          "lineNumber": 4959
+        },
+        {
+          "caller": "scan_keyword",
+          "callee": "peek",
+          "lineNumber": 4972
+        },
+        {
+          "caller": "scan_keyword",
+          "callee": "setstate",
+          "lineNumber": 4975
+        },
+        {
+          "caller": "scan_keyword",
+          "callee": "static_cast<char>",
+          "lineNumber": 4978
+        },
+        {
+          "caller": "scan_keyword",
+          "callee": "toupper",
+          "lineNumber": 4978
+        },
+        {
+          "caller": "scan_keyword",
+          "callee": "static_cast<unsigned char>",
+          "lineNumber": 4978
+        },
+        {
+          "caller": "scan_keyword",
+          "callee": "static_cast<char>",
+          "lineNumber": 4991
+        },
+        {
+          "caller": "scan_keyword",
+          "callee": "toupper",
+          "lineNumber": 4991
+        },
+        {
+          "caller": "scan_keyword",
+          "callee": "static_cast<unsigned char>",
+          "lineNumber": 4991
+        },
+        {
+          "caller": "scan_keyword",
+          "callee": "size",
+          "lineNumber": 4994
+        },
+        {
+          "caller": "scan_keyword",
+          "callee": "get",
+          "lineNumber": 5011
+        },
+        {
+          "caller": "scan_keyword",
+          "callee": "size",
+          "lineNumber": 5020
+        },
+        {
+          "caller": "scan_keyword",
+          "callee": "setstate",
+          "lineNumber": 5035
+        },
+        {
+          "caller": "format",
+          "callee": "to_stream",
+          "lineNumber": 6252
+        },
+        {
+          "caller": "format",
+          "callee": "std::declval<std::basic_ostream<CharT>&>",
+          "lineNumber": 6252
+        },
+        {
+          "caller": "format",
+          "callee": "exceptions",
+          "lineNumber": 6256
+        },
+        {
+          "caller": "format",
+          "callee": "imbue",
+          "lineNumber": 6257
+        },
+        {
+          "caller": "format",
+          "callee": "to_stream",
+          "lineNumber": 6258
+        },
+        {
+          "caller": "format",
+          "callee": "str",
+          "lineNumber": 6259
+        },
+        {
+          "caller": "format",
+          "callee": "to_stream",
+          "lineNumber": 6265
+        },
+        {
+          "caller": "format",
+          "callee": "std::declval<std::basic_ostream<CharT>&>",
+          "lineNumber": 6265
+        },
+        {
+          "caller": "format",
+          "callee": "exceptions",
+          "lineNumber": 6269
+        },
+        {
+          "caller": "format",
+          "callee": "to_stream",
+          "lineNumber": 6270
+        },
+        {
+          "caller": "format",
+          "callee": "str",
+          "lineNumber": 6271
+        },
+        {
+          "caller": "format",
+          "callee": "to_stream",
+          "lineNumber": 6278
+        },
+        {
+          "caller": "format",
+          "callee": "std::declval<std::basic_ostream<CharT, Traits>&>",
+          "lineNumber": 6278
+        },
+        {
+          "caller": "format",
+          "callee": "c_str",
+          "lineNumber": 6278
+        },
+        {
+          "caller": "format",
+          "callee": "exceptions",
+          "lineNumber": 6282
+        },
+        {
+          "caller": "format",
+          "callee": "imbue",
+          "lineNumber": 6283
+        },
+        {
+          "caller": "format",
+          "callee": "to_stream",
+          "lineNumber": 6284
+        },
+        {
+          "caller": "format",
+          "callee": "c_str",
+          "lineNumber": 6284
+        },
+        {
+          "caller": "format",
+          "callee": "str",
+          "lineNumber": 6285
+        },
+        {
+          "caller": "format",
+          "callee": "to_stream",
+          "lineNumber": 6291
+        },
+        {
+          "caller": "format",
+          "callee": "std::declval<std::basic_ostream<CharT, Traits>&>",
+          "lineNumber": 6291
+        },
+        {
+          "caller": "format",
+          "callee": "c_str",
+          "lineNumber": 6291
+        },
+        {
+          "caller": "format",
+          "callee": "exceptions",
+          "lineNumber": 6295
+        },
+        {
+          "caller": "format",
+          "callee": "to_stream",
+          "lineNumber": 6296
+        },
+        {
+          "caller": "format",
+          "callee": "c_str",
+          "lineNumber": 6296
+        },
+        {
+          "caller": "format",
+          "callee": "str",
+          "lineNumber": 6297
+        },
+        {
+          "caller": "read_char",
+          "callee": "get",
+          "lineNumber": 6309
+        },
+        {
+          "caller": "read_char",
+          "callee": "Traits::eq_int_type",
+          "lineNumber": 6310
+        },
+        {
+          "caller": "read_char",
+          "callee": "Traits::eof",
+          "lineNumber": 6310
+        },
+        {
+          "caller": "read_char",
+          "callee": "Traits::eq",
+          "lineNumber": 6311
+        },
+        {
+          "caller": "read_char",
+          "callee": "Traits::to_char_type",
+          "lineNumber": 6311
+        },
+        {
+          "caller": "read_char",
+          "callee": "setstate",
+          "lineNumber": 6314
+        },
+        {
+          "caller": "read_unsigned",
+          "callee": "peek",
+          "lineNumber": 6328
+        },
+        {
+          "caller": "read_unsigned",
+          "callee": "Traits::eq_int_type",
+          "lineNumber": 6329
+        },
+        {
+          "caller": "read_unsigned",
+          "callee": "Traits::eof",
+          "lineNumber": 6329
+        },
+        {
+          "caller": "read_unsigned",
+          "callee": "static_cast<char>",
+          "lineNumber": 6331
+        },
+        {
+          "caller": "read_unsigned",
+          "callee": "Traits::to_char_type",
+          "lineNumber": 6331
+        },
+        {
+          "caller": "read_unsigned",
+          "callee": "get",
+          "lineNumber": 6334
+        },
+        {
+          "caller": "read_unsigned",
+          "callee": "static_cast<unsigned>",
+          "lineNumber": 6336
+        },
+        {
+          "caller": "read_unsigned",
+          "callee": "setstate",
+          "lineNumber": 6341
+        },
+        {
+          "caller": "read_signed",
+          "callee": "peek",
+          "lineNumber": 6349
+        },
+        {
+          "caller": "read_signed",
+          "callee": "Traits::eq_int_type",
+          "lineNumber": 6350
+        },
+        {
+          "caller": "read_signed",
+          "callee": "Traits::eof",
+          "lineNumber": 6350
+        },
+        {
+          "caller": "read_signed",
+          "callee": "static_cast<char>",
+          "lineNumber": 6352
+        },
+        {
+          "caller": "read_signed",
+          "callee": "Traits::to_char_type",
+          "lineNumber": 6352
+        },
+        {
+          "caller": "read_signed",
+          "callee": "get",
+          "lineNumber": 6356
+        },
+        {
+          "caller": "read_signed",
+          "callee": "static_cast<int>",
+          "lineNumber": 6357
+        },
+        {
+          "caller": "read_signed",
+          "callee": "read_unsigned",
+          "lineNumber": 6357
+        },
+        {
+          "caller": "read_signed",
+          "callee": "std::max",
+          "lineNumber": 6357
+        },
+        {
+          "caller": "read_signed",
+          "callee": "fail",
+          "lineNumber": 6358
+        },
+        {
+          "caller": "read_signed",
+          "callee": "setstate",
+          "lineNumber": 6367
+        },
+        {
+          "caller": "read_long_double",
+          "callee": "Traits::to_int_type",
+          "lineNumber": 6383
+        },
+        {
+          "caller": "read_long_double",
+          "callee": "decimal_point",
+          "lineNumber": 6384
+        },
+        {
+          "caller": "read_long_double",
+          "callee": "std::use_facet<std::numpunct<CharT>>",
+          "lineNumber": 6384
+        },
+        {
+          "caller": "read_long_double",
+          "callee": "getloc",
+          "lineNumber": 6384
+        },
+        {
+          "caller": "read_long_double",
+          "callee": "peek",
+          "lineNumber": 6388
+        },
+        {
+          "caller": "read_long_double",
+          "callee": "Traits::eq_int_type",
+          "lineNumber": 6389
+        },
+        {
+          "caller": "read_long_double",
+          "callee": "Traits::eof",
+          "lineNumber": 6389
+        },
+        {
+          "caller": "read_long_double",
+          "callee": "Traits::eq_int_type",
+          "lineNumber": 6391
+        },
+        {
+          "caller": "read_long_double",
+          "callee": "Traits::eof",
+          "lineNumber": 6393
+        },
+        {
+          "caller": "read_long_double",
+          "callee": "static_cast<char>",
+          "lineNumber": 6398
+        },
+        {
+          "caller": "read_long_double",
+          "callee": "Traits::to_char_type",
+          "lineNumber": 6398
+        },
+        {
+          "caller": "read_long_double",
+          "callee": "static_cast<unsigned>",
+          "lineNumber": 6403
+        },
+        {
+          "caller": "read_long_double",
+          "callee": "static_cast<unsigned>",
+          "lineNumber": 6407
+        },
+        {
+          "caller": "read_long_double",
+          "callee": "get",
+          "lineNumber": 6411
+        },
+        {
+          "caller": "read_long_double",
+          "callee": "setstate",
+          "lineNumber": 6417
+        },
+        {
+          "caller": "read_long_double",
+          "callee": "static_cast<long double>",
+          "lineNumber": 6420
+        },
+        {
+          "caller": "read_long_double",
+          "callee": "static_cast<long double>",
+          "lineNumber": 6420
+        },
+        {
+          "caller": "read_long_double",
+          "callee": "std::pow",
+          "lineNumber": 6420
+        },
+        {
+          "caller": "read",
+          "callee": "peek",
+          "lineNumber": 6477
+        },
+        {
+          "caller": "read",
+          "callee": "Traits::eq_int_type",
+          "lineNumber": 6478
+        },
+        {
+          "caller": "read",
+          "callee": "Traits::eof",
+          "lineNumber": 6478
+        },
+        {
+          "caller": "read",
+          "callee": "setstate",
+          "lineNumber": 6480
+        },
+        {
+          "caller": "read",
+          "callee": "Traits::eq",
+          "lineNumber": 6483
+        },
+        {
+          "caller": "read",
+          "callee": "Traits::to_char_type",
+          "lineNumber": 6483
+        },
+        {
+          "caller": "read",
+          "callee": "setstate",
+          "lineNumber": 6485
+        },
+        {
+          "caller": "read",
+          "callee": "get",
+          "lineNumber": 6488
+        },
+        {
+          "caller": "read",
+          "callee": "read",
+          "lineNumber": 6490
+        },
+        {
+          "caller": "read",
+          "callee": "std::forward<Args>",
+          "lineNumber": 6490
+        },
+        {
+          "caller": "read",
+          "callee": "read_signed",
+          "lineNumber": 6497
+        },
+        {
+          "caller": "read",
+          "callee": "fail",
+          "lineNumber": 6498
+        },
+        {
+          "caller": "read",
+          "callee": "read",
+          "lineNumber": 6501
+        },
+        {
+          "caller": "read",
+          "callee": "std::forward<Args>",
+          "lineNumber": 6501
+        },
+        {
+          "caller": "read",
+          "callee": "read_unsigned",
+          "lineNumber": 6508
+        },
+        {
+          "caller": "read",
+          "callee": "fail",
+          "lineNumber": 6509
+        },
+        {
+          "caller": "read",
+          "callee": "static_cast<int>",
+          "lineNumber": 6511
+        },
+        {
+          "caller": "read",
+          "callee": "read",
+          "lineNumber": 6512
+        },
+        {
+          "caller": "read",
+          "callee": "std::forward<Args>",
+          "lineNumber": 6512
+        },
+        {
+          "caller": "read",
+          "callee": "static_cast<unsigned>",
+          "lineNumber": 6521
+        },
+        {
+          "caller": "read",
+          "callee": "static_cast<CharT>",
+          "lineNumber": 6526
+        },
+        {
+          "caller": "read",
+          "callee": "CharT",
+          "lineNumber": 6526
+        },
+        {
+          "caller": "read",
+          "callee": "std::reverse",
+          "lineNumber": 6529
+        },
+        {
+          "caller": "read",
+          "callee": "rdstate",
+          "lineNumber": 6530
+        },
+        {
+          "caller": "read",
+          "callee": "read",
+          "lineNumber": 6531
+        },
+        {
+          "caller": "read",
+          "callee": "rdstate",
+          "lineNumber": 6533
+        },
+        {
+          "caller": "read",
+          "callee": "read",
+          "lineNumber": 6534
+        },
+        {
+          "caller": "read",
+          "callee": "std::forward<Args>",
+          "lineNumber": 6534
+        },
+        {
+          "caller": "read",
+          "callee": "read_long_double",
+          "lineNumber": 6541
+        },
+        {
+          "caller": "read",
+          "callee": "fail",
+          "lineNumber": 6542
+        },
+        {
+          "caller": "read",
+          "callee": "read",
+          "lineNumber": 6545
+        },
+        {
+          "caller": "read",
+          "callee": "std::forward<Args>",
+          "lineNumber": 6545
+        },
+        {
+          "caller": "checked_set",
+          "callee": "fail",
+          "lineNumber": 6553
+        },
+        {
+          "caller": "checked_set",
+          "callee": "std::move",
+          "lineNumber": 6556
+        },
+        {
+          "caller": "checked_set",
+          "callee": "setstate",
+          "lineNumber": 6558
+        },
+        {
+          "caller": "parse_manip",
+          "callee": "std::move",
+          "lineNumber": 8084
+        },
+        {
+          "caller": "parse",
+          "callee": "date::from_stream",
+          "lineNumber": 8123
+        },
+        {
+          "caller": "parse",
+          "callee": "std::declval<std::basic_istream<CharT, Traits>&>",
+          "lineNumber": 8123
+        },
+        {
+          "caller": "parse",
+          "callee": "c_str",
+          "lineNumber": 8124
+        },
+        {
+          "caller": "parse",
+          "callee": "date::from_stream",
+          "lineNumber": 8135
+        },
+        {
+          "caller": "parse",
+          "callee": "std::declval<std::basic_istream<CharT, Traits>&>",
+          "lineNumber": 8135
+        },
+        {
+          "caller": "parse",
+          "callee": "c_str",
+          "lineNumber": 8136
+        },
+        {
+          "caller": "parse",
+          "callee": "date::from_stream",
+          "lineNumber": 8147
+        },
+        {
+          "caller": "parse",
+          "callee": "std::declval<std::basic_istream<CharT, Traits>&>",
+          "lineNumber": 8147
+        },
+        {
+          "caller": "parse",
+          "callee": "c_str",
+          "lineNumber": 8148
+        },
+        {
+          "caller": "parse",
+          "callee": "std::declval<std::basic_string<CharT, Traits, Alloc>*>",
+          "lineNumber": 8149
+        },
+        {
+          "caller": "parse",
+          "callee": "date::from_stream",
+          "lineNumber": 8161
+        },
+        {
+          "caller": "parse",
+          "callee": "std::declval<std::basic_istream<CharT, Traits>&>",
+          "lineNumber": 8161
+        },
+        {
+          "caller": "parse",
+          "callee": "c_str",
+          "lineNumber": 8162
+        },
+        {
+          "caller": "parse",
+          "callee": "date::from_stream",
+          "lineNumber": 8174
+        },
+        {
+          "caller": "parse",
+          "callee": "std::declval<std::basic_istream<CharT>&>",
+          "lineNumber": 8174
+        },
+        {
+          "caller": "parse",
+          "callee": "date::from_stream",
+          "lineNumber": 8184
+        },
+        {
+          "caller": "parse",
+          "callee": "std::declval<std::basic_istream<CharT, Traits>&>",
+          "lineNumber": 8184
+        },
+        {
+          "caller": "parse",
+          "callee": "date::from_stream",
+          "lineNumber": 8195
+        },
+        {
+          "caller": "parse",
+          "callee": "std::declval<std::basic_istream<CharT>&>",
+          "lineNumber": 8195
+        },
+        {
+          "caller": "parse",
+          "callee": "std::declval<std::basic_string<CharT>*>",
+          "lineNumber": 8196
+        },
+        {
+          "caller": "parse",
+          "callee": "date::from_stream",
+          "lineNumber": 8207
+        },
+        {
+          "caller": "parse",
+          "callee": "std::declval<std::basic_istream<CharT, Traits>&>",
+          "lineNumber": 8207
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/vendored/datetime/ios.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 53,
+      "nonEmptyLines": 47,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/vendored/datetime/tz_private.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 319,
+      "nonEmptyLines": 262,
+      "functions": [
+        {
+          "name": "MonthDayTime",
+          "startLine": 106,
+          "endLine": 106,
+          "params": []
+        },
+        {
+          "name": "zone",
+          "startLine": 112,
+          "endLine": 112,
+          "params": []
+        },
+        {
+          "name": "operator!=",
+          "startLine": 197,
+          "endLine": 197,
+          "params": [
+            "x",
+            "y"
+          ]
+        },
+        {
+          "name": "operator>",
+          "startLine": 198,
+          "endLine": 198,
+          "params": [
+            "x",
+            "y"
+          ]
+        },
+        {
+          "name": "operator<=",
+          "startLine": 199,
+          "endLine": 199,
+          "params": [
+            "x",
+            "y"
+          ]
+        },
+        {
+          "name": "operator>=",
+          "startLine": 200,
+          "endLine": 200,
+          "params": [
+            "x",
+            "y"
+          ]
+        },
+        {
+          "name": "operator!=",
+          "startLine": 202,
+          "endLine": 202,
+          "params": [
+            "x",
+            "y"
+          ]
+        },
+        {
+          "name": "operator>",
+          "startLine": 203,
+          "endLine": 203,
+          "params": [
+            "x",
+            "y"
+          ]
+        },
+        {
+          "name": "operator<=",
+          "startLine": 204,
+          "endLine": 204,
+          "params": [
+            "x",
+            "y"
+          ]
+        },
+        {
+          "name": "operator>=",
+          "startLine": 205,
+          "endLine": 205,
+          "params": [
+            "x",
+            "y"
+          ]
+        },
+        {
+          "name": "operator!=",
+          "startLine": 207,
+          "endLine": 207,
+          "params": [
+            "x",
+            "y"
+          ]
+        },
+        {
+          "name": "operator>",
+          "startLine": 208,
+          "endLine": 208,
+          "params": [
+            "x",
+            "y"
+          ]
+        },
+        {
+          "name": "operator<=",
+          "startLine": 209,
+          "endLine": 209,
+          "params": [
+            "x",
+            "y"
+          ]
+        },
+        {
+          "name": "operator>=",
+          "startLine": 210,
+          "endLine": 210,
+          "params": [
+            "x",
+            "y"
+          ]
+        },
+        {
+          "name": "operator!=",
+          "startLine": 212,
+          "endLine": 212,
+          "params": [
+            "x",
+            "y"
+          ]
+        },
+        {
+          "name": "operator>",
+          "startLine": 213,
+          "endLine": 213,
+          "params": [
+            "x",
+            "y"
+          ]
+        },
+        {
+          "name": "operator<=",
+          "startLine": 214,
+          "endLine": 214,
+          "params": [
+            "x",
+            "y"
+          ]
+        },
+        {
+          "name": "operator>=",
+          "startLine": 215,
+          "endLine": 215,
+          "params": [
+            "x",
+            "y"
+          ]
+        },
+        {
+          "name": "operator!=",
+          "startLine": 217,
+          "endLine": 217,
+          "params": [
+            "x",
+            "y"
+          ]
+        },
+        {
+          "name": "operator>",
+          "startLine": 218,
+          "endLine": 218,
+          "params": [
+            "x",
+            "y"
+          ]
+        },
+        {
+          "name": "operator<=",
+          "startLine": 219,
+          "endLine": 219,
+          "params": [
+            "x",
+            "y"
+          ]
+        },
+        {
+          "name": "operator>=",
+          "startLine": 220,
+          "endLine": 220,
+          "params": [
+            "x",
+            "y"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "MonthDayTime",
+          "startLine": 50,
+          "endLine": 50,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "zonelet",
+          "startLine": 222,
+          "endLine": 310,
+          "methods": [],
+          "properties": [
+            "gmtoff_",
+            "tag_"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "MonthDayTime",
+          "line": 50,
+          "isDefault": false
+        },
+        {
+          "name": "MonthDayTime",
+          "line": 106,
+          "isDefault": false
+        },
+        {
+          "name": "zone",
+          "line": 112,
+          "isDefault": false
+        },
+        {
+          "name": "operator!=",
+          "line": 197,
+          "isDefault": false
+        },
+        {
+          "name": "operator>",
+          "line": 198,
+          "isDefault": false
+        },
+        {
+          "name": "operator<=",
+          "line": 199,
+          "isDefault": false
+        },
+        {
+          "name": "operator>=",
+          "line": 200,
+          "isDefault": false
+        },
+        {
+          "name": "operator!=",
+          "line": 202,
+          "isDefault": false
+        },
+        {
+          "name": "operator>",
+          "line": 203,
+          "isDefault": false
+        },
+        {
+          "name": "operator<=",
+          "line": 204,
+          "isDefault": false
+        },
+        {
+          "name": "operator>=",
+          "line": 205,
+          "isDefault": false
+        },
+        {
+          "name": "operator!=",
+          "line": 207,
+          "isDefault": false
+        },
+        {
+          "name": "operator>",
+          "line": 208,
+          "isDefault": false
+        },
+        {
+          "name": "operator<=",
+          "line": 209,
+          "isDefault": false
+        },
+        {
+          "name": "operator>=",
+          "line": 210,
+          "isDefault": false
+        },
+        {
+          "name": "operator!=",
+          "line": 212,
+          "isDefault": false
+        },
+        {
+          "name": "operator>",
+          "line": 213,
+          "isDefault": false
+        },
+        {
+          "name": "operator<=",
+          "line": 214,
+          "isDefault": false
+        },
+        {
+          "name": "operator>=",
+          "line": 215,
+          "isDefault": false
+        },
+        {
+          "name": "operator!=",
+          "line": 217,
+          "isDefault": false
+        },
+        {
+          "name": "operator>",
+          "line": 218,
+          "isDefault": false
+        },
+        {
+          "name": "operator<=",
+          "line": 219,
+          "isDefault": false
+        },
+        {
+          "name": "operator>=",
+          "line": 220,
+          "isDefault": false
+        },
+        {
+          "name": "zonelet",
+          "line": 222,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "U",
+          "callee": "date::month",
+          "lineNumber": 90
+        },
+        {
+          "caller": "U",
+          "callee": "date::weekday_last",
+          "lineNumber": 90
+        },
+        {
+          "caller": "U",
+          "callee": "date::weekday",
+          "lineNumber": 90
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 24,
+        "functionCount": 22,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/vendored/datetime/tz.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 2801,
+      "nonEmptyLines": 2427,
+      "functions": [
+        {
+          "name": "operator==",
+          "startLine": 932,
+          "endLine": 932,
+          "params": [
+            "x",
+            "y"
+          ]
+        },
+        {
+          "name": "operator<",
+          "startLine": 933,
+          "endLine": 933,
+          "params": [
+            "x",
+            "y"
+          ]
+        },
+        {
+          "name": "operator!=",
+          "startLine": 935,
+          "endLine": 935,
+          "params": [
+            "x",
+            "y"
+          ]
+        },
+        {
+          "name": "operator>",
+          "startLine": 936,
+          "endLine": 936,
+          "params": [
+            "x",
+            "y"
+          ]
+        },
+        {
+          "name": "operator<=",
+          "startLine": 937,
+          "endLine": 937,
+          "params": [
+            "x",
+            "y"
+          ]
+        },
+        {
+          "name": "operator>=",
+          "startLine": 938,
+          "endLine": 938,
+          "params": [
+            "x",
+            "y"
+          ]
+        },
+        {
+          "name": "operator!=",
+          "startLine": 1041,
+          "endLine": 1041,
+          "params": [
+            "x",
+            "y"
+          ]
+        },
+        {
+          "name": "operator>",
+          "startLine": 1042,
+          "endLine": 1042,
+          "params": [
+            "x",
+            "y"
+          ]
+        },
+        {
+          "name": "operator<=",
+          "startLine": 1043,
+          "endLine": 1043,
+          "params": [
+            "x",
+            "y"
+          ]
+        },
+        {
+          "name": "operator>=",
+          "startLine": 1044,
+          "endLine": 1044,
+          "params": [
+            "x",
+            "y"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "undocumented",
+          "startLine": 152,
+          "endLine": 152,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "sys_info",
+          "startLine": 164,
+          "endLine": 171,
+          "methods": [],
+          "properties": [
+            "begin",
+            "end",
+            "offset",
+            "save",
+            "abbrev"
+          ]
+        },
+        {
+          "name": "local_info",
+          "startLine": 185,
+          "endLine": 190,
+          "methods": [],
+          "properties": [
+            "result",
+            "first",
+            "second"
+          ]
+        },
+        {
+          "name": "nonexistent_local_time",
+          "startLine": 209,
+          "endLine": 221,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "ambiguous_local_time",
+          "startLine": 247,
+          "endLine": 259,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "time_zone",
+          "startLine": 282,
+          "endLine": 282,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "undocumented",
+          "line": 152,
+          "isDefault": false
+        },
+        {
+          "name": "sys_info",
+          "line": 164,
+          "isDefault": false
+        },
+        {
+          "name": "local_info",
+          "line": 185,
+          "isDefault": false
+        },
+        {
+          "name": "nonexistent_local_time",
+          "line": 209,
+          "isDefault": false
+        },
+        {
+          "name": "ambiguous_local_time",
+          "line": 247,
+          "isDefault": false
+        },
+        {
+          "name": "time_zone",
+          "line": 282,
+          "isDefault": false
+        },
+        {
+          "name": "operator==",
+          "line": 932,
+          "isDefault": false
+        },
+        {
+          "name": "operator<",
+          "line": 933,
+          "isDefault": false
+        },
+        {
+          "name": "operator!=",
+          "line": 935,
+          "isDefault": false
+        },
+        {
+          "name": "operator>",
+          "line": 936,
+          "isDefault": false
+        },
+        {
+          "name": "operator<=",
+          "line": 937,
+          "isDefault": false
+        },
+        {
+          "name": "operator>=",
+          "line": 938,
+          "isDefault": false
+        },
+        {
+          "name": "operator!=",
+          "line": 1041,
+          "isDefault": false
+        },
+        {
+          "name": "operator>",
+          "line": 1042,
+          "isDefault": false
+        },
+        {
+          "name": "operator<=",
+          "line": 1043,
+          "isDefault": false
+        },
+        {
+          "name": "operator>=",
+          "line": 1044,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "nonexistent_local_time",
+          "callee": "make_msg",
+          "lineNumber": 227
+        },
+        {
+          "caller": "make_msg",
+          "callee": "assert",
+          "lineNumber": 235
+        },
+        {
+          "caller": "make_msg",
+          "callee": "time_since_epoch",
+          "lineNumber": 238
+        },
+        {
+          "caller": "make_msg",
+          "callee": "time_since_epoch",
+          "lineNumber": 240
+        },
+        {
+          "caller": "make_msg",
+          "callee": "str",
+          "lineNumber": 244
+        },
+        {
+          "caller": "ambiguous_local_time",
+          "callee": "make_msg",
+          "lineNumber": 264
+        },
+        {
+          "caller": "make_msg",
+          "callee": "assert",
+          "lineNumber": 272
+        },
+        {
+          "caller": "make_msg",
+          "callee": "str",
+          "lineNumber": 279
+        },
+        {
+          "caller": "time_zone",
+          "callee": "std::move",
+          "lineNumber": 866
+        },
+        {
+          "caller": "time_zone",
+          "callee": "std::move",
+          "lineNumber": 867
+        },
+        {
+          "caller": "time_zone",
+          "callee": "std::move",
+          "lineNumber": 868
+        },
+        {
+          "caller": "get_info",
+          "callee": "get_info_impl",
+          "lineNumber": 895
+        },
+        {
+          "caller": "get_info",
+          "callee": "date::floor<std::chrono::seconds>",
+          "lineNumber": 895
+        },
+        {
+          "caller": "get_info",
+          "callee": "get_info_impl",
+          "lineNumber": 903
+        },
+        {
+          "caller": "get_info",
+          "callee": "date::floor<std::chrono::seconds>",
+          "lineNumber": 903
+        },
+        {
+          "caller": "to_sys",
+          "callee": "to_sys_impl",
+          "lineNumber": 911
+        },
+        {
+          "caller": "to_sys",
+          "callee": "to_sys_impl",
+          "lineNumber": 919
+        },
+        {
+          "caller": "to_local",
+          "callee": "get_info",
+          "lineNumber": 928
+        },
+        {
+          "caller": "to_local",
+          "callee": "time_since_epoch",
+          "lineNumber": 929
+        },
+        {
+          "caller": "to_sys_impl",
+          "callee": "get_info",
+          "lineNumber": 944
+        },
+        {
+          "caller": "to_sys_impl",
+          "callee": "time_since_epoch",
+          "lineNumber": 952
+        },
+        {
+          "caller": "to_sys_impl",
+          "callee": "time_since_epoch",
+          "lineNumber": 954
+        },
+        {
+          "caller": "to_sys_impl",
+          "callee": "get_info",
+          "lineNumber": 961
+        },
+        {
+          "caller": "to_sys_impl",
+          "callee": "nonexistent_local_time",
+          "lineNumber": 963
+        },
+        {
+          "caller": "to_sys_impl",
+          "callee": "ambiguous_local_time",
+          "lineNumber": 965
+        },
+        {
+          "caller": "to_sys_impl",
+          "callee": "time_since_epoch",
+          "lineNumber": 966
+        },
+        {
+          "caller": "tzdb",
+          "callee": "std::move",
+          "lineNumber": 1180
+        },
+        {
+          "caller": "tzdb",
+          "callee": "std::move",
+          "lineNumber": 1181
+        },
+        {
+          "caller": "tzdb",
+          "callee": "std::move",
+          "lineNumber": 1182
+        },
+        {
+          "caller": "tzdb",
+          "callee": "std::move",
+          "lineNumber": 1183
+        },
+        {
+          "caller": "tzdb",
+          "callee": "std::move",
+          "lineNumber": 1184
+        },
+        {
+          "caller": "tzdb",
+          "callee": "std::move",
+          "lineNumber": 1185
+        },
+        {
+          "caller": "zoned_time",
+          "callee": "check",
+          "lineNumber": 1363
+        },
+        {
+          "caller": "zoned_time",
+          "callee": "zoned_traits<TimeZonePtr>::default_zone",
+          "lineNumber": 1363
+        },
+        {
+          "caller": "zoned_time",
+          "callee": "check",
+          "lineNumber": 1372
+        },
+        {
+          "caller": "zoned_time",
+          "callee": "zoned_traits<TimeZonePtr>::default_zone",
+          "lineNumber": 1372
+        },
+        {
+          "caller": "zoned_time",
+          "callee": "check",
+          "lineNumber": 1379
+        },
+        {
+          "caller": "zoned_time",
+          "callee": "std::move",
+          "lineNumber": 1379
+        },
+        {
+          "caller": "zoned_time",
+          "callee": "zoned_traits<TimeZonePtr>::locate_zone",
+          "lineNumber": 1388
+        },
+        {
+          "caller": "zoned_time",
+          "callee": "zoned_traits<TimeZonePtr>::locate_zone",
+          "lineNumber": 1399
+        },
+        {
+          "caller": "zoned_time",
+          "callee": "check",
+          "lineNumber": 1415
+        },
+        {
+          "caller": "zoned_time",
+          "callee": "std::move",
+          "lineNumber": 1415
+        },
+        {
+          "caller": "zoned_time",
+          "callee": "check",
+          "lineNumber": 1425
+        },
+        {
+          "caller": "zoned_time",
+          "callee": "std::move",
+          "lineNumber": 1425
+        },
+        {
+          "caller": "zoned_time",
+          "callee": "to_sys",
+          "lineNumber": 1426
+        },
+        {
+          "caller": "zoned_time",
+          "callee": "check",
+          "lineNumber": 1436
+        },
+        {
+          "caller": "zoned_time",
+          "callee": "std::move",
+          "lineNumber": 1436
+        },
+        {
+          "caller": "zoned_time",
+          "callee": "to_sys",
+          "lineNumber": 1437
+        },
+        {
+          "caller": "zoned_time",
+          "callee": "check",
+          "lineNumber": 1445
+        },
+        {
+          "caller": "zoned_time",
+          "callee": "std::move",
+          "lineNumber": 1445
+        },
+        {
+          "caller": "zoned_time",
+          "callee": "std::move",
+          "lineNumber": 1454
+        },
+        {
+          "caller": "zoned_time",
+          "callee": "zoned_traits<TimeZonePtr>::locate_zone",
+          "lineNumber": 1464
+        },
+        {
+          "caller": "zoned_time",
+          "callee": "zoned_traits<TimeZonePtr>::locate_zone",
+          "lineNumber": 1472
+        },
+        {
+          "caller": "zoned_time",
+          "callee": "zoned_traits<TimeZonePtr>::locate_zone",
+          "lineNumber": 1480
+        },
+        {
+          "caller": "zoned_time",
+          "callee": "zoned_traits<TimeZonePtr>::locate_zone",
+          "lineNumber": 1488
+        },
+        {
+          "caller": "zoned_time",
+          "callee": "zoned_traits<TimeZonePtr>::locate_zone",
+          "lineNumber": 1497
+        },
+        {
+          "caller": "zoned_time",
+          "callee": "zoned_traits<TimeZonePtr>::locate_zone",
+          "lineNumber": 1509
+        },
+        {
+          "caller": "zoned_time",
+          "callee": "zoned_traits<TimeZonePtr>::locate_zone",
+          "lineNumber": 1519
+        },
+        {
+          "caller": "zoned_time",
+          "callee": "zoned_traits<TimeZonePtr>::locate_zone",
+          "lineNumber": 1529
+        },
+        {
+          "caller": "zoned_time",
+          "callee": "zoned_traits<TimeZonePtr>::locate_zone",
+          "lineNumber": 1539
+        },
+        {
+          "caller": "zoned_time",
+          "callee": "zoned_traits<TimeZonePtr>::locate_zone",
+          "lineNumber": 1549
+        },
+        {
+          "caller": "zoned_time",
+          "callee": "zoned_traits<TimeZonePtr>::locate_zone",
+          "lineNumber": 1559
+        },
+        {
+          "caller": "zoned_time",
+          "callee": "zoned_traits<TimeZonePtr>::locate_zone",
+          "lineNumber": 1571
+        },
+        {
+          "caller": "zoned_time",
+          "callee": "zoned_traits<TimeZonePtr>::locate_zone",
+          "lineNumber": 1583
+        },
+        {
+          "caller": "zoned_time",
+          "callee": "zoned_traits<TimeZonePtr>::locate_zone",
+          "lineNumber": 1596
+        },
+        {
+          "caller": "zoned_time",
+          "callee": "zoned_traits<TimeZonePtr>::locate_zone",
+          "lineNumber": 1609
+        },
+        {
+          "caller": "local_time<typename zoned_time<Duration, TimeZonePtr>::duration>",
+          "callee": "get_local_time",
+          "lineNumber": 1636
+        },
+        {
+          "caller": "sys_time<typename zoned_time<Duration, TimeZonePtr>::duration>",
+          "callee": "get_sys_time",
+          "lineNumber": 1643
+        },
+        {
+          "caller": "get_local_time",
+          "callee": "to_local",
+          "lineNumber": 1659
+        },
+        {
+          "caller": "get_info",
+          "callee": "get_info",
+          "lineNumber": 1675
+        },
+        {
+          "caller": "make_zoned",
+          "callee": "zoned_time<std::chrono::seconds>",
+          "lineNumber": 1684
+        },
+        {
+          "caller": "make_zoned",
+          "callee": "zoned_time<typename std::common_type<Duration, std::chrono::seconds>::type>",
+          "lineNumber": 1692
+        },
+        {
+          "caller": "make_zoned",
+          "callee": "zoned_time<std::chrono::seconds, TimeZonePtr>",
+          "lineNumber": 1715
+        },
+        {
+          "caller": "make_zoned",
+          "callee": "std::move",
+          "lineNumber": 1715
+        },
+        {
+          "caller": "make_zoned",
+          "callee": "zoned_seconds",
+          "lineNumber": 1722
+        },
+        {
+          "caller": "make_zoned",
+          "callee": "zoned_time<typename std::common_type<Duration, std::chrono::seconds>::type,\n                      TimeZonePtr>",
+          "lineNumber": 1739
+        },
+        {
+          "caller": "make_zoned",
+          "callee": "std::move",
+          "lineNumber": 1740
+        },
+        {
+          "caller": "make_zoned",
+          "callee": "zoned_time<typename std::common_type<Duration, std::chrono::seconds>::type,\n                      TimeZonePtr>",
+          "lineNumber": 1757
+        },
+        {
+          "caller": "make_zoned",
+          "callee": "std::move",
+          "lineNumber": 1758
+        },
+        {
+          "caller": "make_zoned",
+          "callee": "zoned_time<typename std::common_type<Duration,\n                      std::chrono::seconds>::type>",
+          "lineNumber": 1766
+        },
+        {
+          "caller": "make_zoned",
+          "callee": "zoned_time<typename std::common_type<Duration,\n                      std::chrono::seconds>::type>",
+          "lineNumber": 1775
+        },
+        {
+          "caller": "make_zoned",
+          "callee": "zoned_time<Duration, TimeZonePtr>",
+          "lineNumber": 1784
+        },
+        {
+          "caller": "make_zoned",
+          "callee": "std::move",
+          "lineNumber": 1784
+        },
+        {
+          "caller": "make_zoned",
+          "callee": "zoned_time<Duration, TimeZonePtr>",
+          "lineNumber": 1792
+        },
+        {
+          "caller": "make_zoned",
+          "callee": "zoned_time<Duration, TimeZonePtr>",
+          "lineNumber": 1800
+        },
+        {
+          "caller": "make_zoned",
+          "callee": "std::move",
+          "lineNumber": 1800
+        },
+        {
+          "caller": "make_zoned",
+          "callee": "zoned_time<Duration, TimeZonePtr>",
+          "lineNumber": 1808
+        },
+        {
+          "caller": "make_zoned",
+          "callee": "zoned_time<typename std::common_type<Duration, std::chrono::seconds>::type,\n                      TimeZonePtr>",
+          "lineNumber": 1825
+        },
+        {
+          "caller": "make_zoned",
+          "callee": "std::move",
+          "lineNumber": 1826
+        },
+        {
+          "caller": "make_zoned",
+          "callee": "zoned_time<typename std::common_type<Duration,\n                      std::chrono::seconds>::type>",
+          "lineNumber": 1834
+        },
+        {
+          "caller": "from_sys",
+          "callee": "get_tzdb",
+          "lineNumber": 1903
+        },
+        {
+          "caller": "from_sys",
+          "callee": "std::upper_bound",
+          "lineNumber": 1904
+        },
+        {
+          "caller": "from_sys",
+          "callee": "begin",
+          "lineNumber": 1904
+        },
+        {
+          "caller": "from_sys",
+          "callee": "end",
+          "lineNumber": 1904
+        },
+        {
+          "caller": "from_sys",
+          "callee": "time_since_epoch",
+          "lineNumber": 1905
+        },
+        {
+          "caller": "from_sys",
+          "callee": "begin",
+          "lineNumber": 1905
+        },
+        {
+          "caller": "is_leap_second",
+          "callee": "get_tzdb",
+          "lineNumber": 1917
+        },
+        {
+          "caller": "is_leap_second",
+          "callee": "time_since_epoch",
+          "lineNumber": 1918
+        },
+        {
+          "caller": "is_leap_second",
+          "callee": "std::upper_bound",
+          "lineNumber": 1919
+        },
+        {
+          "caller": "is_leap_second",
+          "callee": "begin",
+          "lineNumber": 1919
+        },
+        {
+          "caller": "is_leap_second",
+          "callee": "end",
+          "lineNumber": 1919
+        },
+        {
+          "caller": "is_leap_second",
+          "callee": "begin",
+          "lineNumber": 1920
+        },
+        {
+          "caller": "is_leap_second",
+          "callee": "begin",
+          "lineNumber": 1923
+        },
+        {
+          "caller": "is_leap_second",
+          "callee": "date",
+          "lineNumber": 1927
+        },
+        {
+          "caller": "get_leap_second_info",
+          "callee": "is_leap_second",
+          "lineNumber": 1946
+        },
+        {
+          "caller": "to_sys",
+          "callee": "is_leap_second",
+          "lineNumber": 1956
+        },
+        {
+          "caller": "to_sys",
+          "callee": "time_since_epoch",
+          "lineNumber": 1957
+        },
+        {
+          "caller": "to_sys",
+          "callee": "floor<seconds>",
+          "lineNumber": 1959
+        },
+        {
+          "caller": "from_local",
+          "callee": "from_sys",
+          "lineNumber": 1974
+        },
+        {
+          "caller": "from_local",
+          "callee": "time_since_epoch",
+          "lineNumber": 1974
+        },
+        {
+          "caller": "to_local",
+          "callee": "time_since_epoch",
+          "lineNumber": 1982
+        },
+        {
+          "caller": "to_local",
+          "callee": "to_sys",
+          "lineNumber": 1982
+        },
+        {
+          "caller": "to_utc",
+          "callee": "time_since_epoch",
+          "lineNumber": 2092
+        },
+        {
+          "caller": "to_utc",
+          "callee": "sys_days",
+          "lineNumber": 2093
+        },
+        {
+          "caller": "to_utc",
+          "callee": "sys_days",
+          "lineNumber": 2093
+        },
+        {
+          "caller": "from_utc",
+          "callee": "time_since_epoch",
+          "lineNumber": 2103
+        },
+        {
+          "caller": "from_utc",
+          "callee": "sys_days",
+          "lineNumber": 2104
+        },
+        {
+          "caller": "from_utc",
+          "callee": "sys_days",
+          "lineNumber": 2104
+        },
+        {
+          "caller": "to_local",
+          "callee": "time_since_epoch",
+          "lineNumber": 2120
+        },
+        {
+          "caller": "to_local",
+          "callee": "local_days",
+          "lineNumber": 2121
+        },
+        {
+          "caller": "to_local",
+          "callee": "local_days",
+          "lineNumber": 2121
+        },
+        {
+          "caller": "from_local",
+          "callee": "time_since_epoch",
+          "lineNumber": 2130
+        },
+        {
+          "caller": "from_local",
+          "callee": "local_days",
+          "lineNumber": 2131
+        },
+        {
+          "caller": "from_local",
+          "callee": "local_days",
+          "lineNumber": 2131
+        },
+        {
+          "caller": "to_utc",
+          "callee": "time_since_epoch",
+          "lineNumber": 2212
+        },
+        {
+          "caller": "to_utc",
+          "callee": "sys_days",
+          "lineNumber": 2213
+        },
+        {
+          "caller": "to_utc",
+          "callee": "sys_days",
+          "lineNumber": 2213
+        },
+        {
+          "caller": "from_utc",
+          "callee": "time_since_epoch",
+          "lineNumber": 2224
+        },
+        {
+          "caller": "from_utc",
+          "callee": "sys_days",
+          "lineNumber": 2225
+        },
+        {
+          "caller": "from_utc",
+          "callee": "sys_days",
+          "lineNumber": 2225
+        },
+        {
+          "caller": "to_local",
+          "callee": "time_since_epoch",
+          "lineNumber": 2242
+        },
+        {
+          "caller": "to_local",
+          "callee": "local_days",
+          "lineNumber": 2243
+        },
+        {
+          "caller": "to_local",
+          "callee": "local_days",
+          "lineNumber": 2243
+        },
+        {
+          "caller": "from_local",
+          "callee": "time_since_epoch",
+          "lineNumber": 2252
+        },
+        {
+          "caller": "from_local",
+          "callee": "local_days",
+          "lineNumber": 2253
+        },
+        {
+          "caller": "from_local",
+          "callee": "local_days",
+          "lineNumber": 2253
+        },
+        {
+          "caller": "operator()",
+          "callee": "utc_clock::from_sys",
+          "lineNumber": 2338
+        },
+        {
+          "caller": "operator()",
+          "callee": "utc_clock::to_sys",
+          "lineNumber": 2349
+        },
+        {
+          "caller": "operator()",
+          "callee": "time_since_epoch",
+          "lineNumber": 2361
+        },
+        {
+          "caller": "operator()",
+          "callee": "time_since_epoch",
+          "lineNumber": 2373
+        },
+        {
+          "caller": "operator()",
+          "callee": "utc_clock::from_local",
+          "lineNumber": 2384
+        },
+        {
+          "caller": "operator()",
+          "callee": "utc_clock::to_local",
+          "lineNumber": 2395
+        },
+        {
+          "caller": "ctc_detail::return_to_sys<SrcClock, Duration>::type\n    operator()",
+          "callee": "SrcClock::to_sys",
+          "lineNumber": 2554
+        },
+        {
+          "caller": "ctc_detail::return_from_sys<DstClock, Duration>::type\n    operator()",
+          "callee": "DstClock::from_sys",
+          "lineNumber": 2566
+        },
+        {
+          "caller": "ctc_detail::return_to_utc<SrcClock, Duration>::type\n    operator()",
+          "callee": "SrcClock::to_utc",
+          "lineNumber": 2578
+        },
+        {
+          "caller": "ctc_detail::return_from_utc<DstClock, Duration>::type\n    operator()",
+          "callee": "DstClock::from_utc",
+          "lineNumber": 2590
+        },
+        {
+          "caller": "ctc_detail::return_to_local<SrcClock, Duration>::type\n    operator()",
+          "callee": "SrcClock::to_local",
+          "lineNumber": 2602
+        },
+        {
+          "caller": "ctc_detail::return_from_local<DstClock, Duration>::type\n    operator()",
+          "callee": "DstClock::from_local",
+          "lineNumber": 2614
+        },
+        {
+          "caller": "conv_clock",
+          "callee": "std::declval<clock_time_conversion<DstClock, SrcClock>>()",
+          "lineNumber": 2629
+        },
+        {
+          "caller": "conv_clock",
+          "callee": "std::declval<clock_time_conversion<DstClock, SrcClock>>",
+          "lineNumber": 2629
+        },
+        {
+          "caller": "conv_clock",
+          "callee": "clock_time_conversion<DstClock, SrcClock>{}",
+          "lineNumber": 2631
+        },
+        {
+          "caller": "cc_impl",
+          "callee": "conv_clock<DstClock>",
+          "lineNumber": 2639
+        },
+        {
+          "caller": "cc_impl",
+          "callee": "conv_clock<DstClock>",
+          "lineNumber": 2641
+        },
+        {
+          "caller": "cc_impl",
+          "callee": "conv_clock<DstClock>",
+          "lineNumber": 2649
+        },
+        {
+          "caller": "cc_impl",
+          "callee": "conv_clock<system_clock>",
+          "lineNumber": 2649
+        },
+        {
+          "caller": "cc_impl",
+          "callee": "conv_clock<DstClock>",
+          "lineNumber": 2651
+        },
+        {
+          "caller": "cc_impl",
+          "callee": "conv_clock<system_clock>",
+          "lineNumber": 2651
+        },
+        {
+          "caller": "cc_impl",
+          "callee": "conv_clock<utc_clock>",
+          "lineNumber": 2660
+        },
+        {
+          "caller": "cc_impl",
+          "callee": "conv_clock<DstClock>",
+          "lineNumber": 2662
+        },
+        {
+          "caller": "cc_impl",
+          "callee": "conv_clock<utc_clock>",
+          "lineNumber": 2662
+        },
+        {
+          "caller": "cc_impl",
+          "callee": "conv_clock<DstClock>",
+          "lineNumber": 2670
+        },
+        {
+          "caller": "cc_impl",
+          "callee": "conv_clock<utc_clock>",
+          "lineNumber": 2670
+        },
+        {
+          "caller": "cc_impl",
+          "callee": "conv_clock<system_clock>",
+          "lineNumber": 2670
+        },
+        {
+          "caller": "cc_impl",
+          "callee": "conv_clock<DstClock>",
+          "lineNumber": 2672
+        },
+        {
+          "caller": "cc_impl",
+          "callee": "conv_clock<utc_clock>",
+          "lineNumber": 2672
+        },
+        {
+          "caller": "cc_impl",
+          "callee": "conv_clock<system_clock>",
+          "lineNumber": 2672
+        },
+        {
+          "caller": "cc_impl",
+          "callee": "conv_clock<system_clock>",
+          "lineNumber": 2681
+        },
+        {
+          "caller": "cc_impl",
+          "callee": "conv_clock<utc_clock>",
+          "lineNumber": 2681
+        },
+        {
+          "caller": "cc_impl",
+          "callee": "conv_clock<DstClock>",
+          "lineNumber": 2683
+        },
+        {
+          "caller": "cc_impl",
+          "callee": "conv_clock<system_clock>",
+          "lineNumber": 2683
+        },
+        {
+          "caller": "cc_impl",
+          "callee": "conv_clock<utc_clock>",
+          "lineNumber": 2683
+        },
+        {
+          "caller": "clock_cast",
+          "callee": "clock_cast_detail::cc_impl<DstClock>",
+          "lineNumber": 2692
+        },
+        {
+          "caller": "clock_cast",
+          "callee": "clock_cast_detail::cc_impl<DstClock>",
+          "lineNumber": 2694
+        },
+        {
+          "caller": "to_sys_time",
+          "callee": "utc_clock::to_sys",
+          "lineNumber": 2704
+        },
+        {
+          "caller": "to_sys_time",
+          "callee": "utc_clock::to_sys",
+          "lineNumber": 2712
+        },
+        {
+          "caller": "to_sys_time",
+          "callee": "tai_clock::to_utc",
+          "lineNumber": 2712
+        },
+        {
+          "caller": "to_sys_time",
+          "callee": "utc_clock::to_sys",
+          "lineNumber": 2720
+        },
+        {
+          "caller": "to_sys_time",
+          "callee": "gps_clock::to_utc",
+          "lineNumber": 2720
+        },
+        {
+          "caller": "to_utc_time",
+          "callee": "utc_clock::from_sys",
+          "lineNumber": 2729
+        },
+        {
+          "caller": "to_utc_time",
+          "callee": "tai_clock::to_utc",
+          "lineNumber": 2737
+        },
+        {
+          "caller": "to_utc_time",
+          "callee": "gps_clock::to_utc",
+          "lineNumber": 2745
+        },
+        {
+          "caller": "to_tai_time",
+          "callee": "tai_clock::from_utc",
+          "lineNumber": 2754
+        },
+        {
+          "caller": "to_tai_time",
+          "callee": "utc_clock::from_sys",
+          "lineNumber": 2754
+        },
+        {
+          "caller": "to_tai_time",
+          "callee": "tai_clock::from_utc",
+          "lineNumber": 2762
+        },
+        {
+          "caller": "to_tai_time",
+          "callee": "tai_clock::from_utc",
+          "lineNumber": 2770
+        },
+        {
+          "caller": "to_tai_time",
+          "callee": "gps_clock::to_utc",
+          "lineNumber": 2770
+        },
+        {
+          "caller": "to_gps_time",
+          "callee": "gps_clock::from_utc",
+          "lineNumber": 2779
+        },
+        {
+          "caller": "to_gps_time",
+          "callee": "utc_clock::from_sys",
+          "lineNumber": 2779
+        },
+        {
+          "caller": "to_gps_time",
+          "callee": "gps_clock::from_utc",
+          "lineNumber": 2787
+        },
+        {
+          "caller": "to_gps_time",
+          "callee": "gps_clock::from_utc",
+          "lineNumber": 2795
+        },
+        {
+          "caller": "to_gps_time",
+          "callee": "tai_clock::to_utc",
+          "lineNumber": 2795
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 16,
+        "functionCount": 10,
+        "classCount": 6
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/vendored/datetime/visibility.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 26,
+      "nonEmptyLines": 24,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/vendored/double-conversion/bignum-dtoa.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 86,
+      "nonEmptyLines": 79,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/vendored/double-conversion/bignum.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 154,
+      "nonEmptyLines": 136,
+      "callGraph": [
+        {
+          "caller": "Times10",
+          "callee": "MultiplyByUInt32",
+          "lineNumber": 64
+        },
+        {
+          "caller": "Equal",
+          "callee": "Compare",
+          "lineNumber": 79
+        },
+        {
+          "caller": "LessEqual",
+          "callee": "Compare",
+          "lineNumber": 82
+        },
+        {
+          "caller": "Less",
+          "callee": "Compare",
+          "lineNumber": 85
+        },
+        {
+          "caller": "PlusEqual",
+          "callee": "PlusCompare",
+          "lineNumber": 91
+        },
+        {
+          "caller": "PlusLessEqual",
+          "callee": "PlusCompare",
+          "lineNumber": 95
+        },
+        {
+          "caller": "PlusLess",
+          "callee": "PlusCompare",
+          "lineNumber": 99
+        },
+        {
+          "caller": "EnsureCapacity",
+          "callee": "DOUBLE_CONVERSION_UNREACHABLE",
+          "lineNumber": 117
+        },
+        {
+          "caller": "IsClamped",
+          "callee": "RawBigit",
+          "lineNumber": 123
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/vendored/double-conversion/cached-powers.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 66,
+      "nonEmptyLines": 55,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/vendored/double-conversion/diy-fp.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 139,
+      "nonEmptyLines": 121,
+      "callGraph": [
+        {
+          "caller": "Subtract",
+          "callee": "DOUBLE_CONVERSION_ASSERT",
+          "lineNumber": 54
+        },
+        {
+          "caller": "Subtract",
+          "callee": "DOUBLE_CONVERSION_ASSERT",
+          "lineNumber": 55
+        },
+        {
+          "caller": "Minus",
+          "callee": "Subtract",
+          "lineNumber": 64
+        },
+        {
+          "caller": "Times",
+          "callee": "Multiply",
+          "lineNumber": 93
+        },
+        {
+          "caller": "Normalize",
+          "callee": "DOUBLE_CONVERSION_ASSERT",
+          "lineNumber": 98
+        },
+        {
+          "caller": "Normalize",
+          "callee": "DOUBLE_CONVERSION_UINT64_2PART_C",
+          "lineNumber": 104
+        },
+        {
+          "caller": "Normalize",
+          "callee": "Normalize",
+          "lineNumber": 119
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/vendored/double-conversion/double-conversion.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 34,
+      "nonEmptyLines": 31,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/vendored/double-conversion/double-to-string.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 472,
+      "nonEmptyLines": 445,
+      "callGraph": [
+        {
+          "caller": "DoubleToStringConverter",
+          "callee": "DOUBLE_CONVERSION_ASSERT",
+          "lineNumber": 188
+        },
+        {
+          "caller": "ToShortest",
+          "callee": "ToShortestIeeeNumber",
+          "lineNumber": 242
+        },
+        {
+          "caller": "ToShortestSingle",
+          "callee": "ToShortestIeeeNumber",
+          "lineNumber": 247
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    }
+  ]
+}

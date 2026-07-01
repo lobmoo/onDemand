@@ -1,0 +1,21 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "core/ondemand/.gensrc/FCV.hpp", "language": "cpp", "sizeLines": 363, "fileCategory": "code"},
+    {"path": "core/ondemand/.gensrc/FCVCdrAux.hpp", "language": "cpp", "sizeLines": 46, "fileCategory": "code"},
+    {"path": "core/ondemand/.gensrc/FCVCdrAux.ipp", "language": "ipp", "sizeLines": 171, "fileCategory": "code"},
+    {"path": "core/ondemand/.gensrc/FCVPubSubTypes.cxx", "language": "cpp", "sizeLines": 218, "fileCategory": "code"},
+    {"path": "core/ondemand/.gensrc/FCVPubSubTypes.hpp", "language": "cpp", "sizeLines": 123, "fileCategory": "code"},
+    {"path": "core/ondemand/.gensrc/FCVTypeObjectSupport.cxx", "language": "cpp", "sizeLines": 250, "fileCategory": "code"},
+    {"path": "core/ondemand/.gensrc/FCVTypeObjectSupport.hpp", "language": "cpp", "sizeLines": 56, "fileCategory": "code"}
+  ],
+  "batchImportData": {
+    "core/ondemand/.gensrc/FCV.hpp": [],
+    "core/ondemand/.gensrc/FCVCdrAux.hpp": [],
+    "core/ondemand/.gensrc/FCVCdrAux.ipp": [],
+    "core/ondemand/.gensrc/FCVPubSubTypes.cxx": ["core/ondemand/.gensrc/FCVCdrAux.hpp", "core/ondemand/.gensrc/FCVCdrAux.ipp", "core/ondemand/.gensrc/FCVPubSubTypes.hpp", "core/ondemand/.gensrc/FCVTypeObjectSupport.hpp"],
+    "core/ondemand/.gensrc/FCVPubSubTypes.hpp": [],
+    "core/ondemand/.gensrc/FCVTypeObjectSupport.cxx": ["core/ondemand/.gensrc/FCV.hpp", "core/ondemand/.gensrc/FCVTypeObjectSupport.hpp"],
+    "core/ondemand/.gensrc/FCVTypeObjectSupport.hpp": []
+  }
+}

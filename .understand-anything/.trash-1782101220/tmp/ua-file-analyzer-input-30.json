@@ -1,0 +1,7 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": ".github/workflows/ci.yml", "language": "yaml", "sizeLines": 414, "fileCategory": "infra"}
+  ],
+  "batchImportData": {".github/workflows/ci.yml":[]}
+}

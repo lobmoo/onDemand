@@ -1,0 +1,13 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "thirdparty/spdlog/include/spdlog/sinks/base_sink.h", "language": "c", "sizeLines": 51, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/sinks/dist_sink.h", "language": "c", "sizeLines": 81, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/sinks/dup_filter_sink.h", "language": "c", "sizeLines": 92, "fileCategory": "code"}
+  ],
+  "batchImportData": {
+    "thirdparty/spdlog/include/spdlog/sinks/base_sink.h": [],
+    "thirdparty/spdlog/include/spdlog/sinks/dist_sink.h": ["thirdparty/spdlog/include/spdlog/sinks/base_sink.h"],
+    "thirdparty/spdlog/include/spdlog/sinks/dup_filter_sink.h": []
+  }
+}

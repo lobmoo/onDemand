@@ -1,0 +1,13 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "core/ondemand/.gensrctx/dsf_define_var.cxx", "language": "cpp", "sizeLines": 2666, "fileCategory": "code"},
+    {"path": "core/ondemand/.gensrctx/dsf_define_var.h", "language": "c", "sizeLines": 2148, "fileCategory": "code"},
+    {"path": "core/ondemand/.gensrctx/dsf_define_varCdrAux.ipp", "language": "ipp", "sizeLines": 1544, "fileCategory": "code"}
+  ],
+  "batchImportData": {
+    "core/ondemand/.gensrctx/dsf_define_var.cxx": ["core/ondemand/.gensrctx/dsf_define_var.h", "core/ondemand/.gensrctx/dsf_define_varCdrAux.ipp"],
+    "core/ondemand/.gensrctx/dsf_define_var.h": [],
+    "core/ondemand/.gensrctx/dsf_define_varCdrAux.ipp": []
+  }
+}

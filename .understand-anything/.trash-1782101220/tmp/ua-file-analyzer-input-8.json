@@ -1,0 +1,22 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "tests/fastdds_test_idl/PerformanceTest.hpp", "language": "cpp", "sizeLines": 317, "fileCategory": "code"},
+    {"path": "tests/fastdds_test_idl/PerformanceTestCdrAux.hpp", "language": "cpp", "sizeLines": 46, "fileCategory": "code"},
+    {"path": "tests/fastdds_test_idl/PerformanceTestCdrAux.ipp", "language": "ipp", "sizeLines": 158, "fileCategory": "code"},
+    {"path": "tests/fastdds_test_idl/PerformanceTestPubSubTypes.cxx", "language": "cpp", "sizeLines": 221, "fileCategory": "code"},
+    {"path": "tests/fastdds_test_idl/PerformanceTestPubSubTypes.hpp", "language": "cpp", "sizeLines": 126, "fileCategory": "code"},
+    {"path": "tests/fastdds_test_idl/PerformanceTestTypeObjectSupport.cxx", "language": "cpp", "sizeLines": 233, "fileCategory": "code"},
+    {"path": "tests/fastdds_test_idl/PerformanceTestTypeObjectSupport.hpp", "language": "cpp", "sizeLines": 59, "fileCategory": "code"}
+  ],
+  "batchImportData": {
+    "tests/fastdds_test_idl/PerformanceTest.hpp": [],
+    "tests/fastdds_test_idl/PerformanceTestCdrAux.hpp": [],
+    "tests/fastdds_test_idl/PerformanceTestCdrAux.ipp": [],
+    "tests/fastdds_test_idl/PerformanceTestPubSubTypes.cxx": ["tests/fastdds_test_idl/PerformanceTestCdrAux.hpp", "tests/fastdds_test_idl/PerformanceTestCdrAux.ipp", "tests/fastdds_test_idl/PerformanceTestPubSubTypes.hpp", "tests/fastdds_test_idl/PerformanceTestTypeObjectSupport.hpp"],
+    "tests/fastdds_test_idl/PerformanceTestPubSubTypes.hpp": [],
+    "tests/fastdds_test_idl/PerformanceTestTypeObjectSupport.cxx": ["tests/fastdds_test_idl/PerformanceTest.hpp", "tests/fastdds_test_idl/PerformanceTestTypeObjectSupport.hpp"],
+    "tests/fastdds_test_idl/PerformanceTestTypeObjectSupport.hpp": []
+  },
+  "batchImportData_keys": ["tests/fastdds_test_idl/PerformanceTest.hpp", "tests/fastdds_test_idl/PerformanceTestCdrAux.hpp", "tests/fastdds_test_idl/PerformanceTestCdrAux.ipp", "tests/fastdds_test_idl/PerformanceTestPubSubTypes.cxx", "tests/fastdds_test_idl/PerformanceTestPubSubTypes.hpp", "tests/fastdds_test_idl/PerformanceTestTypeObjectSupport.cxx", "tests/fastdds_test_idl/PerformanceTestTypeObjectSupport.hpp"]
+}

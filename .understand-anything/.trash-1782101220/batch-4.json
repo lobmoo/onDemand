@@ -1,0 +1,533 @@
+{
+  "nodes": [
+    {
+      "id": "file:common/fastdds_wrapper/fastdds_topic_reader.hpp",
+      "type": "file",
+      "name": "fastdds_topic_reader.hpp",
+      "filePath": "common/fastdds_wrapper/fastdds_topic_reader.hpp",
+      "summary": "FastDDS 订阅端模板封装类，通过 DDS Subscriber 创建 DataReader 并注册消息回调，支持外部注入或内部默认 Listener 两种模式。",
+      "tags": ["dds-wrapper", "template", "subscriber", "callback"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:common/fastdds_wrapper/fastdds_topic_writer.hpp",
+      "type": "file",
+      "name": "fastdds_topic_writer.hpp",
+      "filePath": "common/fastdds_wrapper/fastdds_topic_writer.hpp",
+      "summary": "FastDDS 发布端模板封装类，通过 DDS Publisher 创建 DataWriter，提供 writeMessage、clear_history、wait_for_acknowledgments 等数据发送与确认接口。",
+      "tags": ["dds-wrapper", "template", "publisher", "data-sender"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:common/timer_wheel/thread_pool.h",
+      "type": "file",
+      "name": "thread_pool.h",
+      "filePath": "common/timer_wheel/thread_pool.h",
+      "summary": "通用线程池实现，支持有返回值（enqueue）和无返回值（enqueue_void）两种任务投递方式，使用 condition_variable 进行任务通知，析构时自动 join 所有工作线程。",
+      "tags": ["thread-pool", "concurrency", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:common/timer_wheel/timer_scheduler.h",
+      "type": "file",
+      "name": "timer_scheduler.h",
+      "filePath": "common/timer_wheel/timer_scheduler.h",
+      "summary": "高级定时器调度器，封装 TimerWheel 和 ThreadPool，提供 Schedule（单次）、ScheduleRecurring（周期性）、Cancel、Pause/Resume/Stop、Post 等接口。支持 direct_execute 模式（pub 场景直接在 timer 线程执行）和线程池投递模式（sub 场景避免阻塞），含 CallbackTimer 和 RecurringCallbackTimer 两个内部实现类。",
+      "tags": ["timer", "scheduler", "header-only", "concurrency", "core-infrastructure"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:common/timer_wheel/timer_wheel.h",
+      "type": "file",
+      "name": "timer_wheel.h",
+      "filePath": "common/timer_wheel/timer_wheel.h",
+      "summary": "8 层分级时间轮算法实现（源自 Ratas 库），每层 256 槽位，支持 1 tick 到多天范围的定时器调度。提供 schedule、schedule_in_range、advance 等核心操作，事件通过双向链表挂载在对应槽位，高层轮事件在底层轮旋转时逐级下放执行。",
+      "tags": ["timer-wheel", "algorithm", "header-only", "hierarchical-wheel", "core-infrastructure"],
+      "complexity": "complex",
+      "languageNotes": "8 层分级时间轮，每层 8 bit（256 槽），覆盖 64 bit 时间范围。事件使用侵入式双向链表挂在 TimerWheelSlot 上，cancel 通过 relink(NULL) 实现 O(1) 移除。"
+    },
+    {
+      "id": "file:common/log/custom_rotating_file_sink-inl.h",
+      "type": "file",
+      "name": "custom_rotating_file_sink-inl.h",
+      "filePath": "common/log/custom_rotating_file_sink-inl.h",
+      "summary": "自定义 spdlog 轮转文件 sink 实现，在标准轮转逻辑基础上增加按进程名和时间戳命名归档日志文件的功能，支持自动清理超出 max_files 限制的旧日志。",
+      "tags": ["logging", "spdlog", "file-sink", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:common/timer_wheel/timer_scheduler.h:TimerScheduler",
+      "type": "class",
+      "name": "TimerScheduler",
+      "filePath": "common/timer_wheel/timer_scheduler.h",
+      "lineRange": [47, 149],
+      "summary": "定时器调度器主类，整合 TimerWheel（时间轮算法）和 ThreadPool（异步执行），支持单次/周期性定时器调度、暂停/恢复、直接执行或线程池投递两种回调模式。被 OnDemandPub 和 OnDemandSub 使用。",
+      "tags": ["scheduler", "timer", "concurrency", "facade"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:common/timer_wheel/timer_scheduler.h:CallbackTimer",
+      "type": "class",
+      "name": "CallbackTimer",
+      "filePath": "common/timer_wheel/timer_scheduler.h",
+      "lineRange": [81, 98],
+      "summary": "TimerScheduler 的内部类，实现单次执行定时器。继承 TimerEventInterface，execute 时将回调推入 pendingTasks_ 延迟执行，避免持锁期间触发 syscall。",
+      "tags": ["timer", "callback", "internal-class"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:common/timer_wheel/timer_scheduler.h:RecurringCallbackTimer",
+      "type": "class",
+      "name": "RecurringCallbackTimer",
+      "filePath": "common/timer_wheel/timer_scheduler.h",
+      "lineRange": [101, 116],
+      "summary": "TimerScheduler 的内部类，实现周期性执行定时器。继承 TimerEventInterface，execute 时先通过 RescheduleRecurringNoLock 在 timer 线程内重新调度自身，再将回调推入 pendingTasks_。",
+      "tags": ["timer", "recurring", "internal-class"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:common/timer_wheel/timer_wheel.h:TimerEventInterface",
+      "type": "class",
+      "name": "TimerEventInterface",
+      "filePath": "common/timer_wheel/timer_wheel.h",
+      "lineRange": [104, 147],
+      "summary": "定时器事件抽象基类，定义 execute() 纯虚接口和 cancel/active/scheduled_at 等状态查询方法。使用侵入式双向链表挂载在 TimerWheelSlot 上，支持 O(1) cancel（通过 relink(NULL)）。",
+      "tags": ["interface", "timer-event", "abstract-base"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:common/timer_wheel/timer_wheel.h:TimerWheelSlot",
+      "type": "class",
+      "name": "TimerWheelSlot",
+      "filePath": "common/timer_wheel/timer_wheel.h",
+      "lineRange": [186, 213],
+      "summary": "时间轮槽位实现细节类，维护事件双向链表的头指针，提供 events() 和 pop_event() 用于遍历和取出待执行事件。",
+      "tags": ["timer-wheel", "internal-class", "data-structure"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:common/timer_wheel/timer_wheel.h:TimerWheel",
+      "type": "class",
+      "name": "TimerWheel",
+      "filePath": "common/timer_wheel/timer_wheel.h",
+      "lineRange": [219, 301],
+      "summary": "分级时间轮核心类，8 层 x 256 槽位。提供 schedule（按 delta 调度事件到对应层级槽位）、advance（推进时间并执行到期事件，支持 max_execute 限流）、ticks_to_next_event 等接口。内层轮旋转时自动将外层轮事件下放。",
+      "tags": ["timer-wheel", "algorithm", "hierarchical", "core-logic"],
+      "complexity": "complex",
+      "languageNotes": "分级时间轮：8 层，每层 8 bit（256 槽），通过右移 WIDTH_BITS 位将 delta 映射到合适的层级。advance 支持 max_execute 限流，process_current_slot 递归处理外层轮下放。"
+    },
+    {
+      "id": "class:common/timer_wheel/thread_pool.h:ThreadPool",
+      "type": "class",
+      "name": "ThreadPool",
+      "filePath": "common/timer_wheel/thread_pool.h",
+      "lineRange": [29, 49],
+      "summary": "通用线程池类，维护工作线程队列和任务队列。支持模板化的 enqueue（返回 std::future）和轻量级 enqueue_void（省去 packaged_task 堆分配），使用 mutex + condition_variable 同步。",
+      "tags": ["thread-pool", "concurrency", "task-queue"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:common/fastdds_wrapper/fastdds_topic_reader.hpp:FastDDSTopicReader",
+      "type": "class",
+      "name": "FastDDSTopicReader",
+      "filePath": "common/fastdds_wrapper/fastdds_topic_reader.hpp",
+      "lineRange": [28, 46],
+      "summary": "FastDDS DataReader 模板封装，构造时创建 DDS DataReader 并绑定消息回调（支持外部 Listener 或内部默认 Listener），析构时自动删除 DataReader。",
+      "tags": ["dds-wrapper", "template", "subscriber"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:common/fastdds_wrapper/fastdds_topic_writer.hpp:FastDDSTopicWriter",
+      "type": "class",
+      "name": "FastDDSTopicWriter",
+      "filePath": "common/fastdds_wrapper/fastdds_topic_writer.hpp",
+      "lineRange": [28, 46],
+      "summary": "FastDDS DataWriter 模板封装，构造时创建 DDS DataWriter，提供 writeMessage 发送数据、clear_history 清理历史、wait_for_acknowledgments 等待确认、get_matched_subscriptions 获取匹配订阅者等操作。",
+      "tags": ["dds-wrapper", "template", "publisher"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:common/timer_wheel/timer_scheduler.h:TimerScheduler::Schedule",
+      "type": "function",
+      "name": "TimerScheduler::Schedule",
+      "filePath": "common/timer_wheel/timer_scheduler.h",
+      "lineRange": [180, 196],
+      "summary": "调度单次执行定时器，创建 CallbackTimer 实例，注册到 TimerWheel 和 active_timers_ 集合中，返回 shared_ptr 供后续取消使用。",
+      "tags": ["timer", "scheduling", "public-api"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:common/timer_wheel/timer_scheduler.h:TimerScheduler::ScheduleRecurring",
+      "type": "function",
+      "name": "TimerScheduler::ScheduleRecurring",
+      "filePath": "common/timer_wheel/timer_scheduler.h",
+      "lineRange": [198, 216],
+      "summary": "调度周期性执行定时器，创建 RecurringCallbackTimer 实例（含 interval_ticks），注册到 TimerWheel 和 active_timers_，回调执行后自动重新调度。",
+      "tags": ["timer", "scheduling", "recurring", "public-api"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:common/timer_wheel/timer_scheduler.h:TimerScheduler::Cancel",
+      "type": "function",
+      "name": "TimerScheduler::Cancel",
+      "filePath": "common/timer_wheel/timer_scheduler.h",
+      "lineRange": [218, 230],
+      "summary": "取消定时器，调用 timer->cancel() 标记取消并从时间轮移除，同时从 active_timers_ 集合中删除。",
+      "tags": ["timer", "cancellation", "public-api"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:common/timer_wheel/timer_scheduler.h:TimerScheduler::Stop",
+      "type": "function",
+      "name": "TimerScheduler::Stop",
+      "filePath": "common/timer_wheel/timer_scheduler.h",
+      "lineRange": [242, 256],
+      "summary": "停止调度器，设置 should_stop 标志，等待 timer 线程退出，取消所有活跃定时器并清空 active_timers_。",
+      "tags": ["timer", "lifecycle", "shutdown"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:common/timer_wheel/timer_scheduler.h:TimerScheduler::TimerLoop",
+      "type": "function",
+      "name": "TimerScheduler::TimerLoop",
+      "filePath": "common/timer_wheel/timer_scheduler.h",
+      "lineRange": [282, 319],
+      "summary": "定时器主循环，运行在独立 timer 线程上。按 tick_ms 周期推进 TimerWheel，到期事件的回调被收集到 pendingTasks_，然后根据 direct_execute_ 标志决定直接执行或投递到线程池。支持暂停/恢复。",
+      "tags": ["timer", "main-loop", "event-loop", "core-logic"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:common/timer_wheel/timer_scheduler.h:CallbackTimer::execute",
+      "type": "function",
+      "name": "CallbackTimer::execute",
+      "filePath": "common/timer_wheel/timer_scheduler.h",
+      "lineRange": [328, 342],
+      "summary": "单次定时器的 execute 实现，在 mutex 持有期间仅将回调 lambda 推入 pendingTasks_（含 shared_from_this 防止悬空引用），不在持锁期间触发任何 syscall。",
+      "tags": ["timer", "callback", "deferred-execution"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:common/timer_wheel/timer_scheduler.h:RecurringCallbackTimer::execute",
+      "type": "function",
+      "name": "RecurringCallbackTimer::execute",
+      "filePath": "common/timer_wheel/timer_scheduler.h",
+      "lineRange": [360, 376],
+      "summary": "周期性定时器的 execute 实现，先在 timer 线程内（已持锁）通过 RescheduleRecurringNoLock 重新调度自身，再将回调推入 pendingTasks_ 延迟执行。",
+      "tags": ["timer", "recurring", "reschedule"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:common/timer_wheel/timer_wheel.h:TimerEventInterface::relink",
+      "type": "function",
+      "name": "TimerEventInterface::relink",
+      "filePath": "common/timer_wheel/timer_wheel.h",
+      "lineRange": [305, 340],
+      "summary": "将定时器事件从当前槽位移动到新槽位（双向链表的 unlink + insert 操作），传入 NULL 时等效于 cancel。这是 TimerWheel 中事件调度和取消的核心低级操作。",
+      "tags": ["timer-wheel", "linked-list", "core-logic"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:common/timer_wheel/timer_wheel.h:TimerWheel::advance",
+      "type": "function",
+      "name": "TimerWheel::advance",
+      "filePath": "common/timer_wheel/timer_wheel.h",
+      "lineRange": [351, 391],
+      "summary": "推进时间轮 delta 个 tick，逐 tick 处理当前槽位的到期事件。支持 ticks_pending_ 机制处理上一次未完成的推进，以及 max_execute 限流防止单次调用处理过多事件。",
+      "tags": ["timer-wheel", "advance", "core-logic"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:common/timer_wheel/timer_wheel.h:TimerWheel::process_current_slot",
+      "type": "function",
+      "name": "TimerWheel::process_current_slot",
+      "filePath": "common/timer_wheel/timer_wheel.h",
+      "lineRange": [393, 429],
+      "summary": "处理当前槽位中的所有事件：对顶层轮直接执行，对外层轮先检查是否到达执行时间再决定执行或重新调度到底层轮。槽位 0 时递归触发上一层轮的 advance。",
+      "tags": ["timer-wheel", "event-processing", "recursive"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:common/timer_wheel/timer_wheel.h:TimerWheel::schedule",
+      "type": "function",
+      "name": "TimerWheel::schedule",
+      "filePath": "common/timer_wheel/timer_wheel.h",
+      "lineRange": [431, 444],
+      "summary": "将事件调度到 delta 个 tick 后执行，通过 while 循环将 delta 右移确定目标层级，计算槽位索引后调用 relink 将事件挂载到对应槽位。",
+      "tags": ["timer-wheel", "scheduling", "core-logic"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:common/timer_wheel/timer_wheel.h:TimerWheel::schedule_in_range",
+      "type": "function",
+      "name": "TimerWheel::schedule_in_range",
+      "filePath": "common/timer_wheel/timer_wheel.h",
+      "lineRange": [446, 471],
+      "summary": "在 [start, end] 范围内选择最优执行时间调度事件。如果事件已在范围内则跳过，否则通过位掩码找到 start 和 end 的公共前缀来确定最小区间，再调用 schedule。",
+      "tags": ["timer-wheel", "scheduling", "optimization"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:common/timer_wheel/timer_wheel.h:TimerWheel::ticks_to_next_event",
+      "type": "function",
+      "name": "TimerWheel::ticks_to_next_event",
+      "filePath": "common/timer_wheel/timer_wheel.h",
+      "lineRange": [473, 534],
+      "summary": "计算距离下一个事件触发的最小 tick 数，遍历当前层及外层轮的所有相关槽位查找最早 scheduled_at，用于优化 sleep 时间避免空转。",
+      "tags": ["timer-wheel", "query", "optimization"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:common/timer_wheel/thread_pool.h:ThreadPool::ThreadPool",
+      "type": "function",
+      "name": "ThreadPool::ThreadPool",
+      "filePath": "common/timer_wheel/thread_pool.h",
+      "lineRange": [52, 82],
+      "summary": "线程池构造函数，创建指定数量的工作线程，每个线程设置线程名（ondemand_pl_N），循环等待任务队列中的可调用对象并执行。",
+      "tags": ["thread-pool", "constructor", "worker-thread"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:common/timer_wheel/thread_pool.h:ThreadPool::enqueue",
+      "type": "function",
+      "name": "ThreadPool::enqueue",
+      "filePath": "common/timer_wheel/thread_pool.h",
+      "lineRange": [86, 106],
+      "summary": "模板化任务投递接口，使用 packaged_task + std::bind 将可调用对象和参数打包，返回 std::future 供调用方获取结果。任务加入队列后 notify_one 唤醒一个工作线程。",
+      "tags": ["thread-pool", "task-submission", "template"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:common/timer_wheel/thread_pool.h:ThreadPool::enqueue_void",
+      "type": "function",
+      "name": "ThreadPool::enqueue_void",
+      "filePath": "common/timer_wheel/thread_pool.h",
+      "lineRange": [109, 118],
+      "summary": "轻量级无返回值任务投递接口，直接 push std::function<void()> 到队列，省去 packaged_task 和 std::bind 的两次堆分配开销。",
+      "tags": ["thread-pool", "task-submission", "lightweight"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:common/log/custom_rotating_file_sink-inl.h:get_process_name",
+      "type": "function",
+      "name": "get_process_name",
+      "filePath": "common/log/custom_rotating_file_sink-inl.h",
+      "lineRange": [49, 76],
+      "summary": "跨平台获取当前进程名称的辅助函数。Windows 下使用 GetModuleFileNameA，Linux 下通过 readlink /proc/self/exe 获取可执行文件路径后提取文件名。",
+      "tags": ["utility", "platform-specific", "process-info"],
+      "complexity": "moderate",
+      "languageNotes": "使用条件编译实现跨平台：Windows 使用 GetModuleFileNameA + wstring 转换，Linux 使用 readlink + /proc/self/exe。"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:common/fastdds_wrapper/fastdds_topic_reader.hpp",
+      "target": "class:common/fastdds_wrapper/fastdds_topic_reader.hpp:FastDDSTopicReader",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/fastdds_wrapper/fastdds_topic_writer.hpp",
+      "target": "class:common/fastdds_wrapper/fastdds_topic_writer.hpp:FastDDSTopicWriter",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/timer_wheel/thread_pool.h",
+      "target": "class:common/timer_wheel/thread_pool.h:ThreadPool",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/timer_wheel/thread_pool.h",
+      "target": "function:common/timer_wheel/thread_pool.h:ThreadPool::ThreadPool",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/timer_wheel/thread_pool.h",
+      "target": "function:common/timer_wheel/thread_pool.h:ThreadPool::enqueue",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/timer_wheel/thread_pool.h",
+      "target": "function:common/timer_wheel/thread_pool.h:ThreadPool::enqueue_void",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/timer_wheel/timer_scheduler.h",
+      "target": "class:common/timer_wheel/timer_scheduler.h:TimerScheduler",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/timer_wheel/timer_scheduler.h",
+      "target": "class:common/timer_wheel/timer_scheduler.h:CallbackTimer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/timer_wheel/timer_scheduler.h",
+      "target": "class:common/timer_wheel/timer_scheduler.h:RecurringCallbackTimer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/timer_wheel/timer_scheduler.h",
+      "target": "function:common/timer_wheel/timer_scheduler.h:TimerScheduler::Schedule",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/timer_wheel/timer_scheduler.h",
+      "target": "function:common/timer_wheel/timer_scheduler.h:TimerScheduler::ScheduleRecurring",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/timer_wheel/timer_scheduler.h",
+      "target": "function:common/timer_wheel/timer_scheduler.h:TimerScheduler::Cancel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/timer_wheel/timer_scheduler.h",
+      "target": "function:common/timer_wheel/timer_scheduler.h:TimerScheduler::Stop",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/timer_wheel/timer_scheduler.h",
+      "target": "function:common/timer_wheel/timer_scheduler.h:TimerScheduler::TimerLoop",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/timer_wheel/timer_scheduler.h",
+      "target": "function:common/timer_wheel/timer_scheduler.h:CallbackTimer::execute",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/timer_wheel/timer_scheduler.h",
+      "target": "function:common/timer_wheel/timer_scheduler.h:RecurringCallbackTimer::execute",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/timer_wheel/timer_wheel.h",
+      "target": "class:common/timer_wheel/timer_wheel.h:TimerEventInterface",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/timer_wheel/timer_wheel.h",
+      "target": "class:common/timer_wheel/timer_wheel.h:TimerWheelSlot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/timer_wheel/timer_wheel.h",
+      "target": "class:common/timer_wheel/timer_wheel.h:TimerWheel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/timer_wheel/timer_wheel.h",
+      "target": "function:common/timer_wheel/timer_wheel.h:TimerEventInterface::relink",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/timer_wheel/timer_wheel.h",
+      "target": "function:common/timer_wheel/timer_wheel.h:TimerWheel::advance",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/timer_wheel/timer_wheel.h",
+      "target": "function:common/timer_wheel/timer_wheel.h:TimerWheel::process_current_slot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/timer_wheel/timer_wheel.h",
+      "target": "function:common/timer_wheel/timer_wheel.h:TimerWheel::schedule",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/timer_wheel/timer_wheel.h",
+      "target": "function:common/timer_wheel/timer_wheel.h:TimerWheel::schedule_in_range",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/timer_wheel/timer_wheel.h",
+      "target": "function:common/timer_wheel/timer_wheel.h:TimerWheel::ticks_to_next_event",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/log/custom_rotating_file_sink-inl.h",
+      "target": "function:common/log/custom_rotating_file_sink-inl.h:get_process_name",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:common/timer_wheel/timer_scheduler.h:CallbackTimer",
+      "target": "class:common/timer_wheel/timer_wheel.h:TimerEventInterface",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "class:common/timer_wheel/timer_scheduler.h:RecurringCallbackTimer",
+      "target": "class:common/timer_wheel/timer_wheel.h:TimerEventInterface",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "file:common/timer_wheel/timer_scheduler.h",
+      "target": "file:common/timer_wheel/thread_pool.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:common/timer_wheel/timer_scheduler.h",
+      "target": "file:common/timer_wheel/timer_wheel.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    }
+  ]
+}

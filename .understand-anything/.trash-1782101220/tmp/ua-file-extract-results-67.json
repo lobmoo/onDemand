@@ -1,0 +1,538 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 25,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/topic/qos/TopicQos.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 32,
+      "nonEmptyLines": 32,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/topic/TopicDataType.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 81,
+      "nonEmptyLines": 65,
+      "callGraph": [
+        {
+          "caller": "SetName",
+          "callee": "std::string",
+          "lineNumber": 49
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/topic/TypeSupport.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 55,
+      "nonEmptyLines": 40,
+      "callGraph": [
+        {
+          "caller": "operator==",
+          "callee": "get",
+          "lineNumber": 45
+        },
+        {
+          "caller": "operator==",
+          "callee": "get",
+          "lineNumber": 45
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/utils/QosConvert.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 36,
+      "nonEmptyLines": 29,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/attributes/BuiltinAttributes.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 86,
+      "nonEmptyLines": 76,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/attributes/EndpointAttributes.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 44,
+      "nonEmptyLines": 31,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/attributes/HistoryAttributes.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 35,
+      "nonEmptyLines": 30,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/attributes/ParticipantAttributes.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 50,
+      "nonEmptyLines": 37,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/attributes/ReaderAttributes.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 26,
+      "nonEmptyLines": 18,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/attributes/TopicAttributes.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 40,
+      "nonEmptyLines": 38,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/attributes/WriterAttributes.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 36,
+      "nonEmptyLines": 24,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/builtin/data/DiscoveredParticipantData.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 55,
+      "nonEmptyLines": 50,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/builtin/data/DiscoveredReaderData.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 64,
+      "nonEmptyLines": 59,
+      "callGraph": [
+        {
+          "caller": "GetTopicName",
+          "callee": "GetTopicName",
+          "lineNumber": 32
+        },
+        {
+          "caller": "SetKey",
+          "callee": "SetKey",
+          "lineNumber": 37
+        },
+        {
+          "caller": "GetTypeName",
+          "callee": "GetTypeName",
+          "lineNumber": 49
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/builtin/data/DiscoveredTopicData.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 24,
+      "nonEmptyLines": 21,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/builtin/data/DiscoveredWriterData.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 60,
+      "nonEmptyLines": 57,
+      "callGraph": [
+        {
+          "caller": "GetTopicName",
+          "callee": "GetTopicName",
+          "lineNumber": 30
+        },
+        {
+          "caller": "SetKey",
+          "callee": "SetKey",
+          "lineNumber": 35
+        },
+        {
+          "caller": "GetTypeName",
+          "callee": "GetTypeName",
+          "lineNumber": 47
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/builtin/data/ParticipantProxy.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 59,
+      "nonEmptyLines": 55,
+      "callGraph": [
+        {
+          "caller": "Reset",
+          "callee": "Clear",
+          "lineNumber": 31
+        },
+        {
+          "caller": "Reset",
+          "callee": "Clear",
+          "lineNumber": 32
+        },
+        {
+          "caller": "Reset",
+          "callee": "Clear",
+          "lineNumber": 33
+        },
+        {
+          "caller": "Reset",
+          "callee": "Clear",
+          "lineNumber": 34
+        },
+        {
+          "caller": "Reset",
+          "callee": "Clear",
+          "lineNumber": 35
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/builtin/data/ParticipantProxyData.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 14,
+      "nonEmptyLines": 12,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/builtin/data/ReaderProxyData.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 164,
+      "nonEmptyLines": 161,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/builtin/data/SPDPdiscoveredParticipantData.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 23,
+      "nonEmptyLines": 22,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/builtin/data/WriterProxyData.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 121,
+      "nonEmptyLines": 116,
+      "callGraph": [
+        {
+          "caller": "SetUnicastLocator",
+          "callee": "push_back",
+          "lineNumber": 37
+        },
+        {
+          "caller": "SetMulticastLocator",
+          "callee": "push_back",
+          "lineNumber": 41
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/builtin/entity/BuiltinEntitysDefine.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 42,
+      "nonEmptyLines": 38,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/common/CDRMessage.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 133,
+      "nonEmptyLines": 122,
+      "callGraph": [
+        {
+          "caller": "~CDRMessage",
+          "callee": "free",
+          "lineNumber": 44
+        },
+        {
+          "caller": "reset",
+          "callee": "free",
+          "lineNumber": 51
+        },
+        {
+          "caller": "reset",
+          "callee": "malloc",
+          "lineNumber": 56
+        },
+        {
+          "caller": "reset",
+          "callee": "memcpy",
+          "lineNumber": 57
+        },
+        {
+          "caller": "CDRMessage",
+          "callee": "malloc",
+          "lineNumber": 74
+        },
+        {
+          "caller": "CDRMessage",
+          "callee": "memset",
+          "lineNumber": 75
+        },
+        {
+          "caller": "Resize",
+          "callee": "free",
+          "lineNumber": 114
+        },
+        {
+          "caller": "Resize",
+          "callee": "malloc",
+          "lineNumber": 119
+        },
+        {
+          "caller": "Resize",
+          "callee": "memset",
+          "lineNumber": 120
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/common/ChangeCount_t.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 20,
+      "nonEmptyLines": 17,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/common/Duration.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 19,
+      "nonEmptyLines": 16,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/common/EntityId.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 160,
+      "nonEmptyLines": 146,
+      "callGraph": [
+        {
+          "caller": "EntityId",
+          "callee": "memcpy",
+          "lineNumber": 29
+        },
+        {
+          "caller": "EntityId",
+          "callee": "reverse",
+          "lineNumber": 31
+        },
+        {
+          "caller": "EntityId",
+          "callee": "memcpy",
+          "lineNumber": 35
+        },
+        {
+          "caller": "operator==",
+          "callee": "memcmp",
+          "lineNumber": 52
+        },
+        {
+          "caller": "operator!=",
+          "callee": "memcmp",
+          "lineNumber": 56
+        },
+        {
+          "caller": "operator<",
+          "callee": "memcmp",
+          "lineNumber": 60
+        },
+        {
+          "caller": "Unknown",
+          "callee": "EntityId",
+          "lineNumber": 65
+        },
+        {
+          "caller": "IsReader",
+          "callee": "reinterpret_cast<const uint32_t *>",
+          "lineNumber": 69
+        },
+        {
+          "caller": "IsWriter",
+          "callee": "reinterpret_cast<const uint32_t *>",
+          "lineNumber": 73
+        },
+        {
+          "caller": "IsWriter",
+          "callee": "IsReader",
+          "lineNumber": 73
+        },
+        {
+          "caller": "operator()",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 153
+        },
+        {
+          "caller": "operator()",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 154
+        },
+        {
+          "caller": "operator()",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 155
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    }
+  ]
+}

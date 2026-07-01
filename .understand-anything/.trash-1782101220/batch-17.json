@@ -1,0 +1,253 @@
+{
+  "nodes": [
+    {
+      "id": "file:core/ondemand/.gensrctx/dsf_define_modelCdrAux.hpp",
+      "type": "file",
+      "name": "dsf_define_modelCdrAux.hpp",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_modelCdrAux.hpp",
+      "summary": "fastddsgen 自动生成的 CDR 辅助头文件，定义了 Define、Undefine、ModelRequestEnvelope 三种 DDS 消息类型的最大序列化尺寸常量，并声明 BaoSky::Cdr 命名空间下的 SerializeKey 函数。",
+      "tags": ["auto-generated", "serialization", "dds", "type-definition"],
+      "complexity": "simple",
+      "languageNotes": "文件大量留白（120 行中仅 47 行非空），为 fastddsgen 工具生成的模板产物。"
+    },
+    {
+      "id": "file:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.h",
+      "type": "file",
+      "name": "dsf_define_modelPubSubTypes.h",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.h",
+      "summary": "fastddsgen 自动生成的 DDS TopicDataType 头文件，声明了 DefinePubSubType、UndefinePubSubType、ModelRequestEnvelopePubSubType 三个序列化/反序列化类，均继承自 BaoSky::dds::TopicDataType。",
+      "tags": ["auto-generated", "dds", "type-definition", "serialization"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx",
+      "type": "file",
+      "name": "dsf_define_modelPubSubTypes.cxx",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx",
+      "summary": "fastddsgen 自动生成的 DDS TopicDataType 实现文件，为 Define、Undefine、ModelRequestEnvelope 三种消息类型提供完整的 Serialize、Deserialize、GetKey、CreateData、DeleteData 等方法实现，使用 XCDRv1 编码格式。",
+      "tags": ["auto-generated", "dds", "serialization", "implementation"],
+      "complexity": "complex",
+      "languageNotes": "三个类的实现高度重复（模板化），每个类均包含构造/析构、序列化、反序列化、尺寸计算、数据创建/删除、Key 获取共 7 个方法。使用 C 风格 malloc/free 管理 mKeyBuffer 内存。"
+    },
+    {
+      "id": "class:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.h:DefinePubSubType",
+      "type": "class",
+      "name": "DefinePubSubType",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.h",
+      "lineRange": [43, 66],
+      "summary": "DSF::Model::Define 消息的 DDS TopicDataType 实现类，提供该消息类型的序列化、反序列化、Key 获取及数据生命周期管理功能。",
+      "tags": ["dds", "serialization", "auto-generated", "topic-data-type"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.h:UndefinePubSubType",
+      "type": "class",
+      "name": "UndefinePubSubType",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.h",
+      "lineRange": [72, 95],
+      "summary": "DSF::Model::Undefine 消息的 DDS TopicDataType 实现类，提供该消息类型的序列化、反序列化、Key 获取及数据生命周期管理功能。",
+      "tags": ["dds", "serialization", "auto-generated", "topic-data-type"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.h:ModelRequestEnvelopePubSubType",
+      "type": "class",
+      "name": "ModelRequestEnvelopePubSubType",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.h",
+      "lineRange": [101, 124],
+      "summary": "DSF::Model::ModelRequestEnvelope 消息的 DDS TopicDataType 实现类，提供该消息类型的序列化、反序列化、Key 获取及数据生命周期管理功能。",
+      "tags": ["dds", "serialization", "auto-generated", "topic-data-type"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx:DefinePubSubType::Serialize",
+      "type": "function",
+      "name": "DefinePubSubType::Serialize",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx",
+      "lineRange": [60, 80],
+      "summary": "将 Define 类型数据序列化为 XCDRv1 格式的 CDR 字节流，写入 DDS SerializedPayload。",
+      "tags": ["serialization", "dds", "auto-generated"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx:DefinePubSubType::Deserialize",
+      "type": "function",
+      "name": "DefinePubSubType::Deserialize",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx",
+      "lineRange": [82, 103],
+      "summary": "从 DDS SerializedPayload 中反序列化 XCDRv1 格式的字节流，还原为 Define 类型数据。",
+      "tags": ["deserialization", "dds", "auto-generated"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx:DefinePubSubType::GetKey",
+      "type": "function",
+      "name": "DefinePubSubType::GetKey",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx",
+      "lineRange": [129, 165],
+      "summary": "计算 Define 类型数据的实例 Key 并填充到 InstanceHandle 中，用于 DDS 实例标识。",
+      "tags": ["dds", "key-management", "auto-generated"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx:UndefinePubSubType::Serialize",
+      "type": "function",
+      "name": "UndefinePubSubType::Serialize",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx",
+      "lineRange": [190, 210],
+      "summary": "将 Undefine 类型数据序列化为 XCDRv1 格式的 CDR 字节流，写入 DDS SerializedPayload。",
+      "tags": ["serialization", "dds", "auto-generated"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx:UndefinePubSubType::Deserialize",
+      "type": "function",
+      "name": "UndefinePubSubType::Deserialize",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx",
+      "lineRange": [212, 233],
+      "summary": "从 DDS SerializedPayload 中反序列化 XCDRv1 格式的字节流，还原为 Undefine 类型数据。",
+      "tags": ["deserialization", "dds", "auto-generated"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx:UndefinePubSubType::GetKey",
+      "type": "function",
+      "name": "UndefinePubSubType::GetKey",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx",
+      "lineRange": [259, 295],
+      "summary": "计算 Undefine 类型数据的实例 Key 并填充到 InstanceHandle 中，用于 DDS 实例标识。",
+      "tags": ["dds", "key-management", "auto-generated"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx:ModelRequestEnvelopePubSubType::Serialize",
+      "type": "function",
+      "name": "ModelRequestEnvelopePubSubType::Serialize",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx",
+      "lineRange": [320, 340],
+      "summary": "将 ModelRequestEnvelope 类型数据序列化为 XCDRv1 格式的 CDR 字节流，写入 DDS SerializedPayload。",
+      "tags": ["serialization", "dds", "auto-generated"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx:ModelRequestEnvelopePubSubType::Deserialize",
+      "type": "function",
+      "name": "ModelRequestEnvelopePubSubType::Deserialize",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx",
+      "lineRange": [342, 363],
+      "summary": "从 DDS SerializedPayload 中反序列化 XCDRv1 格式的字节流，还原为 ModelRequestEnvelope 类型数据。",
+      "tags": ["deserialization", "dds", "auto-generated"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx:ModelRequestEnvelopePubSubType::GetKey",
+      "type": "function",
+      "name": "ModelRequestEnvelopePubSubType::GetKey",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx",
+      "lineRange": [389, 425],
+      "summary": "计算 ModelRequestEnvelope 类型数据的实例 Key 并填充到 InstanceHandle 中，用于 DDS 实例标识。",
+      "tags": ["dds", "key-management", "auto-generated"],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx",
+      "target": "file:core/ondemand/.gensrctx/dsf_define_modelCdrAux.hpp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx",
+      "target": "file:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.h",
+      "target": "class:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.h:DefinePubSubType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.h",
+      "target": "class:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.h:UndefinePubSubType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.h",
+      "target": "class:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.h:ModelRequestEnvelopePubSubType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx:DefinePubSubType::Serialize",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx:DefinePubSubType::Deserialize",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx:DefinePubSubType::GetKey",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx:UndefinePubSubType::Serialize",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx:UndefinePubSubType::Deserialize",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx:UndefinePubSubType::GetKey",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx:ModelRequestEnvelopePubSubType::Serialize",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx:ModelRequestEnvelopePubSubType::Deserialize",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrctx/dsf_define_modelPubSubTypes.cxx:ModelRequestEnvelopePubSubType::GetKey",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "thirdparty/arrow/include/arrow/vendored/double-conversion/fast-dtoa.h", "language": "c", "sizeLines": 90, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/vendored/double-conversion/fixed-dtoa.h", "language": "c", "sizeLines": 58, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/vendored/double-conversion/ieee.h", "language": "c", "sizeLines": 449, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/vendored/double-conversion/string-to-double.h", "language": "c", "sizeLines": 240, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/vendored/double-conversion/strtod.h", "language": "c", "sizeLines": 66, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/vendored/double-conversion/utils.h", "language": "c", "sizeLines": 420, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/vendored/pcg/pcg_extras.hpp", "language": "cpp", "sizeLines": 649, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/vendored/pcg/pcg_random.hpp", "language": "cpp", "sizeLines": 1954, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/vendored/pcg/pcg_uint128.hpp", "language": "cpp", "sizeLines": 1008, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/vendored/portable-snippets/debug-trap.h", "language": "c", "sizeLines": 83, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/vendored/portable-snippets/safe-math.h", "language": "c", "sizeLines": 1072, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/vendored/ProducerConsumerQueue.h", "language": "c", "sizeLines": 217, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/vendored/strptime.h", "language": "c", "sizeLines": 35, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/vendored/xxhash.h", "language": "c", "sizeLines": 18, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/vendored/xxhash/xxhash.h", "language": "c", "sizeLines": 6773, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/visit_array_inline.h", "language": "c", "sizeLines": 64, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/visit_data_inline.h", "language": "c", "sizeLines": 301, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/visit_scalar_inline.h", "language": "c", "sizeLines": 68, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/visit_type_inline.h", "language": "c", "sizeLines": 117, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/visitor_generate.h", "language": "c", "sizeLines": 69, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/visitor.h", "language": "c", "sizeLines": 173, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/lib/libarrow_bundled_dependencies.a", "language": "a", "sizeLines": 597311, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/lib/libarrow.a", "language": "a", "sizeLines": 39259, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/lib/libarrow.so", "language": "so", "sizeLines": 70240, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/lib/libarrow.so.1400", "language": "1400", "sizeLines": 70240, "fileCategory": "code"}
+  ],
+  "batchImportData": {}
+}

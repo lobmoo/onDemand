@@ -1,0 +1,424 @@
+{
+  "nodes": [
+    {
+      "id": "file:thirdparty/arrow/include/arrow/testing/generator.h",
+      "type": "file",
+      "name": "generator.h",
+      "filePath": "thirdparty/arrow/include/arrow/testing/generator.h",
+      "summary": "Apache Arrow 测试数据生成器头文件，提供用于生成各种 Arrow 数组类型的工厂函数和辅助工具。",
+      "tags": ["testing", "data-generation", "arrow", "type-definition"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/testing/gtest_compat.h",
+      "type": "file",
+      "name": "gtest_compat.h",
+      "filePath": "thirdparty/arrow/include/arrow/testing/gtest_compat.h",
+      "summary": "GoogleTest 兼容性层头文件，提供跨版本 gtest 宏和类型的统一接口。",
+      "tags": ["testing", "compatibility", "gtest", "macro"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/testing/gtest_util.h",
+      "type": "file",
+      "name": "gtest_util.h",
+      "filePath": "thirdparty/arrow/include/arrow/testing/gtest_util.h",
+      "summary": "GoogleTest 测试工具头文件，提供 PrintTo 辅助函数、MoveOnlyDataType 测试类以及 Arrow 数据结构的比较和断言宏。",
+      "tags": ["testing", "gtest", "utility", "type-definition"],
+      "complexity": "moderate",
+      "languageNotes": "定义了 MoveOnlyDataType 类用于测试移动语义，包含完整的移动构造、赋值和析构函数。"
+    },
+    {
+      "id": "class:thirdparty/arrow/include/arrow/testing/gtest_util.h:MoveOnlyDataType",
+      "type": "class",
+      "name": "MoveOnlyDataType",
+      "filePath": "thirdparty/arrow/include/arrow/testing/gtest_util.h",
+      "lineRange": [451, 504],
+      "summary": "仅移动语义的测试数据类型，用于验证 Arrow 容器对移动语义的正确支持。",
+      "tags": ["testing", "move-semantics", "data-type"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/testing/matchers.h",
+      "type": "file",
+      "name": "matchers.h",
+      "filePath": "thirdparty/arrow/include/arrow/testing/matchers.h",
+      "summary": "GoogleTest 自定义匹配器头文件，提供 DataEq、AnyOfJSON、Error、Ok 等匹配器用于 Arrow 数据结构的断言验证。",
+      "tags": ["testing", "matchers", "gtest", "assertion"],
+      "complexity": "moderate",
+      "languageNotes": "使用模板元编程实现类型安全的匹配器，支持 Result<T>、Future<T> 等 Arrow 异步类型的匹配。"
+    },
+    {
+      "id": "class:thirdparty/arrow/include/arrow/testing/matchers.h:AnyOfJSONMatcher",
+      "type": "class",
+      "name": "AnyOfJSONMatcher",
+      "filePath": "thirdparty/arrow/include/arrow/testing/matchers.h",
+      "lineRange": [66, 120],
+      "summary": "JSON 数组匹配器，验证 Arrow 数组是否包含指定 JSON 表示的所有元素。",
+      "tags": ["testing", "matcher", "json", "array"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:thirdparty/arrow/include/arrow/testing/matchers.h:ErrorMatcher",
+      "type": "class",
+      "name": "ErrorMatcher",
+      "filePath": "thirdparty/arrow/include/arrow/testing/matchers.h",
+      "lineRange": [222, 284],
+      "summary": "错误状态匹配器，验证 Result/Future 是否返回指定错误码和消息。",
+      "tags": ["testing", "matcher", "error-handling"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:thirdparty/arrow/include/arrow/testing/matchers.h:DataEqMatcher",
+      "type": "class",
+      "name": "DataEqMatcher",
+      "filePath": "thirdparty/arrow/include/arrow/testing/matchers.h",
+      "lineRange": [337, 407],
+      "summary": "数据相等匹配器，深度比较 Arrow Datum 与期望值，支持数组、标量和 RecordBatch。",
+      "tags": ["testing", "matcher", "comparison", "datum"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/testing/pch.h",
+      "type": "file",
+      "name": "pch.h",
+      "filePath": "thirdparty/arrow/include/arrow/testing/pch.h",
+      "summary": "测试模块预编译头文件，聚合常用标准库和 Arrow 头文件以加速编译。",
+      "tags": ["testing", "precompiled-header", "build-optimization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/testing/random.h",
+      "type": "file",
+      "name": "random.h",
+      "filePath": "thirdparty/arrow/include/arrow/testing/random.h",
+      "summary": "随机数据生成器头文件，提供 RandomArrayGenerator 类用于生成各种类型的随机 Arrow 数组，支持数值、字符串、日期等类型。",
+      "tags": ["testing", "random", "data-generation", "arrow"],
+      "complexity": "complex",
+      "languageNotes": "使用模板特化为不同 Arrow 类型提供随机数生成，支持种子控制和内存池分配。"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/testing/uniform_real.h",
+      "type": "file",
+      "name": "uniform_real.h",
+      "filePath": "thirdparty/arrow/include/arrow/testing/uniform_real.h",
+      "summary": "均匀实数分布头文件，提供跨平台一致的 uniform_real_distribution 实现，解决不同标准库的数值差异。",
+      "tags": ["testing", "random", "distribution", "utility"],
+      "complexity": "simple",
+      "languageNotes": "自定义 generate_canonical 函数确保不同平台生成相同的随机序列。"
+    },
+    {
+      "id": "class:thirdparty/arrow/include/arrow/testing/uniform_real.h:bernoulli_distribution",
+      "type": "class",
+      "name": "bernoulli_distribution",
+      "filePath": "thirdparty/arrow/include/arrow/testing/uniform_real.h",
+      "lineRange": [72, 81],
+      "summary": "伯努利分布实现，用于生成指定概率的布尔随机数。",
+      "tags": ["testing", "random", "distribution"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/testing/util.h",
+      "type": "file",
+      "name": "util.h",
+      "filePath": "thirdparty/arrow/include/arrow/testing/util.h",
+      "summary": "测试工具头文件，提供 BatchIterator 类用于迭代 RecordBatch 序列，以及 CopyBufferFromVector 等辅助函数。",
+      "tags": ["testing", "utility", "iterator", "arrow"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:thirdparty/arrow/include/arrow/testing/util.h:BatchIterator",
+      "type": "class",
+      "name": "BatchIterator",
+      "filePath": "thirdparty/arrow/include/arrow/testing/util.h",
+      "lineRange": [82, 103],
+      "summary": "RecordBatch 迭代器，用于按顺序读取预定义的 RecordBatch 向量。",
+      "tags": ["testing", "iterator", "record-batch"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/testing/visibility.h",
+      "type": "file",
+      "name": "visibility.h",
+      "filePath": "thirdparty/arrow/include/arrow/testing/visibility.h",
+      "summary": "测试库可见性宏定义头文件，控制测试符号的导出/导入属性。",
+      "tags": ["testing", "visibility", "macro", "linkage"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/type_fwd.h",
+      "type": "file",
+      "name": "type_fwd.h",
+      "filePath": "thirdparty/arrow/include/arrow/type_fwd.h",
+      "summary": "Arrow 类型系统前向声明头文件，声明所有核心数据类型（DataType、Array、Builder、Scalar 等）及其特化版本。",
+      "tags": ["type-definition", "forward-declaration", "arrow", "core"],
+      "complexity": "complex",
+      "languageNotes": "包含 130+ 个前向声明，覆盖 Null、Boolean、Binary、String、List、Struct、Union、Decimal、Temporal 等全部 Arrow 类型族。"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/type_traits.h",
+      "type": "file",
+      "name": "type_traits.h",
+      "filePath": "thirdparty/arrow/include/arrow/type_traits.h",
+      "summary": "Arrow 类型特征头文件，提供 CTypeTraits/TypeTraits 模板特化以及 is_integer、is_floating、is_temporal 等类型分类函数。",
+      "tags": ["type-traits", "template", "arrow", "metaprogramming"],
+      "complexity": "complex",
+      "languageNotes": "大量使用模板特化和 constexpr 函数，为每种 Arrow 类型提供 CType 映射、类型单例和字节宽度计算。"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/type.h",
+      "type": "file",
+      "name": "type.h",
+      "filePath": "thirdparty/arrow/include/arrow/type.h",
+      "summary": "Arrow 核心类型系统实现头文件，定义 DataType 基类、Field、Schema 以及所有具体类型类（FixedWidthType、BinaryType、ListType 等）。",
+      "tags": ["type-system", "core", "arrow", "data-model"],
+      "complexity": "complex",
+      "languageNotes": "使用 CRTP 模式（DataTypeImpl）实现类型层次结构，DataTypeLayout 描述内存布局。"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/algorithm.h",
+      "type": "file",
+      "name": "algorithm.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/algorithm.h",
+      "summary": "Arrow 算法工具头文件，提供 MaybeTransform 等函数式编程辅助工具。",
+      "tags": ["utility", "algorithm", "functional"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/align_util.h",
+      "type": "file",
+      "name": "align_util.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/align_util.h",
+      "summary": "位图对齐工具头文件，提供 BitmapWordAlignParams 结构和 BitmapWordAlign 函数用于高效位图操作的内存对齐计算。",
+      "tags": ["utility", "bitmap", "alignment", "performance"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:thirdparty/arrow/include/arrow/util/align_util.h:BitmapWordAlignParams",
+      "type": "class",
+      "name": "BitmapWordAlignParams",
+      "filePath": "thirdparty/arrow/include/arrow/util/align_util.h",
+      "lineRange": [29, 36],
+      "summary": "位图字对齐参数结构，存储前导位、尾部位和对齐后的起始地址等信息。",
+      "tags": ["utility", "bitmap", "alignment"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/aligned_storage.h",
+      "type": "file",
+      "name": "aligned_storage.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/aligned_storage.h",
+      "summary": "对齐存储工具头文件，提供 AlignedStorage 模板类用于在对齐的内存中构造和管理对象。",
+      "tags": ["utility", "memory", "aligned-storage", "raii"],
+      "complexity": "simple",
+      "languageNotes": "使用 placement new 和显式析构实现类型擦除的对齐存储。"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/async_generator_fwd.h",
+      "type": "file",
+      "name": "async_generator_fwd.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/async_generator_fwd.h",
+      "summary": "异步生成器前向声明头文件，声明 AsyncGenerator<T> 类型别名和相关 traits。",
+      "tags": ["async", "forward-declaration", "generator"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/async_generator.h",
+      "type": "file",
+      "name": "async_generator.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/async_generator.h",
+      "summary": "异步生成器实现头文件，提供 MappingGenerator、SequencingGenerator、ReadaheadGenerator、BackgroundGenerator 等丰富的异步流处理组合子。",
+      "tags": ["async", "generator", "concurrency", "stream-processing"],
+      "complexity": "complex",
+      "languageNotes": "使用 shared_ptr 管理状态生命周期，通过 Future/Promise 实现非阻塞的异步迭代。"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/async_util.h",
+      "type": "file",
+      "name": "async_util.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/async_util.h",
+      "summary": "异步工具头文件，提供 AsyncTaskGroup 类用于管理并发异步任务的生命周期和完成状态。",
+      "tags": ["async", "concurrency", "task-management", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/base64.h",
+      "type": "file",
+      "name": "base64.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/base64.h",
+      "summary": "Base64 编解码工具头文件，声明 Base64Encode 和 Base64Decode 函数。",
+      "tags": ["utility", "encoding", "base64"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/basic_decimal.h",
+      "type": "file",
+      "name": "basic_decimal.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/basic_decimal.h",
+      "summary": "基础十进制类型头文件，定义 BasicDecimal128 和 BasicDecimal256 类，支持定点十进制算术运算。",
+      "tags": ["utility", "decimal", "arithmetic", "numeric"],
+      "complexity": "moderate",
+      "languageNotes": "使用 uint64_t 数组存储十进制值，支持大端/小端字节序转换。"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/benchmark_util.h",
+      "type": "file",
+      "name": "benchmark_util.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/benchmark_util.h",
+      "summary": "基准测试工具头文件，提供 BenchmarkSettings、DatumGenerator 等类用于 Arrow 性能测试。",
+      "tags": ["benchmark", "performance", "testing", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/bit_block_counter.h",
+      "type": "file",
+      "name": "bit_block_counter.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/bit_block_counter.h",
+      "summary": "位块计数器头文件，提供 BitBlockCounter 和 OptionalBitBlockCounter 类用于高效统计位图中连续 1/0 块的数量。",
+      "tags": ["utility", "bitmap", "performance", "bit-manipulation"],
+      "complexity": "complex",
+      "languageNotes": "使用 64 位字级别的 popcount 操作实现高性能位统计。"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/bit_run_reader.h",
+      "type": "file",
+      "name": "bit_run_reader.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/bit_run_reader.h",
+      "summary": "位运行读取器头文件，提供 BitRunReader 和 OptionalBitRunReader 类用于顺序读取位图中的连续相同位段。",
+      "tags": ["utility", "bitmap", "run-length", "bit-manipulation"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/bit_stream_utils.h",
+      "type": "file",
+      "name": "bit_stream_utils.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/bit_stream_utils.h",
+      "summary": "位流工具头文件，提供 BitWriter 和 BitReader 类用于按位读写紧凑的位流数据。",
+      "tags": ["utility", "bitstream", "serialization", "io"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/bit_util.h",
+      "type": "file",
+      "name": "bit_util.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/bit_util.h",
+      "summary": "位操作工具头文件，提供 CountLeadingZeros、PopCount、CeilDiv、BytesForBits 等底层位操作函数。",
+      "tags": ["utility", "bit-manipulation", "performance", "low-level"],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:thirdparty/arrow/include/arrow/testing/gtest_util.h",
+      "target": "class:thirdparty/arrow/include/arrow/testing/gtest_util.h:MoveOnlyDataType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/testing/matchers.h",
+      "target": "class:thirdparty/arrow/include/arrow/testing/matchers.h:AnyOfJSONMatcher",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/testing/matchers.h",
+      "target": "class:thirdparty/arrow/include/arrow/testing/matchers.h:ErrorMatcher",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/testing/matchers.h",
+      "target": "class:thirdparty/arrow/include/arrow/testing/matchers.h:DataEqMatcher",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/testing/uniform_real.h",
+      "target": "class:thirdparty/arrow/include/arrow/testing/uniform_real.h:bernoulli_distribution",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/testing/util.h",
+      "target": "class:thirdparty/arrow/include/arrow/testing/util.h:BatchIterator",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/util/align_util.h",
+      "target": "class:thirdparty/arrow/include/arrow/util/align_util.h:BitmapWordAlignParams",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/type_traits.h",
+      "target": "file:thirdparty/arrow/include/arrow/type_fwd.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/type.h",
+      "target": "file:thirdparty/arrow/include/arrow/type_fwd.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/type.h",
+      "target": "file:thirdparty/arrow/include/arrow/type_traits.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/testing/generator.h",
+      "target": "file:thirdparty/arrow/include/arrow/type.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/testing/random.h",
+      "target": "file:thirdparty/arrow/include/arrow/type.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/testing/matchers.h",
+      "target": "file:thirdparty/arrow/include/arrow/testing/gtest_util.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/testing/uniform_real.h",
+      "target": "file:thirdparty/arrow/include/arrow/util/bit_util.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/util/align_util.h",
+      "target": "file:thirdparty/arrow/include/arrow/util/bit_util.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/util/async_generator.h",
+      "target": "file:thirdparty/arrow/include/arrow/util/async_generator_fwd.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    }
+  ]
+}

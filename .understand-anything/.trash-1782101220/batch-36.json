@@ -1,0 +1,369 @@
+{
+  "nodes": [
+    {
+      "id": "file:thirdparty/arrow/include/arrow/builder.h",
+      "type": "file",
+      "name": "builder.h",
+      "filePath": "thirdparty/arrow/include/arrow/builder.h",
+      "summary": "Arrow 数组构建器的统一头文件，聚合包含所有 ArrayBuilder 子类（如 StringBuilder、Int32Builder 等）的头文件。",
+      "tags": ["third-party", "barrel", "array-builder", "apache-arrow"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/c/abi.h",
+      "type": "file",
+      "name": "abi.h",
+      "filePath": "thirdparty/arrow/include/arrow/c/abi.h",
+      "summary": "定义 Arrow C 数据接口（C Data Interface）的标准 ABI 结构体，包括 ArrowSchema、ArrowArray 和 ArrowArrayStream，用于跨语言零拷贝数据交换。",
+      "tags": ["third-party", "type-definition", "c-abi", "interoperability", "apache-arrow"],
+      "complexity": "moderate",
+      "languageNotes": "纯 C 结构体定义，使用函数指针作为 release 回调，遵循 Arrow Columnar Format 规范。"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/c/bridge.h",
+      "type": "file",
+      "name": "bridge.h",
+      "filePath": "thirdparty/arrow/include/arrow/c/bridge.h",
+      "summary": "提供 C++ Arrow 数据类型与 C Data Interface 之间的双向桥接函数，实现 ArrowSchema/ArrowArray/ArrowArrayStream 与 C++ 对象的相互转换。",
+      "tags": ["third-party", "bridge", "serialization", "c-abi", "apache-arrow"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/c/helpers.h",
+      "type": "file",
+      "name": "helpers.h",
+      "filePath": "thirdparty/arrow/include/arrow/c/helpers.h",
+      "summary": "为 Arrow C Data Interface 结构体提供内联辅助函数，包括 ArrowSchema/ArrowArray/ArrowArrayStream 的移动（Move）、释放（Release）和状态检查（IsReleased）操作。",
+      "tags": ["third-party", "utility", "c-abi", "inline-functions", "apache-arrow"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/chunk_resolver.h",
+      "type": "file",
+      "name": "chunk_resolver.h",
+      "filePath": "thirdparty/arrow/include/arrow/chunk_resolver.h",
+      "summary": "定义 ChunkResolver 工具类，用于将扁平化的逻辑索引高效解析到分块数组（ChunkedArray）中的具体 chunk 索引和偏移量，支持缓存和二分查找。",
+      "tags": ["third-party", "utility", "data-structure", "index-resolution", "apache-arrow"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/chunked_array.h",
+      "type": "file",
+      "name": "chunked_array.h",
+      "filePath": "thirdparty/arrow/include/arrow/chunked_array.h",
+      "summary": "定义 ChunkedArray 类，表示由多个 Array 块组成的逻辑数组，支持迭代访问各 chunk 及二元分块遍历（ApplyBinaryChunked）等操作。",
+      "tags": ["third-party", "data-model", "array", "container", "apache-arrow"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/compare.h",
+      "type": "file",
+      "name": "compare.h",
+      "filePath": "thirdparty/arrow/include/arrow/compare.h",
+      "summary": "定义 EqualOptions 配置类，用于控制 Arrow 数组/类型/张量之间的相等比较行为，包括 NaN 处理、有符号零和绝对容差设置。",
+      "tags": ["third-party", "comparison", "options", "configuration", "apache-arrow"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:thirdparty/arrow/include/arrow/compare.h:EqualOptions",
+      "type": "class",
+      "name": "EqualOptions",
+      "filePath": "thirdparty/arrow/include/arrow/compare.h",
+      "lineRange": [39, 92],
+      "summary": "配置类，控制 Arrow 数组比较行为，包括 nans_equal（NaN 相等）、signed_zeros_equal（有符号零相等）、atol（绝对容差）和 diff_sink（差异输出）选项。",
+      "tags": ["configuration", "comparison", "options"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/compute/api_aggregate.h",
+      "type": "file",
+      "name": "api_aggregate.h",
+      "filePath": "thirdparty/arrow/include/arrow/compute/api_aggregate.h",
+      "summary": "声明 Arrow Compute 模块中所有聚合函数（如 Sum、Mean、Count、MinMax 等）的 API，以及 Aggregate 结构体和 HashAggregate 相关选项。",
+      "tags": ["third-party", "api-declaration", "aggregation", "compute", "apache-arrow"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/compute/api_scalar.h",
+      "type": "file",
+      "name": "api_scalar.h",
+      "filePath": "thirdparty/arrow/include/arrow/compute/api_scalar.h",
+      "summary": "声明 Arrow Compute 模块中所有标量函数的 API，涵盖算术运算、字符串处理、时间日期、逻辑运算、类型转换等大量函数及其选项类。",
+      "tags": ["third-party", "api-declaration", "scalar-functions", "compute", "apache-arrow"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/compute/api_vector.h",
+      "type": "file",
+      "name": "api_vector.h",
+      "filePath": "thirdparty/arrow/include/arrow/compute/api_vector.h",
+      "summary": "声明 Arrow Compute 模块中所有向量函数的 API，包括 Filter、Take、Sort、SelectK、RunEndEncode 等操作及其选项类。",
+      "tags": ["third-party", "api-declaration", "vector-functions", "compute", "apache-arrow"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/compute/api.h",
+      "type": "file",
+      "name": "api.h",
+      "filePath": "thirdparty/arrow/include/arrow/compute/api.h",
+      "summary": "Arrow Compute 模块的统一入口头文件，聚合包含 api_scalar.h、api_vector.h、api_aggregate.h、cast.h、exec.h 和 expression.h。",
+      "tags": ["third-party", "barrel", "compute", "entry-point", "apache-arrow"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/compute/cast.h",
+      "type": "file",
+      "name": "cast.h",
+      "filePath": "thirdparty/arrow/include/arrow/compute/cast.h",
+      "summary": "声明 Arrow 数据类型转换函数（Cast），支持安全（Safe）和不安全（Unsafe）两种模式，以及 CastOptions 配置。",
+      "tags": ["third-party", "type-conversion", "compute", "api-declaration", "apache-arrow"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/compute/exec.h",
+      "type": "file",
+      "name": "exec.h",
+      "filePath": "thirdparty/arrow/include/arrow/compute/exec.h",
+      "summary": "定义 Arrow Compute 执行层的核心数据结构：ExecBatch（执行批次）、ExecValue（标量或数组值）、ExecSpan（执行视图）以及 ExecNode 等执行管道组件。",
+      "tags": ["third-party", "execution-engine", "data-model", "compute", "apache-arrow"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:thirdparty/arrow/include/arrow/compute/exec.h:ExecValue",
+      "type": "class",
+      "name": "ExecValue",
+      "filePath": "thirdparty/arrow/include/arrow/compute/exec.h",
+      "lineRange": [275, 329],
+      "summary": "表示计算执行过程中的单个值，可以是标量（Scalar）或数组（ArraySpan），提供 length、is_array、null_count 等访问方法。",
+      "tags": ["data-model", "execution-engine", "variant-type"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/compute/expression.h",
+      "type": "file",
+      "name": "expression.h",
+      "filePath": "thirdparty/arrow/include/arrow/compute/expression.h",
+      "summary": "定义 Arrow 计算表达式树（Expression），支持字面量、字段引用和函数调用三种节点类型，用于谓词下推和查询优化。",
+      "tags": ["third-party", "expression-tree", "query-optimization", "compute", "apache-arrow"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/compute/function.h",
+      "type": "file",
+      "name": "function.h",
+      "filePath": "thirdparty/arrow/include/arrow/compute/function.h",
+      "summary": "定义 Arrow Compute 函数类层次结构，包括 Function 基类及 ScalarFunction、VectorFunction、ScalarAggregateFunction、HashAggregateFunction、MetaFunction 等子类。",
+      "tags": ["third-party", "class-hierarchy", "function-system", "compute", "apache-arrow"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/compute/kernel.h",
+      "type": "file",
+      "name": "kernel.h",
+      "filePath": "thirdparty/arrow/include/arrow/compute/kernel.h",
+      "summary": "定义 Arrow Compute 内核（Kernel）体系结构，包括 Kernel 基类、KernelSignature、InputType/OutputType 类型匹配，以及 ScalarKernel、VectorKernel、ScalarAggregateKernel、HashAggregateKernel 等特化内核。",
+      "tags": ["third-party", "kernel-system", "type-matching", "compute", "apache-arrow"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/compute/key_hash.h",
+      "type": "file",
+      "name": "key_hash.h",
+      "filePath": "thirdparty/arrow/include/arrow/compute/key_hash.h",
+      "summary": "提供 Arrow Compute 中用于哈希聚合和连接操作的键哈希工具，支持多列组合键的高效哈希计算。",
+      "tags": ["third-party", "hashing", "utility", "compute", "apache-arrow"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/compute/key_map.h",
+      "type": "file",
+      "name": "key_map.h",
+      "filePath": "thirdparty/arrow/include/arrow/compute/key_map.h",
+      "summary": "实现 SwissTable 风格的哈希映射（SwissTable），用于 Arrow Compute 的分组聚合操作，支持 group_id 的高效查找和插入。",
+      "tags": ["third-party", "hash-map", "data-structure", "compute", "apache-arrow"],
+      "complexity": "moderate",
+      "languageNotes": "实现 SwissTable 变体，使用 SIMD 友好的控制字节布局，每个 block 有固定数量的 slot。"
+    },
+    {
+      "id": "function:thirdparty/arrow/include/arrow/compute/key_map.h:extract_group_id",
+      "type": "function",
+      "name": "extract_group_id",
+      "filePath": "thirdparty/arrow/include/arrow/compute/key_map.h",
+      "lineRange": [243, 258],
+      "summary": "从 SwissTable 的控制块中提取指定 slot 的 group_id，通过 popcount 计算实际偏移量。",
+      "tags": ["hash-map", "bit-manipulation", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:thirdparty/arrow/include/arrow/compute/key_map.h:insert_into_empty_slot",
+      "type": "function",
+      "name": "insert_into_empty_slot",
+      "filePath": "thirdparty/arrow/include/arrow/compute/key_map.h",
+      "lineRange": [260, 285],
+      "summary": "向 SwissTable 的空 slot 中插入新的 group_id 和哈希值，更新控制字节和 group_id 存储区域。",
+      "tags": ["hash-map", "insertion", "bit-manipulation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/compute/light_array.h",
+      "type": "file",
+      "name": "light_array.h",
+      "filePath": "thirdparty/arrow/include/arrow/compute/light_array.h",
+      "summary": "定义轻量级数组操作工具，包括 LightContext（硬件标志和栈管理）、ResizableArrayData（可调整大小的数组数据）以及 ColumnMetadata 等结构。",
+      "tags": ["third-party", "lightweight", "array-data", "compute", "apache-arrow"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/compute/ordering.h",
+      "type": "file",
+      "name": "ordering.h",
+      "filePath": "thirdparty/arrow/include/arrow/compute/ordering.h",
+      "summary": "定义 Ordering 类，用于描述 Arrow 数据集的排序状态，支持有序（Ordered）和无序（Unordered）两种模式，用于查询优化和流式执行。",
+      "tags": ["third-party", "ordering", "query-optimization", "compute", "apache-arrow"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/compute/registry.h",
+      "type": "file",
+      "name": "registry.h",
+      "filePath": "thirdparty/arrow/include/arrow/compute/registry.h",
+      "summary": "定义 FunctionRegistry 接口，用于注册和查找 Arrow Compute 函数，支持自定义函数扩展。",
+      "tags": ["third-party", "registry", "function-system", "compute", "apache-arrow"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/compute/row/grouper.h",
+      "type": "file",
+      "name": "grouper.h",
+      "filePath": "thirdparty/arrow/include/arrow/compute/row/grouper.h",
+      "summary": "定义 Grouper 接口，用于将多列数据按行分组，是哈希聚合和分组操作的核心组件，支持 Segment 结构表示连续相等行的范围。",
+      "tags": ["third-party", "grouping", "aggregation", "compute", "apache-arrow"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/compute/type_fwd.h",
+      "type": "file",
+      "name": "type_fwd.h",
+      "filePath": "thirdparty/arrow/include/arrow/compute/type_fwd.h",
+      "summary": "Arrow Compute 模块的前向声明头文件，声明 Datum、Function、FunctionOptions、ExecBatch、Kernel 等核心类型，避免循环依赖。",
+      "tags": ["third-party", "forward-declaration", "type-definition", "compute", "apache-arrow"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/compute/util.h",
+      "type": "file",
+      "name": "util.h",
+      "filePath": "thirdparty/arrow/include/arrow/compute/util.h",
+      "summary": "提供 Arrow Compute 内部使用的工具类和函数，包括 MiniBatch（小批量处理常量）、TempVectorHolder（临时向量管理）、ModifyExpression（表达式变换）以及 SIMD 对齐的尾部跳过工具（TailSkipForSIMD）。",
+      "tags": ["third-party", "utility", "simd", "compute", "apache-arrow"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:thirdparty/arrow/include/arrow/compute/util.h:TailSkipForSIMD",
+      "type": "class",
+      "name": "TailSkipForSIMD",
+      "filePath": "thirdparty/arrow/include/arrow/compute/util.h",
+      "lineRange": [249, 287],
+      "summary": "提供 SIMD 对齐辅助函数，用于计算位访问、定长二进制和变长二进制数据的安全访问边界，以及选择向量的安全处理范围。",
+      "tags": ["simd", "utility", "alignment", "optimization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:thirdparty/arrow/include/arrow/compute/util.h:FixVarBinaryAccess",
+      "type": "function",
+      "name": "FixVarBinaryAccess",
+      "filePath": "thirdparty/arrow/include/arrow/compute/util.h",
+      "lineRange": [267, 278],
+      "summary": "计算变长二进制数据在 SIMD 处理时的安全访问边界，通过偏移量数组确定不会越界访问的最大行数。",
+      "tags": ["simd", "bounds-checking", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/config.h",
+      "type": "file",
+      "name": "config.h",
+      "filePath": "thirdparty/arrow/include/arrow/config.h",
+      "summary": "定义 Arrow 库的构建信息（BuildInfo）和运行时信息（RuntimeInfo）结构体，包括版本号、编译器信息、SIMD 支持级别和时区数据库配置。",
+      "tags": ["third-party", "configuration", "build-info", "runtime-info", "apache-arrow"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:thirdparty/arrow/include/arrow/config.h:BuildInfo",
+      "type": "class",
+      "name": "BuildInfo",
+      "filePath": "thirdparty/arrow/include/arrow/config.h",
+      "lineRange": [29, 56],
+      "summary": "存储 Arrow 库的编译时构建信息，包括版本号（major/minor/patch）、SO 版本、编译器 ID/版本/标志、Git 信息和构建类型。",
+      "tags": ["build-info", "metadata", "configuration"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:thirdparty/arrow/include/arrow/config.h:RuntimeInfo",
+      "type": "class",
+      "name": "RuntimeInfo",
+      "filePath": "thirdparty/arrow/include/arrow/config.h",
+      "lineRange": [58, 74],
+      "summary": "存储 Arrow 库的运行时信息，包括当前 SIMD 级别、检测到的 SIMD 级别、是否使用操作系统时区数据库及时区数据库路径。",
+      "tags": ["runtime-info", "simd", "configuration"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:thirdparty/arrow/include/arrow/compare.h",
+      "target": "class:thirdparty/arrow/include/arrow/compare.h:EqualOptions",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/compute/exec.h",
+      "target": "class:thirdparty/arrow/include/arrow/compute/exec.h:ExecValue",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/compute/key_map.h",
+      "target": "function:thirdparty/arrow/include/arrow/compute/key_map.h:extract_group_id",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/compute/key_map.h",
+      "target": "function:thirdparty/arrow/include/arrow/compute/key_map.h:insert_into_empty_slot",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/compute/util.h",
+      "target": "class:thirdparty/arrow/include/arrow/compute/util.h:TailSkipForSIMD",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/compute/util.h",
+      "target": "function:thirdparty/arrow/include/arrow/compute/util.h:FixVarBinaryAccess",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/config.h",
+      "target": "class:thirdparty/arrow/include/arrow/config.h:BuildInfo",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/config.h",
+      "target": "class:thirdparty/arrow/include/arrow/config.h:RuntimeInfo",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    }
+  ]
+}

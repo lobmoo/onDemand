@@ -1,0 +1,512 @@
+{
+  "nodes": [
+    {
+      "id": "file:thirdparty/arrow/include/arrow/ipc/test_common.h",
+      "type": "file",
+      "name": "test_common.h",
+      "filePath": "thirdparty/arrow/include/arrow/ipc/test_common.h",
+      "summary": "IPC 测试公共辅助头文件，声明用于 Arrow IPC 序列化/反序列化测试的通用工具函数，如批量生成 RecordBatch 和 Schema。",
+      "tags": ["test", "ipc", "utility", "type-definition"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/ipc/type_fwd.h",
+      "type": "file",
+      "name": "type_fwd.h",
+      "filePath": "thirdparty/arrow/include/arrow/ipc/type_fwd.h",
+      "summary": "IPC 模块前向声明头文件，为 Message、IpcReadOptions、IpcWriteOptions、RecordBatchStreamReader/Writer 等核心 IPC 类型提供前向声明。",
+      "tags": ["type-definition", "ipc", "forward-declaration"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/ipc/util.h",
+      "type": "file",
+      "name": "util.h",
+      "filePath": "thirdparty/arrow/include/arrow/ipc/util.h",
+      "summary": "IPC 工具头文件，定义 PaddedLength 函数用于计算 IPC 消息的内存对齐填充长度。",
+      "tags": ["utility", "ipc", "memory-alignment"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/ipc/writer.h",
+      "type": "file",
+      "name": "writer.h",
+      "filePath": "thirdparty/arrow/include/arrow/ipc/writer.h",
+      "summary": "IPC 写入器头文件，定义 RecordBatchWriter、IpcPayload、WriteStats 等类型，支持将 Arrow 数据结构序列化为 IPC 流格式或文件格式。",
+      "tags": ["ipc", "serialization", "type-definition", "writer"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/memory_pool_test.h",
+      "type": "file",
+      "name": "memory_pool_test.h",
+      "filePath": "thirdparty/arrow/include/arrow/memory_pool_test.h",
+      "summary": "内存池测试基类头文件，定义 TestMemoryPoolBase 测试夹具，包含内存跟踪、OOM 处理、重新分配和对齐等测试方法。",
+      "tags": ["test", "memory-management", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/memory_pool.h",
+      "type": "file",
+      "name": "memory_pool.h",
+      "filePath": "thirdparty/arrow/include/arrow/memory_pool.h",
+      "summary": "内存池核心头文件，定义 MemoryPoolStats 统计类和 MemoryPool 抽象基类接口，提供线程安全的内存分配/释放/重新分配及统计功能。",
+      "tags": ["memory-management", "type-definition", "core"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/pch.h",
+      "type": "file",
+      "name": "pch.h",
+      "filePath": "thirdparty/arrow/include/arrow/pch.h",
+      "summary": "预编译头文件，包含 Arrow 库常用的标准库头文件以加速编译。",
+      "tags": ["build-system", "pch"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/pretty_print.h",
+      "type": "file",
+      "name": "pretty_print.h",
+      "filePath": "thirdparty/arrow/include/arrow/pretty_print.h",
+      "summary": "格式化打印头文件，定义 PrettyPrintOptions 和 PrettyPrintDelimiters 配置，以及 Array、RecordBatch、Schema、Table 等对象的格式化输出函数。",
+      "tags": ["utility", "debugging", "formatting"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/record_batch.h",
+      "type": "file",
+      "name": "record_batch.h",
+      "filePath": "thirdparty/arrow/include/arrow/record_batch.h",
+      "summary": "RecordBatch 核心头文件，定义 RecordBatch 抽象基类和 RecordBatchReader 迭代器，提供列式数据批次的创建、访问、序列化和流式读取功能。",
+      "tags": ["data-model", "core", "type-definition", "iteration"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/result.h",
+      "type": "file",
+      "name": "result.h",
+      "filePath": "thirdparty/arrow/include/arrow/result.h",
+      "summary": "Result 类型头文件，定义泛型 Result<T> 类，用于表示可能包含值或错误状态的结果，支持 Map、ValueOr、ValueOrElse 等函数式操作。",
+      "tags": ["type-definition", "error-handling", "core", "template"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/scalar.h",
+      "type": "file",
+      "name": "scalar.h",
+      "filePath": "thirdparty/arrow/include/arrow/scalar.h",
+      "summary": "标量值类型头文件，定义 Scalar 基类及其所有派生类型（BooleanScalar、NumericScalar、StringScalar、TimestampScalar、DecimalScalar、StructScalar、DictionaryScalar 等），以及 MakeScalar 工厂函数。",
+      "tags": ["data-model", "type-definition", "core", "factory"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/sparse_tensor.h",
+      "type": "file",
+      "name": "sparse_tensor.h",
+      "filePath": "thirdparty/arrow/include/arrow/sparse_tensor.h",
+      "summary": "稀疏张量头文件，定义 SparseTensor、SparseIndex、SparseCSRIndex、SparseCSCIndex、SparseCSXIndex 等类型，支持 COO/CSR/CSC 等稀疏格式的张量存储和转换。",
+      "tags": ["data-model", "sparse", "tensor", "type-definition"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/status.h",
+      "type": "file",
+      "name": "status.h",
+      "filePath": "thirdparty/arrow/include/arrow/status.h",
+      "summary": "Status 错误状态头文件，定义 Status 类用于表示操作结果（成功或各种错误类型），提供 OutOfMemory、Invalid、TypeError 等静态工厂方法和错误码查询接口。",
+      "tags": ["error-handling", "type-definition", "core"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/stl_allocator.h",
+      "type": "file",
+      "name": "stl_allocator.h",
+      "filePath": "thirdparty/arrow/include/arrow/stl_allocator.h",
+      "summary": "STL 分配器适配头文件，定义 STLAllocator 模板类，将 Arrow MemoryPool 适配为标准库兼容的分配器接口，使 STL 容器可使用 Arrow 内存池。",
+      "tags": ["memory-management", "stl", "adapter", "template"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/stl_iterator.h",
+      "type": "file",
+      "name": "stl_iterator.h",
+      "filePath": "thirdparty/arrow/include/arrow/stl_iterator.h",
+      "summary": "STL 迭代器适配头文件，定义 ArrayIterator 和 ChunkedArrayIterator 模板类，将 Arrow Array 和 ChunkedArray 适配为标准库兼容的迭代器接口。",
+      "tags": ["stl", "adapter", "iteration", "template"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/stl.h",
+      "type": "file",
+      "name": "stl.h",
+      "filePath": "thirdparty/arrow/include/arrow/stl.h",
+      "summary": "STL 集成头文件，定义 ConversionTraits 模板特化和 FromSTL/ToSTL 转换函数，支持在 Arrow 数据结构与 C++ STL 容器之间进行双向转换。",
+      "tags": ["stl", "serialization", "conversion", "template"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/table_builder.h",
+      "type": "file",
+      "name": "table_builder.h",
+      "filePath": "thirdparty/arrow/include/arrow/table_builder.h",
+      "summary": "表构建器头文件，定义 RecordBatchBuilder 工厂类，提供从 Schema 创建 RecordBatch 构建器的便捷接口。",
+      "tags": ["builder", "factory", "data-model"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/table.h",
+      "type": "file",
+      "name": "table.h",
+      "filePath": "thirdparty/arrow/include/arrow/table.h",
+      "summary": "Table 核心头文件，定义 Table 和 ChunkedArray 抽象基类，提供列式表格数据的创建、列访问、切片、合并和过滤操作。",
+      "tags": ["data-model", "core", "type-definition"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/tensor.h",
+      "type": "file",
+      "name": "tensor.h",
+      "filePath": "thirdparty/arrow/include/arrow/tensor.h",
+      "summary": "张量核心头文件，定义 Tensor 类，支持多维数组的创建、形状/步幅管理、元素访问和与 NumPy 的兼容性。",
+      "tags": ["data-model", "tensor", "core", "type-definition"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/tensor/converter.h",
+      "type": "file",
+      "name": "converter.h",
+      "filePath": "thirdparty/arrow/include/arrow/tensor/converter.h",
+      "summary": "张量转换器头文件，定义 SparseTensorConverterMixin 模板类，提供 Dense 到 Sparse 张量的转换功能。",
+      "tags": ["conversion", "tensor", "sparse", "template"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/testing/async_test_util.h",
+      "type": "file",
+      "name": "async_test_util.h",
+      "filePath": "thirdparty/arrow/include/arrow/testing/async_test_util.h",
+      "summary": "异步测试工具头文件，提供用于 Arrow 异步操作测试的辅助宏和工具函数。",
+      "tags": ["test", "async", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/testing/builder.h",
+      "type": "file",
+      "name": "builder.h",
+      "filePath": "thirdparty/arrow/include/arrow/testing/builder.h",
+      "summary": "测试构建器头文件，声明用于测试的 ArrayBuilder 辅助函数，支持从原始数据快速构建各类 Arrow 数组。",
+      "tags": ["test", "builder", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/testing/executor_util.h",
+      "type": "file",
+      "name": "executor_util.h",
+      "filePath": "thirdparty/arrow/include/arrow/testing/executor_util.h",
+      "summary": "执行器测试工具头文件，定义 MockExecutor 和 DelayedExecutor 测试替身，用于异步执行器的单元测试。",
+      "tags": ["test", "mock", "async", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/testing/extension_type.h",
+      "type": "file",
+      "name": "extension_type.h",
+      "filePath": "thirdparty/arrow/include/arrow/testing/extension_type.h",
+      "summary": "扩展类型测试头文件，声明用于测试 Arrow 扩展类型机制的示例扩展类型和辅助函数。",
+      "tags": ["test", "type-definition", "extension", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/testing/future_util.h",
+      "type": "file",
+      "name": "future_util.h",
+      "filePath": "thirdparty/arrow/include/arrow/testing/future_util.h",
+      "summary": "Future 测试工具头文件，提供用于测试 Arrow Future/Promise 异步模式的辅助宏和断言函数。",
+      "tags": ["test", "async", "utility", "future"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:thirdparty/arrow/include/arrow/ipc/writer.h:IpcPayload",
+      "type": "class",
+      "name": "IpcPayload",
+      "filePath": "thirdparty/arrow/include/arrow/ipc/writer.h",
+      "lineRange": [56, 62],
+      "summary": "IPC 消息负载结构体，封装序列化后的消息类型、元数据缓冲区、body 缓冲区数组以及 body 长度信息。",
+      "tags": ["ipc", "data-model", "serialization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:thirdparty/arrow/include/arrow/ipc/writer.h:WriteStats",
+      "type": "class",
+      "name": "WriteStats",
+      "filePath": "thirdparty/arrow/include/arrow/ipc/writer.h",
+      "lineRange": [64, 85],
+      "summary": "IPC 写入统计结构体，跟踪写入的消息数、RecordBatch 数、字典批次数、字典增量数及原始/序列化 body 大小。",
+      "tags": ["ipc", "statistics", "monitoring"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:thirdparty/arrow/include/arrow/memory_pool_test.h:TestMemoryPoolBase",
+      "type": "class",
+      "name": "TestMemoryPoolBase",
+      "filePath": "thirdparty/arrow/include/arrow/memory_pool_test.h",
+      "lineRange": [33, 108],
+      "summary": "内存池测试基类，提供内存跟踪验证、OOM 测试、重新分配测试和对齐测试等通用测试方法。",
+      "tags": ["test", "memory-management", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:thirdparty/arrow/include/arrow/memory_pool.h:MemoryPoolStats",
+      "type": "class",
+      "name": "MemoryPoolStats",
+      "filePath": "thirdparty/arrow/include/arrow/memory_pool.h",
+      "lineRange": [38, 76],
+      "summary": "内存池统计类，使用原子计数器线程安全地跟踪当前分配字节数、峰值内存、总分配字节数和分配次数。",
+      "tags": ["memory-management", "statistics", "thread-safe"],
+      "complexity": "moderate",
+      "languageNotes": "使用 std::atomic 实现线程安全的内存统计，UpdateAllocatedBytes 使用 fetch_add 原子操作。"
+    },
+    {
+      "id": "function:thirdparty/arrow/include/arrow/memory_pool.h:UpdateAllocatedBytes",
+      "type": "function",
+      "name": "UpdateAllocatedBytes",
+      "filePath": "thirdparty/arrow/include/arrow/memory_pool.h",
+      "lineRange": [50, 69],
+      "summary": "原子更新内存池的分配字节统计，使用 fetch_add 和 compare_exchange_weak 循环确保线程安全地更新当前值和峰值。",
+      "tags": ["memory-management", "thread-safe", "atomic"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:thirdparty/arrow/include/arrow/status.h:Equals",
+      "type": "function",
+      "name": "Equals",
+      "filePath": "thirdparty/arrow/include/arrow/status.h",
+      "lineRange": [409, 426],
+      "summary": "比较两个 Status 对象是否相等，检查错误码、detail 指针和错误消息是否相同。",
+      "tags": ["error-handling", "comparison"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:thirdparty/arrow/include/arrow/tensor/converter.h:SparseTensorConverterMixin",
+      "type": "class",
+      "name": "SparseTensorConverterMixin",
+      "filePath": "thirdparty/arrow/include/arrow/tensor/converter.h",
+      "lineRange": [1, 67],
+      "summary": "稀疏张量转换器混入模板类，为 Dense 到 Sparse 张量转换提供通用的 Convert 方法实现。",
+      "tags": ["conversion", "tensor", "sparse", "template"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:thirdparty/arrow/include/arrow/ipc/writer.h",
+      "target": "class:thirdparty/arrow/include/arrow/ipc/writer.h:IpcPayload",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/ipc/writer.h",
+      "target": "class:thirdparty/arrow/include/arrow/ipc/writer.h:WriteStats",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/memory_pool_test.h",
+      "target": "class:thirdparty/arrow/include/arrow/memory_pool_test.h:TestMemoryPoolBase",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/memory_pool.h",
+      "target": "class:thirdparty/arrow/include/arrow/memory_pool.h:MemoryPoolStats",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/memory_pool.h",
+      "target": "function:thirdparty/arrow/include/arrow/memory_pool.h:UpdateAllocatedBytes",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/status.h",
+      "target": "function:thirdparty/arrow/include/arrow/status.h:Equals",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/tensor/converter.h",
+      "target": "class:thirdparty/arrow/include/arrow/tensor/converter.h:SparseTensorConverterMixin",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/ipc/test_common.h",
+      "target": "file:thirdparty/arrow/include/arrow/ipc/writer.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/ipc/writer.h",
+      "target": "file:thirdparty/arrow/include/arrow/ipc/type_fwd.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/ipc/util.h",
+      "target": "file:thirdparty/arrow/include/arrow/ipc/writer.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/memory_pool_test.h",
+      "target": "file:thirdparty/arrow/include/arrow/memory_pool.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/stl_allocator.h",
+      "target": "file:thirdparty/arrow/include/arrow/memory_pool.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/result.h",
+      "target": "file:thirdparty/arrow/include/arrow/status.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/scalar.h",
+      "target": "file:thirdparty/arrow/include/arrow/result.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/record_batch.h",
+      "target": "file:thirdparty/arrow/include/arrow/status.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/sparse_tensor.h",
+      "target": "file:thirdparty/arrow/include/arrow/tensor.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/sparse_tensor.h",
+      "target": "file:thirdparty/arrow/include/arrow/memory_pool.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/tensor/converter.h",
+      "target": "file:thirdparty/arrow/include/arrow/sparse_tensor.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/stl.h",
+      "target": "file:thirdparty/arrow/include/arrow/status.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/stl_iterator.h",
+      "target": "file:thirdparty/arrow/include/arrow/record_batch.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/pretty_print.h",
+      "target": "file:thirdparty/arrow/include/arrow/status.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/pretty_print.h",
+      "target": "file:thirdparty/arrow/include/arrow/record_batch.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/pretty_print.h",
+      "target": "file:thirdparty/arrow/include/arrow/table.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/table.h",
+      "target": "file:thirdparty/arrow/include/arrow/status.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/table.h",
+      "target": "file:thirdparty/arrow/include/arrow/record_batch.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/table_builder.h",
+      "target": "file:thirdparty/arrow/include/arrow/status.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/tensor.h",
+      "target": "file:thirdparty/arrow/include/arrow/status.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/tensor.h",
+      "target": "file:thirdparty/arrow/include/arrow/memory_pool.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/testing/executor_util.h",
+      "target": "file:thirdparty/arrow/include/arrow/testing/async_test_util.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/testing/future_util.h",
+      "target": "file:thirdparty/arrow/include/arrow/status.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    }
+  ]
+}

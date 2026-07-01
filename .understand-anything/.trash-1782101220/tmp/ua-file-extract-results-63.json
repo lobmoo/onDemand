@@ -1,0 +1,3273 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 25,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "thirdparty/spdlog/include/spdlog/sinks/basic_file_sink-inl.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 48,
+      "nonEmptyLines": 38,
+      "callGraph": [
+        {
+          "caller": "truncate",
+          "callee": "reopen",
+          "lineNumber": 32
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "format",
+          "lineNumber": 38
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "write",
+          "lineNumber": 39
+        },
+        {
+          "caller": "flush_",
+          "callee": "flush",
+          "lineNumber": 44
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/spdlog/include/spdlog/sinks/basic_file_sink.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 66,
+      "nonEmptyLines": 54,
+      "callGraph": [
+        {
+          "caller": "basic_logger_mt",
+          "callee": "Factory::template create<sinks::basic_file_sink_mt>",
+          "lineNumber": 49
+        },
+        {
+          "caller": "basic_logger_st",
+          "callee": "Factory::template create<sinks::basic_file_sink_st>",
+          "lineNumber": 58
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/spdlog/include/spdlog/sinks/callback_sink.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 56,
+      "nonEmptyLines": 43,
+      "callGraph": [
+        {
+          "caller": "sink_it_",
+          "callee": "callback_",
+          "lineNumber": 29
+        },
+        {
+          "caller": "callback_logger_mt",
+          "callee": "Factory::template create<sinks::callback_sink_mt>",
+          "lineNumber": 47
+        },
+        {
+          "caller": "callback_logger_st",
+          "callee": "Factory::template create<sinks::callback_sink_st>",
+          "lineNumber": 53
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/spdlog/include/spdlog/sinks/daily_file_sink.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 254,
+      "nonEmptyLines": 228,
+      "functions": [
+        {
+          "name": "calc_filename",
+          "startLine": 31,
+          "endLine": 37,
+          "params": [
+            "filename",
+            "now_tm"
+          ]
+        },
+        {
+          "name": "calc_filename",
+          "startLine": 50,
+          "endLine": 58,
+          "params": [
+            "file_path",
+            "now_tm"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "daily_filename_calculator",
+          "startLine": 29,
+          "endLine": 38,
+          "methods": [
+            "calc_filename"
+          ],
+          "properties": []
+        },
+        {
+          "name": "daily_filename_format_calculator",
+          "startLine": 49,
+          "endLine": 59,
+          "methods": [
+            "calc_filename"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "calc_filename",
+          "line": 31,
+          "isDefault": false
+        },
+        {
+          "name": "daily_filename_calculator",
+          "line": 29,
+          "isDefault": false
+        },
+        {
+          "name": "calc_filename",
+          "line": 50,
+          "isDefault": false
+        },
+        {
+          "name": "daily_filename_format_calculator",
+          "line": 49,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "calc_filename",
+          "callee": "std::tie",
+          "lineNumber": 33
+        },
+        {
+          "caller": "calc_filename",
+          "callee": "details::file_helper::split_by_extension",
+          "lineNumber": 33
+        },
+        {
+          "caller": "calc_filename",
+          "callee": "fmt_lib::format",
+          "lineNumber": 34
+        },
+        {
+          "caller": "calc_filename",
+          "callee": "SPDLOG_FMT_STRING",
+          "lineNumber": 34
+        },
+        {
+          "caller": "calc_filename",
+          "callee": "SPDLOG_FILENAME_T",
+          "lineNumber": 34
+        },
+        {
+          "caller": "calc_filename",
+          "callee": "std::put_time",
+          "lineNumber": 56
+        },
+        {
+          "caller": "calc_filename",
+          "callee": "c_str",
+          "lineNumber": 56
+        },
+        {
+          "caller": "calc_filename",
+          "callee": "str",
+          "lineNumber": 57
+        },
+        {
+          "caller": "daily_file_sink",
+          "callee": "std::move",
+          "lineNumber": 78
+        },
+        {
+          "caller": "daily_file_sink",
+          "callee": "throw_spdlog_ex",
+          "lineNumber": 87
+        },
+        {
+          "caller": "daily_file_sink",
+          "callee": "log_clock::now",
+          "lineNumber": 90
+        },
+        {
+          "caller": "daily_file_sink",
+          "callee": "FileNameCalc::calc_filename",
+          "lineNumber": 91
+        },
+        {
+          "caller": "daily_file_sink",
+          "callee": "now_tm",
+          "lineNumber": 91
+        },
+        {
+          "caller": "daily_file_sink",
+          "callee": "open",
+          "lineNumber": 92
+        },
+        {
+          "caller": "daily_file_sink",
+          "callee": "next_rotation_tp_",
+          "lineNumber": 93
+        },
+        {
+          "caller": "daily_file_sink",
+          "callee": "init_filenames_q_",
+          "lineNumber": 96
+        },
+        {
+          "caller": "filename",
+          "callee": "filename",
+          "lineNumber": 102
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "FileNameCalc::calc_filename",
+          "lineNumber": 110
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "now_tm",
+          "lineNumber": 110
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "open",
+          "lineNumber": 111
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "next_rotation_tp_",
+          "lineNumber": 112
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "format",
+          "lineNumber": 115
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "write",
+          "lineNumber": 116
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "delete_old_",
+          "lineNumber": 120
+        },
+        {
+          "caller": "flush_",
+          "callee": "flush",
+          "lineNumber": 124
+        },
+        {
+          "caller": "init_filenames_q_",
+          "callee": "details::circular_q<filename_t>",
+          "lineNumber": 130
+        },
+        {
+          "caller": "init_filenames_q_",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 130
+        },
+        {
+          "caller": "init_filenames_q_",
+          "callee": "log_clock::now",
+          "lineNumber": 132
+        },
+        {
+          "caller": "init_filenames_q_",
+          "callee": "size",
+          "lineNumber": 133
+        },
+        {
+          "caller": "init_filenames_q_",
+          "callee": "FileNameCalc::calc_filename",
+          "lineNumber": 134
+        },
+        {
+          "caller": "init_filenames_q_",
+          "callee": "now_tm",
+          "lineNumber": 134
+        },
+        {
+          "caller": "init_filenames_q_",
+          "callee": "path_exists",
+          "lineNumber": 135
+        },
+        {
+          "caller": "init_filenames_q_",
+          "callee": "emplace_back",
+          "lineNumber": 138
+        },
+        {
+          "caller": "init_filenames_q_",
+          "callee": "std::chrono::hours",
+          "lineNumber": 139
+        },
+        {
+          "caller": "init_filenames_q_",
+          "callee": "rbegin",
+          "lineNumber": 141
+        },
+        {
+          "caller": "init_filenames_q_",
+          "callee": "rend",
+          "lineNumber": 141
+        },
+        {
+          "caller": "init_filenames_q_",
+          "callee": "push_back",
+          "lineNumber": 142
+        },
+        {
+          "caller": "init_filenames_q_",
+          "callee": "std::move",
+          "lineNumber": 142
+        },
+        {
+          "caller": "now_tm",
+          "callee": "log_clock::to_time_t",
+          "lineNumber": 147
+        },
+        {
+          "caller": "now_tm",
+          "callee": "spdlog::details::os::localtime",
+          "lineNumber": 148
+        },
+        {
+          "caller": "next_rotation_tp_",
+          "callee": "log_clock::now",
+          "lineNumber": 152
+        },
+        {
+          "caller": "next_rotation_tp_",
+          "callee": "now_tm",
+          "lineNumber": 153
+        },
+        {
+          "caller": "next_rotation_tp_",
+          "callee": "log_clock::from_time_t",
+          "lineNumber": 157
+        },
+        {
+          "caller": "next_rotation_tp_",
+          "callee": "std::mktime",
+          "lineNumber": 157
+        },
+        {
+          "caller": "next_rotation_tp_",
+          "callee": "std::chrono::hours",
+          "lineNumber": 161
+        },
+        {
+          "caller": "delete_old_",
+          "callee": "filename",
+          "lineNumber": 170
+        },
+        {
+          "caller": "delete_old_",
+          "callee": "full",
+          "lineNumber": 171
+        },
+        {
+          "caller": "delete_old_",
+          "callee": "std::move",
+          "lineNumber": 172
+        },
+        {
+          "caller": "delete_old_",
+          "callee": "front",
+          "lineNumber": 172
+        },
+        {
+          "caller": "delete_old_",
+          "callee": "pop_front",
+          "lineNumber": 173
+        },
+        {
+          "caller": "delete_old_",
+          "callee": "remove_if_exists",
+          "lineNumber": 174
+        },
+        {
+          "caller": "delete_old_",
+          "callee": "push_back",
+          "lineNumber": 176
+        },
+        {
+          "caller": "delete_old_",
+          "callee": "std::move",
+          "lineNumber": 176
+        },
+        {
+          "caller": "delete_old_",
+          "callee": "throw_spdlog_ex",
+          "lineNumber": 177
+        },
+        {
+          "caller": "delete_old_",
+          "callee": "filename_to_str",
+          "lineNumber": 177
+        },
+        {
+          "caller": "delete_old_",
+          "callee": "push_back",
+          "lineNumber": 181
+        },
+        {
+          "caller": "delete_old_",
+          "callee": "std::move",
+          "lineNumber": 181
+        },
+        {
+          "caller": "daily_logger_mt",
+          "callee": "Factory::template create<sinks::daily_file_sink_mt>",
+          "lineNumber": 213
+        },
+        {
+          "caller": "daily_logger_format_mt",
+          "callee": "Factory::template create<sinks::daily_file_format_sink_mt>",
+          "lineNumber": 226
+        },
+        {
+          "caller": "daily_logger_st",
+          "callee": "Factory::template create<sinks::daily_file_sink_st>",
+          "lineNumber": 238
+        },
+        {
+          "caller": "daily_logger_format_st",
+          "callee": "Factory::template create<sinks::daily_file_format_sink_st>",
+          "lineNumber": 251
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 4,
+        "functionCount": 2,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "thirdparty/spdlog/include/spdlog/sinks/hourly_file_sink.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 193,
+      "nonEmptyLines": 171,
+      "functions": [
+        {
+          "name": "calc_filename",
+          "startLine": 29,
+          "endLine": 35,
+          "params": [
+            "filename",
+            "now_tm"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "hourly_filename_calculator",
+          "startLine": 27,
+          "endLine": 36,
+          "methods": [
+            "calc_filename"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "calc_filename",
+          "line": 29,
+          "isDefault": false
+        },
+        {
+          "name": "hourly_filename_calculator",
+          "line": 27,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "calc_filename",
+          "callee": "std::tie",
+          "lineNumber": 31
+        },
+        {
+          "caller": "calc_filename",
+          "callee": "details::file_helper::split_by_extension",
+          "lineNumber": 31
+        },
+        {
+          "caller": "calc_filename",
+          "callee": "fmt_lib::format",
+          "lineNumber": 32
+        },
+        {
+          "caller": "calc_filename",
+          "callee": "SPDLOG_FILENAME_T",
+          "lineNumber": 32
+        },
+        {
+          "caller": "hourly_file_sink",
+          "callee": "std::move",
+          "lineNumber": 53
+        },
+        {
+          "caller": "hourly_file_sink",
+          "callee": "log_clock::now",
+          "lineNumber": 58
+        },
+        {
+          "caller": "hourly_file_sink",
+          "callee": "FileNameCalc::calc_filename",
+          "lineNumber": 59
+        },
+        {
+          "caller": "hourly_file_sink",
+          "callee": "now_tm",
+          "lineNumber": 59
+        },
+        {
+          "caller": "hourly_file_sink",
+          "callee": "open",
+          "lineNumber": 60
+        },
+        {
+          "caller": "hourly_file_sink",
+          "callee": "size",
+          "lineNumber": 61
+        },
+        {
+          "caller": "hourly_file_sink",
+          "callee": "next_rotation_tp_",
+          "lineNumber": 62
+        },
+        {
+          "caller": "hourly_file_sink",
+          "callee": "init_filenames_q_",
+          "lineNumber": 65
+        },
+        {
+          "caller": "filename",
+          "callee": "filename",
+          "lineNumber": 71
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "close",
+          "lineNumber": 80
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "details::os::remove",
+          "lineNumber": 81
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "filename",
+          "lineNumber": 81
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "FileNameCalc::calc_filename",
+          "lineNumber": 83
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "now_tm",
+          "lineNumber": 83
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "open",
+          "lineNumber": 84
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "next_rotation_tp_",
+          "lineNumber": 85
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "format",
+          "lineNumber": 89
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "write",
+          "lineNumber": 90
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "delete_old_",
+          "lineNumber": 94
+        },
+        {
+          "caller": "flush_",
+          "callee": "flush",
+          "lineNumber": 98
+        },
+        {
+          "caller": "init_filenames_q_",
+          "callee": "details::circular_q<filename_t>",
+          "lineNumber": 104
+        },
+        {
+          "caller": "init_filenames_q_",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 104
+        },
+        {
+          "caller": "init_filenames_q_",
+          "callee": "log_clock::now",
+          "lineNumber": 106
+        },
+        {
+          "caller": "init_filenames_q_",
+          "callee": "size",
+          "lineNumber": 107
+        },
+        {
+          "caller": "init_filenames_q_",
+          "callee": "FileNameCalc::calc_filename",
+          "lineNumber": 108
+        },
+        {
+          "caller": "init_filenames_q_",
+          "callee": "now_tm",
+          "lineNumber": 108
+        },
+        {
+          "caller": "init_filenames_q_",
+          "callee": "path_exists",
+          "lineNumber": 109
+        },
+        {
+          "caller": "init_filenames_q_",
+          "callee": "emplace_back",
+          "lineNumber": 112
+        },
+        {
+          "caller": "init_filenames_q_",
+          "callee": "std::chrono::hours",
+          "lineNumber": 113
+        },
+        {
+          "caller": "init_filenames_q_",
+          "callee": "rbegin",
+          "lineNumber": 115
+        },
+        {
+          "caller": "init_filenames_q_",
+          "callee": "rend",
+          "lineNumber": 115
+        },
+        {
+          "caller": "init_filenames_q_",
+          "callee": "push_back",
+          "lineNumber": 116
+        },
+        {
+          "caller": "init_filenames_q_",
+          "callee": "std::move",
+          "lineNumber": 116
+        },
+        {
+          "caller": "now_tm",
+          "callee": "log_clock::to_time_t",
+          "lineNumber": 121
+        },
+        {
+          "caller": "now_tm",
+          "callee": "spdlog::details::os::localtime",
+          "lineNumber": 122
+        },
+        {
+          "caller": "next_rotation_tp_",
+          "callee": "log_clock::now",
+          "lineNumber": 126
+        },
+        {
+          "caller": "next_rotation_tp_",
+          "callee": "now_tm",
+          "lineNumber": 127
+        },
+        {
+          "caller": "next_rotation_tp_",
+          "callee": "log_clock::from_time_t",
+          "lineNumber": 130
+        },
+        {
+          "caller": "next_rotation_tp_",
+          "callee": "std::mktime",
+          "lineNumber": 130
+        },
+        {
+          "caller": "next_rotation_tp_",
+          "callee": "std::chrono::hours",
+          "lineNumber": 134
+        },
+        {
+          "caller": "delete_old_",
+          "callee": "filename",
+          "lineNumber": 143
+        },
+        {
+          "caller": "delete_old_",
+          "callee": "full",
+          "lineNumber": 144
+        },
+        {
+          "caller": "delete_old_",
+          "callee": "std::move",
+          "lineNumber": 145
+        },
+        {
+          "caller": "delete_old_",
+          "callee": "front",
+          "lineNumber": 145
+        },
+        {
+          "caller": "delete_old_",
+          "callee": "pop_front",
+          "lineNumber": 146
+        },
+        {
+          "caller": "delete_old_",
+          "callee": "remove_if_exists",
+          "lineNumber": 147
+        },
+        {
+          "caller": "delete_old_",
+          "callee": "push_back",
+          "lineNumber": 149
+        },
+        {
+          "caller": "delete_old_",
+          "callee": "std::move",
+          "lineNumber": 149
+        },
+        {
+          "caller": "delete_old_",
+          "callee": "SPDLOG_THROW",
+          "lineNumber": 150
+        },
+        {
+          "caller": "delete_old_",
+          "callee": "spdlog_ex",
+          "lineNumber": 150
+        },
+        {
+          "caller": "delete_old_",
+          "callee": "filename_to_str",
+          "lineNumber": 151
+        },
+        {
+          "caller": "delete_old_",
+          "callee": "push_back",
+          "lineNumber": 154
+        },
+        {
+          "caller": "delete_old_",
+          "callee": "std::move",
+          "lineNumber": 154
+        },
+        {
+          "caller": "hourly_logger_mt",
+          "callee": "Factory::template create<sinks::hourly_file_sink_mt>",
+          "lineNumber": 180
+        },
+        {
+          "caller": "hourly_logger_st",
+          "callee": "Factory::template create<sinks::hourly_file_sink_st>",
+          "lineNumber": 190
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 1,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "thirdparty/spdlog/include/spdlog/sinks/kafka_sink.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 119,
+      "nonEmptyLines": 98,
+      "functions": [
+        {
+          "name": "kafka_sink_config",
+          "startLine": 32,
+          "endLine": 35,
+          "params": [
+            "addr",
+            "topic"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "kafka_sink_config",
+          "startLine": 27,
+          "endLine": 36,
+          "methods": [
+            "kafka_sink_config"
+          ],
+          "properties": [
+            "server_addr",
+            "produce_topic",
+            "flush_timeout_ms"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "kafka_sink_config",
+          "line": 32,
+          "isDefault": false
+        },
+        {
+          "name": "kafka_sink_config",
+          "line": 27,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "kafka_sink_config",
+          "callee": "std::move",
+          "lineNumber": 33
+        },
+        {
+          "caller": "kafka_sink_config",
+          "callee": "std::move",
+          "lineNumber": 34
+        },
+        {
+          "caller": "kafka_sink",
+          "callee": "std::move",
+          "lineNumber": 42
+        },
+        {
+          "caller": "kafka_sink",
+          "callee": "reset",
+          "lineNumber": 45
+        },
+        {
+          "caller": "kafka_sink",
+          "callee": "RdKafka::Conf::create",
+          "lineNumber": 45
+        },
+        {
+          "caller": "kafka_sink",
+          "callee": "set",
+          "lineNumber": 47
+        },
+        {
+          "caller": "kafka_sink",
+          "callee": "throw_spdlog_ex",
+          "lineNumber": 49
+        },
+        {
+          "caller": "kafka_sink",
+          "callee": "fmt_lib::format",
+          "lineNumber": 50
+        },
+        {
+          "caller": "kafka_sink",
+          "callee": "reset",
+          "lineNumber": 53
+        },
+        {
+          "caller": "kafka_sink",
+          "callee": "RdKafka::Conf::create",
+          "lineNumber": 53
+        },
+        {
+          "caller": "kafka_sink",
+          "callee": "throw_spdlog_ex",
+          "lineNumber": 55
+        },
+        {
+          "caller": "kafka_sink",
+          "callee": "fmt_lib::format",
+          "lineNumber": 55
+        },
+        {
+          "caller": "kafka_sink",
+          "callee": "reset",
+          "lineNumber": 58
+        },
+        {
+          "caller": "kafka_sink",
+          "callee": "RdKafka::Producer::create",
+          "lineNumber": 58
+        },
+        {
+          "caller": "kafka_sink",
+          "callee": "get",
+          "lineNumber": 58
+        },
+        {
+          "caller": "kafka_sink",
+          "callee": "throw_spdlog_ex",
+          "lineNumber": 60
+        },
+        {
+          "caller": "kafka_sink",
+          "callee": "fmt_lib::format",
+          "lineNumber": 60
+        },
+        {
+          "caller": "kafka_sink",
+          "callee": "reset",
+          "lineNumber": 62
+        },
+        {
+          "caller": "kafka_sink",
+          "callee": "RdKafka::Topic::create",
+          "lineNumber": 62
+        },
+        {
+          "caller": "kafka_sink",
+          "callee": "get",
+          "lineNumber": 62
+        },
+        {
+          "caller": "kafka_sink",
+          "callee": "get",
+          "lineNumber": 63
+        },
+        {
+          "caller": "kafka_sink",
+          "callee": "throw_spdlog_ex",
+          "lineNumber": 65
+        },
+        {
+          "caller": "kafka_sink",
+          "callee": "fmt_lib::format",
+          "lineNumber": 65
+        },
+        {
+          "caller": "kafka_sink",
+          "callee": "throw_spdlog_ex",
+          "lineNumber": 68
+        },
+        {
+          "caller": "kafka_sink",
+          "callee": "fmt_lib::format",
+          "lineNumber": 68
+        },
+        {
+          "caller": "kafka_sink",
+          "callee": "what",
+          "lineNumber": 68
+        },
+        {
+          "caller": "~kafka_sink",
+          "callee": "flush",
+          "lineNumber": 72
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "produce",
+          "lineNumber": 76
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "get",
+          "lineNumber": 76
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "data",
+          "lineNumber": 77
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "size",
+          "lineNumber": 77
+        },
+        {
+          "caller": "flush_",
+          "callee": "flush",
+          "lineNumber": 80
+        },
+        {
+          "caller": "kafka_logger_mt",
+          "callee": "Factory::template create<sinks::kafka_sink_mt>",
+          "lineNumber": 98
+        },
+        {
+          "caller": "kafka_logger_st",
+          "callee": "Factory::template create<sinks::kafka_sink_st>",
+          "lineNumber": 104
+        },
+        {
+          "caller": "kafka_logger_async_mt",
+          "callee": "Factory::template create<sinks::kafka_sink_mt>",
+          "lineNumber": 110
+        },
+        {
+          "caller": "kafka_logger_async_st",
+          "callee": "Factory::template create<sinks::kafka_sink_st>",
+          "lineNumber": 116
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 1,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "thirdparty/spdlog/include/spdlog/sinks/mongo_sink.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 108,
+      "nonEmptyLines": 91,
+      "callGraph": [
+        {
+          "caller": "mongo_sink",
+          "callee": "std::make_shared<mongocxx::instance>",
+          "lineNumber": 34
+        },
+        {
+          "caller": "mongo_sink",
+          "callee": "throw_spdlog_ex",
+          "lineNumber": 36
+        },
+        {
+          "caller": "mongo_sink",
+          "callee": "fmt_lib::format",
+          "lineNumber": 36
+        },
+        {
+          "caller": "mongo_sink",
+          "callee": "what",
+          "lineNumber": 36
+        },
+        {
+          "caller": "mongo_sink",
+          "callee": "std::move",
+          "lineNumber": 43
+        },
+        {
+          "caller": "mongo_sink",
+          "callee": "spdlog::details::make_unique<mongocxx::client>",
+          "lineNumber": 47
+        },
+        {
+          "caller": "mongo_sink",
+          "callee": "throw_spdlog_ex",
+          "lineNumber": 49
+        },
+        {
+          "caller": "mongo_sink",
+          "callee": "fmt_lib::format",
+          "lineNumber": 49
+        },
+        {
+          "caller": "mongo_sink",
+          "callee": "what",
+          "lineNumber": 49
+        },
+        {
+          "caller": "~mongo_sink",
+          "callee": "flush_",
+          "lineNumber": 53
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "bsoncxx::types::b_date",
+          "lineNumber": 61
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "data",
+          "lineNumber": 62
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "level::to_string_view",
+          "lineNumber": 62
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "std::string",
+          "lineNumber": 64
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "begin",
+          "lineNumber": 64
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "end",
+          "lineNumber": 64
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "std::string",
+          "lineNumber": 66
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "begin",
+          "lineNumber": 66
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "end",
+          "lineNumber": 66
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "static_cast<int>",
+          "lineNumber": 67
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "insert_one",
+          "lineNumber": 68
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "collection",
+          "lineNumber": 68
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "database",
+          "lineNumber": 68
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "view",
+          "lineNumber": 68
+        },
+        {
+          "caller": "mongo_logger_mt",
+          "callee": "Factory::template create<sinks::mongo_sink_mt>",
+          "lineNumber": 94
+        },
+        {
+          "caller": "mongo_logger_st",
+          "callee": "Factory::template create<sinks::mongo_sink_st>",
+          "lineNumber": 104
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/spdlog/include/spdlog/sinks/msvc_sink.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 68,
+      "nonEmptyLines": 55,
+      "callGraph": [
+        {
+          "caller": "sink_it_",
+          "callee": "IsDebuggerPresent",
+          "lineNumber": 39
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "format",
+          "lineNumber": 43
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "push_back",
+          "lineNumber": 44
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "details::os::utf8_to_wstrbuf",
+          "lineNumber": 47
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "string_view_t",
+          "lineNumber": 47
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "data",
+          "lineNumber": 47
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "size",
+          "lineNumber": 47
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "OutputDebugStringW",
+          "lineNumber": 48
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "data",
+          "lineNumber": 48
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "OutputDebugStringA",
+          "lineNumber": 50
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "data",
+          "lineNumber": 50
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/spdlog/include/spdlog/sinks/null_sink.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 41,
+      "nonEmptyLines": 31,
+      "callGraph": [
+        {
+          "caller": "null_logger_mt",
+          "callee": "Factory::template create<sinks::null_sink_mt>",
+          "lineNumber": 29
+        },
+        {
+          "caller": "null_logger_mt",
+          "callee": "set_level",
+          "lineNumber": 30
+        },
+        {
+          "caller": "null_logger_st",
+          "callee": "Factory::template create<sinks::null_sink_st>",
+          "lineNumber": 36
+        },
+        {
+          "caller": "null_logger_st",
+          "callee": "set_level",
+          "lineNumber": 37
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/spdlog/include/spdlog/sinks/ostream_sink.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 43,
+      "nonEmptyLines": 34,
+      "callGraph": [
+        {
+          "caller": "sink_it_",
+          "callee": "format",
+          "lineNumber": 26
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "write",
+          "lineNumber": 27
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "data",
+          "lineNumber": 27
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "static_cast<std::streamsize>",
+          "lineNumber": 27
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "size",
+          "lineNumber": 27
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "flush",
+          "lineNumber": 29
+        },
+        {
+          "caller": "flush_",
+          "callee": "flush",
+          "lineNumber": 33
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/spdlog/include/spdlog/sinks/qt_sinks.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 304,
+      "nonEmptyLines": 262,
+      "callGraph": [
+        {
+          "caller": "qt_sink",
+          "callee": "std::move",
+          "lineNumber": 34
+        },
+        {
+          "caller": "qt_sink",
+          "callee": "throw_spdlog_ex",
+          "lineNumber": 36
+        },
+        {
+          "caller": "~qt_sink",
+          "callee": "flush_",
+          "lineNumber": 40
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "format",
+          "lineNumber": 45
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "string_view_t",
+          "lineNumber": 46
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "data",
+          "lineNumber": 46
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "size",
+          "lineNumber": 46
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "QMetaObject::invokeMethod",
+          "lineNumber": 47
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "c_str",
+          "lineNumber": 48
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "Q_ARG",
+          "lineNumber": 49
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "trimmed",
+          "lineNumber": 49
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "QString::fromUtf8",
+          "lineNumber": 49
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "data",
+          "lineNumber": 49
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "static_cast<int>",
+          "lineNumber": 49
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "size",
+          "lineNumber": 49
+        },
+        {
+          "caller": "qt_color_sink",
+          "callee": "throw_spdlog_ex",
+          "lineNumber": 76
+        },
+        {
+          "caller": "qt_color_sink",
+          "callee": "currentCharFormat",
+          "lineNumber": 79
+        },
+        {
+          "caller": "qt_color_sink",
+          "callee": "setForeground",
+          "lineNumber": 83
+        },
+        {
+          "caller": "qt_color_sink",
+          "callee": "at",
+          "lineNumber": 84
+        },
+        {
+          "caller": "qt_color_sink",
+          "callee": "setForeground",
+          "lineNumber": 86
+        },
+        {
+          "caller": "qt_color_sink",
+          "callee": "at",
+          "lineNumber": 87
+        },
+        {
+          "caller": "qt_color_sink",
+          "callee": "setForeground",
+          "lineNumber": 89
+        },
+        {
+          "caller": "qt_color_sink",
+          "callee": "at",
+          "lineNumber": 90
+        },
+        {
+          "caller": "qt_color_sink",
+          "callee": "setForeground",
+          "lineNumber": 92
+        },
+        {
+          "caller": "qt_color_sink",
+          "callee": "at",
+          "lineNumber": 93
+        },
+        {
+          "caller": "qt_color_sink",
+          "callee": "setForeground",
+          "lineNumber": 95
+        },
+        {
+          "caller": "qt_color_sink",
+          "callee": "at",
+          "lineNumber": 96
+        },
+        {
+          "caller": "qt_color_sink",
+          "callee": "setForeground",
+          "lineNumber": 98
+        },
+        {
+          "caller": "qt_color_sink",
+          "callee": "setBackground",
+          "lineNumber": 99
+        },
+        {
+          "caller": "qt_color_sink",
+          "callee": "at",
+          "lineNumber": 100
+        },
+        {
+          "caller": "~qt_color_sink",
+          "callee": "flush_",
+          "lineNumber": 103
+        },
+        {
+          "caller": "set_level_color",
+          "callee": "at",
+          "lineNumber": 112
+        },
+        {
+          "caller": "set_level_color",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 112
+        },
+        {
+          "caller": "invoke_params",
+          "callee": "std::move",
+          "lineNumber": 136
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "format",
+          "lineNumber": 152
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "string_view_t",
+          "lineNumber": 154
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "data",
+          "lineNumber": 154
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "size",
+          "lineNumber": 154
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "static_cast<int>",
+          "lineNumber": 157
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "static_cast<int>",
+          "lineNumber": 158
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "QString::fromUtf8",
+          "lineNumber": 160
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "data",
+          "lineNumber": 160
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "static_cast<int>",
+          "lineNumber": 160
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "size",
+          "lineNumber": 160
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "size",
+          "lineNumber": 163
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "QString::fromUtf8",
+          "lineNumber": 163
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "data",
+          "lineNumber": 163
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "size",
+          "lineNumber": 164
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "QString::fromUtf8",
+          "lineNumber": 164
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "data",
+          "lineNumber": 164
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "QString::fromLatin1",
+          "lineNumber": 167
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "data",
+          "lineNumber": 167
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "static_cast<int>",
+          "lineNumber": 167
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "size",
+          "lineNumber": 167
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "std::move",
+          "lineNumber": 172
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "at",
+          "lineNumber": 174
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "QMetaObject::invokeMethod",
+          "lineNumber": 178
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "invoke_method_",
+          "lineNumber": 179
+        },
+        {
+          "caller": "invoke_method_",
+          "callee": "document",
+          "lineNumber": 189
+        },
+        {
+          "caller": "invoke_method_",
+          "callee": "blockCount",
+          "lineNumber": 193
+        },
+        {
+          "caller": "invoke_method_",
+          "callee": "select",
+          "lineNumber": 194
+        },
+        {
+          "caller": "invoke_method_",
+          "callee": "removeSelectedText",
+          "lineNumber": 195
+        },
+        {
+          "caller": "invoke_method_",
+          "callee": "deleteChar",
+          "lineNumber": 196
+        },
+        {
+          "caller": "invoke_method_",
+          "callee": "movePosition",
+          "lineNumber": 199
+        },
+        {
+          "caller": "invoke_method_",
+          "callee": "setCharFormat",
+          "lineNumber": 200
+        },
+        {
+          "caller": "invoke_method_",
+          "callee": "insertText",
+          "lineNumber": 204
+        },
+        {
+          "caller": "invoke_method_",
+          "callee": "insertText",
+          "lineNumber": 209
+        },
+        {
+          "caller": "invoke_method_",
+          "callee": "left",
+          "lineNumber": 209
+        },
+        {
+          "caller": "invoke_method_",
+          "callee": "setCharFormat",
+          "lineNumber": 212
+        },
+        {
+          "caller": "invoke_method_",
+          "callee": "insertText",
+          "lineNumber": 213
+        },
+        {
+          "caller": "invoke_method_",
+          "callee": "mid",
+          "lineNumber": 213
+        },
+        {
+          "caller": "invoke_method_",
+          "callee": "setCharFormat",
+          "lineNumber": 217
+        },
+        {
+          "caller": "invoke_method_",
+          "callee": "insertText",
+          "lineNumber": 218
+        },
+        {
+          "caller": "invoke_method_",
+          "callee": "mid",
+          "lineNumber": 218
+        },
+        {
+          "caller": "qt_logger_mt",
+          "callee": "Factory::template create<sinks::qt_sink_mt>",
+          "lineNumber": 246
+        },
+        {
+          "caller": "qt_logger_st",
+          "callee": "Factory::template create<sinks::qt_sink_st>",
+          "lineNumber": 253
+        },
+        {
+          "caller": "qt_logger_mt",
+          "callee": "Factory::template create<sinks::qt_sink_mt>",
+          "lineNumber": 261
+        },
+        {
+          "caller": "qt_logger_st",
+          "callee": "Factory::template create<sinks::qt_sink_st>",
+          "lineNumber": 268
+        },
+        {
+          "caller": "qt_logger_mt",
+          "callee": "Factory::template create<sinks::qt_sink_mt>",
+          "lineNumber": 275
+        },
+        {
+          "caller": "qt_logger_st",
+          "callee": "Factory::template create<sinks::qt_sink_st>",
+          "lineNumber": 282
+        },
+        {
+          "caller": "qt_color_logger_mt",
+          "callee": "Factory::template create<sinks::qt_color_sink_mt>",
+          "lineNumber": 291
+        },
+        {
+          "caller": "qt_color_logger_st",
+          "callee": "Factory::template create<sinks::qt_color_sink_st>",
+          "lineNumber": 300
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/spdlog/include/spdlog/sinks/ringbuffer_sink.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 67,
+      "nonEmptyLines": 56,
+      "callGraph": [
+        {
+          "caller": "last_raw",
+          "callee": "size",
+          "lineNumber": 28
+        },
+        {
+          "caller": "last_raw",
+          "callee": "reserve",
+          "lineNumber": 31
+        },
+        {
+          "caller": "last_raw",
+          "callee": "push_back",
+          "lineNumber": 33
+        },
+        {
+          "caller": "last_raw",
+          "callee": "at",
+          "lineNumber": 33
+        },
+        {
+          "caller": "last_formatted",
+          "callee": "size",
+          "lineNumber": 40
+        },
+        {
+          "caller": "last_formatted",
+          "callee": "reserve",
+          "lineNumber": 43
+        },
+        {
+          "caller": "last_formatted",
+          "callee": "format",
+          "lineNumber": 46
+        },
+        {
+          "caller": "last_formatted",
+          "callee": "at",
+          "lineNumber": 46
+        },
+        {
+          "caller": "last_formatted",
+          "callee": "push_back",
+          "lineNumber": 47
+        },
+        {
+          "caller": "last_formatted",
+          "callee": "SPDLOG_BUF_TO_STRING",
+          "lineNumber": 47
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "push_back",
+          "lineNumber": 54
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/spdlog/include/spdlog/sinks/rotating_file_sink-inl.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 150,
+      "nonEmptyLines": 130,
+      "callGraph": [
+        {
+          "caller": "rotating_file_sink<Mutex>::calc_filename",
+          "callee": "std::tie",
+          "lineNumber": 62
+        },
+        {
+          "caller": "rotating_file_sink<Mutex>::calc_filename",
+          "callee": "details::file_helper::split_by_extension",
+          "lineNumber": 62
+        },
+        {
+          "caller": "rotating_file_sink<Mutex>::calc_filename",
+          "callee": "fmt_lib::format",
+          "lineNumber": 63
+        },
+        {
+          "caller": "rotating_file_sink<Mutex>::calc_filename",
+          "callee": "SPDLOG_FMT_STRING",
+          "lineNumber": 63
+        },
+        {
+          "caller": "rotating_file_sink<Mutex>::calc_filename",
+          "callee": "SPDLOG_FILENAME_T",
+          "lineNumber": 63
+        },
+        {
+          "caller": "rotating_file_sink<Mutex>::filename",
+          "callee": "filename",
+          "lineNumber": 69
+        },
+        {
+          "caller": "rotate_now",
+          "callee": "rotate_",
+          "lineNumber": 75
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "format",
+          "lineNumber": 81
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "size",
+          "lineNumber": 82
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "flush",
+          "lineNumber": 88
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "size",
+          "lineNumber": 89
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "rotate_",
+          "lineNumber": 90
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "size",
+          "lineNumber": 91
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "write",
+          "lineNumber": 94
+        },
+        {
+          "caller": "flush_",
+          "callee": "flush",
+          "lineNumber": 100
+        },
+        {
+          "caller": "rotate_",
+          "callee": "close",
+          "lineNumber": 113
+        },
+        {
+          "caller": "rotate_",
+          "callee": "calc_filename",
+          "lineNumber": 115
+        },
+        {
+          "caller": "rotate_",
+          "callee": "path_exists",
+          "lineNumber": 116
+        },
+        {
+          "caller": "rotate_",
+          "callee": "calc_filename",
+          "lineNumber": 119
+        },
+        {
+          "caller": "rotate_",
+          "callee": "rename_file_",
+          "lineNumber": 121
+        },
+        {
+          "caller": "rotate_",
+          "callee": "details::os::sleep_for_millis",
+          "lineNumber": 125
+        },
+        {
+          "caller": "rotate_",
+          "callee": "rename_file_",
+          "lineNumber": 126
+        },
+        {
+          "caller": "rotate_",
+          "callee": "reopen",
+          "lineNumber": 127
+        },
+        {
+          "caller": "rotate_",
+          "callee": "throw_spdlog_ex",
+          "lineNumber": 130
+        },
+        {
+          "caller": "rotate_",
+          "callee": "filename_to_str",
+          "lineNumber": 130
+        },
+        {
+          "caller": "rotate_",
+          "callee": "filename_to_str",
+          "lineNumber": 131
+        },
+        {
+          "caller": "rotate_",
+          "callee": "reopen",
+          "lineNumber": 136
+        },
+        {
+          "caller": "rename_file_",
+          "callee": "details::os::remove",
+          "lineNumber": 145
+        },
+        {
+          "caller": "rename_file_",
+          "callee": "details::os::rename",
+          "lineNumber": 146
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/spdlog/include/spdlog/sinks/rotating_file_sink.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 90,
+      "nonEmptyLines": 75,
+      "callGraph": [
+        {
+          "caller": "rotating_logger_mt",
+          "callee": "Factory::template create<sinks::rotating_file_sink_mt>",
+          "lineNumber": 72
+        },
+        {
+          "caller": "rotating_logger_st",
+          "callee": "Factory::template create<sinks::rotating_file_sink_st>",
+          "lineNumber": 83
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/spdlog/include/spdlog/sinks/sink-inl.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 22,
+      "nonEmptyLines": 16,
+      "functions": [
+        {
+          "name": "sinks::sink::should_log",
+          "startLine": 12,
+          "endLine": 14,
+          "params": [
+            "msg_level"
+          ]
+        },
+        {
+          "name": "sinks::sink::set_level",
+          "startLine": 16,
+          "endLine": 18,
+          "params": [
+            "log_level"
+          ]
+        },
+        {
+          "name": "level::level_enum spdlog::sinks::sink::level",
+          "startLine": 20,
+          "endLine": 22,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "sinks::sink::should_log",
+          "line": 12,
+          "isDefault": false
+        },
+        {
+          "name": "sinks::sink::set_level",
+          "line": 16,
+          "isDefault": false
+        },
+        {
+          "name": "level::level_enum spdlog::sinks::sink::level",
+          "line": 20,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "sinks::sink::should_log",
+          "callee": "load",
+          "lineNumber": 13
+        },
+        {
+          "caller": "sinks::sink::set_level",
+          "callee": "store",
+          "lineNumber": 17
+        },
+        {
+          "caller": "level::level_enum spdlog::sinks::sink::level",
+          "callee": "static_cast<spdlog::level::level_enum>",
+          "lineNumber": 21
+        },
+        {
+          "caller": "level::level_enum spdlog::sinks::sink::level",
+          "callee": "load",
+          "lineNumber": 21
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 3,
+        "functionCount": 3,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/spdlog/include/spdlog/sinks/sink.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 34,
+      "nonEmptyLines": 26,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/spdlog/include/spdlog/sinks/stdout_color_sinks-inl.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 38,
+      "nonEmptyLines": 30,
+      "callGraph": [
+        {
+          "caller": "shared_ptr<logger> stdout_color_mt",
+          "callee": "Factory::template create<sinks::stdout_color_sink_mt>",
+          "lineNumber": 18
+        },
+        {
+          "caller": "shared_ptr<logger> stdout_color_st",
+          "callee": "Factory::template create<sinks::stdout_color_sink_st>",
+          "lineNumber": 24
+        },
+        {
+          "caller": "shared_ptr<logger> stderr_color_mt",
+          "callee": "Factory::template create<sinks::stderr_color_sink_mt>",
+          "lineNumber": 30
+        },
+        {
+          "caller": "shared_ptr<logger> stderr_color_st",
+          "callee": "Factory::template create<sinks::stderr_color_sink_st>",
+          "lineNumber": 36
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/spdlog/include/spdlog/sinks/stdout_color_sinks.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 49,
+      "nonEmptyLines": 39,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/spdlog/include/spdlog/sinks/stdout_sinks-inl.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 127,
+      "nonEmptyLines": 105,
+      "callGraph": [
+        {
+          "caller": "log",
+          "callee": "format",
+          "lineNumber": 59
+        },
+        {
+          "caller": "log",
+          "callee": "static_cast<DWORD>",
+          "lineNumber": 60
+        },
+        {
+          "caller": "log",
+          "callee": "size",
+          "lineNumber": 60
+        },
+        {
+          "caller": "log",
+          "callee": "::WriteFile",
+          "lineNumber": 62
+        },
+        {
+          "caller": "log",
+          "callee": "data",
+          "lineNumber": 62
+        },
+        {
+          "caller": "log",
+          "callee": "throw_spdlog_ex",
+          "lineNumber": 64
+        },
+        {
+          "caller": "log",
+          "callee": "std::to_string",
+          "lineNumber": 65
+        },
+        {
+          "caller": "log",
+          "callee": "::GetLastError",
+          "lineNumber": 65
+        },
+        {
+          "caller": "log",
+          "callee": "format",
+          "lineNumber": 70
+        },
+        {
+          "caller": "log",
+          "callee": "details::os::fwrite_bytes",
+          "lineNumber": 71
+        },
+        {
+          "caller": "log",
+          "callee": "data",
+          "lineNumber": 71
+        },
+        {
+          "caller": "log",
+          "callee": "size",
+          "lineNumber": 71
+        },
+        {
+          "caller": "log",
+          "callee": "::fflush",
+          "lineNumber": 73
+        },
+        {
+          "caller": "flush",
+          "callee": "fflush",
+          "lineNumber": 79
+        },
+        {
+          "caller": "set_pattern",
+          "callee": "std::unique_ptr<spdlog::formatter>",
+          "lineNumber": 85
+        },
+        {
+          "caller": "set_formatter",
+          "callee": "std::move",
+          "lineNumber": 92
+        },
+        {
+          "caller": "shared_ptr<logger> stdout_logger_mt",
+          "callee": "Factory::template create<sinks::stdout_sink_mt>",
+          "lineNumber": 110
+        },
+        {
+          "caller": "shared_ptr<logger> stdout_logger_st",
+          "callee": "Factory::template create<sinks::stdout_sink_st>",
+          "lineNumber": 115
+        },
+        {
+          "caller": "shared_ptr<logger> stderr_logger_mt",
+          "callee": "Factory::template create<sinks::stderr_sink_mt>",
+          "lineNumber": 120
+        },
+        {
+          "caller": "shared_ptr<logger> stderr_logger_st",
+          "callee": "Factory::template create<sinks::stderr_sink_st>",
+          "lineNumber": 125
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/spdlog/include/spdlog/sinks/stdout_sinks.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 84,
+      "nonEmptyLines": 62,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/spdlog/include/spdlog/sinks/syslog_sink.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 104,
+      "nonEmptyLines": 88,
+      "callGraph": [
+        {
+          "caller": "syslog_sink",
+          "callee": "std::move",
+          "lineNumber": 31
+        },
+        {
+          "caller": "syslog_sink",
+          "callee": "::openlog",
+          "lineNumber": 33
+        },
+        {
+          "caller": "syslog_sink",
+          "callee": "empty",
+          "lineNumber": 33
+        },
+        {
+          "caller": "syslog_sink",
+          "callee": "c_str",
+          "lineNumber": 33
+        },
+        {
+          "caller": "~syslog_sink",
+          "callee": "::closelog",
+          "lineNumber": 36
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "format",
+          "lineNumber": 46
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "string_view_t",
+          "lineNumber": 47
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "data",
+          "lineNumber": 47
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "size",
+          "lineNumber": 47
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "size",
+          "lineNumber": 52
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 54
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "std::numeric_limits<int>::max",
+          "lineNumber": 54
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 55
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "std::numeric_limits<int>::max",
+          "lineNumber": 55
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "::syslog",
+          "lineNumber": 58
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "syslog_prio_from_level",
+          "lineNumber": 58
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "static_cast<int>",
+          "lineNumber": 58
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "data",
+          "lineNumber": 58
+        },
+        {
+          "caller": "syslog_prio_from_level",
+          "callee": "at",
+          "lineNumber": 68
+        },
+        {
+          "caller": "syslog_prio_from_level",
+          "callee": "static_cast<levels_array::size_type>",
+          "lineNumber": 68
+        },
+        {
+          "caller": "syslog_logger_mt",
+          "callee": "Factory::template create<sinks::syslog_sink_mt>",
+          "lineNumber": 91
+        },
+        {
+          "caller": "syslog_logger_st",
+          "callee": "Factory::template create<sinks::syslog_sink_st>",
+          "lineNumber": 101
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/spdlog/include/spdlog/sinks/systemd_sink.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 121,
+      "nonEmptyLines": 103,
+      "callGraph": [
+        {
+          "caller": "systemd_sink",
+          "callee": "std::move",
+          "lineNumber": 27
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "format",
+          "lineNumber": 53
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "string_view_t",
+          "lineNumber": 54
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "data",
+          "lineNumber": 54
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "size",
+          "lineNumber": 54
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "size",
+          "lineNumber": 59
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 61
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "std::numeric_limits<int>::max",
+          "lineNumber": 61
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 62
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "std::numeric_limits<int>::max",
+          "lineNumber": 62
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "empty",
+          "lineNumber": 65
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "empty",
+          "lineNumber": 68
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "(sd_journal_send)",
+          "lineNumber": 70
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "static_cast<int>",
+          "lineNumber": 70
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "data",
+          "lineNumber": 70
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "syslog_level",
+          "lineNumber": 71
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "static_cast<int>",
+          "lineNumber": 76
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "size",
+          "lineNumber": 76
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "data",
+          "lineNumber": 77
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "(sd_journal_send)",
+          "lineNumber": 79
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "static_cast<int>",
+          "lineNumber": 79
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "data",
+          "lineNumber": 79
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "syslog_level",
+          "lineNumber": 80
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "static_cast<int>",
+          "lineNumber": 85
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "size",
+          "lineNumber": 85
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "data",
+          "lineNumber": 86
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "throw_spdlog_ex",
+          "lineNumber": 92
+        },
+        {
+          "caller": "syslog_level",
+          "callee": "at",
+          "lineNumber": 97
+        },
+        {
+          "caller": "syslog_level",
+          "callee": "static_cast<levels_array::size_type>",
+          "lineNumber": 97
+        },
+        {
+          "caller": "systemd_logger_mt",
+          "callee": "Factory::template create<sinks::systemd_sink_mt>",
+          "lineNumber": 112
+        },
+        {
+          "caller": "systemd_logger_st",
+          "callee": "Factory::template create<sinks::systemd_sink_st>",
+          "lineNumber": 119
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/spdlog/include/spdlog/sinks/tcp_sink.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 75,
+      "nonEmptyLines": 60,
+      "functions": [
+        {
+          "name": "tcp_sink_config",
+          "startLine": 36,
+          "endLine": 38,
+          "params": [
+            "host",
+            "port"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "tcp_sink_config",
+          "startLine": 31,
+          "endLine": 39,
+          "methods": [
+            "tcp_sink_config"
+          ],
+          "properties": [
+            "server_host",
+            "server_port",
+            "lazy_connect"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "tcp_sink_config",
+          "line": 36,
+          "isDefault": false
+        },
+        {
+          "name": "tcp_sink_config",
+          "line": 31,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "tcp_sink_config",
+          "callee": "std::move",
+          "lineNumber": 37
+        },
+        {
+          "caller": "tcp_sink",
+          "callee": "std::move",
+          "lineNumber": 48
+        },
+        {
+          "caller": "tcp_sink",
+          "callee": "connect",
+          "lineNumber": 50
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "format",
+          "lineNumber": 59
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "is_connected",
+          "lineNumber": 60
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "connect",
+          "lineNumber": 61
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "send",
+          "lineNumber": 63
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "data",
+          "lineNumber": 63
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "size",
+          "lineNumber": 63
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 1,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "thirdparty/spdlog/include/spdlog/sinks/udp_sink.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 69,
+      "nonEmptyLines": 54,
+      "functions": [
+        {
+          "name": "udp_sink_config",
+          "startLine": 30,
+          "endLine": 32,
+          "params": [
+            "host",
+            "port"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "udp_sink_config",
+          "startLine": 26,
+          "endLine": 33,
+          "methods": [
+            "udp_sink_config"
+          ],
+          "properties": [
+            "server_host",
+            "server_port"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "udp_sink_config",
+          "line": 30,
+          "isDefault": false
+        },
+        {
+          "name": "udp_sink_config",
+          "line": 26,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "udp_sink_config",
+          "callee": "std::move",
+          "lineNumber": 31
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "format",
+          "lineNumber": 47
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "send",
+          "lineNumber": 48
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "data",
+          "lineNumber": 48
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "size",
+          "lineNumber": 48
+        },
+        {
+          "caller": "udp_logger_mt",
+          "callee": "Factory::template create<sinks::udp_sink_mt>",
+          "lineNumber": 66
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 1,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "thirdparty/spdlog/include/spdlog/sinks/win_eventlog_sink.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 260,
+      "nonEmptyLines": 204,
+      "functions": [
+        {
+          "name": "local_alloc_t",
+          "startLine": 56,
+          "endLine": 56,
+          "params": []
+        },
+        {
+          "name": "local_alloc_t",
+          "startLine": 58,
+          "endLine": 58,
+          "params": []
+        },
+        {
+          "name": "~local_alloc_t",
+          "startLine": 61,
+          "endLine": 65,
+          "params": []
+        },
+        {
+          "name": "format",
+          "startLine": 71,
+          "endLine": 86,
+          "params": [
+            "user_message"
+          ]
+        },
+        {
+          "name": "win32_error",
+          "startLine": 88,
+          "endLine": 89,
+          "params": [
+            "func_name"
+          ]
+        },
+        {
+          "name": "sid_t",
+          "startLine": 97,
+          "endLine": 97,
+          "params": []
+        },
+        {
+          "name": "duplicate_sid",
+          "startLine": 100,
+          "endLine": 114,
+          "params": [
+            "psid"
+          ]
+        },
+        {
+          "name": "get_current_user_sid",
+          "startLine": 120,
+          "endLine": 152,
+          "params": []
+        },
+        {
+          "name": "get_event_type",
+          "startLine": 156,
+          "endLine": 176,
+          "params": [
+            "msg"
+          ]
+        },
+        {
+          "name": "get_event_category",
+          "startLine": 178,
+          "endLine": 178,
+          "params": [
+            "msg"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "local_alloc_t",
+          "startLine": 53,
+          "endLine": 66,
+          "methods": [
+            "local_alloc_t",
+            "local_alloc_t",
+            "~local_alloc_t"
+          ],
+          "properties": [
+            "hlocal_"
+          ]
+        },
+        {
+          "name": "win32_error",
+          "startLine": 69,
+          "endLine": 90,
+          "methods": [
+            "format",
+            "win32_error"
+          ],
+          "properties": []
+        },
+        {
+          "name": "sid_t",
+          "startLine": 93,
+          "endLine": 153,
+          "methods": [
+            "sid_t",
+            "duplicate_sid",
+            "get_current_user_sid"
+          ],
+          "properties": [
+            "buffer_"
+          ]
+        },
+        {
+          "name": "eventlog",
+          "startLine": 155,
+          "endLine": 179,
+          "methods": [
+            "get_event_type",
+            "get_event_category"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "local_alloc_t",
+          "line": 56,
+          "isDefault": false
+        },
+        {
+          "name": "local_alloc_t",
+          "line": 58,
+          "isDefault": false
+        },
+        {
+          "name": "~local_alloc_t",
+          "line": 61,
+          "isDefault": false
+        },
+        {
+          "name": "local_alloc_t",
+          "line": 53,
+          "isDefault": false
+        },
+        {
+          "name": "format",
+          "line": 71,
+          "isDefault": false
+        },
+        {
+          "name": "win32_error",
+          "line": 88,
+          "isDefault": false
+        },
+        {
+          "name": "win32_error",
+          "line": 69,
+          "isDefault": false
+        },
+        {
+          "name": "sid_t",
+          "line": 97,
+          "isDefault": false
+        },
+        {
+          "name": "duplicate_sid",
+          "line": 100,
+          "isDefault": false
+        },
+        {
+          "name": "get_current_user_sid",
+          "line": 120,
+          "isDefault": false
+        },
+        {
+          "name": "sid_t",
+          "line": 93,
+          "isDefault": false
+        },
+        {
+          "name": "get_event_type",
+          "line": 156,
+          "isDefault": false
+        },
+        {
+          "name": "get_event_category",
+          "line": 178,
+          "isDefault": false
+        },
+        {
+          "name": "eventlog",
+          "line": 155,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "local_alloc_t",
+          "callee": "hlocal_",
+          "lineNumber": 56
+        },
+        {
+          "caller": "~local_alloc_t",
+          "callee": "LocalFree",
+          "lineNumber": 63
+        },
+        {
+          "caller": "format",
+          "callee": "GetLastError",
+          "lineNumber": 71
+        },
+        {
+          "caller": "format",
+          "callee": "::FormatMessageA",
+          "lineNumber": 76
+        },
+        {
+          "caller": "format",
+          "callee": "MAKELANGID",
+          "lineNumber": 78
+        },
+        {
+          "caller": "format",
+          "callee": "fmt_lib::format",
+          "lineNumber": 82
+        },
+        {
+          "caller": "format",
+          "callee": "fmt_lib::format",
+          "lineNumber": 85
+        },
+        {
+          "caller": "win32_error",
+          "callee": "GetLastError",
+          "lineNumber": 88
+        },
+        {
+          "caller": "win32_error",
+          "callee": "format",
+          "lineNumber": 89
+        },
+        {
+          "caller": "duplicate_sid",
+          "callee": "::IsValidSid",
+          "lineNumber": 101
+        },
+        {
+          "caller": "duplicate_sid",
+          "callee": "throw_spdlog_ex",
+          "lineNumber": 102
+        },
+        {
+          "caller": "duplicate_sid",
+          "callee": "::GetLengthSid",
+          "lineNumber": 105
+        },
+        {
+          "caller": "duplicate_sid",
+          "callee": "resize",
+          "lineNumber": 108
+        },
+        {
+          "caller": "duplicate_sid",
+          "callee": "::CopySid",
+          "lineNumber": 109
+        },
+        {
+          "caller": "duplicate_sid",
+          "callee": "as_sid",
+          "lineNumber": 109
+        },
+        {
+          "caller": "duplicate_sid",
+          "callee": "SPDLOG_THROW",
+          "lineNumber": 110
+        },
+        {
+          "caller": "duplicate_sid",
+          "callee": "win32_error",
+          "lineNumber": 110
+        },
+        {
+          "caller": "process_token_t",
+          "callee": "::OpenProcessToken",
+          "lineNumber": 125
+        },
+        {
+          "caller": "process_token_t",
+          "callee": "SPDLOG_THROW",
+          "lineNumber": 126
+        },
+        {
+          "caller": "process_token_t",
+          "callee": "win32_error",
+          "lineNumber": 126
+        },
+        {
+          "caller": "~process_token_t",
+          "callee": "::CloseHandle",
+          "lineNumber": 130
+        },
+        {
+          "caller": "get_current_user_sid",
+          "callee": "::GetTokenInformation",
+          "lineNumber": 138
+        },
+        {
+          "caller": "get_current_user_sid",
+          "callee": "SPDLOG_THROW",
+          "lineNumber": 140
+        },
+        {
+          "caller": "get_current_user_sid",
+          "callee": "win32_error",
+          "lineNumber": 140
+        },
+        {
+          "caller": "get_current_user_sid",
+          "callee": "::GetTokenInformation",
+          "lineNumber": 145
+        },
+        {
+          "caller": "get_current_user_sid",
+          "callee": "data",
+          "lineNumber": 146
+        },
+        {
+          "caller": "get_current_user_sid",
+          "callee": "SPDLOG_THROW",
+          "lineNumber": 147
+        },
+        {
+          "caller": "get_current_user_sid",
+          "callee": "win32_error",
+          "lineNumber": 147
+        },
+        {
+          "caller": "get_current_user_sid",
+          "callee": "sid_t::duplicate_sid",
+          "lineNumber": 151
+        },
+        {
+          "caller": "get_current_user_sid",
+          "callee": "data",
+          "lineNumber": 151
+        },
+        {
+          "caller": "event_log_handle",
+          "callee": "::RegisterEventSourceA",
+          "lineNumber": 196
+        },
+        {
+          "caller": "event_log_handle",
+          "callee": "c_str",
+          "lineNumber": 196
+        },
+        {
+          "caller": "event_log_handle",
+          "callee": "SPDLOG_THROW",
+          "lineNumber": 198
+        },
+        {
+          "caller": "event_log_handle",
+          "callee": "internal::win32_error",
+          "lineNumber": 198
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "format",
+          "lineNumber": 211
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "push_back",
+          "lineNumber": 212
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "details::os::utf8_to_wstrbuf",
+          "lineNumber": 216
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "string_view_t",
+          "lineNumber": 216
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "data",
+          "lineNumber": 216
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "size",
+          "lineNumber": 216
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "data",
+          "lineNumber": 218
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "static_cast<bool>",
+          "lineNumber": 219
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "::ReportEventW",
+          "lineNumber": 219
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "event_log_handle",
+          "lineNumber": 220
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "eventlog::get_event_type",
+          "lineNumber": 220
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "eventlog::get_event_category",
+          "lineNumber": 220
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "as_sid",
+          "lineNumber": 221
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "data",
+          "lineNumber": 223
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "static_cast<bool>",
+          "lineNumber": 224
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "::ReportEventA",
+          "lineNumber": 224
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "event_log_handle",
+          "lineNumber": 225
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "eventlog::get_event_type",
+          "lineNumber": 225
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "eventlog::get_event_category",
+          "lineNumber": 225
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "as_sid",
+          "lineNumber": 226
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "SPDLOG_THROW",
+          "lineNumber": 230
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "win32_error",
+          "lineNumber": 230
+        },
+        {
+          "caller": "win_eventlog_sink",
+          "callee": "internal::sid_t::get_current_user_sid",
+          "lineNumber": 242
+        },
+        {
+          "caller": "~win_eventlog_sink",
+          "callee": "DeregisterEventSource",
+          "lineNumber": 250
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 14,
+        "functionCount": 10,
+        "classCount": 4
+      }
+    }
+  ]
+}

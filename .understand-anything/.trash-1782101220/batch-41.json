@@ -1,0 +1,568 @@
+{
+  "nodes": [
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/converter.h",
+      "type": "file",
+      "name": "converter.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/converter.h",
+      "summary": "提供通用的 Arrow 数据类型转换器基类 Converter 和工厂函数 MakeConverter，支持将各种输入类型转换为 Arrow 数组。",
+      "tags": ["utility", "type-definition", "template", "data-conversion"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:thirdparty/arrow/include/arrow/util/converter.h:Converter",
+      "type": "class",
+      "name": "Converter",
+      "filePath": "thirdparty/arrow/include/arrow/util/converter.h",
+      "lineRange": [39, 100],
+      "summary": "泛型转换器基类模板，提供 Append/Extend/ExtendMasked 等虚方法接口，用于将输入数据转换为 Arrow 数组。",
+      "tags": ["template", "data-conversion", "abstract-class"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/counting_semaphore.h",
+      "type": "file",
+      "name": "counting_semaphore.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/counting_semaphore.h",
+      "summary": "声明基于互斥锁的计数信号量 CountingSemaphore，支持带超时的 Acquire/Release 操作和等待者同步。",
+      "tags": ["utility", "concurrency", "synchronization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:thirdparty/arrow/include/arrow/util/counting_semaphore.h:CountingSemaphore",
+      "type": "class",
+      "name": "CountingSemaphore",
+      "filePath": "thirdparty/arrow/include/arrow/util/counting_semaphore.h",
+      "lineRange": [29, 55],
+      "summary": "基于互斥锁的计数信号量实现，支持带超时的 Acquire/Release 以及 Close 操作。",
+      "tags": ["concurrency", "synchronization", "thread-safe"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/cpu_info.h",
+      "type": "file",
+      "name": "cpu_info.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/cpu_info.h",
+      "summary": "定义 CpuInfo 单例类，用于运行时查询 CPU 特性（SSE/AVX/NEON 等指令集支持）和缓存信息。",
+      "tags": ["utility", "cpu-detection", "simd", "singleton"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:thirdparty/arrow/include/arrow/util/cpu_info.h:CpuInfo",
+      "type": "class",
+      "name": "CpuInfo",
+      "filePath": "thirdparty/arrow/include/arrow/util/cpu_info.h",
+      "lineRange": [37, 111],
+      "summary": "CPU 信息查询单例，检测 SSE4.2/AVX2/AVX512/NEON 等指令集支持，提供缓存大小和核心数查询。",
+      "tags": ["singleton", "cpu-detection", "simd", "platform"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/crc32.h",
+      "type": "file",
+      "name": "crc32.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/crc32.h",
+      "summary": "声明 CRC32 校验和计算函数，使用多项式 0x04C11DB7（与 zlib 兼容）。",
+      "tags": ["utility", "checksum", "hash"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/debug.h",
+      "type": "file",
+      "name": "debug.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/debug.h",
+      "summary": "声明 DebugTrap 函数，用于在调试时触发断点中断。",
+      "tags": ["utility", "debug"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/decimal.h",
+      "type": "file",
+      "name": "decimal.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/decimal.h",
+      "summary": "定义 Decimal128 类，表示 128 位有符号十进制数，支持算术运算、字符串转换和精度/缩放处理。",
+      "tags": ["utility", "data-model", "decimal", "arithmetic"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:thirdparty/arrow/include/arrow/util/decimal.h:Decimal128",
+      "type": "class",
+      "name": "Decimal128",
+      "filePath": "thirdparty/arrow/include/arrow/util/decimal.h",
+      "lineRange": [51, 100],
+      "summary": "128 位有符号十进制数类，继承自 BasicDecimal128，提供除法、字符串解析和格式化等功能。",
+      "tags": ["data-model", "decimal", "arithmetic", "type-conversion"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/delimiting.h",
+      "type": "file",
+      "name": "delimiting.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/delimiting.h",
+      "summary": "定义分隔符查找器 BoundaryFinder 和数据分块器 Chunker，用于将分隔数据流切割为完整记录。",
+      "tags": ["utility", "parsing", "streaming", "delimiter"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:thirdparty/arrow/include/arrow/util/delimiting.h:BoundaryFinder",
+      "type": "class",
+      "name": "BoundaryFinder",
+      "filePath": "thirdparty/arrow/include/arrow/util/delimiting.h",
+      "lineRange": [32, 73],
+      "summary": "抽象分隔符查找器基类，提供 FindFirst/FindLast/FindNth 虚方法用于在数据块中定位分隔符。",
+      "tags": ["abstract-class", "parsing", "delimiter"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:thirdparty/arrow/include/arrow/util/delimiting.h:Chunker",
+      "type": "class",
+      "name": "Chunker",
+      "filePath": "thirdparty/arrow/include/arrow/util/delimiting.h",
+      "lineRange": [83, 179],
+      "summary": "可复用的分隔数据分块器，将数据流切割为完整记录和部分记录，支持跳行操作。",
+      "tags": ["utility", "parsing", "streaming", "chunking"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/dispatch.h",
+      "type": "file",
+      "name": "dispatch.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/dispatch.h",
+      "summary": "提供动态分派机制 DynamicDispatch，根据运行时 CPU 能力自动选择最优指令集实现（SSE4.2/AVX2/AVX512）。",
+      "tags": ["utility", "simd", "dispatch", "performance"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:thirdparty/arrow/include/arrow/util/dispatch.h:DynamicDispatch",
+      "type": "class",
+      "name": "DynamicDispatch",
+      "filePath": "thirdparty/arrow/include/arrow/util/dispatch.h",
+      "lineRange": [67, 112],
+      "summary": "模板类，根据 CpuInfo 检测结果选择最高可用指令集级别的函数实现。",
+      "tags": ["template", "simd", "dispatch", "performance"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/double_conversion.h",
+      "type": "file",
+      "name": "double_conversion.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/double_conversion.h",
+      "summary": "Re-export 头文件，将 vendored double-conversion 库的类型导入 arrow::util::double_conversion 命名空间。",
+      "tags": ["utility", "barrel", "re-export", "number-formatting"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/endian.h",
+      "type": "file",
+      "name": "endian.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/endian.h",
+      "summary": "提供字节序转换工具函数（ByteSwap/ToBigEndian/FromLittleEndian 等）和小端数组读写适配器。",
+      "tags": ["utility", "endianness", "byte-manipulation", "platform"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/formatting.h",
+      "type": "file",
+      "name": "formatting.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/formatting.h",
+      "summary": "提供类型到字符串的格式化工具 StringFormatter 模板特化，覆盖布尔、十进制、数值、时间等类型的字符串转换。",
+      "tags": ["utility", "formatting", "type-conversion", "string"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/functional.h",
+      "type": "file",
+      "name": "functional.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/functional.h",
+      "summary": "提供 callable 类型萃取工具 call_traits 和一次性调用包装器 FnOnce，用于 Lambda 和函数对象的类型擦除。",
+      "tags": ["utility", "type-definition", "functional", "template"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:thirdparty/arrow/include/arrow/util/functional.h:call_traits",
+      "type": "class",
+      "name": "call_traits",
+      "filePath": "thirdparty/arrow/include/arrow/util/functional.h",
+      "lineRange": [41, 115],
+      "summary": "Callable 类型萃取工具结构，提取函数对象的参数类型、返回类型和参数数量。",
+      "tags": ["type-definition", "functional", "template-meta"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:thirdparty/arrow/include/arrow/util/functional.h:FnOnce",
+      "type": "class",
+      "name": "FnOnce",
+      "filePath": "thirdparty/arrow/include/arrow/util/functional.h",
+      "lineRange": [122, 157],
+      "summary": "一次性调用的类型擦除包装器，调用后立即销毁内部 Lambda，释放所有状态和引用。",
+      "tags": ["utility", "functional", "type-erasure", "move-semantics"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/future.h",
+      "type": "file",
+      "name": "future.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/future.h",
+      "summary": "定义 Arrow 的异步 Future 模板类，支持 then 链式回调、状态标记和同步等待，是 Arrow 异步编程的核心基础设施。",
+      "tags": ["utility", "async", "future", "concurrency"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/hash_util.h",
+      "type": "file",
+      "name": "hash_util.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/hash_util.h",
+      "summary": "提供 hash_combine 工具函数（移植自 Boost），用于组合多个值的哈希码。",
+      "tags": ["utility", "hash", "boost"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/hashing.h",
+      "type": "file",
+      "name": "hashing.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/hashing.h",
+      "summary": "提供高性能哈希工具，包括字符串哈希（基于 XXH3）、位图哈希和标量值哈希辅助模板。",
+      "tags": ["utility", "hash", "performance", "template"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/int_util_overflow.h",
+      "type": "file",
+      "name": "int_util_overflow.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/int_util_overflow.h",
+      "summary": "定义带溢出检测的整数算术函数（AddWithOverflow/SubtractWithOverflow/MultiplyWithOverflow 等）和安全位移操作。",
+      "tags": ["utility", "arithmetic", "overflow", "safety"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/int_util.h",
+      "type": "file",
+      "name": "int_util.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/int_util.h",
+      "summary": "提供整数宽度检测（DetectIntWidth）、类型转换（DowncastInts/UpcastInts/TransposeInts）和边界检查工具。",
+      "tags": ["utility", "integer", "type-conversion", "bounds-checking"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/io_util.h",
+      "type": "file",
+      "name": "io_util.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/io_util.h",
+      "summary": "提供跨平台文件系统操作工具，包括 PlatformFilename 路径封装、目录创建/删除、临时文件管理和信号处理。",
+      "tags": ["utility", "io", "filesystem", "platform"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:thirdparty/arrow/include/arrow/util/io_util.h:PlatformFilename",
+      "type": "class",
+      "name": "PlatformFilename",
+      "filePath": "thirdparty/arrow/include/arrow/util/io_util.h",
+      "lineRange": [51, 86],
+      "summary": "跨平台文件名/路径封装类，处理 Windows 宽字符和 Unix UTF-8 编码差异，提供路径拼接和规范化操作。",
+      "tags": ["utility", "filesystem", "platform", "path"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/iterator.h",
+      "type": "file",
+      "name": "iterator.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/iterator.h",
+      "summary": "定义泛型 Iterator 模板类和迭代器组合工具（Flatten/Filter/Map），支持带错误返回的惰性迭代模式。",
+      "tags": ["utility", "iterator", "template", "lazy-evaluation"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:thirdparty/arrow/include/arrow/util/iterator.h:Iterator",
+      "type": "class",
+      "name": "Iterator",
+      "filePath": "thirdparty/arrow/include/arrow/util/iterator.h",
+      "lineRange": [87, 100],
+      "summary": "泛型迭代器模板类，通过类型擦除实现，支持 Result<T> 返回值和惰性求值。",
+      "tags": ["template", "iterator", "type-erasure", "lazy-evaluation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/key_value_metadata.h",
+      "type": "file",
+      "name": "key_value_metadata.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/key_value_metadata.h",
+      "summary": "定义 KeyValueMetadata 键值对元数据容器，支持查找、追加、删除、合并等操作，用于 Arrow Schema 和数组的自定义元数据。",
+      "tags": ["utility", "metadata", "data-model", "container"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:thirdparty/arrow/include/arrow/util/key_value_metadata.h:KeyValueMetadata",
+      "type": "class",
+      "name": "KeyValueMetadata",
+      "filePath": "thirdparty/arrow/include/arrow/util/key_value_metadata.h",
+      "lineRange": [35, 83],
+      "summary": "键值对元数据容器，基于平行的 keys/values 向量实现，支持 CRUD 操作和合并。",
+      "tags": ["data-model", "metadata", "container"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/launder.h",
+      "type": "file",
+      "name": "launder.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/launder.h",
+      "summary": "提供 std::launder 的 C++17 兼容性封装，用于在 placement new 后获取合法的对象指针。",
+      "tags": ["utility", "compatibility", "cpp17"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/logging.h",
+      "type": "file",
+      "name": "logging.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/logging.h",
+      "summary": "定义 Arrow 日志框架，包括 ArrowLog 类、日志级别枚举和 DCHECK/CHECK 系列断言宏，支持 Gandiva IR 模式。",
+      "tags": ["utility", "logging", "debug", "macros"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/macros.h",
+      "type": "file",
+      "name": "macros.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/macros.h",
+      "summary": "定义 Arrow 跨平台编译器宏，包括 DISALLOW_COPY_AND_ASSIGN、PREDICT_TRUE/FALSE、NOINLINE、内存对齐和 UBSan 禁用等。",
+      "tags": ["utility", "macros", "platform", "cross-compiler"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/map.h",
+      "type": "file",
+      "name": "map.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/map.h",
+      "summary": "提供 GetOrInsertGenerated 模板辅助函数，实现 map/unordered_map 的单次查找条件插入语义。",
+      "tags": ["utility", "container", "template", "map"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/util/math_constants.h",
+      "type": "file",
+      "name": "math_constants.h",
+      "filePath": "thirdparty/arrow/include/arrow/util/math_constants.h",
+      "summary": "定义 M_PI/M_PI_2/M_PI_4 等数学常量宏，兼容 MSVC 等未提供默认定义的编译器。",
+      "tags": ["utility", "math", "constants", "compatibility"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:thirdparty/arrow/include/arrow/util/converter.h",
+      "target": "class:thirdparty/arrow/include/arrow/util/converter.h:Converter",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/util/converter.h",
+      "target": "class:thirdparty/arrow/include/arrow/util/converter.h:Converter",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/util/counting_semaphore.h",
+      "target": "class:thirdparty/arrow/include/arrow/util/counting_semaphore.h:CountingSemaphore",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/util/counting_semaphore.h",
+      "target": "class:thirdparty/arrow/include/arrow/util/counting_semaphore.h:CountingSemaphore",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/util/cpu_info.h",
+      "target": "class:thirdparty/arrow/include/arrow/util/cpu_info.h:CpuInfo",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/util/cpu_info.h",
+      "target": "class:thirdparty/arrow/include/arrow/util/cpu_info.h:CpuInfo",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/util/decimal.h",
+      "target": "class:thirdparty/arrow/include/arrow/util/decimal.h:Decimal128",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/util/decimal.h",
+      "target": "class:thirdparty/arrow/include/arrow/util/decimal.h:Decimal128",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/util/delimiting.h",
+      "target": "class:thirdparty/arrow/include/arrow/util/delimiting.h:BoundaryFinder",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/util/delimiting.h",
+      "target": "class:thirdparty/arrow/include/arrow/util/delimiting.h:BoundaryFinder",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/util/delimiting.h",
+      "target": "class:thirdparty/arrow/include/arrow/util/delimiting.h:Chunker",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/util/delimiting.h",
+      "target": "class:thirdparty/arrow/include/arrow/util/delimiting.h:Chunker",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/util/dispatch.h",
+      "target": "class:thirdparty/arrow/include/arrow/util/dispatch.h:DynamicDispatch",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/util/dispatch.h",
+      "target": "file:thirdparty/arrow/include/arrow/util/cpu_info.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/util/formatting.h",
+      "target": "file:thirdparty/arrow/include/arrow/util/double_conversion.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/util/functional.h",
+      "target": "class:thirdparty/arrow/include/arrow/util/functional.h:call_traits",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/util/functional.h",
+      "target": "class:thirdparty/arrow/include/arrow/util/functional.h:call_traits",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/util/functional.h",
+      "target": "class:thirdparty/arrow/include/arrow/util/functional.h:FnOnce",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/util/functional.h",
+      "target": "class:thirdparty/arrow/include/arrow/util/functional.h:FnOnce",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/util/future.h",
+      "target": "file:thirdparty/arrow/include/arrow/util/functional.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/util/hashing.h",
+      "target": "file:thirdparty/arrow/include/arrow/util/endian.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/util/hashing.h",
+      "target": "file:thirdparty/arrow/include/arrow/util/logging.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/util/io_util.h",
+      "target": "class:thirdparty/arrow/include/arrow/util/io_util.h:PlatformFilename",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/util/io_util.h",
+      "target": "class:thirdparty/arrow/include/arrow/util/io_util.h:PlatformFilename",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/util/iterator.h",
+      "target": "class:thirdparty/arrow/include/arrow/util/iterator.h:Iterator",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/util/iterator.h",
+      "target": "file:thirdparty/arrow/include/arrow/util/functional.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/util/key_value_metadata.h",
+      "target": "class:thirdparty/arrow/include/arrow/util/key_value_metadata.h:KeyValueMetadata",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/util/key_value_metadata.h",
+      "target": "class:thirdparty/arrow/include/arrow/util/key_value_metadata.h:KeyValueMetadata",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/util/logging.h",
+      "target": "file:thirdparty/arrow/include/arrow/util/macros.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/util/endian.h",
+      "target": "file:thirdparty/arrow/include/arrow/util/macros.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/util/formatting.h",
+      "target": "file:thirdparty/arrow/include/arrow/util/macros.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    }
+  ]
+}

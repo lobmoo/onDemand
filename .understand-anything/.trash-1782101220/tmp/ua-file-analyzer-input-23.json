@@ -1,0 +1,13 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "core/ondemand/.gensrctx/FCVCdrAux.hpp", "language": "cpp", "sizeLines": 49, "fileCategory": "code"},
+    {"path": "core/ondemand/.gensrctx/FCVPubSubTypes.cxx", "language": "cpp", "sizeLines": 164, "fileCategory": "code"},
+    {"path": "core/ondemand/.gensrctx/FCVPubSubTypes.h", "language": "c", "sizeLines": 64, "fileCategory": "code"}
+  ],
+  "batchImportData": {
+    "core/ondemand/.gensrctx/FCVCdrAux.hpp": [],
+    "core/ondemand/.gensrctx/FCVPubSubTypes.cxx": ["core/ondemand/.gensrctx/FCVCdrAux.hpp", "core/ondemand/.gensrctx/FCVPubSubTypes.h"],
+    "core/ondemand/.gensrctx/FCVPubSubTypes.h": []
+  }
+}

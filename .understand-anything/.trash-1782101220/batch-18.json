@@ -1,0 +1,101 @@
+{
+  "nodes": [
+    {
+      "id": "file:core/ondemand/.gensrctx/dsf_define_node.h",
+      "type": "file",
+      "name": "dsf_define_node.h",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_node.h",
+      "summary": "FastDDSGen 自动生成的 IDL 数据类型头文件，声明了 DSF 命名空间下的 NetworkInterface、BasicInfo 和 RuntimeInfo 三个 DDS 数据结构类，以及相关的 topic 名称和字段名常量。",
+      "tags": ["type-definition", "auto-generated", "dds-idl", "data-model", "serialization"],
+      "complexity": "complex",
+      "languageNotes": "由 fastddsgen 工具自动生成的 C++ 头文件，采用 eProsima 风格的 getter/setter 模式（同名函数重载），包含拷贝/移动构造函数、赋值运算符和比较运算符的完整实现声明。"
+    },
+    {
+      "id": "file:core/ondemand/.gensrctx/dsf_define_node.cxx",
+      "type": "file",
+      "name": "dsf_define_node.cxx",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_node.cxx",
+      "summary": "FastDDSGen 自动生成的 IDL 数据类型实现文件，包含 NetworkInterface、BasicInfo 和 RuntimeInfo 三个类的构造函数、析构函数、赋值运算符、比较运算符以及所有成员变量的 getter/setter 方法实现。",
+      "tags": ["auto-generated", "dds-idl", "data-model", "implementation", "serialization"],
+      "complexity": "complex",
+      "languageNotes": "所有 setter 方法同时提供拷贝和 std::move 两个重载版本，移动语义实现零拷贝赋值。48 个函数全部为自动生成的样板代码。"
+    },
+    {
+      "id": "file:core/ondemand/.gensrctx/dsf_define_nodeCdrAux.ipp",
+      "type": "file",
+      "name": "dsf_define_nodeCdrAux.ipp",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_nodeCdrAux.ipp",
+      "summary": "FastDDSGen 自动生成的 CDR 序列化辅助文件，为 NetworkInterface、BasicInfo 和 RuntimeInfo 提供 CDR 格式的序列化大小计算、序列化写入和反序列化读取的模板特化实现。",
+      "tags": ["auto-generated", "cdr-serialization", "dds-idl", "template-specialization", "data-model"],
+      "complexity": "complex",
+      "languageNotes": "使用 CDR (Common Data Representation) 协议进行二进制序列化，支持 XCDRv2 编码算法（DELIMIT_CDR2 和 PLAIN_CDR），通过 BaoSky::Cdr 命名空间的 CdrSizeCalculator、SerializeCdr、DeserializeCdr 工具类实现。"
+    },
+    {
+      "id": "class:core/ondemand/.gensrctx/dsf_define_node.h:NetworkInterface",
+      "type": "class",
+      "name": "NetworkInterface",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_node.h",
+      "lineRange": [77, 191],
+      "summary": "DDS 数据结构类，表示网络接口信息，包含接口名称（interfaceName）和 IP 地址（ipAddress）两个字段。用于 RuntimeInfo 中描述节点的网络配置。",
+      "tags": ["data-model", "dds-idl", "auto-generated", "network"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:core/ondemand/.gensrctx/dsf_define_node.h:BasicInfo",
+      "type": "class",
+      "name": "BasicInfo",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_node.h",
+      "lineRange": [202, 372],
+      "summary": "DDS 数据结构类，表示节点的基本静态信息，包含节点名称（nodeName）、描述（description）、版本（version）和发布时间（pubtime）四个字段。通过 dsf/node/basicInfo topic 广播。",
+      "tags": ["data-model", "dds-idl", "auto-generated", "node-info"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:core/ondemand/.gensrctx/dsf_define_node.h:RuntimeInfo",
+      "type": "class",
+      "name": "RuntimeInfo",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_node.h",
+      "lineRange": [377, 687],
+      "summary": "DDS 数据结构类，表示节点的运行时动态信息，包含节点名称、进程 ID、主机名、可执行文件路径、执行时间戳、用户名、公网地址、属性列表和网络接口列表等 9 个字段。通过 dsf/node/runtimeInfo topic 广播。",
+      "tags": ["data-model", "dds-idl", "auto-generated", "runtime-info", "node-info"],
+      "complexity": "complex"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_node.cxx",
+      "target": "file:core/ondemand/.gensrctx/dsf_define_node.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_node.cxx",
+      "target": "file:core/ondemand/.gensrctx/dsf_define_nodeCdrAux.ipp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_node.h",
+      "target": "class:core/ondemand/.gensrctx/dsf_define_node.h:NetworkInterface",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_node.h",
+      "target": "class:core/ondemand/.gensrctx/dsf_define_node.h:BasicInfo",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_node.h",
+      "target": "class:core/ondemand/.gensrctx/dsf_define_node.h:RuntimeInfo",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    }
+  ]
+}

@@ -1,0 +1,107 @@
+{
+  "nodes": [
+    {
+      "id": "pipeline:.github/workflows/ci.yml",
+      "type": "pipeline",
+      "name": "ci.yml",
+      "filePath": ".github/workflows/ci.yml",
+      "summary": "GitHub Actions CI 工作流，在 push（main/dev）和 PR（main）时触发，支持手动选择 DDS 实现（fastdds/txdds）。包含四个阶段：依赖安装、编译构建、单元测试和报告生成。",
+      "tags": ["ci-cd", "build-system", "testing", "deployment"],
+      "complexity": "complex"
+    },
+    {
+      "id": "step:.github/workflows/ci.yml:prepare",
+      "type": "step",
+      "name": "prepare",
+      "filePath": ".github/workflows/ci.yml",
+      "summary": "安装系统依赖（build-essential、cmake、libgtest-dev 等）并编译安装 Google Test 框架，为后续构建和测试做准备。",
+      "tags": ["ci-cd", "setup", "dependencies"],
+      "complexity": "simple"
+    },
+    {
+      "id": "step:.github/workflows/ci.yml:build",
+      "type": "step",
+      "name": "build",
+      "filePath": ".github/workflows/ci.yml",
+      "summary": "根据选择的 DDS 实现（fastdds 或 txdds）配置 CMake、编译项目，并上传构建产物。txdds 模式下会自动创建版本化的 .so 符号链接。",
+      "tags": ["ci-cd", "build-system", "compilation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "step:.github/workflows/ci.yml:test",
+      "type": "step",
+      "name": "test",
+      "filePath": ".github/workflows/ci.yml",
+      "summary": "下载构建产物并运行四个测试套件（test_log、test_timer、test_ddswrapper、test_ondemand），排除已知的不稳定恢复测试用例，上传 GoogleTest XML 测试结果。",
+      "tags": ["ci-cd", "testing", "automation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "step:.github/workflows/ci.yml:report",
+      "type": "step",
+      "name": "report",
+      "filePath": ".github/workflows/ci.yml",
+      "summary": "解析 GoogleTest XML 测试结果，生成包含概览卡片和详细用例表格的 HTML 报告和 Markdown 摘要，上传为 CI artifact 并写入 GitHub Step Summary。",
+      "tags": ["ci-cd", "reporting", "monitoring"],
+      "complexity": "complex"
+    }
+  ],
+  "edges": [
+    {
+      "source": "step:.github/workflows/ci.yml:prepare",
+      "target": "pipeline:.github/workflows/ci.yml",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "step:.github/workflows/ci.yml:build",
+      "target": "pipeline:.github/workflows/ci.yml",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "step:.github/workflows/ci.yml:test",
+      "target": "pipeline:.github/workflows/ci.yml",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "step:.github/workflows/ci.yml:report",
+      "target": "pipeline:.github/workflows/ci.yml",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "step:.github/workflows/ci.yml:build",
+      "target": "step:.github/workflows/ci.yml:prepare",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "step:.github/workflows/ci.yml:test",
+      "target": "step:.github/workflows/ci.yml:build",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "step:.github/workflows/ci.yml:report",
+      "target": "step:.github/workflows/ci.yml:test",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "pipeline:.github/workflows/ci.yml",
+      "target": "file:CMakeLists.txt",
+      "type": "triggers",
+      "direction": "forward",
+      "weight": 0.6
+    }
+  ]
+}

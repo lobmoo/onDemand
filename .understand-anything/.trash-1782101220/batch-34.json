@@ -1,0 +1,500 @@
+{
+  "nodes": [
+    {
+      "id": "config:config/logConfig.json",
+      "type": "config",
+      "name": "logConfig.json",
+      "filePath": "config/logConfig.json",
+      "summary": "spdlog 日志框架配置文件，定义日志输出文件路径、日志级别(trace)、最大文件大小(1MB)、备份数量(10)、异步模式及日志格式模板。",
+      "tags": ["configuration", "logging", "spdlog"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:core/CMakeLists.txt",
+      "type": "file",
+      "name": "CMakeLists.txt",
+      "filePath": "core/CMakeLists.txt",
+      "summary": "核心库的 CMake 构建配置，根据 DDS_IMPL 变量选择 FastDDS 或 TXDDS 实现，编译 ondemand 模块、DDS wrapper 和 IDL 生成代码，链接 CRoaring、spdlog 等依赖库。",
+      "tags": ["build-system", "cmake", "dds", "configuration"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:core/ondemand/ sub-pub.cc11",
+      "type": "file",
+      "name": " sub-pub.cc11",
+      "filePath": "core/ondemand/ sub-pub.cc11",
+      "summary": "OnDemand 发布/订阅系统演示程序，实现两个 DDS 节点(NodeA/NodeB)互相发布和订阅 1000 个变量，演示批量写入、频率协商和时间戳监控。",
+      "tags": ["demo", "entry-point", "pub-sub", "dds"],
+      "complexity": "moderate",
+      "languageNotes": "文件名含空格(sub-pub.cc11)，使用命令行参数 A/B 选择启动节点。"
+    },
+    {
+      "id": "schema:core/ondemand/idl/dsf_define_datatypes.idl",
+      "type": "schema",
+      "name": "dsf_define_datatypes.idl",
+      "filePath": "core/ondemand/idl/dsf_define_datatypes.idl",
+      "summary": "DSF 基础数据类型定义文件，参照 IEC61131-3 标准定义了完整的数据类型体系，包括布尔、整型(8~64位)、浮点、字符串、时间日期等类型，以及 Timespec、DataBuffer 等基础结构体。",
+      "tags": ["schema-definition", "idl", "data-types", "dds"],
+      "complexity": "moderate",
+      "languageNotes": "使用 DDS IDL 语法，@final/@default/@range 等注解控制序列化行为。union switch 模式用于时间类型的双格式表示(字符串/数值)。"
+    },
+    {
+      "id": "schema:core/ondemand/idl/dsf_define_messages.idl",
+      "type": "schema",
+      "name": "dsf_define_messages.idl",
+      "filePath": "core/ondemand/idl/dsf_define_messages.idl",
+      "summary": "DSF 消息定义文件，定义了事件(Event)、报警(Alarm)、控制(Control)、变量注册/注销(SubTableRegister/Unregister)等消息类型及其 DDS 主题名称常量。",
+      "tags": ["schema-definition", "idl", "messaging", "dds", "event-system"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "schema:core/ondemand/idl/dsf_define_model.idl",
+      "type": "schema",
+      "name": "dsf_define_model.idl",
+      "filePath": "core/ondemand/idl/dsf_define_model.idl",
+      "summary": "DSF 模型定义文件，定义了模型(Model)的结构体 Define，包含模型名称、版本、节点、数据结构描述(XML)、默认值、事件和报警等字段。",
+      "tags": ["schema-definition", "idl", "model", "dds"],
+      "complexity": "simple"
+    },
+    {
+      "id": "schema:core/ondemand/idl/dsf_define_node.idl",
+      "type": "schema",
+      "name": "dsf_define_node.idl",
+      "filePath": "core/ondemand/idl/dsf_define_node.idl",
+      "summary": "DSF 节点定义文件，定义了节点基本信息(BasicInfo)和运行时信息(RuntimeInfo)结构体，包含节点名称、PID、主机名、网卡信息等字段及对应的 DDS 主题常量。",
+      "tags": ["schema-definition", "idl", "node", "dds"],
+      "complexity": "simple"
+    },
+    {
+      "id": "schema:core/ondemand/idl/dsf_define_var.idl",
+      "type": "schema",
+      "name": "dsf_define_var.idl",
+      "filePath": "core/ondemand/idl/dsf_define_var.idl",
+      "summary": "DSF 变量定义和数据传输文件，定义了变量配置(Define)、变量数据传输(DataTransfer/TableDataTransfer)、表定义(PubTableDefine)等核心结构，是 OnDemand 系统的数据交换基础。",
+      "tags": ["schema-definition", "idl", "variable", "data-transfer", "dds"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "schema:core/ondemand/idl/FCV.idl",
+      "type": "schema",
+      "name": "FCV.idl",
+      "filePath": "core/ondemand/idl/FCV.idl",
+      "summary": "流体调节阀(Flow Control Valve)用户自定义类型定义，包含流量、温度、压力、开关状态、开度和健康度等工业控制字段。",
+      "tags": ["schema-definition", "idl", "industrial", "udt"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:core/ondemand/idl/generate.sh",
+      "type": "file",
+      "name": "generate.sh",
+      "filePath": "core/ondemand/idl/generate.sh",
+      "summary": "IDL 代码生成脚本，调用 fastddsgen 工具将 .idl 文件编译为 C++ 源码，输出到 .gensrc 目录。",
+      "tags": ["script", "code-generation", "idl", "build-tool"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:core/ondemand/on_demand_listener.h",
+      "type": "file",
+      "name": "on_demand_listener.h",
+      "filePath": "core/ondemand/on_demand_listener.h",
+      "summary": "DDS 统一事件监听器头文件，定义 OnDemandListener 类继承 ParticipantListener 和 DataWriterListener，集中处理 participant 上下线、writer/reader 匹配事件，支持回调注册和 DataReader 监听器工厂模式。",
+      "tags": ["header", "listener", "dds", "event-handler", "callback"],
+      "complexity": "moderate",
+      "languageNotes": "使用模板工厂方法 createReaderListener<T>() 创建类型化的 DataReader 监听器，通过 shared_ptr 管理生命周期。"
+    },
+    {
+      "id": "file:core/ondemand/ondemand_pubsub_test.cc",
+      "type": "file",
+      "name": "ondemand_pubsub_test.cc",
+      "filePath": "core/ondemand/ondemand_pubsub_test.cc",
+      "summary": "OnDemand 系统综合集成测试文件(4601行)，包含 27 个测试用例(TC1-TC27)，覆盖生命周期管理、频率协商、通信恢复、多 pub 场景、动态变量变更、批量写入、发布控制、同步读取、Matched/Unmatched 回调、资源限制等全部核心功能。",
+      "tags": ["test", "integration-test", "pub-sub", "dds", "gtest"],
+      "complexity": "complex",
+      "languageNotes": "使用 fork() 创建子进程模拟 pub/sub 节点，通过文件报告机制(childReport)收集子进程结果。仅在 Linux 平台编译(__linux__ 宏保护)。"
+    },
+    {
+      "id": "document:core/ondemand/readme.md",
+      "type": "document",
+      "name": "readme.md",
+      "filePath": "core/ondemand/readme.md",
+      "summary": "OnDemand 模块开发笔记，记录已知 TODO 和 bug(线程池退出问题)，以及 VarStore Arena 内存占用分析(500k 变量约 600MB)，指出 64B header 对小变量的 32 倍开销、双缓冲 2x 数据、shared_ptr<Define> 堆分配等优化方向。",
+      "tags": ["documentation", "memory-analysis", "performance", "development-notes"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:core/ondemand/variable_store.h",
+      "type": "file",
+      "name": "variable_store.h",
+      "filePath": "core/ondemand/variable_store.h",
+      "summary": "高性能无锁变量存储实现，使用 Seqlock + 双缓冲机制实现线程安全的读写分离。64 字节对齐的 Slot 结构避免 false sharing，支持批量注册/写入、动态扩容、脏队列追踪变更变量，读端提供零拷贝 ScopedPtr 访问。",
+      "tags": ["header", "lock-free", "data-structure", "performance", "concurrency"],
+      "complexity": "complex",
+      "languageNotes": "Seqlock 内存序协议：写开始 fetch_add(relaxed)+fence(release)，写结束 fetch_add(release)，读端 acquire-load 配对。使用 aligned_alloc(64) 保证 arena 对齐。"
+    },
+    {
+      "id": "file:sample/data_memory_manger/CMakeLists.txt",
+      "type": "file",
+      "name": "CMakeLists.txt",
+      "filePath": "sample/data_memory_manger/CMakeLists.txt",
+      "summary": "数据内存管理示例的 CMake 构建配置，编译目录下的 .cc 源文件为独立可执行文件，链接 spdlog 和 pthread。",
+      "tags": ["build-system", "cmake", "sample"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:sample/node_example/CMakeLists.txt",
+      "type": "file",
+      "name": "CMakeLists.txt",
+      "filePath": "sample/node_example/CMakeLists.txt",
+      "summary": "DDS 节点示例的 CMake 构建配置，根据 DDS_IMPL 选择 FastDDS 或 TXDDS 的 IDL 生成源码和 wrapper 源码，编译 HelloWorld 示例程序。",
+      "tags": ["build-system", "cmake", "sample", "dds"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:sample/node_example/example.cpp",
+      "type": "file",
+      "name": "example.cpp",
+      "filePath": "sample/node_example/example.cpp",
+      "summary": "DDS wrapper 使用示例程序，演示 DataWriter/DataReader 创建、QoS 配置、分区(partition)发布订阅、多 writer/reader 等 DDS 基础功能。",
+      "tags": ["sample", "demo", "dds", "entry-point"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "schema:sample/node_example/HelloWorldOneFast/idl/HelloWorldOne.idl",
+      "type": "schema",
+      "name": "HelloWorldOne.idl",
+      "filePath": "sample/node_example/HelloWorldOneFast/idl/HelloWorldOne.idl",
+      "summary": "FastDDS 版 HelloWorld 示例 IDL 定义，包含 index 字段和最大 10MB 的 points 数据序列。",
+      "tags": ["schema-definition", "idl", "sample", "fastdds"],
+      "complexity": "simple"
+    },
+    {
+      "id": "schema:sample/node_example/HelloWorldOneTx/idl/HelloWorldOne.idl",
+      "type": "schema",
+      "name": "HelloWorldOne.idl",
+      "filePath": "sample/node_example/HelloWorldOneTx/idl/HelloWorldOne.idl",
+      "summary": "TXDDS 版 HelloWorld 示例 IDL 定义，结构与 FastDDS 版相同，包含 index 字段和最大 10MB 的 points 数据序列。",
+      "tags": ["schema-definition", "idl", "sample", "txdds"],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:sample/node_example/qosConfig.xml",
+      "type": "config",
+      "name": "qosConfig.xml",
+      "filePath": "sample/node_example/qosConfig.xml",
+      "summary": "FastDDS QoS 配置文件，定义 SHMEM+UDPv4 双传输、domainId=10、RELIABLE+TRANSIENT_LOCAL 可靠性策略、KEEP_LAST 历史深度(100)和资源限制。",
+      "tags": ["configuration", "qos", "dds", "fastdds"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:tests/CMakeLists.txt",
+      "type": "file",
+      "name": "CMakeLists.txt",
+      "filePath": "tests/CMakeLists.txt",
+      "summary": "测试套件 CMake 构建配置，定义 4 个测试目标：test_log(日志)、test_timer(定时器)、test_ddswrapper(DDS wrapper)、test_ondemand(OnDemand 集成测试)，根据 DDS_IMPL 选择对应的 wrapper 源码和库。",
+      "tags": ["build-system", "cmake", "test", "dds"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:tests/dds_wrapper_test.cc",
+      "type": "file",
+      "name": "dds_wrapper_test.cc",
+      "filePath": "tests/dds_wrapper_test.cc",
+      "summary": "DDS 抽象层 wrapper 单元测试文件(1493行)，使用 GTest 框架测试 DataNode、DDSTopicWriter/Reader 的创建、发布订阅、QoS 配置、多 topic 并发等 23 个测试用例。",
+      "tags": ["test", "unit-test", "dds", "gtest", "wrapper"],
+      "complexity": "complex"
+    },
+    {
+      "id": "schema:tests/fastdds_test_idl/PerformanceTest.idl",
+      "type": "schema",
+      "name": "PerformanceTest.idl",
+      "filePath": "tests/fastdds_test_idl/PerformanceTest.idl",
+      "summary": "FastDDS 性能测试 IDL 定义，包含 TestMessage 结构体(seq_num、timestamp、message_type、payload)用于 DDS wrapper 性能测试。",
+      "tags": ["schema-definition", "idl", "test", "fastdds"],
+      "complexity": "simple"
+    },
+    {
+      "id": "schema:tests/txdds_test_idl/PerformanceTest.idl",
+      "type": "schema",
+      "name": "PerformanceTest.idl",
+      "filePath": "tests/txdds_test_idl/PerformanceTest.idl",
+      "summary": "TXDDS 性能测试 IDL 定义，结构与 FastDDS 版相同，包含 TestMessage 结构体用于 DDS wrapper 性能测试。",
+      "tags": ["schema-definition", "idl", "test", "txdds"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/api.h",
+      "type": "file",
+      "name": "api.h",
+      "filePath": "thirdparty/arrow/include/arrow/api.h",
+      "summary": "Apache Arrow C++ API 顶层聚合头文件，通过 IWYU pragma export 包含 array、buffer、builder、table、type 等核心模块头文件。",
+      "tags": ["header", "third-party", "arrow", "data-processing"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:core/ondemand/ sub-pub.cc11:dataNodeA",
+      "type": "function",
+      "name": "dataNodeA",
+      "filePath": "core/ondemand/ sub-pub.cc11",
+      "lineRange": [21, 116],
+      "summary": "节点 A 的发布/订阅逻辑，创建 1000 个变量并批量写入，同时订阅节点 B 的变量，监控时间戳间隔并记录异常。",
+      "tags": ["demo", "pub-sub", "batch-write"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/ondemand/ sub-pub.cc11:dataNodeB",
+      "type": "function",
+      "name": "dataNodeB",
+      "filePath": "core/ondemand/ sub-pub.cc11",
+      "lineRange": [118, 213],
+      "summary": "节点 B 的发布/订阅逻辑，创建 1000 个变量并批量写入，同时订阅节点 A 的变量，监控时间戳间隔。",
+      "tags": ["demo", "pub-sub", "batch-write"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/ondemand/ sub-pub.cc11:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "core/ondemand/ sub-pub.cc11",
+      "lineRange": [215, 234],
+      "summary": "程序入口，初始化日志系统，根据命令行参数(A/B)选择启动节点 A 或节点 B。",
+      "tags": ["entry-point", "demo"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:tests/dds_wrapper_test.cc:ScopedTestDir",
+      "type": "class",
+      "name": "ScopedTestDir",
+      "filePath": "tests/dds_wrapper_test.cc",
+      "lineRange": [34, 51],
+      "summary": "RAII 测试目录管理类，构造时在系统临时目录创建唯一命名的测试目录，析构时自动清理。",
+      "tags": ["test", "raii", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:tests/dds_wrapper_test.cc:ChildProc",
+      "type": "class",
+      "name": "ChildProc",
+      "filePath": "tests/dds_wrapper_test.cc",
+      "lineRange": [93, 98],
+      "summary": "子进程信息结构体，存储子进程名称用于 fork 模式测试。",
+      "tags": ["test", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:tests/dds_wrapper_test.cc:DdsWrapperNodeTEST",
+      "type": "class",
+      "name": "DdsWrapperNodeTEST",
+      "filePath": "tests/dds_wrapper_test.cc",
+      "lineRange": [140, 144],
+      "summary": "DDS wrapper 测试夹具类，继承 GTest Test，提供 SetUp/TearDown 生命周期管理。",
+      "tags": ["test", "gtest", "fixture"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:sample/node_example/example.cpp:run_dds_data_writer",
+      "type": "function",
+      "name": "run_dds_data_writer",
+      "filePath": "sample/node_example/example.cpp",
+      "lineRange": [81, 123],
+      "summary": "DDS DataWriter 示例，演示创建节点、writer、QoS 配置和循环发布 HelloWorldOne 消息。",
+      "tags": ["sample", "dds", "writer"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:sample/node_example/example.cpp:run_dds_data_reader",
+      "type": "function",
+      "name": "run_dds_data_reader",
+      "filePath": "sample/node_example/example.cpp",
+      "lineRange": [125, 152],
+      "summary": "DDS DataReader 示例，演示创建节点、reader、QoS 配置和接收 HelloWorldOne 消息回调。",
+      "tags": ["sample", "dds", "reader"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:sample/node_example/example.cpp:test_partition_pub",
+      "type": "function",
+      "name": "test_partition_pub",
+      "filePath": "sample/node_example/example.cpp",
+      "lineRange": [157, 198],
+      "summary": "分区(partition)发布示例，演示使用 PublisherQoSBuilder 设置分区名称进行定向发布。",
+      "tags": ["sample", "dds", "partition"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:sample/node_example/example.cpp:test_partition_sub",
+      "type": "function",
+      "name": "test_partition_sub",
+      "filePath": "sample/node_example/example.cpp",
+      "lineRange": [200, 234],
+      "summary": "分区(partition)订阅示例，演示使用 SubscriberQoSBuilder 设置分区名称进行定向订阅。",
+      "tags": ["sample", "dds", "partition"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:sample/node_example/example.cpp:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "sample/node_example/example.cpp",
+      "lineRange": [75, 79],
+      "summary": "示例程序入口，直接调用 test_multi_sub_pub 启动多订阅发布演示。",
+      "tags": ["entry-point", "sample"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "schema:core/ondemand/idl/dsf_define_messages.idl",
+      "target": "schema:core/ondemand/idl/dsf_define_node.idl",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "schema:core/ondemand/idl/dsf_define_node.idl",
+      "target": "schema:core/ondemand/idl/dsf_define_datatypes.idl",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "schema:core/ondemand/idl/dsf_define_model.idl",
+      "target": "schema:core/ondemand/idl/dsf_define_messages.idl",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "schema:core/ondemand/idl/dsf_define_var.idl",
+      "target": "schema:core/ondemand/idl/dsf_define_model.idl",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:core/ondemand/ sub-pub.cc11",
+      "target": "function:core/ondemand/ sub-pub.cc11:dataNodeA",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/ sub-pub.cc11",
+      "target": "function:core/ondemand/ sub-pub.cc11:dataNodeB",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/ sub-pub.cc11",
+      "target": "function:core/ondemand/ sub-pub.cc11:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/dds_wrapper_test.cc",
+      "target": "class:tests/dds_wrapper_test.cc:ScopedTestDir",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/dds_wrapper_test.cc",
+      "target": "class:tests/dds_wrapper_test.cc:ChildProc",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:tests/dds_wrapper_test.cc",
+      "target": "class:tests/dds_wrapper_test.cc:DdsWrapperNodeTEST",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:sample/node_example/example.cpp",
+      "target": "function:sample/node_example/example.cpp:run_dds_data_writer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:sample/node_example/example.cpp",
+      "target": "function:sample/node_example/example.cpp:run_dds_data_reader",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:sample/node_example/example.cpp",
+      "target": "function:sample/node_example/example.cpp:test_partition_pub",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:sample/node_example/example.cpp",
+      "target": "function:sample/node_example/example.cpp:test_partition_sub",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:sample/node_example/example.cpp",
+      "target": "function:sample/node_example/example.cpp:main",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/CMakeLists.txt",
+      "target": "file:core/ondemand/ sub-pub.cc11",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:tests/CMakeLists.txt",
+      "target": "file:core/ondemand/ondemand_pubsub_test.cc",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:tests/CMakeLists.txt",
+      "target": "file:tests/dds_wrapper_test.cc",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:sample/node_example/CMakeLists.txt",
+      "target": "file:sample/node_example/example.cpp",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:sample/node_example/qosConfig.xml",
+      "target": "file:sample/node_example/example.cpp",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:core/ondemand/readme.md",
+      "target": "file:core/ondemand/variable_store.h",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:core/ondemand/idl/generate.sh",
+      "target": "schema:core/ondemand/idl/dsf_define_datatypes.idl",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    }
+  ]
+}

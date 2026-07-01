@@ -96,6 +96,10 @@
 // ║  TC27    ║  setMaxVarsPerNode每节点变量数限制：pub创建200个变量，设置             ║
 // ║         ║  maxVarsPerNode=100，sub先订阅100个再订阅第101个，验证pub              ║
 // ║         ║  侧只感知到100个变量被订阅                               [L4509]      ║
+// ╠══════════╬═══════════════════════════════════════════════════════════════════════╣
+// ║         ║  【Slot回收】                                                          ║
+// ║  TC28    ║  sub反复上下线70次(>64)验证slot回收：pub创建10变量，单sub反复         ║
+// ║         ║  上下线70次，每次验证订阅和数据回调正常，最后全新sub也能订阅   [L4600]  ║
 // ╚══════════╩═══════════════════════════════════════════════════════════════════════╝
 
 #include <gtest/gtest.h>
@@ -4595,6 +4599,154 @@ TEST(OnDemandPubSub, MaxVarsPerNodeLimit)
       所以 pub 侧最多感知到100个变量被订阅。*/
     size_t varCount = std::stoi(pubReport.metrics["subscribed_var_count"]);
     EXPECT_EQ(varCount, 100) << "only 100 vars should be subscribed (101st rejected)";
+}
+
+// TC28 - sub 反复上下线超过 64 次，验证 slot 回收后注册不失败
+// 场景：pub 创建 10 个变量并持续发布数据。单个 sub 进程反复上下线 70 次，
+//       每次上线订阅全部变量、验证收到数据回调后立即下线。
+//       第 70 次下线后，启动一个全新的 sub（sub_final），验证仍能正常订阅和收数据。
+// 验证：① 每次上线都能成功订阅并收到数据（slot 未耗尽）；
+//       ② 第 65~70 次（超过 64）仍能正常工作；
+//       ③ 最终全新 sub 也能正常订阅，证明 slot 完全回收。
+TEST(OnDemandPubSub, SubReconnectOver64TimesSlotRecycle)
+{
+    const auto root = std::filesystem::temp_directory_path() / uniqueName("ondemand_case28");
+    std::filesystem::create_directories(root);
+
+    const std::string pubNode = uniqueName("pub_case28");
+    const auto defs = makeDefines(pubNode, "v", 10);
+    const auto names = defineNames(defs);
+    constexpr int kTotalCycles = 70;
+
+    // pub：创建变量并持续发布
+    const auto pubProc = spawnChild("case28_pub", root, [pubNode, defs, names]() {
+        dsf::ondemand::OnDemandPub pub;
+        ChildReport r;
+        if (!childRequire(r, pub.init(pubNode), "pub init failed")
+            || !childRequire(r, pub.start(), "pub start failed")
+            || !childRequire(r, pub.createVars(defs), "pub createVars failed")) {
+            return r;
+        }
+
+        std::atomic<bool> running{true};
+        std::thread th([&]() { publishLoop(pub, names, running, 10); });
+
+        // pub 持续运行足够长，覆盖所有 sub 上下线周期
+        std::this_thread::sleep_for(150s);
+        running.store(false, std::memory_order_release);
+        th.join();
+        pub.stop();
+        r.ok = true;
+        r.message = "ok";
+        return r;
+    });
+
+    // sub：反复上下线 kTotalCycles 次
+    const auto subProc = spawnChild("case28_sub", root, [pubNode, names, kTotalCycles]() {
+        ChildReport r;
+        int successCount = 0;
+
+        for (int cycle = 0; cycle < kTotalCycles; ++cycle) {
+            dsf::ondemand::OnDemandSub sub;
+            const std::string subName = uniqueName("sub_case28_c" + std::to_string(cycle));
+
+            if (!childRequire(r, sub.init(subName), "sub init failed cycle=" + std::to_string(cycle))
+                || !childRequire(r, sub.start(), "sub start failed cycle=" + std::to_string(cycle))) {
+                return r;
+            }
+
+            // 等待变量定义到达
+            if (!childRequire(r,
+                              waitUntil([&]() { return countNodeVars(sub, pubNode) == names.size(); },
+                                        6s),
+                              "sub did not receive defines cycle=" + std::to_string(cycle))) {
+                sub.stop();
+                return r;
+            }
+
+            // 订阅并等待至少一次回调
+            std::atomic<bool> gotCallback{false};
+            if (!childRequire(r,
+                              sub.subscribe(pubNode.c_str(), toSubscriptions(names, 100),
+                                            [&](const std::vector<dsf::ondemand::VarCallbackData> &) {
+                                                gotCallback.store(true, std::memory_order_release);
+                                            }),
+                              "sub subscribe failed cycle=" + std::to_string(cycle))) {
+                sub.stop();
+                return r;
+            }
+
+            if (!childRequire(r,
+                              waitUntil([&]() { return gotCallback.load(std::memory_order_acquire); },
+                                        4s),
+                              "sub no callback cycle=" + std::to_string(cycle))) {
+                sub.stop();
+                return r;
+            }
+
+            ++successCount;
+            LOG(info) << "[case28_sub] cycle " << cycle << "/" << kTotalCycles << " OK";
+
+            // stop 触发 pub 侧 onParticipantDiscovery → cleanupParticipantSubscriptions → slot 回收
+            sub.stop();
+            // 等待 pub 侧清理完成
+            std::this_thread::sleep_for(300ms);
+        }
+
+        r.metrics["success_count"] = std::to_string(successCount);
+        r.ok = (successCount == kTotalCycles);
+        r.message = r.ok ? "ok"
+                         : "only " + std::to_string(successCount) + "/" + std::to_string(kTotalCycles)
+                               + " cycles succeeded";
+        return r;
+    });
+
+    // 等 sub 反复上下线结束后，再启动一个全新 sub 验证 slot 仍可用
+    expectChildOk(subProc, 240s);
+
+    const auto subFinalProc = spawnChild("case28_sub_final", root, [pubNode, names]() {
+        dsf::ondemand::OnDemandSub sub;
+        ChildReport r;
+        if (!childRequire(r, sub.init(uniqueName("sub_case28_final")), "sub_final init failed")
+            || !childRequire(r, sub.start(), "sub_final start failed")) {
+            return r;
+        }
+
+        if (!childRequire(r,
+                          waitUntil([&]() { return countNodeVars(sub, pubNode) == names.size(); },
+                                    6s),
+                          "sub_final did not receive defines")) {
+            sub.stop();
+            return r;
+        }
+
+        std::atomic<bool> gotCallback{false};
+        if (!childRequire(r,
+                          sub.subscribe(pubNode.c_str(), toSubscriptions(names, 100),
+                                        [&](const std::vector<dsf::ondemand::VarCallbackData> &) {
+                                            gotCallback.store(true, std::memory_order_release);
+                                        }),
+                          "sub_final subscribe failed")) {
+            sub.stop();
+            return r;
+        }
+
+        if (!childRequire(r,
+                          waitUntil([&]() { return gotCallback.load(std::memory_order_acquire); },
+                                    4s),
+                          "sub_final no callback")) {
+            sub.stop();
+            return r;
+        }
+
+        sub.stop();
+        r.ok = true;
+        r.message = "ok";
+        return r;
+    });
+
+    expectChildOk(pubProc, 180s);
+    expectChildOk(subFinalProc, 15s);
 }
 
 #endif

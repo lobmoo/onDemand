@@ -1,0 +1,29 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "sample/node_example/HelloWorldOneFast/source/HelloWorldOne.hpp", "language": "cpp", "sizeLines": 227, "fileCategory": "code"},
+    {"path": "sample/node_example/HelloWorldOneFast/source/HelloWorldOneCdrAux.hpp", "language": "cpp", "sizeLines": 46, "fileCategory": "code"},
+    {"path": "sample/node_example/HelloWorldOneFast/source/HelloWorldOneCdrAux.ipp", "language": "ipp", "sizeLines": 131, "fileCategory": "code"},
+    {"path": "sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.cxx", "language": "cpp", "sizeLines": 218, "fileCategory": "code"},
+    {"path": "sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.hpp", "language": "cpp", "sizeLines": 123, "fileCategory": "code"},
+    {"path": "sample/node_example/HelloWorldOneFast/source/HelloWorldOneTypeObjectSupport.cxx", "language": "cpp", "sizeLines": 162, "fileCategory": "code"},
+    {"path": "sample/node_example/HelloWorldOneFast/source/HelloWorldOneTypeObjectSupport.hpp", "language": "cpp", "sizeLines": 56, "fileCategory": "code"}
+  ],
+  "batchImportData": {
+    "sample/node_example/HelloWorldOneFast/source/HelloWorldOne.hpp": [],
+    "sample/node_example/HelloWorldOneFast/source/HelloWorldOneCdrAux.hpp": [],
+    "sample/node_example/HelloWorldOneFast/source/HelloWorldOneCdrAux.ipp": [],
+    "sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.cxx": [
+      "sample/node_example/HelloWorldOneFast/source/HelloWorldOneCdrAux.hpp",
+      "sample/node_example/HelloWorldOneFast/source/HelloWorldOneCdrAux.ipp",
+      "sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.hpp",
+      "sample/node_example/HelloWorldOneFast/source/HelloWorldOneTypeObjectSupport.hpp"
+    ],
+    "sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.hpp": [],
+    "sample/node_example/HelloWorldOneFast/source/HelloWorldOneTypeObjectSupport.cxx": [
+      "sample/node_example/HelloWorldOneFast/source/HelloWorldOne.hpp",
+      "sample/node_example/HelloWorldOneFast/source/HelloWorldOneTypeObjectSupport.hpp"
+    ],
+    "sample/node_example/HelloWorldOneFast/source/HelloWorldOneTypeObjectSupport.hpp": []
+  }
+}

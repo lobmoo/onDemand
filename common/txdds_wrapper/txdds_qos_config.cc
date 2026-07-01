@@ -31,9 +31,9 @@ namespace
 ParticipantQoSBuilder::ParticipantQoSBuilder()
 {
     id_ = instance_counter_.fetch_add(1, std::memory_order_relaxed);
-    const std::string prefix = "dsfconnector_" + std::to_string(id_);
-    threadCfgName_ = prefix + "_thread";
-    transportCfgName_ = prefix + "_transport";
+    const std::string prefix = "dsfc_" + std::to_string(id_);
+    threadCfgName_ = prefix + "_t";
+    transportCfgName_ = prefix + "_tst";
 
     BaoSky::rtps::ThreadConfig thread_config;
     thread_config.mConfigName = threadCfgName_;
@@ -51,6 +51,7 @@ ParticipantQoSBuilder::ParticipantQoSBuilder()
 
     auto locatorUser = makeIPv4Locator("239.255.0.1", 7400, transportCfgName_);
     auto locatorBuiltin = makeIPv4Locator("239.255.0.1", 7400, transportCfgName_);
+    qos_.mEventThreadConfig = thread_config;
     qos_.wireProtocol.builtin.mDiscoveryAttributes.SetEnableInternalEntityMatch(true);
     qos_.wireProtocol.defaultMulticastLocatorList.push_back(locatorUser);
     qos_.wireProtocol.builtin.multicastLocatorList.push_back(locatorBuiltin); //g公告

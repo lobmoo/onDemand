@@ -1,0 +1,10 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": ".env", "language": "config", "sizeLines": 26, "fileCategory": "config"},
+    {"path": "CLAUDE.md", "language": "markdown", "sizeLines": 92, "fileCategory": "docs"},
+    {"path": "CMakeLists.txt", "language": "txt", "sizeLines": 45, "fileCategory": "docs"},
+    {"path": "README.md", "language": "markdown", "sizeLines": 652, "fileCategory": "docs"}
+  ],
+  "batchImportData": {".env":[],"CLAUDE.md":[],"CMakeLists.txt":[],"README.md":[]}
+}

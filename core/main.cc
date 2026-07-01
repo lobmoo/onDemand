@@ -261,12 +261,7 @@ void publish()
         batchItems[i].data = &vals[i];
         batchItems[i].size = sizeof(int);
     }
-    // pub.setOnPublicationMatchedCallback([](const std::string &topicName, int currentCount,
-    //                                       int currentCountChange, int totalCount) {
-    //     LOG(critical) << "Publication matched: topic=" << topicName
-    //               << " current=" << currentCount << " change=" << currentCountChange
-    //               << " total=" << totalCount;
-    // });
+
     std::thread setVarThread([&pub, &batchItems]() {
 #if defined(__linux__)
         pthread_setname_np(pthread_self(), "setvar");
@@ -315,12 +310,7 @@ void subscribe()
     //         LOG(info) << "    var name = " << v;
     //     }
     // }
-    // sub.setOnSubscriptionMatchedCallback([](const std::string &topicName, int currentCount,
-    //                                       int currentCountChange, int totalCount) {
-    //     LOG(critical) << "Subscription matched: topic=" << topicName
-    //               << " current=" << currentCount << " change=" << currentCountChange
-    //               << " total=" << totalCount;
-    // });
+  
     sub.subscribe("pubNode", items, dataCallback);
 
     // sub.unsubscribe("pubNode", unitems);

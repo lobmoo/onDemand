@@ -1,0 +1,125 @@
+{
+  "nodes": [
+    {
+      "id": "file:sample/node_example/HelloWorldOneTx/source/HelloWorldOneCdrAux.hpp",
+      "type": "file",
+      "name": "HelloWorldOneCdrAux.hpp",
+      "filePath": "sample/node_example/HelloWorldOneTx/source/HelloWorldOneCdrAux.hpp",
+      "summary": "fastddsgen 自动生成的 CDR 辅助头文件，定义了 HelloWorldOne 类型的最大序列化尺寸常量，并前向声明了 serialize_key 函数。",
+      "tags": ["auto-generated", "serialization", "type-definition", "dds"],
+      "complexity": "simple",
+      "languageNotes": "使用 constexpr 定义 CDR 序列化尺寸常量，前向声明 BaoSky::Cdr 命名空间中的 Cdr 和 CdrSizeCalculator 类。"
+    },
+    {
+      "id": "file:sample/node_example/HelloWorldOneTx/source/HelloWorldOnePubSubTypes.cxx",
+      "type": "file",
+      "name": "HelloWorldOnePubSubTypes.cxx",
+      "filePath": "sample/node_example/HelloWorldOneTx/source/HelloWorldOnePubSubTypes.cxx",
+      "summary": "fastddsgen 自动生成的序列化实现文件，为 HelloWorldOne 类型实现了 CDR 序列化、反序列化、尺寸计算及数据创建/删除等 DDS TopicDataType 接口方法。",
+      "tags": ["auto-generated", "serialization", "dds", "implementation"],
+      "complexity": "moderate",
+      "languageNotes": "使用 BaoSky::Cdr 命名空间的 SerializeCdr/DeserializeCdr 工具类进行 XCDRv1 格式序列化，通过 static_cast 进行类型转换。"
+    },
+    {
+      "id": "file:sample/node_example/HelloWorldOneTx/source/HelloWorldOnePubSubTypes.h",
+      "type": "file",
+      "name": "HelloWorldOnePubSubTypes.h",
+      "filePath": "sample/node_example/HelloWorldOnePubSubTypes.h",
+      "summary": "fastddsgen 自动生成的头文件，声明了 HelloWorldOnePubSubType 类，该类继承自 BaoSky::dds::TopicDataType，为 HelloWorldOne 数据类型提供 DDS 序列化支持。",
+      "tags": ["auto-generated", "header", "dds", "type-definition"],
+      "complexity": "simple",
+      "languageNotes": "C++ 类继承自 BaoSky::dds::TopicDataType，覆盖 Serialize/Deserialize/GetSerializedSizeProvider/CreateData/DeleteData/GetKey 六个虚函数。"
+    },
+    {
+      "id": "class:sample/node_example/HelloWorldOneTx/source/HelloWorldOnePubSubTypes.h:HelloWorldOnePubSubType",
+      "type": "class",
+      "name": "HelloWorldOnePubSubType",
+      "filePath": "sample/node_example/HelloWorldOneTx/source/HelloWorldOnePubSubTypes.h",
+      "lineRange": [36, 56],
+      "summary": "DDS TopicDataType 实现类，为 HelloWorldOne IDL 数据类型提供 CDR 序列化/反序列化能力，用于 DDS 数据传输。",
+      "tags": ["dds", "serialization", "topic-data-type"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:sample/node_example/HelloWorldOneTx/source/HelloWorldOnePubSubTypes.cxx:Serialize",
+      "type": "function",
+      "name": "Serialize",
+      "filePath": "sample/node_example/HelloWorldOneTx/source/HelloWorldOnePubSubTypes.cxx",
+      "lineRange": [49, 69],
+      "summary": "将 HelloWorldOne 数据对象序列化为 CDR 格式的 SerializedPayload，使用 XCDRv1 编码并自动处理封装头和字节序。",
+      "tags": ["serialization", "dds", "cdr"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:sample/node_example/HelloWorldOneTx/source/HelloWorldOnePubSubTypes.cxx:Deserialize",
+      "type": "function",
+      "name": "Deserialize",
+      "filePath": "sample/node_example/HelloWorldOneTx/source/HelloWorldOnePubSubTypes.cxx",
+      "lineRange": [71, 92],
+      "summary": "从 CDR 格式的 SerializedPayload 反序列化数据到 HelloWorldOne 对象，处理封装头解析和字节序检测。",
+      "tags": ["deserialization", "dds", "cdr"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:sample/node_example/HelloWorldOneTx/source/HelloWorldOnePubSubTypes.cxx:GetSerializedSizeProvider",
+      "type": "function",
+      "name": "GetSerializedSizeProvider",
+      "filePath": "sample/node_example/HelloWorldOneTx/source/HelloWorldOnePubSubTypes.cxx",
+      "lineRange": [94, 105],
+      "summary": "返回一个 lambda 函数，用于延迟计算 HelloWorldOne 对象的 CDR 序列化大小（含 4 字节封装开销）。",
+      "tags": ["serialization", "size-calculation", "dds"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:sample/node_example/HelloWorldOneTx/source/HelloWorldOnePubSubTypes.cxx",
+      "target": "file:sample/node_example/HelloWorldOneTx/source/HelloWorldOnePubSubTypes.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:sample/node_example/HelloWorldOneTx/source/HelloWorldOnePubSubTypes.cxx",
+      "target": "file:sample/node_example/HelloWorldOneTx/source/HelloWorldOneCdrAux.hpp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:sample/node_example/HelloWorldOneTx/source/HelloWorldOnePubSubTypes.cxx",
+      "target": "class:sample/node_example/HelloWorldOneTx/source/HelloWorldOnePubSubTypes.h:HelloWorldOnePubSubType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:sample/node_example/HelloWorldOneTx/source/HelloWorldOnePubSubTypes.cxx",
+      "target": "function:sample/node_example/HelloWorldOneTx/source/HelloWorldOnePubSubTypes.cxx:Serialize",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:sample/node_example/HelloWorldOneTx/source/HelloWorldOnePubSubTypes.cxx",
+      "target": "function:sample/node_example/HelloWorldOneTx/source/HelloWorldOnePubSubTypes.cxx:Deserialize",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:sample/node_example/HelloWorldOneTx/source/HelloWorldOnePubSubTypes.cxx",
+      "target": "function:sample/node_example/HelloWorldOneTx/source/HelloWorldOnePubSubTypes.cxx:GetSerializedSizeProvider",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:sample/node_example/HelloWorldOneTx/source/HelloWorldOnePubSubTypes.h",
+      "target": "class:sample/node_example/HelloWorldOneTx/source/HelloWorldOnePubSubTypes.h:HelloWorldOnePubSubType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "thirdparty/arrow/include/arrow/ipc/test_common.h", "language": "c", "sizeLines": 183, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/ipc/type_fwd.h", "language": "c", "sizeLines": 68, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/ipc/util.h", "language": "c", "sizeLines": 41, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/ipc/writer.h", "language": "c", "sizeLines": 474, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/memory_pool_test.h", "language": "c", "sizeLines": 110, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/memory_pool.h", "language": "c", "sizeLines": 272, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/pch.h", "language": "c", "sizeLines": 30, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/pretty_print.h", "language": "c", "sizeLines": 151, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/record_batch.h", "language": "c", "sizeLines": 353, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/result.h", "language": "c", "sizeLines": 508, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/scalar.h", "language": "c", "sizeLines": 775, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/sparse_tensor.h", "language": "c", "sizeLines": 617, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/status.h", "language": "c", "sizeLines": 471, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/stl_allocator.h", "language": "c", "sizeLines": 164, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/stl_iterator.h", "language": "c", "sizeLines": 304, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/stl.h", "language": "c", "sizeLines": 462, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/table_builder.h", "language": "c", "sizeLines": 107, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/table.h", "language": "c", "sizeLines": 367, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/tensor.h", "language": "c", "sizeLines": 246, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/tensor/converter.h", "language": "c", "sizeLines": 67, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/testing/async_test_util.h", "language": "c", "sizeLines": 79, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/testing/builder.h", "language": "c", "sizeLines": 231, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/testing/executor_util.h", "language": "c", "sizeLines": 55, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/testing/extension_type.h", "language": "c", "sizeLines": 211, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/testing/future_util.h", "language": "c", "sizeLines": 142, "fileCategory": "code"}
+  ],
+  "batchImportData": {}
+}

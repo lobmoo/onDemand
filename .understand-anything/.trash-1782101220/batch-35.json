@@ -1,0 +1,567 @@
+{
+  "nodes": [
+    {
+      "id": "file:thirdparty/arrow/include/arrow/array.h",
+      "type": "file",
+      "name": "array.h",
+      "filePath": "thirdparty/arrow/include/arrow/array.h",
+      "summary": "Arrow 数组模块的聚合头文件，include 了所有具体数组类型（primitive、binary、nested、dict、run-end）和 ArrayData、工具函数。",
+      "tags": ["barrel", "header", "type-definition"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/array/array_base.h",
+      "type": "file",
+      "name": "array_base.h",
+      "filePath": "thirdparty/arrow/include/arrow/array/array_base.h",
+      "summary": "定义 Arrow Array 基类及 PrimitiveArray、NullArray，提供 null bitmap 判定、length、Slice 等核心接口，是所有具体数组类型的根基。",
+      "tags": ["type-definition", "base-class", "data-model"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:thirdparty/arrow/include/arrow/array/array_base.h:Array",
+      "type": "class",
+      "name": "Array",
+      "filePath": "thirdparty/arrow/include/arrow/array/array_base.h",
+      "lineRange": [53, 200],
+      "summary": "不可变数组基类，持有 ArrayData 引用和 null bitmap，提供 IsValid/IsNull/Slice/type_id 等核心方法，所有具体数组类型均继承此类。",
+      "tags": ["base-class", "data-model", "immutable"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:thirdparty/arrow/include/arrow/array/array_base.h:PrimitiveArray",
+      "type": "class",
+      "name": "PrimitiveArray",
+      "filePath": "thirdparty/arrow/include/arrow/array/array_base.h",
+      "lineRange": [215, 265],
+      "summary": "原始类型数组基类，持有 raw_values 缓冲区指针，为 NumericArray 和 BooleanArray 提供共同的 SetData 实现。",
+      "tags": ["base-class", "data-model", "primitive"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:thirdparty/arrow/include/arrow/array/array_base.h:NullArray",
+      "type": "class",
+      "name": "NullArray",
+      "filePath": "thirdparty/arrow/include/arrow/array/array_base.h",
+      "lineRange": [268, 280],
+      "summary": "全空值数组，所有元素均为 null，不持有任何数据缓冲区。",
+      "tags": ["data-model", "null-type"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/array/array_binary.h",
+      "type": "file",
+      "name": "array_binary.h",
+      "filePath": "thirdparty/arrow/include/arrow/array/array_binary.h",
+      "summary": "定义二进制和字符串数组类型：BinaryArray、StringArray、LargeBinaryArray、LargeStringArray、FixedSizeBinaryArray，提供 offset 访问、GetView/GetString 零拷贝读取和迭代器支持。",
+      "tags": ["type-definition", "binary", "string"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/array/array_decimal.h",
+      "type": "file",
+      "name": "array_decimal.h",
+      "filePath": "thirdparty/arrow/include/arrow/array/array_decimal.h",
+      "summary": "定义 Decimal128Array 和 Decimal256Array，继承 FixedSizeBinaryArray，用于精确十进制数值的列式存储。",
+      "tags": ["type-definition", "decimal", "numeric"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/array/array_dict.h",
+      "type": "file",
+      "name": "array_dict.h",
+      "filePath": "thirdparty/arrow/include/arrow/array/array_dict.h",
+      "summary": "定义 DictionaryArray，以 indices + dictionary 的编码方式高效存储低基数数据，支持 FromArrays 工厂方法。",
+      "tags": ["type-definition", "dictionary", "encoding"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/array/array_nested.h",
+      "type": "file",
+      "name": "array_nested.h",
+      "filePath": "thirdparty/arrow/include/arrow/array/array_nested.h",
+      "summary": "定义所有嵌套/复合数组类型：ListArray、LargeListArray、FixedSizeListArray、MapArray、StructArray、SparseUnionArray、DenseUnionArray，支持 value_offset/value_length/child 访问。",
+      "tags": ["type-definition", "nested", "composite"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/array/array_primitive.h",
+      "type": "file",
+      "name": "array_primitive.h",
+      "filePath": "thirdparty/arrow/include/arrow/array/array_primitive.h",
+      "summary": "定义 BooleanArray 和 NumericArray<T> 模板（Int8/16/32/64、UInt8/16/32/64、Float/Double），提供 Value/GetView/迭代器等高效元素访问。",
+      "tags": ["type-definition", "numeric", "boolean"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/array/array_run_end.h",
+      "type": "file",
+      "name": "array_run_end.h",
+      "filePath": "thirdparty/arrow/include/arrow/array/array_run_end.h",
+      "summary": "定义 RunEndEncodedArray，通过 run_ends + values 两子数组实现行程编码压缩，适用于大量连续重复值的场景。",
+      "tags": ["type-definition", "run-length-encoding", "compression"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/array/builder_adaptive.h",
+      "type": "file",
+      "name": "builder_adaptive.h",
+      "filePath": "thirdparty/arrow/include/arrow/array/builder_adaptive.h",
+      "summary": "定义 AdaptiveIntBuilder 和 AdaptiveUIntBuilder，根据实际追加值的范围自动选择最小整数宽度（8/16/32/64 位），避免预先知道数据范围。",
+      "tags": ["builder", "adaptive", "integer"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/array/builder_base.h",
+      "type": "file",
+      "name": "builder_base.h",
+      "filePath": "thirdparty/arrow/include/arrow/array/builder_base.h",
+      "summary": "定义 ArrayBuilder 基类，提供 Reserve/Resize/AppendNull/Finish 等通用构建接口，以及 MakeBuilder/MakeDictionaryBuilder 工厂函数。",
+      "tags": ["builder", "base-class", "factory"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:thirdparty/arrow/include/arrow/array/builder_base.h:ArrayBuilder",
+      "type": "class",
+      "name": "ArrayBuilder",
+      "filePath": "thirdparty/arrow/include/arrow/array/builder_base.h",
+      "lineRange": [38, 300],
+      "summary": "数组构建器基类，管理内存池、长度、null bitmap，提供 Append/Reserve/Finish 等通用接口，所有具体 Builder 均继承此类。",
+      "tags": ["base-class", "builder", "memory-management"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/array/builder_binary.h",
+      "type": "file",
+      "name": "builder_binary.h",
+      "filePath": "thirdparty/arrow/include/arrow/array/builder_binary.h",
+      "summary": "定义二进制/字符串构建器：BaseBinaryBuilder、BinaryBuilder、StringBuilder、LargeBinaryBuilder、LargeStringBuilder、FixedSizeBinaryBuilder，支持增量 Append 和批量 AppendValues。",
+      "tags": ["builder", "binary", "string"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/array/builder_decimal.h",
+      "type": "file",
+      "name": "builder_decimal.h",
+      "filePath": "thirdparty/arrow/include/arrow/array/builder_decimal.h",
+      "summary": "定义 Decimal128Builder 和 Decimal256Builder，继承 FixedSizeBinaryBuilder，用于构建精确十进制数组。",
+      "tags": ["builder", "decimal", "numeric"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/array/builder_dict.h",
+      "type": "file",
+      "name": "builder_dict.h",
+      "filePath": "thirdparty/arrow/include/arrow/array/builder_dict.h",
+      "summary": "定义 DictionaryBuilderBase 和 NullDictionaryBuilder，通过 memo table 自动维护字典编码，支持多种索引类型（Int8~UInt64）和 Delta 增量构建。",
+      "tags": ["builder", "dictionary", "encoding"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/array/builder_nested.h",
+      "type": "file",
+      "name": "builder_nested.h",
+      "filePath": "thirdparty/arrow/include/arrow/array/builder_nested.h",
+      "summary": "定义嵌套数组构建器：BaseListBuilder、ListBuilder、LargeListBuilder、FixedSizeListBuilder、MapBuilder、StructBuilder，支持递归子 Builder 管理。",
+      "tags": ["builder", "nested", "composite"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/array/builder_primitive.h",
+      "type": "file",
+      "name": "builder_primitive.h",
+      "filePath": "thirdparty/arrow/include/arrow/array/builder_primitive.h",
+      "summary": "定义 NullBuilder、NumericBuilder<T>、BooleanBuilder，用于构建原始类型数组，支持 Append/AppendValues/UnsafeAppend 等高性能追加操作。",
+      "tags": ["builder", "numeric", "boolean"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/array/builder_run_end.h",
+      "type": "file",
+      "name": "builder_run_end.h",
+      "filePath": "thirdparty/arrow/include/arrow/array/builder_run_end.h",
+      "summary": "定义 RunCompressorBuilder 和 RunEndEncodedBuilder，将普通数组压缩为行程编码格式，自动合并相邻相同值。",
+      "tags": ["builder", "run-length-encoding", "compression"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/array/builder_time.h",
+      "type": "file",
+      "name": "builder_time.h",
+      "filePath": "thirdparty/arrow/include/arrow/array/builder_time.h",
+      "summary": "定义时间类型构建器类型别名：Date32Builder、Date64Builder、TimestampBuilder、Time32Builder、Time64Builder、DurationBuilder。",
+      "tags": ["builder", "time", "type-alias"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/array/builder_union.h",
+      "type": "file",
+      "name": "builder_union.h",
+      "filePath": "thirdparty/arrow/include/arrow/array/builder_union.h",
+      "summary": "定义 SparseUnionBuilder 和 DenseUnionBuilder，用于构建联合类型数组，支持多个子 Builder 的动态类型分发。",
+      "tags": ["builder", "union", "composite"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/array/concatenate.h",
+      "type": "file",
+      "name": "concatenate.h",
+      "filePath": "thirdparty/arrow/include/arrow/array/concatenate.h",
+      "summary": "声明 Concatenate 函数，将多个同类型 Array 合并为一个连续数组。",
+      "tags": ["utility", "concatenation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/array/data.h",
+      "type": "file",
+      "name": "data.h",
+      "filePath": "thirdparty/arrow/include/arrow/array/data.h",
+      "summary": "定义 ArrayData 结构体（数组的底层表示）和 ArrayDataVector、ScalarSlotReference 等辅助类型，是 Arrow 内存布局的核心。",
+      "tags": ["type-definition", "data-model", "memory-layout"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:thirdparty/arrow/include/arrow/array/data.h:ArrayData",
+      "type": "class",
+      "name": "ArrayData",
+      "filePath": "thirdparty/arrow/include/arrow/array/data.h",
+      "lineRange": [50, 200],
+      "summary": "数组的底层数据容器，持有 type、length、null_count、offset、buffers 和 child_data，是 Array 类的内部存储结构。",
+      "tags": ["data-model", "memory-layout", "core"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/array/diff.h",
+      "type": "file",
+      "name": "diff.h",
+      "filePath": "thirdparty/arrow/include/arrow/array/diff.h",
+      "summary": "声明 Diff 函数，比较两个同类型 Array 并输出 UnifiedDiff 格式的差异字符串。",
+      "tags": ["utility", "diff", "comparison"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/array/util.h",
+      "type": "file",
+      "name": "util.h",
+      "filePath": "thirdparty/arrow/include/arrow/array/util.h",
+      "summary": "声明数组工具函数：SliceArraySafe、ArrayFromJSON（从 JSON 字符串创建数组）、LoadArrayFromStream 等。",
+      "tags": ["utility", "factory", "json"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/array/validate.h",
+      "type": "file",
+      "name": "validate.h",
+      "filePath": "thirdparty/arrow/include/arrow/array/validate.h",
+      "summary": "声明数组验证函数：ValidateArray、ValidateArrayFull、ValidateUTF8，用于检查数组结构一致性和编码正确性。",
+      "tags": ["utility", "validation", "utf8"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/buffer_builder.h",
+      "type": "file",
+      "name": "buffer_builder.h",
+      "filePath": "thirdparty/arrow/include/arrow/buffer_builder.h",
+      "summary": "定义 TypedBufferBuilder<T> 模板和布尔特化版本，提供 Append/Reserve/Finish/Reset 等底层缓冲区构建接口，是所有 ArrayBuilder 的基础设施。",
+      "tags": ["builder", "buffer", "memory-management"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:thirdparty/arrow/include/arrow/buffer_builder.h:TypedBufferBuilder",
+      "type": "class",
+      "name": "TypedBufferBuilder",
+      "filePath": "thirdparty/arrow/include/arrow/buffer_builder.h",
+      "lineRange": [40, 200],
+      "summary": "类型化缓冲区构建器模板，封装 BufferBuilder 提供类型安全的 Append/Reserve/Finish 操作，ArrayBuilder 的底层内存管理组件。",
+      "tags": ["builder", "buffer", "template"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:thirdparty/arrow/include/arrow/buffer.h",
+      "type": "file",
+      "name": "buffer.h",
+      "filePath": "thirdparty/arrow/include/arrow/buffer.h",
+      "summary": "定义 Buffer、MutableBuffer、PoolBuffer 等内存缓冲区类，提供引用计数、零拷贝 Slice、内存池分配等机制，是 Arrow 内存管理的基石。",
+      "tags": ["type-definition", "memory-management", "buffer"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:thirdparty/arrow/include/arrow/buffer.h:Buffer",
+      "type": "class",
+      "name": "Buffer",
+      "filePath": "thirdparty/arrow/include/arrow/buffer.h",
+      "lineRange": [51, 200],
+      "summary": "不可变内存缓冲区基类，持有 data 指针和 size，支持引用计数共享和零拷贝 Slice，是 Arrow 内存管理的核心类。",
+      "tags": ["base-class", "memory-management", "immutable"],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:thirdparty/arrow/include/arrow/array.h",
+      "target": "file:thirdparty/arrow/include/arrow/array/array_base.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/array.h",
+      "target": "file:thirdparty/arrow/include/arrow/array/array_binary.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/array.h",
+      "target": "file:thirdparty/arrow/include/arrow/array/array_decimal.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/array.h",
+      "target": "file:thirdparty/arrow/include/arrow/array/array_dict.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/array.h",
+      "target": "file:thirdparty/arrow/include/arrow/array/array_nested.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/array.h",
+      "target": "file:thirdparty/arrow/include/arrow/array/array_primitive.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/array.h",
+      "target": "file:thirdparty/arrow/include/arrow/array/array_run_end.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/array.h",
+      "target": "file:thirdparty/arrow/include/arrow/array/data.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/array.h",
+      "target": "file:thirdparty/arrow/include/arrow/array/util.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/array/array_base.h",
+      "target": "file:thirdparty/arrow/include/arrow/array/data.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/array/array_base.h",
+      "target": "file:thirdparty/arrow/include/arrow/buffer.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/array/array_base.h",
+      "target": "class:thirdparty/arrow/include/arrow/array/array_base.h:Array",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/array/array_base.h",
+      "target": "class:thirdparty/arrow/include/arrow/array/array_base.h:PrimitiveArray",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/array/array_base.h",
+      "target": "class:thirdparty/arrow/include/arrow/array/array_base.h:NullArray",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/array/builder_base.h",
+      "target": "class:thirdparty/arrow/include/arrow/array/builder_base.h:ArrayBuilder",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/array/data.h",
+      "target": "class:thirdparty/arrow/include/arrow/array/data.h:ArrayData",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/buffer.h",
+      "target": "class:thirdparty/arrow/include/arrow/buffer.h:Buffer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/buffer_builder.h",
+      "target": "class:thirdparty/arrow/include/arrow/buffer_builder.h:TypedBufferBuilder",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/array/builder_base.h",
+      "target": "file:thirdparty/arrow/include/arrow/buffer_builder.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/array/builder_primitive.h",
+      "target": "file:thirdparty/arrow/include/arrow/array/builder_base.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/array/builder_binary.h",
+      "target": "file:thirdparty/arrow/include/arrow/array/builder_base.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/array/builder_nested.h",
+      "target": "file:thirdparty/arrow/include/arrow/array/builder_base.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/array/builder_dict.h",
+      "target": "file:thirdparty/arrow/include/arrow/array/builder_base.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/array/builder_adaptive.h",
+      "target": "file:thirdparty/arrow/include/arrow/array/builder_base.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/array/builder_run_end.h",
+      "target": "file:thirdparty/arrow/include/arrow/array/builder_base.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/array/builder_time.h",
+      "target": "file:thirdparty/arrow/include/arrow/array/builder_primitive.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/array/builder_decimal.h",
+      "target": "file:thirdparty/arrow/include/arrow/array/builder_binary.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/array/builder_union.h",
+      "target": "file:thirdparty/arrow/include/arrow/array/builder_base.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "class:thirdparty/arrow/include/arrow/array/array_base.h:PrimitiveArray",
+      "target": "class:thirdparty/arrow/include/arrow/array/array_base.h:Array",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "class:thirdparty/arrow/include/arrow/array/array_base.h:NullArray",
+      "target": "class:thirdparty/arrow/include/arrow/array/array_base.h:Array",
+      "type": "inherits",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/array/array_binary.h",
+      "target": "class:thirdparty/arrow/include/arrow/array/array_base.h:Array",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/array/array_primitive.h",
+      "target": "class:thirdparty/arrow/include/arrow/array/array_base.h:PrimitiveArray",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/array/array_dict.h",
+      "target": "class:thirdparty/arrow/include/arrow/array/array_base.h:Array",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/array/array_nested.h",
+      "target": "class:thirdparty/arrow/include/arrow/array/array_base.h:Array",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/array/array_run_end.h",
+      "target": "class:thirdparty/arrow/include/arrow/array/array_base.h:Array",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/array/array_decimal.h",
+      "target": "file:thirdparty/arrow/include/arrow/array/array_binary.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "class:thirdparty/arrow/include/arrow/buffer_builder.h:TypedBufferBuilder",
+      "target": "class:thirdparty/arrow/include/arrow/buffer.h:Buffer",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:thirdparty/arrow/include/arrow/array/data.h",
+      "target": "file:thirdparty/arrow/include/arrow/buffer.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    }
+  ]
+}

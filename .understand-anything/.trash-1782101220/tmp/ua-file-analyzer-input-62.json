@@ -1,0 +1,31 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "thirdparty/spdlog/include/spdlog/fmt/bundled/format.h", "language": "c", "sizeLines": 4234, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/fmt/bundled/os.h", "language": "c", "sizeLines": 427, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/fmt/bundled/ostream.h", "language": "c", "sizeLines": 166, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/fmt/bundled/printf.h", "language": "c", "sizeLines": 633, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/fmt/bundled/ranges.h", "language": "c", "sizeLines": 850, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/fmt/bundled/std.h", "language": "c", "sizeLines": 726, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/fmt/bundled/xchar.h", "language": "c", "sizeLines": 373, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/fmt/chrono.h", "language": "c", "sizeLines": 23, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/fmt/compile.h", "language": "c", "sizeLines": 23, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/fmt/fmt.h", "language": "c", "sizeLines": 30, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/fmt/ostr.h", "language": "c", "sizeLines": 23, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/fmt/ranges.h", "language": "c", "sizeLines": 23, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/fmt/std.h", "language": "c", "sizeLines": 24, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/fmt/xchar.h", "language": "c", "sizeLines": 23, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/formatter.h", "language": "c", "sizeLines": 17, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/fwd.h", "language": "c", "sizeLines": 18, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/logger-inl.h", "language": "c", "sizeLines": 198, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/logger.h", "language": "c", "sizeLines": 379, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/mdc.h", "language": "c", "sizeLines": 50, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/pattern_formatter-inl.h", "language": "c", "sizeLines": 1338, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/pattern_formatter.h", "language": "c", "sizeLines": 118, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/sinks/android_sink.h", "language": "c", "sizeLines": 137, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/sinks/ansicolor_sink-inl.h", "language": "c", "sizeLines": 141, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/sinks/ansicolor_sink.h", "language": "c", "sizeLines": 116, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/sinks/base_sink-inl.h", "language": "c", "sizeLines": 59, "fileCategory": "code"}
+  ],
+  "batchImportData": {}
+}

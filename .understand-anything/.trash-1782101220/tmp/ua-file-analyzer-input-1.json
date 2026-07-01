@@ -1,0 +1,20 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "core/ondemand/.gensrc/dsf_define_datatypes.hpp", "language": "cpp", "sizeLines": 3590, "fileCategory": "code"},
+    {"path": "core/ondemand/.gensrc/dsf_define_datatypesCdrAux.hpp", "language": "cpp", "sizeLines": 102, "fileCategory": "code"},
+    {"path": "core/ondemand/.gensrc/dsf_define_datatypesCdrAux.ipp", "language": "cpp", "sizeLines": 1426, "fileCategory": "code"},
+    {"path": "core/ondemand/.gensrc/dsf_define_datatypesPubSubTypes.cxx", "language": "cpp", "sizeLines": 952, "fileCategory": "code"},
+    {"path": "core/ondemand/.gensrc/dsf_define_datatypesPubSubTypes.hpp", "language": "cpp", "sizeLines": 534, "fileCategory": "code"},
+    {"path": "core/ondemand/.gensrc/dsf_define_datatypesTypeObjectSupport.cxx", "language": "cpp", "sizeLines": 3919, "fileCategory": "code"},
+    {"path": "core/ondemand/.gensrc/dsf_define_datatypesTypeObjectSupport.hpp", "language": "cpp", "sizeLines": 610, "fileCategory": "code"},
+    {"path": "core/ondemand/.gensrc/dsf_define_node.hpp", "language": "cpp", "sizeLines": 1046, "fileCategory": "code"},
+    {"path": "core/ondemand/.gensrc/dsf_define_nodeCdrAux.hpp", "language": "cpp", "sizeLines": 90, "fileCategory": "code"},
+    {"path": "core/ondemand/.gensrc/dsf_define_nodeCdrAux.ipp", "language": "cpp", "sizeLines": 438, "fileCategory": "code"},
+    {"path": "core/ondemand/.gensrc/dsf_define_nodePubSubTypes.cxx", "language": "cpp", "sizeLines": 588, "fileCategory": "code"},
+    {"path": "core/ondemand/.gensrc/dsf_define_nodePubSubTypes.hpp", "language": "cpp", "sizeLines": 292, "fileCategory": "code"},
+    {"path": "core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.cxx", "language": "cpp", "sizeLines": 769, "fileCategory": "code"},
+    {"path": "core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.hpp", "language": "cpp", "sizeLines": 89, "fileCategory": "code"}
+  ],
+  "batchImportData": {"core/ondemand/.gensrc/dsf_define_datatypes.hpp":[],"core/ondemand/.gensrc/dsf_define_datatypesCdrAux.hpp":[],"core/ondemand/.gensrc/dsf_define_datatypesCdrAux.ipp":[],"core/ondemand/.gensrc/dsf_define_datatypesPubSubTypes.cxx":["core/ondemand/.gensrc/dsf_define_datatypesCdrAux.hpp","core/ondemand/.gensrc/dsf_define_datatypesCdrAux.ipp","core/ondemand/.gensrc/dsf_define_datatypesPubSubTypes.hpp","core/ondemand/.gensrc/dsf_define_datatypesTypeObjectSupport.hpp"],"core/ondemand/.gensrc/dsf_define_datatypesPubSubTypes.hpp":[],"core/ondemand/.gensrc/dsf_define_datatypesTypeObjectSupport.cxx":["core/ondemand/.gensrc/dsf_define_datatypes.hpp","core/ondemand/.gensrc/dsf_define_datatypesTypeObjectSupport.hpp"],"core/ondemand/.gensrc/dsf_define_datatypesTypeObjectSupport.hpp":[],"core/ondemand/.gensrc/dsf_define_node.hpp":[],"core/ondemand/.gensrc/dsf_define_nodeCdrAux.hpp":[],"core/ondemand/.gensrc/dsf_define_nodeCdrAux.ipp":[],"core/ondemand/.gensrc/dsf_define_nodePubSubTypes.cxx":["core/ondemand/.gensrc/dsf_define_nodeCdrAux.hpp","core/ondemand/.gensrc/dsf_define_nodeCdrAux.ipp","core/ondemand/.gensrc/dsf_define_nodePubSubTypes.hpp","core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.hpp"],"core/ondemand/.gensrc/dsf_define_nodePubSubTypes.hpp":[],"core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.cxx":["core/ondemand/.gensrc/dsf_define_datatypes.hpp","core/ondemand/.gensrc/dsf_define_node.hpp","core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.hpp"],"core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.hpp":[]}
+}

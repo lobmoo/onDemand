@@ -1,0 +1,31 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "thirdparty/fast_dds/include/fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.hpp", "language": "cpp", "sizeLines": 177, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/rtps/transport/shared_mem/test_SharedMemTransportDescriptor.hpp", "language": "cpp", "sizeLines": 56, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/rtps/transport/SocketTransportDescriptor.hpp", "language": "cpp", "sizeLines": 116, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/rtps/transport/TCPTransportDescriptor.hpp", "language": "cpp", "sizeLines": 334, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/rtps/transport/TCPv4TransportDescriptor.hpp", "language": "cpp", "sizeLines": 108, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/rtps/transport/TCPv6TransportDescriptor.hpp", "language": "cpp", "sizeLines": 62, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/rtps/transport/test_UDPv4TransportDescriptor.hpp", "language": "cpp", "sizeLines": 181, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/rtps/transport/TransportDescriptorInterface.hpp", "language": "cpp", "sizeLines": 137, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/rtps/transport/TransportInterface.hpp", "language": "cpp", "sizeLines": 346, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/rtps/transport/TransportReceiverInterface.hpp", "language": "cpp", "sizeLines": 58, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/rtps/transport/UDPTransportDescriptor.hpp", "language": "cpp", "sizeLines": 82, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/rtps/transport/UDPv4TransportDescriptor.hpp", "language": "cpp", "sizeLines": 61, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/rtps/transport/UDPv6TransportDescriptor.hpp", "language": "cpp", "sizeLines": 63, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/rtps/writer/RTPSWriter.hpp", "language": "cpp", "sizeLines": 243, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/rtps/writer/WriterDiscoveryStatus.hpp", "language": "cpp", "sizeLines": 47, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/rtps/writer/WriterListener.hpp", "language": "cpp", "sizeLines": 143, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/statistics/dds/domain/DomainParticipant.hpp", "language": "cpp", "sizeLines": 180, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/statistics/dds/publisher/qos/DataWriterQos.hpp", "language": "cpp", "sizeLines": 53, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/statistics/dds/subscriber/qos/DataReaderQos.hpp", "language": "cpp", "sizeLines": 70, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/statistics/IListeners.hpp", "language": "cpp", "sizeLines": 43, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/statistics/monitorservice_types.idl", "language": "idl", "sizeLines": 134, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/statistics/rtps/monitor_service/connections_fwd.hpp", "language": "cpp", "sizeLines": 38, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/statistics/rtps/StatisticsCommon.hpp", "language": "cpp", "sizeLines": 400, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/statistics/topic_names.hpp", "language": "cpp", "sizeLines": 69, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/statistics/types.idl", "language": "idl", "sizeLines": 174, "fileCategory": "code"}
+  ],
+  "batchImportData": {}
+}

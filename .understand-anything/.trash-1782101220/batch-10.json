@@ -1,0 +1,413 @@
+{
+  "nodes": [
+    {
+      "id": "file:common/timer_wheel/thread_pool.h",
+      "type": "file",
+      "name": "thread_pool.h",
+      "filePath": "common/timer_wheel/thread_pool.h",
+      "summary": "基于条件变量的固定大小线程池实现，支持带返回值的任务入队（enqueue）和轻量无返回值入队（enqueue_void），内部使用 std::queue + std::mutex 保护任务队列。",
+      "tags": ["utility", "concurrency", "thread-pool", "header-only"],
+      "complexity": "moderate",
+      "languageNotes": "头文件内联实现全部成员函数，模板方法 enqueue 使用 std::packaged_task 支持返回 std::future；enqueue_void 避免 packaged_task 的额外堆分配以提升性能。"
+    },
+    {
+      "id": "class:common/timer_wheel/thread_pool.h:ThreadPool",
+      "type": "class",
+      "name": "ThreadPool",
+      "filePath": "common/timer_wheel/thread_pool.h",
+      "lineRange": [29, 49],
+      "summary": "固定大小线程池，构造时启动指定数量的工作线程，每个线程从共享任务队列中取任务执行。析构时通知所有线程停止并 join。",
+      "tags": ["concurrency", "thread-pool", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:common/timer_wheel/thread_pool.h:enqueue",
+      "type": "function",
+      "name": "enqueue",
+      "filePath": "common/timer_wheel/thread_pool.h",
+      "lineRange": [86, 106],
+      "summary": "模板方法，将可调用对象及其参数封装为 packaged_task 入队，返回 std::future 以便调用者获取异步结果。线程池已停止时抛出 runtime_error。",
+      "tags": ["concurrency", "async", "template"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:common/timer_wheel/timer_scheduler.h",
+      "type": "file",
+      "name": "timer_scheduler.h",
+      "filePath": "common/timer_wheel/timer_scheduler.h",
+      "summary": "高层定时器调度器，封装 TimerWheel 和 ThreadPool，提供一次性定时（Schedule）、周期性定时（ScheduleRecurring）、取消、暂停/恢复、Post 即时任务等功能。被发布端和订阅端用于管理定时发布与回调任务。",
+      "tags": ["service", "timer", "scheduler", "concurrency", "header-only"],
+      "complexity": "complex",
+      "languageNotes": "内部定义 CallbackTimer 和 RecurringCallbackTimer 两个定时事件类，继承自 TimerWheel 的 TimerEventInterface。调度器运行独立的 TimerLoop 线程，按 tick_ms 间隔推进 TimerWheel 并将到期回调派发到 ThreadPool 执行。"
+    },
+    {
+      "id": "class:common/timer_wheel/timer_scheduler.h:TimerScheduler",
+      "type": "class",
+      "name": "TimerScheduler",
+      "filePath": "common/timer_wheel/timer_scheduler.h",
+      "lineRange": [47, 319],
+      "summary": "定时器调度器核心类，管理 TimerWheel 实例和 ThreadPool，提供 Schedule/ScheduleRecurring/Cancel/Pause/Resume/Stop/Post 等完整定时任务生命周期管理接口。",
+      "tags": ["scheduler", "timer", "service", "concurrency"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:common/timer_wheel/timer_scheduler.h:Schedule",
+      "type": "function",
+      "name": "Schedule",
+      "filePath": "common/timer_wheel/timer_scheduler.h",
+      "lineRange": [180, 196],
+      "summary": "调度一次性定时器，在 delay_ticks 个 tick 后执行回调。创建 CallbackTimer 并注册到 TimerWheel，返回事件对象供后续取消使用。",
+      "tags": ["timer", "scheduling", "api"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:common/timer_wheel/timer_scheduler.h:ScheduleRecurring",
+      "type": "function",
+      "name": "ScheduleRecurring",
+      "filePath": "common/timer_wheel/timer_scheduler.h",
+      "lineRange": [198, 216],
+      "summary": "调度周期性定时器，首次在 delay_ticks 后触发，之后每 interval_ticks 重复触发。创建 RecurringCallbackTimer 并注册到 TimerWheel。",
+      "tags": ["timer", "scheduling", "recurring", "api"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:common/timer_wheel/timer_scheduler.h:Cancel",
+      "type": "function",
+      "name": "Cancel",
+      "filePath": "common/timer_wheel/timer_scheduler.h",
+      "lineRange": [218, 230],
+      "summary": "取消指定定时器，调用事件的 cancel 方法并从活跃定时器集合中移除。",
+      "tags": ["timer", "cancellation", "api"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:common/timer_wheel/timer_scheduler.h:Stop",
+      "type": "function",
+      "name": "Stop",
+      "filePath": "common/timer_wheel/timer_scheduler.h",
+      "lineRange": [242, 256],
+      "summary": "停止调度器，设置停止标志、终止定时循环线程、取消所有活跃定时器并清空线程池任务队列。",
+      "tags": ["lifecycle", "cleanup", "api"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:common/timer_wheel/timer_scheduler.h:TimerLoop",
+      "type": "function",
+      "name": "TimerLoop",
+      "filePath": "common/timer_wheel/timer_scheduler.h",
+      "lineRange": [282, 319],
+      "summary": "定时器主循环，在独立线程中运行。按 tick_ms 间隔推进 TimerWheel，将到期回调通过 ThreadPool 派发执行，支持暂停和停止。",
+      "tags": ["timer", "event-loop", "concurrency"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:common/timer_wheel/timer_scheduler.h:CallbackTimer",
+      "type": "class",
+      "name": "CallbackTimer",
+      "filePath": "common/timer_wheel/timer_scheduler.h",
+      "lineRange": [323, 348],
+      "summary": "一次性回调定时事件类，继承 TimerEventInterface。执行时检查取消标志，通过调度器的 Post 方法将回调派发到线程池。",
+      "tags": ["timer", "callback", "event-handler"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:common/timer_wheel/timer_scheduler.h:RecurringCallbackTimer",
+      "type": "class",
+      "name": "RecurringCallbackTimer",
+      "filePath": "common/timer_wheel/timer_scheduler.h",
+      "lineRange": [352, 382],
+      "summary": "周期性回调定时事件类，继承 TimerEventInterface。每次执行后自动重新调度以实现周期触发，支持取消。",
+      "tags": ["timer", "callback", "recurring", "event-handler"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:common/timer_wheel/timer_scheduler_test.cc",
+      "type": "file",
+      "name": "timer_scheduler_test.cc",
+      "filePath": "common/timer_wheel/timer_scheduler_test.cc",
+      "summary": "TimerScheduler 的 GoogleTest 单元测试文件，覆盖一次性定时、周期定时、取消、Post 即时任务、多定时器并发、高频定时和压力负载等场景。",
+      "tags": ["test", "unit-test", "timer", "scheduler"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:common/timer_wheel/timer_scheduler_test.cc:TimerSchedulerTest",
+      "type": "class",
+      "name": "TimerSchedulerTest",
+      "filePath": "common/timer_wheel/timer_scheduler_test.cc",
+      "lineRange": [10, 21],
+      "summary": "GoogleTest 测试夹具类，在 SetUp 中创建 TimerScheduler 实例（1ms tick, 8 线程池），在 TearDown 中停止并销毁。",
+      "tags": ["test", "fixture", "google-test"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:common/timer_wheel/timer_scheduler_test.cc:TestBasicFunctionality",
+      "type": "function",
+      "name": "TestBasicFunctionality",
+      "filePath": "common/timer_wheel/timer_scheduler_test.cc",
+      "lineRange": [24, 39],
+      "summary": "测试 Post 即时任务的基本功能，验证回调被正确执行且定时器状态正确。",
+      "tags": ["test", "basic", "post"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:common/timer_wheel/timer_scheduler_test.cc:TestSingleTimer",
+      "type": "function",
+      "name": "TestSingleTimer",
+      "filePath": "common/timer_wheel/timer_scheduler_test.cc",
+      "lineRange": [42, 66],
+      "summary": "测试一次性定时器的调度和执行，验证定时器在指定延迟后触发且回调计数正确。",
+      "tags": ["test", "single-timer", "schedule"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:common/timer_wheel/timer_scheduler_test.cc:TestRecurringTimer",
+      "type": "function",
+      "name": "TestRecurringTimer",
+      "filePath": "common/timer_wheel/timer_scheduler_test.cc",
+      "lineRange": [69, 88],
+      "summary": "测试周期性定时器，验证多次触发的计数和时间间隔在预期范围内，以及取消后停止触发。",
+      "tags": ["test", "recurring-timer", "schedule"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:common/timer_wheel/timer_scheduler_test.cc:TestTimerCancel",
+      "type": "function",
+      "name": "TestTimerCancel",
+      "filePath": "common/timer_wheel/timer_scheduler_test.cc",
+      "lineRange": [91, 137],
+      "summary": "测试定时器取消功能，验证一次性定时器和周期性定时器在取消后不再触发且回调计数不再增加。",
+      "tags": ["test", "cancel", "timer"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:common/timer_wheel/timer_scheduler_test.cc:TestMultipleTimers",
+      "type": "function",
+      "name": "TestMultipleTimers",
+      "filePath": "common/timer_wheel/timer_scheduler_test.cc",
+      "lineRange": [169, 204],
+      "summary": "测试多个定时器同时调度的场景，验证不同延迟的定时器各自独立触发且计数正确。",
+      "tags": ["test", "multiple-timers", "concurrency"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:common/timer_wheel/timer_scheduler_test.cc:TestHighFrequencyTimers",
+      "type": "function",
+      "name": "TestHighFrequencyTimers",
+      "filePath": "common/timer_wheel/timer_scheduler_test.cc",
+      "lineRange": [286, 323],
+      "summary": "测试高频周期定时器（5ms 间隔），验证执行次数和回调在调度器重置后正确停止。",
+      "tags": ["test", "high-frequency", "stress"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:common/timer_wheel/timer_scheduler_test.cc:TestStressLoad",
+      "type": "function",
+      "name": "TestStressLoad",
+      "filePath": "common/timer_wheel/timer_scheduler_test.cc",
+      "lineRange": [326, 359],
+      "summary": "压力测试，调度大量定时器并测量总执行时间，验证系统在高负载下的吞吐量和正确性。",
+      "tags": ["test", "stress", "performance"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:common/timer_wheel/timer_wheel.h",
+      "type": "file",
+      "name": "timer_wheel.h",
+      "filePath": "common/timer_wheel/timer_wheel.h",
+      "summary": "8 层分层时间轮实现，源自 Juho Snellman 的 MIT 开源项目。支持 256 个 slot/层，1 tick 精度，适用于 1ms 到数天范围的定时器。提供事件调度（schedule）、范围调度（schedule_in_range）、推进（advance）和取消（cancel）接口。",
+      "tags": ["utility", "timer", "data-structure", "header-only", "hierarchical-timer-wheel"],
+      "complexity": "complex",
+      "languageNotes": "8 层分层时间轮，每层 256 个 slot（WIDTH_BITS=8），支持 64 位 tick 范围。内层轮处理近期事件，外层轮存放远期事件，每次内层轮满一圈时从外层轮提升事件。使用侵入式双向链表管理事件，避免额外内存分配。"
+    },
+    {
+      "id": "class:common/timer_wheel/timer_wheel.h:TimerWheel",
+      "type": "class",
+      "name": "TimerWheel",
+      "filePath": "common/timer_wheel/timer_wheel.h",
+      "lineRange": [219, 301],
+      "summary": "分层时间轮核心类，管理多层 slot 数组和当前时间戳。提供 schedule、schedule_in_range、advance、ticks_to_next_event 等接口，支持高效的定时事件调度和推进。",
+      "tags": ["timer", "data-structure", "hierarchical-wheel"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:common/timer_wheel/timer_wheel.h:TimerEventInterface",
+      "type": "class",
+      "name": "TimerEventInterface",
+      "filePath": "common/timer_wheel/timer_wheel.h",
+      "lineRange": [104, 147],
+      "summary": "定时事件抽象基类，定义 cancel、active、scheduled_at 接口，管理事件在时间轮 slot 中的双向链表节点。析构时自动取消。",
+      "tags": ["timer", "abstract-class", "event-handler"],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:common/timer_wheel/timer_scheduler.h",
+      "target": "file:common/timer_wheel/thread_pool.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:common/timer_wheel/timer_scheduler.h",
+      "target": "file:common/timer_wheel/timer_wheel.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:common/timer_wheel/timer_scheduler_test.cc",
+      "target": "file:common/timer_wheel/timer_scheduler.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:common/timer_wheel/thread_pool.h",
+      "target": "class:common/timer_wheel/thread_pool.h:ThreadPool",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:common/timer_wheel/thread_pool.h:ThreadPool",
+      "target": "function:common/timer_wheel/thread_pool.h:enqueue",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/timer_wheel/timer_scheduler.h",
+      "target": "class:common/timer_wheel/timer_scheduler.h:TimerScheduler",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:common/timer_wheel/timer_scheduler.h:TimerScheduler",
+      "target": "function:common/timer_wheel/timer_scheduler.h:Schedule",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:common/timer_wheel/timer_scheduler.h:TimerScheduler",
+      "target": "function:common/timer_wheel/timer_scheduler.h:ScheduleRecurring",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:common/timer_wheel/timer_scheduler.h:TimerScheduler",
+      "target": "function:common/timer_wheel/timer_scheduler.h:Cancel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:common/timer_wheel/timer_scheduler.h:TimerScheduler",
+      "target": "function:common/timer_wheel/timer_scheduler.h:Stop",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:common/timer_wheel/timer_scheduler.h:TimerScheduler",
+      "target": "function:common/timer_wheel/timer_scheduler.h:TimerLoop",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/timer_wheel/timer_scheduler.h",
+      "target": "class:common/timer_wheel/timer_scheduler.h:CallbackTimer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/timer_wheel/timer_scheduler.h",
+      "target": "class:common/timer_wheel/timer_scheduler.h:RecurringCallbackTimer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/timer_wheel/timer_scheduler_test.cc",
+      "target": "class:common/timer_wheel/timer_scheduler_test.cc:TimerSchedulerTest",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:common/timer_wheel/timer_scheduler_test.cc:TimerSchedulerTest",
+      "target": "function:common/timer_wheel/timer_scheduler_test.cc:TestBasicFunctionality",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:common/timer_wheel/timer_scheduler_test.cc:TimerSchedulerTest",
+      "target": "function:common/timer_wheel/timer_scheduler_test.cc:TestSingleTimer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:common/timer_wheel/timer_scheduler_test.cc:TimerSchedulerTest",
+      "target": "function:common/timer_wheel/timer_scheduler_test.cc:TestRecurringTimer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:common/timer_wheel/timer_scheduler_test.cc:TimerSchedulerTest",
+      "target": "function:common/timer_wheel/timer_scheduler_test.cc:TestTimerCancel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:common/timer_wheel/timer_scheduler_test.cc:TimerSchedulerTest",
+      "target": "function:common/timer_wheel/timer_scheduler_test.cc:TestMultipleTimers",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:common/timer_wheel/timer_scheduler_test.cc:TimerSchedulerTest",
+      "target": "function:common/timer_wheel/timer_scheduler_test.cc:TestHighFrequencyTimers",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:common/timer_wheel/timer_scheduler_test.cc:TimerSchedulerTest",
+      "target": "function:common/timer_wheel/timer_scheduler_test.cc:TestStressLoad",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/timer_wheel/timer_wheel.h",
+      "target": "class:common/timer_wheel/timer_wheel.h:TimerWheel",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/timer_wheel/timer_wheel.h",
+      "target": "class:common/timer_wheel/timer_wheel.h:TimerEventInterface",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/timer_wheel/timer_scheduler.h",
+      "target": "class:common/timer_wheel/timer_scheduler_test.cc:TimerSchedulerTest",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "thirdparty/fast_dds/include/fastdds/thirdparty/optionparser/optionparser.hpp", "language": "cpp", "sizeLines": 48, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/thirdparty/optionparser/optionparser/optionparser.h", "language": "c", "sizeLines": 2862, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/utils/collections/ResourceLimitedContainerConfig.hpp", "language": "cpp", "sizeLines": 93, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/utils/collections/ResourceLimitedVector.hpp", "language": "cpp", "sizeLines": 622, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/utils/fixed_size_bitmap.hpp", "language": "cpp", "sizeLines": 637, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/utils/IPFinder.hpp", "language": "cpp", "sizeLines": 136, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/utils/IPLocator.hpp", "language": "cpp", "sizeLines": 332, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/utils/md5.hpp", "language": "cpp", "sizeLines": 172, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/utils/TimedConditionVariable.hpp", "language": "cpp", "sizeLines": 196, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/utils/TimedMutex.hpp", "language": "cpp", "sizeLines": 349, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/aligned_allocator.hpp", "language": "cpp", "sizeLines": 196, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/allocator_storage.hpp", "language": "cpp", "sizeLines": 933, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/allocator_traits.hpp", "language": "cpp", "sizeLines": 601, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/config_impl.hpp", "language": "cpp", "sizeLines": 22, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/container_node_sizes_impl.hpp", "language": "cpp", "sizeLines": 448, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/container.hpp", "language": "cpp", "sizeLines": 367, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/default_allocator.hpp", "language": "cpp", "sizeLines": 36, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/deleter.hpp", "language": "cpp", "sizeLines": 307, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/detail/container_node_sizes_impl.hpp", "language": "cpp", "sizeLines": 448, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/detail/container_node_sizes.hpp", "language": "cpp", "sizeLines": 9, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/detail/ebo_storage.hpp", "language": "cpp", "sizeLines": 41, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/detail/free_list.hpp", "language": "cpp", "sizeLines": 227, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/detail/ilog2.hpp", "language": "cpp", "sizeLines": 68, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/detail/lowlevel_allocator.hpp", "language": "cpp", "sizeLines": 85, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/detail/small_free_list.hpp", "language": "cpp", "sizeLines": 163, "fileCategory": "code"}
+  ],
+  "batchImportData": {}
+}

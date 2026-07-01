@@ -229,7 +229,8 @@ namespace ondemand
          * @return 未找到的变量数量（>0 表示有变量尚未创建，调用方应延迟重试）
          */
         uint32_t handleSubscribe(const std::string &nodeName,
-                                 const std::vector<DSF::NamedValue> &varFreqs);
+                                 const std::vector<DSF::NamedValue> &varFreqs,
+                                 std::vector<DSF::NamedValue> *missingVarFreqs = nullptr);
         /**
          * @brief 处理订阅者取消订阅请求，更新订阅者信息和变量频率，触发发布调度
          * @param  nodeName         变量名
@@ -313,9 +314,11 @@ namespace ondemand
         mutable std::shared_mutex varIndexMutex_;
         /*变量索引: hash -> 元数据（热路径，调度/订阅处理均访问）*/
         std::unordered_map<uint64_t, VarMetadata> varIndex_;
-        /*变量定义冷路径索引: hash -> IDL Define（仅 tableDefine 广播时访问）
-         * 与 varIndex_ 共享 varIndexMutex_，生命周期与 varIndex_ 条目一致 */
-        std::unordered_map<uint64_t, std::shared_ptr<DSF::Var::Define>> varDefineIndex_;
+        /*变量定义冷路径存储（仅 tableDefine 广播时访问）
+         * 连续 vector 存储，避免 600K 次 make_shared 独立堆分配。
+         * defineLookup_: hash → defineCache_ 下标，与 varIndex_ 共享 varIndexMutex_ */
+        std::vector<DSF::Var::Define> defineCache_;
+        std::unordered_map<uint64_t, uint32_t> defineLookup_;
         BucketManager bucketManager_;
 
         std::atomic<bool> initialized_;
@@ -346,7 +349,6 @@ namespace ondemand
             static_cast<uint32_t>(DSF::Var::BLOB_TYPE::STRUCTS)}; // 全局序列化类型
         std::atomic<bool> paused_{false};                         // 暂停发布标志
         std::unordered_map<uint64_t, uint8_t> nodeSlotMap_;
-        uint8_t nextNodeSlot_ = 0;
 
         FreqChangeCallback freqChangeCb_;
         mutable std::mutex freqChangeCbMutex_;

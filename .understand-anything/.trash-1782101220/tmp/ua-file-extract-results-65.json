@@ -1,0 +1,645 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 25,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/common/ParameterType.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 325,
+      "nonEmptyLines": 298,
+      "callGraph": [
+        {
+          "caller": "DefaultUnicastLocatorParameter",
+          "callee": "BaoSky::rtps::Locator",
+          "lineNumber": 62
+        },
+        {
+          "caller": "DefaultMulticastLocatorParameter",
+          "callee": "BaoSky::rtps::Locator",
+          "lineNumber": 76
+        },
+        {
+          "caller": "MetatrafficMulticastLocatorParameter",
+          "callee": "BaoSky::rtps::Locator",
+          "lineNumber": 90
+        },
+        {
+          "caller": "MetatrafficUnicastLocatorParameter",
+          "callee": "BaoSky::rtps::Locator",
+          "lineNumber": 104
+        },
+        {
+          "caller": "EntityNameParameter",
+          "callee": "length",
+          "lineNumber": 161
+        },
+        {
+          "caller": "EndpointGuidParameter",
+          "callee": "BaoSky::rtps::Guid",
+          "lineNumber": 195
+        },
+        {
+          "caller": "UnicastLocatorParameter",
+          "callee": "BaoSky::rtps::Locator",
+          "lineNumber": 210
+        },
+        {
+          "caller": "MulticastLocatorParameter",
+          "callee": "BaoSky::rtps::Locator",
+          "lineNumber": 224
+        },
+        {
+          "caller": "TopicNameParameter",
+          "callee": "length",
+          "lineNumber": 235
+        },
+        {
+          "caller": "TypeNameParameter",
+          "callee": "length",
+          "lineNumber": 251
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/common/ReturnCode.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 32,
+      "nonEmptyLines": 28,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/common/StatusKind.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 33,
+      "nonEmptyLines": 30,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/core/condition/Condition.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 12,
+      "nonEmptyLines": 10,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/core/condition/GuardCondition.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 16,
+      "nonEmptyLines": 13,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/core/condition/StatusCondition.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 30,
+      "nonEmptyLines": 21,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/core/condition/WaitSet.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 26,
+      "nonEmptyLines": 18,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/core/IDomainEntity.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 24,
+      "nonEmptyLines": 20,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/core/IEntity.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 65,
+      "nonEmptyLines": 48,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/core/policy/QosPolicy.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 493,
+      "nonEmptyLines": 440,
+      "callGraph": [
+        {
+          "caller": "AddToCDRMsg",
+          "callee": "BaoSky::rtps::Parameter::AddToCDRMsg",
+          "lineNumber": 105
+        },
+        {
+          "caller": "AddToCDRMsg",
+          "callee": "BaoSky::rtps::CDRMessageOperator::AddOctet",
+          "lineNumber": 109
+        },
+        {
+          "caller": "AddToCDRMsg",
+          "callee": "BaoSky::rtps::CDRMessageOperator::AddOctet",
+          "lineNumber": 110
+        },
+        {
+          "caller": "AddToCDRMsg",
+          "callee": "BaoSky::rtps::CDRMessageOperator::AddOctet",
+          "lineNumber": 111
+        },
+        {
+          "caller": "AddToCDRMsg",
+          "callee": "BaoSky::rtps::CDRMessageOperator::AddOctet",
+          "lineNumber": 112
+        },
+        {
+          "caller": "AddToCDRMsg",
+          "callee": "BaoSky::rtps::CDRMessageOperator::AddInt32",
+          "lineNumber": 113
+        },
+        {
+          "caller": "AddToCDRMsg",
+          "callee": "BaoSky::rtps::Parameter::AddToCDRMsg",
+          "lineNumber": 138
+        },
+        {
+          "caller": "AddToCDRMsg",
+          "callee": "BaoSky::rtps::CDRMessageOperator::AddOctet",
+          "lineNumber": 142
+        },
+        {
+          "caller": "AddToCDRMsg",
+          "callee": "BaoSky::rtps::CDRMessageOperator::AddOctet",
+          "lineNumber": 143
+        },
+        {
+          "caller": "AddToCDRMsg",
+          "callee": "BaoSky::rtps::CDRMessageOperator::AddOctet",
+          "lineNumber": 144
+        },
+        {
+          "caller": "AddToCDRMsg",
+          "callee": "BaoSky::rtps::CDRMessageOperator::AddOctet",
+          "lineNumber": 145
+        },
+        {
+          "caller": "AddToCDRMsg",
+          "callee": "BaoSky::rtps::CDRMessageOperator::AddDuration",
+          "lineNumber": 146
+        },
+        {
+          "caller": "ReadFromCDRMsg",
+          "callee": "BaoSky::rtps::CDRMessageOperator::ReadOctet",
+          "lineNumber": 155
+        },
+        {
+          "caller": "ReadFromCDRMsg",
+          "callee": "BaoSky::rtps::CDRMessageOperator::ReadDuration",
+          "lineNumber": 165
+        },
+        {
+          "caller": "CreateInstance",
+          "callee": "std::static_pointer_cast<Parameter>",
+          "lineNumber": 170
+        },
+        {
+          "caller": "CreateInstance",
+          "callee": "std::make_shared<ReliabilityQosPolicy>",
+          "lineNumber": 170
+        },
+        {
+          "caller": "AddToCDRMsg",
+          "callee": "BaoSky::rtps::Parameter::AddToCDRMsg",
+          "lineNumber": 190
+        },
+        {
+          "caller": "AddToCDRMsg",
+          "callee": "BaoSky::rtps::CDRMessageOperator::AddOctet",
+          "lineNumber": 194
+        },
+        {
+          "caller": "AddToCDRMsg",
+          "callee": "BaoSky::rtps::CDRMessageOperator::AddOctet",
+          "lineNumber": 195
+        },
+        {
+          "caller": "AddToCDRMsg",
+          "callee": "BaoSky::rtps::CDRMessageOperator::AddOctet",
+          "lineNumber": 196
+        },
+        {
+          "caller": "AddToCDRMsg",
+          "callee": "BaoSky::rtps::CDRMessageOperator::AddOctet",
+          "lineNumber": 197
+        },
+        {
+          "caller": "ReadFromCDRMsg",
+          "callee": "BaoSky::rtps::CDRMessageOperator::ReadOctet",
+          "lineNumber": 206
+        },
+        {
+          "caller": "CreateInstance",
+          "callee": "std::static_pointer_cast<Parameter>",
+          "lineNumber": 221
+        },
+        {
+          "caller": "CreateInstance",
+          "callee": "std::make_shared<DurabilityQosPolicy>",
+          "lineNumber": 221
+        },
+        {
+          "caller": "AddToCDRMsg",
+          "callee": "static_cast<uint16_t>",
+          "lineNumber": 280
+        },
+        {
+          "caller": "AddToCDRMsg",
+          "callee": "size",
+          "lineNumber": 280
+        },
+        {
+          "caller": "AddToCDRMsg",
+          "callee": "BaoSky::rtps::Parameter::AddToCDRMsg",
+          "lineNumber": 283
+        },
+        {
+          "caller": "AddToCDRMsg",
+          "callee": "BaoSky::rtps::CDRMessageOperator::AddUint32",
+          "lineNumber": 287
+        },
+        {
+          "caller": "AddToCDRMsg",
+          "callee": "size",
+          "lineNumber": 287
+        },
+        {
+          "caller": "AddToCDRMsg",
+          "callee": "BaoSky::rtps::CDRMessageOperator::AddString",
+          "lineNumber": 290
+        },
+        {
+          "caller": "ReadFromCDRMsg",
+          "callee": "BaoSky::rtps::CDRMessageOperator::ReadUint32",
+          "lineNumber": 300
+        },
+        {
+          "caller": "ReadFromCDRMsg",
+          "callee": "BaoSky::rtps::CDRMessageOperator::ReadString",
+          "lineNumber": 308
+        },
+        {
+          "caller": "ReadFromCDRMsg",
+          "callee": "push_back",
+          "lineNumber": 311
+        },
+        {
+          "caller": "CreateInstance",
+          "callee": "std::static_pointer_cast<Parameter>",
+          "lineNumber": 322
+        },
+        {
+          "caller": "CreateInstance",
+          "callee": "std::make_shared<PartitionQosPolicy>",
+          "lineNumber": 322
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/core/status/BaseStatus.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 22,
+      "nonEmptyLines": 15,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/core/status/IncompatibleQosStatus.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 44,
+      "nonEmptyLines": 36,
+      "callGraph": [
+        {
+          "caller": "IncompatibleQosStatus",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 29
+        },
+        {
+          "caller": "IncompatibleQosStatus",
+          "callee": "QosPolicyCount",
+          "lineNumber": 29
+        },
+        {
+          "caller": "IncompatibleQosStatus",
+          "callee": "static_cast<QosPolicyId_t>",
+          "lineNumber": 33
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/core/status/MatchedStatus.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 21,
+      "nonEmptyLines": 16,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/core/status/PublicationMatchedStatus.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 22,
+      "nonEmptyLines": 19,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/core/status/SubscriptionMatchedStatus.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 18,
+      "nonEmptyLines": 13,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/domain/DomainParticipantFactory.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 51,
+      "nonEmptyLines": 34,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/domain/IDomainParticipant.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 82,
+      "nonEmptyLines": 54,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/domain/IDomainParticipantListener.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 52,
+      "nonEmptyLines": 44,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/domain/qos/DomainParticipantFactoryQos.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 24,
+      "nonEmptyLines": 20,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/domain/qos/DomainParticipantQos.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 28,
+      "nonEmptyLines": 25,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/dynamicType/DynamicData.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 171,
+      "nonEmptyLines": 162,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/dynamicType/DynamicDataFactory.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 30,
+      "nonEmptyLines": 28,
+      "classes": [
+        {
+          "name": "DynamicData",
+          "startLine": 16,
+          "endLine": 16,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "DynamicData",
+          "line": 16,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/dynamicType/DynamicTopicDataType.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 80,
+      "nonEmptyLines": 78,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/dynamicType/DynamicType.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 43,
+      "nonEmptyLines": 39,
+      "classes": [
+        {
+          "name": "AnnotationDescriptor",
+          "startLine": 19,
+          "endLine": 19,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "DynamicTypeBuilder",
+          "startLine": 20,
+          "endLine": 20,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "AnnotationDescriptor",
+          "line": 19,
+          "isDefault": false
+        },
+        {
+          "name": "DynamicTypeBuilder",
+          "line": 20,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 0,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/dynamicType/DynamicTypeBuilder.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 48,
+      "nonEmptyLines": 44,
+      "classes": [
+        {
+          "name": "AnnotationDescriptor",
+          "startLine": 15,
+          "endLine": 15,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "AnnotationDescriptor",
+          "line": 15,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "SetName",
+          "callee": "SetDynTypeName",
+          "lineNumber": 38
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    }
+  ]
+}

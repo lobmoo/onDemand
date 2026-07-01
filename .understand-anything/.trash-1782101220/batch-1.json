@@ -1,0 +1,565 @@
+{
+  "nodes": [
+    {
+      "id": "file:core/ondemand/.gensrc/dsf_define_datatypes.hpp",
+      "type": "file",
+      "name": "dsf_define_datatypes.hpp",
+      "filePath": "core/ondemand/.gensrc/dsf_define_datatypes.hpp",
+      "summary": "由 fastddsgen 自动生成的数据类型头文件，定义了 DSF 命名空间下 12 个 IDL 数据结构类，包括 Timespec、NamedValue、DataBuffer、DT_FILE 及各种时间/日期类型，用于 DDS 消息序列化与反序列化。",
+      "tags": ["auto-generated", "type-definition", "dds-idl", "serialization"],
+      "complexity": "complex",
+      "languageNotes": "包含 12 个纯数据类，每个类均有默认构造/拷贝/移动语义以及 CDR 序列化友元声明。"
+    },
+    {
+      "id": "file:core/ondemand/.gensrc/dsf_define_datatypesCdrAux.hpp",
+      "type": "file",
+      "name": "dsf_define_datatypesCdrAux.hpp",
+      "filePath": "core/ondemand/.gensrc/dsf_define_datatypesCdrAux.hpp",
+      "summary": "CDR 序列化辅助头文件，定义各数据类型的最大 CDR 序列化尺寸常量，并声明 eprosima::fastcdr 命名空间下的 serialize_key 函数。",
+      "tags": ["auto-generated", "serialization", "cdr", "dds-idl"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:core/ondemand/.gensrc/dsf_define_datatypesCdrAux.ipp",
+      "type": "file",
+      "name": "dsf_define_datatypesCdrAux.ipp",
+      "filePath": "core/ondemand/.gensrc/dsf_define_datatypesCdrAux.ipp",
+      "summary": "CDR 序列化辅助实现文件，包含各数据类型的 CDR 序列化/反序列化函数实现及尺寸计算逻辑。",
+      "tags": ["auto-generated", "serialization", "cdr", "dds-idl"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:core/ondemand/.gensrc/dsf_define_datatypesPubSubTypes.cxx",
+      "type": "file",
+      "name": "dsf_define_datatypesPubSubTypes.cxx",
+      "filePath": "core/ondemand/.gensrc/dsf_define_datatypesPubSubTypes.cxx",
+      "summary": "数据类型 PubSubType 实现文件，为每个 IDL 数据类型实现 TopicDataType 接口的 serialize、deserialize、calculate_serialized_size 等方法，用于 DDS 数据传输。",
+      "tags": ["auto-generated", "dds-topic", "serialization", "pubsub-type"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:core/ondemand/.gensrc/dsf_define_datatypesPubSubTypes.hpp",
+      "type": "file",
+      "name": "dsf_define_datatypesPubSubTypes.hpp",
+      "filePath": "core/ondemand/.gensrc/dsf_define_datatypesPubSubTypes.hpp",
+      "summary": "数据类型 PubSubType 头文件，声明各 IDL 数据类型对应的 TopicDataType 派生类，继承自 eprosima::fastdds::dds::TopicDataType。",
+      "tags": ["auto-generated", "dds-topic", "type-definition", "pubsub-type"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:core/ondemand/.gensrc/dsf_define_datatypesTypeObjectSupport.cxx",
+      "type": "file",
+      "name": "dsf_define_datatypesTypeObjectSupport.cxx",
+      "filePath": "core/ondemand/.gensrc/dsf_define_datatypesTypeObjectSupport.cxx",
+      "summary": "数据类型 TypeObject 注册实现文件，为每个 IDL 数据类型实现 register_*_type_identifier 函数，用于 DDS 类型发现与动态类型支持。",
+      "tags": ["auto-generated", "type-object", "dds-idl", "type-registration"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:core/ondemand/.gensrc/dsf_define_datatypesTypeObjectSupport.hpp",
+      "type": "file",
+      "name": "dsf_define_datatypesTypeObjectSupport.hpp",
+      "filePath": "core/ondemand/.gensrc/dsf_define_datatypesTypeObjectSupport.hpp",
+      "summary": "数据类型 TypeObject 注册头文件，声明 39 个 register_*_type_identifier 函数，涵盖所有 IDL 数据类型的 DDS 类型标识符注册接口。",
+      "tags": ["auto-generated", "type-object", "dds-idl", "type-registration"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:core/ondemand/.gensrc/dsf_define_node.hpp",
+      "type": "file",
+      "name": "dsf_define_node.hpp",
+      "filePath": "core/ondemand/.gensrc/dsf_define_node.hpp",
+      "summary": "由 fastddsgen 自动生成的节点信息头文件，定义 DSF::Node 命名空间下 NetworkInterface、BasicInfo、RuntimeInfo 三个 IDL 数据结构类，用于描述 DDS 节点的网络接口、基本信息和运行时状态。",
+      "tags": ["auto-generated", "type-definition", "dds-idl", "node-info"],
+      "complexity": "moderate",
+      "languageNotes": "BasicInfo 和 RuntimeInfo 位于 DSF::Node 命名空间内，NetworkInterface 位于 DSF 命名空间。"
+    },
+    {
+      "id": "file:core/ondemand/.gensrc/dsf_define_nodeCdrAux.hpp",
+      "type": "file",
+      "name": "dsf_define_nodeCdrAux.hpp",
+      "filePath": "core/ondemand/.gensrc/dsf_define_nodeCdrAux.hpp",
+      "summary": "节点类型 CDR 序列化辅助头文件，定义 NetworkInterface、BasicInfo、RuntimeInfo 的最大 CDR 序列化尺寸常量及 serialize_key 声明。",
+      "tags": ["auto-generated", "serialization", "cdr", "node-info"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:core/ondemand/.gensrc/dsf_define_nodeCdrAux.ipp",
+      "type": "file",
+      "name": "dsf_define_nodeCdrAux.ipp",
+      "filePath": "core/ondemand/.gensrc/dsf_define_nodeCdrAux.ipp",
+      "summary": "节点类型 CDR 序列化辅助实现文件，包含 NetworkInterface、BasicInfo、RuntimeInfo 的 CDR 序列化/反序列化函数实现。",
+      "tags": ["auto-generated", "serialization", "cdr", "node-info"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:core/ondemand/.gensrc/dsf_define_nodePubSubTypes.cxx",
+      "type": "file",
+      "name": "dsf_define_nodePubSubTypes.cxx",
+      "filePath": "core/ondemand/.gensrc/dsf_define_nodePubSubTypes.cxx",
+      "summary": "节点类型 PubSubType 实现文件，为 NetworkInterface、BasicInfo、RuntimeInfo 实现 TopicDataType 接口的序列化方法。",
+      "tags": ["auto-generated", "dds-topic", "serialization", "pubsub-type"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:core/ondemand/.gensrc/dsf_define_nodePubSubTypes.hpp",
+      "type": "file",
+      "name": "dsf_define_nodePubSubTypes.hpp",
+      "filePath": "core/ondemand/.gensrc/dsf_define_nodePubSubTypes.hpp",
+      "summary": "节点类型 PubSubType 头文件，声明 NetworkInterfacePubSubType、BasicInfoPubSubType、RuntimeInfoPubSubType 三个 TopicDataType 派生类。",
+      "tags": ["auto-generated", "dds-topic", "type-definition", "pubsub-type"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.cxx",
+      "type": "file",
+      "name": "dsf_define_nodeTypeObjectSupport.cxx",
+      "filePath": "core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.cxx",
+      "summary": "节点类型 TypeObject 注册实现文件，实现 NetworkInterface、BasicInfo、RuntimeInfo 的 register_*_type_identifier 函数。",
+      "tags": ["auto-generated", "type-object", "dds-idl", "type-registration"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.hpp",
+      "type": "file",
+      "name": "dsf_define_nodeTypeObjectSupport.hpp",
+      "filePath": "core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.hpp",
+      "summary": "节点类型 TypeObject 注册头文件，声明 NetworkInterface、BasicInfo、RuntimeInfo 的 register_*_type_identifier 函数接口。",
+      "tags": ["auto-generated", "type-object", "dds-idl", "type-registration"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:Timespec",
+      "type": "class",
+      "name": "Timespec",
+      "filePath": "core/ondemand/.gensrc/dsf_define_datatypes.hpp",
+      "lineRange": [66, 224],
+      "summary": "DDS IDL 时间戳结构体，包含秒级和纳秒级时间字段，用于消息时间标记。",
+      "tags": ["data-model", "dds-idl", "time"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:NamedValue",
+      "type": "class",
+      "name": "NamedValue",
+      "filePath": "core/ondemand/.gensrc/dsf_define_datatypes.hpp",
+      "lineRange": [226, 404],
+      "summary": "命名值结构体，包含名称字符串和值字节序列，用于变量的键值对表示。",
+      "tags": ["data-model", "dds-idl", "key-value"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:StructuredDataMapEntry",
+      "type": "class",
+      "name": "StructuredDataMapEntry",
+      "filePath": "core/ondemand/.gensrc/dsf_define_datatypes.hpp",
+      "lineRange": [406, 584],
+      "summary": "结构化数据映射条目，包含键值对及其关联的 NamedValue 列表，用于复杂数据的层次化表示。",
+      "tags": ["data-model", "dds-idl", "structured-data"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DataBuffer",
+      "type": "class",
+      "name": "DataBuffer",
+      "filePath": "core/ondemand/.gensrc/dsf_define_datatypes.hpp",
+      "lineRange": [586, 792],
+      "summary": "通用数据缓冲区结构体，封装原始字节数组，用于 DDS 消息中二进制数据的传输。",
+      "tags": ["data-model", "dds-idl", "buffer"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_FILE",
+      "type": "class",
+      "name": "DT_FILE",
+      "filePath": "core/ondemand/.gensrc/dsf_define_datatypes.hpp",
+      "lineRange": [794, 1035],
+      "summary": "文件类型数据结构，包含文件名、文件数据和版本号三个字段，用于 DDS 消息中文件传输。",
+      "tags": ["data-model", "dds-idl", "file-transfer"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_TIME",
+      "type": "class",
+      "name": "DT_TIME",
+      "filePath": "core/ondemand/.gensrc/dsf_define_datatypes.hpp",
+      "lineRange": [1037, 1399],
+      "summary": "时间数据类型，包含起止时间字段 T0 和 T1，支持时间范围表示。",
+      "tags": ["data-model", "dds-idl", "time"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_DATE",
+      "type": "class",
+      "name": "DT_DATE",
+      "filePath": "core/ondemand/.gensrc/dsf_define_datatypes.hpp",
+      "lineRange": [1401, 1763],
+      "summary": "日期数据类型，包含起止日期字段 D0 和 D1，支持日期范围表示。",
+      "tags": ["data-model", "dds-idl", "date"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_TIME_OF_DAY",
+      "type": "class",
+      "name": "DT_TIME_OF_DAY",
+      "filePath": "core/ondemand/.gensrc/dsf_define_datatypes.hpp",
+      "lineRange": [1765, 2127],
+      "summary": "日内时间数据类型，表示一天中的时间范围。",
+      "tags": ["data-model", "dds-idl", "time"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_DATE_AND_TIME",
+      "type": "class",
+      "name": "DT_DATE_AND_TIME",
+      "filePath": "core/ondemand/.gensrc/dsf_define_datatypes.hpp",
+      "lineRange": [2129, 2493],
+      "summary": "日期时间组合数据类型，表示日期与时间的联合范围。",
+      "tags": ["data-model", "dds-idl", "datetime"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_LDATE",
+      "type": "class",
+      "name": "DT_LDATE",
+      "filePath": "core/ondemand/.gensrc/dsf_define_datatypes.hpp",
+      "lineRange": [2495, 2857],
+      "summary": "长日期数据类型，支持更大范围的日期表示。",
+      "tags": ["data-model", "dds-idl", "date"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_LTIME_OF_DAY",
+      "type": "class",
+      "name": "DT_LTIME_OF_DAY",
+      "filePath": "core/ondemand/.gensrc/dsf_define_datatypes.hpp",
+      "lineRange": [2859, 3221],
+      "summary": "长日内时间数据类型，支持更大精度的时间范围表示。",
+      "tags": ["data-model", "dds-idl", "time"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_LDATE_AND_TIME",
+      "type": "class",
+      "name": "DT_LDATE_AND_TIME",
+      "filePath": "core/ondemand/.gensrc/dsf_define_datatypes.hpp",
+      "lineRange": [3223, 3588],
+      "summary": "长日期时间组合数据类型，支持更大范围的日期时间联合表示。",
+      "tags": ["data-model", "dds-idl", "datetime"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:core/ondemand/.gensrc/dsf_define_node.hpp:NetworkInterface",
+      "type": "class",
+      "name": "NetworkInterface",
+      "filePath": "core/ondemand/.gensrc/dsf_define_node.hpp",
+      "lineRange": [64, 248],
+      "summary": "网络接口信息结构体，描述 DDS 节点的网络接口属性（如 IP 地址、接口名称等）。",
+      "tags": ["data-model", "dds-idl", "network"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:core/ondemand/.gensrc/dsf_define_node.hpp:BasicInfo",
+      "type": "class",
+      "name": "BasicInfo",
+      "filePath": "core/ondemand/.gensrc/dsf_define_node.hpp",
+      "lineRange": [250, 522],
+      "summary": "节点基本信息结构体，包含节点标识、名称、类型等基础元数据，用于 DDS 节点注册与发现。",
+      "tags": ["data-model", "dds-idl", "node-info"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:core/ondemand/.gensrc/dsf_define_node.hpp:RuntimeInfo",
+      "type": "class",
+      "name": "RuntimeInfo",
+      "filePath": "core/ondemand/.gensrc/dsf_define_node.hpp",
+      "lineRange": [524, 1044],
+      "summary": "节点运行时信息结构体，包含 CPU、内存、网络接口列表等运行时状态数据，用于节点健康监控。",
+      "tags": ["data-model", "dds-idl", "runtime", "monitoring"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:core/ondemand/.gensrc/dsf_define_datatypesPubSubTypes.cxx:serialize",
+      "type": "function",
+      "name": "serialize",
+      "filePath": "core/ondemand/.gensrc/dsf_define_datatypesPubSubTypes.cxx",
+      "lineRange": [55, 90],
+      "summary": "TimespecPubSubType 的序列化方法，将 Timespec 数据序列化为 DDS 负载格式。",
+      "tags": ["serialization", "dds-topic"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:core/ondemand/.gensrc/dsf_define_datatypesTypeObjectSupport.cxx:register_Timespec_type_identifier",
+      "type": "function",
+      "name": "register_Timespec_type_identifier",
+      "filePath": "core/ondemand/.gensrc/dsf_define_datatypesTypeObjectSupport.cxx",
+      "lineRange": [43, 137],
+      "summary": "注册 Timespec 类型的 DDS TypeObject 标识符，用于类型发现和动态类型支持。",
+      "tags": ["type-registration", "dds-idl"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.cxx:register_NetworkInterface_type_identifier",
+      "type": "function",
+      "name": "register_NetworkInterface_type_identifier",
+      "filePath": "core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.cxx",
+      "lineRange": [44, 147],
+      "summary": "注册 NetworkInterface 类型的 DDS TypeObject 标识符。",
+      "tags": ["type-registration", "dds-idl"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.cxx:register_BasicInfo_type_identifier",
+      "type": "function",
+      "name": "register_BasicInfo_type_identifier",
+      "filePath": "core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.cxx",
+      "lineRange": [150, 326],
+      "summary": "注册 BasicInfo 类型的 DDS TypeObject 标识符。",
+      "tags": ["type-registration", "dds-idl"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.cxx:register_RuntimeInfo_type_identifier",
+      "type": "function",
+      "name": "register_RuntimeInfo_type_identifier",
+      "filePath": "core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.cxx",
+      "lineRange": [328, 764],
+      "summary": "注册 RuntimeInfo 类型的 DDS TypeObject 标识符，该函数较大因为 RuntimeInfo 包含嵌套类型和序列。",
+      "tags": ["type-registration", "dds-idl"],
+      "complexity": "complex"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:core/ondemand/.gensrc/dsf_define_datatypes.hpp",
+      "target": "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:Timespec",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/dsf_define_datatypes.hpp",
+      "target": "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:NamedValue",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/dsf_define_datatypes.hpp",
+      "target": "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:StructuredDataMapEntry",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/dsf_define_datatypes.hpp",
+      "target": "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DataBuffer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/dsf_define_datatypes.hpp",
+      "target": "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_FILE",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/dsf_define_datatypes.hpp",
+      "target": "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_TIME",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/dsf_define_datatypes.hpp",
+      "target": "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_DATE",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/dsf_define_datatypes.hpp",
+      "target": "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_TIME_OF_DAY",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/dsf_define_datatypes.hpp",
+      "target": "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_DATE_AND_TIME",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/dsf_define_datatypes.hpp",
+      "target": "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_LDATE",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/dsf_define_datatypes.hpp",
+      "target": "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_LTIME_OF_DAY",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/dsf_define_datatypes.hpp",
+      "target": "class:core/ondemand/.gensrc/dsf_define_datatypes.hpp:DT_LDATE_AND_TIME",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/dsf_define_node.hpp",
+      "target": "class:core/ondemand/.gensrc/dsf_define_node.hpp:NetworkInterface",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/dsf_define_node.hpp",
+      "target": "class:core/ondemand/.gensrc/dsf_define_node.hpp:BasicInfo",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/dsf_define_node.hpp",
+      "target": "class:core/ondemand/.gensrc/dsf_define_node.hpp:RuntimeInfo",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/dsf_define_datatypesPubSubTypes.cxx",
+      "target": "file:core/ondemand/.gensrc/dsf_define_datatypesCdrAux.hpp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/dsf_define_datatypesPubSubTypes.cxx",
+      "target": "file:core/ondemand/.gensrc/dsf_define_datatypesCdrAux.ipp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/dsf_define_datatypesPubSubTypes.cxx",
+      "target": "file:core/ondemand/.gensrc/dsf_define_datatypesPubSubTypes.hpp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/dsf_define_datatypesPubSubTypes.cxx",
+      "target": "file:core/ondemand/.gensrc/dsf_define_datatypesTypeObjectSupport.hpp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/dsf_define_datatypesTypeObjectSupport.cxx",
+      "target": "file:core/ondemand/.gensrc/dsf_define_datatypes.hpp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/dsf_define_datatypesTypeObjectSupport.cxx",
+      "target": "file:core/ondemand/.gensrc/dsf_define_datatypesTypeObjectSupport.hpp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/dsf_define_nodePubSubTypes.cxx",
+      "target": "file:core/ondemand/.gensrc/dsf_define_nodeCdrAux.hpp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/dsf_define_nodePubSubTypes.cxx",
+      "target": "file:core/ondemand/.gensrc/dsf_define_nodeCdrAux.ipp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/dsf_define_nodePubSubTypes.cxx",
+      "target": "file:core/ondemand/.gensrc/dsf_define_nodePubSubTypes.hpp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/dsf_define_nodePubSubTypes.cxx",
+      "target": "file:core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.hpp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.cxx",
+      "target": "file:core/ondemand/.gensrc/dsf_define_datatypes.hpp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.cxx",
+      "target": "file:core/ondemand/.gensrc/dsf_define_node.hpp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.cxx",
+      "target": "file:core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.hpp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/dsf_define_datatypesPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrc/dsf_define_datatypesPubSubTypes.cxx:serialize",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/dsf_define_datatypesTypeObjectSupport.cxx",
+      "target": "function:core/ondemand/.gensrc/dsf_define_datatypesTypeObjectSupport.cxx:register_Timespec_type_identifier",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.cxx",
+      "target": "function:core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.cxx:register_NetworkInterface_type_identifier",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.cxx",
+      "target": "function:core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.cxx:register_BasicInfo_type_identifier",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.cxx",
+      "target": "function:core/ondemand/.gensrc/dsf_define_nodeTypeObjectSupport.cxx:register_RuntimeInfo_type_identifier",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    }
+  ]
+}

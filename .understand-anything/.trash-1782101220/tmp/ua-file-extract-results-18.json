@@ -1,0 +1,809 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 3,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "core/ondemand/.gensrctx/dsf_define_node.cxx",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 837,
+      "nonEmptyLines": 718,
+      "functions": [
+        {
+          "name": "NetworkInterface",
+          "startLine": 38,
+          "endLine": 40,
+          "params": []
+        },
+        {
+          "name": "~NetworkInterface",
+          "startLine": 42,
+          "endLine": 44,
+          "params": []
+        },
+        {
+          "name": "NetworkInterface",
+          "startLine": 46,
+          "endLine": 51,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "NetworkInterface",
+          "startLine": 53,
+          "endLine": 58,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator ==",
+          "startLine": 78,
+          "endLine": 83,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator !=",
+          "startLine": 85,
+          "endLine": 89,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "interfaceName",
+          "startLine": 95,
+          "endLine": 99,
+          "params": [
+            "_interfaceName"
+          ]
+        },
+        {
+          "name": "interfaceName",
+          "startLine": 105,
+          "endLine": 109,
+          "params": [
+            "_interfaceName"
+          ]
+        },
+        {
+          "name": "ipAddress",
+          "startLine": 134,
+          "endLine": 138,
+          "params": [
+            "_ipAddress"
+          ]
+        },
+        {
+          "name": "ipAddress",
+          "startLine": 144,
+          "endLine": 148,
+          "params": [
+            "_ipAddress"
+          ]
+        },
+        {
+          "name": "BasicInfo",
+          "startLine": 171,
+          "endLine": 173,
+          "params": []
+        },
+        {
+          "name": "~BasicInfo",
+          "startLine": 175,
+          "endLine": 177,
+          "params": []
+        },
+        {
+          "name": "BasicInfo",
+          "startLine": 179,
+          "endLine": 186,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "BasicInfo",
+          "startLine": 188,
+          "endLine": 195,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator ==",
+          "startLine": 219,
+          "endLine": 226,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator !=",
+          "startLine": 228,
+          "endLine": 232,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "nodeName",
+          "startLine": 238,
+          "endLine": 242,
+          "params": [
+            "_nodeName"
+          ]
+        },
+        {
+          "name": "nodeName",
+          "startLine": 248,
+          "endLine": 252,
+          "params": [
+            "_nodeName"
+          ]
+        },
+        {
+          "name": "description",
+          "startLine": 277,
+          "endLine": 281,
+          "params": [
+            "_description"
+          ]
+        },
+        {
+          "name": "description",
+          "startLine": 287,
+          "endLine": 291,
+          "params": [
+            "_description"
+          ]
+        },
+        {
+          "name": "version",
+          "startLine": 316,
+          "endLine": 320,
+          "params": [
+            "_version"
+          ]
+        },
+        {
+          "name": "version",
+          "startLine": 326,
+          "endLine": 330,
+          "params": [
+            "_version"
+          ]
+        },
+        {
+          "name": "pubtime",
+          "startLine": 355,
+          "endLine": 359,
+          "params": [
+            "_pubtime"
+          ]
+        },
+        {
+          "name": "pubtime",
+          "startLine": 365,
+          "endLine": 369,
+          "params": [
+            "_pubtime"
+          ]
+        },
+        {
+          "name": "RuntimeInfo",
+          "startLine": 390,
+          "endLine": 392,
+          "params": []
+        },
+        {
+          "name": "~RuntimeInfo",
+          "startLine": 394,
+          "endLine": 396,
+          "params": []
+        },
+        {
+          "name": "RuntimeInfo",
+          "startLine": 398,
+          "endLine": 410,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "RuntimeInfo",
+          "startLine": 412,
+          "endLine": 424,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator ==",
+          "startLine": 458,
+          "endLine": 470,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator !=",
+          "startLine": 472,
+          "endLine": 476,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "nodeName",
+          "startLine": 482,
+          "endLine": 486,
+          "params": [
+            "_nodeName"
+          ]
+        },
+        {
+          "name": "nodeName",
+          "startLine": 492,
+          "endLine": 496,
+          "params": [
+            "_nodeName"
+          ]
+        },
+        {
+          "name": "processId",
+          "startLine": 521,
+          "endLine": 525,
+          "params": [
+            "_processId"
+          ]
+        },
+        {
+          "name": "processId",
+          "startLine": 531,
+          "endLine": 535,
+          "params": [
+            "_processId"
+          ]
+        },
+        {
+          "name": "hostName",
+          "startLine": 560,
+          "endLine": 564,
+          "params": [
+            "_hostName"
+          ]
+        },
+        {
+          "name": "hostName",
+          "startLine": 570,
+          "endLine": 574,
+          "params": [
+            "_hostName"
+          ]
+        },
+        {
+          "name": "execPath",
+          "startLine": 599,
+          "endLine": 603,
+          "params": [
+            "_execPath"
+          ]
+        },
+        {
+          "name": "execPath",
+          "startLine": 609,
+          "endLine": 613,
+          "params": [
+            "_execPath"
+          ]
+        },
+        {
+          "name": "execTimestamp",
+          "startLine": 638,
+          "endLine": 642,
+          "params": [
+            "_execTimestamp"
+          ]
+        },
+        {
+          "name": "execTimestamp",
+          "startLine": 648,
+          "endLine": 652,
+          "params": [
+            "_execTimestamp"
+          ]
+        },
+        {
+          "name": "userName",
+          "startLine": 677,
+          "endLine": 681,
+          "params": [
+            "_userName"
+          ]
+        },
+        {
+          "name": "userName",
+          "startLine": 687,
+          "endLine": 691,
+          "params": [
+            "_userName"
+          ]
+        },
+        {
+          "name": "publicAddress",
+          "startLine": 716,
+          "endLine": 720,
+          "params": [
+            "_publicAddress"
+          ]
+        },
+        {
+          "name": "publicAddress",
+          "startLine": 726,
+          "endLine": 730,
+          "params": [
+            "_publicAddress"
+          ]
+        },
+        {
+          "name": "properities",
+          "startLine": 755,
+          "endLine": 759,
+          "params": [
+            "_properities"
+          ]
+        },
+        {
+          "name": "properities",
+          "startLine": 765,
+          "endLine": 769,
+          "params": [
+            "_properities"
+          ]
+        },
+        {
+          "name": "networkInterfaces",
+          "startLine": 794,
+          "endLine": 798,
+          "params": [
+            "_networkInterfaces"
+          ]
+        },
+        {
+          "name": "networkInterfaces",
+          "startLine": 804,
+          "endLine": 808,
+          "params": [
+            "_networkInterfaces"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "NetworkInterface",
+          "line": 38,
+          "isDefault": false
+        },
+        {
+          "name": "~NetworkInterface",
+          "line": 42,
+          "isDefault": false
+        },
+        {
+          "name": "NetworkInterface",
+          "line": 46,
+          "isDefault": false
+        },
+        {
+          "name": "NetworkInterface",
+          "line": 53,
+          "isDefault": false
+        },
+        {
+          "name": "operator ==",
+          "line": 78,
+          "isDefault": false
+        },
+        {
+          "name": "operator !=",
+          "line": 85,
+          "isDefault": false
+        },
+        {
+          "name": "interfaceName",
+          "line": 95,
+          "isDefault": false
+        },
+        {
+          "name": "interfaceName",
+          "line": 105,
+          "isDefault": false
+        },
+        {
+          "name": "ipAddress",
+          "line": 134,
+          "isDefault": false
+        },
+        {
+          "name": "ipAddress",
+          "line": 144,
+          "isDefault": false
+        },
+        {
+          "name": "BasicInfo",
+          "line": 171,
+          "isDefault": false
+        },
+        {
+          "name": "~BasicInfo",
+          "line": 175,
+          "isDefault": false
+        },
+        {
+          "name": "BasicInfo",
+          "line": 179,
+          "isDefault": false
+        },
+        {
+          "name": "BasicInfo",
+          "line": 188,
+          "isDefault": false
+        },
+        {
+          "name": "operator ==",
+          "line": 219,
+          "isDefault": false
+        },
+        {
+          "name": "operator !=",
+          "line": 228,
+          "isDefault": false
+        },
+        {
+          "name": "nodeName",
+          "line": 238,
+          "isDefault": false
+        },
+        {
+          "name": "nodeName",
+          "line": 248,
+          "isDefault": false
+        },
+        {
+          "name": "description",
+          "line": 277,
+          "isDefault": false
+        },
+        {
+          "name": "description",
+          "line": 287,
+          "isDefault": false
+        },
+        {
+          "name": "version",
+          "line": 316,
+          "isDefault": false
+        },
+        {
+          "name": "version",
+          "line": 326,
+          "isDefault": false
+        },
+        {
+          "name": "pubtime",
+          "line": 355,
+          "isDefault": false
+        },
+        {
+          "name": "pubtime",
+          "line": 365,
+          "isDefault": false
+        },
+        {
+          "name": "RuntimeInfo",
+          "line": 390,
+          "isDefault": false
+        },
+        {
+          "name": "~RuntimeInfo",
+          "line": 394,
+          "isDefault": false
+        },
+        {
+          "name": "RuntimeInfo",
+          "line": 398,
+          "isDefault": false
+        },
+        {
+          "name": "RuntimeInfo",
+          "line": 412,
+          "isDefault": false
+        },
+        {
+          "name": "operator ==",
+          "line": 458,
+          "isDefault": false
+        },
+        {
+          "name": "operator !=",
+          "line": 472,
+          "isDefault": false
+        },
+        {
+          "name": "nodeName",
+          "line": 482,
+          "isDefault": false
+        },
+        {
+          "name": "nodeName",
+          "line": 492,
+          "isDefault": false
+        },
+        {
+          "name": "processId",
+          "line": 521,
+          "isDefault": false
+        },
+        {
+          "name": "processId",
+          "line": 531,
+          "isDefault": false
+        },
+        {
+          "name": "hostName",
+          "line": 560,
+          "isDefault": false
+        },
+        {
+          "name": "hostName",
+          "line": 570,
+          "isDefault": false
+        },
+        {
+          "name": "execPath",
+          "line": 599,
+          "isDefault": false
+        },
+        {
+          "name": "execPath",
+          "line": 609,
+          "isDefault": false
+        },
+        {
+          "name": "execTimestamp",
+          "line": 638,
+          "isDefault": false
+        },
+        {
+          "name": "execTimestamp",
+          "line": 648,
+          "isDefault": false
+        },
+        {
+          "name": "userName",
+          "line": 677,
+          "isDefault": false
+        },
+        {
+          "name": "userName",
+          "line": 687,
+          "isDefault": false
+        },
+        {
+          "name": "publicAddress",
+          "line": 716,
+          "isDefault": false
+        },
+        {
+          "name": "publicAddress",
+          "line": 726,
+          "isDefault": false
+        },
+        {
+          "name": "properities",
+          "line": 755,
+          "isDefault": false
+        },
+        {
+          "name": "properities",
+          "line": 765,
+          "isDefault": false
+        },
+        {
+          "name": "networkInterfaces",
+          "line": 794,
+          "isDefault": false
+        },
+        {
+          "name": "networkInterfaces",
+          "line": 804,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "NetworkInterface",
+          "callee": "std::move",
+          "lineNumber": 56
+        },
+        {
+          "caller": "NetworkInterface",
+          "callee": "std::move",
+          "lineNumber": 57
+        },
+        {
+          "caller": "interfaceName",
+          "callee": "std::move",
+          "lineNumber": 108
+        },
+        {
+          "caller": "ipAddress",
+          "callee": "std::move",
+          "lineNumber": 147
+        },
+        {
+          "caller": "BasicInfo",
+          "callee": "std::move",
+          "lineNumber": 191
+        },
+        {
+          "caller": "BasicInfo",
+          "callee": "std::move",
+          "lineNumber": 192
+        },
+        {
+          "caller": "BasicInfo",
+          "callee": "std::move",
+          "lineNumber": 193
+        },
+        {
+          "caller": "BasicInfo",
+          "callee": "std::move",
+          "lineNumber": 194
+        },
+        {
+          "caller": "nodeName",
+          "callee": "std::move",
+          "lineNumber": 251
+        },
+        {
+          "caller": "description",
+          "callee": "std::move",
+          "lineNumber": 290
+        },
+        {
+          "caller": "version",
+          "callee": "std::move",
+          "lineNumber": 329
+        },
+        {
+          "caller": "pubtime",
+          "callee": "std::move",
+          "lineNumber": 368
+        },
+        {
+          "caller": "RuntimeInfo",
+          "callee": "std::move",
+          "lineNumber": 415
+        },
+        {
+          "caller": "RuntimeInfo",
+          "callee": "std::move",
+          "lineNumber": 416
+        },
+        {
+          "caller": "RuntimeInfo",
+          "callee": "std::move",
+          "lineNumber": 417
+        },
+        {
+          "caller": "RuntimeInfo",
+          "callee": "std::move",
+          "lineNumber": 418
+        },
+        {
+          "caller": "RuntimeInfo",
+          "callee": "std::move",
+          "lineNumber": 419
+        },
+        {
+          "caller": "RuntimeInfo",
+          "callee": "std::move",
+          "lineNumber": 420
+        },
+        {
+          "caller": "RuntimeInfo",
+          "callee": "std::move",
+          "lineNumber": 421
+        },
+        {
+          "caller": "RuntimeInfo",
+          "callee": "std::move",
+          "lineNumber": 422
+        },
+        {
+          "caller": "RuntimeInfo",
+          "callee": "std::move",
+          "lineNumber": 423
+        },
+        {
+          "caller": "nodeName",
+          "callee": "std::move",
+          "lineNumber": 495
+        },
+        {
+          "caller": "processId",
+          "callee": "std::move",
+          "lineNumber": 534
+        },
+        {
+          "caller": "hostName",
+          "callee": "std::move",
+          "lineNumber": 573
+        },
+        {
+          "caller": "execPath",
+          "callee": "std::move",
+          "lineNumber": 612
+        },
+        {
+          "caller": "execTimestamp",
+          "callee": "std::move",
+          "lineNumber": 651
+        },
+        {
+          "caller": "userName",
+          "callee": "std::move",
+          "lineNumber": 690
+        },
+        {
+          "caller": "publicAddress",
+          "callee": "std::move",
+          "lineNumber": 729
+        },
+        {
+          "caller": "properities",
+          "callee": "std::move",
+          "lineNumber": 768
+        },
+        {
+          "caller": "networkInterfaces",
+          "callee": "std::move",
+          "lineNumber": 807
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 48,
+        "functionCount": 48,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "core/ondemand/.gensrctx/dsf_define_node.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 706,
+      "nonEmptyLines": 579,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "core/ondemand/.gensrctx/dsf_define_nodeCdrAux.ipp",
+      "language": "ipp",
+      "fileCategory": "code",
+      "totalLines": 409,
+      "nonEmptyLines": 310,
+      "metrics": {}
+    }
+  ]
+}

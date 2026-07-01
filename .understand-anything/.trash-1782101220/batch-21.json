@@ -1,0 +1,254 @@
+{
+  "nodes": [
+    {
+      "id": "file:core/ondemand/.gensrctx/dsf_define_varCdrAux.hpp",
+      "type": "file",
+      "name": "dsf_define_varCdrAux.hpp",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_varCdrAux.hpp",
+      "summary": "FastDDS 自动生成的 CDR 序列化辅助头文件，为 onDemand 系统中的 IDL 消息类型提供 Cdr 序列化/反序列化的函数声明。",
+      "tags": ["auto-generated", "serialization", "dds", "cdr", "header"],
+      "complexity": "moderate",
+      "languageNotes": "由 FastDDS IDL 编译器自动生成，包含 BaoSky::Cdr 命名空间下的序列化/反序列化函数声明。"
+    },
+    {
+      "id": "file:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx",
+      "type": "file",
+      "name": "dsf_define_varPubSubTypes.cxx",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx",
+      "summary": "FastDDS 自动生成的 PubSubType 实现文件，包含 11 个 DDS 消息类型的序列化/反序列化/键值提取等操作，是 onDemand 变量发布订阅系统的 DDS 数据传输核心。",
+      "tags": ["auto-generated", "serialization", "dds", "pub-sub", "implementation"],
+      "complexity": "complex",
+      "languageNotes": "由 FastDDS IDL 编译器自动生成，包含 11 个 PubSubType 类的完整实现，每个类提供构造/析构/Serialize/Deserialize/GetSerializedSizeProvider/DeleteData/GetKey 共 7 个方法，使用 malloc/free 进行内存管理。"
+    },
+    {
+      "id": "file:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.h",
+      "type": "file",
+      "name": "dsf_define_varPubSubTypes.h",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_varPubSubTypes.h",
+      "summary": "FastDDS 自动生成的 PubSubType 头文件，声明 11 个 DDS 消息类型的 PubSubType 类，用于 DDS 中间件的数据类型注册和序列化接口。",
+      "tags": ["auto-generated", "dds", "pub-sub", "header", "type-definition"],
+      "complexity": "moderate",
+      "languageNotes": "由 FastDDS IDL 编译器自动生成，声明继承自 TopicDataType 的 PubSubType 类，提供 DDS 数据类型的序列化接口。"
+    },
+    {
+      "id": "class:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx:AccessControlPubSubType",
+      "type": "class",
+      "name": "AccessControlPubSubType",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx",
+      "lineRange": [37, 165],
+      "summary": "AccessControl 消息的 DDS PubSubType 实现，提供该消息类型的序列化、反序列化、大小计算和键值提取功能。",
+      "tags": ["auto-generated", "dds", "serialization", "pub-sub-type"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx:DefinePubSubType",
+      "type": "class",
+      "name": "DefinePubSubType",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx",
+      "lineRange": [167, 295],
+      "summary": "Define 消息的 DDS PubSubType 实现，处理变量定义消息的 DDS 序列化和反序列化。",
+      "tags": ["auto-generated", "dds", "serialization", "pub-sub-type"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx:UndefinePubSubType",
+      "type": "class",
+      "name": "UndefinePubSubType",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx",
+      "lineRange": [297, 425],
+      "summary": "Undefine 消息的 DDS PubSubType 实现，处理变量取消定义消息的 DDS 序列化和反序列化。",
+      "tags": ["auto-generated", "dds", "serialization", "pub-sub-type"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx:VarRequestEnvelopePubSubType",
+      "type": "class",
+      "name": "VarRequestEnvelopePubSubType",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx",
+      "lineRange": [427, 555],
+      "summary": "VarRequestEnvelope 消息的 DDS PubSubType 实现，处理变量订阅请求信封消息的 DDS 序列化和反序列化。",
+      "tags": ["auto-generated", "dds", "serialization", "pub-sub-type"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx:DataTransferPubSubType",
+      "type": "class",
+      "name": "DataTransferPubSubType",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx",
+      "lineRange": [557, 685],
+      "summary": "DataTransfer 消息的 DDS PubSubType 实现，处理变量数据传输消息的 DDS 序列化和反序列化。",
+      "tags": ["auto-generated", "dds", "serialization", "pub-sub-type", "data-transfer"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx:DataTransferExPubSubType",
+      "type": "class",
+      "name": "DataTransferExPubSubType",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx",
+      "lineRange": [687, 815],
+      "summary": "DataTransferEx 扩展消息的 DDS PubSubType 实现，处理扩展变量数据传输消息的 DDS 序列化和反序列化。",
+      "tags": ["auto-generated", "dds", "serialization", "pub-sub-type", "data-transfer"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx:VarPubSubInfoPubSubType",
+      "type": "class",
+      "name": "VarPubSubInfoPubSubType",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx",
+      "lineRange": [817, 945],
+      "summary": "VarPubSubInfo 消息的 DDS PubSubType 实现，处理变量发布订阅信息消息的 DDS 序列化和反序列化。",
+      "tags": ["auto-generated", "dds", "serialization", "pub-sub-type"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx:PubTableVarDefinePubSubType",
+      "type": "class",
+      "name": "PubTableVarDefinePubSubType",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx",
+      "lineRange": [947, 1075],
+      "summary": "PubTableVarDefine 消息的 DDS PubSubType 实现，处理发布表变量定义消息的 DDS 序列化和反序列化。",
+      "tags": ["auto-generated", "dds", "serialization", "pub-sub-type"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx:PubTableDefinePubSubType",
+      "type": "class",
+      "name": "PubTableDefinePubSubType",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx",
+      "lineRange": [1077, 1205],
+      "summary": "PubTableDefine 消息的 DDS PubSubType 实现，处理发布表定义消息的 DDS 序列化和反序列化。",
+      "tags": ["auto-generated", "dds", "serialization", "pub-sub-type"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx:TableDataTransferPubSubType",
+      "type": "class",
+      "name": "TableDataTransferPubSubType",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx",
+      "lineRange": [1207, 1335],
+      "summary": "TableDataTransfer 消息的 DDS PubSubType 实现，处理表数据传输消息的 DDS 序列化和反序列化，用于按 bucket 批量传输变量数据。",
+      "tags": ["auto-generated", "dds", "serialization", "pub-sub-type", "data-transfer"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx:TableUpdateBatchPubSubType",
+      "type": "class",
+      "name": "TableUpdateBatchPubSubType",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx",
+      "lineRange": [1337, 1465],
+      "summary": "TableUpdateBatch 消息的 DDS PubSubType 实现，处理表批量更新消息的 DDS 序列化和反序列化。",
+      "tags": ["auto-generated", "dds", "serialization", "pub-sub-type", "data-transfer"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx:TableDataTransferExPubSubType",
+      "type": "class",
+      "name": "TableDataTransferExPubSubType",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx",
+      "lineRange": [1467, 1595],
+      "summary": "TableDataTransferEx 扩展消息的 DDS PubSubType 实现，处理扩展表数据传输消息的 DDS 序列化和反序列化。",
+      "tags": ["auto-generated", "dds", "serialization", "pub-sub-type", "data-transfer"],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx",
+      "target": "file:core/ondemand/.gensrctx/dsf_define_varCdrAux.hpp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx",
+      "target": "file:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx",
+      "target": "class:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx:AccessControlPubSubType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx",
+      "target": "class:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx:DefinePubSubType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx",
+      "target": "class:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx:UndefinePubSubType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx",
+      "target": "class:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx:VarRequestEnvelopePubSubType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx",
+      "target": "class:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx:DataTransferPubSubType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx",
+      "target": "class:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx:DataTransferExPubSubType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx",
+      "target": "class:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx:VarPubSubInfoPubSubType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx",
+      "target": "class:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx:PubTableVarDefinePubSubType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx",
+      "target": "class:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx:PubTableDefinePubSubType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx",
+      "target": "class:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx:TableDataTransferPubSubType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx",
+      "target": "class:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx:TableUpdateBatchPubSubType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx",
+      "target": "class:core/ondemand/.gensrctx/dsf_define_varPubSubTypes.cxx:TableDataTransferExPubSubType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    }
+  ]
+}

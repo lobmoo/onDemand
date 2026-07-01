@@ -1,0 +1,50 @@
+{
+  "nodes": [
+    {
+      "id": "file:core/ondemand/.gensrctx/dsf_define_var.cxx",
+      "type": "file",
+      "name": "dsf_define_var.cxx",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_var.cxx",
+      "summary": "由 fastddsgen 自动生成的 DDS IDL 数据类型实现文件，包含 DSF::Var 命名空间下所有消息结构体（AccessControl、Define、Undefine、VarRequest、VarRequestEnvelope、DataTransfer、DataTransferEx、VarPubSubInfo、PubTableVarDefine、PubTableDefine、TableDataTransfer、TableUpdateBatch、TableDataTransferEx）的构造函数、析构函数、拷贝/移动赋值、比较运算符和属性 setter/getter 实现。",
+      "tags": ["auto-generated", "type-definition", "dds-idl", "serialization", "data-model"],
+      "complexity": "complex",
+      "languageNotes": "由 fastddsgen 工具自动生成的 C++17 代码，实现了 DSF::Var 命名空间下 13 个 DDS 消息结构体的全部成员函数（168 个函数）。大量使用 std::move 语义进行移动赋值。DataTransferEx 继承自 DataTransfer，TableDataTransferEx 继承自 TableDataTransfer。"
+    },
+    {
+      "id": "file:core/ondemand/.gensrctx/dsf_define_var.h",
+      "type": "file",
+      "name": "dsf_define_var.h",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_var.h",
+      "summary": "由 fastddsgen 自动生成的 DDS IDL 数据类型头文件，声明了 DSF::Var 命名空间下所有消息结构体（AccessControl、Define、Undefine、VarRequest、VarRequestEnvelope、DataTransfer、DataTransferEx、VarPubSubInfo、PubTableVarDefine、PubTableDefine、TableDataTransfer、TableUpdateBatch、TableDataTransferEx）的类定义、枚举类型（DEFINE_TYPE、BLOB_TYPE）以及 DDS Topic 名称常量。",
+      "tags": ["auto-generated", "type-definition", "dds-idl", "header", "data-model"],
+      "complexity": "complex",
+      "languageNotes": "由 fastddsgen 自动生成的头文件，定义了 13 个 DDS 消息结构体和 2 个枚举类型。包含 DDS Topic 名称常量（如 dsf/sys/var/tableDefine、dsf/var/data/transfer/）。DataTransferEx 和 TableDataTransferEx 分别继承自 DataTransfer 和 TableDataTransfer。依赖 dsf_define_model.h 和 txcdr/optional.h。"
+    },
+    {
+      "id": "file:core/ondemand/.gensrctx/dsf_define_varCdrAux.ipp",
+      "type": "file",
+      "name": "dsf_define_varCdrAux.ipp",
+      "filePath": "core/ondemand/.gensrctx/dsf_define_varCdrAux.ipp",
+      "summary": "由 fastddsgen 自动生成的 CDR（Common Data Representation）序列化辅助实现文件，包含 DSF::Var 命名空间下所有 DDS 消息结构体的 CDR 序列化和反序列化函数，用于 DDS 数据的网络传输编解码。",
+      "tags": ["auto-generated", "serialization", "dds-idl", "cdr", "encoding"],
+      "complexity": "complex",
+      "languageNotes": "CDR（Common Data Representation）是 DDS 标准的二进制序列化格式。此文件使用 BaoSky::Cdr 命名空间下的 Cdr 和 CdrSizeCalculator 类实现所有消息结构体的序列化/反序列化逻辑。作为 .ipp 文件被包含在 .cxx 中，实现与头文件声明分离的编译优化模式。"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_var.cxx",
+      "target": "file:core/ondemand/.gensrctx/dsf_define_var.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/dsf_define_var.cxx",
+      "target": "file:core/ondemand/.gensrctx/dsf_define_varCdrAux.ipp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    }
+  ]
+}

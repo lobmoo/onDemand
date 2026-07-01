@@ -1,0 +1,7317 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 25,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "thirdparty/arrow/include/arrow/array.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 49,
+      "nonEmptyLines": 42,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/array/array_base.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 285,
+      "nonEmptyLines": 238,
+      "callGraph": [
+        {
+          "caller": "IsNull",
+          "callee": "IsValid",
+          "lineNumber": 58
+        },
+        {
+          "caller": "IsValid",
+          "callee": "bit_util::GetBit",
+          "lineNumber": 64
+        },
+        {
+          "caller": "IsValid",
+          "callee": "type_id",
+          "lineNumber": 70
+        },
+        {
+          "caller": "IsValid",
+          "callee": "internal::IsNullSparseUnion",
+          "lineNumber": 71
+        },
+        {
+          "caller": "IsValid",
+          "callee": "type_id",
+          "lineNumber": 73
+        },
+        {
+          "caller": "IsValid",
+          "callee": "internal::IsNullDenseUnion",
+          "lineNumber": 74
+        },
+        {
+          "caller": "IsValid",
+          "callee": "type_id",
+          "lineNumber": 76
+        },
+        {
+          "caller": "IsValid",
+          "callee": "internal::IsNullRunEndEncoded",
+          "lineNumber": 77
+        },
+        {
+          "caller": "type_id",
+          "callee": "id",
+          "lineNumber": 110
+        },
+        {
+          "caller": "num_fields",
+          "callee": "static_cast<int>",
+          "lineNumber": 189
+        },
+        {
+          "caller": "num_fields",
+          "callee": "size",
+          "lineNumber": 189
+        },
+        {
+          "caller": "SetData",
+          "callee": "size",
+          "lineNumber": 220
+        },
+        {
+          "caller": "SetData",
+          "callee": "GetValuesSafe<uint8_t>",
+          "lineNumber": 221
+        },
+        {
+          "caller": "SetData",
+          "callee": "Array::SetData",
+          "lineNumber": 260
+        },
+        {
+          "caller": "SetData",
+          "callee": "GetValuesSafe<uint8_t>",
+          "lineNumber": 261
+        },
+        {
+          "caller": "PrimitiveArray",
+          "callee": "SetData",
+          "lineNumber": 264
+        },
+        {
+          "caller": "NullArray",
+          "callee": "SetData",
+          "lineNumber": 274
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/array/array_binary.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 269,
+      "nonEmptyLines": 214,
+      "callGraph": [
+        {
+          "caller": "GetView",
+          "callee": "std::string_view",
+          "lineNumber": 74
+        },
+        {
+          "caller": "GetView",
+          "callee": "reinterpret_cast<const char*>",
+          "lineNumber": 74
+        },
+        {
+          "caller": "operator[]",
+          "callee": "IteratorType",
+          "lineNumber": 79
+        },
+        {
+          "caller": "Value",
+          "callee": "GetView",
+          "lineNumber": 87
+        },
+        {
+          "caller": "GetString",
+          "callee": "std::string",
+          "lineNumber": 93
+        },
+        {
+          "caller": "GetString",
+          "callee": "GetView",
+          "lineNumber": 93
+        },
+        {
+          "caller": "begin",
+          "callee": "IteratorType",
+          "lineNumber": 135
+        },
+        {
+          "caller": "end",
+          "callee": "IteratorType",
+          "lineNumber": 137
+        },
+        {
+          "caller": "end",
+          "callee": "length",
+          "lineNumber": 137
+        },
+        {
+          "caller": "SetData",
+          "callee": "Array::SetData",
+          "lineNumber": 145
+        },
+        {
+          "caller": "SetData",
+          "callee": "GetValuesSafe<offset_type>",
+          "lineNumber": 146
+        },
+        {
+          "caller": "SetData",
+          "callee": "GetValuesSafe<uint8_t>",
+          "lineNumber": 147
+        },
+        {
+          "caller": "Value",
+          "callee": "GetValue",
+          "lineNumber": 237
+        },
+        {
+          "caller": "GetView",
+          "callee": "std::string_view",
+          "lineNumber": 240
+        },
+        {
+          "caller": "GetView",
+          "callee": "reinterpret_cast<const char*>",
+          "lineNumber": 240
+        },
+        {
+          "caller": "GetView",
+          "callee": "GetValue",
+          "lineNumber": 240
+        },
+        {
+          "caller": "GetView",
+          "callee": "byte_width",
+          "lineNumber": 240
+        },
+        {
+          "caller": "operator[]",
+          "callee": "IteratorType",
+          "lineNumber": 244
+        },
+        {
+          "caller": "GetString",
+          "callee": "std::string",
+          "lineNumber": 247
+        },
+        {
+          "caller": "GetString",
+          "callee": "GetView",
+          "lineNumber": 247
+        },
+        {
+          "caller": "begin",
+          "callee": "IteratorType",
+          "lineNumber": 253
+        },
+        {
+          "caller": "end",
+          "callee": "IteratorType",
+          "lineNumber": 255
+        },
+        {
+          "caller": "end",
+          "callee": "length",
+          "lineNumber": 255
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/array/array_decimal.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 72,
+      "nonEmptyLines": 54,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/array/array_dict.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 180,
+      "nonEmptyLines": 154,
+      "callGraph": [
+        {
+          "caller": "FromArrays",
+          "callee": "FromArrays",
+          "lineNumber": 80
+        },
+        {
+          "caller": "FromArrays",
+          "callee": "::arrow::dictionary",
+          "lineNumber": 80
+        },
+        {
+          "caller": "FromArrays",
+          "callee": "type",
+          "lineNumber": 80
+        },
+        {
+          "caller": "FromArrays",
+          "callee": "type",
+          "lineNumber": 80
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/array/array_nested.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 594,
+      "nonEmptyLines": 483,
+      "callGraph": [
+        {
+          "caller": "value_slice",
+          "callee": "Slice",
+          "lineNumber": 95
+        },
+        {
+          "caller": "value_slice",
+          "callee": "value_offset",
+          "lineNumber": 95
+        },
+        {
+          "caller": "value_slice",
+          "callee": "value_length",
+          "lineNumber": 95
+        },
+        {
+          "caller": "value_length",
+          "callee": "ARROW_UNUSED",
+          "lineNumber": 323
+        },
+        {
+          "caller": "value_slice",
+          "callee": "Slice",
+          "lineNumber": 327
+        },
+        {
+          "caller": "value_slice",
+          "callee": "value_offset",
+          "lineNumber": 327
+        },
+        {
+          "caller": "value_slice",
+          "callee": "value_length",
+          "lineNumber": 327
+        },
+        {
+          "caller": "child_id",
+          "callee": "child_ids",
+          "lineNumber": 450
+        },
+        {
+          "caller": "mode",
+          "callee": "mode",
+          "lineNumber": 455
+        },
+        {
+          "caller": "Make",
+          "callee": "Make",
+          "lineNumber": 492
+        },
+        {
+          "caller": "Make",
+          "callee": "std::move",
+          "lineNumber": 492
+        },
+        {
+          "caller": "Make",
+          "callee": "std::move",
+          "lineNumber": 492
+        },
+        {
+          "caller": "Make",
+          "callee": "std::move",
+          "lineNumber": 493
+        },
+        {
+          "caller": "Make",
+          "callee": "Make",
+          "lineNumber": 552
+        },
+        {
+          "caller": "Make",
+          "callee": "std::move",
+          "lineNumber": 552
+        },
+        {
+          "caller": "Make",
+          "callee": "std::move",
+          "lineNumber": 553
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/array/array_primitive.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 202,
+      "nonEmptyLines": 151,
+      "callGraph": [
+        {
+          "caller": "Value",
+          "callee": "bit_util::GetBit",
+          "lineNumber": 51
+        },
+        {
+          "caller": "Value",
+          "callee": "reinterpret_cast<const uint8_t*>",
+          "lineNumber": 51
+        },
+        {
+          "caller": "GetView",
+          "callee": "Value",
+          "lineNumber": 55
+        },
+        {
+          "caller": "operator[]",
+          "callee": "IteratorType",
+          "lineNumber": 57
+        },
+        {
+          "caller": "begin",
+          "callee": "IteratorType",
+          "lineNumber": 67
+        },
+        {
+          "caller": "end",
+          "callee": "IteratorType",
+          "lineNumber": 69
+        },
+        {
+          "caller": "end",
+          "callee": "length",
+          "lineNumber": 69
+        },
+        {
+          "caller": "NumericArray",
+          "callee": "TypeTraits<T1>::type_singleton",
+          "lineNumber": 102
+        },
+        {
+          "caller": "Value",
+          "callee": "raw_values",
+          "lineNumber": 109
+        },
+        {
+          "caller": "GetView",
+          "callee": "Value",
+          "lineNumber": 112
+        },
+        {
+          "caller": "operator[]",
+          "callee": "IteratorType",
+          "lineNumber": 115
+        },
+        {
+          "caller": "begin",
+          "callee": "IteratorType",
+          "lineNumber": 118
+        },
+        {
+          "caller": "end",
+          "callee": "IteratorType",
+          "lineNumber": 120
+        },
+        {
+          "caller": "end",
+          "callee": "length",
+          "lineNumber": 120
+        },
+        {
+          "caller": "Value",
+          "callee": "GetValue",
+          "lineNumber": 146
+        },
+        {
+          "caller": "GetView",
+          "callee": "GetValue",
+          "lineNumber": 149
+        },
+        {
+          "caller": "begin",
+          "callee": "IteratorType",
+          "lineNumber": 151
+        },
+        {
+          "caller": "end",
+          "callee": "IteratorType",
+          "lineNumber": 153
+        },
+        {
+          "caller": "end",
+          "callee": "length",
+          "lineNumber": 153
+        },
+        {
+          "caller": "operator[]",
+          "callee": "IteratorType",
+          "lineNumber": 156
+        },
+        {
+          "caller": "Value",
+          "callee": "GetValue",
+          "lineNumber": 182
+        },
+        {
+          "caller": "GetView",
+          "callee": "GetValue",
+          "lineNumber": 185
+        },
+        {
+          "caller": "begin",
+          "callee": "IteratorType",
+          "lineNumber": 187
+        },
+        {
+          "caller": "end",
+          "callee": "IteratorType",
+          "lineNumber": 189
+        },
+        {
+          "caller": "end",
+          "callee": "length",
+          "lineNumber": 189
+        },
+        {
+          "caller": "operator[]",
+          "callee": "IteratorType",
+          "lineNumber": 192
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/array/array_run_end.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 133,
+      "nonEmptyLines": 111,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/array/builder_adaptive.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 215,
+      "nonEmptyLines": 170,
+      "callGraph": [
+        {
+          "caller": "AppendNulls",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 52
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "CommitPendingData",
+          "lineNumber": 52
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "ARROW_PREDICT_TRUE",
+          "lineNumber": 53
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 54
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "Reserve",
+          "lineNumber": 54
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "memset",
+          "lineNumber": 55
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "mutable_data",
+          "lineNumber": 55
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "UnsafeSetNull",
+          "lineNumber": 56
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "Status::OK",
+          "lineNumber": 58
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 69
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "CommitPendingData",
+          "lineNumber": 70
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "Status::OK",
+          "lineNumber": 72
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 76
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "CommitPendingData",
+          "lineNumber": 76
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "ARROW_PREDICT_TRUE",
+          "lineNumber": 77
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 78
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "Reserve",
+          "lineNumber": 78
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "memset",
+          "lineNumber": 79
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "mutable_data",
+          "lineNumber": 79
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "UnsafeSetNotNull",
+          "lineNumber": 80
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "Status::OK",
+          "lineNumber": 82
+        },
+        {
+          "caller": "AppendEmptyValue",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 91
+        },
+        {
+          "caller": "AppendEmptyValue",
+          "callee": "CommitPendingData",
+          "lineNumber": 92
+        },
+        {
+          "caller": "AppendEmptyValue",
+          "callee": "Status::OK",
+          "lineNumber": 94
+        },
+        {
+          "caller": "AdaptiveUIntBuilder",
+          "callee": "default_memory_pool",
+          "lineNumber": 142
+        },
+        {
+          "caller": "Append",
+          "callee": "AppendInternal",
+          "lineNumber": 148
+        },
+        {
+          "caller": "AdaptiveIntBuilder",
+          "callee": "default_memory_pool",
+          "lineNumber": 180
+        },
+        {
+          "caller": "Append",
+          "callee": "AppendInternal",
+          "lineNumber": 187
+        },
+        {
+          "caller": "Append",
+          "callee": "static_cast<uint64_t>",
+          "lineNumber": 187
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/array/builder_base.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 370,
+      "nonEmptyLines": 304,
+      "functions": [
+        {
+          "name": "MakeBuilder",
+          "startLine": 330,
+          "endLine": 335,
+          "params": [
+            "type"
+          ]
+        },
+        {
+          "name": "MakeBuilderExactIndex",
+          "startLine": 344,
+          "endLine": 349,
+          "params": [
+            "type"
+          ]
+        },
+        {
+          "name": "MakeDictionaryBuilder",
+          "startLine": 362,
+          "endLine": 368,
+          "params": [
+            "type",
+            "dictionary"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "MakeBuilder",
+          "line": 330,
+          "isDefault": false
+        },
+        {
+          "name": "MakeBuilderExactIndex",
+          "line": 344,
+          "isDefault": false
+        },
+        {
+          "name": "MakeDictionaryBuilder",
+          "line": 362,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "AppendOrNull",
+          "callee": "static_cast<Builder*>",
+          "lineNumber": 46
+        },
+        {
+          "caller": "AppendOrNull",
+          "callee": "has_value",
+          "lineNumber": 47
+        },
+        {
+          "caller": "AppendOrNull",
+          "callee": "Append",
+          "lineNumber": 47
+        },
+        {
+          "caller": "AppendOrNull",
+          "callee": "AppendNull",
+          "lineNumber": 47
+        },
+        {
+          "caller": "UnsafeAppendOrNull",
+          "callee": "static_cast<Builder*>",
+          "lineNumber": 54
+        },
+        {
+          "caller": "UnsafeAppendOrNull",
+          "callee": "has_value",
+          "lineNumber": 55
+        },
+        {
+          "caller": "UnsafeAppendOrNull",
+          "callee": "UnsafeAppend",
+          "lineNumber": 55
+        },
+        {
+          "caller": "UnsafeAppendOrNull",
+          "callee": "UnsafeAppendNull",
+          "lineNumber": 55
+        },
+        {
+          "caller": "num_children",
+          "callee": "static_cast<int>",
+          "lineNumber": 112
+        },
+        {
+          "caller": "num_children",
+          "callee": "size",
+          "lineNumber": 112
+        },
+        {
+          "caller": "Reserve",
+          "callee": "capacity",
+          "lineNumber": 139
+        },
+        {
+          "caller": "Reserve",
+          "callee": "length",
+          "lineNumber": 140
+        },
+        {
+          "caller": "Reserve",
+          "callee": "Status::OK",
+          "lineNumber": 141
+        },
+        {
+          "caller": "Reserve",
+          "callee": "BufferBuilder::GrowByFactor",
+          "lineNumber": 144
+        },
+        {
+          "caller": "Reserve",
+          "callee": "Resize",
+          "lineNumber": 145
+        },
+        {
+          "caller": "AppendScalar",
+          "callee": "AppendScalar",
+          "lineNumber": 171
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "Status::NotImplemented",
+          "lineNumber": 180
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "type",
+          "lineNumber": 180
+        },
+        {
+          "caller": "UnsafeAppendNull",
+          "callee": "UnsafeAppendToBitmap",
+          "lineNumber": 224
+        },
+        {
+          "caller": "UnsafeAppendToBitmap",
+          "callee": "UnsafeAppend",
+          "lineNumber": 228
+        },
+        {
+          "caller": "UnsafeAppendToBitmap",
+          "callee": "UnsafeSetNotNull",
+          "lineNumber": 237
+        },
+        {
+          "caller": "UnsafeAppendToBitmap",
+          "callee": "UnsafeAppend",
+          "lineNumber": 239
+        },
+        {
+          "caller": "UnsafeAppendToBitmap",
+          "callee": "false_count",
+          "lineNumber": 241
+        },
+        {
+          "caller": "UnsafeAppendToBitmap",
+          "callee": "UnsafeSetNotNull",
+          "lineNumber": 248
+        },
+        {
+          "caller": "UnsafeAppendToBitmap",
+          "callee": "UnsafeAppend",
+          "lineNumber": 250
+        },
+        {
+          "caller": "UnsafeAppendToBitmap",
+          "callee": "false_count",
+          "lineNumber": 252
+        },
+        {
+          "caller": "UnsafeAppendToBitmap",
+          "callee": "UnsafeSetNotNull",
+          "lineNumber": 258
+        },
+        {
+          "caller": "UnsafeAppendToBitmap",
+          "callee": "UnsafeSetNull",
+          "lineNumber": 260
+        },
+        {
+          "caller": "FinishTyped",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 278
+        },
+        {
+          "caller": "FinishTyped",
+          "callee": "Finish",
+          "lineNumber": 278
+        },
+        {
+          "caller": "FinishTyped",
+          "callee": "std::static_pointer_cast<ArrayType>",
+          "lineNumber": 279
+        },
+        {
+          "caller": "FinishTyped",
+          "callee": "std::move",
+          "lineNumber": 279
+        },
+        {
+          "caller": "FinishTyped",
+          "callee": "Status::OK",
+          "lineNumber": 280
+        },
+        {
+          "caller": "CheckCapacity",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 285
+        },
+        {
+          "caller": "CheckCapacity",
+          "callee": "Status::Invalid",
+          "lineNumber": 286
+        },
+        {
+          "caller": "CheckCapacity",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 290
+        },
+        {
+          "caller": "CheckCapacity",
+          "callee": "Status::Invalid",
+          "lineNumber": 291
+        },
+        {
+          "caller": "CheckCapacity",
+          "callee": "Status::OK",
+          "lineNumber": 295
+        },
+        {
+          "caller": "MakeBuilder",
+          "callee": "default_memory_pool",
+          "lineNumber": 331
+        },
+        {
+          "caller": "MakeBuilder",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 333
+        },
+        {
+          "caller": "MakeBuilder",
+          "callee": "MakeBuilder",
+          "lineNumber": 333
+        },
+        {
+          "caller": "MakeBuilder",
+          "callee": "std::move",
+          "lineNumber": 334
+        },
+        {
+          "caller": "MakeBuilderExactIndex",
+          "callee": "default_memory_pool",
+          "lineNumber": 345
+        },
+        {
+          "caller": "MakeBuilderExactIndex",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 347
+        },
+        {
+          "caller": "MakeBuilderExactIndex",
+          "callee": "MakeBuilderExactIndex",
+          "lineNumber": 347
+        },
+        {
+          "caller": "MakeBuilderExactIndex",
+          "callee": "std::move",
+          "lineNumber": 348
+        },
+        {
+          "caller": "MakeDictionaryBuilder",
+          "callee": "default_memory_pool",
+          "lineNumber": 364
+        },
+        {
+          "caller": "MakeDictionaryBuilder",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 366
+        },
+        {
+          "caller": "MakeDictionaryBuilder",
+          "callee": "MakeDictionaryBuilder",
+          "lineNumber": 366
+        },
+        {
+          "caller": "MakeDictionaryBuilder",
+          "callee": "std::move",
+          "lineNumber": 367
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 3,
+        "functionCount": 3,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/array/builder_binary.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 711,
+      "nonEmptyLines": 589,
+      "callGraph": [
+        {
+          "caller": "BaseBinaryBuilder",
+          "callee": "default_memory_pool",
+          "lineNumber": 59
+        },
+        {
+          "caller": "Append",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 69
+        },
+        {
+          "caller": "Append",
+          "callee": "Reserve",
+          "lineNumber": 69
+        },
+        {
+          "caller": "Append",
+          "callee": "UnsafeAppendNextOffset",
+          "lineNumber": 70
+        },
+        {
+          "caller": "Append",
+          "callee": "ARROW_PREDICT_TRUE",
+          "lineNumber": 72
+        },
+        {
+          "caller": "Append",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 73
+        },
+        {
+          "caller": "Append",
+          "callee": "ValidateOverflow",
+          "lineNumber": 73
+        },
+        {
+          "caller": "Append",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 74
+        },
+        {
+          "caller": "Append",
+          "callee": "Append",
+          "lineNumber": 74
+        },
+        {
+          "caller": "Append",
+          "callee": "UnsafeAppendToBitmap",
+          "lineNumber": 77
+        },
+        {
+          "caller": "Append",
+          "callee": "Status::OK",
+          "lineNumber": 78
+        },
+        {
+          "caller": "Append",
+          "callee": "Append",
+          "lineNumber": 82
+        },
+        {
+          "caller": "Append",
+          "callee": "reinterpret_cast<const uint8_t*>",
+          "lineNumber": 82
+        },
+        {
+          "caller": "Append",
+          "callee": "Append",
+          "lineNumber": 86
+        },
+        {
+          "caller": "Append",
+          "callee": "data",
+          "lineNumber": 86
+        },
+        {
+          "caller": "Append",
+          "callee": "static_cast<offset_type>",
+          "lineNumber": 86
+        },
+        {
+          "caller": "Append",
+          "callee": "size",
+          "lineNumber": 86
+        },
+        {
+          "caller": "ExtendCurrent",
+          "callee": "ARROW_PREDICT_TRUE",
+          "lineNumber": 94
+        },
+        {
+          "caller": "ExtendCurrent",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 95
+        },
+        {
+          "caller": "ExtendCurrent",
+          "callee": "ValidateOverflow",
+          "lineNumber": 95
+        },
+        {
+          "caller": "ExtendCurrent",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 96
+        },
+        {
+          "caller": "ExtendCurrent",
+          "callee": "Append",
+          "lineNumber": 96
+        },
+        {
+          "caller": "ExtendCurrent",
+          "callee": "Status::OK",
+          "lineNumber": 98
+        },
+        {
+          "caller": "ExtendCurrent",
+          "callee": "ExtendCurrent",
+          "lineNumber": 102
+        },
+        {
+          "caller": "ExtendCurrent",
+          "callee": "reinterpret_cast<const uint8_t*>",
+          "lineNumber": 102
+        },
+        {
+          "caller": "ExtendCurrent",
+          "callee": "data",
+          "lineNumber": 102
+        },
+        {
+          "caller": "ExtendCurrent",
+          "callee": "static_cast<offset_type>",
+          "lineNumber": 103
+        },
+        {
+          "caller": "ExtendCurrent",
+          "callee": "size",
+          "lineNumber": 103
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "length",
+          "lineNumber": 107
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 108
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "Reserve",
+          "lineNumber": 108
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "UnsafeAppend",
+          "lineNumber": 110
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "static_cast<offset_type>",
+          "lineNumber": 110
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "UnsafeAppendToBitmap",
+          "lineNumber": 112
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "Status::OK",
+          "lineNumber": 113
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 117
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "Reserve",
+          "lineNumber": 117
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "UnsafeAppendNextOffset",
+          "lineNumber": 118
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "UnsafeAppendToBitmap",
+          "lineNumber": 119
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "Status::OK",
+          "lineNumber": 120
+        },
+        {
+          "caller": "AppendEmptyValue",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 124
+        },
+        {
+          "caller": "AppendEmptyValue",
+          "callee": "Reserve",
+          "lineNumber": 124
+        },
+        {
+          "caller": "AppendEmptyValue",
+          "callee": "UnsafeAppendNextOffset",
+          "lineNumber": 125
+        },
+        {
+          "caller": "AppendEmptyValue",
+          "callee": "UnsafeAppendToBitmap",
+          "lineNumber": 126
+        },
+        {
+          "caller": "AppendEmptyValue",
+          "callee": "Status::OK",
+          "lineNumber": 127
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "length",
+          "lineNumber": 131
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 132
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "Reserve",
+          "lineNumber": 132
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "UnsafeAppend",
+          "lineNumber": 134
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "static_cast<offset_type>",
+          "lineNumber": 134
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "UnsafeAppendToBitmap",
+          "lineNumber": 136
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "Status::OK",
+          "lineNumber": 137
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "UnsafeAppendNextOffset",
+          "lineNumber": 145
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "UnsafeAppend",
+          "lineNumber": 146
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "UnsafeAppendToBitmap",
+          "lineNumber": 147
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "UnsafeAppend",
+          "lineNumber": 151
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "reinterpret_cast<const uint8_t*>",
+          "lineNumber": 151
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "UnsafeAppend",
+          "lineNumber": 155
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "c_str",
+          "lineNumber": 155
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "static_cast<offset_type>",
+          "lineNumber": 155
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "size",
+          "lineNumber": 155
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "UnsafeAppend",
+          "lineNumber": 159
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "data",
+          "lineNumber": 159
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "static_cast<offset_type>",
+          "lineNumber": 159
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "size",
+          "lineNumber": 159
+        },
+        {
+          "caller": "UnsafeExtendCurrent",
+          "callee": "UnsafeAppend",
+          "lineNumber": 164
+        },
+        {
+          "caller": "UnsafeExtendCurrent",
+          "callee": "UnsafeExtendCurrent",
+          "lineNumber": 168
+        },
+        {
+          "caller": "UnsafeExtendCurrent",
+          "callee": "reinterpret_cast<const uint8_t*>",
+          "lineNumber": 168
+        },
+        {
+          "caller": "UnsafeExtendCurrent",
+          "callee": "data",
+          "lineNumber": 168
+        },
+        {
+          "caller": "UnsafeExtendCurrent",
+          "callee": "static_cast<offset_type>",
+          "lineNumber": 169
+        },
+        {
+          "caller": "UnsafeExtendCurrent",
+          "callee": "size",
+          "lineNumber": 169
+        },
+        {
+          "caller": "UnsafeAppendNull",
+          "callee": "length",
+          "lineNumber": 173
+        },
+        {
+          "caller": "UnsafeAppendNull",
+          "callee": "UnsafeAppend",
+          "lineNumber": 174
+        },
+        {
+          "caller": "UnsafeAppendNull",
+          "callee": "static_cast<offset_type>",
+          "lineNumber": 174
+        },
+        {
+          "caller": "UnsafeAppendNull",
+          "callee": "UnsafeAppendToBitmap",
+          "lineNumber": 175
+        },
+        {
+          "caller": "UnsafeAppendEmptyValue",
+          "callee": "length",
+          "lineNumber": 179
+        },
+        {
+          "caller": "UnsafeAppendEmptyValue",
+          "callee": "UnsafeAppend",
+          "lineNumber": 180
+        },
+        {
+          "caller": "UnsafeAppendEmptyValue",
+          "callee": "static_cast<offset_type>",
+          "lineNumber": 180
+        },
+        {
+          "caller": "UnsafeAppendEmptyValue",
+          "callee": "UnsafeAppendToBitmap",
+          "lineNumber": 181
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "std::accumulate",
+          "lineNumber": 192
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "begin",
+          "lineNumber": 193
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "end",
+          "lineNumber": 193
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "size",
+          "lineNumber": 194
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 195
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "Reserve",
+          "lineNumber": 195
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "size",
+          "lineNumber": 195
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 196
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "ReserveData",
+          "lineNumber": 196
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "size",
+          "lineNumber": 199
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "UnsafeAppendNextOffset",
+          "lineNumber": 200
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "UnsafeAppend",
+          "lineNumber": 202
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "reinterpret_cast<const uint8_t*>",
+          "lineNumber": 203
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "data",
+          "lineNumber": 203
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "size",
+          "lineNumber": 203
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "size",
+          "lineNumber": 207
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "UnsafeAppendNextOffset",
+          "lineNumber": 208
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "UnsafeAppend",
+          "lineNumber": 209
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "reinterpret_cast<const uint8_t*>",
+          "lineNumber": 210
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "data",
+          "lineNumber": 210
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "size",
+          "lineNumber": 210
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "UnsafeAppendToBitmap",
+          "lineNumber": 214
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "size",
+          "lineNumber": 214
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "Status::OK",
+          "lineNumber": 215
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "strlen",
+          "lineNumber": 234
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 241
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "Reserve",
+          "lineNumber": 241
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 242
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "ReserveData",
+          "lineNumber": 242
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "UnsafeAppendNextOffset",
+          "lineNumber": 247
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "UnsafeAppend",
+          "lineNumber": 250
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "reinterpret_cast<const uint8_t*>",
+          "lineNumber": 250
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "UnsafeAppendToBitmap",
+          "lineNumber": 253
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "UnsafeAppendToBitmap",
+          "lineNumber": 255
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "UnsafeAppendToBitmap",
+          "lineNumber": 260
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "UnsafeAppendNextOffset",
+          "lineNumber": 265
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "UnsafeAppend",
+          "lineNumber": 267
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "reinterpret_cast<const uint8_t*>",
+          "lineNumber": 267
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "UnsafeAppendToBitmap",
+          "lineNumber": 272
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "data",
+          "lineNumber": 272
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "UnsafeAppendNextOffset",
+          "lineNumber": 275
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "UnsafeAppend",
+          "lineNumber": 276
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "reinterpret_cast<const uint8_t*>",
+          "lineNumber": 276
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "UnsafeAppendToBitmap",
+          "lineNumber": 279
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "Status::OK",
+          "lineNumber": 282
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "GetValues<uint8_t>",
+          "lineNumber": 287
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "GetValues<offset_type>",
+          "lineNumber": 288
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "GetValues<uint8_t>",
+          "lineNumber": 289
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 291
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "Reserve",
+          "lineNumber": 291
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 292
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "ReserveData",
+          "lineNumber": 292
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "bit_util::GetBit",
+          "lineNumber": 294
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "UnsafeAppend",
+          "lineNumber": 297
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "UnsafeAppendNull",
+          "lineNumber": 299
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "Status::OK",
+          "lineNumber": 302
+        },
+        {
+          "caller": "Reset",
+          "callee": "ArrayBuilder::Reset",
+          "lineNumber": 306
+        },
+        {
+          "caller": "Reset",
+          "callee": "Reset",
+          "lineNumber": 307
+        },
+        {
+          "caller": "Reset",
+          "callee": "Reset",
+          "lineNumber": 308
+        },
+        {
+          "caller": "ValidateOverflow",
+          "callee": "length",
+          "lineNumber": 312
+        },
+        {
+          "caller": "ValidateOverflow",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 313
+        },
+        {
+          "caller": "ValidateOverflow",
+          "callee": "memory_limit",
+          "lineNumber": 313
+        },
+        {
+          "caller": "ValidateOverflow",
+          "callee": "Status::CapacityError",
+          "lineNumber": 314
+        },
+        {
+          "caller": "ValidateOverflow",
+          "callee": "memory_limit",
+          "lineNumber": 314
+        },
+        {
+          "caller": "ValidateOverflow",
+          "callee": "Status::OK",
+          "lineNumber": 317
+        },
+        {
+          "caller": "Resize",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 322
+        },
+        {
+          "caller": "Resize",
+          "callee": "CheckCapacity",
+          "lineNumber": 322
+        },
+        {
+          "caller": "Resize",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 324
+        },
+        {
+          "caller": "Resize",
+          "callee": "Resize",
+          "lineNumber": 324
+        },
+        {
+          "caller": "Resize",
+          "callee": "ArrayBuilder::Resize",
+          "lineNumber": 325
+        },
+        {
+          "caller": "ReserveData",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 331
+        },
+        {
+          "caller": "ReserveData",
+          "callee": "ValidateOverflow",
+          "lineNumber": 331
+        },
+        {
+          "caller": "ReserveData",
+          "callee": "Reserve",
+          "lineNumber": 332
+        },
+        {
+          "caller": "FinishInternal",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 337
+        },
+        {
+          "caller": "FinishInternal",
+          "callee": "AppendNextOffset",
+          "lineNumber": 337
+        },
+        {
+          "caller": "FinishInternal",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 341
+        },
+        {
+          "caller": "FinishInternal",
+          "callee": "Finish",
+          "lineNumber": 341
+        },
+        {
+          "caller": "FinishInternal",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 342
+        },
+        {
+          "caller": "FinishInternal",
+          "callee": "Finish",
+          "lineNumber": 342
+        },
+        {
+          "caller": "FinishInternal",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 343
+        },
+        {
+          "caller": "FinishInternal",
+          "callee": "Finish",
+          "lineNumber": 343
+        },
+        {
+          "caller": "FinishInternal",
+          "callee": "ArrayData::Make",
+          "lineNumber": 345
+        },
+        {
+          "caller": "FinishInternal",
+          "callee": "type",
+          "lineNumber": 345
+        },
+        {
+          "caller": "FinishInternal",
+          "callee": "Reset",
+          "lineNumber": 347
+        },
+        {
+          "caller": "FinishInternal",
+          "callee": "Status::OK",
+          "lineNumber": 348
+        },
+        {
+          "caller": "value_data_length",
+          "callee": "length",
+          "lineNumber": 354
+        },
+        {
+          "caller": "value_data_capacity",
+          "callee": "capacity",
+          "lineNumber": 356
+        },
+        {
+          "caller": "offset",
+          "callee": "offsets_data",
+          "lineNumber": 375
+        },
+        {
+          "caller": "GetView",
+          "callee": "GetValue",
+          "lineNumber": 382
+        },
+        {
+          "caller": "GetView",
+          "callee": "std::string_view",
+          "lineNumber": 383
+        },
+        {
+          "caller": "GetView",
+          "callee": "reinterpret_cast<const char*>",
+          "lineNumber": 383
+        },
+        {
+          "caller": "memory_limit",
+          "callee": "std::numeric_limits<offset_type>::max",
+          "lineNumber": 388
+        },
+        {
+          "caller": "AppendNextOffset",
+          "callee": "length",
+          "lineNumber": 396
+        },
+        {
+          "caller": "AppendNextOffset",
+          "callee": "Append",
+          "lineNumber": 397
+        },
+        {
+          "caller": "AppendNextOffset",
+          "callee": "static_cast<offset_type>",
+          "lineNumber": 397
+        },
+        {
+          "caller": "UnsafeAppendNextOffset",
+          "callee": "length",
+          "lineNumber": 401
+        },
+        {
+          "caller": "UnsafeAppendNextOffset",
+          "callee": "UnsafeAppend",
+          "lineNumber": 402
+        },
+        {
+          "caller": "UnsafeAppendNextOffset",
+          "callee": "static_cast<offset_type>",
+          "lineNumber": 402
+        },
+        {
+          "caller": "Finish",
+          "callee": "FinishTyped",
+          "lineNumber": 416
+        },
+        {
+          "caller": "type",
+          "callee": "binary",
+          "lineNumber": 418
+        },
+        {
+          "caller": "Finish",
+          "callee": "FinishTyped",
+          "lineNumber": 431
+        },
+        {
+          "caller": "type",
+          "callee": "utf8",
+          "lineNumber": 433
+        },
+        {
+          "caller": "Finish",
+          "callee": "FinishTyped",
+          "lineNumber": 446
+        },
+        {
+          "caller": "type",
+          "callee": "large_binary",
+          "lineNumber": 448
+        },
+        {
+          "caller": "Finish",
+          "callee": "FinishTyped",
+          "lineNumber": 461
+        },
+        {
+          "caller": "type",
+          "callee": "large_utf8",
+          "lineNumber": 463
+        },
+        {
+          "caller": "Append",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 478
+        },
+        {
+          "caller": "Append",
+          "callee": "Reserve",
+          "lineNumber": 478
+        },
+        {
+          "caller": "Append",
+          "callee": "UnsafeAppend",
+          "lineNumber": 479
+        },
+        {
+          "caller": "Append",
+          "callee": "Status::OK",
+          "lineNumber": 480
+        },
+        {
+          "caller": "Append",
+          "callee": "Append",
+          "lineNumber": 484
+        },
+        {
+          "caller": "Append",
+          "callee": "reinterpret_cast<const uint8_t*>",
+          "lineNumber": 484
+        },
+        {
+          "caller": "Append",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 488
+        },
+        {
+          "caller": "Append",
+          "callee": "Reserve",
+          "lineNumber": 488
+        },
+        {
+          "caller": "Append",
+          "callee": "UnsafeAppend",
+          "lineNumber": 489
+        },
+        {
+          "caller": "Append",
+          "callee": "Status::OK",
+          "lineNumber": 490
+        },
+        {
+          "caller": "Append",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 494
+        },
+        {
+          "caller": "Append",
+          "callee": "Reserve",
+          "lineNumber": 494
+        },
+        {
+          "caller": "Append",
+          "callee": "UnsafeAppend",
+          "lineNumber": 495
+        },
+        {
+          "caller": "Append",
+          "callee": "Status::OK",
+          "lineNumber": 496
+        },
+        {
+          "caller": "Append",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 500
+        },
+        {
+          "caller": "Append",
+          "callee": "Reserve",
+          "lineNumber": 500
+        },
+        {
+          "caller": "Append",
+          "callee": "UnsafeAppend",
+          "lineNumber": 501
+        },
+        {
+          "caller": "Append",
+          "callee": "std::string_view",
+          "lineNumber": 501
+        },
+        {
+          "caller": "Append",
+          "callee": "Status::OK",
+          "lineNumber": 502
+        },
+        {
+          "caller": "Append",
+          "callee": "Append",
+          "lineNumber": 505
+        },
+        {
+          "caller": "Append",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 509
+        },
+        {
+          "caller": "Append",
+          "callee": "Reserve",
+          "lineNumber": 509
+        },
+        {
+          "caller": "Append",
+          "callee": "UnsafeAppend",
+          "lineNumber": 510
+        },
+        {
+          "caller": "Append",
+          "callee": "std::string_view",
+          "lineNumber": 511
+        },
+        {
+          "caller": "Append",
+          "callee": "reinterpret_cast<const char*>",
+          "lineNumber": 511
+        },
+        {
+          "caller": "Append",
+          "callee": "data",
+          "lineNumber": 511
+        },
+        {
+          "caller": "Append",
+          "callee": "size",
+          "lineNumber": 511
+        },
+        {
+          "caller": "Append",
+          "callee": "Status::OK",
+          "lineNumber": 512
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "AppendValues",
+          "lineNumber": 529
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "GetValues<uint8_t>",
+          "lineNumber": 530
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "GetValues<uint8_t>",
+          "lineNumber": 531
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "UnsafeAppendToBitmap",
+          "lineNumber": 535
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "ARROW_PREDICT_TRUE",
+          "lineNumber": 536
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "UnsafeAppend",
+          "lineNumber": 537
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "UnsafeAppend",
+          "lineNumber": 542
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "reinterpret_cast<const uint8_t*>",
+          "lineNumber": 542
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "CheckValueSize",
+          "lineNumber": 547
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 547
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "size",
+          "lineNumber": 547
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "UnsafeAppend",
+          "lineNumber": 549
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "reinterpret_cast<const uint8_t*>",
+          "lineNumber": 549
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "data",
+          "lineNumber": 549
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "UnsafeAppend",
+          "lineNumber": 552
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "std::string_view",
+          "lineNumber": 552
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "UnsafeAppend",
+          "lineNumber": 554
+        },
+        {
+          "caller": "UnsafeAppendNull",
+          "callee": "UnsafeAppendToBitmap",
+          "lineNumber": 557
+        },
+        {
+          "caller": "UnsafeAppendNull",
+          "callee": "UnsafeAppend",
+          "lineNumber": 558
+        },
+        {
+          "caller": "ValidateOverflow",
+          "callee": "length",
+          "lineNumber": 562
+        },
+        {
+          "caller": "ValidateOverflow",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 563
+        },
+        {
+          "caller": "ValidateOverflow",
+          "callee": "memory_limit",
+          "lineNumber": 563
+        },
+        {
+          "caller": "ValidateOverflow",
+          "callee": "Status::CapacityError",
+          "lineNumber": 564
+        },
+        {
+          "caller": "ValidateOverflow",
+          "callee": "memory_limit",
+          "lineNumber": 564
+        },
+        {
+          "caller": "ValidateOverflow",
+          "callee": "Status::OK",
+          "lineNumber": 567
+        },
+        {
+          "caller": "ReserveData",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 574
+        },
+        {
+          "caller": "ReserveData",
+          "callee": "ValidateOverflow",
+          "lineNumber": 574
+        },
+        {
+          "caller": "ReserveData",
+          "callee": "Reserve",
+          "lineNumber": 575
+        },
+        {
+          "caller": "Finish",
+          "callee": "FinishTyped",
+          "lineNumber": 586
+        },
+        {
+          "caller": "value_data_length",
+          "callee": "length",
+          "lineNumber": 589
+        },
+        {
+          "caller": "memory_limit",
+          "callee": "std::numeric_limits<int64_t>::max",
+          "lineNumber": 604
+        },
+        {
+          "caller": "type",
+          "callee": "fixed_size_binary",
+          "lineNumber": 608
+        },
+        {
+          "caller": "Append",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 645
+        },
+        {
+          "caller": "Append",
+          "callee": "value_data_length",
+          "lineNumber": 645
+        },
+        {
+          "caller": "Append",
+          "callee": "value_data_length",
+          "lineNumber": 647
+        },
+        {
+          "caller": "Append",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 650
+        },
+        {
+          "caller": "Append",
+          "callee": "Append",
+          "lineNumber": 650
+        },
+        {
+          "caller": "Append",
+          "callee": "NextChunk",
+          "lineNumber": 651
+        },
+        {
+          "caller": "Append",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 656
+        },
+        {
+          "caller": "Append",
+          "callee": "NextChunk",
+          "lineNumber": 656
+        },
+        {
+          "caller": "Append",
+          "callee": "Append",
+          "lineNumber": 657
+        },
+        {
+          "caller": "Append",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 660
+        },
+        {
+          "caller": "Append",
+          "callee": "length",
+          "lineNumber": 660
+        },
+        {
+          "caller": "Append",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 663
+        },
+        {
+          "caller": "Append",
+          "callee": "NextChunk",
+          "lineNumber": 663
+        },
+        {
+          "caller": "Append",
+          "callee": "Append",
+          "lineNumber": 666
+        },
+        {
+          "caller": "Append",
+          "callee": "Append",
+          "lineNumber": 670
+        },
+        {
+          "caller": "Append",
+          "callee": "reinterpret_cast<const uint8_t*>",
+          "lineNumber": 670
+        },
+        {
+          "caller": "Append",
+          "callee": "data",
+          "lineNumber": 670
+        },
+        {
+          "caller": "Append",
+          "callee": "static_cast<int32_t>",
+          "lineNumber": 671
+        },
+        {
+          "caller": "Append",
+          "callee": "size",
+          "lineNumber": 671
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 675
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "length",
+          "lineNumber": 675
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 676
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "NextChunk",
+          "lineNumber": 676
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "AppendNull",
+          "lineNumber": 678
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/array/builder_decimal.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 102,
+      "nonEmptyLines": 76,
+      "callGraph": [
+        {
+          "caller": "Finish",
+          "callee": "FinishTyped",
+          "lineNumber": 59
+        },
+        {
+          "caller": "Finish",
+          "callee": "FinishTyped",
+          "lineNumber": 90
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/array/builder_dict.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 730,
+      "nonEmptyLines": 621,
+      "callGraph": [
+        {
+          "caller": "GetOrInsert",
+          "callee": "GetOrInsert",
+          "lineNumber": 88
+        },
+        {
+          "caller": "DictionaryBuilderBase",
+          "callee": "default_memory_pool",
+          "lineNumber": 149
+        },
+        {
+          "caller": "DictionaryBuilderBase",
+          "callee": "default_memory_pool",
+          "lineNumber": 162
+        },
+        {
+          "caller": "DictionaryBuilderBase",
+          "callee": "default_memory_pool",
+          "lineNumber": 176
+        },
+        {
+          "caller": "DictionaryBuilderBase",
+          "callee": "default_memory_pool",
+          "lineNumber": 191
+        },
+        {
+          "caller": "DictionaryBuilderBase",
+          "callee": "byte_width",
+          "lineNumber": 196
+        },
+        {
+          "caller": "DictionaryBuilderBase",
+          "callee": "static_cast<const T1&>",
+          "lineNumber": 196
+        },
+        {
+          "caller": "DictionaryBuilderBase",
+          "callee": "default_memory_pool",
+          "lineNumber": 203
+        },
+        {
+          "caller": "DictionaryBuilderBase",
+          "callee": "byte_width",
+          "lineNumber": 208
+        },
+        {
+          "caller": "DictionaryBuilderBase",
+          "callee": "static_cast<const T1&>",
+          "lineNumber": 208
+        },
+        {
+          "caller": "DictionaryBuilderBase",
+          "callee": "default_memory_pool",
+          "lineNumber": 216
+        },
+        {
+          "caller": "DictionaryBuilderBase",
+          "callee": "byte_width",
+          "lineNumber": 221
+        },
+        {
+          "caller": "DictionaryBuilderBase",
+          "callee": "static_cast<const T1&>",
+          "lineNumber": 221
+        },
+        {
+          "caller": "DictionaryBuilderBase",
+          "callee": "default_memory_pool",
+          "lineNumber": 227
+        },
+        {
+          "caller": "DictionaryBuilderBase",
+          "callee": "TypeTraits<T1>::type_singleton",
+          "lineNumber": 228
+        },
+        {
+          "caller": "DictionaryBuilderBase",
+          "callee": "default_memory_pool",
+          "lineNumber": 232
+        },
+        {
+          "caller": "DictionaryBuilderBase",
+          "callee": "type",
+          "lineNumber": 239
+        },
+        {
+          "caller": "dictionary_length",
+          "callee": "size",
+          "lineNumber": 244
+        },
+        {
+          "caller": "Append",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 254
+        },
+        {
+          "caller": "Append",
+          "callee": "Reserve",
+          "lineNumber": 254
+        },
+        {
+          "caller": "Append",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 257
+        },
+        {
+          "caller": "Append",
+          "callee": "GetOrInsert<T>",
+          "lineNumber": 257
+        },
+        {
+          "caller": "Append",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 258
+        },
+        {
+          "caller": "Append",
+          "callee": "Append",
+          "lineNumber": 258
+        },
+        {
+          "caller": "Append",
+          "callee": "Status::OK",
+          "lineNumber": 261
+        },
+        {
+          "caller": "Append",
+          "callee": "Append",
+          "lineNumber": 267
+        },
+        {
+          "caller": "Append",
+          "callee": "std::string_view",
+          "lineNumber": 267
+        },
+        {
+          "caller": "Append",
+          "callee": "reinterpret_cast<const char*>",
+          "lineNumber": 267
+        },
+        {
+          "caller": "Append",
+          "callee": "Append",
+          "lineNumber": 273
+        },
+        {
+          "caller": "Append",
+          "callee": "std::string_view",
+          "lineNumber": 273
+        },
+        {
+          "caller": "Append",
+          "callee": "Append",
+          "lineNumber": 279
+        },
+        {
+          "caller": "Append",
+          "callee": "reinterpret_cast<const char*>",
+          "lineNumber": 279
+        },
+        {
+          "caller": "Append",
+          "callee": "Append",
+          "lineNumber": 285
+        },
+        {
+          "caller": "Append",
+          "callee": "std::string_view",
+          "lineNumber": 285
+        },
+        {
+          "caller": "Append",
+          "callee": "Append",
+          "lineNumber": 291
+        },
+        {
+          "caller": "Append",
+          "callee": "std::string_view",
+          "lineNumber": 291
+        },
+        {
+          "caller": "Append",
+          "callee": "ToBytes",
+          "lineNumber": 298
+        },
+        {
+          "caller": "Append",
+          "callee": "Append",
+          "lineNumber": 299
+        },
+        {
+          "caller": "Append",
+          "callee": "ToBytes",
+          "lineNumber": 306
+        },
+        {
+          "caller": "Append",
+          "callee": "Append",
+          "lineNumber": 307
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "AppendNull",
+          "lineNumber": 315
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "AppendNulls",
+          "lineNumber": 322
+        },
+        {
+          "caller": "AppendEmptyValue",
+          "callee": "AppendEmptyValue",
+          "lineNumber": 328
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "AppendEmptyValues",
+          "lineNumber": 334
+        },
+        {
+          "caller": "AppendScalar",
+          "callee": "AppendNulls",
+          "lineNumber": 338
+        },
+        {
+          "caller": "AppendScalar",
+          "callee": "internal::checked_cast<const DictionaryType&>",
+          "lineNumber": 340
+        },
+        {
+          "caller": "AppendScalar",
+          "callee": "internal::checked_cast<const DictionaryScalar&>",
+          "lineNumber": 342
+        },
+        {
+          "caller": "AppendScalar",
+          "callee": "internal::checked_cast<const typename TypeTraits<T>::ArrayType&>",
+          "lineNumber": 343
+        },
+        {
+          "caller": "AppendScalar",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 345
+        },
+        {
+          "caller": "AppendScalar",
+          "callee": "Reserve",
+          "lineNumber": 345
+        },
+        {
+          "caller": "AppendScalar",
+          "callee": "id",
+          "lineNumber": 346
+        },
+        {
+          "caller": "AppendScalar",
+          "callee": "index_type",
+          "lineNumber": 346
+        },
+        {
+          "caller": "AppendScalar",
+          "callee": "AppendScalarImpl<UInt8Type>",
+          "lineNumber": 348
+        },
+        {
+          "caller": "AppendScalar",
+          "callee": "AppendScalarImpl<Int8Type>",
+          "lineNumber": 350
+        },
+        {
+          "caller": "AppendScalar",
+          "callee": "AppendScalarImpl<UInt16Type>",
+          "lineNumber": 352
+        },
+        {
+          "caller": "AppendScalar",
+          "callee": "AppendScalarImpl<Int16Type>",
+          "lineNumber": 354
+        },
+        {
+          "caller": "AppendScalar",
+          "callee": "AppendScalarImpl<UInt32Type>",
+          "lineNumber": 356
+        },
+        {
+          "caller": "AppendScalar",
+          "callee": "AppendScalarImpl<Int32Type>",
+          "lineNumber": 358
+        },
+        {
+          "caller": "AppendScalar",
+          "callee": "AppendScalarImpl<UInt64Type>",
+          "lineNumber": 360
+        },
+        {
+          "caller": "AppendScalar",
+          "callee": "AppendScalarImpl<Int64Type>",
+          "lineNumber": 362
+        },
+        {
+          "caller": "AppendScalar",
+          "callee": "Status::TypeError",
+          "lineNumber": 364
+        },
+        {
+          "caller": "AppendScalar",
+          "callee": "Status::OK",
+          "lineNumber": 366
+        },
+        {
+          "caller": "AppendScalars",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 371
+        },
+        {
+          "caller": "AppendScalars",
+          "callee": "AppendScalar",
+          "lineNumber": 371
+        },
+        {
+          "caller": "AppendScalars",
+          "callee": "Status::OK",
+          "lineNumber": 373
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "internal::checked_cast<const DictionaryType&>",
+          "lineNumber": 378
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "ToArrayData",
+          "lineNumber": 380
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "dictionary",
+          "lineNumber": 380
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 381
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "Reserve",
+          "lineNumber": 381
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "id",
+          "lineNumber": 382
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "index_type",
+          "lineNumber": 382
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "AppendArraySliceImpl<uint8_t>",
+          "lineNumber": 384
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "AppendArraySliceImpl<int8_t>",
+          "lineNumber": 386
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "AppendArraySliceImpl<uint16_t>",
+          "lineNumber": 388
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "AppendArraySliceImpl<int16_t>",
+          "lineNumber": 390
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "AppendArraySliceImpl<uint32_t>",
+          "lineNumber": 392
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "AppendArraySliceImpl<int32_t>",
+          "lineNumber": 394
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "AppendArraySliceImpl<uint64_t>",
+          "lineNumber": 396
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "AppendArraySliceImpl<int64_t>",
+          "lineNumber": 398
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "Status::TypeError",
+          "lineNumber": 400
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "Status::OK",
+          "lineNumber": 402
+        },
+        {
+          "caller": "InsertMemoValues",
+          "callee": "InsertValues",
+          "lineNumber": 411
+        },
+        {
+          "caller": "AppendArray",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 421
+        },
+        {
+          "caller": "AppendArray",
+          "callee": "ArrayBuilder::CheckArrayType",
+          "lineNumber": 421
+        },
+        {
+          "caller": "AppendArray",
+          "callee": "static_cast<const ArrayType&>",
+          "lineNumber": 425
+        },
+        {
+          "caller": "AppendArray",
+          "callee": "length",
+          "lineNumber": 426
+        },
+        {
+          "caller": "AppendArray",
+          "callee": "IsNull",
+          "lineNumber": 427
+        },
+        {
+          "caller": "AppendArray",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 428
+        },
+        {
+          "caller": "AppendArray",
+          "callee": "AppendNull",
+          "lineNumber": 428
+        },
+        {
+          "caller": "AppendArray",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 430
+        },
+        {
+          "caller": "AppendArray",
+          "callee": "Append",
+          "lineNumber": 430
+        },
+        {
+          "caller": "AppendArray",
+          "callee": "GetView",
+          "lineNumber": 430
+        },
+        {
+          "caller": "AppendArray",
+          "callee": "Status::OK",
+          "lineNumber": 433
+        },
+        {
+          "caller": "AppendArray",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 439
+        },
+        {
+          "caller": "AppendArray",
+          "callee": "ArrayBuilder::CheckArrayType",
+          "lineNumber": 439
+        },
+        {
+          "caller": "AppendArray",
+          "callee": "static_cast<const FixedSizeBinaryArray&>",
+          "lineNumber": 443
+        },
+        {
+          "caller": "AppendArray",
+          "callee": "length",
+          "lineNumber": 444
+        },
+        {
+          "caller": "AppendArray",
+          "callee": "IsNull",
+          "lineNumber": 445
+        },
+        {
+          "caller": "AppendArray",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 446
+        },
+        {
+          "caller": "AppendArray",
+          "callee": "AppendNull",
+          "lineNumber": 446
+        },
+        {
+          "caller": "AppendArray",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 448
+        },
+        {
+          "caller": "AppendArray",
+          "callee": "Append",
+          "lineNumber": 448
+        },
+        {
+          "caller": "AppendArray",
+          "callee": "GetValue",
+          "lineNumber": 448
+        },
+        {
+          "caller": "AppendArray",
+          "callee": "Status::OK",
+          "lineNumber": 451
+        },
+        {
+          "caller": "Reset",
+          "callee": "ArrayBuilder::Reset",
+          "lineNumber": 457
+        },
+        {
+          "caller": "Reset",
+          "callee": "Reset",
+          "lineNumber": 458
+        },
+        {
+          "caller": "ResetFull",
+          "callee": "Reset",
+          "lineNumber": 463
+        },
+        {
+          "caller": "ResetFull",
+          "callee": "reset",
+          "lineNumber": 464
+        },
+        {
+          "caller": "Resize",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 468
+        },
+        {
+          "caller": "Resize",
+          "callee": "CheckCapacity",
+          "lineNumber": 468
+        },
+        {
+          "caller": "Resize",
+          "callee": "std::max",
+          "lineNumber": 469
+        },
+        {
+          "caller": "Resize",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 470
+        },
+        {
+          "caller": "Resize",
+          "callee": "Resize",
+          "lineNumber": 470
+        },
+        {
+          "caller": "Resize",
+          "callee": "capacity",
+          "lineNumber": 471
+        },
+        {
+          "caller": "Resize",
+          "callee": "Status::OK",
+          "lineNumber": 472
+        },
+        {
+          "caller": "FinishDelta",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 482
+        },
+        {
+          "caller": "FinishDelta",
+          "callee": "FinishWithDictOffset",
+          "lineNumber": 482
+        },
+        {
+          "caller": "FinishDelta",
+          "callee": "MakeArray",
+          "lineNumber": 483
+        },
+        {
+          "caller": "FinishDelta",
+          "callee": "MakeArray",
+          "lineNumber": 484
+        },
+        {
+          "caller": "FinishDelta",
+          "callee": "Status::OK",
+          "lineNumber": 485
+        },
+        {
+          "caller": "Finish",
+          "callee": "FinishTyped",
+          "lineNumber": 492
+        },
+        {
+          "caller": "type",
+          "callee": "::arrow::dictionary",
+          "lineNumber": 495
+        },
+        {
+          "caller": "type",
+          "callee": "type",
+          "lineNumber": 495
+        },
+        {
+          "caller": "AppendArraySliceImpl",
+          "callee": "GetValues<c_type>",
+          "lineNumber": 502
+        },
+        {
+          "caller": "AppendArraySliceImpl",
+          "callee": "VisitBitBlocks",
+          "lineNumber": 503
+        },
+        {
+          "caller": "AppendArraySliceImpl",
+          "callee": "static_cast<int64_t>",
+          "lineNumber": 506
+        },
+        {
+          "caller": "AppendArraySliceImpl",
+          "callee": "IsValid",
+          "lineNumber": 507
+        },
+        {
+          "caller": "AppendArraySliceImpl",
+          "callee": "Append",
+          "lineNumber": 508
+        },
+        {
+          "caller": "AppendArraySliceImpl",
+          "callee": "GetView",
+          "lineNumber": 508
+        },
+        {
+          "caller": "AppendArraySliceImpl",
+          "callee": "AppendNull",
+          "lineNumber": 510
+        },
+        {
+          "caller": "AppendArraySliceImpl",
+          "callee": "AppendNull",
+          "lineNumber": 512
+        },
+        {
+          "caller": "AppendScalarImpl",
+          "callee": "internal::checked_cast<const ScalarType&>",
+          "lineNumber": 519
+        },
+        {
+          "caller": "AppendScalarImpl",
+          "callee": "IsValid",
+          "lineNumber": 520
+        },
+        {
+          "caller": "AppendScalarImpl",
+          "callee": "GetView",
+          "lineNumber": 521
+        },
+        {
+          "caller": "AppendScalarImpl",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 523
+        },
+        {
+          "caller": "AppendScalarImpl",
+          "callee": "Append",
+          "lineNumber": 523
+        },
+        {
+          "caller": "AppendScalarImpl",
+          "callee": "Status::OK",
+          "lineNumber": 525
+        },
+        {
+          "caller": "AppendScalarImpl",
+          "callee": "AppendNulls",
+          "lineNumber": 527
+        },
+        {
+          "caller": "FinishInternal",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 532
+        },
+        {
+          "caller": "FinishInternal",
+          "callee": "FinishWithDictOffset",
+          "lineNumber": 532
+        },
+        {
+          "caller": "FinishInternal",
+          "callee": "type",
+          "lineNumber": 535
+        },
+        {
+          "caller": "FinishInternal",
+          "callee": "Status::OK",
+          "lineNumber": 537
+        },
+        {
+          "caller": "FinishWithDictOffset",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 544
+        },
+        {
+          "caller": "FinishWithDictOffset",
+          "callee": "FinishInternal",
+          "lineNumber": 544
+        },
+        {
+          "caller": "FinishWithDictOffset",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 547
+        },
+        {
+          "caller": "FinishWithDictOffset",
+          "callee": "GetArrayData",
+          "lineNumber": 547
+        },
+        {
+          "caller": "FinishWithDictOffset",
+          "callee": "size",
+          "lineNumber": 548
+        },
+        {
+          "caller": "FinishWithDictOffset",
+          "callee": "ArrayBuilder::Reset",
+          "lineNumber": 551
+        },
+        {
+          "caller": "FinishWithDictOffset",
+          "callee": "Status::OK",
+          "lineNumber": 552
+        },
+        {
+          "caller": "DictionaryBuilderBase",
+          "callee": "default_memory_pool",
+          "lineNumber": 576
+        },
+        {
+          "caller": "DictionaryBuilderBase",
+          "callee": "default_memory_pool",
+          "lineNumber": 580
+        },
+        {
+          "caller": "DictionaryBuilderBase",
+          "callee": "default_memory_pool",
+          "lineNumber": 585
+        },
+        {
+          "caller": "DictionaryBuilderBase",
+          "callee": "default_memory_pool",
+          "lineNumber": 592
+        },
+        {
+          "caller": "DictionaryBuilderBase",
+          "callee": "default_memory_pool",
+          "lineNumber": 595
+        },
+        {
+          "caller": "DictionaryBuilderBase",
+          "callee": "default_memory_pool",
+          "lineNumber": 599
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "AppendNull",
+          "lineNumber": 607
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "AppendNulls",
+          "lineNumber": 614
+        },
+        {
+          "caller": "AppendEmptyValue",
+          "callee": "AppendEmptyValue",
+          "lineNumber": 620
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "AppendEmptyValues",
+          "lineNumber": 626
+        },
+        {
+          "caller": "AppendArray",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 632
+        },
+        {
+          "caller": "AppendArray",
+          "callee": "ArrayBuilder::CheckArrayType",
+          "lineNumber": 632
+        },
+        {
+          "caller": "AppendArray",
+          "callee": "length",
+          "lineNumber": 635
+        },
+        {
+          "caller": "AppendArray",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 636
+        },
+        {
+          "caller": "AppendArray",
+          "callee": "AppendNull",
+          "lineNumber": 636
+        },
+        {
+          "caller": "AppendArray",
+          "callee": "Status::OK",
+          "lineNumber": 638
+        },
+        {
+          "caller": "Resize",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 642
+        },
+        {
+          "caller": "Resize",
+          "callee": "CheckCapacity",
+          "lineNumber": 642
+        },
+        {
+          "caller": "Resize",
+          "callee": "std::max",
+          "lineNumber": 643
+        },
+        {
+          "caller": "Resize",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 645
+        },
+        {
+          "caller": "Resize",
+          "callee": "Resize",
+          "lineNumber": 645
+        },
+        {
+          "caller": "Resize",
+          "callee": "capacity",
+          "lineNumber": 646
+        },
+        {
+          "caller": "Resize",
+          "callee": "Status::OK",
+          "lineNumber": 647
+        },
+        {
+          "caller": "FinishInternal",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 651
+        },
+        {
+          "caller": "FinishInternal",
+          "callee": "FinishInternal",
+          "lineNumber": 651
+        },
+        {
+          "caller": "FinishInternal",
+          "callee": "dictionary",
+          "lineNumber": 652
+        },
+        {
+          "caller": "FinishInternal",
+          "callee": "null",
+          "lineNumber": 652
+        },
+        {
+          "caller": "FinishInternal",
+          "callee": "data",
+          "lineNumber": 653
+        },
+        {
+          "caller": "FinishInternal",
+          "callee": "NullArray",
+          "lineNumber": 653
+        },
+        {
+          "caller": "FinishInternal",
+          "callee": "Status::OK",
+          "lineNumber": 654
+        },
+        {
+          "caller": "Finish",
+          "callee": "FinishTyped",
+          "lineNumber": 661
+        },
+        {
+          "caller": "type",
+          "callee": "::arrow::dictionary",
+          "lineNumber": 664
+        },
+        {
+          "caller": "type",
+          "callee": "type",
+          "lineNumber": 664
+        },
+        {
+          "caller": "type",
+          "callee": "null",
+          "lineNumber": 664
+        },
+        {
+          "caller": "AppendIndices",
+          "callee": "null_count",
+          "lineNumber": 686
+        },
+        {
+          "caller": "AppendIndices",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 687
+        },
+        {
+          "caller": "AppendIndices",
+          "callee": "AppendValues",
+          "lineNumber": 687
+        },
+        {
+          "caller": "AppendIndices",
+          "callee": "capacity",
+          "lineNumber": 688
+        },
+        {
+          "caller": "AppendIndices",
+          "callee": "null_count",
+          "lineNumber": 690
+        },
+        {
+          "caller": "AppendIndices",
+          "callee": "Status::OK",
+          "lineNumber": 691
+        },
+        {
+          "caller": "AppendIndices",
+          "callee": "null_count",
+          "lineNumber": 709
+        },
+        {
+          "caller": "AppendIndices",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 710
+        },
+        {
+          "caller": "AppendIndices",
+          "callee": "AppendValues",
+          "lineNumber": 710
+        },
+        {
+          "caller": "AppendIndices",
+          "callee": "capacity",
+          "lineNumber": 711
+        },
+        {
+          "caller": "AppendIndices",
+          "callee": "null_count",
+          "lineNumber": 713
+        },
+        {
+          "caller": "AppendIndices",
+          "callee": "Status::OK",
+          "lineNumber": 714
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/array/builder_nested.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 577,
+      "nonEmptyLines": 482,
+      "callGraph": [
+        {
+          "caller": "BaseListBuilder",
+          "callee": "WithType",
+          "lineNumber": 59
+        },
+        {
+          "caller": "BaseListBuilder",
+          "callee": "field",
+          "lineNumber": 59
+        },
+        {
+          "caller": "BaseListBuilder",
+          "callee": "list",
+          "lineNumber": 63
+        },
+        {
+          "caller": "BaseListBuilder",
+          "callee": "type",
+          "lineNumber": 63
+        },
+        {
+          "caller": "Resize",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 66
+        },
+        {
+          "caller": "Resize",
+          "callee": "maximum_elements",
+          "lineNumber": 66
+        },
+        {
+          "caller": "Resize",
+          "callee": "Status::CapacityError",
+          "lineNumber": 67
+        },
+        {
+          "caller": "Resize",
+          "callee": "maximum_elements",
+          "lineNumber": 68
+        },
+        {
+          "caller": "Resize",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 70
+        },
+        {
+          "caller": "Resize",
+          "callee": "CheckCapacity",
+          "lineNumber": 70
+        },
+        {
+          "caller": "Resize",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 73
+        },
+        {
+          "caller": "Resize",
+          "callee": "Resize",
+          "lineNumber": 73
+        },
+        {
+          "caller": "Resize",
+          "callee": "ArrayBuilder::Resize",
+          "lineNumber": 74
+        },
+        {
+          "caller": "Reset",
+          "callee": "ArrayBuilder::Reset",
+          "lineNumber": 78
+        },
+        {
+          "caller": "Reset",
+          "callee": "Reset",
+          "lineNumber": 79
+        },
+        {
+          "caller": "Reset",
+          "callee": "Reset",
+          "lineNumber": 80
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 89
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "Reserve",
+          "lineNumber": 89
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "UnsafeAppendToBitmap",
+          "lineNumber": 90
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "UnsafeAppend",
+          "lineNumber": 91
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "Status::OK",
+          "lineNumber": 92
+        },
+        {
+          "caller": "Append",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 100
+        },
+        {
+          "caller": "Append",
+          "callee": "Reserve",
+          "lineNumber": 100
+        },
+        {
+          "caller": "Append",
+          "callee": "UnsafeAppendToBitmap",
+          "lineNumber": 101
+        },
+        {
+          "caller": "Append",
+          "callee": "UnsafeAppendNextOffset",
+          "lineNumber": 102
+        },
+        {
+          "caller": "Append",
+          "callee": "Status::OK",
+          "lineNumber": 103
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "Append",
+          "lineNumber": 106
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 109
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "Reserve",
+          "lineNumber": 109
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "UnsafeAppendToBitmap",
+          "lineNumber": 110
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "length",
+          "lineNumber": 111
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "UnsafeAppend",
+          "lineNumber": 113
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "static_cast<offset_type>",
+          "lineNumber": 113
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "Status::OK",
+          "lineNumber": 115
+        },
+        {
+          "caller": "AppendEmptyValue",
+          "callee": "Append",
+          "lineNumber": 118
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 121
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "Reserve",
+          "lineNumber": 121
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "UnsafeAppendToBitmap",
+          "lineNumber": 122
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "length",
+          "lineNumber": 123
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "UnsafeAppend",
+          "lineNumber": 125
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "static_cast<offset_type>",
+          "lineNumber": 125
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "Status::OK",
+          "lineNumber": 127
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "GetValues<offset_type>",
+          "lineNumber": 132
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "MayHaveLogicalNulls",
+          "lineNumber": 133
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "HasValidityBitmap",
+          "lineNumber": 134
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 135
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "Reserve",
+          "lineNumber": 135
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "bit_util::GetBit",
+          "lineNumber": 138
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "IsValid",
+          "lineNumber": 139
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "UnsafeAppendToBitmap",
+          "lineNumber": 140
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "UnsafeAppendNextOffset",
+          "lineNumber": 141
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 144
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "AppendArraySlice",
+          "lineNumber": 144
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "Status::OK",
+          "lineNumber": 148
+        },
+        {
+          "caller": "FinishInternal",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 152
+        },
+        {
+          "caller": "FinishInternal",
+          "callee": "AppendNextOffset",
+          "lineNumber": 152
+        },
+        {
+          "caller": "FinishInternal",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 156
+        },
+        {
+          "caller": "FinishInternal",
+          "callee": "Finish",
+          "lineNumber": 156
+        },
+        {
+          "caller": "FinishInternal",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 157
+        },
+        {
+          "caller": "FinishInternal",
+          "callee": "Finish",
+          "lineNumber": 157
+        },
+        {
+          "caller": "FinishInternal",
+          "callee": "length",
+          "lineNumber": 159
+        },
+        {
+          "caller": "FinishInternal",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 161
+        },
+        {
+          "caller": "FinishInternal",
+          "callee": "Resize",
+          "lineNumber": 161
+        },
+        {
+          "caller": "FinishInternal",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 165
+        },
+        {
+          "caller": "FinishInternal",
+          "callee": "FinishInternal",
+          "lineNumber": 165
+        },
+        {
+          "caller": "FinishInternal",
+          "callee": "ArrayData::Make",
+          "lineNumber": 167
+        },
+        {
+          "caller": "FinishInternal",
+          "callee": "type",
+          "lineNumber": 167
+        },
+        {
+          "caller": "FinishInternal",
+          "callee": "std::move",
+          "lineNumber": 167
+        },
+        {
+          "caller": "FinishInternal",
+          "callee": "Reset",
+          "lineNumber": 169
+        },
+        {
+          "caller": "FinishInternal",
+          "callee": "Status::OK",
+          "lineNumber": 170
+        },
+        {
+          "caller": "ValidateOverflow",
+          "callee": "length",
+          "lineNumber": 174
+        },
+        {
+          "caller": "ValidateOverflow",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 175
+        },
+        {
+          "caller": "ValidateOverflow",
+          "callee": "maximum_elements",
+          "lineNumber": 175
+        },
+        {
+          "caller": "ValidateOverflow",
+          "callee": "Status::CapacityError",
+          "lineNumber": 176
+        },
+        {
+          "caller": "ValidateOverflow",
+          "callee": "maximum_elements",
+          "lineNumber": 177
+        },
+        {
+          "caller": "ValidateOverflow",
+          "callee": "Status::OK",
+          "lineNumber": 179
+        },
+        {
+          "caller": "maximum_elements",
+          "callee": "std::numeric_limits<offset_type>::max",
+          "lineNumber": 187
+        },
+        {
+          "caller": "type",
+          "callee": "std::make_shared<TYPE>",
+          "lineNumber": 191
+        },
+        {
+          "caller": "type",
+          "callee": "WithType",
+          "lineNumber": 191
+        },
+        {
+          "caller": "type",
+          "callee": "type",
+          "lineNumber": 191
+        },
+        {
+          "caller": "AppendNextOffset",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 200
+        },
+        {
+          "caller": "AppendNextOffset",
+          "callee": "ValidateOverflow",
+          "lineNumber": 200
+        },
+        {
+          "caller": "AppendNextOffset",
+          "callee": "length",
+          "lineNumber": 201
+        },
+        {
+          "caller": "AppendNextOffset",
+          "callee": "Append",
+          "lineNumber": 202
+        },
+        {
+          "caller": "AppendNextOffset",
+          "callee": "static_cast<offset_type>",
+          "lineNumber": 202
+        },
+        {
+          "caller": "UnsafeAppendNextOffset",
+          "callee": "length",
+          "lineNumber": 206
+        },
+        {
+          "caller": "UnsafeAppendNextOffset",
+          "callee": "UnsafeAppend",
+          "lineNumber": 207
+        },
+        {
+          "caller": "UnsafeAppendNextOffset",
+          "callee": "static_cast<offset_type>",
+          "lineNumber": 207
+        },
+        {
+          "caller": "Finish",
+          "callee": "FinishTyped",
+          "lineNumber": 232
+        },
+        {
+          "caller": "Finish",
+          "callee": "FinishTyped",
+          "lineNumber": 247
+        },
+        {
+          "caller": "Finish",
+          "callee": "FinishTyped",
+          "lineNumber": 286
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "GetValues<int32_t>",
+          "lineNumber": 311
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "MayHaveLogicalNulls",
+          "lineNumber": 312
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "HasValidityBitmap",
+          "lineNumber": 313
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "bit_util::GetBit",
+          "lineNumber": 316
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "IsValid",
+          "lineNumber": 317
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 319
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "Append",
+          "lineNumber": 319
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 323
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "AppendArraySlice",
+          "lineNumber": 323
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 325
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "AppendArraySlice",
+          "lineNumber": 325
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 328
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "AppendNull",
+          "lineNumber": 328
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "Status::OK",
+          "lineNumber": 331
+        },
+        {
+          "caller": "type",
+          "callee": "std::make_shared<MapType>",
+          "lineNumber": 355
+        },
+        {
+          "caller": "type",
+          "callee": "field",
+          "lineNumber": 356
+        },
+        {
+          "caller": "type",
+          "callee": "struct_",
+          "lineNumber": 357
+        },
+        {
+          "caller": "type",
+          "callee": "field",
+          "lineNumber": 357
+        },
+        {
+          "caller": "type",
+          "callee": "type",
+          "lineNumber": 357
+        },
+        {
+          "caller": "type",
+          "callee": "field",
+          "lineNumber": 358
+        },
+        {
+          "caller": "type",
+          "callee": "type",
+          "lineNumber": 358
+        },
+        {
+          "caller": "ValidateOverflow",
+          "callee": "ValidateOverflow",
+          "lineNumber": 364
+        },
+        {
+          "caller": "Finish",
+          "callee": "FinishTyped",
+          "lineNumber": 408
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "MayHaveNulls",
+          "lineNumber": 445
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "bit_util::GetBit",
+          "lineNumber": 447
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 448
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "AppendArraySlice",
+          "lineNumber": 448
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 450
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "Append",
+          "lineNumber": 450
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 452
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "AppendNull",
+          "lineNumber": 452
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "Status::OK",
+          "lineNumber": 455
+        },
+        {
+          "caller": "type",
+          "callee": "fixed_size_list",
+          "lineNumber": 461
+        },
+        {
+          "caller": "type",
+          "callee": "WithType",
+          "lineNumber": 461
+        },
+        {
+          "caller": "type",
+          "callee": "type",
+          "lineNumber": 461
+        },
+        {
+          "caller": "maximum_elements",
+          "callee": "std::numeric_limits<FixedSizeListType::offset_type>::max",
+          "lineNumber": 466
+        },
+        {
+          "caller": "Finish",
+          "callee": "FinishTyped",
+          "lineNumber": 495
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 502
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "Reserve",
+          "lineNumber": 502
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "UnsafeAppendToBitmap",
+          "lineNumber": 503
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "Status::OK",
+          "lineNumber": 504
+        },
+        {
+          "caller": "Append",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 510
+        },
+        {
+          "caller": "Append",
+          "callee": "Reserve",
+          "lineNumber": 510
+        },
+        {
+          "caller": "Append",
+          "callee": "UnsafeAppendToBitmap",
+          "lineNumber": 511
+        },
+        {
+          "caller": "Append",
+          "callee": "Status::OK",
+          "lineNumber": 512
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 519
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "AppendEmptyValue",
+          "lineNumber": 519
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "Append",
+          "lineNumber": 521
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 528
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "AppendEmptyValues",
+          "lineNumber": 528
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 530
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "Reserve",
+          "lineNumber": 530
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "UnsafeAppendToBitmap",
+          "lineNumber": 531
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "Status::OK",
+          "lineNumber": 532
+        },
+        {
+          "caller": "AppendEmptyValue",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 537
+        },
+        {
+          "caller": "AppendEmptyValue",
+          "callee": "AppendEmptyValue",
+          "lineNumber": 537
+        },
+        {
+          "caller": "AppendEmptyValue",
+          "callee": "Append",
+          "lineNumber": 539
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 544
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "AppendEmptyValues",
+          "lineNumber": 544
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 546
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "Reserve",
+          "lineNumber": 546
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "UnsafeAppendToBitmap",
+          "lineNumber": 547
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "Status::OK",
+          "lineNumber": 548
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 553
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "size",
+          "lineNumber": 553
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 554
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "AppendArraySlice",
+          "lineNumber": 554
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "MayHaveNulls",
+          "lineNumber": 557
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 558
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "Reserve",
+          "lineNumber": 558
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "UnsafeAppendToBitmap",
+          "lineNumber": 559
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "Status::OK",
+          "lineNumber": 560
+        },
+        {
+          "caller": "num_fields",
+          "callee": "static_cast<int>",
+          "lineNumber": 567
+        },
+        {
+          "caller": "num_fields",
+          "callee": "size",
+          "lineNumber": 567
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/array/builder_primitive.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 555,
+      "nonEmptyLines": 468,
+      "functions": [
+        {
+          "name": "AppendNull",
+          "startLine": 51,
+          "endLine": 51,
+          "params": []
+        },
+        {
+          "name": "AppendEmptyValues",
+          "startLine": 53,
+          "endLine": 53,
+          "params": [
+            "length"
+          ]
+        },
+        {
+          "name": "AppendEmptyValue",
+          "startLine": 55,
+          "endLine": 55,
+          "params": []
+        },
+        {
+          "name": "Append",
+          "startLine": 57,
+          "endLine": 57,
+          "params": []
+        },
+        {
+          "name": "AppendArraySlice",
+          "startLine": 59,
+          "endLine": 61,
+          "params": [
+            "length"
+          ]
+        },
+        {
+          "name": "type",
+          "startLine": 69,
+          "endLine": 69,
+          "params": []
+        },
+        {
+          "name": "Finish",
+          "startLine": 71,
+          "endLine": 71,
+          "params": [
+            "out"
+          ]
+        },
+        {
+          "name": "AppendNulls",
+          "startLine": 361,
+          "endLine": 374,
+          "params": [
+            "length"
+          ]
+        },
+        {
+          "name": "AppendNull",
+          "startLine": 376,
+          "endLine": 380,
+          "params": []
+        },
+        {
+          "name": "AppendEmptyValue",
+          "startLine": 382,
+          "endLine": 387,
+          "params": []
+        },
+        {
+          "name": "AppendEmptyValues",
+          "startLine": 389,
+          "endLine": 394,
+          "params": [
+            "length"
+          ]
+        },
+        {
+          "name": "Append",
+          "startLine": 397,
+          "endLine": 401,
+          "params": [
+            "val"
+          ]
+        },
+        {
+          "name": "Append",
+          "startLine": 403,
+          "endLine": 403,
+          "params": [
+            "val"
+          ]
+        },
+        {
+          "name": "UnsafeAppend",
+          "startLine": 406,
+          "endLine": 409,
+          "params": [
+            "val"
+          ]
+        },
+        {
+          "name": "UnsafeAppendNull",
+          "startLine": 411,
+          "endLine": 414,
+          "params": []
+        },
+        {
+          "name": "UnsafeAppend",
+          "startLine": 416,
+          "endLine": 416,
+          "params": [
+            "val"
+          ]
+        },
+        {
+          "name": "AppendArraySlice",
+          "startLine": 532,
+          "endLine": 536,
+          "params": [
+            "array",
+            "offset",
+            "length"
+          ]
+        },
+        {
+          "name": "Finish",
+          "startLine": 544,
+          "endLine": 544,
+          "params": [
+            "out"
+          ]
+        },
+        {
+          "name": "type",
+          "startLine": 549,
+          "endLine": 549,
+          "params": []
+        }
+      ],
+      "classes": [
+        {
+          "name": "ARROW_EXPORT",
+          "startLine": 354,
+          "endLine": 354,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "AppendNull",
+          "line": 51,
+          "isDefault": false
+        },
+        {
+          "name": "AppendEmptyValues",
+          "line": 53,
+          "isDefault": false
+        },
+        {
+          "name": "AppendEmptyValue",
+          "line": 55,
+          "isDefault": false
+        },
+        {
+          "name": "Append",
+          "line": 57,
+          "isDefault": false
+        },
+        {
+          "name": "AppendArraySlice",
+          "line": 59,
+          "isDefault": false
+        },
+        {
+          "name": "type",
+          "line": 69,
+          "isDefault": false
+        },
+        {
+          "name": "Finish",
+          "line": 71,
+          "isDefault": false
+        },
+        {
+          "name": "ARROW_EXPORT",
+          "line": 354,
+          "isDefault": false
+        },
+        {
+          "name": "AppendNulls",
+          "line": 361,
+          "isDefault": false
+        },
+        {
+          "name": "AppendNull",
+          "line": 376,
+          "isDefault": false
+        },
+        {
+          "name": "AppendEmptyValue",
+          "line": 382,
+          "isDefault": false
+        },
+        {
+          "name": "AppendEmptyValues",
+          "line": 389,
+          "isDefault": false
+        },
+        {
+          "name": "Append",
+          "line": 397,
+          "isDefault": false
+        },
+        {
+          "name": "Append",
+          "line": 403,
+          "isDefault": false
+        },
+        {
+          "name": "UnsafeAppend",
+          "line": 406,
+          "isDefault": false
+        },
+        {
+          "name": "UnsafeAppendNull",
+          "line": 411,
+          "isDefault": false
+        },
+        {
+          "name": "UnsafeAppend",
+          "line": 416,
+          "isDefault": false
+        },
+        {
+          "name": "AppendArraySlice",
+          "line": 532,
+          "isDefault": false
+        },
+        {
+          "name": "Finish",
+          "line": 544,
+          "isDefault": false
+        },
+        {
+          "name": "type",
+          "line": 549,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "AppendNull",
+          "callee": "AppendNulls",
+          "lineNumber": 51
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "AppendNulls",
+          "lineNumber": 53
+        },
+        {
+          "caller": "AppendEmptyValue",
+          "callee": "AppendEmptyValues",
+          "lineNumber": 55
+        },
+        {
+          "caller": "Append",
+          "callee": "AppendNull",
+          "lineNumber": 57
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "AppendNulls",
+          "lineNumber": 60
+        },
+        {
+          "caller": "type",
+          "callee": "null",
+          "lineNumber": 69
+        },
+        {
+          "caller": "Finish",
+          "callee": "FinishTyped",
+          "lineNumber": 71
+        },
+        {
+          "caller": "NumericBuilder",
+          "callee": "default_memory_pool",
+          "lineNumber": 90
+        },
+        {
+          "caller": "NumericBuilder",
+          "callee": "TypeTraits<T>::type_singleton",
+          "lineNumber": 93
+        },
+        {
+          "caller": "Append",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 102
+        },
+        {
+          "caller": "Append",
+          "callee": "ArrayBuilder::Reserve",
+          "lineNumber": 102
+        },
+        {
+          "caller": "Append",
+          "callee": "UnsafeAppend",
+          "lineNumber": 103
+        },
+        {
+          "caller": "Append",
+          "callee": "Status::OK",
+          "lineNumber": 104
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 111
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "Reserve",
+          "lineNumber": 111
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "UnsafeAppend",
+          "lineNumber": 112
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "UnsafeSetNull",
+          "lineNumber": 113
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "Status::OK",
+          "lineNumber": 114
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 119
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "Reserve",
+          "lineNumber": 119
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "UnsafeAppend",
+          "lineNumber": 120
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "UnsafeAppendToBitmap",
+          "lineNumber": 121
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "Status::OK",
+          "lineNumber": 122
+        },
+        {
+          "caller": "AppendEmptyValue",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 127
+        },
+        {
+          "caller": "AppendEmptyValue",
+          "callee": "Reserve",
+          "lineNumber": 127
+        },
+        {
+          "caller": "AppendEmptyValue",
+          "callee": "UnsafeAppend",
+          "lineNumber": 128
+        },
+        {
+          "caller": "AppendEmptyValue",
+          "callee": "UnsafeAppendToBitmap",
+          "lineNumber": 129
+        },
+        {
+          "caller": "AppendEmptyValue",
+          "callee": "Status::OK",
+          "lineNumber": 130
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 135
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "Reserve",
+          "lineNumber": 135
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "UnsafeAppend",
+          "lineNumber": 136
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "UnsafeSetNotNull",
+          "lineNumber": 137
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "Status::OK",
+          "lineNumber": 138
+        },
+        {
+          "caller": "GetValue",
+          "callee": "data",
+          "lineNumber": 141
+        },
+        {
+          "caller": "Reset",
+          "callee": "Reset",
+          "lineNumber": 144
+        },
+        {
+          "caller": "Reset",
+          "callee": "ArrayBuilder::Reset",
+          "lineNumber": 145
+        },
+        {
+          "caller": "Resize",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 149
+        },
+        {
+          "caller": "Resize",
+          "callee": "CheckCapacity",
+          "lineNumber": 149
+        },
+        {
+          "caller": "Resize",
+          "callee": "std::max",
+          "lineNumber": 150
+        },
+        {
+          "caller": "Resize",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 151
+        },
+        {
+          "caller": "Resize",
+          "callee": "Resize",
+          "lineNumber": 151
+        },
+        {
+          "caller": "Resize",
+          "callee": "ArrayBuilder::Resize",
+          "lineNumber": 152
+        },
+        {
+          "caller": "operator[]",
+          "callee": "GetValue",
+          "lineNumber": 155
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 169
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "Reserve",
+          "lineNumber": 169
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "UnsafeAppend",
+          "lineNumber": 170
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "ArrayBuilder::UnsafeAppendToBitmap",
+          "lineNumber": 172
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "Status::OK",
+          "lineNumber": 173
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 184
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "Reserve",
+          "lineNumber": 184
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "UnsafeAppend",
+          "lineNumber": 185
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "ArrayBuilder::UnsafeAppendToBitmap",
+          "lineNumber": 187
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "Status::OK",
+          "lineNumber": 188
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 199
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "Reserve",
+          "lineNumber": 199
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "UnsafeAppend",
+          "lineNumber": 200
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "ArrayBuilder::UnsafeAppendToBitmap",
+          "lineNumber": 202
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "Status::OK",
+          "lineNumber": 203
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "AppendValues",
+          "lineNumber": 213
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "data",
+          "lineNumber": 213
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "static_cast<int64_t>",
+          "lineNumber": 213
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "size",
+          "lineNumber": 213
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "AppendValues",
+          "lineNumber": 220
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "data",
+          "lineNumber": 220
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "static_cast<int64_t>",
+          "lineNumber": 220
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "size",
+          "lineNumber": 220
+        },
+        {
+          "caller": "FinishInternal",
+          "callee": "ArrayData::Make",
+          "lineNumber": 227
+        },
+        {
+          "caller": "FinishInternal",
+          "callee": "type",
+          "lineNumber": 227
+        },
+        {
+          "caller": "FinishInternal",
+          "callee": "Status::OK",
+          "lineNumber": 229
+        },
+        {
+          "caller": "Finish",
+          "callee": "FinishTyped",
+          "lineNumber": 236
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "static_cast<int64_t>",
+          "lineNumber": 244
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "std::distance",
+          "lineNumber": 244
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 245
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "Reserve",
+          "lineNumber": 245
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "UnsafeAppend",
+          "lineNumber": 246
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "UnsafeSetNotNull",
+          "lineNumber": 248
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "Status::OK",
+          "lineNumber": 249
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "static_cast<int64_t>",
+          "lineNumber": 264
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "std::distance",
+          "lineNumber": 264
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 265
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "Reserve",
+          "lineNumber": 265
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "UnsafeAppend",
+          "lineNumber": 266
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "length",
+          "lineNumber": 269
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "false_count",
+          "lineNumber": 270
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "Status::OK",
+          "lineNumber": 271
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "static_cast<int64_t>",
+          "lineNumber": 278
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "std::distance",
+          "lineNumber": 278
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 279
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "Reserve",
+          "lineNumber": 279
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "UnsafeAppend",
+          "lineNumber": 280
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "UnsafeSetNotNull",
+          "lineNumber": 283
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "length",
+          "lineNumber": 287
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "false_count",
+          "lineNumber": 288
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "Status::OK",
+          "lineNumber": 291
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "AppendValues",
+          "lineNumber": 296
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "GetValues<value_type>",
+          "lineNumber": 296
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "GetValues<uint8_t>",
+          "lineNumber": 297
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "ArrayBuilder::UnsafeAppendToBitmap",
+          "lineNumber": 306
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "UnsafeAppend",
+          "lineNumber": 307
+        },
+        {
+          "caller": "UnsafeAppendNull",
+          "callee": "ArrayBuilder::UnsafeAppendToBitmap",
+          "lineNumber": 311
+        },
+        {
+          "caller": "UnsafeAppendNull",
+          "callee": "UnsafeAppend",
+          "lineNumber": 312
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "default_memory_pool",
+          "lineNumber": 361
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "default_memory_pool",
+          "lineNumber": 365
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 370
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "Reserve",
+          "lineNumber": 370
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "UnsafeAppend",
+          "lineNumber": 371
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "UnsafeSetNull",
+          "lineNumber": 372
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "Status::OK",
+          "lineNumber": 373
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 377
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "Reserve",
+          "lineNumber": 377
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "UnsafeAppendNull",
+          "lineNumber": 378
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "Status::OK",
+          "lineNumber": 379
+        },
+        {
+          "caller": "AppendEmptyValue",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 383
+        },
+        {
+          "caller": "AppendEmptyValue",
+          "callee": "Reserve",
+          "lineNumber": 383
+        },
+        {
+          "caller": "AppendEmptyValue",
+          "callee": "UnsafeAppend",
+          "lineNumber": 384
+        },
+        {
+          "caller": "AppendEmptyValue",
+          "callee": "UnsafeSetNotNull",
+          "lineNumber": 385
+        },
+        {
+          "caller": "AppendEmptyValue",
+          "callee": "Status::OK",
+          "lineNumber": 386
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 390
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "Reserve",
+          "lineNumber": 390
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "UnsafeAppend",
+          "lineNumber": 391
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "UnsafeSetNotNull",
+          "lineNumber": 392
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "Status::OK",
+          "lineNumber": 393
+        },
+        {
+          "caller": "Append",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 398
+        },
+        {
+          "caller": "Append",
+          "callee": "Reserve",
+          "lineNumber": 398
+        },
+        {
+          "caller": "Append",
+          "callee": "UnsafeAppend",
+          "lineNumber": 399
+        },
+        {
+          "caller": "Append",
+          "callee": "Status::OK",
+          "lineNumber": 400
+        },
+        {
+          "caller": "Append",
+          "callee": "Append",
+          "lineNumber": 403
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "UnsafeAppend",
+          "lineNumber": 407
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "UnsafeAppendToBitmap",
+          "lineNumber": 408
+        },
+        {
+          "caller": "UnsafeAppendNull",
+          "callee": "UnsafeAppend",
+          "lineNumber": 412
+        },
+        {
+          "caller": "UnsafeAppendNull",
+          "callee": "UnsafeAppendToBitmap",
+          "lineNumber": 413
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "UnsafeAppend",
+          "lineNumber": 416
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "static_cast<int64_t>",
+          "lineNumber": 477
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "std::distance",
+          "lineNumber": 477
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 478
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "Reserve",
+          "lineNumber": 478
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "UnsafeSetNotNull",
+          "lineNumber": 482
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "Status::OK",
+          "lineNumber": 483
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "static_cast<int64_t>",
+          "lineNumber": 498
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "std::distance",
+          "lineNumber": 498
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 499
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "Reserve",
+          "lineNumber": 499
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "length",
+          "lineNumber": 505
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "false_count",
+          "lineNumber": 506
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "Status::OK",
+          "lineNumber": 507
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "static_cast<int64_t>",
+          "lineNumber": 514
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "std::distance",
+          "lineNumber": 514
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 515
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "Reserve",
+          "lineNumber": 515
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "UnsafeSetNotNull",
+          "lineNumber": 520
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "length",
+          "lineNumber": 525
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "false_count",
+          "lineNumber": 526
+        },
+        {
+          "caller": "AppendValues",
+          "callee": "Status::OK",
+          "lineNumber": 527
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "AppendValues",
+          "lineNumber": 534
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "GetValues<uint8_t>",
+          "lineNumber": 534
+        },
+        {
+          "caller": "AppendArraySlice",
+          "callee": "GetValues<uint8_t>",
+          "lineNumber": 535
+        },
+        {
+          "caller": "Finish",
+          "callee": "FinishTyped",
+          "lineNumber": 544
+        },
+        {
+          "caller": "type",
+          "callee": "boolean",
+          "lineNumber": 549
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 20,
+        "functionCount": 19,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/array/builder_run_end.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 303,
+      "nonEmptyLines": 249,
+      "functions": [
+        {
+          "name": "WillCloseRun",
+          "startLine": 77,
+          "endLine": 80,
+          "params": [
+            "value",
+            "length"
+          ]
+        },
+        {
+          "name": "WillCloseRunOfEmptyValues",
+          "startLine": 89,
+          "endLine": 89,
+          "params": [
+            "length"
+          ]
+        },
+        {
+          "name": "Resize",
+          "startLine": 98,
+          "endLine": 98,
+          "params": [
+            "capacity"
+          ]
+        },
+        {
+          "name": "ReservePhysical",
+          "startLine": 106,
+          "endLine": 108,
+          "params": [
+            "additional_capacity"
+          ]
+        },
+        {
+          "name": "AppendNull",
+          "startLine": 112,
+          "endLine": 112,
+          "params": []
+        },
+        {
+          "name": "AppendEmptyValue",
+          "startLine": 115,
+          "endLine": 115,
+          "params": []
+        },
+        {
+          "name": "type",
+          "startLine": 148,
+          "endLine": 148,
+          "params": []
+        },
+        {
+          "name": "has_open_run",
+          "startLine": 150,
+          "endLine": 150,
+          "params": []
+        },
+        {
+          "name": "open_run_length",
+          "startLine": 151,
+          "endLine": 151,
+          "params": []
+        },
+        {
+          "name": "UpdateDimensions",
+          "startLine": 154,
+          "endLine": 158,
+          "params": []
+        }
+      ],
+      "classes": [
+        {
+          "name": "RunCompressorBuilder",
+          "startLine": 60,
+          "endLine": 164,
+          "methods": [
+            "WillCloseRun",
+            "WillCloseRunOfEmptyValues",
+            "Resize",
+            "ResizePhysical",
+            "ReservePhysical",
+            "Reset",
+            "AppendNull",
+            "AppendNulls",
+            "AppendEmptyValue",
+            "AppendEmptyValues",
+            "AppendScalar",
+            "AppendScalars",
+            "AppendRunCompressedArraySlice",
+            "FinishCurrentRun",
+            "FinishInternal",
+            "type",
+            "has_open_run",
+            "open_run_length",
+            "UpdateDimensions"
+          ],
+          "properties": [
+            "inner_builder_",
+            "current_value_",
+            "current_run_length_"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "WillCloseRun",
+          "line": 77,
+          "isDefault": false
+        },
+        {
+          "name": "WillCloseRunOfEmptyValues",
+          "line": 89,
+          "isDefault": false
+        },
+        {
+          "name": "Resize",
+          "line": 98,
+          "isDefault": false
+        },
+        {
+          "name": "ResizePhysical",
+          "line": 104,
+          "isDefault": false
+        },
+        {
+          "name": "ReservePhysical",
+          "line": 106,
+          "isDefault": false
+        },
+        {
+          "name": "Reset",
+          "line": 110,
+          "isDefault": false
+        },
+        {
+          "name": "AppendNull",
+          "line": 112,
+          "isDefault": false
+        },
+        {
+          "name": "AppendNulls",
+          "line": 113,
+          "isDefault": false
+        },
+        {
+          "name": "AppendEmptyValue",
+          "line": 115,
+          "isDefault": false
+        },
+        {
+          "name": "AppendEmptyValues",
+          "line": 116,
+          "isDefault": false
+        },
+        {
+          "name": "AppendScalar",
+          "line": 118,
+          "isDefault": false
+        },
+        {
+          "name": "AppendScalars",
+          "line": 119,
+          "isDefault": false
+        },
+        {
+          "name": "AppendRunCompressedArraySlice",
+          "line": 131,
+          "isDefault": false
+        },
+        {
+          "name": "FinishCurrentRun",
+          "line": 142,
+          "isDefault": false
+        },
+        {
+          "name": "FinishInternal",
+          "line": 144,
+          "isDefault": false
+        },
+        {
+          "name": "type",
+          "line": 148,
+          "isDefault": false
+        },
+        {
+          "name": "has_open_run",
+          "line": 150,
+          "isDefault": false
+        },
+        {
+          "name": "open_run_length",
+          "line": 151,
+          "isDefault": false
+        },
+        {
+          "name": "RunCompressorBuilder",
+          "line": 60,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "WillCloseRun",
+          "callee": "Status::OK",
+          "lineNumber": 79
+        },
+        {
+          "caller": "WillCloseRunOfEmptyValues",
+          "callee": "Status::OK",
+          "lineNumber": 89
+        },
+        {
+          "caller": "Resize",
+          "callee": "ResizePhysical",
+          "lineNumber": 98
+        },
+        {
+          "caller": "ReservePhysical",
+          "callee": "Reserve",
+          "lineNumber": 107
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "AppendNulls",
+          "lineNumber": 112
+        },
+        {
+          "caller": "AppendEmptyValue",
+          "callee": "AppendEmptyValues",
+          "lineNumber": 115
+        },
+        {
+          "caller": "type",
+          "callee": "type",
+          "lineNumber": 148
+        },
+        {
+          "caller": "UpdateDimensions",
+          "callee": "capacity",
+          "lineNumber": 155
+        },
+        {
+          "caller": "UpdateDimensions",
+          "callee": "length",
+          "lineNumber": 156
+        },
+        {
+          "caller": "UpdateDimensions",
+          "callee": "null_count",
+          "lineNumber": 157
+        },
+        {
+          "caller": "WillCloseRun",
+          "callee": "CloseRun",
+          "lineNumber": 190
+        },
+        {
+          "caller": "WillCloseRunOfEmptyValues",
+          "callee": "CloseRun",
+          "lineNumber": 194
+        },
+        {
+          "caller": "Resize",
+          "callee": "ResizePhysical",
+          "lineNumber": 214
+        },
+        {
+          "caller": "ReservePhysical",
+          "callee": "Reserve",
+          "lineNumber": 229
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "AppendNulls",
+          "lineNumber": 234
+        },
+        {
+          "caller": "AppendEmptyValue",
+          "callee": "AppendEmptyValues",
+          "lineNumber": 237
+        },
+        {
+          "caller": "Finish",
+          "callee": "FinishTyped",
+          "lineNumber": 249
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 19,
+        "functionCount": 10,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/array/builder_time.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 66,
+      "nonEmptyLines": 51,
+      "callGraph": [
+        {
+          "caller": "DayTimeIntervalBuilder",
+          "callee": "default_memory_pool",
+          "lineNumber": 39
+        },
+        {
+          "caller": "DayTimeIntervalBuilder",
+          "callee": "day_time_interval",
+          "lineNumber": 41
+        },
+        {
+          "caller": "DayTimeIntervalBuilder",
+          "callee": "default_memory_pool",
+          "lineNumber": 44
+        },
+        {
+          "caller": "MonthDayNanoIntervalBuilder",
+          "callee": "default_memory_pool",
+          "lineNumber": 54
+        },
+        {
+          "caller": "MonthDayNanoIntervalBuilder",
+          "callee": "month_day_nano_interval",
+          "lineNumber": 56
+        },
+        {
+          "caller": "MonthDayNanoIntervalBuilder",
+          "callee": "default_memory_pool",
+          "lineNumber": 59
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/array/builder_union.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 254,
+      "nonEmptyLines": 219,
+      "callGraph": [
+        {
+          "caller": "Finish",
+          "callee": "FinishTyped",
+          "lineNumber": 52
+        },
+        {
+          "caller": "length",
+          "callee": "length",
+          "lineNumber": 67
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 112
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "Append",
+          "lineNumber": 112
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 113
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "Append",
+          "lineNumber": 114
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "static_cast<int32_t>",
+          "lineNumber": 114
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "length",
+          "lineNumber": 114
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "AppendNull",
+          "lineNumber": 116
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 122
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "Append",
+          "lineNumber": 122
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 123
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "Append",
+          "lineNumber": 124
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "static_cast<int32_t>",
+          "lineNumber": 124
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "length",
+          "lineNumber": 124
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "AppendNull",
+          "lineNumber": 126
+        },
+        {
+          "caller": "AppendEmptyValue",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 132
+        },
+        {
+          "caller": "AppendEmptyValue",
+          "callee": "Append",
+          "lineNumber": 132
+        },
+        {
+          "caller": "AppendEmptyValue",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 133
+        },
+        {
+          "caller": "AppendEmptyValue",
+          "callee": "Append",
+          "lineNumber": 134
+        },
+        {
+          "caller": "AppendEmptyValue",
+          "callee": "static_cast<int32_t>",
+          "lineNumber": 134
+        },
+        {
+          "caller": "AppendEmptyValue",
+          "callee": "length",
+          "lineNumber": 134
+        },
+        {
+          "caller": "AppendEmptyValue",
+          "callee": "AppendEmptyValue",
+          "lineNumber": 136
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 142
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "Append",
+          "lineNumber": 142
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 143
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "Append",
+          "lineNumber": 144
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "static_cast<int32_t>",
+          "lineNumber": 144
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "length",
+          "lineNumber": 144
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "AppendEmptyValue",
+          "lineNumber": 146
+        },
+        {
+          "caller": "Append",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 157
+        },
+        {
+          "caller": "Append",
+          "callee": "Append",
+          "lineNumber": 157
+        },
+        {
+          "caller": "Append",
+          "callee": "length",
+          "lineNumber": 158
+        },
+        {
+          "caller": "Append",
+          "callee": "Status::CapacityError",
+          "lineNumber": 159
+        },
+        {
+          "caller": "Append",
+          "callee": "static_cast<int32_t>",
+          "lineNumber": 163
+        },
+        {
+          "caller": "Append",
+          "callee": "length",
+          "lineNumber": 163
+        },
+        {
+          "caller": "Append",
+          "callee": "Append",
+          "lineNumber": 164
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 201
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "Append",
+          "lineNumber": 201
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 202
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "AppendNull",
+          "lineNumber": 202
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "static_cast<int>",
+          "lineNumber": 203
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "size",
+          "lineNumber": 203
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 204
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "AppendEmptyValue",
+          "lineNumber": 204
+        },
+        {
+          "caller": "AppendNull",
+          "callee": "Status::OK",
+          "lineNumber": 206
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 214
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "Append",
+          "lineNumber": 214
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 215
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "AppendNulls",
+          "lineNumber": 215
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "static_cast<int>",
+          "lineNumber": 216
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "size",
+          "lineNumber": 216
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 217
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "AppendEmptyValues",
+          "lineNumber": 218
+        },
+        {
+          "caller": "AppendNulls",
+          "callee": "Status::OK",
+          "lineNumber": 220
+        },
+        {
+          "caller": "AppendEmptyValue",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 224
+        },
+        {
+          "caller": "AppendEmptyValue",
+          "callee": "Append",
+          "lineNumber": 224
+        },
+        {
+          "caller": "AppendEmptyValue",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 226
+        },
+        {
+          "caller": "AppendEmptyValue",
+          "callee": "AppendEmptyValue",
+          "lineNumber": 226
+        },
+        {
+          "caller": "AppendEmptyValue",
+          "callee": "Status::OK",
+          "lineNumber": 228
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 232
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "Append",
+          "lineNumber": 232
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 234
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "AppendEmptyValues",
+          "lineNumber": 234
+        },
+        {
+          "caller": "AppendEmptyValues",
+          "callee": "Status::OK",
+          "lineNumber": 236
+        },
+        {
+          "caller": "Append",
+          "callee": "Append",
+          "lineNumber": 246
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/array/concatenate.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 37,
+      "nonEmptyLines": 31,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/array/data.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 567,
+      "nonEmptyLines": 491,
+      "classes": [
+        {
+          "name": "Array",
+          "startLine": 35,
+          "endLine": 35,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "ArrayData",
+          "startLine": 36,
+          "endLine": 36,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "Array",
+          "line": 35,
+          "isDefault": false
+        },
+        {
+          "name": "ArrayData",
+          "line": 36,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "ArrayData",
+          "callee": "std::move",
+          "lineNumber": 95
+        },
+        {
+          "caller": "ArrayData",
+          "callee": "std::move",
+          "lineNumber": 100
+        },
+        {
+          "caller": "ArrayData",
+          "callee": "std::move",
+          "lineNumber": 101
+        },
+        {
+          "caller": "ArrayData",
+          "callee": "std::move",
+          "lineNumber": 108
+        },
+        {
+          "caller": "ArrayData",
+          "callee": "std::move",
+          "lineNumber": 109
+        },
+        {
+          "caller": "ArrayData",
+          "callee": "std::move",
+          "lineNumber": 110
+        },
+        {
+          "caller": "ArrayData",
+          "callee": "std::move",
+          "lineNumber": 137
+        },
+        {
+          "caller": "ArrayData",
+          "callee": "std::move",
+          "lineNumber": 140
+        },
+        {
+          "caller": "ArrayData",
+          "callee": "std::move",
+          "lineNumber": 141
+        },
+        {
+          "caller": "ArrayData",
+          "callee": "std::move",
+          "lineNumber": 142
+        },
+        {
+          "caller": "ArrayData",
+          "callee": "SetNullCount",
+          "lineNumber": 143
+        },
+        {
+          "caller": "ArrayData",
+          "callee": "SetNullCount",
+          "lineNumber": 154
+        },
+        {
+          "caller": "Copy",
+          "callee": "std::make_shared<ArrayData>",
+          "lineNumber": 181
+        },
+        {
+          "caller": "IsNull",
+          "callee": "IsValid",
+          "lineNumber": 183
+        },
+        {
+          "caller": "IsValid",
+          "callee": "bit_util::GetBit",
+          "lineNumber": 187
+        },
+        {
+          "caller": "IsValid",
+          "callee": "data",
+          "lineNumber": 187
+        },
+        {
+          "caller": "IsValid",
+          "callee": "id",
+          "lineNumber": 189
+        },
+        {
+          "caller": "IsValid",
+          "callee": "internal::IsNullSparseUnion",
+          "lineNumber": 191
+        },
+        {
+          "caller": "IsValid",
+          "callee": "internal::IsNullDenseUnion",
+          "lineNumber": 194
+        },
+        {
+          "caller": "IsValid",
+          "callee": "internal::IsNullRunEndEncoded",
+          "lineNumber": 197
+        },
+        {
+          "caller": "IsValid",
+          "callee": "load",
+          "lineNumber": 199
+        },
+        {
+          "caller": "SetNullCount",
+          "callee": "store",
+          "lineNumber": 257
+        },
+        {
+          "caller": "MayHaveNulls",
+          "callee": "load",
+          "lineNumber": 274
+        },
+        {
+          "caller": "MayHaveLogicalNulls",
+          "callee": "load",
+          "lineNumber": 318
+        },
+        {
+          "caller": "MayHaveLogicalNulls",
+          "callee": "id",
+          "lineNumber": 320
+        },
+        {
+          "caller": "MayHaveLogicalNulls",
+          "callee": "internal::UnionMayHaveLogicalNulls",
+          "lineNumber": 322
+        },
+        {
+          "caller": "MayHaveLogicalNulls",
+          "callee": "internal::RunEndEncodedMayHaveLogicalNulls",
+          "lineNumber": 325
+        },
+        {
+          "caller": "MayHaveLogicalNulls",
+          "callee": "load",
+          "lineNumber": 327
+        },
+        {
+          "caller": "ArraySpan",
+          "callee": "SetMembers",
+          "lineNumber": 389
+        },
+        {
+          "caller": "ArraySpan",
+          "callee": "FillFromScalar",
+          "lineNumber": 391
+        },
+        {
+          "caller": "SetBuffer",
+          "callee": "const_cast<uint8_t*>",
+          "lineNumber": 403
+        },
+        {
+          "caller": "SetBuffer",
+          "callee": "data",
+          "lineNumber": 403
+        },
+        {
+          "caller": "SetBuffer",
+          "callee": "size",
+          "lineNumber": 404
+        },
+        {
+          "caller": "IsNull",
+          "callee": "IsValid",
+          "lineNumber": 436
+        },
+        {
+          "caller": "IsValid",
+          "callee": "bit_util::GetBit",
+          "lineNumber": 440
+        },
+        {
+          "caller": "IsValid",
+          "callee": "id",
+          "lineNumber": 442
+        },
+        {
+          "caller": "IsValid",
+          "callee": "IsNullSparseUnion",
+          "lineNumber": 444
+        },
+        {
+          "caller": "IsValid",
+          "callee": "IsNullDenseUnion",
+          "lineNumber": 447
+        },
+        {
+          "caller": "IsValid",
+          "callee": "IsNullRunEndEncoded",
+          "lineNumber": 450
+        },
+        {
+          "caller": "GetBuffer",
+          "callee": "std::make_shared<Buffer>",
+          "lineNumber": 466
+        },
+        {
+          "caller": "SetSlice",
+          "callee": "id",
+          "lineNumber": 475
+        },
+        {
+          "caller": "MayHaveLogicalNulls",
+          "callee": "id",
+          "lineNumber": 512
+        },
+        {
+          "caller": "MayHaveLogicalNulls",
+          "callee": "UnionMayHaveLogicalNulls",
+          "lineNumber": 514
+        },
+        {
+          "caller": "MayHaveLogicalNulls",
+          "callee": "RunEndEncodedMayHaveLogicalNulls",
+          "lineNumber": 517
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 0,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/array/diff.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 76,
+      "nonEmptyLines": 68,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/array/util.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 90,
+      "nonEmptyLines": 78,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/array/validate.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 56,
+      "nonEmptyLines": 43,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/buffer_builder.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 481,
+      "nonEmptyLines": 414,
+      "callGraph": [
+        {
+          "caller": "BufferBuilder",
+          "callee": "default_memory_pool",
+          "lineNumber": 59
+        },
+        {
+          "caller": "BufferBuilder",
+          "callee": "std::move",
+          "lineNumber": 61
+        },
+        {
+          "caller": "BufferBuilder",
+          "callee": "mutable_data",
+          "lineNumber": 63
+        },
+        {
+          "caller": "BufferBuilder",
+          "callee": "capacity",
+          "lineNumber": 64
+        },
+        {
+          "caller": "BufferBuilder",
+          "callee": "size",
+          "lineNumber": 65
+        },
+        {
+          "caller": "Resize",
+          "callee": "ARROW_ASSIGN_OR_RAISE",
+          "lineNumber": 78
+        },
+        {
+          "caller": "Resize",
+          "callee": "AllocateResizableBuffer",
+          "lineNumber": 79
+        },
+        {
+          "caller": "Resize",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 81
+        },
+        {
+          "caller": "Resize",
+          "callee": "Resize",
+          "lineNumber": 81
+        },
+        {
+          "caller": "Resize",
+          "callee": "capacity",
+          "lineNumber": 83
+        },
+        {
+          "caller": "Resize",
+          "callee": "mutable_data",
+          "lineNumber": 84
+        },
+        {
+          "caller": "Resize",
+          "callee": "Status::OK",
+          "lineNumber": 85
+        },
+        {
+          "caller": "Reserve",
+          "callee": "Status::OK",
+          "lineNumber": 96
+        },
+        {
+          "caller": "Reserve",
+          "callee": "Resize",
+          "lineNumber": 98
+        },
+        {
+          "caller": "Reserve",
+          "callee": "GrowByFactor",
+          "lineNumber": 98
+        },
+        {
+          "caller": "GrowByFactor",
+          "callee": "std::max",
+          "lineNumber": 107
+        },
+        {
+          "caller": "Append",
+          "callee": "ARROW_PREDICT_FALSE",
+          "lineNumber": 114
+        },
+        {
+          "caller": "Append",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 115
+        },
+        {
+          "caller": "Append",
+          "callee": "Resize",
+          "lineNumber": 115
+        },
+        {
+          "caller": "Append",
+          "callee": "GrowByFactor",
+          "lineNumber": 115
+        },
+        {
+          "caller": "Append",
+          "callee": "UnsafeAppend",
+          "lineNumber": 117
+        },
+        {
+          "caller": "Append",
+          "callee": "Status::OK",
+          "lineNumber": 118
+        },
+        {
+          "caller": "Append",
+          "callee": "Append",
+          "lineNumber": 124
+        },
+        {
+          "caller": "Append",
+          "callee": "data",
+          "lineNumber": 124
+        },
+        {
+          "caller": "Append",
+          "callee": "size",
+          "lineNumber": 124
+        },
+        {
+          "caller": "Append",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 130
+        },
+        {
+          "caller": "Append",
+          "callee": "Reserve",
+          "lineNumber": 130
+        },
+        {
+          "caller": "Append",
+          "callee": "UnsafeAppend",
+          "lineNumber": 131
+        },
+        {
+          "caller": "Append",
+          "callee": "Status::OK",
+          "lineNumber": 132
+        },
+        {
+          "caller": "Advance",
+          "callee": "Append",
+          "lineNumber": 136
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "memcpy",
+          "lineNumber": 143
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 143
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "UnsafeAppend",
+          "lineNumber": 146
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "data",
+          "lineNumber": 146
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "size",
+          "lineNumber": 146
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "memset",
+          "lineNumber": 149
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 149
+        },
+        {
+          "caller": "Finish",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 163
+        },
+        {
+          "caller": "Finish",
+          "callee": "Resize",
+          "lineNumber": 163
+        },
+        {
+          "caller": "Finish",
+          "callee": "ZeroPadding",
+          "lineNumber": 164
+        },
+        {
+          "caller": "Finish",
+          "callee": "ARROW_ASSIGN_OR_RAISE",
+          "lineNumber": 167
+        },
+        {
+          "caller": "Finish",
+          "callee": "AllocateBuffer",
+          "lineNumber": 167
+        },
+        {
+          "caller": "Finish",
+          "callee": "Reset",
+          "lineNumber": 169
+        },
+        {
+          "caller": "Finish",
+          "callee": "Status::OK",
+          "lineNumber": 170
+        },
+        {
+          "caller": "Finish",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 175
+        },
+        {
+          "caller": "Finish",
+          "callee": "Finish",
+          "lineNumber": 175
+        },
+        {
+          "caller": "FinishWithLength",
+          "callee": "Finish",
+          "lineNumber": 187
+        },
+        {
+          "caller": "TypedBufferBuilder",
+          "callee": "default_memory_pool",
+          "lineNumber": 232
+        },
+        {
+          "caller": "TypedBufferBuilder",
+          "callee": "default_memory_pool",
+          "lineNumber": 237
+        },
+        {
+          "caller": "TypedBufferBuilder",
+          "callee": "std::move",
+          "lineNumber": 238
+        },
+        {
+          "caller": "TypedBufferBuilder",
+          "callee": "std::move",
+          "lineNumber": 241
+        },
+        {
+          "caller": "Append",
+          "callee": "Append",
+          "lineNumber": 246
+        },
+        {
+          "caller": "Append",
+          "callee": "reinterpret_cast<uint8_t*>",
+          "lineNumber": 246
+        },
+        {
+          "caller": "Append",
+          "callee": "Append",
+          "lineNumber": 250
+        },
+        {
+          "caller": "Append",
+          "callee": "reinterpret_cast<const uint8_t*>",
+          "lineNumber": 250
+        },
+        {
+          "caller": "Append",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 255
+        },
+        {
+          "caller": "Append",
+          "callee": "Reserve",
+          "lineNumber": 255
+        },
+        {
+          "caller": "Append",
+          "callee": "length",
+          "lineNumber": 255
+        },
+        {
+          "caller": "Append",
+          "callee": "UnsafeAppend",
+          "lineNumber": 256
+        },
+        {
+          "caller": "Append",
+          "callee": "Status::OK",
+          "lineNumber": 257
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "UnsafeAppend",
+          "lineNumber": 261
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "reinterpret_cast<uint8_t*>",
+          "lineNumber": 261
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "UnsafeAppend",
+          "lineNumber": 265
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "reinterpret_cast<const uint8_t*>",
+          "lineNumber": 265
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "static_cast<int64_t>",
+          "lineNumber": 271
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "std::distance",
+          "lineNumber": 271
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "mutable_data",
+          "lineNumber": 272
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "length",
+          "lineNumber": 272
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "UnsafeAdvance",
+          "lineNumber": 273
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "std::copy",
+          "lineNumber": 274
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "mutable_data",
+          "lineNumber": 278
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "length",
+          "lineNumber": 278
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "UnsafeAdvance",
+          "lineNumber": 279
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "std::fill",
+          "lineNumber": 280
+        },
+        {
+          "caller": "Resize",
+          "callee": "Resize",
+          "lineNumber": 284
+        },
+        {
+          "caller": "Reserve",
+          "callee": "Reserve",
+          "lineNumber": 288
+        },
+        {
+          "caller": "Advance",
+          "callee": "Advance",
+          "lineNumber": 292
+        },
+        {
+          "caller": "Finish",
+          "callee": "Finish",
+          "lineNumber": 296
+        },
+        {
+          "caller": "Finish",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 301
+        },
+        {
+          "caller": "Finish",
+          "callee": "Finish",
+          "lineNumber": 301
+        },
+        {
+          "caller": "FinishWithLength",
+          "callee": "FinishWithLength",
+          "lineNumber": 312
+        },
+        {
+          "caller": "Reset",
+          "callee": "Reset",
+          "lineNumber": 315
+        },
+        {
+          "caller": "length",
+          "callee": "length",
+          "lineNumber": 317
+        },
+        {
+          "caller": "capacity",
+          "callee": "capacity",
+          "lineNumber": 318
+        },
+        {
+          "caller": "TypedBufferBuilder",
+          "callee": "default_memory_pool",
+          "lineNumber": 330
+        },
+        {
+          "caller": "TypedBufferBuilder",
+          "callee": "std::move",
+          "lineNumber": 335
+        },
+        {
+          "caller": "Append",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 340
+        },
+        {
+          "caller": "Append",
+          "callee": "Reserve",
+          "lineNumber": 340
+        },
+        {
+          "caller": "Append",
+          "callee": "UnsafeAppend",
+          "lineNumber": 341
+        },
+        {
+          "caller": "Append",
+          "callee": "Status::OK",
+          "lineNumber": 342
+        },
+        {
+          "caller": "Append",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 346
+        },
+        {
+          "caller": "Append",
+          "callee": "Reserve",
+          "lineNumber": 346
+        },
+        {
+          "caller": "Append",
+          "callee": "UnsafeAppend",
+          "lineNumber": 347
+        },
+        {
+          "caller": "Append",
+          "callee": "Status::OK",
+          "lineNumber": 348
+        },
+        {
+          "caller": "Append",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 352
+        },
+        {
+          "caller": "Append",
+          "callee": "Reserve",
+          "lineNumber": 352
+        },
+        {
+          "caller": "Append",
+          "callee": "UnsafeAppend",
+          "lineNumber": 353
+        },
+        {
+          "caller": "Append",
+          "callee": "Status::OK",
+          "lineNumber": 354
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "bit_util::SetBitTo",
+          "lineNumber": 358
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "mutable_data",
+          "lineNumber": 358
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "internal::GenerateBitsUnrolled",
+          "lineNumber": 369
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "mutable_data",
+          "lineNumber": 369
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "internal::CopyBitmap",
+          "lineNumber": 380
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "mutable_data",
+          "lineNumber": 380
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "internal::CountSetBits",
+          "lineNumber": 381
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "bit_util::SetBitsTo",
+          "lineNumber": 386
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "mutable_data",
+          "lineNumber": 386
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "internal::GenerateBitsUnrolled",
+          "lineNumber": 396
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "mutable_data",
+          "lineNumber": 396
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "gen",
+          "lineNumber": 397
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "internal::GenerateBitsUnrolled",
+          "lineNumber": 402
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "mutable_data",
+          "lineNumber": 402
+        },
+        {
+          "caller": "UnsafeAppend",
+          "callee": "std::forward<Generator>",
+          "lineNumber": 403
+        },
+        {
+          "caller": "Resize",
+          "callee": "capacity",
+          "lineNumber": 409
+        },
+        {
+          "caller": "Resize",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 410
+        },
+        {
+          "caller": "Resize",
+          "callee": "Resize",
+          "lineNumber": 411
+        },
+        {
+          "caller": "Resize",
+          "callee": "bit_util::BytesForBits",
+          "lineNumber": 411
+        },
+        {
+          "caller": "Resize",
+          "callee": "capacity",
+          "lineNumber": 414
+        },
+        {
+          "caller": "Resize",
+          "callee": "memset",
+          "lineNumber": 418
+        },
+        {
+          "caller": "Resize",
+          "callee": "mutable_data",
+          "lineNumber": 418
+        },
+        {
+          "caller": "Resize",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 419
+        },
+        {
+          "caller": "Resize",
+          "callee": "Status::OK",
+          "lineNumber": 421
+        },
+        {
+          "caller": "Reserve",
+          "callee": "Resize",
+          "lineNumber": 425
+        },
+        {
+          "caller": "Reserve",
+          "callee": "BufferBuilder::GrowByFactor",
+          "lineNumber": 426
+        },
+        {
+          "caller": "Advance",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 431
+        },
+        {
+          "caller": "Advance",
+          "callee": "Reserve",
+          "lineNumber": 431
+        },
+        {
+          "caller": "Advance",
+          "callee": "Status::OK",
+          "lineNumber": 434
+        },
+        {
+          "caller": "Finish",
+          "callee": "UnsafeAdvance",
+          "lineNumber": 439
+        },
+        {
+          "caller": "Finish",
+          "callee": "bit_util::BytesForBits",
+          "lineNumber": 439
+        },
+        {
+          "caller": "Finish",
+          "callee": "length",
+          "lineNumber": 440
+        },
+        {
+          "caller": "Finish",
+          "callee": "Finish",
+          "lineNumber": 442
+        },
+        {
+          "caller": "Finish",
+          "callee": "ARROW_RETURN_NOT_OK",
+          "lineNumber": 447
+        },
+        {
+          "caller": "Finish",
+          "callee": "Finish",
+          "lineNumber": 447
+        },
+        {
+          "caller": "FinishWithLength",
+          "callee": "bit_util::BytesForBits",
+          "lineNumber": 458
+        },
+        {
+          "caller": "FinishWithLength",
+          "callee": "UnsafeAdvance",
+          "lineNumber": 459
+        },
+        {
+          "caller": "FinishWithLength",
+          "callee": "length",
+          "lineNumber": 459
+        },
+        {
+          "caller": "FinishWithLength",
+          "callee": "FinishWithLength",
+          "lineNumber": 461
+        },
+        {
+          "caller": "Reset",
+          "callee": "Reset",
+          "lineNumber": 465
+        },
+        {
+          "caller": "capacity",
+          "callee": "capacity",
+          "lineNumber": 470
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/arrow/include/arrow/buffer.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 574,
+      "nonEmptyLines": 494,
+      "functions": [
+        {
+          "name": "SliceBuffer",
+          "startLine": 386,
+          "endLine": 390,
+          "params": [
+            "buffer",
+            "offset",
+            "length"
+          ]
+        },
+        {
+          "name": "SliceBuffer",
+          "startLine": 395,
+          "endLine": 399,
+          "params": [
+            "buffer",
+            "offset"
+          ]
+        },
+        {
+          "name": "SliceMutableBuffer",
+          "startLine": 427,
+          "endLine": 431,
+          "params": [
+            "buffer",
+            "offset"
+          ]
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "Buffer",
+          "callee": "SetMemoryManager",
+          "lineNumber": 68
+        },
+        {
+          "caller": "Buffer",
+          "callee": "default_cpu_memory_manager",
+          "lineNumber": 68
+        },
+        {
+          "caller": "Buffer",
+          "callee": "std::move",
+          "lineNumber": 78
+        },
+        {
+          "caller": "Buffer",
+          "callee": "SetMemoryManager",
+          "lineNumber": 80
+        },
+        {
+          "caller": "Buffer",
+          "callee": "std::move",
+          "lineNumber": 80
+        },
+        {
+          "caller": "Buffer",
+          "callee": "reinterpret_cast<const uint8_t*>",
+          "lineNumber": 91
+        },
+        {
+          "caller": "Buffer",
+          "callee": "std::move",
+          "lineNumber": 91
+        },
+        {
+          "caller": "Buffer",
+          "callee": "std::move",
+          "lineNumber": 92
+        },
+        {
+          "caller": "Buffer",
+          "callee": "reinterpret_cast<const uint8_t*>",
+          "lineNumber": 101
+        },
+        {
+          "caller": "Buffer",
+          "callee": "data",
+          "lineNumber": 101
+        },
+        {
+          "caller": "Buffer",
+          "callee": "static_cast<int64_t>",
+          "lineNumber": 102
+        },
+        {
+          "caller": "Buffer",
+          "callee": "size",
+          "lineNumber": 102
+        },
+        {
+          "caller": "Buffer",
+          "callee": "SetMemoryManager",
+          "lineNumber": 116
+        },
+        {
+          "caller": "ZeroPadding",
+          "callee": "CheckMutable",
+          "lineNumber": 140
+        },
+        {
+          "caller": "ZeroPadding",
+          "callee": "memset",
+          "lineNumber": 144
+        },
+        {
+          "caller": "ZeroPadding",
+          "callee": "mutable_data",
+          "lineNumber": 144
+        },
+        {
+          "caller": "ZeroPadding",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 144
+        },
+        {
+          "caller": "FromVector",
+          "callee": "empty",
+          "lineNumber": 166
+        },
+        {
+          "caller": "FromVector",
+          "callee": "reinterpret_cast<uint8_t*>",
+          "lineNumber": 170
+        },
+        {
+          "caller": "FromVector",
+          "callee": "data",
+          "lineNumber": 170
+        },
+        {
+          "caller": "FromVector",
+          "callee": "static_cast<int64_t>",
+          "lineNumber": 171
+        },
+        {
+          "caller": "FromVector",
+          "callee": "size",
+          "lineNumber": 171
+        },
+        {
+          "caller": "FromVector",
+          "callee": "std::move",
+          "lineNumber": 178
+        },
+        {
+          "caller": "Wrap",
+          "callee": "std::make_shared<Buffer>",
+          "lineNumber": 188
+        },
+        {
+          "caller": "Wrap",
+          "callee": "reinterpret_cast<const uint8_t*>",
+          "lineNumber": 188
+        },
+        {
+          "caller": "Wrap",
+          "callee": "static_cast<int64_t>",
+          "lineNumber": 189
+        },
+        {
+          "caller": "Wrap",
+          "callee": "std::make_shared<Buffer>",
+          "lineNumber": 199
+        },
+        {
+          "caller": "Wrap",
+          "callee": "reinterpret_cast<const uint8_t*>",
+          "lineNumber": 199
+        },
+        {
+          "caller": "Wrap",
+          "callee": "data",
+          "lineNumber": 199
+        },
+        {
+          "caller": "Wrap",
+          "callee": "static_cast<int64_t>",
+          "lineNumber": 200
+        },
+        {
+          "caller": "Wrap",
+          "callee": "size",
+          "lineNumber": 200
+        },
+        {
+          "caller": "address",
+          "callee": "reinterpret_cast<uintptr_t>",
+          "lineNumber": 264
+        },
+        {
+          "caller": "mutable_address",
+          "callee": "CheckMutable",
+          "lineNumber": 272
+        },
+        {
+          "caller": "mutable_address",
+          "callee": "ARROW_PREDICT_TRUE",
+          "lineNumber": 274
+        },
+        {
+          "caller": "mutable_address",
+          "callee": "reinterpret_cast<uintptr_t>",
+          "lineNumber": 274
+        },
+        {
+          "caller": "SetMemoryManager",
+          "callee": "std::move",
+          "lineNumber": 373
+        },
+        {
+          "caller": "SetMemoryManager",
+          "callee": "is_cpu",
+          "lineNumber": 374
+        },
+        {
+          "caller": "SetMemoryManager",
+          "callee": "device_type",
+          "lineNumber": 375
+        },
+        {
+          "caller": "SetMemoryManager",
+          "callee": "device",
+          "lineNumber": 375
+        },
+        {
+          "caller": "SliceBuffer",
+          "callee": "std::make_shared<Buffer>",
+          "lineNumber": 389
+        },
+        {
+          "caller": "SliceBuffer",
+          "callee": "size",
+          "lineNumber": 397
+        },
+        {
+          "caller": "SliceBuffer",
+          "callee": "SliceBuffer",
+          "lineNumber": 398
+        },
+        {
+          "caller": "SliceMutableBuffer",
+          "callee": "size",
+          "lineNumber": 429
+        },
+        {
+          "caller": "SliceMutableBuffer",
+          "callee": "SliceMutableBuffer",
+          "lineNumber": 430
+        },
+        {
+          "caller": "MutableBuffer",
+          "callee": "std::move",
+          "lineNumber": 458
+        },
+        {
+          "caller": "Wrap",
+          "callee": "std::make_shared<MutableBuffer>",
+          "lineNumber": 471
+        },
+        {
+          "caller": "Wrap",
+          "callee": "reinterpret_cast<uint8_t*>",
+          "lineNumber": 471
+        },
+        {
+          "caller": "Wrap",
+          "callee": "static_cast<int64_t>",
+          "lineNumber": 472
+        },
+        {
+          "caller": "Resize",
+          "callee": "Resize",
+          "lineNumber": 493
+        },
+        {
+          "caller": "TypedResize",
+          "callee": "Resize",
+          "lineNumber": 503
+        },
+        {
+          "caller": "TypedReserve",
+          "callee": "Reserve",
+          "lineNumber": 508
+        },
+        {
+          "caller": "ResizableBuffer",
+          "callee": "std::move",
+          "lineNumber": 514
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 3,
+        "classCount": 0
+      }
+    }
+  ]
+}

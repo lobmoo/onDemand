@@ -1,0 +1,664 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 25,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/dynamicType/DynamicTypeBuilderFactory.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 70,
+      "nonEmptyLines": 66,
+      "classes": [
+        {
+          "name": "TypeObject",
+          "startLine": 24,
+          "endLine": 24,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "TypeObject",
+          "line": 24,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/dynamicType/DynamicTypeMember.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 33,
+      "nonEmptyLines": 30,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/dynamicType/DynamicTypeParameter.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 63,
+      "nonEmptyLines": 58,
+      "callGraph": [
+        {
+          "caller": "CreateInstance",
+          "callee": "std::static_pointer_cast<Parameter>",
+          "lineNumber": 42
+        },
+        {
+          "caller": "CreateInstance",
+          "callee": "std::make_shared<TypeIdentifierParameter>",
+          "lineNumber": 42
+        },
+        {
+          "caller": "CreateInstance",
+          "callee": "std::static_pointer_cast<Parameter>",
+          "lineNumber": 59
+        },
+        {
+          "caller": "CreateInstance",
+          "callee": "std::make_shared<TypeObjectParameter>",
+          "lineNumber": 59
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/dynamicType/MemberDescriptor.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 49,
+      "nonEmptyLines": 45,
+      "classes": [
+        {
+          "name": "DynamicType",
+          "startLine": 21,
+          "endLine": 21,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "DynamicType",
+          "line": 21,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/dynamicType/TypeDescriptor.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 115,
+      "nonEmptyLines": 109,
+      "classes": [
+        {
+          "name": "DynamicType",
+          "startLine": 22,
+          "endLine": 22,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "DynamicType",
+          "line": 22,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/dynamicType/TypeNamesGenerator.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 25,
+      "nonEmptyLines": 22,
+      "classes": [
+        {
+          "name": "TypeNamesGenerator",
+          "startLine": 16,
+          "endLine": 23,
+          "methods": [
+            "get_array_type_name",
+            "get_sequence_type_name",
+            "get_string_type_name",
+            "get_map_type_name"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "get_array_type_name",
+          "line": 19,
+          "isDefault": false
+        },
+        {
+          "name": "get_sequence_type_name",
+          "line": 20,
+          "isDefault": false
+        },
+        {
+          "name": "get_string_type_name",
+          "line": 21,
+          "isDefault": false
+        },
+        {
+          "name": "get_map_type_name",
+          "line": 22,
+          "isDefault": false
+        },
+        {
+          "name": "TypeNamesGenerator",
+          "line": 16,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 5,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/dynamicType/TypeObjectFactory.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 115,
+      "nonEmptyLines": 101,
+      "functions": [
+        {
+          "name": "~TypeObjectFactory",
+          "startLine": 31,
+          "endLine": 31,
+          "params": []
+        },
+        {
+          "name": "add_alias",
+          "startLine": 47,
+          "endLine": 52,
+          "params": [
+            "name",
+            "alisanme"
+          ]
+        },
+        {
+          "name": "add_type_identifier",
+          "startLine": 75,
+          "endLine": 99,
+          "params": [
+            "type_name",
+            "identifier"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "TypeInformation",
+          "startLine": 16,
+          "endLine": 16,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "DynamicType",
+          "startLine": 17,
+          "endLine": 17,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "TypeDescriptor",
+          "startLine": 18,
+          "endLine": 18,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "TypeObjectFactory",
+          "startLine": 20,
+          "endLine": 113,
+          "methods": [
+            "~TypeObjectFactory",
+            "GetTypeKindFromIdentifier",
+            "add_alias",
+            "add_type_object",
+            "get_type_name",
+            "BuildDynamicType",
+            "BuildDynamicType",
+            "add_type_identifier",
+            "get_array_type_name",
+            "get_sequence_type_name",
+            "get_map_type_name",
+            "get_string_type_name"
+          ],
+          "properties": [
+            "identifiers_",
+            "complete_identifiers_",
+            "objects_",
+            "complete_objects_",
+            "identifiers_created_",
+            "informations_",
+            "informations_created_",
+            "sMutex",
+            "mMutex",
+            "get_type_identifier",
+            "get_type_object",
+            "get_type_object",
+            "sInstance",
+            "get_stored_type_identifier",
+            "CreateComplexType",
+            "get_array_identifier",
+            "get_sequence_identifier",
+            "get_map_identifier",
+            "get_string_identifier"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "TypeInformation",
+          "line": 16,
+          "isDefault": false
+        },
+        {
+          "name": "DynamicType",
+          "line": 17,
+          "isDefault": false
+        },
+        {
+          "name": "TypeDescriptor",
+          "line": 18,
+          "isDefault": false
+        },
+        {
+          "name": "~TypeObjectFactory",
+          "line": 31,
+          "isDefault": false
+        },
+        {
+          "name": "GetTypeKindFromIdentifier",
+          "line": 36,
+          "isDefault": false
+        },
+        {
+          "name": "add_alias",
+          "line": 47,
+          "isDefault": false
+        },
+        {
+          "name": "add_type_object",
+          "line": 53,
+          "isDefault": false
+        },
+        {
+          "name": "get_type_name",
+          "line": 67,
+          "isDefault": false
+        },
+        {
+          "name": "BuildDynamicType",
+          "line": 69,
+          "isDefault": false
+        },
+        {
+          "name": "BuildDynamicType",
+          "line": 71,
+          "isDefault": false
+        },
+        {
+          "name": "add_type_identifier",
+          "line": 75,
+          "isDefault": false
+        },
+        {
+          "name": "get_array_type_name",
+          "line": 101,
+          "isDefault": false
+        },
+        {
+          "name": "get_sequence_type_name",
+          "line": 105,
+          "isDefault": false
+        },
+        {
+          "name": "get_map_type_name",
+          "line": 109,
+          "isDefault": false
+        },
+        {
+          "name": "get_string_type_name",
+          "line": 110,
+          "isDefault": false
+        },
+        {
+          "name": "TypeObjectFactory",
+          "line": 20,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "add_type_identifier",
+          "callee": "count",
+          "lineNumber": 80
+        },
+        {
+          "caller": "add_type_identifier",
+          "callee": "push_back",
+          "lineNumber": 83
+        },
+        {
+          "caller": "add_type_identifier",
+          "callee": "count",
+          "lineNumber": 90
+        },
+        {
+          "caller": "add_type_identifier",
+          "callee": "push_back",
+          "lineNumber": 93
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 16,
+        "functionCount": 3,
+        "classCount": 4
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/dynamicType/TypeObjectUtils.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 34,
+      "nonEmptyLines": 28,
+      "classes": [
+        {
+          "name": "TypeObject",
+          "startLine": 17,
+          "endLine": 17,
+          "methods": [],
+          "properties": []
+        },
+        {
+          "name": "TypeIdentifier",
+          "startLine": 18,
+          "endLine": 18,
+          "methods": [],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "TypeObject",
+          "line": 17,
+          "isDefault": false
+        },
+        {
+          "name": "TypeIdentifier",
+          "line": 18,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 0,
+        "classCount": 2
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/publisher/history/DataWriterHistory.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 40,
+      "nonEmptyLines": 34,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/publisher/IDataWriter.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 41,
+      "nonEmptyLines": 26,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/publisher/IDataWriterListener.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 31,
+      "nonEmptyLines": 26,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/publisher/IPublisher.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 59,
+      "nonEmptyLines": 41,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/publisher/IPublisherListener.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 15,
+      "nonEmptyLines": 12,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/publisher/qos/DataWriterQos.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 32,
+      "nonEmptyLines": 31,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/publisher/qos/PublisherQos.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 23,
+      "nonEmptyLines": 23,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/subscriber/history/DataReaderHistory.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 53,
+      "nonEmptyLines": 47,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/subscriber/IDataReader.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 59,
+      "nonEmptyLines": 45,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/subscriber/IDataReaderListener.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 42,
+      "nonEmptyLines": 35,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/subscriber/ISubscriber.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 59,
+      "nonEmptyLines": 41,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/subscriber/ISubscriberListener.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 15,
+      "nonEmptyLines": 12,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/subscriber/qos/DataReaderQos.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 29,
+      "nonEmptyLines": 25,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/subscriber/qos/SubscriberQos.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 21,
+      "nonEmptyLines": 21,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/subscriber/SampleInfo.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 60,
+      "nonEmptyLines": 46,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/topic/ITopic.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 54,
+      "nonEmptyLines": 36,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/DCPS/topic/ITopicListener.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 13,
+      "nonEmptyLines": 11,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    }
+  ]
+}

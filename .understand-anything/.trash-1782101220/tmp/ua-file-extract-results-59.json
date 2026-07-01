@@ -1,0 +1,2460 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 25,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/detail/utility.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 117,
+      "nonEmptyLines": 100,
+      "callGraph": [
+        {
+          "caller": "swap",
+          "callee": "move",
+          "lineNumber": 51
+        },
+        {
+          "caller": "swap",
+          "callee": "move",
+          "lineNumber": 52
+        },
+        {
+          "caller": "swap",
+          "callee": "move",
+          "lineNumber": 53
+        },
+        {
+          "caller": "adl_swap",
+          "callee": "swap",
+          "lineNumber": 63
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/fallback_allocator.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 211,
+      "nonEmptyLines": 187,
+      "callGraph": [
+        {
+          "caller": "fallback_allocator",
+          "callee": "detail::move",
+          "lineNumber": 57
+        },
+        {
+          "caller": "fallback_allocator",
+          "callee": "detail::move",
+          "lineNumber": 58
+        },
+        {
+          "caller": "deallocate_node",
+          "callee": "default_composable_traits::try_deallocate_node",
+          "lineNumber": 86
+        },
+        {
+          "caller": "deallocate_node",
+          "callee": "get_default_allocator",
+          "lineNumber": 86
+        },
+        {
+          "caller": "deallocate_node",
+          "callee": "fallback_traits::deallocate_node",
+          "lineNumber": 89
+        },
+        {
+          "caller": "deallocate_node",
+          "callee": "get_fallback_allocator",
+          "lineNumber": 89
+        },
+        {
+          "caller": "deallocate_array",
+          "callee": "default_composable_traits::try_deallocate_array",
+          "lineNumber": 97
+        },
+        {
+          "caller": "deallocate_array",
+          "callee": "get_default_allocator",
+          "lineNumber": 97
+        },
+        {
+          "caller": "deallocate_array",
+          "callee": "fallback_traits::deallocate_array",
+          "lineNumber": 100
+        },
+        {
+          "caller": "deallocate_array",
+          "callee": "get_fallback_allocator",
+          "lineNumber": 100
+        },
+        {
+          "caller": "try_deallocate_node",
+          "callee": "default_composable_traits::try_deallocate_node",
+          "lineNumber": 135
+        },
+        {
+          "caller": "try_deallocate_node",
+          "callee": "get_default_allocator",
+          "lineNumber": 135
+        },
+        {
+          "caller": "try_deallocate_node",
+          "callee": "fallback_composable_traits::try_deallocate_node",
+          "lineNumber": 138
+        },
+        {
+          "caller": "try_deallocate_node",
+          "callee": "get_fallback_allocator",
+          "lineNumber": 138
+        },
+        {
+          "caller": "try_deallocate_array",
+          "callee": "default_composable_traits::try_deallocate_array",
+          "lineNumber": 148
+        },
+        {
+          "caller": "try_deallocate_array",
+          "callee": "get_default_allocator",
+          "lineNumber": 148
+        },
+        {
+          "caller": "try_deallocate_array",
+          "callee": "fallback_composable_traits::try_deallocate_array",
+          "lineNumber": 151
+        },
+        {
+          "caller": "try_deallocate_array",
+          "callee": "get_fallback_allocator",
+          "lineNumber": 151
+        },
+        {
+          "caller": "max_node_size",
+          "callee": "default_traits::max_node_size",
+          "lineNumber": 162
+        },
+        {
+          "caller": "max_node_size",
+          "callee": "get_default_allocator",
+          "lineNumber": 162
+        },
+        {
+          "caller": "max_node_size",
+          "callee": "fallback_traits::max_node_size",
+          "lineNumber": 163
+        },
+        {
+          "caller": "max_node_size",
+          "callee": "get_fallback_allocator",
+          "lineNumber": 163
+        },
+        {
+          "caller": "max_array_size",
+          "callee": "default_traits::max_array_size",
+          "lineNumber": 169
+        },
+        {
+          "caller": "max_array_size",
+          "callee": "get_default_allocator",
+          "lineNumber": 169
+        },
+        {
+          "caller": "max_array_size",
+          "callee": "fallback_traits::max_array_size",
+          "lineNumber": 170
+        },
+        {
+          "caller": "max_array_size",
+          "callee": "get_fallback_allocator",
+          "lineNumber": 170
+        },
+        {
+          "caller": "max_alignment",
+          "callee": "default_traits::max_alignment",
+          "lineNumber": 176
+        },
+        {
+          "caller": "max_alignment",
+          "callee": "get_default_allocator",
+          "lineNumber": 176
+        },
+        {
+          "caller": "max_alignment",
+          "callee": "fallback_traits::max_alignment",
+          "lineNumber": 177
+        },
+        {
+          "caller": "max_alignment",
+          "callee": "get_fallback_allocator",
+          "lineNumber": 177
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/heap_allocator.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 82,
+      "nonEmptyLines": 67,
+      "callGraph": [
+        {
+          "caller": "deallocate",
+          "callee": "heap_dealloc",
+          "lineNumber": 58
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/iteration_allocator.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 304,
+      "nonEmptyLines": 260,
+      "callGraph": [
+        {
+          "caller": "iteration_allocator",
+          "callee": "detail::forward<Args>",
+          "lineNumber": 47
+        },
+        {
+          "caller": "iteration_allocator",
+          "callee": "allocate_block",
+          "lineNumber": 49
+        },
+        {
+          "caller": "iteration_allocator",
+          "callee": "get_allocator",
+          "lineNumber": 49
+        },
+        {
+          "caller": "iteration_allocator",
+          "callee": "static_cast<char*>",
+          "lineNumber": 50
+        },
+        {
+          "caller": "iteration_allocator",
+          "callee": "detail::fixed_memory_stack",
+          "lineNumber": 54
+        },
+        {
+          "caller": "iteration_allocator",
+          "callee": "detail::move",
+          "lineNumber": 60
+        },
+        {
+          "caller": "iteration_allocator",
+          "callee": "detail::move",
+          "lineNumber": 62
+        },
+        {
+          "caller": "iteration_allocator",
+          "callee": "detail::move",
+          "lineNumber": 65
+        },
+        {
+          "caller": "~iteration_allocator",
+          "callee": "deallocate_block",
+          "lineNumber": 73
+        },
+        {
+          "caller": "~iteration_allocator",
+          "callee": "get_allocator",
+          "lineNumber": 73
+        },
+        {
+          "caller": "next_iteration",
+          "callee": "FOONATHAN_MEMORY_ASSERT_MSG",
+          "lineNumber": 123
+        },
+        {
+          "caller": "next_iteration",
+          "callee": "unwind",
+          "lineNumber": 125
+        },
+        {
+          "caller": "next_iteration",
+          "callee": "block_start",
+          "lineNumber": 125
+        },
+        {
+          "caller": "capacity_left",
+          "callee": "std::size_t",
+          "lineNumber": 153
+        },
+        {
+          "caller": "capacity_left",
+          "callee": "block_end",
+          "lineNumber": 153
+        },
+        {
+          "caller": "capacity_left",
+          "callee": "top",
+          "lineNumber": 153
+        },
+        {
+          "caller": "capacity_left",
+          "callee": "capacity_left",
+          "lineNumber": 159
+        },
+        {
+          "caller": "capacity_left",
+          "callee": "cur_iteration",
+          "lineNumber": 159
+        },
+        {
+          "caller": "max_node_size",
+          "callee": "capacity_left",
+          "lineNumber": 241
+        },
+        {
+          "caller": "max_array_size",
+          "callee": "capacity_left",
+          "lineNumber": 246
+        },
+        {
+          "caller": "max_alignment",
+          "callee": "std::size_t",
+          "lineNumber": 254
+        },
+        {
+          "caller": "try_deallocate_node",
+          "callee": "contains",
+          "lineNumber": 286
+        },
+        {
+          "caller": "try_deallocate_array",
+          "callee": "try_deallocate_node",
+          "lineNumber": 292
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/joint_allocator.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 926,
+      "nonEmptyLines": 800,
+      "callGraph": [
+        {
+          "caller": "joint_stack",
+          "callee": "static_cast<char*>",
+          "lineNumber": 38
+        },
+        {
+          "caller": "joint_stack",
+          "callee": "static_cast<char*>",
+          "lineNumber": 38
+        },
+        {
+          "caller": "bump",
+          "callee": "std::size_t",
+          "lineNumber": 49
+        },
+        {
+          "caller": "bump",
+          "callee": "top",
+          "lineNumber": 49
+        },
+        {
+          "caller": "bump",
+          "callee": "bump",
+          "lineNumber": 51
+        },
+        {
+          "caller": "unwind",
+          "callee": "unwind",
+          "lineNumber": 67
+        },
+        {
+          "caller": "unwind",
+          "callee": "static_cast<char*>",
+          "lineNumber": 67
+        },
+        {
+          "caller": "capacity",
+          "callee": "std::size_t",
+          "lineNumber": 72
+        },
+        {
+          "caller": "capacity_left",
+          "callee": "std::size_t",
+          "lineNumber": 77
+        },
+        {
+          "caller": "capacity_left",
+          "callee": "top",
+          "lineNumber": 77
+        },
+        {
+          "caller": "capacity_used",
+          "callee": "std::size_t",
+          "lineNumber": 82
+        },
+        {
+          "caller": "capacity_used",
+          "callee": "top",
+          "lineNumber": 82
+        },
+        {
+          "caller": "joint_type",
+          "callee": "detail::get_memory",
+          "lineNumber": 181
+        },
+        {
+          "caller": "joint_type",
+          "callee": "FOONATHAN_MEMORY_ASSERT",
+          "lineNumber": 183
+        },
+        {
+          "caller": "joint_type",
+          "callee": "top",
+          "lineNumber": 183
+        },
+        {
+          "caller": "joint_type",
+          "callee": "detail::get_memory",
+          "lineNumber": 183
+        },
+        {
+          "caller": "joint_type",
+          "callee": "FOONATHAN_MEMORY_ASSERT",
+          "lineNumber": 184
+        },
+        {
+          "caller": "joint_type",
+          "callee": "capacity_left",
+          "lineNumber": 184
+        },
+        {
+          "caller": "joint_ptr",
+          "callee": "create",
+          "lineNumber": 243
+        },
+        {
+          "caller": "joint_ptr",
+          "callee": "detail::forward<Args>",
+          "lineNumber": 243
+        },
+        {
+          "caller": "joint_ptr",
+          "callee": "create",
+          "lineNumber": 250
+        },
+        {
+          "caller": "joint_ptr",
+          "callee": "detail::forward<Args>",
+          "lineNumber": 250
+        },
+        {
+          "caller": "joint_ptr",
+          "callee": "detail::move",
+          "lineNumber": 257
+        },
+        {
+          "caller": "~joint_ptr",
+          "callee": "reset",
+          "lineNumber": 265
+        },
+        {
+          "caller": "swap",
+          "callee": "detail::adl_swap",
+          "lineNumber": 288
+        },
+        {
+          "caller": "swap",
+          "callee": "static_cast<allocator_reference<RawAllocator>&>",
+          "lineNumber": 288
+        },
+        {
+          "caller": "swap",
+          "callee": "static_cast<allocator_reference<RawAllocator>&>",
+          "lineNumber": 289
+        },
+        {
+          "caller": "swap",
+          "callee": "detail::adl_swap",
+          "lineNumber": 290
+        },
+        {
+          "caller": "reset",
+          "callee": "~element_type",
+          "lineNumber": 300
+        },
+        {
+          "caller": "reset",
+          "callee": "deallocate_node",
+          "lineNumber": 301
+        },
+        {
+          "caller": "reset",
+          "callee": "capacity",
+          "lineNumber": 303
+        },
+        {
+          "caller": "reset",
+          "callee": "detail::get_stack",
+          "lineNumber": 303
+        },
+        {
+          "caller": "reset",
+          "callee": "detail::get_memory",
+          "lineNumber": 304
+        },
+        {
+          "caller": "get_allocator",
+          "callee": "get_allocator",
+          "lineNumber": 345
+        },
+        {
+          "caller": "get_allocator",
+          "callee": "std::declval<allocator_reference<allocator_type>>",
+          "lineNumber": 345
+        },
+        {
+          "caller": "get_allocator",
+          "callee": "allocator_reference<allocator_type>::get_allocator",
+          "lineNumber": 347
+        },
+        {
+          "caller": "operator==",
+          "callee": "get",
+          "lineNumber": 406
+        },
+        {
+          "caller": "allocate_joint",
+          "callee": "joint_ptr<T, RawAllocator>",
+          "lineNumber": 458
+        },
+        {
+          "caller": "allocate_joint",
+          "callee": "detail::forward<Args>",
+          "lineNumber": 459
+        },
+        {
+          "caller": "allocate_joint",
+          "callee": "joint_ptr<T, RawAllocator>",
+          "lineNumber": 466
+        },
+        {
+          "caller": "allocate_joint",
+          "callee": "detail::forward<Args>",
+          "lineNumber": 467
+        },
+        {
+          "caller": "clone_joint",
+          "callee": "joint_ptr<T, RawAllocator>",
+          "lineNumber": 479
+        },
+        {
+          "caller": "clone_joint",
+          "callee": "joint_size",
+          "lineNumber": 480
+        },
+        {
+          "caller": "clone_joint",
+          "callee": "capacity_used",
+          "lineNumber": 480
+        },
+        {
+          "caller": "clone_joint",
+          "callee": "detail::get_stack",
+          "lineNumber": 480
+        },
+        {
+          "caller": "clone_joint",
+          "callee": "detail::get_memory",
+          "lineNumber": 481
+        },
+        {
+          "caller": "clone_joint",
+          "callee": "static_cast<const T&>",
+          "lineNumber": 482
+        },
+        {
+          "caller": "clone_joint",
+          "callee": "joint_ptr<T, RawAllocator>",
+          "lineNumber": 489
+        },
+        {
+          "caller": "clone_joint",
+          "callee": "joint_size",
+          "lineNumber": 490
+        },
+        {
+          "caller": "clone_joint",
+          "callee": "capacity_used",
+          "lineNumber": 490
+        },
+        {
+          "caller": "clone_joint",
+          "callee": "detail::get_stack",
+          "lineNumber": 490
+        },
+        {
+          "caller": "clone_joint",
+          "callee": "detail::get_memory",
+          "lineNumber": 491
+        },
+        {
+          "caller": "clone_joint",
+          "callee": "static_cast<const T&>",
+          "lineNumber": 492
+        },
+        {
+          "caller": "joint_allocator",
+          "callee": "detail::get_stack",
+          "lineNumber": 513
+        },
+        {
+          "caller": "deallocate_node",
+          "callee": "FOONATHAN_MEMORY_ASSERT",
+          "lineNumber": 537
+        },
+        {
+          "caller": "deallocate_node",
+          "callee": "static_cast<char*>",
+          "lineNumber": 538
+        },
+        {
+          "caller": "deallocate_node",
+          "callee": "top",
+          "lineNumber": 539
+        },
+        {
+          "caller": "deallocate_node",
+          "callee": "unwind",
+          "lineNumber": 540
+        },
+        {
+          "caller": "info",
+          "callee": "allocator_info",
+          "lineNumber": 546
+        },
+        {
+          "caller": "joint_array",
+          "callee": "detail::get_stack",
+          "lineNumber": 643
+        },
+        {
+          "caller": "joint_array",
+          "callee": "detail::get_stack",
+          "lineNumber": 653
+        },
+        {
+          "caller": "joint_array",
+          "callee": "detail::get_stack",
+          "lineNumber": 663
+        },
+        {
+          "caller": "joint_array",
+          "callee": "detail::get_stack",
+          "lineNumber": 674
+        },
+        {
+          "caller": "joint_array",
+          "callee": "detail::get_stack",
+          "lineNumber": 686
+        },
+        {
+          "caller": "joint_array",
+          "callee": "detail::get_stack",
+          "lineNumber": 698
+        },
+        {
+          "caller": "joint_array",
+          "callee": "detail::move",
+          "lineNumber": 698
+        },
+        {
+          "caller": "~joint_array",
+          "callee": "~T",
+          "lineNumber": 707
+        },
+        {
+          "caller": "joint_array",
+          "callee": "static_cast<T*>",
+          "lineNumber": 790
+        },
+        {
+          "caller": "joint_array",
+          "callee": "allocate",
+          "lineNumber": 790
+        },
+        {
+          "caller": "joint_array",
+          "callee": "FOONATHAN_THROW",
+          "lineNumber": 792
+        },
+        {
+          "caller": "joint_array",
+          "callee": "out_of_fixed_memory",
+          "lineNumber": 792
+        },
+        {
+          "caller": "joint_array",
+          "callee": "info",
+          "lineNumber": 792
+        },
+        {
+          "caller": "~builder",
+          "callee": "~T",
+          "lineNumber": 806
+        },
+        {
+          "caller": "~builder",
+          "callee": "unwind",
+          "lineNumber": 809
+        },
+        {
+          "caller": "joint_array",
+          "callee": "create",
+          "lineNumber": 847
+        },
+        {
+          "caller": "joint_array",
+          "callee": "release",
+          "lineNumber": 848
+        },
+        {
+          "caller": "joint_array",
+          "callee": "create",
+          "lineNumber": 856
+        },
+        {
+          "caller": "joint_array",
+          "callee": "release",
+          "lineNumber": 857
+        },
+        {
+          "caller": "joint_array",
+          "callee": "size",
+          "lineNumber": 861
+        },
+        {
+          "caller": "joint_array",
+          "callee": "create",
+          "lineNumber": 865
+        },
+        {
+          "caller": "joint_array",
+          "callee": "release",
+          "lineNumber": 866
+        },
+        {
+          "caller": "joint_array",
+          "callee": "size",
+          "lineNumber": 870
+        },
+        {
+          "caller": "joint_array",
+          "callee": "create",
+          "lineNumber": 874
+        },
+        {
+          "caller": "joint_array",
+          "callee": "release",
+          "lineNumber": 875
+        },
+        {
+          "caller": "joint_array",
+          "callee": "size",
+          "lineNumber": 879
+        },
+        {
+          "caller": "joint_array",
+          "callee": "create",
+          "lineNumber": 883
+        },
+        {
+          "caller": "joint_array",
+          "callee": "detail::move",
+          "lineNumber": 883
+        },
+        {
+          "caller": "joint_array",
+          "callee": "release",
+          "lineNumber": 884
+        },
+        {
+          "caller": "joint_array",
+          "callee": "static_cast<T*>",
+          "lineNumber": 894
+        },
+        {
+          "caller": "joint_array",
+          "callee": "allocate",
+          "lineNumber": 894
+        },
+        {
+          "caller": "joint_array",
+          "callee": "FOONATHAN_THROW",
+          "lineNumber": 896
+        },
+        {
+          "caller": "joint_array",
+          "callee": "out_of_fixed_memory",
+          "lineNumber": 896
+        },
+        {
+          "caller": "joint_array",
+          "callee": "info",
+          "lineNumber": 896
+        },
+        {
+          "caller": "joint_array",
+          "callee": "create",
+          "lineNumber": 899
+        },
+        {
+          "caller": "joint_array",
+          "callee": "bump",
+          "lineNumber": 904
+        },
+        {
+          "caller": "joint_array",
+          "callee": "FOONATHAN_THROW",
+          "lineNumber": 905
+        },
+        {
+          "caller": "joint_array",
+          "callee": "out_of_fixed_memory",
+          "lineNumber": 905
+        },
+        {
+          "caller": "joint_array",
+          "callee": "info",
+          "lineNumber": 905
+        },
+        {
+          "caller": "joint_array",
+          "callee": "size",
+          "lineNumber": 905
+        },
+        {
+          "caller": "joint_array",
+          "callee": "create",
+          "lineNumber": 907
+        },
+        {
+          "caller": "joint_array",
+          "callee": "FOONATHAN_MEMORY_ASSERT",
+          "lineNumber": 908
+        },
+        {
+          "caller": "joint_array",
+          "callee": "release",
+          "lineNumber": 912
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/malloc_allocator.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 70,
+      "nonEmptyLines": 55,
+      "callGraph": [
+        {
+          "caller": "deallocate",
+          "callee": "std::free",
+          "lineNumber": 44
+        },
+        {
+          "caller": "max_node_size",
+          "callee": "std::allocator_traits<std::allocator<char>>::max_size",
+          "lineNumber": 49
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/memory_resource_adapter.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 238,
+      "nonEmptyLines": 201,
+      "functions": [
+        {
+          "name": "memory_resource_allocator",
+          "startLine": 172,
+          "endLine": 175,
+          "params": [
+            "ptr"
+          ]
+        },
+        {
+          "name": "deallocate_node",
+          "startLine": 186,
+          "endLine": 189,
+          "params": [
+            "ptr",
+            "size",
+            "alignment"
+          ]
+        },
+        {
+          "name": "max_alignment",
+          "startLine": 192,
+          "endLine": 195,
+          "params": []
+        },
+        {
+          "name": "operator==",
+          "startLine": 210,
+          "endLine": 214,
+          "params": [
+            "lhs",
+            "rhs"
+          ]
+        },
+        {
+          "name": "operator!=",
+          "startLine": 216,
+          "endLine": 220,
+          "params": [
+            "lhs",
+            "rhs"
+          ]
+        }
+      ],
+      "classes": [
+        {
+          "name": "memory_resource_allocator",
+          "startLine": 167,
+          "endLine": 205,
+          "methods": [
+            "memory_resource_allocator",
+            "deallocate_node",
+            "max_alignment"
+          ],
+          "properties": [
+            "ptr_"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "memory_resource_allocator",
+          "line": 172,
+          "isDefault": false
+        },
+        {
+          "name": "deallocate_node",
+          "line": 186,
+          "isDefault": false
+        },
+        {
+          "name": "max_alignment",
+          "line": 192,
+          "isDefault": false
+        },
+        {
+          "name": "memory_resource_allocator",
+          "line": 167,
+          "isDefault": false
+        },
+        {
+          "name": "operator==",
+          "line": 210,
+          "isDefault": false
+        },
+        {
+          "name": "operator!=",
+          "line": 216,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "deallocate",
+          "callee": "do_deallocate",
+          "lineNumber": 61
+        },
+        {
+          "caller": "is_equal",
+          "callee": "do_is_equal",
+          "lineNumber": 65
+        },
+        {
+          "caller": "operator==",
+          "callee": "is_equal",
+          "lineNumber": 75
+        },
+        {
+          "caller": "memory_resource_adapter",
+          "callee": "detail::move",
+          "lineNumber": 105
+        },
+        {
+          "caller": "do_deallocate",
+          "callee": "traits_type::max_node_size",
+          "lineNumber": 145
+        },
+        {
+          "caller": "do_deallocate",
+          "callee": "traits_type::deallocate_node",
+          "lineNumber": 147
+        },
+        {
+          "caller": "do_deallocate",
+          "callee": "traits_type::deallocate_array",
+          "lineNumber": 153
+        },
+        {
+          "caller": "memory_resource_allocator",
+          "callee": "FOONATHAN_MEMORY_ASSERT",
+          "lineNumber": 174
+        },
+        {
+          "caller": "deallocate_node",
+          "callee": "deallocate",
+          "lineNumber": 188
+        },
+        {
+          "caller": "max_alignment",
+          "callee": "std::size_t",
+          "lineNumber": 194
+        },
+        {
+          "caller": "operator==",
+          "callee": "resource",
+          "lineNumber": 213
+        },
+        {
+          "caller": "operator==",
+          "callee": "resource",
+          "lineNumber": 213
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 6,
+        "functionCount": 5,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/memory_stack.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 489,
+      "nonEmptyLines": 419,
+      "callGraph": [
+        {
+          "caller": "stack_marker",
+          "callee": "top",
+          "lineNumber": 41
+        },
+        {
+          "caller": "operator==",
+          "callee": "FOONATHAN_MEMORY_ASSERT_MSG",
+          "lineNumber": 49
+        },
+        {
+          "caller": "operator<",
+          "callee": "FOONATHAN_MEMORY_ASSERT_MSG",
+          "lineNumber": 64
+        },
+        {
+          "caller": "min_block_size",
+          "callee": "detail::memory_block_stack::implementation_offset",
+          "lineNumber": 116
+        },
+        {
+          "caller": "memory_stack",
+          "callee": "detail::forward<Args>",
+          "lineNumber": 124
+        },
+        {
+          "caller": "memory_stack",
+          "callee": "allocate_block",
+          "lineNumber": 125
+        },
+        {
+          "caller": "top",
+          "callee": "size",
+          "lineNumber": 181
+        },
+        {
+          "caller": "top",
+          "callee": "block_end",
+          "lineNumber": 181
+        },
+        {
+          "caller": "unwind",
+          "callee": "FOONATHAN_MEMORY_ASSERT",
+          "lineNumber": 194
+        },
+        {
+          "caller": "unwind",
+          "callee": "top",
+          "lineNumber": 194
+        },
+        {
+          "caller": "unwind",
+          "callee": "detail::debug_check_pointer",
+          "lineNumber": 195
+        },
+        {
+          "caller": "unwind",
+          "callee": "size",
+          "lineNumber": 195
+        },
+        {
+          "caller": "unwind",
+          "callee": "info",
+          "lineNumber": 195
+        },
+        {
+          "caller": "unwind",
+          "callee": "size",
+          "lineNumber": 198
+        },
+        {
+          "caller": "unwind",
+          "callee": "deallocate_block",
+          "lineNumber": 200
+        },
+        {
+          "caller": "unwind",
+          "callee": "deallocate_block",
+          "lineNumber": 202
+        },
+        {
+          "caller": "unwind",
+          "callee": "detail::debug_check_pointer",
+          "lineNumber": 204
+        },
+        {
+          "caller": "unwind",
+          "callee": "current_block",
+          "lineNumber": 207
+        },
+        {
+          "caller": "unwind",
+          "callee": "static_cast<char*>",
+          "lineNumber": 208
+        },
+        {
+          "caller": "unwind",
+          "callee": "info",
+          "lineNumber": 210
+        },
+        {
+          "caller": "unwind",
+          "callee": "detail::debug_fill_free",
+          "lineNumber": 213
+        },
+        {
+          "caller": "unwind",
+          "callee": "std::size_t",
+          "lineNumber": 213
+        },
+        {
+          "caller": "unwind",
+          "callee": "detail::fixed_memory_stack",
+          "lineNumber": 214
+        },
+        {
+          "caller": "unwind",
+          "callee": "detail::debug_check_pointer",
+          "lineNumber": 218
+        },
+        {
+          "caller": "unwind",
+          "callee": "top",
+          "lineNumber": 218
+        },
+        {
+          "caller": "unwind",
+          "callee": "info",
+          "lineNumber": 218
+        },
+        {
+          "caller": "unwind",
+          "callee": "unwind",
+          "lineNumber": 220
+        },
+        {
+          "caller": "shrink_to_fit",
+          "callee": "shrink_to_fit",
+          "lineNumber": 229
+        },
+        {
+          "caller": "capacity_left",
+          "callee": "std::size_t",
+          "lineNumber": 237
+        },
+        {
+          "caller": "capacity_left",
+          "callee": "block_end",
+          "lineNumber": 237
+        },
+        {
+          "caller": "capacity_left",
+          "callee": "top",
+          "lineNumber": 237
+        },
+        {
+          "caller": "next_capacity",
+          "callee": "next_block_size",
+          "lineNumber": 246
+        },
+        {
+          "caller": "memory_stack_raii_unwind",
+          "callee": "top",
+          "lineNumber": 289
+        },
+        {
+          "caller": "~memory_stack_raii_unwind",
+          "callee": "unwind",
+          "lineNumber": 313
+        },
+        {
+          "caller": "unwind",
+          "callee": "FOONATHAN_MEMORY_ASSERT",
+          "lineNumber": 342
+        },
+        {
+          "caller": "unwind",
+          "callee": "will_unwind",
+          "lineNumber": 342
+        },
+        {
+          "caller": "unwind",
+          "callee": "unwind",
+          "lineNumber": 343
+        },
+        {
+          "caller": "get_marker",
+          "callee": "FOONATHAN_MEMORY_ASSERT",
+          "lineNumber": 357
+        },
+        {
+          "caller": "get_marker",
+          "callee": "will_unwind",
+          "lineNumber": 357
+        },
+        {
+          "caller": "deallocate_node",
+          "callee": "on_deallocate",
+          "lineNumber": 412
+        },
+        {
+          "caller": "deallocate_array",
+          "callee": "deallocate_node",
+          "lineNumber": 418
+        },
+        {
+          "caller": "max_node_size",
+          "callee": "next_capacity",
+          "lineNumber": 426
+        },
+        {
+          "caller": "max_array_size",
+          "callee": "next_capacity",
+          "lineNumber": 431
+        },
+        {
+          "caller": "max_alignment",
+          "callee": "std::size_t",
+          "lineNumber": 439
+        },
+        {
+          "caller": "try_deallocate_node",
+          "callee": "owns",
+          "lineNumber": 471
+        },
+        {
+          "caller": "try_deallocate_array",
+          "callee": "try_deallocate_node",
+          "lineNumber": 477
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/namespace_alias.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 36,
+      "nonEmptyLines": 24,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/new_allocator.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 54,
+      "nonEmptyLines": 41,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/segregator.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 447,
+      "nonEmptyLines": 384,
+      "callGraph": [
+        {
+          "caller": "threshold_segregatable",
+          "callee": "allocator_type",
+          "lineNumber": 31
+        },
+        {
+          "caller": "threshold_segregatable",
+          "callee": "detail::move",
+          "lineNumber": 32
+        },
+        {
+          "caller": "threshold",
+          "callee": "threshold_segregatable<\n                typename std::decay<RawAllocator>::type>",
+          "lineNumber": 74
+        },
+        {
+          "caller": "threshold",
+          "callee": "std::forward<RawAllocator>",
+          "lineNumber": 76
+        },
+        {
+          "caller": "deallocate_node",
+          "callee": "FOONATHAN_MEMORY_UNREACHABLE",
+          "lineNumber": 95
+        },
+        {
+          "caller": "binary_segregator",
+          "callee": "fallback_allocator_type",
+          "lineNumber": 139
+        },
+        {
+          "caller": "binary_segregator",
+          "callee": "detail::move",
+          "lineNumber": 140
+        },
+        {
+          "caller": "binary_segregator",
+          "callee": "detail::move",
+          "lineNumber": 141
+        },
+        {
+          "caller": "deallocate_node",
+          "callee": "use_allocate_node",
+          "lineNumber": 160
+        },
+        {
+          "caller": "deallocate_node",
+          "callee": "get_segregatable",
+          "lineNumber": 160
+        },
+        {
+          "caller": "deallocate_node",
+          "callee": "segregatable_traits::deallocate_node",
+          "lineNumber": 161
+        },
+        {
+          "caller": "deallocate_node",
+          "callee": "get_segregatable_allocator",
+          "lineNumber": 161
+        },
+        {
+          "caller": "deallocate_node",
+          "callee": "fallback_traits::deallocate_node",
+          "lineNumber": 164
+        },
+        {
+          "caller": "deallocate_node",
+          "callee": "get_fallback_allocator",
+          "lineNumber": 164
+        },
+        {
+          "caller": "deallocate_array",
+          "callee": "use_allocate_array",
+          "lineNumber": 181
+        },
+        {
+          "caller": "deallocate_array",
+          "callee": "get_segregatable",
+          "lineNumber": 181
+        },
+        {
+          "caller": "deallocate_array",
+          "callee": "segregatable_traits::deallocate_array",
+          "lineNumber": 182
+        },
+        {
+          "caller": "deallocate_array",
+          "callee": "get_segregatable_allocator",
+          "lineNumber": 182
+        },
+        {
+          "caller": "deallocate_array",
+          "callee": "fallback_traits::deallocate_array",
+          "lineNumber": 185
+        },
+        {
+          "caller": "deallocate_array",
+          "callee": "get_fallback_allocator",
+          "lineNumber": 185
+        },
+        {
+          "caller": "max_node_size",
+          "callee": "fallback_traits::max_node_size",
+          "lineNumber": 196
+        },
+        {
+          "caller": "max_node_size",
+          "callee": "get_fallback_allocator",
+          "lineNumber": 196
+        },
+        {
+          "caller": "max_array_size",
+          "callee": "fallback_traits::max_array_size",
+          "lineNumber": 201
+        },
+        {
+          "caller": "max_array_size",
+          "callee": "get_fallback_allocator",
+          "lineNumber": 201
+        },
+        {
+          "caller": "max_alignemnt",
+          "callee": "fallback_traits::max_alignment",
+          "lineNumber": 206
+        },
+        {
+          "caller": "max_alignemnt",
+          "callee": "get_fallback_allocator",
+          "lineNumber": 206
+        },
+        {
+          "caller": "make_segregator",
+          "callee": "binary_segregator<\n                    typename std::decay<Segregator>::type,\n                    typename std::decay<Fallback>::type>",
+          "lineNumber": 276
+        },
+        {
+          "caller": "make_segregator",
+          "callee": "std::forward<Segregator>",
+          "lineNumber": 278
+        },
+        {
+          "caller": "make_segregator",
+          "callee": "std::forward<Fallback>",
+          "lineNumber": 279
+        },
+        {
+          "caller": "make_segregator",
+          "callee": "make_segregator",
+          "lineNumber": 285
+        },
+        {
+          "caller": "make_segregator",
+          "callee": "std::forward<Rest>",
+          "lineNumber": 285
+        },
+        {
+          "caller": "make_segregator",
+          "callee": "binary_segregator<typename std::decay<Segregator>::type,\n                                         decltype(make_segregator(std::forward<Rest>(\n                                             rest)...))>",
+          "lineNumber": 287
+        },
+        {
+          "caller": "make_segregator",
+          "callee": "make_segregator",
+          "lineNumber": 288
+        },
+        {
+          "caller": "make_segregator",
+          "callee": "std::forward<Rest>",
+          "lineNumber": 288
+        },
+        {
+          "caller": "make_segregator",
+          "callee": "std::forward<Segregator>",
+          "lineNumber": 289
+        },
+        {
+          "caller": "make_segregator",
+          "callee": "make_segregator",
+          "lineNumber": 290
+        },
+        {
+          "caller": "make_segregator",
+          "callee": "std::forward<Rest>",
+          "lineNumber": 291
+        },
+        {
+          "caller": "make_segregator",
+          "callee": "detail::make_segregator",
+          "lineNumber": 388
+        },
+        {
+          "caller": "make_segregator",
+          "callee": "std::forward<Args>",
+          "lineNumber": 388
+        },
+        {
+          "caller": "get_segregatable_allocator",
+          "callee": "detail::segregatable_type<I, binary_segregator<Segregator, Fallback>>::get",
+          "lineNumber": 411
+        },
+        {
+          "caller": "get_segregatable_allocator",
+          "callee": "detail::segregatable_type<I, binary_segregator<Segregator, Fallback>>::get",
+          "lineNumber": 418
+        },
+        {
+          "caller": "get_fallback_allocator",
+          "callee": "detail::fallback_type<binary_segregator<Segregator, Fallback>>::get",
+          "lineNumber": 434
+        },
+        {
+          "caller": "get_fallback_allocator",
+          "callee": "detail::fallback_type<binary_segregator<Segregator, Fallback>>::get",
+          "lineNumber": 441
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/smart_ptr.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 197,
+      "nonEmptyLines": 178,
+      "callGraph": [
+        {
+          "caller": "allocate_unique",
+          "callee": "allocate_node",
+          "lineNumber": 35
+        },
+        {
+          "caller": "allocate_unique",
+          "callee": "static_cast<T*>",
+          "lineNumber": 37
+        },
+        {
+          "caller": "allocate_unique",
+          "callee": "detail::forward<Args>",
+          "lineNumber": 39
+        },
+        {
+          "caller": "allocate_unique",
+          "callee": "release",
+          "lineNumber": 41
+        },
+        {
+          "caller": "construct",
+          "callee": "static_cast<void*>",
+          "lineNumber": 48
+        },
+        {
+          "caller": "construct",
+          "callee": "detail::forward<Args>",
+          "lineNumber": 48
+        },
+        {
+          "caller": "construct",
+          "callee": "static_cast<void*>",
+          "lineNumber": 59
+        },
+        {
+          "caller": "construct",
+          "callee": "detail::forward<Args>",
+          "lineNumber": 59
+        },
+        {
+          "caller": "construct",
+          "callee": "~T",
+          "lineNumber": 64
+        },
+        {
+          "caller": "construct",
+          "callee": "construct",
+          "lineNumber": 68
+        },
+        {
+          "caller": "construct",
+          "callee": "detail::forward<Args>",
+          "lineNumber": 68
+        },
+        {
+          "caller": "allocate_array_unique",
+          "callee": "allocate_array",
+          "lineNumber": 78
+        },
+        {
+          "caller": "allocate_array_unique",
+          "callee": "static_cast<T*>",
+          "lineNumber": 80
+        },
+        {
+          "caller": "allocate_array_unique",
+          "callee": "construct",
+          "lineNumber": 81
+        },
+        {
+          "caller": "allocate_array_unique",
+          "callee": "get",
+          "lineNumber": 81
+        },
+        {
+          "caller": "allocate_array_unique",
+          "callee": "get",
+          "lineNumber": 82
+        },
+        {
+          "caller": "allocate_array_unique",
+          "callee": "release",
+          "lineNumber": 84
+        },
+        {
+          "caller": "allocate_unique",
+          "callee": "detail::allocate_unique<T>",
+          "lineNumber": 120
+        },
+        {
+          "caller": "allocate_unique",
+          "callee": "make_allocator_reference",
+          "lineNumber": 120
+        },
+        {
+          "caller": "allocate_unique",
+          "callee": "detail::forward<RawAllocator>",
+          "lineNumber": 121
+        },
+        {
+          "caller": "allocate_unique",
+          "callee": "detail::forward<Args>",
+          "lineNumber": 122
+        },
+        {
+          "caller": "allocate_unique",
+          "callee": "detail::allocate_unique<T, any_allocator>",
+          "lineNumber": 138
+        },
+        {
+          "caller": "allocate_unique",
+          "callee": "make_allocator_reference",
+          "lineNumber": 138
+        },
+        {
+          "caller": "allocate_unique",
+          "callee": "detail::forward<RawAllocator>",
+          "lineNumber": 139
+        },
+        {
+          "caller": "allocate_unique",
+          "callee": "detail::forward<Args>",
+          "lineNumber": 141
+        },
+        {
+          "caller": "allocate_unique",
+          "callee": "detail::allocate_array_unique<\n                typename std::remove_extent<T>::type>",
+          "lineNumber": 155
+        },
+        {
+          "caller": "allocate_unique",
+          "callee": "make_allocator_reference",
+          "lineNumber": 157
+        },
+        {
+          "caller": "allocate_unique",
+          "callee": "detail::forward<RawAllocator>",
+          "lineNumber": 158
+        },
+        {
+          "caller": "allocate_unique",
+          "callee": "detail::allocate_array_unique<typename std::remove_extent<T>::type,\n                                                 any_allocator>",
+          "lineNumber": 173
+        },
+        {
+          "caller": "allocate_unique",
+          "callee": "make_allocator_reference",
+          "lineNumber": 175
+        },
+        {
+          "caller": "allocate_unique",
+          "callee": "detail::forward<RawAllocator>",
+          "lineNumber": 176
+        },
+        {
+          "caller": "allocate_shared",
+          "callee": "std::allocate_shared<T>",
+          "lineNumber": 190
+        },
+        {
+          "caller": "allocate_shared",
+          "callee": "make_std_allocator<T>",
+          "lineNumber": 190
+        },
+        {
+          "caller": "allocate_shared",
+          "callee": "detail::forward<RawAllocator>",
+          "lineNumber": 191
+        },
+        {
+          "caller": "allocate_shared",
+          "callee": "detail::forward<Args>",
+          "lineNumber": 192
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/static_allocator.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 178,
+      "nonEmptyLines": 149,
+      "callGraph": [
+        {
+          "caller": "static_allocator",
+          "callee": "top",
+          "lineNumber": 59
+        },
+        {
+          "caller": "max_node_size",
+          "callee": "static_cast<std::size_t>",
+          "lineNumber": 76
+        },
+        {
+          "caller": "max_node_size",
+          "callee": "top",
+          "lineNumber": 76
+        },
+        {
+          "caller": "max_alignment",
+          "callee": "std::size_t",
+          "lineNumber": 83
+        },
+        {
+          "caller": "static_block_allocator",
+          "callee": "static_cast<char*>",
+          "lineNumber": 116
+        },
+        {
+          "caller": "static_block_allocator",
+          "callee": "static_cast<void*>",
+          "lineNumber": 116
+        },
+        {
+          "caller": "static_block_allocator",
+          "callee": "FOONATHAN_MEMORY_ASSERT",
+          "lineNumber": 120
+        },
+        {
+          "caller": "static_block_allocator",
+          "callee": "FOONATHAN_MEMORY_ASSERT",
+          "lineNumber": 121
+        },
+        {
+          "caller": "swap",
+          "callee": "detail::adl_swap",
+          "lineNumber": 148
+        },
+        {
+          "caller": "swap",
+          "callee": "detail::adl_swap",
+          "lineNumber": 149
+        },
+        {
+          "caller": "swap",
+          "callee": "detail::adl_swap",
+          "lineNumber": 150
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/std_allocator.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 361,
+      "nonEmptyLines": 310,
+      "callGraph": [
+        {
+          "caller": "select_on_container_copy_construction",
+          "callee": "prop_traits::select_on_container_copy_construction",
+          "lineNumber": 185
+        },
+        {
+          "caller": "allocate",
+          "callee": "static_cast<pointer>",
+          "lineNumber": 196
+        },
+        {
+          "caller": "allocate",
+          "callee": "allocate_impl",
+          "lineNumber": 196
+        },
+        {
+          "caller": "deallocate",
+          "callee": "deallocate_impl",
+          "lineNumber": 204
+        },
+        {
+          "caller": "construct",
+          "callee": "detail::forward<Args>",
+          "lineNumber": 213
+        },
+        {
+          "caller": "destroy",
+          "callee": "~U",
+          "lineNumber": 222
+        },
+        {
+          "caller": "max_size",
+          "callee": "max_array_size",
+          "lineNumber": 230
+        },
+        {
+          "caller": "get_allocator",
+          "callee": "get_allocator",
+          "lineNumber": 238
+        },
+        {
+          "caller": "get_allocator",
+          "callee": "std::declval<alloc_reference>",
+          "lineNumber": 238
+        },
+        {
+          "caller": "get_allocator",
+          "callee": "alloc_reference::get_allocator",
+          "lineNumber": 240
+        },
+        {
+          "caller": "get_allocator",
+          "callee": "get_allocator",
+          "lineNumber": 244
+        },
+        {
+          "caller": "get_allocator",
+          "callee": "std::declval<const alloc_reference>",
+          "lineNumber": 244
+        },
+        {
+          "caller": "get_allocator",
+          "callee": "alloc_reference::get_allocator",
+          "lineNumber": 246
+        },
+        {
+          "caller": "deallocate_impl",
+          "callee": "deallocate_impl",
+          "lineNumber": 259
+        },
+        {
+          "caller": "deallocate_impl",
+          "callee": "get_allocator",
+          "lineNumber": 259
+        },
+        {
+          "caller": "deallocate_impl",
+          "callee": "deallocate_node",
+          "lineNumber": 274
+        },
+        {
+          "caller": "deallocate_impl",
+          "callee": "deallocate_array",
+          "lineNumber": 276
+        },
+        {
+          "caller": "equal_to_impl",
+          "callee": "get_allocator",
+          "lineNumber": 283
+        },
+        {
+          "caller": "equal_to_impl",
+          "callee": "get_allocator",
+          "lineNumber": 283
+        },
+        {
+          "caller": "equal_to",
+          "callee": "get_allocator",
+          "lineNumber": 297
+        },
+        {
+          "caller": "equal_to",
+          "callee": "get_allocator",
+          "lineNumber": 297
+        },
+        {
+          "caller": "equal_to",
+          "callee": "equal_to_impl",
+          "lineNumber": 304
+        },
+        {
+          "caller": "operator==",
+          "callee": "equal_to",
+          "lineNumber": 322
+        },
+        {
+          "caller": "make_std_allocator",
+          "callee": "detail::forward<RawAllocator>",
+          "lineNumber": 341
+        },
+        {
+          "caller": "make_any_std_allocator",
+          "callee": "detail::forward<RawAllocator>",
+          "lineNumber": 356
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/temporary_allocator.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 334,
+      "nonEmptyLines": 274,
+      "callGraph": [
+        {
+          "caller": "set_growth_tracker",
+          "callee": "set_growth_tracker",
+          "lineNumber": 111
+        },
+        {
+          "caller": "set_growth_tracker",
+          "callee": "get_allocator",
+          "lineNumber": 111
+        },
+        {
+          "caller": "get_growth_tracker",
+          "callee": "get_growth_tracker",
+          "lineNumber": 117
+        },
+        {
+          "caller": "get_growth_tracker",
+          "callee": "get_allocator",
+          "lineNumber": 117
+        },
+        {
+          "caller": "next_capacity",
+          "callee": "next_capacity",
+          "lineNumber": 130
+        },
+        {
+          "caller": "top",
+          "callee": "top",
+          "lineNumber": 143
+        },
+        {
+          "caller": "unwind",
+          "callee": "unwind",
+          "lineNumber": 148
+        },
+        {
+          "caller": "max_node_size",
+          "callee": "next_capacity",
+          "lineNumber": 315
+        },
+        {
+          "caller": "max_node_size",
+          "callee": "get_stack",
+          "lineNumber": 315
+        },
+        {
+          "caller": "max_array_size",
+          "callee": "max_node_size",
+          "lineNumber": 320
+        },
+        {
+          "caller": "max_alignment",
+          "callee": "std::size_t",
+          "lineNumber": 328
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/threading.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 154,
+      "nonEmptyLines": 126,
+      "callGraph": [
+        {
+          "caller": "lock",
+          "callee": "lock",
+          "lineNumber": 74
+        },
+        {
+          "caller": "unlock",
+          "callee": "unlock",
+          "lineNumber": 79
+        },
+        {
+          "caller": "locked_allocator",
+          "callee": "lock",
+          "lineNumber": 110
+        },
+        {
+          "caller": "~locked_allocator",
+          "callee": "unlock",
+          "lineNumber": 123
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/tracking.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 429,
+      "nonEmptyLines": 373,
+      "callGraph": [
+        {
+          "caller": "set_tracker",
+          "callee": "set_tracker",
+          "lineNumber": 22
+        },
+        {
+          "caller": "set_tracker",
+          "callee": "get_allocator",
+          "lineNumber": 22
+        },
+        {
+          "caller": "set_tracker",
+          "callee": "set_tracker",
+          "lineNumber": 24
+        },
+        {
+          "caller": "set_tracker",
+          "callee": "get_allocator",
+          "lineNumber": 24
+        },
+        {
+          "caller": "allocate_block",
+          "callee": "BlockAllocator::allocate_block",
+          "lineNumber": 44
+        },
+        {
+          "caller": "allocate_block",
+          "callee": "on_allocator_growth",
+          "lineNumber": 46
+        },
+        {
+          "caller": "deallocate_block",
+          "callee": "on_allocator_shrinking",
+          "lineNumber": 53
+        },
+        {
+          "caller": "deallocate_block",
+          "callee": "BlockAllocator::deallocate_block",
+          "lineNumber": 54
+        },
+        {
+          "caller": "next_block_size",
+          "callee": "BlockAllocator::next_block_size",
+          "lineNumber": 59
+        },
+        {
+          "caller": "tracked_block_allocator",
+          "callee": "detail::move",
+          "lineNumber": 89
+        },
+        {
+          "caller": "tracked_block_allocator",
+          "callee": "detail::move",
+          "lineNumber": 92
+        },
+        {
+          "caller": "tracked_block_allocator",
+          "callee": "detail::move",
+          "lineNumber": 92
+        },
+        {
+          "caller": "tracked_block_allocator",
+          "callee": "detail::move",
+          "lineNumber": 101
+        },
+        {
+          "caller": "tracked_block_allocator",
+          "callee": "detail::forward<Args>",
+          "lineNumber": 101
+        },
+        {
+          "caller": "allocate_block",
+          "callee": "allocator_type::allocate_block",
+          "lineNumber": 109
+        },
+        {
+          "caller": "allocate_block",
+          "callee": "on_allocator_growth",
+          "lineNumber": 110
+        },
+        {
+          "caller": "deallocate_block",
+          "callee": "on_allocator_shrinking",
+          "lineNumber": 117
+        },
+        {
+          "caller": "deallocate_block",
+          "callee": "allocator_type::deallocate_block",
+          "lineNumber": 118
+        },
+        {
+          "caller": "next_block_size",
+          "callee": "allocator_type::next_block_size",
+          "lineNumber": 124
+        },
+        {
+          "caller": "tracked_allocator",
+          "callee": "detail::move",
+          "lineNumber": 188
+        },
+        {
+          "caller": "tracked_allocator",
+          "callee": "detail::move",
+          "lineNumber": 193
+        },
+        {
+          "caller": "tracked_allocator",
+          "callee": "detail::move",
+          "lineNumber": 193
+        },
+        {
+          "caller": "tracked_allocator",
+          "callee": "detail::set_tracker",
+          "lineNumber": 195
+        },
+        {
+          "caller": "tracked_allocator",
+          "callee": "get_allocator",
+          "lineNumber": 195
+        },
+        {
+          "caller": "tracked_allocator",
+          "callee": "get_tracker",
+          "lineNumber": 195
+        },
+        {
+          "caller": "~tracked_allocator",
+          "callee": "detail::set_tracker",
+          "lineNumber": 203
+        },
+        {
+          "caller": "~tracked_allocator",
+          "callee": "get_allocator",
+          "lineNumber": 203
+        },
+        {
+          "caller": "~tracked_allocator",
+          "callee": "static_cast<tracker*>",
+          "lineNumber": 203
+        },
+        {
+          "caller": "tracked_allocator",
+          "callee": "detail::move",
+          "lineNumber": 209
+        },
+        {
+          "caller": "tracked_allocator",
+          "callee": "detail::move",
+          "lineNumber": 209
+        },
+        {
+          "caller": "tracked_allocator",
+          "callee": "detail::set_tracker",
+          "lineNumber": 211
+        },
+        {
+          "caller": "tracked_allocator",
+          "callee": "get_allocator",
+          "lineNumber": 211
+        },
+        {
+          "caller": "tracked_allocator",
+          "callee": "get_tracker",
+          "lineNumber": 211
+        },
+        {
+          "caller": "deallocate_node",
+          "callee": "on_node_deallocation",
+          "lineNumber": 271
+        },
+        {
+          "caller": "deallocate_node",
+          "callee": "traits::deallocate_node",
+          "lineNumber": 272
+        },
+        {
+          "caller": "deallocate_node",
+          "callee": "get_allocator",
+          "lineNumber": 272
+        },
+        {
+          "caller": "try_deallocate_node",
+          "callee": "composable_traits::try_deallocate_node",
+          "lineNumber": 281
+        },
+        {
+          "caller": "try_deallocate_node",
+          "callee": "get_allocator",
+          "lineNumber": 281
+        },
+        {
+          "caller": "try_deallocate_node",
+          "callee": "on_node_deallocation",
+          "lineNumber": 283
+        },
+        {
+          "caller": "deallocate_array",
+          "callee": "on_array_deallocation",
+          "lineNumber": 292
+        },
+        {
+          "caller": "deallocate_array",
+          "callee": "traits::deallocate_array",
+          "lineNumber": 293
+        },
+        {
+          "caller": "deallocate_array",
+          "callee": "get_allocator",
+          "lineNumber": 293
+        },
+        {
+          "caller": "try_deallocate_array",
+          "callee": "composable_traits::try_deallocate_array",
+          "lineNumber": 302
+        },
+        {
+          "caller": "try_deallocate_array",
+          "callee": "on_array_deallocation",
+          "lineNumber": 304
+        },
+        {
+          "caller": "max_node_size",
+          "callee": "traits::max_node_size",
+          "lineNumber": 312
+        },
+        {
+          "caller": "max_node_size",
+          "callee": "get_allocator",
+          "lineNumber": 312
+        },
+        {
+          "caller": "max_array_size",
+          "callee": "traits::max_array_size",
+          "lineNumber": 317
+        },
+        {
+          "caller": "max_array_size",
+          "callee": "get_allocator",
+          "lineNumber": 317
+        },
+        {
+          "caller": "max_alignment",
+          "callee": "traits::max_alignment",
+          "lineNumber": 322
+        },
+        {
+          "caller": "max_alignment",
+          "callee": "get_allocator",
+          "lineNumber": 322
+        },
+        {
+          "caller": "make_tracked_allocator",
+          "callee": "detail::move",
+          "lineNumber": 360
+        },
+        {
+          "caller": "make_tracked_allocator",
+          "callee": "detail::move",
+          "lineNumber": 362
+        },
+        {
+          "caller": "make_deeply_tracked_allocator",
+          "callee": "deeply_tracked_allocator<Tracker, RawAllocator>",
+          "lineNumber": 422
+        },
+        {
+          "caller": "make_deeply_tracked_allocator",
+          "callee": "detail::move",
+          "lineNumber": 422
+        },
+        {
+          "caller": "make_deeply_tracked_allocator",
+          "callee": "detail::forward<Args>",
+          "lineNumber": 423
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/foonathan_memory/foonathan/memory/virtual_memory.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 201,
+      "nonEmptyLines": 167,
+      "callGraph": [
+        {
+          "caller": "swap",
+          "callee": "detail::adl_swap",
+          "lineNumber": 164
+        },
+        {
+          "caller": "swap",
+          "callee": "detail::adl_swap",
+          "lineNumber": 165
+        },
+        {
+          "caller": "swap",
+          "callee": "detail::adl_swap",
+          "lineNumber": 166
+        },
+        {
+          "caller": "capacity_left",
+          "callee": "static_cast<std::size_t>",
+          "lineNumber": 189
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/lib/libfastcdr.so",
+      "language": "so",
+      "fileCategory": "code",
+      "totalLines": 247,
+      "nonEmptyLines": 247,
+      "metrics": {}
+    },
+    {
+      "path": "thirdparty/fast_dds/lib/libfastcdr.so.2",
+      "language": "2",
+      "fileCategory": "code",
+      "totalLines": 247,
+      "nonEmptyLines": 247,
+      "metrics": {}
+    },
+    {
+      "path": "thirdparty/fast_dds/lib/libfastcdr.so.2.3.0",
+      "language": "0",
+      "fileCategory": "code",
+      "totalLines": 247,
+      "nonEmptyLines": 247,
+      "metrics": {}
+    },
+    {
+      "path": "thirdparty/fast_dds/lib/libfastdds_statistics_backend.so",
+      "language": "so",
+      "fileCategory": "code",
+      "totalLines": 7259,
+      "nonEmptyLines": 7237,
+      "metrics": {}
+    },
+    {
+      "path": "thirdparty/fast_dds/lib/libfastdds_statistics_backend.so.2",
+      "language": "2",
+      "fileCategory": "code",
+      "totalLines": 7259,
+      "nonEmptyLines": 7237,
+      "metrics": {}
+    },
+    {
+      "path": "thirdparty/fast_dds/lib/libfastdds_statistics_backend.so.2.2.0",
+      "language": "0",
+      "fileCategory": "code",
+      "totalLines": 7259,
+      "nonEmptyLines": 7237,
+      "metrics": {}
+    },
+    {
+      "path": "thirdparty/fast_dds/lib/libfastdds.so",
+      "language": "so",
+      "fileCategory": "code",
+      "totalLines": 34203,
+      "nonEmptyLines": 34138,
+      "metrics": {}
+    }
+  ]
+}

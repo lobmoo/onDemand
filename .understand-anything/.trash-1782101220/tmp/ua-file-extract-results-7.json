@@ -1,0 +1,681 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 7,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "sample/node_example/HelloWorldOneFast/source/HelloWorldOne.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 227,
+      "nonEmptyLines": 190,
+      "callGraph": [
+        {
+          "caller": "HelloWorldOne",
+          "callee": "std::move",
+          "lineNumber": 97
+        },
+        {
+          "caller": "points",
+          "callee": "std::move",
+          "lineNumber": 195
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "sample/node_example/HelloWorldOneFast/source/HelloWorldOneCdrAux.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 46,
+      "nonEmptyLines": 34,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "sample/node_example/HelloWorldOneFast/source/HelloWorldOneCdrAux.ipp",
+      "language": "ipp",
+      "fileCategory": "code",
+      "totalLines": 131,
+      "nonEmptyLines": 102,
+      "metrics": {}
+    },
+    {
+      "path": "sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.cxx",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 218,
+      "nonEmptyLines": 188,
+      "functions": [
+        {
+          "name": "HelloWorldOnePubSubType",
+          "startLine": 34,
+          "endLine": 44,
+          "params": []
+        },
+        {
+          "name": "~HelloWorldOnePubSubType",
+          "startLine": 46,
+          "endLine": 52,
+          "params": []
+        },
+        {
+          "name": "serialize",
+          "startLine": 54,
+          "endLine": 89,
+          "params": [
+            "data",
+            "payload",
+            "data_representation"
+          ]
+        },
+        {
+          "name": "deserialize",
+          "startLine": 91,
+          "endLine": 119,
+          "params": [
+            "payload",
+            "data"
+          ]
+        },
+        {
+          "name": "calculate_serialized_size",
+          "startLine": 121,
+          "endLine": 139,
+          "params": [
+            "data",
+            "data_representation"
+          ]
+        },
+        {
+          "name": "delete_data",
+          "startLine": 146,
+          "endLine": 150,
+          "params": [
+            "data"
+          ]
+        },
+        {
+          "name": "compute_key",
+          "startLine": 152,
+          "endLine": 169,
+          "params": [
+            "payload",
+            "handle",
+            "force_md5"
+          ]
+        },
+        {
+          "name": "compute_key",
+          "startLine": 171,
+          "endLine": 209,
+          "params": [
+            "data",
+            "handle",
+            "force_md5"
+          ]
+        },
+        {
+          "name": "register_type_object_representation",
+          "startLine": 211,
+          "endLine": 214,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "HelloWorldOnePubSubType",
+          "line": 34,
+          "isDefault": false
+        },
+        {
+          "name": "~HelloWorldOnePubSubType",
+          "line": 46,
+          "isDefault": false
+        },
+        {
+          "name": "serialize",
+          "line": 54,
+          "isDefault": false
+        },
+        {
+          "name": "deserialize",
+          "line": 91,
+          "isDefault": false
+        },
+        {
+          "name": "calculate_serialized_size",
+          "line": 121,
+          "isDefault": false
+        },
+        {
+          "name": "delete_data",
+          "line": 146,
+          "isDefault": false
+        },
+        {
+          "name": "compute_key",
+          "line": 152,
+          "isDefault": false
+        },
+        {
+          "name": "compute_key",
+          "line": 171,
+          "isDefault": false
+        },
+        {
+          "name": "register_type_object_representation",
+          "line": 211,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "HelloWorldOnePubSubType",
+          "callee": "set_name",
+          "lineNumber": 36
+        },
+        {
+          "caller": "HelloWorldOnePubSubType",
+          "callee": "static_cast<uint32_t>",
+          "lineNumber": 38
+        },
+        {
+          "caller": "HelloWorldOnePubSubType",
+          "callee": "eprosima::fastcdr::Cdr::alignment",
+          "lineNumber": 38
+        },
+        {
+          "caller": "HelloWorldOnePubSubType",
+          "callee": "reinterpret_cast<unsigned char*>",
+          "lineNumber": 42
+        },
+        {
+          "caller": "HelloWorldOnePubSubType",
+          "callee": "malloc",
+          "lineNumber": 42
+        },
+        {
+          "caller": "HelloWorldOnePubSubType",
+          "callee": "memset",
+          "lineNumber": 43
+        },
+        {
+          "caller": "~HelloWorldOnePubSubType",
+          "callee": "free",
+          "lineNumber": 50
+        },
+        {
+          "caller": "serialize",
+          "callee": "static_cast<const HelloWorldOne*>",
+          "lineNumber": 59
+        },
+        {
+          "caller": "serialize",
+          "callee": "reinterpret_cast<char*>",
+          "lineNumber": 62
+        },
+        {
+          "caller": "serialize",
+          "callee": "endianness",
+          "lineNumber": 67
+        },
+        {
+          "caller": "serialize",
+          "callee": "set_encoding_flag",
+          "lineNumber": 68
+        },
+        {
+          "caller": "serialize",
+          "callee": "serialize_encapsulation",
+          "lineNumber": 76
+        },
+        {
+          "caller": "serialize",
+          "callee": "set_dds_cdr_options",
+          "lineNumber": 79
+        },
+        {
+          "caller": "serialize",
+          "callee": "static_cast<uint32_t>",
+          "lineNumber": 87
+        },
+        {
+          "caller": "serialize",
+          "callee": "get_serialized_data_length",
+          "lineNumber": 87
+        },
+        {
+          "caller": "deserialize",
+          "callee": "static_cast<HelloWorldOne*>",
+          "lineNumber": 98
+        },
+        {
+          "caller": "deserialize",
+          "callee": "reinterpret_cast<char*>",
+          "lineNumber": 101
+        },
+        {
+          "caller": "deserialize",
+          "callee": "read_encapsulation",
+          "lineNumber": 107
+        },
+        {
+          "caller": "deserialize",
+          "callee": "endianness",
+          "lineNumber": 108
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "static_cast<uint32_t>",
+          "lineNumber": 131
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "calculate_serialized_size",
+          "lineNumber": 131
+        },
+        {
+          "caller": "calculate_serialized_size",
+          "callee": "static_cast<const HelloWorldOne*>",
+          "lineNumber": 132
+        },
+        {
+          "caller": "delete_data",
+          "callee": "reinterpret_cast<HelloWorldOne*>",
+          "lineNumber": 149
+        },
+        {
+          "caller": "compute_key",
+          "callee": "deserialize",
+          "lineNumber": 163
+        },
+        {
+          "caller": "compute_key",
+          "callee": "static_cast<void*>",
+          "lineNumber": 163
+        },
+        {
+          "caller": "compute_key",
+          "callee": "compute_key",
+          "lineNumber": 165
+        },
+        {
+          "caller": "compute_key",
+          "callee": "static_cast<void*>",
+          "lineNumber": 165
+        },
+        {
+          "caller": "compute_key",
+          "callee": "static_cast<const HelloWorldOne*>",
+          "lineNumber": 181
+        },
+        {
+          "caller": "compute_key",
+          "callee": "set_encoding_flag",
+          "lineNumber": 189
+        },
+        {
+          "caller": "compute_key",
+          "callee": "eprosima::fastcdr::serialize_key",
+          "lineNumber": 190
+        },
+        {
+          "caller": "compute_key",
+          "callee": "init",
+          "lineNumber": 193
+        },
+        {
+          "caller": "compute_key",
+          "callee": "update",
+          "lineNumber": 194
+        },
+        {
+          "caller": "compute_key",
+          "callee": "static_cast<unsigned int>",
+          "lineNumber": 194
+        },
+        {
+          "caller": "compute_key",
+          "callee": "get_serialized_data_length",
+          "lineNumber": 194
+        },
+        {
+          "caller": "compute_key",
+          "callee": "finalize",
+          "lineNumber": 195
+        },
+        {
+          "caller": "register_type_object_representation",
+          "callee": "register_HelloWorldOne_type_identifier",
+          "lineNumber": 213
+        }
+      ],
+      "metrics": {
+        "importCount": 4,
+        "exportCount": 9,
+        "functionCount": 9,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 123,
+      "nonEmptyLines": 91,
+      "callGraph": [
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 99
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 109
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "sample/node_example/HelloWorldOneFast/source/HelloWorldOneTypeObjectSupport.cxx",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 162,
+      "nonEmptyLines": 149,
+      "functions": [
+        {
+          "name": "register_HelloWorldOne_type_identifier",
+          "startLine": 42,
+          "endLine": 161,
+          "params": [
+            "type_ids_HelloWorldOne"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "register_HelloWorldOne_type_identifier",
+          "line": 42,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "get_type_identifiers",
+          "lineNumber": 48
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "type_object_registry",
+          "lineNumber": 48
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "eprosima::fastdds::dds::DomainParticipantFactory::get_instance",
+          "lineNumber": 48
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "TypeObjectUtils::build_struct_type_flag",
+          "lineNumber": 52
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "TypeObjectUtils::build_complete_type_detail",
+          "lineNumber": 57
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "to_string",
+          "lineNumber": 57
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "TypeObjectUtils::build_complete_struct_header",
+          "lineNumber": 59
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "TypeIdentifier",
+          "lineNumber": 59
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "get_type_identifiers",
+          "lineNumber": 65
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "type_object_registry",
+          "lineNumber": 65
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "eprosima::fastdds::dds::DomainParticipantFactory::get_instance",
+          "lineNumber": 65
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "EPROSIMA_LOG_ERROR",
+          "lineNumber": 70
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "TypeObjectUtils::build_struct_member_flag",
+          "lineNumber": 74
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "TypeObjectUtils::build_common_struct_member",
+          "lineNumber": 78
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "TypeObjectUtils::retrieve_complete_type_identifier",
+          "lineNumber": 78
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "EPROSIMA_LOG_ERROR",
+          "lineNumber": 81
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "reset",
+          "lineNumber": 86
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "TypeObjectUtils::build_complete_member_detail",
+          "lineNumber": 87
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "TypeObjectUtils::build_complete_struct_member",
+          "lineNumber": 88
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "TypeObjectUtils::add_complete_struct_member",
+          "lineNumber": 89
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "get_type_identifiers",
+          "lineNumber": 95
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "type_object_registry",
+          "lineNumber": 95
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "eprosima::fastdds::dds::DomainParticipantFactory::get_instance",
+          "lineNumber": 95
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "get_type_identifiers",
+          "lineNumber": 101
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "type_object_registry",
+          "lineNumber": 101
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "eprosima::fastdds::dds::DomainParticipantFactory::get_instance",
+          "lineNumber": 101
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "EPROSIMA_LOG_ERROR",
+          "lineNumber": 106
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "TypeObjectUtils::retrieve_complete_type_identifier",
+          "lineNumber": 111
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "EPROSIMA_LOG_ERROR",
+          "lineNumber": 114
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "_d",
+          "lineNumber": 118
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "type_identifier2",
+          "lineNumber": 118
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "TypeObjectUtils::build_plain_collection_header",
+          "lineNumber": 123
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "TypeObjectUtils::build_plain_sequence_l_elem_defn",
+          "lineNumber": 126
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "eprosima::fastcdr::external<TypeIdentifier>",
+          "lineNumber": 127
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "TypeObjectUtils::build_and_register_l_sequence_type_identifier",
+          "lineNumber": 129
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "EPROSIMA_LOG_ERROR",
+          "lineNumber": 131
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "TypeObjectUtils::build_struct_member_flag",
+          "lineNumber": 136
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "TypeObjectUtils::build_common_struct_member",
+          "lineNumber": 140
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "TypeObjectUtils::retrieve_complete_type_identifier",
+          "lineNumber": 140
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "EPROSIMA_LOG_ERROR",
+          "lineNumber": 143
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "reset",
+          "lineNumber": 148
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "TypeObjectUtils::build_complete_member_detail",
+          "lineNumber": 149
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "TypeObjectUtils::build_complete_struct_member",
+          "lineNumber": 150
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "TypeObjectUtils::add_complete_struct_member",
+          "lineNumber": 151
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "TypeObjectUtils::build_complete_struct_type",
+          "lineNumber": 153
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "TypeObjectUtils::build_and_register_struct_type_object",
+          "lineNumber": 155
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "to_string",
+          "lineNumber": 155
+        },
+        {
+          "caller": "register_HelloWorldOne_type_identifier",
+          "callee": "EPROSIMA_LOG_ERROR",
+          "lineNumber": 157
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "sample/node_example/HelloWorldOneFast/source/HelloWorldOneTypeObjectSupport.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 56,
+      "nonEmptyLines": 46,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    }
+  ]
+}

@@ -59,12 +59,6 @@ module DSF {
             string nodeName;        // 创建节点名称
             boolean isReadonly;     // 是否只读
             VarPublishMask publishMask; // 发布能力掩码（PERIODIC/ON_DEMAND/BOTH）
-            @optional sequence<DSF::Message::Event> events; // 事件
-            @optional sequence<DSF::Message::Alarm> alarms; // 报警
-            @optional sequence<DSF::NamedValue> initialValues; // 初始值
-            @optional sequence<DSF::NamedValue> startIndexes; // 下标起始值
-            // 权限字段，可选，用于访问控制
-            @optional AccessControl permission;
         };
 
         struct Undefine {

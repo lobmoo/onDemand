@@ -1,0 +1,4980 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 25,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/xtypes/dynamic_types/DynamicDataFactory.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 78,
+      "nonEmptyLines": 63,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/xtypes/dynamic_types/DynamicPubSubType.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 197,
+      "nonEmptyLines": 169,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/xtypes/dynamic_types/DynamicType.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 191,
+      "nonEmptyLines": 160,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilder.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 211,
+      "nonEmptyLines": 179,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/xtypes/dynamic_types/DynamicTypeBuilderFactory.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 219,
+      "nonEmptyLines": 184,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/xtypes/dynamic_types/DynamicTypeMember.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 139,
+      "nonEmptyLines": 112,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/xtypes/dynamic_types/MemberDescriptor.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 331,
+      "nonEmptyLines": 272,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/xtypes/dynamic_types/type_traits.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 34,
+      "nonEmptyLines": 27,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/xtypes/dynamic_types/TypeDescriptor.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 274,
+      "nonEmptyLines": 224,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/xtypes/dynamic_types/Types.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 83,
+      "nonEmptyLines": 64,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/xtypes/dynamic_types/VerbatimTextDescriptor.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 135,
+      "nonEmptyLines": 108,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/xtypes/exception/Exception.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 79,
+      "nonEmptyLines": 60,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobject.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 24796,
+      "nonEmptyLines": 20791,
+      "callGraph": [
+        {
+          "caller": "TypeObjectHashId",
+          "callee": "member_destructor_",
+          "lineNumber": 164
+        },
+        {
+          "caller": "TypeObjectHashId",
+          "callee": "hash_",
+          "lineNumber": 180
+        },
+        {
+          "caller": "TypeObjectHashId",
+          "callee": "hash_",
+          "lineNumber": 198
+        },
+        {
+          "caller": "TypeObjectHashId",
+          "callee": "std::move",
+          "lineNumber": 198
+        },
+        {
+          "caller": "_d",
+          "callee": "eprosima::fastcdr::exception::BadParamException",
+          "lineNumber": 311
+        },
+        {
+          "caller": "hash",
+          "callee": "hash_",
+          "lineNumber": 333
+        },
+        {
+          "caller": "hash",
+          "callee": "hash_",
+          "lineNumber": 344
+        },
+        {
+          "caller": "_default",
+          "callee": "member_destructor_",
+          "lineNumber": 383
+        },
+        {
+          "caller": "PlainCollectionHeader",
+          "callee": "std::move",
+          "lineNumber": 781
+        },
+        {
+          "caller": "element_flags",
+          "callee": "std::move",
+          "lineNumber": 879
+        },
+        {
+          "caller": "PlainSequenceSElemDefn",
+          "callee": "std::move",
+          "lineNumber": 952
+        },
+        {
+          "caller": "PlainSequenceSElemDefn",
+          "callee": "std::move",
+          "lineNumber": 954
+        },
+        {
+          "caller": "header",
+          "callee": "std::move",
+          "lineNumber": 1027
+        },
+        {
+          "caller": "element_identifier",
+          "callee": "std::move",
+          "lineNumber": 1095
+        },
+        {
+          "caller": "PlainSequenceLElemDefn",
+          "callee": "std::move",
+          "lineNumber": 1169
+        },
+        {
+          "caller": "PlainSequenceLElemDefn",
+          "callee": "std::move",
+          "lineNumber": 1171
+        },
+        {
+          "caller": "header",
+          "callee": "std::move",
+          "lineNumber": 1244
+        },
+        {
+          "caller": "element_identifier",
+          "callee": "std::move",
+          "lineNumber": 1312
+        },
+        {
+          "caller": "PlainArraySElemDefn",
+          "callee": "std::move",
+          "lineNumber": 1386
+        },
+        {
+          "caller": "PlainArraySElemDefn",
+          "callee": "std::move",
+          "lineNumber": 1387
+        },
+        {
+          "caller": "PlainArraySElemDefn",
+          "callee": "std::move",
+          "lineNumber": 1388
+        },
+        {
+          "caller": "header",
+          "callee": "std::move",
+          "lineNumber": 1461
+        },
+        {
+          "caller": "array_bound_seq",
+          "callee": "std::move",
+          "lineNumber": 1500
+        },
+        {
+          "caller": "element_identifier",
+          "callee": "std::move",
+          "lineNumber": 1539
+        },
+        {
+          "caller": "PlainArrayLElemDefn",
+          "callee": "std::move",
+          "lineNumber": 1613
+        },
+        {
+          "caller": "PlainArrayLElemDefn",
+          "callee": "std::move",
+          "lineNumber": 1614
+        },
+        {
+          "caller": "PlainArrayLElemDefn",
+          "callee": "std::move",
+          "lineNumber": 1615
+        },
+        {
+          "caller": "header",
+          "callee": "std::move",
+          "lineNumber": 1688
+        },
+        {
+          "caller": "array_bound_seq",
+          "callee": "std::move",
+          "lineNumber": 1727
+        },
+        {
+          "caller": "element_identifier",
+          "callee": "std::move",
+          "lineNumber": 1766
+        },
+        {
+          "caller": "PlainMapSTypeDefn",
+          "callee": "std::move",
+          "lineNumber": 1844
+        },
+        {
+          "caller": "PlainMapSTypeDefn",
+          "callee": "std::move",
+          "lineNumber": 1846
+        },
+        {
+          "caller": "PlainMapSTypeDefn",
+          "callee": "std::move",
+          "lineNumber": 1847
+        },
+        {
+          "caller": "PlainMapSTypeDefn",
+          "callee": "std::move",
+          "lineNumber": 1848
+        },
+        {
+          "caller": "header",
+          "callee": "std::move",
+          "lineNumber": 1929
+        },
+        {
+          "caller": "element_identifier",
+          "callee": "std::move",
+          "lineNumber": 1997
+        },
+        {
+          "caller": "key_flags",
+          "callee": "std::move",
+          "lineNumber": 2036
+        },
+        {
+          "caller": "key_identifier",
+          "callee": "std::move",
+          "lineNumber": 2075
+        },
+        {
+          "caller": "PlainMapLTypeDefn",
+          "callee": "std::move",
+          "lineNumber": 2155
+        },
+        {
+          "caller": "PlainMapLTypeDefn",
+          "callee": "std::move",
+          "lineNumber": 2157
+        },
+        {
+          "caller": "PlainMapLTypeDefn",
+          "callee": "std::move",
+          "lineNumber": 2158
+        },
+        {
+          "caller": "PlainMapLTypeDefn",
+          "callee": "std::move",
+          "lineNumber": 2159
+        },
+        {
+          "caller": "header",
+          "callee": "std::move",
+          "lineNumber": 2240
+        },
+        {
+          "caller": "element_identifier",
+          "callee": "std::move",
+          "lineNumber": 2308
+        },
+        {
+          "caller": "key_flags",
+          "callee": "std::move",
+          "lineNumber": 2347
+        },
+        {
+          "caller": "key_identifier",
+          "callee": "std::move",
+          "lineNumber": 2386
+        },
+        {
+          "caller": "StronglyConnectedComponentId",
+          "callee": "std::move",
+          "lineNumber": 2462
+        },
+        {
+          "caller": "sc_component_id",
+          "callee": "std::move",
+          "lineNumber": 2537
+        },
+        {
+          "caller": "ExtendedTypeDefn",
+          "callee": "static_cast<void>",
+          "lineNumber": 2654
+        },
+        {
+          "caller": "ExtendedTypeDefn",
+          "callee": "static_cast<void>",
+          "lineNumber": 2664
+        },
+        {
+          "caller": "operator ==",
+          "callee": "static_cast<void>",
+          "lineNumber": 2700
+        },
+        {
+          "caller": "Dummy",
+          "callee": "static_cast<void>",
+          "lineNumber": 2749
+        },
+        {
+          "caller": "Dummy",
+          "callee": "static_cast<void>",
+          "lineNumber": 2759
+        },
+        {
+          "caller": "operator ==",
+          "callee": "static_cast<void>",
+          "lineNumber": 2795
+        },
+        {
+          "caller": "TypeIdentifier",
+          "callee": "~Dummy",
+          "lineNumber": 2831
+        },
+        {
+          "caller": "TypeIdentifier",
+          "callee": "member_destructor_",
+          "lineNumber": 2844
+        },
+        {
+          "caller": "TypeIdentifier",
+          "callee": "no_value_",
+          "lineNumber": 2860
+        },
+        {
+          "caller": "TypeIdentifier",
+          "callee": "string_sdefn_",
+          "lineNumber": 2864
+        },
+        {
+          "caller": "TypeIdentifier",
+          "callee": "string_ldefn_",
+          "lineNumber": 2868
+        },
+        {
+          "caller": "TypeIdentifier",
+          "callee": "seq_sdefn_",
+          "lineNumber": 2872
+        },
+        {
+          "caller": "TypeIdentifier",
+          "callee": "seq_ldefn_",
+          "lineNumber": 2876
+        },
+        {
+          "caller": "TypeIdentifier",
+          "callee": "array_sdefn_",
+          "lineNumber": 2880
+        },
+        {
+          "caller": "TypeIdentifier",
+          "callee": "array_ldefn_",
+          "lineNumber": 2884
+        },
+        {
+          "caller": "TypeIdentifier",
+          "callee": "map_sdefn_",
+          "lineNumber": 2888
+        },
+        {
+          "caller": "TypeIdentifier",
+          "callee": "map_ldefn_",
+          "lineNumber": 2892
+        },
+        {
+          "caller": "TypeIdentifier",
+          "callee": "sc_component_id_",
+          "lineNumber": 2896
+        },
+        {
+          "caller": "TypeIdentifier",
+          "callee": "equivalence_hash_",
+          "lineNumber": 2900
+        },
+        {
+          "caller": "TypeIdentifier",
+          "callee": "extended_defn_",
+          "lineNumber": 2904
+        },
+        {
+          "caller": "TypeIdentifier",
+          "callee": "no_value_",
+          "lineNumber": 2922
+        },
+        {
+          "caller": "TypeIdentifier",
+          "callee": "std::move",
+          "lineNumber": 2922
+        },
+        {
+          "caller": "TypeIdentifier",
+          "callee": "string_sdefn_",
+          "lineNumber": 2926
+        },
+        {
+          "caller": "TypeIdentifier",
+          "callee": "std::move",
+          "lineNumber": 2926
+        },
+        {
+          "caller": "TypeIdentifier",
+          "callee": "string_ldefn_",
+          "lineNumber": 2930
+        },
+        {
+          "caller": "TypeIdentifier",
+          "callee": "std::move",
+          "lineNumber": 2930
+        },
+        {
+          "caller": "TypeIdentifier",
+          "callee": "seq_sdefn_",
+          "lineNumber": 2934
+        },
+        {
+          "caller": "TypeIdentifier",
+          "callee": "std::move",
+          "lineNumber": 2934
+        },
+        {
+          "caller": "TypeIdentifier",
+          "callee": "seq_ldefn_",
+          "lineNumber": 2938
+        },
+        {
+          "caller": "TypeIdentifier",
+          "callee": "std::move",
+          "lineNumber": 2938
+        },
+        {
+          "caller": "TypeIdentifier",
+          "callee": "array_sdefn_",
+          "lineNumber": 2942
+        },
+        {
+          "caller": "TypeIdentifier",
+          "callee": "std::move",
+          "lineNumber": 2942
+        },
+        {
+          "caller": "TypeIdentifier",
+          "callee": "array_ldefn_",
+          "lineNumber": 2946
+        },
+        {
+          "caller": "TypeIdentifier",
+          "callee": "std::move",
+          "lineNumber": 2946
+        },
+        {
+          "caller": "TypeIdentifier",
+          "callee": "map_sdefn_",
+          "lineNumber": 2950
+        },
+        {
+          "caller": "TypeIdentifier",
+          "callee": "std::move",
+          "lineNumber": 2950
+        },
+        {
+          "caller": "TypeIdentifier",
+          "callee": "map_ldefn_",
+          "lineNumber": 2954
+        },
+        {
+          "caller": "TypeIdentifier",
+          "callee": "std::move",
+          "lineNumber": 2954
+        },
+        {
+          "caller": "TypeIdentifier",
+          "callee": "sc_component_id_",
+          "lineNumber": 2958
+        },
+        {
+          "caller": "TypeIdentifier",
+          "callee": "std::move",
+          "lineNumber": 2958
+        },
+        {
+          "caller": "TypeIdentifier",
+          "callee": "equivalence_hash_",
+          "lineNumber": 2962
+        },
+        {
+          "caller": "TypeIdentifier",
+          "callee": "std::move",
+          "lineNumber": 2962
+        },
+        {
+          "caller": "TypeIdentifier",
+          "callee": "extended_defn_",
+          "lineNumber": 2966
+        },
+        {
+          "caller": "TypeIdentifier",
+          "callee": "std::move",
+          "lineNumber": 2966
+        },
+        {
+          "caller": "_d",
+          "callee": "eprosima::fastcdr::exception::BadParamException",
+          "lineNumber": 3305
+        },
+        {
+          "caller": "no_value",
+          "callee": "no_value_",
+          "lineNumber": 3327
+        },
+        {
+          "caller": "no_value",
+          "callee": "no_value_",
+          "lineNumber": 3338
+        },
+        {
+          "caller": "string_sdefn",
+          "callee": "string_sdefn_",
+          "lineNumber": 3380
+        },
+        {
+          "caller": "string_sdefn",
+          "callee": "string_sdefn_",
+          "lineNumber": 3391
+        },
+        {
+          "caller": "string_ldefn",
+          "callee": "string_ldefn_",
+          "lineNumber": 3433
+        },
+        {
+          "caller": "string_ldefn",
+          "callee": "string_ldefn_",
+          "lineNumber": 3444
+        },
+        {
+          "caller": "seq_sdefn",
+          "callee": "seq_sdefn_",
+          "lineNumber": 3486
+        },
+        {
+          "caller": "seq_sdefn",
+          "callee": "seq_sdefn_",
+          "lineNumber": 3497
+        },
+        {
+          "caller": "seq_ldefn",
+          "callee": "seq_ldefn_",
+          "lineNumber": 3539
+        },
+        {
+          "caller": "seq_ldefn",
+          "callee": "seq_ldefn_",
+          "lineNumber": 3550
+        },
+        {
+          "caller": "array_sdefn",
+          "callee": "array_sdefn_",
+          "lineNumber": 3592
+        },
+        {
+          "caller": "array_sdefn",
+          "callee": "array_sdefn_",
+          "lineNumber": 3603
+        },
+        {
+          "caller": "array_ldefn",
+          "callee": "array_ldefn_",
+          "lineNumber": 3645
+        },
+        {
+          "caller": "array_ldefn",
+          "callee": "array_ldefn_",
+          "lineNumber": 3656
+        },
+        {
+          "caller": "map_sdefn",
+          "callee": "map_sdefn_",
+          "lineNumber": 3698
+        },
+        {
+          "caller": "map_sdefn",
+          "callee": "map_sdefn_",
+          "lineNumber": 3709
+        },
+        {
+          "caller": "map_ldefn",
+          "callee": "map_ldefn_",
+          "lineNumber": 3751
+        },
+        {
+          "caller": "map_ldefn",
+          "callee": "map_ldefn_",
+          "lineNumber": 3762
+        },
+        {
+          "caller": "sc_component_id",
+          "callee": "sc_component_id_",
+          "lineNumber": 3804
+        },
+        {
+          "caller": "sc_component_id",
+          "callee": "sc_component_id_",
+          "lineNumber": 3815
+        },
+        {
+          "caller": "equivalence_hash",
+          "callee": "equivalence_hash_",
+          "lineNumber": 3857
+        },
+        {
+          "caller": "equivalence_hash",
+          "callee": "equivalence_hash_",
+          "lineNumber": 3868
+        },
+        {
+          "caller": "extended_defn",
+          "callee": "extended_defn_",
+          "lineNumber": 3910
+        },
+        {
+          "caller": "extended_defn",
+          "callee": "extended_defn_",
+          "lineNumber": 3921
+        },
+        {
+          "caller": "ExtendedAnnotationParameterValue",
+          "callee": "static_cast<void>",
+          "lineNumber": 4270
+        },
+        {
+          "caller": "ExtendedAnnotationParameterValue",
+          "callee": "static_cast<void>",
+          "lineNumber": 4280
+        },
+        {
+          "caller": "operator ==",
+          "callee": "static_cast<void>",
+          "lineNumber": 4316
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "~ExtendedAnnotationParameterValue",
+          "lineNumber": 4352
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "member_destructor_",
+          "lineNumber": 4365
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "boolean_value_",
+          "lineNumber": 4381
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "byte_value_",
+          "lineNumber": 4385
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "int8_value_",
+          "lineNumber": 4389
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "uint8_value_",
+          "lineNumber": 4393
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "int16_value_",
+          "lineNumber": 4397
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "uint_16_value_",
+          "lineNumber": 4401
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "int32_value_",
+          "lineNumber": 4405
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "uint32_value_",
+          "lineNumber": 4409
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "int64_value_",
+          "lineNumber": 4413
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "uint64_value_",
+          "lineNumber": 4417
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "float32_value_",
+          "lineNumber": 4421
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "float64_value_",
+          "lineNumber": 4425
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "float128_value_",
+          "lineNumber": 4429
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "char_value_",
+          "lineNumber": 4433
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "wchar_value_",
+          "lineNumber": 4437
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "enumerated_value_",
+          "lineNumber": 4441
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "string8_value_",
+          "lineNumber": 4445
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "string16_value_",
+          "lineNumber": 4449
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "extended_value_",
+          "lineNumber": 4453
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "boolean_value_",
+          "lineNumber": 4471
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "std::move",
+          "lineNumber": 4471
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "byte_value_",
+          "lineNumber": 4475
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "std::move",
+          "lineNumber": 4475
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "int8_value_",
+          "lineNumber": 4479
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "std::move",
+          "lineNumber": 4479
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "uint8_value_",
+          "lineNumber": 4483
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "std::move",
+          "lineNumber": 4483
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "int16_value_",
+          "lineNumber": 4487
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "std::move",
+          "lineNumber": 4487
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "uint_16_value_",
+          "lineNumber": 4491
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "std::move",
+          "lineNumber": 4491
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "int32_value_",
+          "lineNumber": 4495
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "std::move",
+          "lineNumber": 4495
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "uint32_value_",
+          "lineNumber": 4499
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "std::move",
+          "lineNumber": 4499
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "int64_value_",
+          "lineNumber": 4503
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "std::move",
+          "lineNumber": 4503
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "uint64_value_",
+          "lineNumber": 4507
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "std::move",
+          "lineNumber": 4507
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "float32_value_",
+          "lineNumber": 4511
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "std::move",
+          "lineNumber": 4511
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "float64_value_",
+          "lineNumber": 4515
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "std::move",
+          "lineNumber": 4515
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "float128_value_",
+          "lineNumber": 4519
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "std::move",
+          "lineNumber": 4519
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "char_value_",
+          "lineNumber": 4523
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "std::move",
+          "lineNumber": 4523
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "wchar_value_",
+          "lineNumber": 4527
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "std::move",
+          "lineNumber": 4527
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "enumerated_value_",
+          "lineNumber": 4531
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "std::move",
+          "lineNumber": 4531
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "string8_value_",
+          "lineNumber": 4535
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "std::move",
+          "lineNumber": 4535
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "string16_value_",
+          "lineNumber": 4539
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "std::move",
+          "lineNumber": 4539
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "extended_value_",
+          "lineNumber": 4543
+        },
+        {
+          "caller": "AnnotationParameterValue",
+          "callee": "std::move",
+          "lineNumber": 4543
+        },
+        {
+          "caller": "_d",
+          "callee": "eprosima::fastcdr::exception::BadParamException",
+          "lineNumber": 4997
+        },
+        {
+          "caller": "boolean_value",
+          "callee": "boolean_value_",
+          "lineNumber": 5019
+        },
+        {
+          "caller": "boolean_value",
+          "callee": "eprosima::fastcdr::exception::BadParamException",
+          "lineNumber": 5032
+        },
+        {
+          "caller": "byte_value",
+          "callee": "byte_value_",
+          "lineNumber": 5061
+        },
+        {
+          "caller": "byte_value",
+          "callee": "eprosima::fastcdr::exception::BadParamException",
+          "lineNumber": 5074
+        },
+        {
+          "caller": "int8_value",
+          "callee": "int8_value_",
+          "lineNumber": 5103
+        },
+        {
+          "caller": "int8_value",
+          "callee": "eprosima::fastcdr::exception::BadParamException",
+          "lineNumber": 5116
+        },
+        {
+          "caller": "uint8_value",
+          "callee": "uint8_value_",
+          "lineNumber": 5145
+        },
+        {
+          "caller": "uint8_value",
+          "callee": "eprosima::fastcdr::exception::BadParamException",
+          "lineNumber": 5158
+        },
+        {
+          "caller": "int16_value",
+          "callee": "int16_value_",
+          "lineNumber": 5187
+        },
+        {
+          "caller": "int16_value",
+          "callee": "eprosima::fastcdr::exception::BadParamException",
+          "lineNumber": 5200
+        },
+        {
+          "caller": "uint_16_value",
+          "callee": "uint_16_value_",
+          "lineNumber": 5229
+        },
+        {
+          "caller": "uint_16_value",
+          "callee": "eprosima::fastcdr::exception::BadParamException",
+          "lineNumber": 5242
+        },
+        {
+          "caller": "int32_value",
+          "callee": "int32_value_",
+          "lineNumber": 5271
+        },
+        {
+          "caller": "int32_value",
+          "callee": "eprosima::fastcdr::exception::BadParamException",
+          "lineNumber": 5284
+        },
+        {
+          "caller": "uint32_value",
+          "callee": "uint32_value_",
+          "lineNumber": 5313
+        },
+        {
+          "caller": "uint32_value",
+          "callee": "eprosima::fastcdr::exception::BadParamException",
+          "lineNumber": 5326
+        },
+        {
+          "caller": "int64_value",
+          "callee": "int64_value_",
+          "lineNumber": 5355
+        },
+        {
+          "caller": "int64_value",
+          "callee": "eprosima::fastcdr::exception::BadParamException",
+          "lineNumber": 5368
+        },
+        {
+          "caller": "uint64_value",
+          "callee": "uint64_value_",
+          "lineNumber": 5397
+        },
+        {
+          "caller": "uint64_value",
+          "callee": "eprosima::fastcdr::exception::BadParamException",
+          "lineNumber": 5410
+        },
+        {
+          "caller": "float32_value",
+          "callee": "float32_value_",
+          "lineNumber": 5439
+        },
+        {
+          "caller": "float32_value",
+          "callee": "eprosima::fastcdr::exception::BadParamException",
+          "lineNumber": 5452
+        },
+        {
+          "caller": "float64_value",
+          "callee": "float64_value_",
+          "lineNumber": 5481
+        },
+        {
+          "caller": "float64_value",
+          "callee": "eprosima::fastcdr::exception::BadParamException",
+          "lineNumber": 5494
+        },
+        {
+          "caller": "float128_value",
+          "callee": "float128_value_",
+          "lineNumber": 5523
+        },
+        {
+          "caller": "float128_value",
+          "callee": "eprosima::fastcdr::exception::BadParamException",
+          "lineNumber": 5536
+        },
+        {
+          "caller": "char_value",
+          "callee": "char_value_",
+          "lineNumber": 5565
+        },
+        {
+          "caller": "char_value",
+          "callee": "eprosima::fastcdr::exception::BadParamException",
+          "lineNumber": 5578
+        },
+        {
+          "caller": "wchar_value",
+          "callee": "wchar_value_",
+          "lineNumber": 5607
+        },
+        {
+          "caller": "wchar_value",
+          "callee": "eprosima::fastcdr::exception::BadParamException",
+          "lineNumber": 5620
+        },
+        {
+          "caller": "enumerated_value",
+          "callee": "enumerated_value_",
+          "lineNumber": 5649
+        },
+        {
+          "caller": "enumerated_value",
+          "callee": "eprosima::fastcdr::exception::BadParamException",
+          "lineNumber": 5662
+        },
+        {
+          "caller": "string8_value",
+          "callee": "string8_value_",
+          "lineNumber": 5691
+        },
+        {
+          "caller": "string8_value",
+          "callee": "string8_value_",
+          "lineNumber": 5702
+        },
+        {
+          "caller": "string16_value",
+          "callee": "string16_value_",
+          "lineNumber": 5744
+        },
+        {
+          "caller": "string16_value",
+          "callee": "string16_value_",
+          "lineNumber": 5755
+        },
+        {
+          "caller": "extended_value",
+          "callee": "extended_value_",
+          "lineNumber": 5797
+        },
+        {
+          "caller": "extended_value",
+          "callee": "extended_value_",
+          "lineNumber": 5808
+        },
+        {
+          "caller": "AppliedAnnotationParameter",
+          "callee": "std::move",
+          "lineNumber": 6269
+        },
+        {
+          "caller": "AppliedAnnotationParameter",
+          "callee": "std::move",
+          "lineNumber": 6270
+        },
+        {
+          "caller": "paramname_hash",
+          "callee": "std::move",
+          "lineNumber": 6339
+        },
+        {
+          "caller": "value",
+          "callee": "std::move",
+          "lineNumber": 6378
+        },
+        {
+          "caller": "AppliedAnnotation",
+          "callee": "std::move",
+          "lineNumber": 6451
+        },
+        {
+          "caller": "AppliedAnnotation",
+          "callee": "std::move",
+          "lineNumber": 6452
+        },
+        {
+          "caller": "annotation_typeid",
+          "callee": "std::move",
+          "lineNumber": 6521
+        },
+        {
+          "caller": "param_seq",
+          "callee": "std::move",
+          "lineNumber": 6560
+        },
+        {
+          "caller": "AppliedVerbatimAnnotation",
+          "callee": "std::move",
+          "lineNumber": 6635
+        },
+        {
+          "caller": "AppliedVerbatimAnnotation",
+          "callee": "std::move",
+          "lineNumber": 6636
+        },
+        {
+          "caller": "AppliedVerbatimAnnotation",
+          "callee": "std::move",
+          "lineNumber": 6637
+        },
+        {
+          "caller": "placement",
+          "callee": "std::move",
+          "lineNumber": 6710
+        },
+        {
+          "caller": "language",
+          "callee": "std::move",
+          "lineNumber": 6749
+        },
+        {
+          "caller": "text",
+          "callee": "std::move",
+          "lineNumber": 6788
+        },
+        {
+          "caller": "AppliedBuiltinMemberAnnotations",
+          "callee": "std::move",
+          "lineNumber": 6864
+        },
+        {
+          "caller": "AppliedBuiltinMemberAnnotations",
+          "callee": "std::move",
+          "lineNumber": 6865
+        },
+        {
+          "caller": "AppliedBuiltinMemberAnnotations",
+          "callee": "std::move",
+          "lineNumber": 6866
+        },
+        {
+          "caller": "AppliedBuiltinMemberAnnotations",
+          "callee": "std::move",
+          "lineNumber": 6867
+        },
+        {
+          "caller": "unit",
+          "callee": "std::move",
+          "lineNumber": 6944
+        },
+        {
+          "caller": "min",
+          "callee": "std::move",
+          "lineNumber": 6983
+        },
+        {
+          "caller": "max",
+          "callee": "std::move",
+          "lineNumber": 7022
+        },
+        {
+          "caller": "hash_id",
+          "callee": "std::move",
+          "lineNumber": 7061
+        },
+        {
+          "caller": "CommonStructMember",
+          "callee": "std::move",
+          "lineNumber": 7137
+        },
+        {
+          "caller": "CommonStructMember",
+          "callee": "std::move",
+          "lineNumber": 7138
+        },
+        {
+          "caller": "member_flags",
+          "callee": "std::move",
+          "lineNumber": 7240
+        },
+        {
+          "caller": "member_type_id",
+          "callee": "std::move",
+          "lineNumber": 7279
+        },
+        {
+          "caller": "CompleteMemberDetail",
+          "callee": "std::move",
+          "lineNumber": 7353
+        },
+        {
+          "caller": "CompleteMemberDetail",
+          "callee": "std::move",
+          "lineNumber": 7354
+        },
+        {
+          "caller": "CompleteMemberDetail",
+          "callee": "std::move",
+          "lineNumber": 7355
+        },
+        {
+          "caller": "name",
+          "callee": "std::move",
+          "lineNumber": 7428
+        },
+        {
+          "caller": "ann_builtin",
+          "callee": "std::move",
+          "lineNumber": 7467
+        },
+        {
+          "caller": "ann_custom",
+          "callee": "std::move",
+          "lineNumber": 7506
+        },
+        {
+          "caller": "MinimalMemberDetail",
+          "callee": "std::move",
+          "lineNumber": 7576
+        },
+        {
+          "caller": "name_hash",
+          "callee": "std::move",
+          "lineNumber": 7641
+        },
+        {
+          "caller": "CompleteStructMember",
+          "callee": "std::move",
+          "lineNumber": 7711
+        },
+        {
+          "caller": "CompleteStructMember",
+          "callee": "std::move",
+          "lineNumber": 7712
+        },
+        {
+          "caller": "common",
+          "callee": "std::move",
+          "lineNumber": 7781
+        },
+        {
+          "caller": "detail",
+          "callee": "std::move",
+          "lineNumber": 7820
+        },
+        {
+          "caller": "MinimalStructMember",
+          "callee": "std::move",
+          "lineNumber": 7893
+        },
+        {
+          "caller": "MinimalStructMember",
+          "callee": "std::move",
+          "lineNumber": 7894
+        },
+        {
+          "caller": "common",
+          "callee": "std::move",
+          "lineNumber": 7963
+        },
+        {
+          "caller": "detail",
+          "callee": "std::move",
+          "lineNumber": 8002
+        },
+        {
+          "caller": "AppliedBuiltinTypeAnnotations",
+          "callee": "std::move",
+          "lineNumber": 8073
+        },
+        {
+          "caller": "verbatim",
+          "callee": "std::move",
+          "lineNumber": 8138
+        },
+        {
+          "caller": "MinimalTypeDetail",
+          "callee": "static_cast<void>",
+          "lineNumber": 8195
+        },
+        {
+          "caller": "MinimalTypeDetail",
+          "callee": "static_cast<void>",
+          "lineNumber": 8205
+        },
+        {
+          "caller": "operator ==",
+          "callee": "static_cast<void>",
+          "lineNumber": 8241
+        },
+        {
+          "caller": "CompleteTypeDetail",
+          "callee": "std::move",
+          "lineNumber": 8305
+        },
+        {
+          "caller": "CompleteTypeDetail",
+          "callee": "std::move",
+          "lineNumber": 8306
+        },
+        {
+          "caller": "CompleteTypeDetail",
+          "callee": "std::move",
+          "lineNumber": 8307
+        },
+        {
+          "caller": "ann_builtin",
+          "callee": "std::move",
+          "lineNumber": 8380
+        },
+        {
+          "caller": "ann_custom",
+          "callee": "std::move",
+          "lineNumber": 8419
+        },
+        {
+          "caller": "type_name",
+          "callee": "std::move",
+          "lineNumber": 8458
+        },
+        {
+          "caller": "CompleteStructHeader",
+          "callee": "std::move",
+          "lineNumber": 8530
+        },
+        {
+          "caller": "CompleteStructHeader",
+          "callee": "std::move",
+          "lineNumber": 8531
+        },
+        {
+          "caller": "base_type",
+          "callee": "std::move",
+          "lineNumber": 8600
+        },
+        {
+          "caller": "detail",
+          "callee": "std::move",
+          "lineNumber": 8639
+        },
+        {
+          "caller": "MinimalStructHeader",
+          "callee": "std::move",
+          "lineNumber": 8710
+        },
+        {
+          "caller": "MinimalStructHeader",
+          "callee": "std::move",
+          "lineNumber": 8711
+        },
+        {
+          "caller": "base_type",
+          "callee": "std::move",
+          "lineNumber": 8780
+        },
+        {
+          "caller": "detail",
+          "callee": "std::move",
+          "lineNumber": 8819
+        },
+        {
+          "caller": "CompleteStructType",
+          "callee": "std::move",
+          "lineNumber": 8892
+        },
+        {
+          "caller": "CompleteStructType",
+          "callee": "std::move",
+          "lineNumber": 8893
+        },
+        {
+          "caller": "CompleteStructType",
+          "callee": "std::move",
+          "lineNumber": 8894
+        },
+        {
+          "caller": "struct_flags",
+          "callee": "std::move",
+          "lineNumber": 8967
+        },
+        {
+          "caller": "header",
+          "callee": "std::move",
+          "lineNumber": 9006
+        },
+        {
+          "caller": "member_seq",
+          "callee": "std::move",
+          "lineNumber": 9045
+        },
+        {
+          "caller": "MinimalStructType",
+          "callee": "std::move",
+          "lineNumber": 9119
+        },
+        {
+          "caller": "MinimalStructType",
+          "callee": "std::move",
+          "lineNumber": 9120
+        },
+        {
+          "caller": "MinimalStructType",
+          "callee": "std::move",
+          "lineNumber": 9121
+        },
+        {
+          "caller": "struct_flags",
+          "callee": "std::move",
+          "lineNumber": 9194
+        },
+        {
+          "caller": "header",
+          "callee": "std::move",
+          "lineNumber": 9233
+        },
+        {
+          "caller": "member_seq",
+          "callee": "std::move",
+          "lineNumber": 9272
+        },
+        {
+          "caller": "CommonUnionMember",
+          "callee": "std::move",
+          "lineNumber": 9351
+        },
+        {
+          "caller": "CommonUnionMember",
+          "callee": "std::move",
+          "lineNumber": 9352
+        },
+        {
+          "caller": "CommonUnionMember",
+          "callee": "std::move",
+          "lineNumber": 9353
+        },
+        {
+          "caller": "member_flags",
+          "callee": "std::move",
+          "lineNumber": 9459
+        },
+        {
+          "caller": "type_id",
+          "callee": "std::move",
+          "lineNumber": 9498
+        },
+        {
+          "caller": "label_seq",
+          "callee": "std::move",
+          "lineNumber": 9537
+        },
+        {
+          "caller": "CompleteUnionMember",
+          "callee": "std::move",
+          "lineNumber": 9610
+        },
+        {
+          "caller": "CompleteUnionMember",
+          "callee": "std::move",
+          "lineNumber": 9611
+        },
+        {
+          "caller": "common",
+          "callee": "std::move",
+          "lineNumber": 9680
+        },
+        {
+          "caller": "detail",
+          "callee": "std::move",
+          "lineNumber": 9719
+        },
+        {
+          "caller": "MinimalUnionMember",
+          "callee": "std::move",
+          "lineNumber": 9792
+        },
+        {
+          "caller": "MinimalUnionMember",
+          "callee": "std::move",
+          "lineNumber": 9793
+        },
+        {
+          "caller": "common",
+          "callee": "std::move",
+          "lineNumber": 9862
+        },
+        {
+          "caller": "detail",
+          "callee": "std::move",
+          "lineNumber": 9901
+        },
+        {
+          "caller": "CommonDiscriminatorMember",
+          "callee": "std::move",
+          "lineNumber": 9974
+        },
+        {
+          "caller": "CommonDiscriminatorMember",
+          "callee": "std::move",
+          "lineNumber": 9975
+        },
+        {
+          "caller": "member_flags",
+          "callee": "std::move",
+          "lineNumber": 10044
+        },
+        {
+          "caller": "type_id",
+          "callee": "std::move",
+          "lineNumber": 10083
+        },
+        {
+          "caller": "CompleteDiscriminatorMember",
+          "callee": "std::move",
+          "lineNumber": 10156
+        },
+        {
+          "caller": "CompleteDiscriminatorMember",
+          "callee": "std::move",
+          "lineNumber": 10157
+        },
+        {
+          "caller": "CompleteDiscriminatorMember",
+          "callee": "std::move",
+          "lineNumber": 10158
+        },
+        {
+          "caller": "common",
+          "callee": "std::move",
+          "lineNumber": 10231
+        },
+        {
+          "caller": "ann_builtin",
+          "callee": "std::move",
+          "lineNumber": 10270
+        },
+        {
+          "caller": "ann_custom",
+          "callee": "std::move",
+          "lineNumber": 10309
+        },
+        {
+          "caller": "MinimalDiscriminatorMember",
+          "callee": "std::move",
+          "lineNumber": 10379
+        },
+        {
+          "caller": "common",
+          "callee": "std::move",
+          "lineNumber": 10444
+        },
+        {
+          "caller": "CompleteUnionHeader",
+          "callee": "std::move",
+          "lineNumber": 10512
+        },
+        {
+          "caller": "detail",
+          "callee": "std::move",
+          "lineNumber": 10577
+        },
+        {
+          "caller": "MinimalUnionHeader",
+          "callee": "std::move",
+          "lineNumber": 10645
+        },
+        {
+          "caller": "detail",
+          "callee": "std::move",
+          "lineNumber": 10710
+        },
+        {
+          "caller": "CompleteUnionType",
+          "callee": "std::move",
+          "lineNumber": 10784
+        },
+        {
+          "caller": "CompleteUnionType",
+          "callee": "std::move",
+          "lineNumber": 10785
+        },
+        {
+          "caller": "CompleteUnionType",
+          "callee": "std::move",
+          "lineNumber": 10786
+        },
+        {
+          "caller": "CompleteUnionType",
+          "callee": "std::move",
+          "lineNumber": 10787
+        },
+        {
+          "caller": "union_flags",
+          "callee": "std::move",
+          "lineNumber": 10864
+        },
+        {
+          "caller": "header",
+          "callee": "std::move",
+          "lineNumber": 10903
+        },
+        {
+          "caller": "discriminator",
+          "callee": "std::move",
+          "lineNumber": 10942
+        },
+        {
+          "caller": "member_seq",
+          "callee": "std::move",
+          "lineNumber": 10981
+        },
+        {
+          "caller": "MinimalUnionType",
+          "callee": "std::move",
+          "lineNumber": 11058
+        },
+        {
+          "caller": "MinimalUnionType",
+          "callee": "std::move",
+          "lineNumber": 11059
+        },
+        {
+          "caller": "MinimalUnionType",
+          "callee": "std::move",
+          "lineNumber": 11060
+        },
+        {
+          "caller": "MinimalUnionType",
+          "callee": "std::move",
+          "lineNumber": 11061
+        },
+        {
+          "caller": "union_flags",
+          "callee": "std::move",
+          "lineNumber": 11138
+        },
+        {
+          "caller": "header",
+          "callee": "std::move",
+          "lineNumber": 11177
+        },
+        {
+          "caller": "discriminator",
+          "callee": "std::move",
+          "lineNumber": 11216
+        },
+        {
+          "caller": "member_seq",
+          "callee": "std::move",
+          "lineNumber": 11255
+        },
+        {
+          "caller": "CommonAnnotationParameter",
+          "callee": "std::move",
+          "lineNumber": 11328
+        },
+        {
+          "caller": "CommonAnnotationParameter",
+          "callee": "std::move",
+          "lineNumber": 11329
+        },
+        {
+          "caller": "member_flags",
+          "callee": "std::move",
+          "lineNumber": 11398
+        },
+        {
+          "caller": "member_type_id",
+          "callee": "std::move",
+          "lineNumber": 11437
+        },
+        {
+          "caller": "CompleteAnnotationParameter",
+          "callee": "std::move",
+          "lineNumber": 11510
+        },
+        {
+          "caller": "CompleteAnnotationParameter",
+          "callee": "std::move",
+          "lineNumber": 11511
+        },
+        {
+          "caller": "CompleteAnnotationParameter",
+          "callee": "std::move",
+          "lineNumber": 11512
+        },
+        {
+          "caller": "common",
+          "callee": "std::move",
+          "lineNumber": 11585
+        },
+        {
+          "caller": "name",
+          "callee": "std::move",
+          "lineNumber": 11624
+        },
+        {
+          "caller": "default_value",
+          "callee": "std::move",
+          "lineNumber": 11663
+        },
+        {
+          "caller": "MinimalAnnotationParameter",
+          "callee": "std::move",
+          "lineNumber": 11739
+        },
+        {
+          "caller": "MinimalAnnotationParameter",
+          "callee": "std::move",
+          "lineNumber": 11740
+        },
+        {
+          "caller": "MinimalAnnotationParameter",
+          "callee": "std::move",
+          "lineNumber": 11741
+        },
+        {
+          "caller": "common",
+          "callee": "std::move",
+          "lineNumber": 11814
+        },
+        {
+          "caller": "name_hash",
+          "callee": "std::move",
+          "lineNumber": 11853
+        },
+        {
+          "caller": "default_value",
+          "callee": "std::move",
+          "lineNumber": 11892
+        },
+        {
+          "caller": "CompleteAnnotationHeader",
+          "callee": "std::move",
+          "lineNumber": 11964
+        },
+        {
+          "caller": "annotation_name",
+          "callee": "std::move",
+          "lineNumber": 12029
+        },
+        {
+          "caller": "MinimalAnnotationHeader",
+          "callee": "static_cast<void>",
+          "lineNumber": 12086
+        },
+        {
+          "caller": "MinimalAnnotationHeader",
+          "callee": "static_cast<void>",
+          "lineNumber": 12096
+        },
+        {
+          "caller": "operator ==",
+          "callee": "static_cast<void>",
+          "lineNumber": 12132
+        },
+        {
+          "caller": "CompleteAnnotationType",
+          "callee": "std::move",
+          "lineNumber": 12196
+        },
+        {
+          "caller": "CompleteAnnotationType",
+          "callee": "std::move",
+          "lineNumber": 12197
+        },
+        {
+          "caller": "CompleteAnnotationType",
+          "callee": "std::move",
+          "lineNumber": 12198
+        },
+        {
+          "caller": "annotation_flag",
+          "callee": "std::move",
+          "lineNumber": 12271
+        },
+        {
+          "caller": "header",
+          "callee": "std::move",
+          "lineNumber": 12310
+        },
+        {
+          "caller": "member_seq",
+          "callee": "std::move",
+          "lineNumber": 12349
+        },
+        {
+          "caller": "MinimalAnnotationType",
+          "callee": "std::move",
+          "lineNumber": 12423
+        },
+        {
+          "caller": "MinimalAnnotationType",
+          "callee": "std::move",
+          "lineNumber": 12424
+        },
+        {
+          "caller": "MinimalAnnotationType",
+          "callee": "std::move",
+          "lineNumber": 12425
+        },
+        {
+          "caller": "annotation_flag",
+          "callee": "std::move",
+          "lineNumber": 12498
+        },
+        {
+          "caller": "header",
+          "callee": "std::move",
+          "lineNumber": 12537
+        },
+        {
+          "caller": "member_seq",
+          "callee": "std::move",
+          "lineNumber": 12576
+        },
+        {
+          "caller": "CommonAliasBody",
+          "callee": "std::move",
+          "lineNumber": 12648
+        },
+        {
+          "caller": "CommonAliasBody",
+          "callee": "std::move",
+          "lineNumber": 12649
+        },
+        {
+          "caller": "related_flags",
+          "callee": "std::move",
+          "lineNumber": 12718
+        },
+        {
+          "caller": "related_type",
+          "callee": "std::move",
+          "lineNumber": 12757
+        },
+        {
+          "caller": "CompleteAliasBody",
+          "callee": "std::move",
+          "lineNumber": 12830
+        },
+        {
+          "caller": "CompleteAliasBody",
+          "callee": "std::move",
+          "lineNumber": 12831
+        },
+        {
+          "caller": "CompleteAliasBody",
+          "callee": "std::move",
+          "lineNumber": 12832
+        },
+        {
+          "caller": "common",
+          "callee": "std::move",
+          "lineNumber": 12905
+        },
+        {
+          "caller": "ann_builtin",
+          "callee": "std::move",
+          "lineNumber": 12944
+        },
+        {
+          "caller": "ann_custom",
+          "callee": "std::move",
+          "lineNumber": 12983
+        },
+        {
+          "caller": "MinimalAliasBody",
+          "callee": "std::move",
+          "lineNumber": 13053
+        },
+        {
+          "caller": "common",
+          "callee": "std::move",
+          "lineNumber": 13118
+        },
+        {
+          "caller": "CompleteAliasHeader",
+          "callee": "std::move",
+          "lineNumber": 13186
+        },
+        {
+          "caller": "detail",
+          "callee": "std::move",
+          "lineNumber": 13251
+        },
+        {
+          "caller": "MinimalAliasHeader",
+          "callee": "static_cast<void>",
+          "lineNumber": 13308
+        },
+        {
+          "caller": "MinimalAliasHeader",
+          "callee": "static_cast<void>",
+          "lineNumber": 13318
+        },
+        {
+          "caller": "operator ==",
+          "callee": "static_cast<void>",
+          "lineNumber": 13354
+        },
+        {
+          "caller": "CompleteAliasType",
+          "callee": "std::move",
+          "lineNumber": 13418
+        },
+        {
+          "caller": "CompleteAliasType",
+          "callee": "std::move",
+          "lineNumber": 13419
+        },
+        {
+          "caller": "CompleteAliasType",
+          "callee": "std::move",
+          "lineNumber": 13420
+        },
+        {
+          "caller": "alias_flags",
+          "callee": "std::move",
+          "lineNumber": 13493
+        },
+        {
+          "caller": "header",
+          "callee": "std::move",
+          "lineNumber": 13532
+        },
+        {
+          "caller": "body",
+          "callee": "std::move",
+          "lineNumber": 13571
+        },
+        {
+          "caller": "MinimalAliasType",
+          "callee": "std::move",
+          "lineNumber": 13645
+        },
+        {
+          "caller": "MinimalAliasType",
+          "callee": "std::move",
+          "lineNumber": 13646
+        },
+        {
+          "caller": "MinimalAliasType",
+          "callee": "std::move",
+          "lineNumber": 13647
+        },
+        {
+          "caller": "alias_flags",
+          "callee": "std::move",
+          "lineNumber": 13720
+        },
+        {
+          "caller": "header",
+          "callee": "std::move",
+          "lineNumber": 13759
+        },
+        {
+          "caller": "body",
+          "callee": "std::move",
+          "lineNumber": 13798
+        },
+        {
+          "caller": "CompleteElementDetail",
+          "callee": "std::move",
+          "lineNumber": 13870
+        },
+        {
+          "caller": "CompleteElementDetail",
+          "callee": "std::move",
+          "lineNumber": 13871
+        },
+        {
+          "caller": "ann_builtin",
+          "callee": "std::move",
+          "lineNumber": 13940
+        },
+        {
+          "caller": "ann_custom",
+          "callee": "std::move",
+          "lineNumber": 13979
+        },
+        {
+          "caller": "CommonCollectionElement",
+          "callee": "std::move",
+          "lineNumber": 14050
+        },
+        {
+          "caller": "CommonCollectionElement",
+          "callee": "std::move",
+          "lineNumber": 14051
+        },
+        {
+          "caller": "element_flags",
+          "callee": "std::move",
+          "lineNumber": 14120
+        },
+        {
+          "caller": "type",
+          "callee": "std::move",
+          "lineNumber": 14159
+        },
+        {
+          "caller": "CompleteCollectionElement",
+          "callee": "std::move",
+          "lineNumber": 14230
+        },
+        {
+          "caller": "CompleteCollectionElement",
+          "callee": "std::move",
+          "lineNumber": 14231
+        },
+        {
+          "caller": "common",
+          "callee": "std::move",
+          "lineNumber": 14300
+        },
+        {
+          "caller": "detail",
+          "callee": "std::move",
+          "lineNumber": 14339
+        },
+        {
+          "caller": "MinimalCollectionElement",
+          "callee": "std::move",
+          "lineNumber": 14408
+        },
+        {
+          "caller": "common",
+          "callee": "std::move",
+          "lineNumber": 14473
+        },
+        {
+          "caller": "CompleteCollectionHeader",
+          "callee": "std::move",
+          "lineNumber": 14666
+        },
+        {
+          "caller": "CompleteCollectionHeader",
+          "callee": "std::move",
+          "lineNumber": 14667
+        },
+        {
+          "caller": "common",
+          "callee": "std::move",
+          "lineNumber": 14736
+        },
+        {
+          "caller": "detail",
+          "callee": "std::move",
+          "lineNumber": 14775
+        },
+        {
+          "caller": "MinimalCollectionHeader",
+          "callee": "std::move",
+          "lineNumber": 14844
+        },
+        {
+          "caller": "common",
+          "callee": "std::move",
+          "lineNumber": 14909
+        },
+        {
+          "caller": "CompleteSequenceType",
+          "callee": "std::move",
+          "lineNumber": 14981
+        },
+        {
+          "caller": "CompleteSequenceType",
+          "callee": "std::move",
+          "lineNumber": 14982
+        },
+        {
+          "caller": "CompleteSequenceType",
+          "callee": "std::move",
+          "lineNumber": 14983
+        },
+        {
+          "caller": "collection_flag",
+          "callee": "std::move",
+          "lineNumber": 15056
+        },
+        {
+          "caller": "header",
+          "callee": "std::move",
+          "lineNumber": 15095
+        },
+        {
+          "caller": "element",
+          "callee": "std::move",
+          "lineNumber": 15134
+        },
+        {
+          "caller": "MinimalSequenceType",
+          "callee": "std::move",
+          "lineNumber": 15208
+        },
+        {
+          "caller": "MinimalSequenceType",
+          "callee": "std::move",
+          "lineNumber": 15209
+        },
+        {
+          "caller": "MinimalSequenceType",
+          "callee": "std::move",
+          "lineNumber": 15210
+        },
+        {
+          "caller": "collection_flag",
+          "callee": "std::move",
+          "lineNumber": 15283
+        },
+        {
+          "caller": "header",
+          "callee": "std::move",
+          "lineNumber": 15322
+        },
+        {
+          "caller": "element",
+          "callee": "std::move",
+          "lineNumber": 15361
+        },
+        {
+          "caller": "CommonArrayHeader",
+          "callee": "std::move",
+          "lineNumber": 15431
+        },
+        {
+          "caller": "bound_seq",
+          "callee": "std::move",
+          "lineNumber": 15496
+        },
+        {
+          "caller": "CompleteArrayHeader",
+          "callee": "std::move",
+          "lineNumber": 15566
+        },
+        {
+          "caller": "CompleteArrayHeader",
+          "callee": "std::move",
+          "lineNumber": 15567
+        },
+        {
+          "caller": "common",
+          "callee": "std::move",
+          "lineNumber": 15636
+        },
+        {
+          "caller": "detail",
+          "callee": "std::move",
+          "lineNumber": 15675
+        },
+        {
+          "caller": "MinimalArrayHeader",
+          "callee": "std::move",
+          "lineNumber": 15744
+        },
+        {
+          "caller": "common",
+          "callee": "std::move",
+          "lineNumber": 15809
+        },
+        {
+          "caller": "CompleteArrayType",
+          "callee": "std::move",
+          "lineNumber": 15881
+        },
+        {
+          "caller": "CompleteArrayType",
+          "callee": "std::move",
+          "lineNumber": 15882
+        },
+        {
+          "caller": "CompleteArrayType",
+          "callee": "std::move",
+          "lineNumber": 15883
+        },
+        {
+          "caller": "collection_flag",
+          "callee": "std::move",
+          "lineNumber": 15956
+        },
+        {
+          "caller": "header",
+          "callee": "std::move",
+          "lineNumber": 15995
+        },
+        {
+          "caller": "element",
+          "callee": "std::move",
+          "lineNumber": 16034
+        },
+        {
+          "caller": "MinimalArrayType",
+          "callee": "std::move",
+          "lineNumber": 16108
+        },
+        {
+          "caller": "MinimalArrayType",
+          "callee": "std::move",
+          "lineNumber": 16109
+        },
+        {
+          "caller": "MinimalArrayType",
+          "callee": "std::move",
+          "lineNumber": 16110
+        },
+        {
+          "caller": "collection_flag",
+          "callee": "std::move",
+          "lineNumber": 16183
+        },
+        {
+          "caller": "header",
+          "callee": "std::move",
+          "lineNumber": 16222
+        },
+        {
+          "caller": "element",
+          "callee": "std::move",
+          "lineNumber": 16261
+        },
+        {
+          "caller": "CompleteMapType",
+          "callee": "std::move",
+          "lineNumber": 16337
+        },
+        {
+          "caller": "CompleteMapType",
+          "callee": "std::move",
+          "lineNumber": 16338
+        },
+        {
+          "caller": "CompleteMapType",
+          "callee": "std::move",
+          "lineNumber": 16339
+        },
+        {
+          "caller": "CompleteMapType",
+          "callee": "std::move",
+          "lineNumber": 16340
+        },
+        {
+          "caller": "collection_flag",
+          "callee": "std::move",
+          "lineNumber": 16417
+        },
+        {
+          "caller": "header",
+          "callee": "std::move",
+          "lineNumber": 16456
+        },
+        {
+          "caller": "key",
+          "callee": "std::move",
+          "lineNumber": 16495
+        },
+        {
+          "caller": "element",
+          "callee": "std::move",
+          "lineNumber": 16534
+        },
+        {
+          "caller": "MinimalMapType",
+          "callee": "std::move",
+          "lineNumber": 16611
+        },
+        {
+          "caller": "MinimalMapType",
+          "callee": "std::move",
+          "lineNumber": 16612
+        },
+        {
+          "caller": "MinimalMapType",
+          "callee": "std::move",
+          "lineNumber": 16613
+        },
+        {
+          "caller": "MinimalMapType",
+          "callee": "std::move",
+          "lineNumber": 16614
+        },
+        {
+          "caller": "collection_flag",
+          "callee": "std::move",
+          "lineNumber": 16691
+        },
+        {
+          "caller": "header",
+          "callee": "std::move",
+          "lineNumber": 16730
+        },
+        {
+          "caller": "key",
+          "callee": "std::move",
+          "lineNumber": 16769
+        },
+        {
+          "caller": "element",
+          "callee": "std::move",
+          "lineNumber": 16808
+        },
+        {
+          "caller": "CommonEnumeratedLiteral",
+          "callee": "std::move",
+          "lineNumber": 16884
+        },
+        {
+          "caller": "flags",
+          "callee": "std::move",
+          "lineNumber": 16982
+        },
+        {
+          "caller": "CompleteEnumeratedLiteral",
+          "callee": "std::move",
+          "lineNumber": 17053
+        },
+        {
+          "caller": "CompleteEnumeratedLiteral",
+          "callee": "std::move",
+          "lineNumber": 17054
+        },
+        {
+          "caller": "common",
+          "callee": "std::move",
+          "lineNumber": 17123
+        },
+        {
+          "caller": "detail",
+          "callee": "std::move",
+          "lineNumber": 17162
+        },
+        {
+          "caller": "MinimalEnumeratedLiteral",
+          "callee": "std::move",
+          "lineNumber": 17235
+        },
+        {
+          "caller": "MinimalEnumeratedLiteral",
+          "callee": "std::move",
+          "lineNumber": 17236
+        },
+        {
+          "caller": "common",
+          "callee": "std::move",
+          "lineNumber": 17305
+        },
+        {
+          "caller": "detail",
+          "callee": "std::move",
+          "lineNumber": 17344
+        },
+        {
+          "caller": "CompleteEnumeratedHeader",
+          "callee": "std::move",
+          "lineNumber": 17540
+        },
+        {
+          "caller": "CompleteEnumeratedHeader",
+          "callee": "std::move",
+          "lineNumber": 17541
+        },
+        {
+          "caller": "common",
+          "callee": "std::move",
+          "lineNumber": 17610
+        },
+        {
+          "caller": "detail",
+          "callee": "std::move",
+          "lineNumber": 17649
+        },
+        {
+          "caller": "MinimalEnumeratedHeader",
+          "callee": "std::move",
+          "lineNumber": 17718
+        },
+        {
+          "caller": "common",
+          "callee": "std::move",
+          "lineNumber": 17783
+        },
+        {
+          "caller": "CompleteEnumeratedType",
+          "callee": "std::move",
+          "lineNumber": 17855
+        },
+        {
+          "caller": "CompleteEnumeratedType",
+          "callee": "std::move",
+          "lineNumber": 17856
+        },
+        {
+          "caller": "CompleteEnumeratedType",
+          "callee": "std::move",
+          "lineNumber": 17857
+        },
+        {
+          "caller": "enum_flags",
+          "callee": "std::move",
+          "lineNumber": 17930
+        },
+        {
+          "caller": "header",
+          "callee": "std::move",
+          "lineNumber": 17969
+        },
+        {
+          "caller": "literal_seq",
+          "callee": "std::move",
+          "lineNumber": 18008
+        },
+        {
+          "caller": "MinimalEnumeratedType",
+          "callee": "std::move",
+          "lineNumber": 18082
+        },
+        {
+          "caller": "MinimalEnumeratedType",
+          "callee": "std::move",
+          "lineNumber": 18083
+        },
+        {
+          "caller": "MinimalEnumeratedType",
+          "callee": "std::move",
+          "lineNumber": 18084
+        },
+        {
+          "caller": "enum_flags",
+          "callee": "std::move",
+          "lineNumber": 18157
+        },
+        {
+          "caller": "header",
+          "callee": "std::move",
+          "lineNumber": 18196
+        },
+        {
+          "caller": "literal_seq",
+          "callee": "std::move",
+          "lineNumber": 18235
+        },
+        {
+          "caller": "CommonBitflag",
+          "callee": "std::move",
+          "lineNumber": 18308
+        },
+        {
+          "caller": "flags",
+          "callee": "std::move",
+          "lineNumber": 18406
+        },
+        {
+          "caller": "CompleteBitflag",
+          "callee": "std::move",
+          "lineNumber": 18477
+        },
+        {
+          "caller": "CompleteBitflag",
+          "callee": "std::move",
+          "lineNumber": 18478
+        },
+        {
+          "caller": "common",
+          "callee": "std::move",
+          "lineNumber": 18547
+        },
+        {
+          "caller": "detail",
+          "callee": "std::move",
+          "lineNumber": 18586
+        },
+        {
+          "caller": "MinimalBitflag",
+          "callee": "std::move",
+          "lineNumber": 18659
+        },
+        {
+          "caller": "MinimalBitflag",
+          "callee": "std::move",
+          "lineNumber": 18660
+        },
+        {
+          "caller": "common",
+          "callee": "std::move",
+          "lineNumber": 18729
+        },
+        {
+          "caller": "detail",
+          "callee": "std::move",
+          "lineNumber": 18768
+        },
+        {
+          "caller": "CompleteBitmaskType",
+          "callee": "std::move",
+          "lineNumber": 18970
+        },
+        {
+          "caller": "CompleteBitmaskType",
+          "callee": "std::move",
+          "lineNumber": 18971
+        },
+        {
+          "caller": "CompleteBitmaskType",
+          "callee": "std::move",
+          "lineNumber": 18972
+        },
+        {
+          "caller": "bitmask_flags",
+          "callee": "std::move",
+          "lineNumber": 19045
+        },
+        {
+          "caller": "header",
+          "callee": "std::move",
+          "lineNumber": 19084
+        },
+        {
+          "caller": "flag_seq",
+          "callee": "std::move",
+          "lineNumber": 19123
+        },
+        {
+          "caller": "MinimalBitmaskType",
+          "callee": "std::move",
+          "lineNumber": 19197
+        },
+        {
+          "caller": "MinimalBitmaskType",
+          "callee": "std::move",
+          "lineNumber": 19198
+        },
+        {
+          "caller": "MinimalBitmaskType",
+          "callee": "std::move",
+          "lineNumber": 19199
+        },
+        {
+          "caller": "bitmask_flags",
+          "callee": "std::move",
+          "lineNumber": 19272
+        },
+        {
+          "caller": "header",
+          "callee": "std::move",
+          "lineNumber": 19311
+        },
+        {
+          "caller": "flag_seq",
+          "callee": "std::move",
+          "lineNumber": 19350
+        },
+        {
+          "caller": "CommonBitfield",
+          "callee": "std::move",
+          "lineNumber": 19427
+        },
+        {
+          "caller": "flags",
+          "callee": "std::move",
+          "lineNumber": 19535
+        },
+        {
+          "caller": "CompleteBitfield",
+          "callee": "std::move",
+          "lineNumber": 19666
+        },
+        {
+          "caller": "CompleteBitfield",
+          "callee": "std::move",
+          "lineNumber": 19667
+        },
+        {
+          "caller": "common",
+          "callee": "std::move",
+          "lineNumber": 19736
+        },
+        {
+          "caller": "detail",
+          "callee": "std::move",
+          "lineNumber": 19775
+        },
+        {
+          "caller": "MinimalBitfield",
+          "callee": "std::move",
+          "lineNumber": 19848
+        },
+        {
+          "caller": "MinimalBitfield",
+          "callee": "std::move",
+          "lineNumber": 19849
+        },
+        {
+          "caller": "common",
+          "callee": "std::move",
+          "lineNumber": 19918
+        },
+        {
+          "caller": "name_hash",
+          "callee": "std::move",
+          "lineNumber": 19957
+        },
+        {
+          "caller": "CompleteBitsetHeader",
+          "callee": "std::move",
+          "lineNumber": 20028
+        },
+        {
+          "caller": "detail",
+          "callee": "std::move",
+          "lineNumber": 20093
+        },
+        {
+          "caller": "MinimalBitsetHeader",
+          "callee": "static_cast<void>",
+          "lineNumber": 20150
+        },
+        {
+          "caller": "MinimalBitsetHeader",
+          "callee": "static_cast<void>",
+          "lineNumber": 20160
+        },
+        {
+          "caller": "operator ==",
+          "callee": "static_cast<void>",
+          "lineNumber": 20196
+        },
+        {
+          "caller": "CompleteBitsetType",
+          "callee": "std::move",
+          "lineNumber": 20260
+        },
+        {
+          "caller": "CompleteBitsetType",
+          "callee": "std::move",
+          "lineNumber": 20261
+        },
+        {
+          "caller": "CompleteBitsetType",
+          "callee": "std::move",
+          "lineNumber": 20262
+        },
+        {
+          "caller": "bitset_flags",
+          "callee": "std::move",
+          "lineNumber": 20335
+        },
+        {
+          "caller": "header",
+          "callee": "std::move",
+          "lineNumber": 20374
+        },
+        {
+          "caller": "field_seq",
+          "callee": "std::move",
+          "lineNumber": 20413
+        },
+        {
+          "caller": "MinimalBitsetType",
+          "callee": "std::move",
+          "lineNumber": 20487
+        },
+        {
+          "caller": "MinimalBitsetType",
+          "callee": "std::move",
+          "lineNumber": 20488
+        },
+        {
+          "caller": "MinimalBitsetType",
+          "callee": "std::move",
+          "lineNumber": 20489
+        },
+        {
+          "caller": "bitset_flags",
+          "callee": "std::move",
+          "lineNumber": 20562
+        },
+        {
+          "caller": "header",
+          "callee": "std::move",
+          "lineNumber": 20601
+        },
+        {
+          "caller": "field_seq",
+          "callee": "std::move",
+          "lineNumber": 20640
+        },
+        {
+          "caller": "CompleteExtendedType",
+          "callee": "static_cast<void>",
+          "lineNumber": 20699
+        },
+        {
+          "caller": "CompleteExtendedType",
+          "callee": "static_cast<void>",
+          "lineNumber": 20709
+        },
+        {
+          "caller": "operator ==",
+          "callee": "static_cast<void>",
+          "lineNumber": 20745
+        },
+        {
+          "caller": "CompleteTypeObject",
+          "callee": "~CompleteExtendedType",
+          "lineNumber": 20781
+        },
+        {
+          "caller": "CompleteTypeObject",
+          "callee": "member_destructor_",
+          "lineNumber": 20794
+        },
+        {
+          "caller": "CompleteTypeObject",
+          "callee": "alias_type_",
+          "lineNumber": 20810
+        },
+        {
+          "caller": "CompleteTypeObject",
+          "callee": "annotation_type_",
+          "lineNumber": 20814
+        },
+        {
+          "caller": "CompleteTypeObject",
+          "callee": "struct_type_",
+          "lineNumber": 20818
+        },
+        {
+          "caller": "CompleteTypeObject",
+          "callee": "union_type_",
+          "lineNumber": 20822
+        },
+        {
+          "caller": "CompleteTypeObject",
+          "callee": "bitset_type_",
+          "lineNumber": 20826
+        },
+        {
+          "caller": "CompleteTypeObject",
+          "callee": "sequence_type_",
+          "lineNumber": 20830
+        },
+        {
+          "caller": "CompleteTypeObject",
+          "callee": "array_type_",
+          "lineNumber": 20834
+        },
+        {
+          "caller": "CompleteTypeObject",
+          "callee": "map_type_",
+          "lineNumber": 20838
+        },
+        {
+          "caller": "CompleteTypeObject",
+          "callee": "enumerated_type_",
+          "lineNumber": 20842
+        },
+        {
+          "caller": "CompleteTypeObject",
+          "callee": "bitmask_type_",
+          "lineNumber": 20846
+        },
+        {
+          "caller": "CompleteTypeObject",
+          "callee": "extended_type_",
+          "lineNumber": 20850
+        },
+        {
+          "caller": "CompleteTypeObject",
+          "callee": "alias_type_",
+          "lineNumber": 20868
+        },
+        {
+          "caller": "CompleteTypeObject",
+          "callee": "std::move",
+          "lineNumber": 20868
+        },
+        {
+          "caller": "CompleteTypeObject",
+          "callee": "annotation_type_",
+          "lineNumber": 20872
+        },
+        {
+          "caller": "CompleteTypeObject",
+          "callee": "std::move",
+          "lineNumber": 20872
+        },
+        {
+          "caller": "CompleteTypeObject",
+          "callee": "struct_type_",
+          "lineNumber": 20876
+        },
+        {
+          "caller": "CompleteTypeObject",
+          "callee": "std::move",
+          "lineNumber": 20876
+        },
+        {
+          "caller": "CompleteTypeObject",
+          "callee": "union_type_",
+          "lineNumber": 20880
+        },
+        {
+          "caller": "CompleteTypeObject",
+          "callee": "std::move",
+          "lineNumber": 20880
+        },
+        {
+          "caller": "CompleteTypeObject",
+          "callee": "bitset_type_",
+          "lineNumber": 20884
+        },
+        {
+          "caller": "CompleteTypeObject",
+          "callee": "std::move",
+          "lineNumber": 20884
+        },
+        {
+          "caller": "CompleteTypeObject",
+          "callee": "sequence_type_",
+          "lineNumber": 20888
+        },
+        {
+          "caller": "CompleteTypeObject",
+          "callee": "std::move",
+          "lineNumber": 20888
+        },
+        {
+          "caller": "CompleteTypeObject",
+          "callee": "array_type_",
+          "lineNumber": 20892
+        },
+        {
+          "caller": "CompleteTypeObject",
+          "callee": "std::move",
+          "lineNumber": 20892
+        },
+        {
+          "caller": "CompleteTypeObject",
+          "callee": "map_type_",
+          "lineNumber": 20896
+        },
+        {
+          "caller": "CompleteTypeObject",
+          "callee": "std::move",
+          "lineNumber": 20896
+        },
+        {
+          "caller": "CompleteTypeObject",
+          "callee": "enumerated_type_",
+          "lineNumber": 20900
+        },
+        {
+          "caller": "CompleteTypeObject",
+          "callee": "std::move",
+          "lineNumber": 20900
+        },
+        {
+          "caller": "CompleteTypeObject",
+          "callee": "bitmask_type_",
+          "lineNumber": 20904
+        },
+        {
+          "caller": "CompleteTypeObject",
+          "callee": "std::move",
+          "lineNumber": 20904
+        },
+        {
+          "caller": "CompleteTypeObject",
+          "callee": "extended_type_",
+          "lineNumber": 20908
+        },
+        {
+          "caller": "CompleteTypeObject",
+          "callee": "std::move",
+          "lineNumber": 20908
+        },
+        {
+          "caller": "_d",
+          "callee": "eprosima::fastcdr::exception::BadParamException",
+          "lineNumber": 21210
+        },
+        {
+          "caller": "alias_type",
+          "callee": "alias_type_",
+          "lineNumber": 21232
+        },
+        {
+          "caller": "alias_type",
+          "callee": "alias_type_",
+          "lineNumber": 21243
+        },
+        {
+          "caller": "annotation_type",
+          "callee": "annotation_type_",
+          "lineNumber": 21285
+        },
+        {
+          "caller": "annotation_type",
+          "callee": "annotation_type_",
+          "lineNumber": 21296
+        },
+        {
+          "caller": "struct_type",
+          "callee": "struct_type_",
+          "lineNumber": 21338
+        },
+        {
+          "caller": "struct_type",
+          "callee": "struct_type_",
+          "lineNumber": 21349
+        },
+        {
+          "caller": "union_type",
+          "callee": "union_type_",
+          "lineNumber": 21391
+        },
+        {
+          "caller": "union_type",
+          "callee": "union_type_",
+          "lineNumber": 21402
+        },
+        {
+          "caller": "bitset_type",
+          "callee": "bitset_type_",
+          "lineNumber": 21444
+        },
+        {
+          "caller": "bitset_type",
+          "callee": "bitset_type_",
+          "lineNumber": 21455
+        },
+        {
+          "caller": "sequence_type",
+          "callee": "sequence_type_",
+          "lineNumber": 21497
+        },
+        {
+          "caller": "sequence_type",
+          "callee": "sequence_type_",
+          "lineNumber": 21508
+        },
+        {
+          "caller": "array_type",
+          "callee": "array_type_",
+          "lineNumber": 21550
+        },
+        {
+          "caller": "array_type",
+          "callee": "array_type_",
+          "lineNumber": 21561
+        },
+        {
+          "caller": "map_type",
+          "callee": "map_type_",
+          "lineNumber": 21603
+        },
+        {
+          "caller": "map_type",
+          "callee": "map_type_",
+          "lineNumber": 21614
+        },
+        {
+          "caller": "enumerated_type",
+          "callee": "enumerated_type_",
+          "lineNumber": 21656
+        },
+        {
+          "caller": "enumerated_type",
+          "callee": "enumerated_type_",
+          "lineNumber": 21667
+        },
+        {
+          "caller": "bitmask_type",
+          "callee": "bitmask_type_",
+          "lineNumber": 21709
+        },
+        {
+          "caller": "bitmask_type",
+          "callee": "bitmask_type_",
+          "lineNumber": 21720
+        },
+        {
+          "caller": "extended_type",
+          "callee": "extended_type_",
+          "lineNumber": 21762
+        },
+        {
+          "caller": "extended_type",
+          "callee": "extended_type_",
+          "lineNumber": 21773
+        },
+        {
+          "caller": "MinimalExtendedType",
+          "callee": "static_cast<void>",
+          "lineNumber": 22093
+        },
+        {
+          "caller": "MinimalExtendedType",
+          "callee": "static_cast<void>",
+          "lineNumber": 22103
+        },
+        {
+          "caller": "operator ==",
+          "callee": "static_cast<void>",
+          "lineNumber": 22139
+        },
+        {
+          "caller": "MinimalTypeObject",
+          "callee": "~MinimalExtendedType",
+          "lineNumber": 22175
+        },
+        {
+          "caller": "MinimalTypeObject",
+          "callee": "member_destructor_",
+          "lineNumber": 22188
+        },
+        {
+          "caller": "MinimalTypeObject",
+          "callee": "alias_type_",
+          "lineNumber": 22204
+        },
+        {
+          "caller": "MinimalTypeObject",
+          "callee": "annotation_type_",
+          "lineNumber": 22208
+        },
+        {
+          "caller": "MinimalTypeObject",
+          "callee": "struct_type_",
+          "lineNumber": 22212
+        },
+        {
+          "caller": "MinimalTypeObject",
+          "callee": "union_type_",
+          "lineNumber": 22216
+        },
+        {
+          "caller": "MinimalTypeObject",
+          "callee": "bitset_type_",
+          "lineNumber": 22220
+        },
+        {
+          "caller": "MinimalTypeObject",
+          "callee": "sequence_type_",
+          "lineNumber": 22224
+        },
+        {
+          "caller": "MinimalTypeObject",
+          "callee": "array_type_",
+          "lineNumber": 22228
+        },
+        {
+          "caller": "MinimalTypeObject",
+          "callee": "map_type_",
+          "lineNumber": 22232
+        },
+        {
+          "caller": "MinimalTypeObject",
+          "callee": "enumerated_type_",
+          "lineNumber": 22236
+        },
+        {
+          "caller": "MinimalTypeObject",
+          "callee": "bitmask_type_",
+          "lineNumber": 22240
+        },
+        {
+          "caller": "MinimalTypeObject",
+          "callee": "extended_type_",
+          "lineNumber": 22244
+        },
+        {
+          "caller": "MinimalTypeObject",
+          "callee": "alias_type_",
+          "lineNumber": 22262
+        },
+        {
+          "caller": "MinimalTypeObject",
+          "callee": "std::move",
+          "lineNumber": 22262
+        },
+        {
+          "caller": "MinimalTypeObject",
+          "callee": "annotation_type_",
+          "lineNumber": 22266
+        },
+        {
+          "caller": "MinimalTypeObject",
+          "callee": "std::move",
+          "lineNumber": 22266
+        },
+        {
+          "caller": "MinimalTypeObject",
+          "callee": "struct_type_",
+          "lineNumber": 22270
+        },
+        {
+          "caller": "MinimalTypeObject",
+          "callee": "std::move",
+          "lineNumber": 22270
+        },
+        {
+          "caller": "MinimalTypeObject",
+          "callee": "union_type_",
+          "lineNumber": 22274
+        },
+        {
+          "caller": "MinimalTypeObject",
+          "callee": "std::move",
+          "lineNumber": 22274
+        },
+        {
+          "caller": "MinimalTypeObject",
+          "callee": "bitset_type_",
+          "lineNumber": 22278
+        },
+        {
+          "caller": "MinimalTypeObject",
+          "callee": "std::move",
+          "lineNumber": 22278
+        },
+        {
+          "caller": "MinimalTypeObject",
+          "callee": "sequence_type_",
+          "lineNumber": 22282
+        },
+        {
+          "caller": "MinimalTypeObject",
+          "callee": "std::move",
+          "lineNumber": 22282
+        },
+        {
+          "caller": "MinimalTypeObject",
+          "callee": "array_type_",
+          "lineNumber": 22286
+        },
+        {
+          "caller": "MinimalTypeObject",
+          "callee": "std::move",
+          "lineNumber": 22286
+        },
+        {
+          "caller": "MinimalTypeObject",
+          "callee": "map_type_",
+          "lineNumber": 22290
+        },
+        {
+          "caller": "MinimalTypeObject",
+          "callee": "std::move",
+          "lineNumber": 22290
+        },
+        {
+          "caller": "MinimalTypeObject",
+          "callee": "enumerated_type_",
+          "lineNumber": 22294
+        },
+        {
+          "caller": "MinimalTypeObject",
+          "callee": "std::move",
+          "lineNumber": 22294
+        },
+        {
+          "caller": "MinimalTypeObject",
+          "callee": "bitmask_type_",
+          "lineNumber": 22298
+        },
+        {
+          "caller": "MinimalTypeObject",
+          "callee": "std::move",
+          "lineNumber": 22298
+        },
+        {
+          "caller": "MinimalTypeObject",
+          "callee": "extended_type_",
+          "lineNumber": 22302
+        },
+        {
+          "caller": "MinimalTypeObject",
+          "callee": "std::move",
+          "lineNumber": 22302
+        },
+        {
+          "caller": "_d",
+          "callee": "eprosima::fastcdr::exception::BadParamException",
+          "lineNumber": 22604
+        },
+        {
+          "caller": "alias_type",
+          "callee": "alias_type_",
+          "lineNumber": 22626
+        },
+        {
+          "caller": "alias_type",
+          "callee": "alias_type_",
+          "lineNumber": 22637
+        },
+        {
+          "caller": "annotation_type",
+          "callee": "annotation_type_",
+          "lineNumber": 22679
+        },
+        {
+          "caller": "annotation_type",
+          "callee": "annotation_type_",
+          "lineNumber": 22690
+        },
+        {
+          "caller": "struct_type",
+          "callee": "struct_type_",
+          "lineNumber": 22732
+        },
+        {
+          "caller": "struct_type",
+          "callee": "struct_type_",
+          "lineNumber": 22743
+        },
+        {
+          "caller": "union_type",
+          "callee": "union_type_",
+          "lineNumber": 22785
+        },
+        {
+          "caller": "union_type",
+          "callee": "union_type_",
+          "lineNumber": 22796
+        },
+        {
+          "caller": "bitset_type",
+          "callee": "bitset_type_",
+          "lineNumber": 22838
+        },
+        {
+          "caller": "bitset_type",
+          "callee": "bitset_type_",
+          "lineNumber": 22849
+        },
+        {
+          "caller": "sequence_type",
+          "callee": "sequence_type_",
+          "lineNumber": 22891
+        },
+        {
+          "caller": "sequence_type",
+          "callee": "sequence_type_",
+          "lineNumber": 22902
+        },
+        {
+          "caller": "array_type",
+          "callee": "array_type_",
+          "lineNumber": 22944
+        },
+        {
+          "caller": "array_type",
+          "callee": "array_type_",
+          "lineNumber": 22955
+        },
+        {
+          "caller": "map_type",
+          "callee": "map_type_",
+          "lineNumber": 22997
+        },
+        {
+          "caller": "map_type",
+          "callee": "map_type_",
+          "lineNumber": 23008
+        },
+        {
+          "caller": "enumerated_type",
+          "callee": "enumerated_type_",
+          "lineNumber": 23050
+        },
+        {
+          "caller": "enumerated_type",
+          "callee": "enumerated_type_",
+          "lineNumber": 23061
+        },
+        {
+          "caller": "bitmask_type",
+          "callee": "bitmask_type_",
+          "lineNumber": 23103
+        },
+        {
+          "caller": "bitmask_type",
+          "callee": "bitmask_type_",
+          "lineNumber": 23114
+        },
+        {
+          "caller": "extended_type",
+          "callee": "extended_type_",
+          "lineNumber": 23156
+        },
+        {
+          "caller": "extended_type",
+          "callee": "extended_type_",
+          "lineNumber": 23167
+        },
+        {
+          "caller": "TypeObject",
+          "callee": "member_destructor_",
+          "lineNumber": 23480
+        },
+        {
+          "caller": "TypeObject",
+          "callee": "complete_",
+          "lineNumber": 23496
+        },
+        {
+          "caller": "TypeObject",
+          "callee": "minimal_",
+          "lineNumber": 23500
+        },
+        {
+          "caller": "TypeObject",
+          "callee": "complete_",
+          "lineNumber": 23518
+        },
+        {
+          "caller": "TypeObject",
+          "callee": "std::move",
+          "lineNumber": 23518
+        },
+        {
+          "caller": "TypeObject",
+          "callee": "minimal_",
+          "lineNumber": 23522
+        },
+        {
+          "caller": "TypeObject",
+          "callee": "std::move",
+          "lineNumber": 23522
+        },
+        {
+          "caller": "_d",
+          "callee": "eprosima::fastcdr::exception::BadParamException",
+          "lineNumber": 23653
+        },
+        {
+          "caller": "complete",
+          "callee": "complete_",
+          "lineNumber": 23675
+        },
+        {
+          "caller": "complete",
+          "callee": "complete_",
+          "lineNumber": 23686
+        },
+        {
+          "caller": "minimal",
+          "callee": "minimal_",
+          "lineNumber": 23728
+        },
+        {
+          "caller": "minimal",
+          "callee": "minimal_",
+          "lineNumber": 23739
+        },
+        {
+          "caller": "_default",
+          "callee": "member_destructor_",
+          "lineNumber": 23778
+        },
+        {
+          "caller": "TypeIdentifierTypeObjectPair",
+          "callee": "std::move",
+          "lineNumber": 23888
+        },
+        {
+          "caller": "TypeIdentifierTypeObjectPair",
+          "callee": "std::move",
+          "lineNumber": 23889
+        },
+        {
+          "caller": "type_identifier",
+          "callee": "std::move",
+          "lineNumber": 23958
+        },
+        {
+          "caller": "type_object",
+          "callee": "std::move",
+          "lineNumber": 23997
+        },
+        {
+          "caller": "TypeIdentifierPair",
+          "callee": "std::move",
+          "lineNumber": 24070
+        },
+        {
+          "caller": "TypeIdentifierPair",
+          "callee": "std::move",
+          "lineNumber": 24071
+        },
+        {
+          "caller": "type_identifier1",
+          "callee": "std::move",
+          "lineNumber": 24140
+        },
+        {
+          "caller": "type_identifier2",
+          "callee": "std::move",
+          "lineNumber": 24179
+        },
+        {
+          "caller": "TypeIdentfierWithSize",
+          "callee": "std::move",
+          "lineNumber": 24252
+        },
+        {
+          "caller": "type_id",
+          "callee": "std::move",
+          "lineNumber": 24322
+        },
+        {
+          "caller": "TypeIdentifierWithDependencies",
+          "callee": "std::move",
+          "lineNumber": 24426
+        },
+        {
+          "caller": "TypeIdentifierWithDependencies",
+          "callee": "std::move",
+          "lineNumber": 24428
+        },
+        {
+          "caller": "typeid_with_size",
+          "callee": "std::move",
+          "lineNumber": 24501
+        },
+        {
+          "caller": "dependent_typeids",
+          "callee": "std::move",
+          "lineNumber": 24569
+        },
+        {
+          "caller": "TypeInformation",
+          "callee": "std::move",
+          "lineNumber": 24643
+        },
+        {
+          "caller": "TypeInformation",
+          "callee": "std::move",
+          "lineNumber": 24644
+        },
+        {
+          "caller": "minimal",
+          "callee": "std::move",
+          "lineNumber": 24713
+        },
+        {
+          "caller": "complete",
+          "callee": "std::move",
+          "lineNumber": 24752
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobjectCdrAux.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 781,
+      "nonEmptyLines": 514,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/xtypes/type_representation/detail/dds_xtypes_typeobjectPubSubTypes.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 8333,
+      "nonEmptyLines": 6105,
+      "callGraph": [
+        {
+          "caller": "StringSTypeDefn_offset_of",
+          "callee": "reinterpret_cast<char const volatile&>",
+          "lineNumber": 106
+        },
+        {
+          "caller": "StringSTypeDefn_offset_of",
+          "callee": "get",
+          "lineNumber": 106
+        },
+        {
+          "caller": "StringSTypeDefn_offset_of",
+          "callee": "Tag",
+          "lineNumber": 106
+        },
+        {
+          "caller": "is_plain",
+          "callee": "is_plain_xcdrv2_impl",
+          "lineNumber": 173
+        },
+        {
+          "caller": "is_plain",
+          "callee": "is_plain_xcdrv1_impl",
+          "lineNumber": 177
+        },
+        {
+          "caller": "is_plain_xcdrv1_impl",
+          "callee": "detail::StringSTypeDefn_offset_of<StringSTypeDefn, detail::StringSTypeDefn_f>",
+          "lineNumber": 202
+        },
+        {
+          "caller": "is_plain_xcdrv2_impl",
+          "callee": "detail::StringSTypeDefn_offset_of<StringSTypeDefn, detail::StringSTypeDefn_f>",
+          "lineNumber": 209
+        },
+        {
+          "caller": "StringLTypeDefn_offset_of",
+          "callee": "reinterpret_cast<char const volatile&>",
+          "lineNumber": 241
+        },
+        {
+          "caller": "StringLTypeDefn_offset_of",
+          "callee": "get",
+          "lineNumber": 241
+        },
+        {
+          "caller": "StringLTypeDefn_offset_of",
+          "callee": "Tag",
+          "lineNumber": 241
+        },
+        {
+          "caller": "is_plain",
+          "callee": "is_plain_xcdrv2_impl",
+          "lineNumber": 308
+        },
+        {
+          "caller": "is_plain",
+          "callee": "is_plain_xcdrv1_impl",
+          "lineNumber": 312
+        },
+        {
+          "caller": "is_plain_xcdrv1_impl",
+          "callee": "detail::StringLTypeDefn_offset_of<StringLTypeDefn, detail::StringLTypeDefn_f>",
+          "lineNumber": 337
+        },
+        {
+          "caller": "is_plain_xcdrv2_impl",
+          "callee": "detail::StringLTypeDefn_offset_of<StringLTypeDefn, detail::StringLTypeDefn_f>",
+          "lineNumber": 344
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 408
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 418
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 489
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 499
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 570
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 580
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 651
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 661
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 732
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 742
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 813
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 823
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 894
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 904
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 975
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 985
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 1056
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 1066
+        },
+        {
+          "caller": "is_plain",
+          "callee": "is_plain_xcdrv2_impl",
+          "lineNumber": 1139
+        },
+        {
+          "caller": "is_plain",
+          "callee": "is_plain_xcdrv1_impl",
+          "lineNumber": 1143
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 1237
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 1247
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 1318
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 1328
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 1400
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 1410
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 1482
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 1492
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 1563
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 1573
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 1644
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 1654
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 1725
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 1735
+        },
+        {
+          "caller": "MinimalMemberDetail_offset_of",
+          "callee": "reinterpret_cast<char const volatile&>",
+          "lineNumber": 1774
+        },
+        {
+          "caller": "MinimalMemberDetail_offset_of",
+          "callee": "get",
+          "lineNumber": 1774
+        },
+        {
+          "caller": "MinimalMemberDetail_offset_of",
+          "callee": "Tag",
+          "lineNumber": 1774
+        },
+        {
+          "caller": "is_plain",
+          "callee": "is_plain_xcdrv2_impl",
+          "lineNumber": 1841
+        },
+        {
+          "caller": "is_plain",
+          "callee": "is_plain_xcdrv1_impl",
+          "lineNumber": 1845
+        },
+        {
+          "caller": "is_plain_xcdrv1_impl",
+          "callee": "detail::MinimalMemberDetail_offset_of<MinimalMemberDetail, detail::MinimalMemberDetail_f>",
+          "lineNumber": 1870
+        },
+        {
+          "caller": "is_plain_xcdrv2_impl",
+          "callee": "detail::MinimalMemberDetail_offset_of<MinimalMemberDetail, detail::MinimalMemberDetail_f>",
+          "lineNumber": 1877
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 1941
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 1951
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 2023
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 2033
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 2105
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 2115
+        },
+        {
+          "caller": "is_plain",
+          "callee": "is_plain_xcdrv2_impl",
+          "lineNumber": 2188
+        },
+        {
+          "caller": "is_plain",
+          "callee": "is_plain_xcdrv1_impl",
+          "lineNumber": 2192
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 2284
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 2294
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 2365
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 2375
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 2446
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 2456
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 2527
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 2537
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 2608
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 2618
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 2690
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 2700
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 2771
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 2781
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 2853
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 2863
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 2935
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 2945
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 3016
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 3026
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 3097
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 3107
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 3178
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 3188
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 3259
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 3269
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 3340
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 3350
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 3421
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 3431
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 3502
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 3512
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 3583
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 3593
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 3665
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 3675
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 3747
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 3757
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 3828
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 3838
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 3909
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 3919
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 3990
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 4000
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 4071
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 4081
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 4152
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 4162
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 4233
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 4243
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 4314
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 4324
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 4395
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 4405
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 4476
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 4486
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 4557
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 4567
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 4638
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 4648
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 4719
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 4729
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 4800
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 4810
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 4881
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 4891
+        },
+        {
+          "caller": "CommonCollectionHeader_offset_of",
+          "callee": "reinterpret_cast<char const volatile&>",
+          "lineNumber": 4930
+        },
+        {
+          "caller": "CommonCollectionHeader_offset_of",
+          "callee": "get",
+          "lineNumber": 4930
+        },
+        {
+          "caller": "CommonCollectionHeader_offset_of",
+          "callee": "Tag",
+          "lineNumber": 4930
+        },
+        {
+          "caller": "is_plain",
+          "callee": "is_plain_xcdrv2_impl",
+          "lineNumber": 4997
+        },
+        {
+          "caller": "is_plain",
+          "callee": "is_plain_xcdrv1_impl",
+          "lineNumber": 5001
+        },
+        {
+          "caller": "is_plain_xcdrv1_impl",
+          "callee": "detail::CommonCollectionHeader_offset_of<CommonCollectionHeader, detail::CommonCollectionHeader_f>",
+          "lineNumber": 5026
+        },
+        {
+          "caller": "is_plain_xcdrv2_impl",
+          "callee": "detail::CommonCollectionHeader_offset_of<CommonCollectionHeader, detail::CommonCollectionHeader_f>",
+          "lineNumber": 5033
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 5097
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 5107
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 5178
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 5188
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 5259
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 5269
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 5340
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 5350
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 5421
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 5431
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 5502
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 5512
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 5583
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 5593
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 5664
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 5674
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 5745
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 5755
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 5826
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 5836
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 5907
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 5917
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 5989
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 5999
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 6070
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 6080
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 6152
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 6162
+        },
+        {
+          "caller": "CommonEnumeratedHeader_offset_of",
+          "callee": "reinterpret_cast<char const volatile&>",
+          "lineNumber": 6202
+        },
+        {
+          "caller": "CommonEnumeratedHeader_offset_of",
+          "callee": "get",
+          "lineNumber": 6202
+        },
+        {
+          "caller": "CommonEnumeratedHeader_offset_of",
+          "callee": "Tag",
+          "lineNumber": 6202
+        },
+        {
+          "caller": "is_plain",
+          "callee": "is_plain_xcdrv2_impl",
+          "lineNumber": 6269
+        },
+        {
+          "caller": "is_plain",
+          "callee": "is_plain_xcdrv1_impl",
+          "lineNumber": 6273
+        },
+        {
+          "caller": "is_plain_xcdrv1_impl",
+          "callee": "detail::CommonEnumeratedHeader_offset_of<CommonEnumeratedHeader, detail::CommonEnumeratedHeader_f>",
+          "lineNumber": 6298
+        },
+        {
+          "caller": "is_plain_xcdrv2_impl",
+          "callee": "detail::CommonEnumeratedHeader_offset_of<CommonEnumeratedHeader, detail::CommonEnumeratedHeader_f>",
+          "lineNumber": 6305
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 6369
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 6379
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 6450
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 6460
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 6531
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 6541
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 6612
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 6622
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 6693
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 6703
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 6774
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 6784
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 6856
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 6866
+        },
+        {
+          "caller": "CommonBitmaskHeader_offset_of",
+          "callee": "reinterpret_cast<char const volatile&>",
+          "lineNumber": 6906
+        },
+        {
+          "caller": "CommonBitmaskHeader_offset_of",
+          "callee": "get",
+          "lineNumber": 6906
+        },
+        {
+          "caller": "CommonBitmaskHeader_offset_of",
+          "callee": "Tag",
+          "lineNumber": 6906
+        },
+        {
+          "caller": "is_plain",
+          "callee": "is_plain_xcdrv2_impl",
+          "lineNumber": 6973
+        },
+        {
+          "caller": "is_plain",
+          "callee": "is_plain_xcdrv1_impl",
+          "lineNumber": 6977
+        },
+        {
+          "caller": "is_plain_xcdrv1_impl",
+          "callee": "detail::CommonBitmaskHeader_offset_of<CommonBitmaskHeader, detail::CommonBitmaskHeader_f>",
+          "lineNumber": 7002
+        },
+        {
+          "caller": "is_plain_xcdrv2_impl",
+          "callee": "detail::CommonBitmaskHeader_offset_of<CommonBitmaskHeader, detail::CommonBitmaskHeader_f>",
+          "lineNumber": 7009
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 7075
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 7085
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 7156
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 7166
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 7237
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 7247
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 7318
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 7328
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 7400
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 7410
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 7482
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 7492
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 7563
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 7573
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 7644
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 7654
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 7725
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 7735
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 7806
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 7816
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 7887
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 7897
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 7970
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 7980
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 8052
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 8062
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 8134
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 8144
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 8216
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 8226
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 8298
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 8308
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/xtypes/type_representation/ITypeObjectRegistry.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 214,
+      "nonEmptyLines": 192,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/xtypes/type_representation/TypeObject.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 30,
+      "nonEmptyLines": 25,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/xtypes/type_representation/TypeObjectUtils.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 3134,
+      "nonEmptyLines": 2840,
+      "callGraph": [
+        {
+          "caller": "add_array_dimension",
+          "callee": "InvalidArgumentError",
+          "lineNumber": 262
+        },
+        {
+          "caller": "add_array_dimension",
+          "callee": "push_back",
+          "lineNumber": 264
+        },
+        {
+          "caller": "array_bound_seq_consistency",
+          "callee": "empty",
+          "lineNumber": 2076
+        },
+        {
+          "caller": "array_bound_seq_consistency",
+          "callee": "InvalidArgumentError",
+          "lineNumber": 2078
+        },
+        {
+          "caller": "array_bound_seq_consistency",
+          "callee": "InvalidArgumentError",
+          "lineNumber": 2084
+        },
+        {
+          "caller": "empty_flags_consistency",
+          "callee": "InvalidArgumentError",
+          "lineNumber": 2175
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/xtypes/utils.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 67,
+      "nonEmptyLines": 57,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/fastdds_auto_link.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 67,
+      "nonEmptyLines": 57,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/fastdds_dll.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 82,
+      "nonEmptyLines": 67,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/LibrarySettings.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 66,
+      "nonEmptyLines": 55,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/rtps/attributes/BuiltinTransports.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 162,
+      "nonEmptyLines": 147,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/rtps/attributes/EndpointAttributes.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 177,
+      "nonEmptyLines": 143,
+      "callGraph": [
+        {
+          "caller": "EndpointAttributes",
+          "callee": "off",
+          "lineNumber": 81
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/rtps/attributes/EndpointSecurityAttributes.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 130,
+      "nonEmptyLines": 102,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    }
+  ]
+}

@@ -314,7 +314,8 @@ namespace ondemand
             switch (data->msgType()) {
                 case DSF::Message::MSGTYPE::SUB_TABLE_REGISTER: {
                     const std::string nodeName = data->nodeName();
-                    uint32_t missing = handleSubscribe(nodeName, data->varFreqs());
+                    std::vector<DSF::NamedValue> missingVarFreqs;
+                    uint32_t missing = handleSubscribe(nodeName, data->varFreqs(), &missingVarFreqs);
                     if (missing > 0) {
                         /*指数退避，不丢弃，持续重试直到变量被创建*/
                         const size_t total = data->varFreqs().size();
@@ -344,8 +345,8 @@ namespace ondemand
                         retryData->msgType(data->msgType());
                         retryData->nodeName(data->nodeName());
                         retryData->tableName(data->tableName());
-                        for (const auto &vf : data->varFreqs()) {
-                            retryData->varFreqs().push_back(vf);
+                        for (auto &vf : missingVarFreqs) {
+                            retryData->varFreqs().push_back(std::move(vf));
                         }
                         std::this_thread::sleep_for(std::chrono::milliseconds(backoffMs));
                         {
@@ -357,10 +358,25 @@ namespace ondemand
                     }
                     break;
                 }
-                case DSF::Message::MSGTYPE::SUB_TABLE_UNREGISTER:
-                    retryBackoffMsByNode.erase(data->nodeName());
-                    handleUnsubscribe(data->nodeName(), data->varFreqs());
+                case DSF::Message::MSGTYPE::SUB_TABLE_UNREGISTER: {
+                    const std::string unsubNode = data->nodeName();
+                    retryBackoffMsByNode.erase(unsubNode);
+                    /*清空重试队列中该节点的所有待重试消息，防止注销后被重新订阅*/
+                    {
+                        std::lock_guard<std::mutex> lk(pubTableDefRetryQueueMutex_);
+                        std::queue<std::shared_ptr<DSF::Message::SubTableRegister>> remaining;
+                        while (!pubTableDefRetryQueue_.empty()) {
+                            auto item = std::move(pubTableDefRetryQueue_.front());
+                            pubTableDefRetryQueue_.pop();
+                            if (item->nodeName() != unsubNode) {
+                                remaining.push(std::move(item));
+                            }
+                        }
+                        pubTableDefRetryQueue_ = std::move(remaining);
+                    }
+                    handleUnsubscribe(unsubNode, data->varFreqs());
                     break;
+                }
                 default:
                     ONDEMANDLOG(error) << "Unknown registered type.";
                     break;
@@ -557,13 +573,17 @@ namespace ondemand
         std::vector<uint32_t> ids(n);
         for (size_t i = 0; i < n; ++i) {
             ids[i] = (*members)[i].varId;
-        }
+        }     
         varStore_.read_batch(ids.data(), n, [&](size_t i, const void *ptr, uint32_t sz) {
             if (!ptr || sz == 0) {
                 if (skippedCount == 0) {
                     for (size_t j = 0; j < i; ++j)
                         actualMask.add((*members)[j].varHash);
                 }
+                ONDEMANDLOG_TIME(warning, 3000)
+                    << "Variable has no data: varHash=" << (*members)[i].varHash
+                    << " varId=" << (*members)[i].varId << " bucket=" << bucketIndex
+                    << " freq=" << freqMs << "ms";
                 ++skippedCount;
                 return;
             }
@@ -576,7 +596,7 @@ namespace ondemand
 
         /*如果所有变量都没数据，跳过本次发送*/
         if (msg.varData().empty()) {
-            ONDEMANDLOG_TIME(warning, 30000)
+            ONDEMANDLOG_TIME(warning, 3000)
                 << "All " << members->size() << " variables in bucket=" << bucketIndex
                 << " freq=" << freqMs << "ms have no data, skipping publish";
             return;
@@ -584,7 +604,7 @@ namespace ondemand
 
         /* 如果有部分变量被跳过，打印一次警告*/
         if (skippedCount > 0) {
-            ONDEMANDLOG_TIME(warning, 30000) << "Skipped " << skippedCount << "/" << members->size()
+            ONDEMANDLOG_TIME(warning, 3000) << "Skipped " << skippedCount << "/" << members->size()
                                              << " variables without data in bucket=" << bucketIndex
                                              << " freq=" << freqMs << "ms";
         }
@@ -712,7 +732,7 @@ namespace ondemand
         {
             std::unique_lock lock(varIndexMutex_);
             varIndex_.reserve(varIndex_.size() + newVars.size());
-            varDefineIndex_.reserve(varDefineIndex_.size() + newVars.size());
+            defineLookup_.reserve(defineLookup_.size() + newVars.size());
 
             // 去重
             size_t writeIdx = 0;
@@ -746,10 +766,10 @@ namespace ondemand
                 meta.bucketIndex = newVars[i].bucketIdx;
                 meta.realVarName = newVars[i].define->name();
                 meta.varId = ids[i];
-                varDefineIndex_.emplace(newVars[i].varHash,
-                                        std::make_shared<DSF::Var::Define>(*newVars[i].define));
+                defineLookup_[newVars[i].varHash] = static_cast<uint32_t>(defineCache_.size());
+                defineCache_.push_back(*newVars[i].define);
                 varIndex_.emplace(newVars[i].varHash, std::move(meta));
-                bucketManager_.AddMember(newVars[i].varName, newVars[i].varHash);
+                bucketManager_.AddMember(newVars[i].varHash);
                 affectedBuckets.insert(newVars[i].bucketIdx);
             }
         } // 释放写锁，再 finalize
@@ -776,18 +796,17 @@ namespace ondemand
                 pubTableDefine.nodeName(nodeName_);
                 pubTableDefine.description("onDemandPub TableDefine");
 
-                const auto members = bucketManager_.GetBucketMembers(bucketId);
+                const auto &members = bucketManager_.GetBucketMembers(bucketId);
                 pubTableDefine.varDefines().reserve(members.size());
 
-                for (const auto &varName : members) {
-                    uint64_t varHash = fast_hash(varName);
-                    auto defIt = varDefineIndex_.find(varHash);
-                    if (defIt == varDefineIndex_.end())
+                for (uint64_t varHash : members) {
+                    auto idxIt = defineLookup_.find(varHash);
+                    if (idxIt == defineLookup_.end())
                         continue;
 
                     DSF::Var::PubTableVarDefine pubTableVarDefine;
                     DSF::Var::VarRequest varRequest;
-                    varRequest.varDefine(*(defIt->second)); // 直接解引用，省掉局部 Define 拷贝
+                    varRequest.varDefine(defineCache_[idxIt->second]);
                     pubTableVarDefine.var(std::move(varRequest));
                     pubTableDefine.varDefines().push_back(std::move(pubTableVarDefine));
                 }
@@ -825,9 +844,9 @@ namespace ondemand
                 }
                 affectedBuckets.insert(static_cast<uint32_t>(it->second.bucketIndex));
                 varStore_.unregister_var(varHash);
-                varDefineIndex_.erase(varHash);
+                defineLookup_.erase(varHash);
                 varIndex_.erase(it);
-                bucketManager_.RemoveMember(make_meta_varname(nodeName_, varName), varHash);
+                bucketManager_.RemoveMember(varHash);
             }
         }
 
@@ -840,29 +859,26 @@ namespace ondemand
             pubTableDefine.nodeName(nodeName_);
             pubTableDefine.description("onDemandPub TableDefine");
 
-            const auto members = bucketManager_.GetBucketMembers(i);
+            const auto &members = bucketManager_.GetBucketMembers(i);
             pubTableDefine.varDefines().reserve(members.size());
 
             {
                 std::shared_lock lock(varIndexMutex_);
-                for (const auto &varName : members) {
-                    uint64_t varHash = fast_hash(varName);
+                for (uint64_t varHash : members) {
                     auto it = varIndex_.find(varHash);
                     if (it == varIndex_.end()) {
                         continue;
                     }
                     const auto &meta = it->second;
                     (void)meta; // bucketIndex 等字段已在上方 affectedBuckets 中使用
-                    auto defIt = varDefineIndex_.find(varHash);
-                    if (defIt == varDefineIndex_.end()) {
+                    auto idxIt = defineLookup_.find(varHash);
+                    if (idxIt == defineLookup_.end()) {
                         continue;
                     }
 
                     DSF::Var::PubTableVarDefine pubTableVarDefine;
                     DSF::Var::VarRequest varRequest;
-                    DSF::Var::Define varDefine;
-                    varDefine = *(defIt->second);
-                    varRequest.varDefine(varDefine);
+                    varRequest.varDefine(defineCache_[idxIt->second]);
                     pubTableVarDefine.var(std::move(varRequest));
                     pubTableDefine.varDefines().push_back(std::move(pubTableVarDefine));
                 }
@@ -1026,14 +1042,17 @@ namespace ondemand
         if (it != nodeSlotMap_.end()) {
             return it->second;
         }
-        if (nextNodeSlot_ >= 64) {
-            /* 超过 64 个订阅节点：返回 kInvalidSlot，调用方需检查并拒绝该订阅，
-             * 避免多节点共享同一 bit 导致 unsubscribe 时错误清除其他节点的订阅 */
+        if (nodeSlotMap_.size() >= 64) {
             ONDEMANDLOG(error) << "Node slot overflow! Max 64 subscriber nodes supported."
                                << " nodeHash=" << nodeHash;
             return 0xFF; // kInvalidNodeSlot
         }
-        uint8_t slot = nextNodeSlot_++;
+        /* 从 nodeSlotMap_ 已占用的 slot 中找第一个空位 */
+        uint64_t used = 0;
+        for (const auto &[_, s] : nodeSlotMap_) {
+            used |= (1ULL << s);
+        }
+        uint8_t slot = static_cast<uint8_t>(__builtin_ctzll(~used));
         nodeSlotMap_.emplace(nodeHash, slot);
         return slot;
     }
@@ -1055,7 +1074,8 @@ namespace ondemand
      * @param  varFreqs 周期
      */
     uint32_t OnDemandPub::handleSubscribe(const std::string &nodeName,
-                                          const std::vector<DSF::NamedValue> &varFreqs)
+                                          const std::vector<DSF::NamedValue> &varFreqs,
+                                          std::vector<DSF::NamedValue> *missingVarFreqs)
     {
         uint64_t nodeHash = fast_hash(nodeName);
         const std::string ownPrefix = nodeName_ + "_";
@@ -1139,6 +1159,9 @@ namespace ondemand
             if (it == varIndex_.end()) {
                 ONDEMANDLOG(debug) << "handleSubscribe: var not yet created, will retry"
                                    << " var=" << metaName << " node=" << nodeName;
+                if (missingVarFreqs) {
+                    missingVarFreqs->push_back(varFreq);
+                }
                 ++missingCount;
                 continue;
             }
@@ -1146,10 +1169,10 @@ namespace ondemand
             auto &meta = it->second;
 
             // 收集需要扩展的变量
-            auto defIt = varDefineIndex_.find(varHash);
-            if (defIt != varDefineIndex_.end()) {
-                uint32_t defineSize = static_cast<uint32_t>(defIt->second->size());
-                uint32_t targetSize = defineSize > 0 ? defineSize : 32u;
+            auto idxIt = defineLookup_.find(varHash);
+            if (idxIt != defineLookup_.end()) {
+                uint32_t defineSize = static_cast<uint32_t>(defineCache_[idxIt->second].size());
+                uint32_t targetSize = defineSize > 0 ? defineSize : 2u;
                 if (varStore_.slot_size(meta.varId) < targetSize) {
                     expandIds.push_back(meta.varId);
                     expandSizes.push_back(targetSize);
@@ -1345,10 +1368,22 @@ namespace ondemand
 
         uint64_t nodeMask = uint64_t(1) << slotIt->second;
         auto freqChanges = forceUnsubscribeNode(nodeMask);
-
         nodeSlotMap_.erase(slotIt);
-
         lock.unlock();
+
+        /*清空重试队列中该节点的所有待重试消息，防止离线后被重新订阅*/
+        {
+            std::lock_guard<std::mutex> lk(pubTableDefRetryQueueMutex_);
+            std::queue<std::shared_ptr<DSF::Message::SubTableRegister>> remaining;
+            while (!pubTableDefRetryQueue_.empty()) {
+                auto item = std::move(pubTableDefRetryQueue_.front());
+                pubTableDefRetryQueue_.pop();
+                if (item->nodeName() != participantName) {
+                    remaining.push(std::move(item));
+                }
+            }
+            pubTableDefRetryQueue_ = std::move(remaining);
+        }
 
         ONDEMANDLOG(info) << "Participant cleanup: " << participantName << ", force-unsubscribed "
                           << freqChanges.size() << " vars";
@@ -1431,10 +1466,10 @@ namespace ondemand
         {
             std::unique_lock lock(varIndexMutex_);
             varIndex_.clear();
-            varDefineIndex_.clear();
+            defineCache_.clear();
+            defineLookup_.clear();
             bucketManager_.Clear();
             nodeSlotMap_.clear();
-            nextNodeSlot_ = 0;
         }
 
         /*重置 varStore_，清空 table/metas/arena，避免重新注册时 id 冲突*/

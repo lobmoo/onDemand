@@ -1,0 +1,31 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "config/logConfig.json", "language": "json", "sizeLines": 15, "fileCategory": "config"},
+    {"path": "core/CMakeLists.txt", "language": "txt", "sizeLines": 136, "fileCategory": "docs"},
+    {"path": "core/ondemand/ sub-pub.cc11", "language": "cc11", "sizeLines": 234, "fileCategory": "code"},
+    {"path": "core/ondemand/idl/dsf_define_datatypes.idl", "language": "idl", "sizeLines": 211, "fileCategory": "code"},
+    {"path": "core/ondemand/idl/dsf_define_messages.idl", "language": "idl", "sizeLines": 195, "fileCategory": "code"},
+    {"path": "core/ondemand/idl/dsf_define_model.idl", "language": "idl", "sizeLines": 61, "fileCategory": "code"},
+    {"path": "core/ondemand/idl/dsf_define_node.idl", "language": "idl", "sizeLines": 66, "fileCategory": "code"},
+    {"path": "core/ondemand/idl/dsf_define_var.idl", "language": "idl", "sizeLines": 153, "fileCategory": "code"},
+    {"path": "core/ondemand/idl/FCV.idl", "language": "idl", "sizeLines": 9, "fileCategory": "code"},
+    {"path": "core/ondemand/idl/generate.sh", "language": "shell", "sizeLines": 3, "fileCategory": "script"},
+    {"path": "core/ondemand/on_demand_listener.h", "language": "c", "sizeLines": 140, "fileCategory": "code"},
+    {"path": "core/ondemand/ondemand_pubsub_test.cc", "language": "cpp", "sizeLines": 4601, "fileCategory": "code"},
+    {"path": "core/ondemand/readme.md", "language": "markdown", "sizeLines": 47, "fileCategory": "docs"},
+    {"path": "core/ondemand/variable_store.h", "language": "c", "sizeLines": 743, "fileCategory": "code"},
+    {"path": "sample/data_memory_manger/CMakeLists.txt", "language": "txt", "sizeLines": 31, "fileCategory": "docs"},
+    {"path": "sample/node_example/CMakeLists.txt", "language": "txt", "sizeLines": 61, "fileCategory": "docs"},
+    {"path": "sample/node_example/example.cpp", "language": "cpp", "sizeLines": 310, "fileCategory": "code"},
+    {"path": "sample/node_example/HelloWorldOneFast/idl/HelloWorldOne.idl", "language": "idl", "sizeLines": 5, "fileCategory": "code"},
+    {"path": "sample/node_example/HelloWorldOneTx/idl/HelloWorldOne.idl", "language": "idl", "sizeLines": 5, "fileCategory": "code"},
+    {"path": "sample/node_example/qosConfig.xml", "language": "xml", "sizeLines": 107, "fileCategory": "config"},
+    {"path": "tests/CMakeLists.txt", "language": "txt", "sizeLines": 124, "fileCategory": "docs"},
+    {"path": "tests/dds_wrapper_test.cc", "language": "cpp", "sizeLines": 1493, "fileCategory": "code"},
+    {"path": "tests/fastdds_test_idl/PerformanceTest.idl", "language": "idl", "sizeLines": 11, "fileCategory": "code"},
+    {"path": "tests/txdds_test_idl/PerformanceTest.idl", "language": "idl", "sizeLines": 11, "fileCategory": "code"},
+    {"path": "thirdparty/arrow/include/arrow/api.h", "language": "c", "sizeLines": 47, "fileCategory": "code"}
+  ],
+  "batchImportData": {"config/logConfig.json":[],"core/CMakeLists.txt":[],"core/ondemand/ sub-pub.cc11":[],"core/ondemand/idl/dsf_define_datatypes.idl":[],"core/ondemand/idl/dsf_define_messages.idl":[],"core/ondemand/idl/dsf_define_model.idl":[],"core/ondemand/idl/dsf_define_node.idl":[],"core/ondemand/idl/dsf_define_var.idl":[],"core/ondemand/idl/FCV.idl":[],"core/ondemand/idl/generate.sh":[],"core/ondemand/on_demand_listener.h":[],"core/ondemand/ondemand_pubsub_test.cc":[],"core/ondemand/readme.md":[],"core/ondemand/variable_store.h":[],"sample/data_memory_manger/CMakeLists.txt":[],"sample/node_example/CMakeLists.txt":[],"sample/node_example/example.cpp":[],"sample/node_example/HelloWorldOneFast/idl/HelloWorldOne.idl":[],"sample/node_example/HelloWorldOneTx/idl/HelloWorldOne.idl":[],"sample/node_example/qosConfig.xml":[],"tests/CMakeLists.txt":[],"tests/dds_wrapper_test.cc":[],"tests/fastdds_test_idl/PerformanceTest.idl":[],"tests/txdds_test_idl/PerformanceTest.idl":[],"thirdparty/arrow/include/arrow/api.h":[]}
+}

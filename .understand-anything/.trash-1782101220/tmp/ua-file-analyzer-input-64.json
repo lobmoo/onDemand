@@ -1,0 +1,31 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "thirdparty/spdlog/include/spdlog/sinks/wincolor_sink-inl.h", "language": "c", "sizeLines": 172, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/sinks/wincolor_sink.h", "language": "c", "sizeLines": 82, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/spdlog-inl.h", "language": "c", "sizeLines": 92, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/spdlog.h", "language": "c", "sizeLines": 352, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/stopwatch.h", "language": "c", "sizeLines": 66, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/tweakme.h", "language": "c", "sizeLines": 148, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/version.h", "language": "c", "sizeLines": 11, "fileCategory": "code"},
+    {"path": "thirdparty/tinyxml/include/tinyxml2.h", "language": "c", "sizeLines": 2387, "fileCategory": "code"},
+    {"path": "thirdparty/tinyxml/lib/libtinyxml2.a", "language": "a", "sizeLines": 90, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txcdr/Cdr.h", "language": "c", "sizeLines": 189, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txcdr/CdrSizeCalculator.h", "language": "c", "sizeLines": 669, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txcdr/DeserializeCdr.h", "language": "c", "sizeLines": 348, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txcdr/Enums.h", "language": "c", "sizeLines": 39, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txcdr/MemberId.h", "language": "c", "sizeLines": 52, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txcdr/optional.h", "language": "c", "sizeLines": 320, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txcdr/ReturnCode.h", "language": "c", "sizeLines": 24, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txcdr/SerializeCdr.h", "language": "c", "sizeLines": 228, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txcdr/TXBuffer.h", "language": "c", "sizeLines": 165, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/builtin/topic/BuiltinTopicKey_t.h", "language": "c", "sizeLines": 10, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/builtin/topic/ParticipantBuiltinTopicData.h", "language": "c", "sizeLines": 25, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/builtin/topic/PublicationBuiltinTopicData.h", "language": "c", "sizeLines": 41, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/builtin/topic/SubscriptionBuiltinTopicData.h", "language": "c", "sizeLines": 39, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/builtin/topic/TopicBuiltinTopicData.h", "language": "c", "sizeLines": 36, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/common/DomainId.h", "language": "c", "sizeLines": 14, "fileCategory": "code"},
+    {"path": "thirdparty/txdds/include/txdds/DCPS/common/InstanceHandle.h", "language": "c", "sizeLines": 10, "fileCategory": "code"}
+  ],
+  "batchImportData": {}
+}

@@ -1,0 +1,648 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 25,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "thirdparty/fast_dds/include/fastdds_statistics_backend/topic_types/typesPubSubTypes.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 1186,
+      "nonEmptyLines": 868,
+      "callGraph": [
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 103
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 113
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 184
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 194
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 265
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 275
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 346
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 356
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 427
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 437
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 508
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 518
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 590
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 600
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 671
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 681
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 752
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 762
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 833
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 843
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 914
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 924
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 995
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 1005
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 1076
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 1086
+        },
+        {
+          "caller": "is_plain",
+          "callee": "static_cast<void>",
+          "lineNumber": 1157
+        },
+        {
+          "caller": "construct_sample",
+          "callee": "static_cast<void>",
+          "lineNumber": 1167
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds_statistics_backend/topic_types/typesTypeObjectSupport.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 253,
+      "nonEmptyLines": 224,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds_statistics_backend/types/app_names.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 77,
+      "nonEmptyLines": 66,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds_statistics_backend/types/Bitmask.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 244,
+      "nonEmptyLines": 207,
+      "callGraph": [
+        {
+          "caller": "Bitmask",
+          "callee": "static_cast<underlying_type>",
+          "lineNumber": 81
+        },
+        {
+          "caller": "set",
+          "callee": "static_cast<underlying_type>",
+          "lineNumber": 94
+        },
+        {
+          "caller": "clear",
+          "callee": "static_cast<underlying_type>",
+          "lineNumber": 100
+        },
+        {
+          "caller": "is_set",
+          "callee": "static_cast<underlying_type>",
+          "lineNumber": 106
+        },
+        {
+          "caller": "none",
+          "callee": "Bitmask",
+          "lineNumber": 112
+        },
+        {
+          "caller": "all",
+          "callee": "Bitmask",
+          "lineNumber": 117
+        },
+        {
+          "caller": "all",
+          "callee": "static_cast<underlying_type>",
+          "lineNumber": 117
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds_statistics_backend/types/EntityId.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 216,
+      "nonEmptyLines": 184,
+      "callGraph": [
+        {
+          "caller": "operator <",
+          "callee": "value",
+          "lineNumber": 150
+        },
+        {
+          "caller": "operator <",
+          "callee": "value",
+          "lineNumber": 150
+        },
+        {
+          "caller": "operator <=",
+          "callee": "value",
+          "lineNumber": 162
+        },
+        {
+          "caller": "operator <=",
+          "callee": "value",
+          "lineNumber": 162
+        },
+        {
+          "caller": "operator >",
+          "callee": "value",
+          "lineNumber": 174
+        },
+        {
+          "caller": "operator >",
+          "callee": "value",
+          "lineNumber": 174
+        },
+        {
+          "caller": "operator >=",
+          "callee": "value",
+          "lineNumber": 186
+        },
+        {
+          "caller": "operator >=",
+          "callee": "value",
+          "lineNumber": 186
+        },
+        {
+          "caller": "operator ==",
+          "callee": "value",
+          "lineNumber": 198
+        },
+        {
+          "caller": "operator ==",
+          "callee": "value",
+          "lineNumber": 198
+        },
+        {
+          "caller": "operator !=",
+          "callee": "value",
+          "lineNumber": 210
+        },
+        {
+          "caller": "operator !=",
+          "callee": "value",
+          "lineNumber": 210
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds_statistics_backend/types/JSONTags.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 231,
+      "nonEmptyLines": 205,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds_statistics_backend/types/types.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 703,
+      "nonEmptyLines": 560,
+      "callGraph": [
+        {
+          "caller": "operator ==",
+          "callee": "MonitorServiceSample::operator ==",
+          "lineNumber": 443
+        },
+        {
+          "caller": "operator ==",
+          "callee": "MonitorServiceSample::operator ==",
+          "lineNumber": 473
+        },
+        {
+          "caller": "operator ==",
+          "callee": "MonitorServiceSample::operator ==",
+          "lineNumber": 505
+        },
+        {
+          "caller": "operator ==",
+          "callee": "MonitorServiceSample::operator ==",
+          "lineNumber": 535
+        },
+        {
+          "caller": "operator ==",
+          "callee": "MonitorServiceSample::operator ==",
+          "lineNumber": 566
+        },
+        {
+          "caller": "operator ==",
+          "callee": "MonitorServiceSample::operator ==",
+          "lineNumber": 596
+        },
+        {
+          "caller": "operator ==",
+          "callee": "MonitorServiceSample::operator ==",
+          "lineNumber": 627
+        },
+        {
+          "caller": "operator ==",
+          "callee": "MonitorServiceSample::operator ==",
+          "lineNumber": 657
+        },
+        {
+          "caller": "operator ==",
+          "callee": "MonitorServiceSample::operator ==",
+          "lineNumber": 687
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds_statistics_backend/types/utils.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 57,
+      "nonEmptyLines": 46,
+      "callGraph": [
+        {
+          "caller": "the_initial_time",
+          "callee": "Timestamp",
+          "lineNumber": 51
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/config.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 127,
+      "nonEmptyLines": 103,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/config/doxygen_modules.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 172,
+      "nonEmptyLines": 138,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/builtin/topic/BuiltinTopicKey.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 34,
+      "nonEmptyLines": 27,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 35,
+      "nonEmptyLines": 28,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/builtin/topic/PublicationBuiltinTopicData.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 34,
+      "nonEmptyLines": 27,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/builtin/topic/SubscriptionBuiltinTopicData.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 34,
+      "nonEmptyLines": 27,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/builtin/topic/TopicBuiltinTopicData.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 81,
+      "nonEmptyLines": 61,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/common/InstanceHandle.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 39,
+      "nonEmptyLines": 30,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/core/condition/Condition.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 74,
+      "nonEmptyLines": 59,
+      "callGraph": [
+        {
+          "caller": "get_trigger_value",
+          "callee": "EPROSIMA_LOG_WARNING",
+          "lineNumber": 51
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/core/condition/GuardCondition.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 70,
+      "nonEmptyLines": 55,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/core/condition/StatusCondition.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 110,
+      "nonEmptyLines": 86,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/core/condition/WaitSet.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 108,
+      "nonEmptyLines": 89,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/core/detail/DDSReturnCode.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 84,
+      "nonEmptyLines": 66,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/core/detail/DDSSecurityReturnCode.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 71,
+      "nonEmptyLines": 54,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/core/Entity.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 196,
+      "nonEmptyLines": 170,
+      "callGraph": [
+        {
+          "caller": "DomainEntity",
+          "callee": "StatusMask::all",
+          "lineNumber": 185
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/core/LoanableArray.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 75,
+      "nonEmptyLines": 63,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/core/LoanableCollection.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 250,
+      "nonEmptyLines": 222,
+      "callGraph": [
+        {
+          "caller": "length",
+          "callee": "resize",
+          "lineNumber": 120
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    }
+  ]
+}

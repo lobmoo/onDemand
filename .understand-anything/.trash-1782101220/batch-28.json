@@ -1,0 +1,101 @@
+{
+  "nodes": [
+    {
+      "id": "file:tests/txdds_test_idl/PerformanceTestCdrAux.hpp",
+      "type": "file",
+      "name": "PerformanceTestCdrAux.hpp",
+      "filePath": "tests/txdds_test_idl/PerformanceTestCdrAux.hpp",
+      "summary": "由 fastddsgen 自动生成的 CDR 辅助头文件，定义 PerformanceTest::TestMessage 的最大 CDR 序列化尺寸常量，并声明 serialize_key 函数。",
+      "tags": ["auto-generated", "serialization", "type-definition", "cdr"],
+      "complexity": "simple",
+      "languageNotes": "定义了 constexpr 常量用于 CDR 序列化大小计算，使用 BaoSky::Cdr 命名空间前向声明。"
+    },
+    {
+      "id": "file:tests/txdds_test_idl/PerformanceTestPubSubTypes.cxx",
+      "type": "file",
+      "name": "PerformanceTestPubSubTypes.cxx",
+      "filePath": "tests/txdds_test_idl/PerformanceTestPubSubTypes.cxx",
+      "summary": "TestMessagePubSubType 类的序列化/反序列化实现文件，由 fastddsgen 自动生成，使用 BaoSky::Cdr 的 XCDRv1 格式进行 CDR 序列化。",
+      "tags": ["auto-generated", "serialization", "dds-topic", "implementation"],
+      "complexity": "moderate",
+      "languageNotes": "使用 XCDRv1 编码格式，通过 SerializeCdr/DeserializeCdr 完成数据的序列化封装与反序列化解封。"
+    },
+    {
+      "id": "file:tests/txdds_test_idl/PerformanceTestPubSubTypes.h",
+      "type": "file",
+      "name": "PerformanceTestPubSubTypes.h",
+      "filePath": "tests/txdds_test_idl/PerformanceTestPubSubTypes.h",
+      "summary": "TestMessagePubSubType 类声明头文件，继承自 BaoSky::dds::TopicDataType，声明 DDS 主题数据类型的序列化接口。",
+      "tags": ["auto-generated", "type-definition", "dds-topic", "header"],
+      "complexity": "simple",
+      "languageNotes": "继承 TopicDataType 基类，override 标记确保接口一致性。"
+    },
+    {
+      "id": "class:tests/txdds_test_idl/PerformanceTestPubSubTypes.cxx:TestMessagePubSubType",
+      "type": "class",
+      "name": "TestMessagePubSubType",
+      "filePath": "tests/txdds_test_idl/PerformanceTestPubSubTypes.cxx",
+      "lineRange": [36, 129],
+      "summary": "DDS 主题数据类型实现类，负责 TestMessage 的 CDR 序列化、反序列化、大小计算及内存管理，继承自 TopicDataType。",
+      "tags": ["dds-topic", "serialization", "auto-generated", "topic-data-type"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/txdds_test_idl/PerformanceTestPubSubTypes.cxx:Serialize",
+      "type": "function",
+      "name": "Serialize",
+      "filePath": "tests/txdds_test_idl/PerformanceTestPubSubTypes.cxx",
+      "lineRange": [50, 70],
+      "summary": "将 TestMessage 对象序列化为 CDR 格式的 SerializedPayload，使用 XCDRv1 编码并处理封装头和字节序。",
+      "tags": ["serialization", "cdr", "dds-topic"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:tests/txdds_test_idl/PerformanceTestPubSubTypes.cxx:Deserialize",
+      "type": "function",
+      "name": "Deserialize",
+      "filePath": "tests/txdds_test_idl/PerformanceTestPubSubTypes.cxx",
+      "lineRange": [72, 93],
+      "summary": "从 SerializedPayload 反序列化 CDR 数据到 TestMessage 对象，处理封装头解析和字节序检测。",
+      "tags": ["deserialization", "cdr", "dds-topic"],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:tests/txdds_test_idl/PerformanceTestPubSubTypes.cxx",
+      "target": "file:tests/txdds_test_idl/PerformanceTestCdrAux.hpp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/txdds_test_idl/PerformanceTestPubSubTypes.cxx",
+      "target": "file:tests/txdds_test_idl/PerformanceTestPubSubTypes.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:tests/txdds_test_idl/PerformanceTestPubSubTypes.cxx",
+      "target": "class:tests/txdds_test_idl/PerformanceTestPubSubTypes.cxx:TestMessagePubSubType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/txdds_test_idl/PerformanceTestPubSubTypes.cxx:TestMessagePubSubType",
+      "target": "function:tests/txdds_test_idl/PerformanceTestPubSubTypes.cxx:Serialize",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "class:tests/txdds_test_idl/PerformanceTestPubSubTypes.cxx:TestMessagePubSubType",
+      "target": "function:tests/txdds_test_idl/PerformanceTestPubSubTypes.cxx:Deserialize",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    }
+  ]
+}

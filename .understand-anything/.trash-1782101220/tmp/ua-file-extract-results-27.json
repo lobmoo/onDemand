@@ -1,0 +1,241 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 3,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "tests/txdds_test_idl/PerformanceTest.cxx",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 242,
+      "nonEmptyLines": 203,
+      "functions": [
+        {
+          "name": "TestMessage",
+          "startLine": 38,
+          "endLine": 40,
+          "params": []
+        },
+        {
+          "name": "~TestMessage",
+          "startLine": 42,
+          "endLine": 44,
+          "params": []
+        },
+        {
+          "name": "TestMessage",
+          "startLine": 46,
+          "endLine": 53,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "TestMessage",
+          "startLine": 55,
+          "endLine": 62,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator ==",
+          "startLine": 86,
+          "endLine": 93,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator !=",
+          "startLine": 95,
+          "endLine": 99,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "seq_num",
+          "startLine": 105,
+          "endLine": 109,
+          "params": [
+            "_seq_num"
+          ]
+        },
+        {
+          "name": "seq_num",
+          "startLine": 115,
+          "endLine": 118,
+          "params": []
+        },
+        {
+          "name": "timestamp",
+          "startLine": 134,
+          "endLine": 138,
+          "params": [
+            "_timestamp"
+          ]
+        },
+        {
+          "name": "timestamp",
+          "startLine": 144,
+          "endLine": 147,
+          "params": []
+        },
+        {
+          "name": "message_type",
+          "startLine": 163,
+          "endLine": 167,
+          "params": [
+            "_message_type"
+          ]
+        },
+        {
+          "name": "message_type",
+          "startLine": 173,
+          "endLine": 177,
+          "params": [
+            "_message_type"
+          ]
+        },
+        {
+          "name": "payload",
+          "startLine": 202,
+          "endLine": 206,
+          "params": [
+            "_payload"
+          ]
+        },
+        {
+          "name": "payload",
+          "startLine": 212,
+          "endLine": 216,
+          "params": [
+            "_payload"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "TestMessage",
+          "line": 38,
+          "isDefault": false
+        },
+        {
+          "name": "~TestMessage",
+          "line": 42,
+          "isDefault": false
+        },
+        {
+          "name": "TestMessage",
+          "line": 46,
+          "isDefault": false
+        },
+        {
+          "name": "TestMessage",
+          "line": 55,
+          "isDefault": false
+        },
+        {
+          "name": "operator ==",
+          "line": 86,
+          "isDefault": false
+        },
+        {
+          "name": "operator !=",
+          "line": 95,
+          "isDefault": false
+        },
+        {
+          "name": "seq_num",
+          "line": 105,
+          "isDefault": false
+        },
+        {
+          "name": "seq_num",
+          "line": 115,
+          "isDefault": false
+        },
+        {
+          "name": "timestamp",
+          "line": 134,
+          "isDefault": false
+        },
+        {
+          "name": "timestamp",
+          "line": 144,
+          "isDefault": false
+        },
+        {
+          "name": "message_type",
+          "line": 163,
+          "isDefault": false
+        },
+        {
+          "name": "message_type",
+          "line": 173,
+          "isDefault": false
+        },
+        {
+          "name": "payload",
+          "line": 202,
+          "isDefault": false
+        },
+        {
+          "name": "payload",
+          "line": 212,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "TestMessage",
+          "callee": "std::move",
+          "lineNumber": 60
+        },
+        {
+          "caller": "TestMessage",
+          "callee": "std::move",
+          "lineNumber": 61
+        },
+        {
+          "caller": "message_type",
+          "callee": "std::move",
+          "lineNumber": 176
+        },
+        {
+          "caller": "payload",
+          "callee": "std::move",
+          "lineNumber": 215
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 14,
+        "functionCount": 14,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "tests/txdds_test_idl/PerformanceTest.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 235,
+      "nonEmptyLines": 189,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "tests/txdds_test_idl/PerformanceTestCdrAux.ipp",
+      "language": "ipp",
+      "fileCategory": "code",
+      "totalLines": 145,
+      "nonEmptyLines": 110,
+      "metrics": {}
+    }
+  ]
+}

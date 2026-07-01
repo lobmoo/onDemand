@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 
 project(demo_exec  LANGUAGES  CXX)
-set(LIBRARY_OUTPUT_NAME  demo)
+set(LIBRARY_OUTPUT_NAME  ondemand)
 
 # 根据 DDS 实现类型选择生成文件目录
 if(DDS_IMPL STREQUAL "FASTDDS")
@@ -96,6 +96,8 @@ if(BUILD_LIBRARY)
         pthread
         rt
         log::log
+        ${CMAKE_SOURCE_DIR}/thirdparty/jemalloc/lib/libjemalloc.so
+        
     )
 
     target_compile_options(${LIBRARY_OUTPUT_NAME} PRIVATE -fPIC -g)
@@ -115,6 +117,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     pthread
     rt
     log::log
+    ${CMAKE_SOURCE_DIR}/thirdparty/jemalloc/lib/libjemalloc.so
 )
 
 target_compile_options(${PROJECT_NAME}  PRIVATE  -g )

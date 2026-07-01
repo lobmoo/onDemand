@@ -1,0 +1,181 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 3,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "sample/node_example/HelloWorldOneTx/source/HelloWorldOne.cxx",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 159,
+      "nonEmptyLines": 132,
+      "functions": [
+        {
+          "name": "HelloWorldOne",
+          "startLine": 36,
+          "endLine": 38,
+          "params": []
+        },
+        {
+          "name": "~HelloWorldOne",
+          "startLine": 40,
+          "endLine": 42,
+          "params": []
+        },
+        {
+          "name": "HelloWorldOne",
+          "startLine": 44,
+          "endLine": 49,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "HelloWorldOne",
+          "startLine": 51,
+          "endLine": 56,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator ==",
+          "startLine": 76,
+          "endLine": 81,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "operator !=",
+          "startLine": 83,
+          "endLine": 87,
+          "params": [
+            "x"
+          ]
+        },
+        {
+          "name": "index",
+          "startLine": 93,
+          "endLine": 97,
+          "params": [
+            "_index"
+          ]
+        },
+        {
+          "name": "index",
+          "startLine": 103,
+          "endLine": 106,
+          "params": []
+        },
+        {
+          "name": "points",
+          "startLine": 122,
+          "endLine": 126,
+          "params": [
+            "_points"
+          ]
+        },
+        {
+          "name": "points",
+          "startLine": 132,
+          "endLine": 136,
+          "params": [
+            "_points"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "HelloWorldOne",
+          "line": 36,
+          "isDefault": false
+        },
+        {
+          "name": "~HelloWorldOne",
+          "line": 40,
+          "isDefault": false
+        },
+        {
+          "name": "HelloWorldOne",
+          "line": 44,
+          "isDefault": false
+        },
+        {
+          "name": "HelloWorldOne",
+          "line": 51,
+          "isDefault": false
+        },
+        {
+          "name": "operator ==",
+          "line": 76,
+          "isDefault": false
+        },
+        {
+          "name": "operator !=",
+          "line": 83,
+          "isDefault": false
+        },
+        {
+          "name": "index",
+          "line": 93,
+          "isDefault": false
+        },
+        {
+          "name": "index",
+          "line": 103,
+          "isDefault": false
+        },
+        {
+          "name": "points",
+          "line": 122,
+          "isDefault": false
+        },
+        {
+          "name": "points",
+          "line": 132,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "HelloWorldOne",
+          "callee": "std::move",
+          "lineNumber": 55
+        },
+        {
+          "caller": "points",
+          "callee": "std::move",
+          "lineNumber": 135
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 10,
+        "functionCount": 10,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "sample/node_example/HelloWorldOneTx/source/HelloWorldOne.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 182,
+      "nonEmptyLines": 147,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "sample/node_example/HelloWorldOneTx/source/HelloWorldOneCdrAux.ipp",
+      "language": "ipp",
+      "fileCategory": "code",
+      "totalLines": 118,
+      "nonEmptyLines": 93,
+      "metrics": {}
+    }
+  ]
+}

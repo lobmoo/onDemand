@@ -1,0 +1,276 @@
+{
+  "nodes": [
+    {
+      "id": "file:core/ondemand/.gensrc/FCV.hpp",
+      "type": "file",
+      "name": "FCV.hpp",
+      "filePath": "core/ondemand/.gensrc/FCV.hpp",
+      "summary": "FastDDS 自动生成的 IDL 数据类型头文件，定义了 FCVType 结构体，包含 flow、temp、press、isopen、openvalue、healthlevel 六个成员变量，用于表示流量控制阀（FCV）的运行状态数据。",
+      "tags": ["auto-generated", "type-definition", "dds-idl", "data-model"],
+      "complexity": "moderate",
+      "languageNotes": "由 fastddsgen 工具自动生成，包含完整的拷贝/移动构造、赋值运算符及 getter/setter 方法，遵循 eProsima 的 CDR 序列化兼容设计。"
+    },
+    {
+      "id": "class:core/ondemand/.gensrc/FCV.hpp:FCVType",
+      "type": "class",
+      "name": "FCVType",
+      "filePath": "core/ondemand/.gensrc/FCV.hpp",
+      "lineRange": [56, 359],
+      "summary": "由 IDL 文件定义的流量控制阀数据结构，包含流量（flow）、温度（temp）、压力（press）、开关状态（isopen）、开度值（openvalue）和健康等级（healthlevel）六个字段，提供完整的拷贝/移动语义支持。",
+      "tags": ["data-model", "dds-idl", "auto-generated", "serializable"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:core/ondemand/.gensrc/FCVCdrAux.hpp",
+      "type": "file",
+      "name": "FCVCdrAux.hpp",
+      "filePath": "core/ondemand/.gensrc/FCVCdrAux.hpp",
+      "summary": "CDR 序列化辅助头文件，定义了 FCVType 的最大序列化尺寸常量和 serialize_key 函数声明，用于 FastCDR 序列化框架。",
+      "tags": ["auto-generated", "serialization", "cdr", "dds-idl"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:core/ondemand/.gensrc/FCVCdrAux.ipp",
+      "type": "file",
+      "name": "FCVCdrAux.ipp",
+      "filePath": "core/ondemand/.gensrc/FCVCdrAux.ipp",
+      "summary": "CDR 序列化辅助的模板实现文件，包含 FCVType 的 calculate_serialized_size、serialize、deserialize 和 serialize_key 四个函数的模板特化实现，支持 XCDRv1/v2 编码格式。",
+      "tags": ["auto-generated", "serialization", "cdr", "template-specialization"],
+      "complexity": "moderate",
+      "languageNotes": "使用 FastCDR 的模板特化机制实现序列化，支持 PLAIN_CDR 和 DELIMIT_CDR2 两种编码算法，通过 MemberId 实现成员级别的序列化控制。"
+    },
+    {
+      "id": "file:core/ondemand/.gensrc/FCVPubSubTypes.cxx",
+      "type": "file",
+      "name": "FCVPubSubTypes.cxx",
+      "filePath": "core/ondemand/.gensrc/FCVPubSubTypes.cxx",
+      "summary": "FCVTypePubSubType 类的完整实现文件，提供 FCVType 在 FastDDS 中的序列化、反序列化、尺寸计算、键值计算和类型注册等功能，是 FCVType 与 DDS 中间件集成的核心桥接层。",
+      "tags": ["auto-generated", "dds-topic", "serialization", "pubsub-type"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/ondemand/.gensrc/FCVPubSubTypes.cxx:serialize",
+      "type": "function",
+      "name": "serialize",
+      "filePath": "core/ondemand/.gensrc/FCVPubSubTypes.cxx",
+      "lineRange": [54, 89],
+      "summary": "将 FCVType 对象序列化为 DDS SerializedPayload，使用 FastCDR 进行 CDR 编码，支持 XCDRv1 和 XCDRv2 两种数据表示格式。",
+      "tags": ["serialization", "dds", "cdr"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/ondemand/.gensrc/FCVPubSubTypes.cxx:deserialize",
+      "type": "function",
+      "name": "deserialize",
+      "filePath": "core/ondemand/.gensrc/FCVPubSubTypes.cxx",
+      "lineRange": [91, 119],
+      "summary": "从 DDS SerializedPayload 反序列化还原 FCVType 对象，读取 CDR 编码的数据并填充到目标结构体中。",
+      "tags": ["deserialization", "dds", "cdr"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/ondemand/.gensrc/FCVPubSubTypes.cxx:compute_key",
+      "type": "function",
+      "name": "compute_key",
+      "filePath": "core/ondemand/.gensrc/FCVPubSubTypes.cxx",
+      "lineRange": [171, 209],
+      "summary": "从 FCVType 数据对象计算实例键值（InstanceHandle），使用 MD5 哈希算法生成唯一标识，用于 DDS 实例管理。",
+      "tags": ["key-computation", "dds", "hash"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:core/ondemand/.gensrc/FCVPubSubTypes.cxx:register_type_object_representation",
+      "type": "function",
+      "name": "register_type_object_representation",
+      "filePath": "core/ondemand/.gensrc/FCVPubSubTypes.cxx",
+      "lineRange": [211, 214],
+      "summary": "向 FastDDS TypeObjectRegistry 注册 FCVType 的类型对象表示，调用 register_FCVType_type_identifier 完成类型系统注册。",
+      "tags": ["type-registration", "dds"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:core/ondemand/.gensrc/FCVPubSubTypes.hpp",
+      "type": "file",
+      "name": "FCVPubSubTypes.hpp",
+      "filePath": "core/ondemand/.gensrc/FCVPubSubTypes.hpp",
+      "summary": "FCVTypePubSubType 类的头文件，声明了继承自 eprosima::fastdds::dds::TopicDataType 的发布/订阅类型类，提供序列化、反序列化、键值计算等 DDS Topic 数据类型接口。",
+      "tags": ["auto-generated", "dds-topic", "pubsub-type", "type-definition"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "class:core/ondemand/.gensrc/FCVPubSubTypes.hpp:FCVTypePubSubType",
+      "type": "class",
+      "name": "FCVTypePubSubType",
+      "filePath": "core/ondemand/.gensrc/FCVPubSubTypes.hpp",
+      "lineRange": [45, 120],
+      "summary": "继承自 FastDDS TopicDataType 的 FCVType 发布/订阅类型适配器类，封装了 FCVType 的序列化/反序列化逻辑、键值计算和类型注册功能，使 FCVType 能够通过 DDS 中间件进行数据传输。",
+      "tags": ["dds-topic", "pubsub-type", "adapter", "serialization"],
+      "complexity": "moderate",
+      "languageNotes": "使用 is_bounded() 返回 true 表示序列化尺寸有界，is_plain() 返回 false 表示非平凡可序列化类型，需要通过 CDR 编码。"
+    },
+    {
+      "id": "file:core/ondemand/.gensrc/FCVTypeObjectSupport.cxx",
+      "type": "file",
+      "name": "FCVTypeObjectSupport.cxx",
+      "filePath": "core/ondemand/.gensrc/FCVTypeObjectSupport.cxx",
+      "summary": "FCVType 的 TypeObject 注册实现文件，通过 FastDDS TypeObjectUtils 逐个成员构建完整的结构体类型描述，并注册到 TypeObjectRegistry，支持 DDS XTypes 动态类型发现机制。",
+      "tags": ["auto-generated", "type-registration", "xtypes", "dds"],
+      "complexity": "complex",
+      "languageNotes": "实现方式为逐个成员调用 build_common_struct_member + add_complete_struct_member，最后通过 build_and_register_struct_type_object 完成注册，属于 FastDDS XTypes 规范的标准实现模式。"
+    },
+    {
+      "id": "function:core/ondemand/.gensrc/FCVTypeObjectSupport.cxx:register_FCVType_type_identifier",
+      "type": "function",
+      "name": "register_FCVType_type_identifier",
+      "filePath": "core/ondemand/.gensrc/FCVTypeObjectSupport.cxx",
+      "lineRange": [42, 249],
+      "summary": "向 FastDDS TypeObjectRegistry 注册 FCVType 的完整类型标识符，逐个构建 6 个成员的类型描述（flow/temp/press/isopen/openvalue/healthlevel），最终生成结构体 TypeObject 并注册。",
+      "tags": ["type-registration", "xtypes", "dds", "auto-generated"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:core/ondemand/.gensrc/FCVTypeObjectSupport.hpp",
+      "type": "file",
+      "name": "FCVTypeObjectSupport.hpp",
+      "filePath": "core/ondemand/.gensrc/FCVTypeObjectSupport.hpp",
+      "summary": "FCVType TypeObject 注册函数的头文件，声明了 register_FCVType_type_identifier 函数接口，用于向 FastDDS XTypes 系统注册 FCVType 的类型标识符。",
+      "tags": ["auto-generated", "type-registration", "xtypes", "dds-idl"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:core/ondemand/.gensrc/FCV.hpp",
+      "target": "class:core/ondemand/.gensrc/FCV.hpp:FCVType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/FCVPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrc/FCVPubSubTypes.cxx:serialize",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/FCVPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrc/FCVPubSubTypes.cxx:deserialize",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/FCVPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrc/FCVPubSubTypes.cxx:compute_key",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/FCVPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrc/FCVPubSubTypes.cxx:register_type_object_representation",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/FCVPubSubTypes.hpp",
+      "target": "class:core/ondemand/.gensrc/FCVPubSubTypes.hpp:FCVTypePubSubType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/FCVTypeObjectSupport.cxx",
+      "target": "function:core/ondemand/.gensrc/FCVTypeObjectSupport.cxx:register_FCVType_type_identifier",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/FCVPubSubTypes.cxx",
+      "target": "file:core/ondemand/.gensrc/FCVCdrAux.hpp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/FCVPubSubTypes.cxx",
+      "target": "file:core/ondemand/.gensrc/FCVCdrAux.ipp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/FCVPubSubTypes.cxx",
+      "target": "file:core/ondemand/.gensrc/FCVPubSubTypes.hpp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/FCVPubSubTypes.cxx",
+      "target": "file:core/ondemand/.gensrc/FCVTypeObjectSupport.hpp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/FCVTypeObjectSupport.cxx",
+      "target": "file:core/ondemand/.gensrc/FCV.hpp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/FCVTypeObjectSupport.cxx",
+      "target": "file:core/ondemand/.gensrc/FCVTypeObjectSupport.hpp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/FCVPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrc/FCVTypeObjectSupport.cxx:register_FCVType_type_identifier",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/FCVPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrc/FCVPubSubTypes.cxx:register_type_object_representation",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/FCVPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrc/FCVPubSubTypes.cxx:serialize",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/FCVPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrc/FCVPubSubTypes.cxx:deserialize",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/FCVPubSubTypes.cxx",
+      "target": "function:core/ondemand/.gensrc/FCVPubSubTypes.cxx:compute_key",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:core/ondemand/.gensrc/FCVTypeObjectSupport.cxx",
+      "target": "function:core/ondemand/.gensrc/FCVTypeObjectSupport.cxx:register_FCVType_type_identifier",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

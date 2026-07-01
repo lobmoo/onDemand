@@ -1,0 +1,31 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "thirdparty/fast_dds/lib/libfastdds.so.3.2", "language": "2", "sizeLines": 34202, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/lib/libfastdds.so.3.2.2", "language": "2", "sizeLines": 34202, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/lib/libfoonathan_memory-0.7.3.so", "language": "so", "sizeLines": 212, "fileCategory": "code"},
+    {"path": "thirdparty/nlohmann/include/nlohmann/json_fwd.hpp", "language": "cpp", "sizeLines": 187, "fileCategory": "code"},
+    {"path": "thirdparty/nlohmann/include/nlohmann/json.hpp", "language": "cpp", "sizeLines": 25510, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/async_logger-inl.h", "language": "c", "sizeLines": 84, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/async_logger.h", "language": "c", "sizeLines": 74, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/async.h", "language": "c", "sizeLines": 100, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/cfg/argv.h", "language": "c", "sizeLines": 40, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/cfg/env.h", "language": "c", "sizeLines": 36, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/cfg/helpers-inl.h", "language": "c", "sizeLines": 107, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/cfg/helpers.h", "language": "c", "sizeLines": 29, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/common-inl.h", "language": "c", "sizeLines": 68, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/common.h", "language": "c", "sizeLines": 406, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/details/backtracer-inl.h", "language": "c", "sizeLines": 63, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/details/backtracer.h", "language": "c", "sizeLines": 45, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/details/circular_q.h", "language": "c", "sizeLines": 115, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/details/console_globals.h", "language": "c", "sizeLines": 28, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/details/file_helper-inl.h", "language": "c", "sizeLines": 153, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/details/file_helper.h", "language": "c", "sizeLines": 61, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/details/fmt_helper.h", "language": "c", "sizeLines": 141, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/details/log_msg_buffer-inl.h", "language": "c", "sizeLines": 54, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/details/log_msg_buffer.h", "language": "c", "sizeLines": 32, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/details/log_msg-inl.h", "language": "c", "sizeLines": 44, "fileCategory": "code"},
+    {"path": "thirdparty/spdlog/include/spdlog/details/log_msg.h", "language": "c", "sizeLines": 40, "fileCategory": "code"}
+  ],
+  "batchImportData": {}
+}

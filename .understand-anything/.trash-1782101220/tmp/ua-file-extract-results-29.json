@@ -1,0 +1,180 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 3,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "thirdparty/spdlog/include/spdlog/sinks/base_sink.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 51,
+      "nonEmptyLines": 42,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/spdlog/include/spdlog/sinks/dist_sink.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 81,
+      "nonEmptyLines": 64,
+      "callGraph": [
+        {
+          "caller": "add_sink",
+          "callee": "push_back",
+          "lineNumber": 34
+        },
+        {
+          "caller": "remove_sink",
+          "callee": "erase",
+          "lineNumber": 39
+        },
+        {
+          "caller": "remove_sink",
+          "callee": "std::remove",
+          "lineNumber": 39
+        },
+        {
+          "caller": "remove_sink",
+          "callee": "begin",
+          "lineNumber": 39
+        },
+        {
+          "caller": "remove_sink",
+          "callee": "end",
+          "lineNumber": 39
+        },
+        {
+          "caller": "remove_sink",
+          "callee": "end",
+          "lineNumber": 39
+        },
+        {
+          "caller": "set_sinks",
+          "callee": "std::move",
+          "lineNumber": 44
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "should_log",
+          "lineNumber": 52
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "log",
+          "lineNumber": 53
+        },
+        {
+          "caller": "flush_",
+          "callee": "flush",
+          "lineNumber": 60
+        },
+        {
+          "caller": "set_pattern_",
+          "callee": "set_formatter_",
+          "lineNumber": 65
+        },
+        {
+          "caller": "set_pattern_",
+          "callee": "details::make_unique<spdlog::pattern_formatter>",
+          "lineNumber": 65
+        },
+        {
+          "caller": "set_formatter_",
+          "callee": "std::move",
+          "lineNumber": 69
+        },
+        {
+          "caller": "set_formatter_",
+          "callee": "set_formatter",
+          "lineNumber": 71
+        },
+        {
+          "caller": "set_formatter_",
+          "callee": "clone",
+          "lineNumber": 71
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/spdlog/include/spdlog/sinks/dup_filter_sink.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 92,
+      "nonEmptyLines": 80,
+      "callGraph": [
+        {
+          "caller": "sink_it_",
+          "callee": "filter_",
+          "lineNumber": 56
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "::snprintf",
+          "lineNumber": 65
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "static_cast<unsigned>",
+          "lineNumber": 66
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 67
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 69
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "dist_sink<Mutex>::sink_it_",
+          "lineNumber": 70
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "dist_sink<Mutex>::sink_it_",
+          "lineNumber": 75
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "assign",
+          "lineNumber": 78
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "data",
+          "lineNumber": 78
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "data",
+          "lineNumber": 78
+        },
+        {
+          "caller": "sink_it_",
+          "callee": "size",
+          "lineNumber": 78
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    }
+  ]
+}

@@ -172,21 +172,6 @@ eProsima_user_DllExport size_t calculate_serialized_size(
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(7),
                 data.publishMask(), current_alignment);
 
-        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(8),
-                data.events(), current_alignment);
-
-        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(9),
-                data.alarms(), current_alignment);
-
-        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(10),
-                data.initialValues(), current_alignment);
-
-        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(11),
-                data.startIndexes(), current_alignment);
-
-        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(12),
-                data.permission(), current_alignment);
-
 
     calculated_size += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
 
@@ -215,11 +200,6 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(5) << data.nodeName()
         << eprosima::fastcdr::MemberId(6) << data.isReadonly()
         << eprosima::fastcdr::MemberId(7) << data.publishMask()
-        << eprosima::fastcdr::MemberId(8) << data.events()
-        << eprosima::fastcdr::MemberId(9) << data.alarms()
-        << eprosima::fastcdr::MemberId(10) << data.initialValues()
-        << eprosima::fastcdr::MemberId(11) << data.startIndexes()
-        << eprosima::fastcdr::MemberId(12) << data.permission()
 ;
     scdr.end_serialize_type(current_state);
 }
@@ -271,26 +251,6 @@ eProsima_user_DllExport void deserialize(
                                                 dcdr >> data.publishMask();
                                             break;
 
-                                        case 8:
-                                                dcdr >> data.events();
-                                            break;
-
-                                        case 9:
-                                                dcdr >> data.alarms();
-                                            break;
-
-                                        case 10:
-                                                dcdr >> data.initialValues();
-                                            break;
-
-                                        case 11:
-                                                dcdr >> data.startIndexes();
-                                            break;
-
-                                        case 12:
-                                                dcdr >> data.permission();
-                                            break;
-
                     default:
                         ret_value = false;
                         break;
@@ -304,10 +264,6 @@ void serialize_key(
         const DSF::Var::Define& data)
 {
     using namespace DSF::Var;
-            extern void serialize_key(
-                    Cdr& scdr,
-                    const DSF::Var::AccessControl& data);
-
 
     static_cast<void>(scdr);
     static_cast<void>(data);
@@ -326,31 +282,6 @@ void serialize_key(
                         scdr << data.isReadonly();
 
                         scdr << data.publishMask();
-
-                        if (data.events().has_value())
-                        {
-                            scdr << data.events().value();
-                        }
-
-                        if (data.alarms().has_value())
-                        {
-                            scdr << data.alarms().value();
-                        }
-
-                        if (data.initialValues().has_value())
-                        {
-                            scdr << data.initialValues().value();
-                        }
-
-                        if (data.startIndexes().has_value())
-                        {
-                            scdr << data.startIndexes().value();
-                        }
-
-                        if (data.permission().has_value())
-                        {
-                            serialize_key(scdr, data.permission().value());
-                        }
 
 }
 

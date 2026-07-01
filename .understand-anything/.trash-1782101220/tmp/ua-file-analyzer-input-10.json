@@ -1,0 +1,15 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "common/timer_wheel/thread_pool.h", "language": "c", "sizeLines": 140, "fileCategory": "code"},
+    {"path": "common/timer_wheel/timer_scheduler.h", "language": "c", "sizeLines": 665, "fileCategory": "code"},
+    {"path": "common/timer_wheel/timer_scheduler_test.cc", "language": "cpp", "sizeLines": 359, "fileCategory": "code"},
+    {"path": "common/timer_wheel/timer_wheel.h", "language": "c", "sizeLines": 535, "fileCategory": "code"}
+  ],
+  "batchImportData": {
+    "common/timer_wheel/thread_pool.h": [],
+    "common/timer_wheel/timer_scheduler.h": ["common/timer_wheel/thread_pool.h", "common/timer_wheel/timer_wheel.h"],
+    "common/timer_wheel/timer_scheduler_test.cc": ["common/timer_wheel/timer_scheduler.h"],
+    "common/timer_wheel/timer_wheel.h": []
+  }
+}

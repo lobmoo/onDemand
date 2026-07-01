@@ -1,0 +1,948 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 25,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/message/submessages/InfoTimestamp.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 24,
+      "nonEmptyLines": 23,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/message/submessages/NackFrag.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 25,
+      "nonEmptyLines": 23,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/participant/IParticipant.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 96,
+      "nonEmptyLines": 66,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/participant/IParticipantListener.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 52,
+      "nonEmptyLines": 44,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/participant/ParticipantDiscoveryInfo.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 37,
+      "nonEmptyLines": 30,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/reader/IReader.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 81,
+      "nonEmptyLines": 64,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/reader/IReaderListener.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 88,
+      "nonEmptyLines": 79,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/reader/IStatefulReader.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 47,
+      "nonEmptyLines": 38,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/reader/IStatelessReader.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 32,
+      "nonEmptyLines": 27,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/reader/ReaderDiscoveryInfo.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 29,
+      "nonEmptyLines": 24,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/reader/WriterProxy.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 181,
+      "nonEmptyLines": 147,
+      "callGraph": [
+        {
+          "caller": "SetWriterProxyData",
+          "callee": "GetGuid",
+          "lineNumber": 123
+        },
+        {
+          "caller": "SetWriterProxyData",
+          "callee": "begin",
+          "lineNumber": 124
+        },
+        {
+          "caller": "SetWriterProxyData",
+          "callee": "GetUnicastLocator",
+          "lineNumber": 124
+        },
+        {
+          "caller": "SetWriterProxyData",
+          "callee": "end",
+          "lineNumber": 124
+        },
+        {
+          "caller": "SetWriterProxyData",
+          "callee": "GetUnicastLocator",
+          "lineNumber": 124
+        },
+        {
+          "caller": "SetWriterProxyData",
+          "callee": "push_back",
+          "lineNumber": 126
+        },
+        {
+          "caller": "SetWriterProxyData",
+          "callee": "begin",
+          "lineNumber": 128
+        },
+        {
+          "caller": "SetWriterProxyData",
+          "callee": "GetMulticastLocator",
+          "lineNumber": 128
+        },
+        {
+          "caller": "SetWriterProxyData",
+          "callee": "end",
+          "lineNumber": 128
+        },
+        {
+          "caller": "SetWriterProxyData",
+          "callee": "GetMulticastLocator",
+          "lineNumber": 128
+        },
+        {
+          "caller": "SetWriterProxyData",
+          "callee": "push_back",
+          "lineNumber": 130
+        },
+        {
+          "caller": "SetWriterProxyData",
+          "callee": "GetDataMaxSize",
+          "lineNumber": 132
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/resources/ResourceManagement.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 24,
+      "nonEmptyLines": 20,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/RTPSDomain.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 32,
+      "nonEmptyLines": 27,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/transport/BasicChannel.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 52,
+      "nonEmptyLines": 43,
+      "callGraph": [
+        {
+          "caller": "BasicChannel",
+          "callee": "store",
+          "lineNumber": 23
+        },
+        {
+          "caller": "Alive",
+          "callee": "load",
+          "lineNumber": 42
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/transport/BasicTransport.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 51,
+      "nonEmptyLines": 35,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/transport/RecvResource.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 53,
+      "nonEmptyLines": 40,
+      "callGraph": [
+        {
+          "caller": "SetEndpoint",
+          "callee": "AddEndPoint",
+          "lineNumber": 35
+        },
+        {
+          "caller": "RemoveEndpoint",
+          "callee": "RemoveEndPoint",
+          "lineNumber": 41
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/transport/SendResource.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 63,
+      "nonEmptyLines": 53,
+      "callGraph": [
+        {
+          "caller": "AddChannel",
+          "callee": "push_back",
+          "lineNumber": 31
+        },
+        {
+          "caller": "DeleteChannel",
+          "callee": "std::find_if",
+          "lineNumber": 36
+        },
+        {
+          "caller": "DeleteChannel",
+          "callee": "begin",
+          "lineNumber": 37
+        },
+        {
+          "caller": "DeleteChannel",
+          "callee": "end",
+          "lineNumber": 37
+        },
+        {
+          "caller": "DeleteChannel",
+          "callee": "erase",
+          "lineNumber": 39
+        },
+        {
+          "caller": "DeleteChannel",
+          "callee": "std::find_if",
+          "lineNumber": 43
+        },
+        {
+          "caller": "DeleteChannel",
+          "callee": "begin",
+          "lineNumber": 44
+        },
+        {
+          "caller": "DeleteChannel",
+          "callee": "end",
+          "lineNumber": 44
+        },
+        {
+          "caller": "DeleteChannel",
+          "callee": "get",
+          "lineNumber": 45
+        },
+        {
+          "caller": "DeleteChannel",
+          "callee": "erase",
+          "lineNumber": 46
+        },
+        {
+          "caller": "GetChannel",
+          "callee": "std::find_if",
+          "lineNumber": 51
+        },
+        {
+          "caller": "GetChannel",
+          "callee": "begin",
+          "lineNumber": 52
+        },
+        {
+          "caller": "GetChannel",
+          "callee": "end",
+          "lineNumber": 52
+        },
+        {
+          "caller": "GetChannel",
+          "callee": "get",
+          "lineNumber": 53
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/transport/ThreadConfig.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 32,
+      "nonEmptyLines": 27,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/transport/ThreadManager.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 54,
+      "nonEmptyLines": 37,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/transport/TransportConfig.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 202,
+      "nonEmptyLines": 182,
+      "callGraph": [
+        {
+          "caller": "TLSConfig",
+          "callee": "clear",
+          "lineNumber": 110
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/transport/TransportStack.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 75,
+      "nonEmptyLines": 49,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/utils/BitmapRange.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 383,
+      "nonEmptyLines": 349,
+      "callGraph": [
+        {
+          "caller": "base",
+          "callee": "fill",
+          "lineNumber": 55
+        },
+        {
+          "caller": "base",
+          "callee": "fill",
+          "lineNumber": 62
+        },
+        {
+          "caller": "base_update",
+          "callee": "d_func",
+          "lineNumber": 75
+        },
+        {
+          "caller": "base_update",
+          "callee": "shift_map_left",
+          "lineNumber": 76
+        },
+        {
+          "caller": "base_update",
+          "callee": "d_func",
+          "lineNumber": 80
+        },
+        {
+          "caller": "base_update",
+          "callee": "shift_map_right",
+          "lineNumber": 81
+        },
+        {
+          "caller": "min",
+          "callee": "static_cast<uint32_t>",
+          "lineNumber": 105
+        },
+        {
+          "caller": "min",
+          "callee": "__builtin_clz",
+          "lineNumber": 105
+        },
+        {
+          "caller": "is_set",
+          "callee": "d_func",
+          "lineNumber": 119
+        },
+        {
+          "caller": "add",
+          "callee": "d_func",
+          "lineNumber": 136
+        },
+        {
+          "caller": "add",
+          "callee": "std::max",
+          "lineNumber": 137
+        },
+        {
+          "caller": "add_range",
+          "callee": "(std::numeric_limits<uint32_t>::max)",
+          "lineNumber": 149
+        },
+        {
+          "caller": "add_range",
+          "callee": "d_func",
+          "lineNumber": 157
+        },
+        {
+          "caller": "add_range",
+          "callee": "d_func",
+          "lineNumber": 158
+        },
+        {
+          "caller": "add_range",
+          "callee": "std::max",
+          "lineNumber": 159
+        },
+        {
+          "caller": "remove",
+          "callee": "max",
+          "lineNumber": 181
+        },
+        {
+          "caller": "remove",
+          "callee": "d_func",
+          "lineNumber": 185
+        },
+        {
+          "caller": "remove",
+          "callee": "calc_maximum_bit_set",
+          "lineNumber": 192
+        },
+        {
+          "caller": "count",
+          "callee": "_BitScanReverse",
+          "lineNumber": 226
+        },
+        {
+          "caller": "count",
+          "callee": "static_cast<uint32_t>",
+          "lineNumber": 229
+        },
+        {
+          "caller": "count",
+          "callee": "__builtin_clz",
+          "lineNumber": 229
+        },
+        {
+          "caller": "bitmap_set",
+          "callee": "std::min",
+          "lineNumber": 243
+        },
+        {
+          "caller": "bitmap_set",
+          "callee": "static_cast<uint32_t>",
+          "lineNumber": 245
+        },
+        {
+          "caller": "bitmap_set",
+          "callee": "fill",
+          "lineNumber": 246
+        },
+        {
+          "caller": "bitmap_set",
+          "callee": "memcpy",
+          "lineNumber": 247
+        },
+        {
+          "caller": "bitmap_set",
+          "callee": "data",
+          "lineNumber": 247
+        },
+        {
+          "caller": "bitmap_set",
+          "callee": "(std::numeric_limits<uint32_t>::max)",
+          "lineNumber": 251
+        },
+        {
+          "caller": "bitmap_set",
+          "callee": "calc_maximum_bit_set",
+          "lineNumber": 253
+        },
+        {
+          "caller": "for_each",
+          "callee": "_BitScanReverse",
+          "lineNumber": 268
+        },
+        {
+          "caller": "for_each",
+          "callee": "static_cast<uint32_t>",
+          "lineNumber": 271
+        },
+        {
+          "caller": "for_each",
+          "callee": "__builtin_clz",
+          "lineNumber": 271
+        },
+        {
+          "caller": "for_each",
+          "callee": "f",
+          "lineNumber": 274
+        },
+        {
+          "caller": "shift_map_left",
+          "callee": "fill",
+          "lineNumber": 293
+        },
+        {
+          "caller": "shift_map_left",
+          "callee": "std::copy",
+          "lineNumber": 302
+        },
+        {
+          "caller": "shift_map_left",
+          "callee": "begin",
+          "lineNumber": 302
+        },
+        {
+          "caller": "shift_map_left",
+          "callee": "end",
+          "lineNumber": 302
+        },
+        {
+          "caller": "shift_map_left",
+          "callee": "begin",
+          "lineNumber": 302
+        },
+        {
+          "caller": "shift_map_left",
+          "callee": "std::fill_n",
+          "lineNumber": 303
+        },
+        {
+          "caller": "shift_map_left",
+          "callee": "rbegin",
+          "lineNumber": 303
+        },
+        {
+          "caller": "shift_map_left",
+          "callee": "std::fill_n",
+          "lineNumber": 314
+        },
+        {
+          "caller": "shift_map_left",
+          "callee": "rbegin",
+          "lineNumber": 314
+        },
+        {
+          "caller": "shift_map_right",
+          "callee": "fill",
+          "lineNumber": 324
+        },
+        {
+          "caller": "shift_map_right",
+          "callee": "std::copy",
+          "lineNumber": 334
+        },
+        {
+          "caller": "shift_map_right",
+          "callee": "rbegin",
+          "lineNumber": 334
+        },
+        {
+          "caller": "shift_map_right",
+          "callee": "rend",
+          "lineNumber": 334
+        },
+        {
+          "caller": "shift_map_right",
+          "callee": "rbegin",
+          "lineNumber": 334
+        },
+        {
+          "caller": "shift_map_right",
+          "callee": "std::fill_n",
+          "lineNumber": 335
+        },
+        {
+          "caller": "shift_map_right",
+          "callee": "begin",
+          "lineNumber": 335
+        },
+        {
+          "caller": "shift_map_right",
+          "callee": "std::fill_n",
+          "lineNumber": 346
+        },
+        {
+          "caller": "shift_map_right",
+          "callee": "begin",
+          "lineNumber": 346
+        },
+        {
+          "caller": "shift_map_right",
+          "callee": "calc_maximum_bit_set",
+          "lineNumber": 352
+        },
+        {
+          "caller": "calc_maximum_bit_set",
+          "callee": "_BitScanReverse",
+          "lineNumber": 369
+        },
+        {
+          "caller": "calc_maximum_bit_set",
+          "callee": "static_cast<uint32_t>",
+          "lineNumber": 372
+        },
+        {
+          "caller": "calc_maximum_bit_set",
+          "callee": "__builtin_clz",
+          "lineNumber": 372
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/utils/FixedString.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 171,
+      "nonEmptyLines": 139,
+      "callGraph": [
+        {
+          "caller": "FixedString",
+          "callee": "memset",
+          "lineNumber": 17
+        },
+        {
+          "caller": "FixedString",
+          "callee": "assign",
+          "lineNumber": 23
+        },
+        {
+          "caller": "FixedString",
+          "callee": "set",
+          "lineNumber": 39
+        },
+        {
+          "caller": "FixedString",
+          "callee": "set",
+          "lineNumber": 50
+        },
+        {
+          "caller": "FixedString",
+          "callee": "c_str",
+          "lineNumber": 50
+        },
+        {
+          "caller": "to_string",
+          "callee": "std::string",
+          "lineNumber": 73
+        },
+        {
+          "caller": "operator==",
+          "callee": "strncmp",
+          "lineNumber": 78
+        },
+        {
+          "caller": "operator==",
+          "callee": "strncmp",
+          "lineNumber": 83
+        },
+        {
+          "caller": "operator==",
+          "callee": "c_str",
+          "lineNumber": 83
+        },
+        {
+          "caller": "operator==",
+          "callee": "strncmp",
+          "lineNumber": 89
+        },
+        {
+          "caller": "operator==",
+          "callee": "c_str",
+          "lineNumber": 89
+        },
+        {
+          "caller": "operator!=",
+          "callee": "strncmp",
+          "lineNumber": 94
+        },
+        {
+          "caller": "operator!=",
+          "callee": "strncmp",
+          "lineNumber": 99
+        },
+        {
+          "caller": "operator!=",
+          "callee": "c_str",
+          "lineNumber": 99
+        },
+        {
+          "caller": "operator!=",
+          "callee": "strncmp",
+          "lineNumber": 105
+        },
+        {
+          "caller": "operator!=",
+          "callee": "c_str",
+          "lineNumber": 105
+        },
+        {
+          "caller": "operator<",
+          "callee": "compare",
+          "lineNumber": 111
+        },
+        {
+          "caller": "operator>",
+          "callee": "compare",
+          "lineNumber": 117
+        },
+        {
+          "caller": "operator<",
+          "callee": "compare",
+          "lineNumber": 122
+        },
+        {
+          "caller": "operator>",
+          "callee": "compare",
+          "lineNumber": 127
+        },
+        {
+          "caller": "compare",
+          "callee": "strncmp",
+          "lineNumber": 142
+        },
+        {
+          "caller": "compare",
+          "callee": "strncmp",
+          "lineNumber": 147
+        },
+        {
+          "caller": "compare",
+          "callee": "c_str",
+          "lineNumber": 147
+        },
+        {
+          "caller": "compare",
+          "callee": "strncmp",
+          "lineNumber": 153
+        },
+        {
+          "caller": "compare",
+          "callee": "c_str",
+          "lineNumber": 153
+        },
+        {
+          "caller": "set",
+          "callee": "memcpy",
+          "lineNumber": 159
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/utils/InsertByOrder.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 31,
+      "nonEmptyLines": 28,
+      "callGraph": [
+        {
+          "caller": "InsertByOrder",
+          "callee": "LessThanPredicate",
+          "lineNumber": 19
+        },
+        {
+          "caller": "InsertByOrder",
+          "callee": "end",
+          "lineNumber": 21
+        },
+        {
+          "caller": "InsertByOrder",
+          "callee": "empty",
+          "lineNumber": 22
+        },
+        {
+          "caller": "InsertByOrder",
+          "callee": "pred",
+          "lineNumber": 22
+        },
+        {
+          "caller": "InsertByOrder",
+          "callee": "rbegin",
+          "lineNumber": 22
+        },
+        {
+          "caller": "InsertByOrder",
+          "callee": "std::lower_bound",
+          "lineNumber": 24
+        },
+        {
+          "caller": "InsertByOrder",
+          "callee": "begin",
+          "lineNumber": 24
+        },
+        {
+          "caller": "InsertByOrder",
+          "callee": "end",
+          "lineNumber": 24
+        },
+        {
+          "caller": "InsertByOrder",
+          "callee": "insert",
+          "lineNumber": 26
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/txdds/include/txdds/RTPS/utils/IPLocator.h",
+      "language": "c",
+      "fileCategory": "code",
+      "totalLines": 111,
+      "nonEmptyLines": 70,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    }
+  ]
+}

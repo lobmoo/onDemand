@@ -1,0 +1,1728 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 25,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/core/LoanableSequence.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 233,
+      "nonEmptyLines": 205,
+      "callGraph": [
+        {
+          "caller": "LoanableSequence",
+          "callee": "resize",
+          "lineNumber": 103
+        },
+        {
+          "caller": "~LoanableSequence",
+          "callee": "EPROSIMA_LOG_WARNING",
+          "lineNumber": 117
+        },
+        {
+          "caller": "~LoanableSequence",
+          "callee": "release",
+          "lineNumber": 121
+        },
+        {
+          "caller": "resize",
+          "callee": "assert",
+          "lineNumber": 189
+        },
+        {
+          "caller": "resize",
+          "callee": "reserve",
+          "lineNumber": 192
+        },
+        {
+          "caller": "resize",
+          "callee": "resize",
+          "lineNumber": 193
+        },
+        {
+          "caller": "resize",
+          "callee": "reinterpret_cast<element_type*>",
+          "lineNumber": 194
+        },
+        {
+          "caller": "resize",
+          "callee": "data",
+          "lineNumber": 194
+        },
+        {
+          "caller": "release",
+          "callee": "swap",
+          "lineNumber": 212
+        },
+        {
+          "caller": "release",
+          "callee": "std::vector<T*>",
+          "lineNumber": 212
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/core/LoanableTypedCollection.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 101,
+      "nonEmptyLines": 88,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/core/policy/ParameterTypes.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 1965,
+      "nonEmptyLines": 1691,
+      "callGraph": [
+        {
+          "caller": "size",
+          "callee": "size",
+          "lineNumber": 416
+        },
+        {
+          "caller": "ParameterGuid_t",
+          "callee": "fastdds::rtps::iHandle2GUID",
+          "lineNumber": 536
+        },
+        {
+          "caller": "ParameterIP4Address_t",
+          "callee": "setIP4Address",
+          "lineNumber": 700
+        },
+        {
+          "caller": "ParameterIP4Address_t",
+          "callee": "setIP4Address",
+          "lineNumber": 714
+        },
+        {
+          "caller": "first",
+          "callee": "std::string",
+          "lineNumber": 1065
+        },
+        {
+          "caller": "second",
+          "callee": "ParameterProperty_t::element_size",
+          "lineNumber": 1076
+        },
+        {
+          "caller": "second",
+          "callee": "std::string",
+          "lineNumber": 1079
+        },
+        {
+          "caller": "modify",
+          "callee": "size",
+          "lineNumber": 1091
+        },
+        {
+          "caller": "modify",
+          "callee": "size",
+          "lineNumber": 1093
+        },
+        {
+          "caller": "modify",
+          "callee": "size",
+          "lineNumber": 1095
+        },
+        {
+          "caller": "modify",
+          "callee": "memcpy",
+          "lineNumber": 1105
+        },
+        {
+          "caller": "modify",
+          "callee": "memcpy",
+          "lineNumber": 1106
+        },
+        {
+          "caller": "modify",
+          "callee": "c_str",
+          "lineNumber": 1106
+        },
+        {
+          "caller": "modify",
+          "callee": "memset",
+          "lineNumber": 1107
+        },
+        {
+          "caller": "modify",
+          "callee": "memcpy",
+          "lineNumber": 1110
+        },
+        {
+          "caller": "modify",
+          "callee": "memcpy",
+          "lineNumber": 1111
+        },
+        {
+          "caller": "modify",
+          "callee": "c_str",
+          "lineNumber": 1111
+        },
+        {
+          "caller": "modify",
+          "callee": "memset",
+          "lineNumber": 1112
+        },
+        {
+          "caller": "pair",
+          "callee": "std::make_pair",
+          "lineNumber": 1124
+        },
+        {
+          "caller": "pair",
+          "callee": "std::string",
+          "lineNumber": 1124
+        },
+        {
+          "caller": "pair",
+          "callee": "first",
+          "lineNumber": 1124
+        },
+        {
+          "caller": "pair",
+          "callee": "std::string",
+          "lineNumber": 1124
+        },
+        {
+          "caller": "pair",
+          "callee": "second",
+          "lineNumber": 1124
+        },
+        {
+          "caller": "size",
+          "callee": "ParameterProperty_t::element_size",
+          "lineNumber": 1135
+        },
+        {
+          "caller": "size",
+          "callee": "ParameterProperty_t::element_size",
+          "lineNumber": 1138
+        },
+        {
+          "caller": "operator ==",
+          "callee": "first",
+          "lineNumber": 1145
+        },
+        {
+          "caller": "operator ==",
+          "callee": "first",
+          "lineNumber": 1145
+        },
+        {
+          "caller": "operator ==",
+          "callee": "second",
+          "lineNumber": 1146
+        },
+        {
+          "caller": "operator ==",
+          "callee": "second",
+          "lineNumber": 1146
+        },
+        {
+          "caller": "operator ++",
+          "callee": "advance",
+          "lineNumber": 1284
+        },
+        {
+          "caller": "operator ++",
+          "callee": "advance",
+          "lineNumber": 1292
+        },
+        {
+          "caller": "advance",
+          "callee": "size",
+          "lineNumber": 1325
+        },
+        {
+          "caller": "advance",
+          "callee": "ParameterProperty_t",
+          "lineNumber": 1326
+        },
+        {
+          "caller": "const_iterator",
+          "callee": "const_cast<fastdds::rtps::octet*>",
+          "lineNumber": 1366
+        },
+        {
+          "caller": "operator ++",
+          "callee": "advance",
+          "lineNumber": 1372
+        },
+        {
+          "caller": "operator ++",
+          "callee": "advance",
+          "lineNumber": 1380
+        },
+        {
+          "caller": "advance",
+          "callee": "size",
+          "lineNumber": 1413
+        },
+        {
+          "caller": "advance",
+          "callee": "ParameterProperty_t",
+          "lineNumber": 1414
+        },
+        {
+          "caller": "advance",
+          "callee": "const_cast<fastdds::rtps::octet*>",
+          "lineNumber": 1414
+        },
+        {
+          "caller": "ParameterPropertyList_t",
+          "callee": "static_cast<void>",
+          "lineNumber": 1475
+        },
+        {
+          "caller": "ParameterPropertyList_t",
+          "callee": "copy",
+          "lineNumber": 1492
+        },
+        {
+          "caller": "begin",
+          "callee": "iterator",
+          "lineNumber": 1515
+        },
+        {
+          "caller": "end",
+          "callee": "iterator",
+          "lineNumber": 1525
+        },
+        {
+          "caller": "begin",
+          "callee": "const_iterator",
+          "lineNumber": 1535
+        },
+        {
+          "caller": "end",
+          "callee": "const_iterator",
+          "lineNumber": 1545
+        },
+        {
+          "caller": "push_back",
+          "callee": "push_back",
+          "lineNumber": 1557
+        },
+        {
+          "caller": "push_back",
+          "callee": "reinterpret_cast<const unsigned char*>",
+          "lineNumber": 1571
+        },
+        {
+          "caller": "push_back",
+          "callee": "c_str",
+          "lineNumber": 1571
+        },
+        {
+          "caller": "push_back",
+          "callee": "length",
+          "lineNumber": 1572
+        },
+        {
+          "caller": "push_back",
+          "callee": "reinterpret_cast<const unsigned char*>",
+          "lineNumber": 1573
+        },
+        {
+          "caller": "push_back",
+          "callee": "c_str",
+          "lineNumber": 1573
+        },
+        {
+          "caller": "push_back",
+          "callee": "length",
+          "lineNumber": 1574
+        },
+        {
+          "caller": "push_back",
+          "callee": "push_back",
+          "lineNumber": 1576
+        },
+        {
+          "caller": "push_back",
+          "callee": "reserve",
+          "lineNumber": 1604
+        },
+        {
+          "caller": "push_back",
+          "callee": "push_back_helper",
+          "lineNumber": 1608
+        },
+        {
+          "caller": "push_back",
+          "callee": "push_back_helper",
+          "lineNumber": 1609
+        },
+        {
+          "caller": "set_property",
+          "callee": "modify",
+          "lineNumber": 1625
+        },
+        {
+          "caller": "set_max_size",
+          "callee": "reserve",
+          "lineNumber": 1653
+        },
+        {
+          "caller": "push_back_helper",
+          "callee": "memcpy",
+          "lineNumber": 1675
+        },
+        {
+          "caller": "push_back_helper",
+          "callee": "memcpy",
+          "lineNumber": 1678
+        },
+        {
+          "caller": "ParameterSampleIdentity_t",
+          "callee": "fastdds::rtps::SampleIdentity::unknown",
+          "lineNumber": 1705
+        },
+        {
+          "caller": "ParameterSampleIdentity_t",
+          "callee": "fastdds::rtps::SampleIdentity::unknown",
+          "lineNumber": 1719
+        },
+        {
+          "caller": "set_proxy_property",
+          "callee": "T::unknown",
+          "lineNumber": 1871
+        },
+        {
+          "caller": "set_proxy_property",
+          "callee": "str",
+          "lineNumber": 1882
+        },
+        {
+          "caller": "set_proxy_property",
+          "callee": "std::find_if",
+          "lineNumber": 1885
+        },
+        {
+          "caller": "set_proxy_property",
+          "callee": "begin",
+          "lineNumber": 1886
+        },
+        {
+          "caller": "set_proxy_property",
+          "callee": "end",
+          "lineNumber": 1887
+        },
+        {
+          "caller": "set_proxy_property",
+          "callee": "first",
+          "lineNumber": 1890
+        },
+        {
+          "caller": "set_proxy_property",
+          "callee": "end",
+          "lineNumber": 1893
+        },
+        {
+          "caller": "set_proxy_property",
+          "callee": "set_property",
+          "lineNumber": 1896
+        },
+        {
+          "caller": "set_proxy_property",
+          "callee": "push_back",
+          "lineNumber": 1901
+        },
+        {
+          "caller": "get_proxy_property",
+          "callee": "std::find_if",
+          "lineNumber": 1912
+        },
+        {
+          "caller": "get_proxy_property",
+          "callee": "begin",
+          "lineNumber": 1913
+        },
+        {
+          "caller": "get_proxy_property",
+          "callee": "end",
+          "lineNumber": 1914
+        },
+        {
+          "caller": "get_proxy_property",
+          "callee": "first",
+          "lineNumber": 1917
+        },
+        {
+          "caller": "get_proxy_property",
+          "callee": "end",
+          "lineNumber": 1920
+        },
+        {
+          "caller": "get_proxy_property",
+          "callee": "second",
+          "lineNumber": 1922
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/core/policy/QosPolicies.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 3281,
+      "nonEmptyLines": 2862,
+      "callGraph": [
+        {
+          "caller": "EntityFactoryQosPolicy",
+          "callee": "autoenable_created_entities",
+          "lineNumber": 203
+        },
+        {
+          "caller": "EntityFactoryQosPolicy",
+          "callee": "autoenable_created_entities",
+          "lineNumber": 214
+        },
+        {
+          "caller": "clear",
+          "callee": "EntityFactoryQosPolicy",
+          "lineNumber": 234
+        },
+        {
+          "caller": "clear",
+          "callee": "std::swap",
+          "lineNumber": 235
+        },
+        {
+          "caller": "operator ==",
+          "callee": "Parameter_t::operator ==",
+          "lineNumber": 317
+        },
+        {
+          "caller": "operator ==",
+          "callee": "QosPolicy::operator ==",
+          "lineNumber": 318
+        },
+        {
+          "caller": "clear",
+          "callee": "DurabilityQosPolicy",
+          "lineNumber": 342
+        },
+        {
+          "caller": "clear",
+          "callee": "std::swap",
+          "lineNumber": 343
+        },
+        {
+          "caller": "operator ==",
+          "callee": "Parameter_t::operator ==",
+          "lineNumber": 385
+        },
+        {
+          "caller": "operator ==",
+          "callee": "QosPolicy::operator ==",
+          "lineNumber": 386
+        },
+        {
+          "caller": "clear",
+          "callee": "DeadlineQosPolicy",
+          "lineNumber": 391
+        },
+        {
+          "caller": "clear",
+          "callee": "std::swap",
+          "lineNumber": 392
+        },
+        {
+          "caller": "operator ==",
+          "callee": "Parameter_t::operator ==",
+          "lineNumber": 438
+        },
+        {
+          "caller": "operator ==",
+          "callee": "QosPolicy::operator ==",
+          "lineNumber": 439
+        },
+        {
+          "caller": "clear",
+          "callee": "LatencyBudgetQosPolicy",
+          "lineNumber": 444
+        },
+        {
+          "caller": "clear",
+          "callee": "std::swap",
+          "lineNumber": 445
+        },
+        {
+          "caller": "operator ==",
+          "callee": "Parameter_t::operator ==",
+          "lineNumber": 514
+        },
+        {
+          "caller": "operator ==",
+          "callee": "QosPolicy::operator ==",
+          "lineNumber": 515
+        },
+        {
+          "caller": "clear",
+          "callee": "LivelinessQosPolicy",
+          "lineNumber": 520
+        },
+        {
+          "caller": "clear",
+          "callee": "std::swap",
+          "lineNumber": 521
+        },
+        {
+          "caller": "operator ==",
+          "callee": "Parameter_t::operator ==",
+          "lineNumber": 594
+        },
+        {
+          "caller": "operator ==",
+          "callee": "QosPolicy::operator ==",
+          "lineNumber": 595
+        },
+        {
+          "caller": "clear",
+          "callee": "ReliabilityQosPolicy",
+          "lineNumber": 600
+        },
+        {
+          "caller": "clear",
+          "callee": "std::swap",
+          "lineNumber": 601
+        },
+        {
+          "caller": "operator ==",
+          "callee": "Parameter_t::operator ==",
+          "lineNumber": 674
+        },
+        {
+          "caller": "operator ==",
+          "callee": "QosPolicy::operator ==",
+          "lineNumber": 675
+        },
+        {
+          "caller": "clear",
+          "callee": "OwnershipQosPolicy",
+          "lineNumber": 680
+        },
+        {
+          "caller": "clear",
+          "callee": "std::swap",
+          "lineNumber": 681
+        },
+        {
+          "caller": "operator ==",
+          "callee": "Parameter_t::operator ==",
+          "lineNumber": 741
+        },
+        {
+          "caller": "operator ==",
+          "callee": "QosPolicy::operator ==",
+          "lineNumber": 742
+        },
+        {
+          "caller": "clear",
+          "callee": "DestinationOrderQosPolicy",
+          "lineNumber": 747
+        },
+        {
+          "caller": "clear",
+          "callee": "std::swap",
+          "lineNumber": 748
+        },
+        {
+          "caller": "operator ==",
+          "callee": "Parameter_t::operator ==",
+          "lineNumber": 872
+        },
+        {
+          "caller": "operator ==",
+          "callee": "QosPolicy::operator ==",
+          "lineNumber": 873
+        },
+        {
+          "caller": "set_max_size",
+          "callee": "fastdds::ResourceLimitedContainerConfig::fixed_size_configuration",
+          "lineNumber": 892
+        },
+        {
+          "caller": "set_max_size",
+          "callee": "reserve",
+          "lineNumber": 893
+        },
+        {
+          "caller": "set_max_size",
+          "callee": "fastdds::ResourceLimitedContainerConfig::dynamic_allocation_configuration",
+          "lineNumber": 897
+        },
+        {
+          "caller": "resize",
+          "callee": "resize",
+          "lineNumber": 904
+        },
+        {
+          "caller": "clear",
+          "callee": "ResourceLimitedOctetVector::clear",
+          "lineNumber": 917
+        },
+        {
+          "caller": "data_vec",
+          "callee": "assign",
+          "lineNumber": 951
+        },
+        {
+          "caller": "data_vec",
+          "callee": "begin",
+          "lineNumber": 951
+        },
+        {
+          "caller": "data_vec",
+          "callee": "end",
+          "lineNumber": 951
+        },
+        {
+          "caller": "data_vec",
+          "callee": "static_cast<uint16_t>",
+          "lineNumber": 952
+        },
+        {
+          "caller": "data_vec",
+          "callee": "size",
+          "lineNumber": 952
+        },
+        {
+          "caller": "setValue",
+          "callee": "data_vec",
+          "lineNumber": 975
+        },
+        {
+          "caller": "operator ==",
+          "callee": "Parameter_t::operator ==",
+          "lineNumber": 1126
+        },
+        {
+          "caller": "operator ==",
+          "callee": "QosPolicy::operator ==",
+          "lineNumber": 1127
+        },
+        {
+          "caller": "clear",
+          "callee": "TimeBasedFilterQosPolicy",
+          "lineNumber": 1132
+        },
+        {
+          "caller": "clear",
+          "callee": "std::swap",
+          "lineNumber": 1133
+        },
+        {
+          "caller": "operator ==",
+          "callee": "Parameter_t::operator ==",
+          "lineNumber": 1204
+        },
+        {
+          "caller": "operator ==",
+          "callee": "QosPolicy::operator ==",
+          "lineNumber": 1205
+        },
+        {
+          "caller": "clear",
+          "callee": "PresentationQosPolicy",
+          "lineNumber": 1210
+        },
+        {
+          "caller": "clear",
+          "callee": "std::swap",
+          "lineNumber": 1211
+        },
+        {
+          "caller": "operator ==",
+          "callee": "size",
+          "lineNumber": 1265
+        },
+        {
+          "caller": "operator ==",
+          "callee": "size",
+          "lineNumber": 1265
+        },
+        {
+          "caller": "operator ==",
+          "callee": "size",
+          "lineNumber": 1266
+        },
+        {
+          "caller": "operator ==",
+          "callee": "strcmp",
+          "lineNumber": 1266
+        },
+        {
+          "caller": "operator ++",
+          "callee": "advance",
+          "lineNumber": 1337
+        },
+        {
+          "caller": "operator ++",
+          "callee": "advance",
+          "lineNumber": 1344
+        },
+        {
+          "caller": "advance",
+          "callee": "Partition_t",
+          "lineNumber": 1380
+        },
+        {
+          "caller": "operator ==",
+          "callee": "Parameter_t::operator ==",
+          "lineNumber": 1449
+        },
+        {
+          "caller": "operator ==",
+          "callee": "QosPolicy::operator ==",
+          "lineNumber": 1450
+        },
+        {
+          "caller": "begin",
+          "callee": "const_iterator",
+          "lineNumber": 1475
+        },
+        {
+          "caller": "end",
+          "callee": "const_iterator",
+          "lineNumber": 1485
+        },
+        {
+          "caller": "set_max_size",
+          "callee": "reserve",
+          "lineNumber": 1516
+        },
+        {
+          "caller": "push_back",
+          "callee": "strlen",
+          "lineNumber": 1539
+        },
+        {
+          "caller": "push_back",
+          "callee": "reserve",
+          "lineNumber": 1548
+        },
+        {
+          "caller": "push_back",
+          "callee": "memcpy",
+          "lineNumber": 1551
+        },
+        {
+          "caller": "push_back",
+          "callee": "memcpy",
+          "lineNumber": 1554
+        },
+        {
+          "caller": "push_back",
+          "callee": "memset",
+          "lineNumber": 1557
+        },
+        {
+          "caller": "vector<std::string> getNames",
+          "callee": "names",
+          "lineNumber": 1581
+        },
+        {
+          "caller": "setNames",
+          "callee": "names",
+          "lineNumber": 1592
+        },
+        {
+          "caller": "vector<std::string> names",
+          "callee": "begin",
+          "lineNumber": 1605
+        },
+        {
+          "caller": "vector<std::string> names",
+          "callee": "end",
+          "lineNumber": 1605
+        },
+        {
+          "caller": "vector<std::string> names",
+          "callee": "push_back",
+          "lineNumber": 1607
+        },
+        {
+          "caller": "vector<std::string> names",
+          "callee": "name",
+          "lineNumber": 1607
+        },
+        {
+          "caller": "names",
+          "callee": "clear",
+          "lineNumber": 1621
+        },
+        {
+          "caller": "names",
+          "callee": "begin",
+          "lineNumber": 1622
+        },
+        {
+          "caller": "names",
+          "callee": "end",
+          "lineNumber": 1622
+        },
+        {
+          "caller": "names",
+          "callee": "push_back",
+          "lineNumber": 1624
+        },
+        {
+          "caller": "names",
+          "callee": "c_str",
+          "lineNumber": 1624
+        },
+        {
+          "caller": "operator ==",
+          "callee": "Parameter_t::operator ==",
+          "lineNumber": 1697
+        },
+        {
+          "caller": "operator ==",
+          "callee": "QosPolicy::operator ==",
+          "lineNumber": 1698
+        },
+        {
+          "caller": "clear",
+          "callee": "HistoryQosPolicy",
+          "lineNumber": 1703
+        },
+        {
+          "caller": "clear",
+          "callee": "std::swap",
+          "lineNumber": 1704
+        },
+        {
+          "caller": "operator ==",
+          "callee": "Parameter_t::operator ==",
+          "lineNumber": 1788
+        },
+        {
+          "caller": "operator ==",
+          "callee": "QosPolicy::operator ==",
+          "lineNumber": 1789
+        },
+        {
+          "caller": "clear",
+          "callee": "ResourceLimitsQosPolicy",
+          "lineNumber": 1794
+        },
+        {
+          "caller": "clear",
+          "callee": "std::swap",
+          "lineNumber": 1795
+        },
+        {
+          "caller": "operator ==",
+          "callee": "Parameter_t::operator ==",
+          "lineNumber": 1841
+        },
+        {
+          "caller": "operator ==",
+          "callee": "QosPolicy::operator ==",
+          "lineNumber": 1842
+        },
+        {
+          "caller": "clear",
+          "callee": "DurabilityServiceQosPolicy",
+          "lineNumber": 1847
+        },
+        {
+          "caller": "clear",
+          "callee": "std::swap",
+          "lineNumber": 1848
+        },
+        {
+          "caller": "operator ==",
+          "callee": "Parameter_t::operator ==",
+          "lineNumber": 1921
+        },
+        {
+          "caller": "operator ==",
+          "callee": "QosPolicy::operator ==",
+          "lineNumber": 1922
+        },
+        {
+          "caller": "clear",
+          "callee": "LifespanQosPolicy",
+          "lineNumber": 1927
+        },
+        {
+          "caller": "clear",
+          "callee": "std::swap",
+          "lineNumber": 1928
+        },
+        {
+          "caller": "operator ==",
+          "callee": "Parameter_t::operator ==",
+          "lineNumber": 1967
+        },
+        {
+          "caller": "operator ==",
+          "callee": "QosPolicy::operator ==",
+          "lineNumber": 1968
+        },
+        {
+          "caller": "clear",
+          "callee": "OwnershipStrengthQosPolicy",
+          "lineNumber": 1973
+        },
+        {
+          "caller": "clear",
+          "callee": "std::swap",
+          "lineNumber": 1974
+        },
+        {
+          "caller": "operator ==",
+          "callee": "Parameter_t::operator ==",
+          "lineNumber": 2017
+        },
+        {
+          "caller": "operator ==",
+          "callee": "QosPolicy::operator ==",
+          "lineNumber": 2018
+        },
+        {
+          "caller": "clear",
+          "callee": "TransportPriorityQosPolicy",
+          "lineNumber": 2023
+        },
+        {
+          "caller": "clear",
+          "callee": "std::swap",
+          "lineNumber": 2024
+        },
+        {
+          "caller": "clear",
+          "callee": "PublishModeQosPolicy",
+          "lineNumber": 2056
+        },
+        {
+          "caller": "clear",
+          "callee": "std::swap",
+          "lineNumber": 2057
+        },
+        {
+          "caller": "operator ==",
+          "callee": "c_str",
+          "lineNumber": 2064
+        },
+        {
+          "caller": "operator ==",
+          "callee": "QosPolicy::operator ==",
+          "lineNumber": 2065
+        },
+        {
+          "caller": "operator ==",
+          "callee": "Parameter_t::operator ==",
+          "lineNumber": 2124
+        },
+        {
+          "caller": "operator ==",
+          "callee": "QosPolicy::operator ==",
+          "lineNumber": 2125
+        },
+        {
+          "caller": "clear",
+          "callee": "DataRepresentationQosPolicy",
+          "lineNumber": 2130
+        },
+        {
+          "caller": "clear",
+          "callee": "std::swap",
+          "lineNumber": 2131
+        },
+        {
+          "caller": "operator ==",
+          "callee": "Parameter_t::operator ==",
+          "lineNumber": 2228
+        },
+        {
+          "caller": "operator ==",
+          "callee": "QosPolicy::operator ==",
+          "lineNumber": 2229
+        },
+        {
+          "caller": "clear",
+          "callee": "TypeConsistencyEnforcementQosPolicy",
+          "lineNumber": 2234
+        },
+        {
+          "caller": "clear",
+          "callee": "std::swap",
+          "lineNumber": 2235
+        },
+        {
+          "caller": "operator ==",
+          "callee": "Parameter_t::operator ==",
+          "lineNumber": 2270
+        },
+        {
+          "caller": "operator ==",
+          "callee": "QosPolicy::operator ==",
+          "lineNumber": 2271
+        },
+        {
+          "caller": "clear",
+          "callee": "DisablePositiveACKsQosPolicy",
+          "lineNumber": 2276
+        },
+        {
+          "caller": "clear",
+          "callee": "std::swap",
+          "lineNumber": 2277
+        },
+        {
+          "caller": "clear",
+          "callee": "TypeIdV1",
+          "lineNumber": 2379
+        },
+        {
+          "caller": "clear",
+          "callee": "TypeObjectV1",
+          "lineNumber": 2491
+        },
+        {
+          "caller": "clear",
+          "callee": "TypeInformationParameter",
+          "lineNumber": 2611
+        },
+        {
+          "caller": "operator ==",
+          "callee": "easy_mode",
+          "lineNumber": 2689
+        },
+        {
+          "caller": "operator ==",
+          "callee": "QosPolicy::operator ==",
+          "lineNumber": 2690
+        },
+        {
+          "caller": "clear",
+          "callee": "WireProtocolConfigQos",
+          "lineNumber": 2695
+        },
+        {
+          "caller": "clear",
+          "callee": "std::swap",
+          "lineNumber": 2696
+        },
+        {
+          "caller": "easy_mode",
+          "callee": "empty",
+          "lineNumber": 2746
+        },
+        {
+          "caller": "easy_mode",
+          "callee": "rtps::IPLocator::isIPv4",
+          "lineNumber": 2749
+        },
+        {
+          "caller": "easy_mode",
+          "callee": "EPROSIMA_LOG_ERROR",
+          "lineNumber": 2751
+        },
+        {
+          "caller": "operator ==",
+          "callee": "QosPolicy::operator ==",
+          "lineNumber": 2812
+        },
+        {
+          "caller": "clear",
+          "callee": "TransportConfigQos",
+          "lineNumber": 2817
+        },
+        {
+          "caller": "clear",
+          "callee": "std::swap",
+          "lineNumber": 2818
+        },
+        {
+          "caller": "clear",
+          "callee": "RTPSEndpointQos",
+          "lineNumber": 2865
+        },
+        {
+          "caller": "clear",
+          "callee": "std::swap",
+          "lineNumber": 2866
+        },
+        {
+          "caller": "clear",
+          "callee": "WriterResourceLimitsQos",
+          "lineNumber": 2929
+        },
+        {
+          "caller": "clear",
+          "callee": "std::swap",
+          "lineNumber": 2930
+        },
+        {
+          "caller": "operator ==",
+          "callee": "Parameter_t::operator ==",
+          "lineNumber": 3036
+        },
+        {
+          "caller": "operator ==",
+          "callee": "QosPolicy::operator ==",
+          "lineNumber": 3037
+        },
+        {
+          "caller": "clear",
+          "callee": "DataSharingQosPolicy",
+          "lineNumber": 3042
+        },
+        {
+          "caller": "clear",
+          "callee": "std::swap",
+          "lineNumber": 3043
+        },
+        {
+          "caller": "set_max_domains",
+          "callee": "reserve",
+          "lineNumber": 3086
+        },
+        {
+          "caller": "automatic",
+          "callee": "setup",
+          "lineNumber": 3106
+        },
+        {
+          "caller": "automatic",
+          "callee": "std::vector<uint16_t>",
+          "lineNumber": 3106
+        },
+        {
+          "caller": "automatic",
+          "callee": "setup",
+          "lineNumber": 3119
+        },
+        {
+          "caller": "automatic",
+          "callee": "setup",
+          "lineNumber": 3132
+        },
+        {
+          "caller": "automatic",
+          "callee": "std::vector<uint16_t>",
+          "lineNumber": 3132
+        },
+        {
+          "caller": "automatic",
+          "callee": "setup",
+          "lineNumber": 3145
+        },
+        {
+          "caller": "on",
+          "callee": "setup",
+          "lineNumber": 3161
+        },
+        {
+          "caller": "on",
+          "callee": "std::vector<uint16_t>",
+          "lineNumber": 3161
+        },
+        {
+          "caller": "on",
+          "callee": "setup",
+          "lineNumber": 3177
+        },
+        {
+          "caller": "off",
+          "callee": "setup",
+          "lineNumber": 3185
+        },
+        {
+          "caller": "off",
+          "callee": "std::vector<uint16_t>",
+          "lineNumber": 3185
+        },
+        {
+          "caller": "add_domain_id",
+          "callee": "size",
+          "lineNumber": 3196
+        },
+        {
+          "caller": "add_domain_id",
+          "callee": "push_back",
+          "lineNumber": 3198
+        },
+        {
+          "caller": "add_domain_id",
+          "callee": "size",
+          "lineNumber": 3206
+        },
+        {
+          "caller": "add_domain_id",
+          "callee": "push_back",
+          "lineNumber": 3208
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/core/policy/ReaderDataLifecycleQosPolicy.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 88,
+      "nonEmptyLines": 73,
+      "callGraph": [
+        {
+          "caller": "clear",
+          "callee": "ReaderDataLifecycleQosPolicy",
+          "lineNumber": 64
+        },
+        {
+          "caller": "clear",
+          "callee": "std::swap",
+          "lineNumber": 65
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/core/policy/ReaderResourceLimitsQos.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 84,
+      "nonEmptyLines": 70,
+      "callGraph": [
+        {
+          "caller": "clear",
+          "callee": "ReaderResourceLimitsQos",
+          "lineNumber": 56
+        },
+        {
+          "caller": "clear",
+          "callee": "std::swap",
+          "lineNumber": 57
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/core/policy/RTPSReliableReaderQos.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 73,
+      "nonEmptyLines": 60,
+      "callGraph": [
+        {
+          "caller": "clear",
+          "callee": "RTPSReliableReaderQos",
+          "lineNumber": 55
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/core/policy/RTPSReliableWriterQos.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 72,
+      "nonEmptyLines": 58,
+      "callGraph": [
+        {
+          "caller": "clear",
+          "callee": "RTPSReliableWriterQos",
+          "lineNumber": 55
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/core/policy/WriterDataLifecycleQosPolicy.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 78,
+      "nonEmptyLines": 64,
+      "callGraph": [
+        {
+          "caller": "clear",
+          "callee": "WriterDataLifecycleQosPolicy",
+          "lineNumber": 52
+        },
+        {
+          "caller": "clear",
+          "callee": "std::swap",
+          "lineNumber": 53
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/core/ReturnCode.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 26,
+      "nonEmptyLines": 21,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/core/StackAllocatedSequence.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 91,
+      "nonEmptyLines": 74,
+      "callGraph": [
+        {
+          "caller": "StackAllocatedSequence",
+          "callee": "buffer_for_loans",
+          "lineNumber": 48
+        },
+        {
+          "caller": "resize",
+          "callee": "std::bad_alloc",
+          "lineNumber": 78
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/core/status/BaseStatus.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 52,
+      "nonEmptyLines": 41,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/core/status/DeadlineMissedStatus.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 65,
+      "nonEmptyLines": 53,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/core/status/IncompatibleQosStatus.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 96,
+      "nonEmptyLines": 77,
+      "callGraph": [
+        {
+          "caller": "IncompatibleQosStatus",
+          "callee": "static_cast<size_t>",
+          "lineNumber": 76
+        },
+        {
+          "caller": "IncompatibleQosStatus",
+          "callee": "QosPolicyCount",
+          "lineNumber": 76
+        },
+        {
+          "caller": "IncompatibleQosStatus",
+          "callee": "static_cast<QosPolicyId_t>",
+          "lineNumber": 80
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/core/status/LivelinessChangedStatus.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 59,
+      "nonEmptyLines": 48,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/core/status/MatchedStatus.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 55,
+      "nonEmptyLines": 43,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/core/status/PublicationMatchedStatus.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 41,
+      "nonEmptyLines": 34,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/core/status/SampleRejectedStatus.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 72,
+      "nonEmptyLines": 60,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/core/status/StatusMask.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 270,
+      "nonEmptyLines": 237,
+      "callGraph": [
+        {
+          "caller": "all",
+          "callee": "StatusMask",
+          "lineNumber": 106
+        },
+        {
+          "caller": "none",
+          "callee": "StatusMask",
+          "lineNumber": 116
+        },
+        {
+          "caller": "offered_deadline_missed",
+          "callee": "StatusMask",
+          "lineNumber": 138
+        },
+        {
+          "caller": "requested_deadline_missed",
+          "callee": "StatusMask",
+          "lineNumber": 148
+        },
+        {
+          "caller": "offered_incompatible_qos",
+          "callee": "StatusMask",
+          "lineNumber": 158
+        },
+        {
+          "caller": "requested_incompatible_qos",
+          "callee": "StatusMask",
+          "lineNumber": 168
+        },
+        {
+          "caller": "sample_lost",
+          "callee": "StatusMask",
+          "lineNumber": 178
+        },
+        {
+          "caller": "sample_rejected",
+          "callee": "StatusMask",
+          "lineNumber": 188
+        },
+        {
+          "caller": "data_on_readers",
+          "callee": "StatusMask",
+          "lineNumber": 198
+        },
+        {
+          "caller": "data_available",
+          "callee": "StatusMask",
+          "lineNumber": 208
+        },
+        {
+          "caller": "liveliness_lost",
+          "callee": "StatusMask",
+          "lineNumber": 218
+        },
+        {
+          "caller": "liveliness_changed",
+          "callee": "StatusMask",
+          "lineNumber": 228
+        },
+        {
+          "caller": "publication_matched",
+          "callee": "StatusMask",
+          "lineNumber": 238
+        },
+        {
+          "caller": "subscription_matched",
+          "callee": "StatusMask",
+          "lineNumber": 248
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/core/status/SubscriptionMatchedStatus.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 42,
+      "nonEmptyLines": 34,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/core/Time_t.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 318,
+      "nonEmptyLines": 286,
+      "callGraph": [
+        {
+          "caller": "is_infinite",
+          "callee": "is_infinite",
+          "lineNumber": 72
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/core/Types.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 34,
+      "nonEmptyLines": 26,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/core/UserAllocatedSequence.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 103,
+      "nonEmptyLines": 87,
+      "callGraph": [
+        {
+          "caller": "resize",
+          "callee": "std::bad_alloc",
+          "lineNumber": 93
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/domain/DomainParticipant.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 1288,
+      "nonEmptyLines": 1171,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "thirdparty/fast_dds/include/fastdds/dds/domain/DomainParticipantFactory.hpp",
+      "language": "cpp",
+      "fileCategory": "code",
+      "totalLines": 501,
+      "nonEmptyLines": 431,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    }
+  ]
+}

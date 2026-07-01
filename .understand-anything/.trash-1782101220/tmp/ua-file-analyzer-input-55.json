@@ -1,0 +1,31 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "thirdparty/fast_dds/include/fastdds/rtps/common/InstanceHandle.hpp", "language": "cpp", "sizeLines": 367, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/rtps/common/Locator.hpp", "language": "cpp", "sizeLines": 529, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/rtps/common/LocatorList.hpp", "language": "cpp", "sizeLines": 484, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/rtps/common/LocatorListComparisons.hpp", "language": "cpp", "sizeLines": 62, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/rtps/common/LocatorSelector.hpp", "language": "cpp", "sizeLines": 479, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/rtps/common/LocatorSelectorEntry.hpp", "language": "cpp", "sizeLines": 152, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/rtps/common/LocatorsIterator.hpp", "language": "cpp", "sizeLines": 72, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/rtps/common/LocatorWithMask.hpp", "language": "cpp", "sizeLines": 80, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/rtps/common/MatchingInfo.hpp", "language": "cpp", "sizeLines": 82, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/rtps/common/PortParameters.hpp", "language": "cpp", "sizeLines": 164, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/rtps/common/ProductVersion_t.hpp", "language": "cpp", "sizeLines": 59, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/rtps/common/Property.hpp", "language": "cpp", "sizeLines": 363, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/rtps/common/RemoteLocators.hpp", "language": "cpp", "sizeLines": 242, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/rtps/common/SampleIdentity.hpp", "language": "cpp", "sizeLines": 199, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/rtps/common/SequenceNumber.hpp", "language": "cpp", "sizeLines": 418, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/rtps/common/SerializedPayload.hpp", "language": "cpp", "sizeLines": 158, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/rtps/common/Time_t.hpp", "language": "cpp", "sizeLines": 413, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/rtps/common/Token.hpp", "language": "cpp", "sizeLines": 196, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/rtps/common/Types.hpp", "language": "cpp", "sizeLines": 165, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/rtps/common/VendorId_t.hpp", "language": "cpp", "sizeLines": 58, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/rtps/common/WriteParams.hpp", "language": "cpp", "sizeLines": 282, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/rtps/Endpoint.hpp", "language": "cpp", "sizeLines": 136, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/rtps/flowcontrol/FlowControllerConsts.hpp", "language": "cpp", "sizeLines": 33, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/rtps/flowcontrol/FlowControllerDescriptor.hpp", "language": "cpp", "sizeLines": 77, "fileCategory": "code"},
+    {"path": "thirdparty/fast_dds/include/fastdds/rtps/flowcontrol/FlowControllerSchedulerPolicy.hpp", "language": "cpp", "sizeLines": 47, "fileCategory": "code"}
+  ],
+  "batchImportData": {}
+}

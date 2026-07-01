@@ -1,0 +1,486 @@
+{
+  "nodes": [
+    {
+      "id": "file:.clang-format",
+      "type": "file",
+      "name": ".clang-format",
+      "filePath": ".clang-format",
+      "summary": "clang-format 代码格式化配置文件，定义了 LLVM 风格的 4 空格缩进及 C++ 代码排版规则。",
+      "tags": ["configuration", "code-style", "build-system"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:.claude/CLAUDE.md",
+      "type": "document",
+      "name": "CLAUDE.md",
+      "filePath": ".claude/CLAUDE.md",
+      "summary": "项目级 Claude Code 指令文件，定义了 C++17 遗留代码维护的核心原则：内存安全、性能优化、线程安全和增量重构策略。",
+      "tags": ["documentation", "development", "maintenance"],
+      "complexity": "moderate",
+      "languageNotes": "面向 Claude Code AI 助手的项目维护指南，强调 ASan/TSan 测试和 C++17 兼容性约束。"
+    },
+    {
+      "id": "document:.claude/skills/cpp-legacy-maintain/SKILL.md",
+      "type": "document",
+      "name": "SKILL.md",
+      "filePath": ".claude/skills/cpp-legacy-maintain/SKILL.md",
+      "summary": "C++ 遗留代码维护 Skill 定义文件，提供重构前后的安全检查清单和最佳实践指导。",
+      "tags": ["documentation", "skill-definition", "maintenance"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:.understand-anything/.understandignore",
+      "type": "file",
+      "name": ".understandignore",
+      "filePath": ".understand-anything/.understandignore",
+      "summary": "Understand-Anything 工具的忽略规则配置，定义了项目分析时应排除的文件和目录模式。",
+      "tags": ["configuration", "tooling", "analysis"],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:.understand-anything/config.json",
+      "type": "config",
+      "name": "config.json",
+      "filePath": ".understand-anything/config.json",
+      "summary": "Understand-Anything 工具的输出语言配置文件。",
+      "tags": ["configuration", "tooling"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:common/dds_wrapper/dds_abstraction.h",
+      "type": "file",
+      "name": "dds_abstraction.h",
+      "filePath": "common/dds_wrapper/dds_abstraction.h",
+      "summary": "DDS 抽象层头文件，通过编译宏 USE_FASTDDS/USE_TXDDS 在 FastDDS 和 TXDDS 之间进行编译时切换，统一 DataNode、DDSTopicWriter、DDSTopicReader 类型别名。",
+      "tags": ["type-definition", "abstraction", "middleware"],
+      "complexity": "simple",
+      "languageNotes": "使用预处理宏和 namespace alias 实现编译时多态，避免运行时开销。"
+    },
+    {
+      "id": "file:common/dds_wrapper/dds_idl_wrapper.h",
+      "type": "file",
+      "name": "dds_idl_wrapper.h",
+      "filePath": "common/dds_wrapper/dds_idl_wrapper.h",
+      "summary": "DDS IDL 消息类型封装头文件，为不同 DDS 实现提供统一的 IDL 消息序列化/反序列化接口。",
+      "tags": ["type-definition", "serialization", "middleware"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:common/fastdds_wrapper/fastdds_listeners.h",
+      "type": "file",
+      "name": "fastdds_listeners.h",
+      "filePath": "common/fastdds_wrapper/fastdds_listeners.h",
+      "summary": "FastDDS 监听器封装头文件，定义了 ParticipantListener、DataWriterListener、DataReaderListener 三个模板类，将 FastDDS 原生回调转换为 std::function 回调机制。",
+      "tags": ["event-handler", "middleware", "callback"],
+      "complexity": "complex",
+      "languageNotes": "模板监听器类通过继承 FastDDS 原生 Listener 接口，将 DDS 回调桥接到用户自定义的 std::function 回调。"
+    },
+    {
+      "id": "file:common/fastdds_wrapper/fastdds_node.cc",
+      "type": "file",
+      "name": "fastdds_node.cc",
+      "filePath": "common/fastdds_wrapper/fastdds_node.cc",
+      "summary": "FastDataNode 类的实现文件，负责 FastDDS DomainParticipant 的创建与初始化、Publisher/Subscriber 的创建与 QoS 更新、Topic 注册及资源清理。",
+      "tags": ["service", "middleware", "initialization"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:common/fastdds_wrapper/fastdds_node.cc:FastDataNode",
+      "type": "class",
+      "name": "FastDataNode",
+      "filePath": "common/fastdds_wrapper/fastdds_node.cc",
+      "lineRange": [25, 433],
+      "summary": "FastDDS 数据通信节点类，封装 DomainParticipant、Publisher、Subscriber 的生命周期管理，支持多种构造方式（默认 QoS、自定义 QoS、XML 配置）和模板化的 DataWriter/DataReader 创建。",
+      "tags": ["service", "middleware", "resource-management"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:common/fastdds_wrapper/fastdds_node.h",
+      "type": "file",
+      "name": "fastdds_node.h",
+      "filePath": "common/fastdds_wrapper/fastdds_node.h",
+      "summary": "FastDataNode 类声明头文件，定义了 DDS 数据通信节点的公共接口，包括模板化的 createDataWriter/createDataReader 方法和 Publisher/Subscriber 管理接口。",
+      "tags": ["type-definition", "middleware", "interface"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:common/fastdds_wrapper/fastdds_qos_config.cc",
+      "type": "file",
+      "name": "fastdds_qos_config.cc",
+      "filePath": "common/fastdds_wrapper/fastdds_qos_config.cc",
+      "summary": "FastDDS QoS 配置构建器实现文件，包含 ParticipantQoSBuilder、DataWriterQoSBuilder、DataReaderQoSBuilder、PublisherQoSBuilder、SubscriberQoSBuilder 的 Builder 模式实现，以及默认/可靠模式的预设工厂方法。",
+      "tags": ["configuration", "builder-pattern", "middleware"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:common/fastdds_wrapper/fastdds_qos_config.h",
+      "type": "file",
+      "name": "fastdds_qos_config.h",
+      "filePath": "common/fastdds_wrapper/fastdds_qos_config.h",
+      "summary": "FastDDS QoS 配置构建器头文件，定义了 ReliabilityKind/DurabilityKind/HistoryKind 枚举和五个 Builder 类（Participant/Writer/Reader/Publisher/Subscriber），采用链式调用模式配置 DDS QoS 策略。",
+      "tags": ["type-definition", "configuration", "builder-pattern"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:common/fastdds_wrapper/fastdds_topic_reader.hpp",
+      "type": "file",
+      "name": "fastdds_topic_reader.hpp",
+      "filePath": "common/fastdds_wrapper/fastdds_topic_reader.hpp",
+      "summary": "FastDDS 主题读取器模板类，封装 DataReader 的创建、消息回调注册和资源销毁，支持有/无回调两种构造模式。",
+      "tags": ["middleware", "template", "subscriber"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:common/fastdds_wrapper/fastdds_topic_writer.hpp",
+      "type": "file",
+      "name": "fastdds_topic_writer.hpp",
+      "filePath": "common/fastdds_wrapper/fastdds_topic_writer.hpp",
+      "summary": "FastDDS 主题写入器模板类，封装 DataWriter 的创建、消息发送（writeMessage）、历史清理和确认等待功能。",
+      "tags": ["middleware", "template", "publisher"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:common/fastdds_wrapper/readme.md",
+      "type": "document",
+      "name": "readme.md",
+      "filePath": "common/fastdds_wrapper/readme.md",
+      "summary": "FastDDS 封装模块的简要说明文档。",
+      "tags": ["documentation", "middleware"],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:common/log/CMakeLists.txt",
+      "type": "document",
+      "name": "CMakeLists.txt",
+      "filePath": "common/log/CMakeLists.txt",
+      "summary": "日志模块的 CMake 构建配置文件，定义了 spdlog 依赖和自定义 rotating file sink 的编译目标。",
+      "tags": ["build-system", "configuration", "logging"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:common/log/custom_rotating_file_sink-inl.h",
+      "type": "file",
+      "name": "custom_rotating_file_sink-inl.h",
+      "filePath": "common/log/custom_rotating_file_sink-inl.h",
+      "summary": "自定义 rotating file sink 的模板实现文件，实现了基于文件大小的日志轮转、进程名和时间戳的文件命名、旧日志自动清理等功能。",
+      "tags": ["utility", "logging", "file-management"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:common/log/custom_rotating_file_sink.h",
+      "type": "file",
+      "name": "custom_rotating_file_sink.h",
+      "filePath": "common/log/custom_rotating_file_sink.h",
+      "summary": "自定义 rotating file sink 的模板类声明，继承 spdlog::sinks::base_sink，支持按文件大小轮转和自定义文件命名策略。提供 custom_rotating_logger_mt/st 工厂函数。",
+      "tags": ["type-definition", "logging", "template"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:common/txdds_wrapper/txdds_listeners.h",
+      "type": "file",
+      "name": "txdds_listeners.h",
+      "filePath": "common/txdds_wrapper/txdds_listeners.h",
+      "summary": "TXDDS 监听器封装头文件，结构与 fastdds_listeners.h 对齐，将 BaoSky TXDDS 原生回调桥接到 std::function 回调机制，支持 Participant/Writer/Reader 发现和数据到达事件。",
+      "tags": ["event-handler", "middleware", "callback"],
+      "complexity": "complex",
+      "languageNotes": "与 fastdds_listeners.h 保持 API 对齐，通过不同的底层 DDS 实现提供统一的监听器接口。"
+    },
+    {
+      "id": "file:common/txdds_wrapper/txdds_node.cc",
+      "type": "file",
+      "name": "txdds_node.cc",
+      "filePath": "common/txdds_wrapper/txdds_node.cc",
+      "summary": "TXDDSNode 类的实现文件，负责 BaoSky TXDDS DomainParticipant 的创建与初始化、Publisher/Subscriber 管理、Topic 注册及资源清理。结构与 fastdds_node.cc 对齐。",
+      "tags": ["service", "middleware", "initialization"],
+      "complexity": "complex"
+    },
+    {
+      "id": "class:common/txdds_wrapper/txdds_node.cc:TXDDSNode",
+      "type": "class",
+      "name": "TXDDSNode",
+      "filePath": "common/txdds_wrapper/txdds_node.cc",
+      "lineRange": [16, 312],
+      "summary": "TXDDS 数据通信节点类，封装 BaoSky DDS 的 DomainParticipant、Publisher、Subscriber 生命周期管理，与 FastDataNode 保持对称的接口设计。",
+      "tags": ["service", "middleware", "resource-management"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:common/txdds_wrapper/txdds_node.h",
+      "type": "file",
+      "name": "txdds_node.h",
+      "filePath": "common/txdds_wrapper/txdds_node.h",
+      "summary": "TXDDSNode 类声明头文件，定义了基于 BaoSky TXDDS 的数据通信节点公共接口，与 fastdds_node.h 保持对称的 API 设计。",
+      "tags": ["type-definition", "middleware", "interface"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:common/txdds_wrapper/txdds_qos_config.cc",
+      "type": "file",
+      "name": "txdds_qos_config.cc",
+      "filePath": "common/txdds_wrapper/txdds_qos_config.cc",
+      "summary": "TXDDS QoS 配置构建器实现文件，包含五个 Builder 类的实现和 toDuration/makeIPv4Locator 工具函数。额外支持 UDP 传输配置和 Locator 设置。",
+      "tags": ["configuration", "builder-pattern", "middleware"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:common/txdds_wrapper/txdds_qos_config.h",
+      "type": "file",
+      "name": "txdds_qos_config.h",
+      "filePath": "common/txdds_wrapper/txdds_qos_config.h",
+      "summary": "TXDDS QoS 配置构建器头文件，定义了与 fastdds_qos_config.h 对齐的 Builder 类体系，支持 BaoSky TXDDS 的 QoS 策略配置。",
+      "tags": ["type-definition", "configuration", "builder-pattern"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:common/txdds_wrapper/txdds_topic_reader.hpp",
+      "type": "file",
+      "name": "txdds_topic_reader.hpp",
+      "filePath": "common/txdds_wrapper/txdds_topic_reader.hpp",
+      "summary": "TXDDS 主题读取器模板类，封装 BaoSky DataReader 的创建和消息回调注册，与 FastDDSTopicReader 保持对称接口。",
+      "tags": ["middleware", "template", "subscriber"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:common/txdds_wrapper/txdds_topic_writer.hpp",
+      "type": "file",
+      "name": "txdds_topic_writer.hpp",
+      "filePath": "common/txdds_wrapper/txdds_topic_writer.hpp",
+      "summary": "TXDDS 主题写入器模板类，封装 BaoSky DataWriter 的创建和消息发送功能，与 FastDDSTopicWriter 保持对称接口。",
+      "tags": ["middleware", "template", "publisher"],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:common/fastdds_wrapper/fastdds_node.cc",
+      "target": "file:common/fastdds_wrapper/fastdds_listeners.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:common/fastdds_wrapper/fastdds_node.cc",
+      "target": "file:common/fastdds_wrapper/fastdds_node.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:common/fastdds_wrapper/fastdds_node.cc",
+      "target": "file:common/fastdds_wrapper/fastdds_qos_config.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:common/fastdds_wrapper/fastdds_node.cc",
+      "target": "file:common/fastdds_wrapper/fastdds_topic_reader.hpp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:common/fastdds_wrapper/fastdds_node.cc",
+      "target": "file:common/fastdds_wrapper/fastdds_topic_writer.hpp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:common/fastdds_wrapper/fastdds_qos_config.cc",
+      "target": "file:common/fastdds_wrapper/fastdds_qos_config.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:common/txdds_wrapper/txdds_node.cc",
+      "target": "file:common/txdds_wrapper/txdds_listeners.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:common/txdds_wrapper/txdds_node.cc",
+      "target": "file:common/txdds_wrapper/txdds_node.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:common/txdds_wrapper/txdds_node.cc",
+      "target": "file:common/txdds_wrapper/txdds_qos_config.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:common/txdds_wrapper/txdds_node.cc",
+      "target": "file:common/txdds_wrapper/txdds_topic_reader.hpp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:common/txdds_wrapper/txdds_node.cc",
+      "target": "file:common/txdds_wrapper/txdds_topic_writer.hpp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:common/txdds_wrapper/txdds_qos_config.cc",
+      "target": "file:common/txdds_wrapper/txdds_qos_config.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:common/fastdds_wrapper/fastdds_node.cc",
+      "target": "class:common/fastdds_wrapper/fastdds_node.cc:FastDataNode",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/txdds_wrapper/txdds_node.cc",
+      "target": "class:common/txdds_wrapper/txdds_node.cc:TXDDSNode",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:common/fastdds_wrapper/fastdds_node.h",
+      "target": "file:common/fastdds_wrapper/fastdds_topic_reader.hpp",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:common/fastdds_wrapper/fastdds_node.h",
+      "target": "file:common/fastdds_wrapper/fastdds_topic_writer.hpp",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:common/fastdds_wrapper/fastdds_node.h",
+      "target": "file:common/fastdds_wrapper/fastdds_qos_config.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:common/txdds_wrapper/txdds_node.h",
+      "target": "file:common/txdds_wrapper/txdds_topic_reader.hpp",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:common/txdds_wrapper/txdds_node.h",
+      "target": "file:common/txdds_wrapper/txdds_topic_writer.hpp",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:common/txdds_wrapper/txdds_node.h",
+      "target": "file:common/txdds_wrapper/txdds_qos_config.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:common/fastdds_wrapper/fastdds_listeners.h",
+      "target": "file:common/fastdds_wrapper/fastdds_node.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:common/txdds_wrapper/txdds_listeners.h",
+      "target": "file:common/txdds_wrapper/txdds_node.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:common/dds_wrapper/dds_abstraction.h",
+      "target": "file:common/fastdds_wrapper/fastdds_node.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:common/dds_wrapper/dds_abstraction.h",
+      "target": "file:common/fastdds_wrapper/fastdds_qos_config.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:common/dds_wrapper/dds_abstraction.h",
+      "target": "file:common/fastdds_wrapper/fastdds_listeners.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:common/dds_wrapper/dds_abstraction.h",
+      "target": "file:common/txdds_wrapper/txdds_node.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:common/dds_wrapper/dds_abstraction.h",
+      "target": "file:common/txdds_wrapper/txdds_qos_config.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:common/dds_wrapper/dds_abstraction.h",
+      "target": "file:common/txdds_wrapper/txdds_listeners.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:common/fastdds_wrapper/fastdds_node.h",
+      "target": "file:common/fastdds_wrapper/fastdds_listeners.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:common/txdds_wrapper/txdds_node.h",
+      "target": "file:common/txdds_wrapper/txdds_listeners.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:common/log/CMakeLists.txt",
+      "target": "file:common/log/custom_rotating_file_sink.h",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:common/log/CMakeLists.txt",
+      "target": "file:common/log/custom_rotating_file_sink-inl.h",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:common/log/custom_rotating_file_sink.h",
+      "target": "file:common/log/custom_rotating_file_sink-inl.h",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    }
+  ]
+}

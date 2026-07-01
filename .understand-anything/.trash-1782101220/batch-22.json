@@ -1,0 +1,81 @@
+{
+  "nodes": [
+    {
+      "id": "file:core/ondemand/.gensrctx/FCV.h",
+      "type": "file",
+      "name": "FCV.h",
+      "filePath": "core/ondemand/.gensrctx/FCV.h",
+      "summary": "由 fastddsgen 自动生成的 IDL 类型头文件，声明了 FCVType 类（流量控制阀数据类型），包含 flow、temp、press、isopen、openvalue、healthlevel 六个成员及其 getter/setter 方法。",
+      "tags": ["type-definition", "auto-generated", "data-model", "dds"],
+      "complexity": "moderate",
+      "languageNotes": "使用 eProsima fastddsgen 自动生成，包含 DLL 导出宏定义和 BaoSky::Cdr 前向声明。"
+    },
+    {
+      "id": "class:core/ondemand/.gensrctx/FCV.h:FCVType",
+      "type": "class",
+      "name": "FCVType",
+      "filePath": "core/ondemand/.gensrctx/FCV.h",
+      "lineRange": [72, 256],
+      "summary": "DDS IDL 定义的流量控制阀数据结构，包含流量(flow)、温度(temp)、压力(press)、开关状态(isopen)、开度值(openvalue)和健康等级(healthlevel) 六个字段，提供完整的拷贝/移动语义和比较运算符。",
+      "tags": ["data-model", "auto-generated", "dds", "industrial-control"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:core/ondemand/.gensrctx/FCV.cxx",
+      "type": "file",
+      "name": "FCV.cxx",
+      "filePath": "core/ondemand/.gensrctx/FCV.cxx",
+      "summary": "FCVType 类的实现文件，包含构造函数、拷贝/移动赋值运算符、相等比较运算符以及六个字段的 getter/setter 方法。文件末尾 include 了 FCVCdrAux.ipp 以引入 CDR 序列化辅助函数。",
+      "tags": ["auto-generated", "data-model", "dds", "implementation"],
+      "complexity": "moderate",
+      "languageNotes": "由 fastddsgen 自动生成，move 构造函数的实现与 copy 构造函数相同（未使用 std::move），这是自动生成代码的典型特征。"
+    },
+    {
+      "id": "file:core/ondemand/.gensrctx/FCVCdrAux.ipp",
+      "type": "file",
+      "name": "FCVCdrAux.ipp",
+      "filePath": "core/ondemand/.gensrctx/FCVCdrAux.ipp",
+      "summary": "FCVType 的 CDR 序列化/反序列化辅助函数模板特化文件，包含序列化大小计算、序列化和反序列化三个模板特化函数，以及空的 SerializeKey 实现。通过 #include 方式被 FCV.cxx 包含。",
+      "tags": ["auto-generated", "serialization", "dds", "cdr"],
+      "complexity": "moderate",
+      "languageNotes": "使用 BaoSky::Cdr 命名空间下的 CDR 序列化框架，支持 XCDRv2 编码的 DELIMIT_CDR2 和 PLAIN_CDR 两种算法。"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:core/ondemand/.gensrctx/FCV.cxx",
+      "target": "file:core/ondemand/.gensrctx/FCV.h",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/FCV.cxx",
+      "target": "file:core/ondemand/.gensrctx/FCVCdrAux.ipp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/FCV.h",
+      "target": "class:core/ondemand/.gensrctx/FCV.h:FCVType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/FCV.cxx",
+      "target": "class:core/ondemand/.gensrctx/FCV.h:FCVType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:core/ondemand/.gensrctx/FCVCdrAux.ipp",
+      "target": "class:core/ondemand/.gensrctx/FCV.h:FCVType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    }
+  ]
+}

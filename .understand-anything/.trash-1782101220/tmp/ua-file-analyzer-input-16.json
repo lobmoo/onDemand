@@ -1,0 +1,13 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "core/ondemand/.gensrctx/dsf_define_model.cxx", "language": "cpp", "sizeLines": 1005, "fileCategory": "code"},
+    {"path": "core/ondemand/.gensrctx/dsf_define_model.h", "language": "c", "sizeLines": 763, "fileCategory": "code"},
+    {"path": "core/ondemand/.gensrctx/dsf_define_modelCdrAux.ipp", "language": "ipp", "sizeLines": 490, "fileCategory": "code"}
+  ],
+  "batchImportData": {
+    "core/ondemand/.gensrctx/dsf_define_model.cxx": ["core/ondemand/.gensrctx/dsf_define_model.h", "core/ondemand/.gensrctx/dsf_define_modelCdrAux.ipp"],
+    "core/ondemand/.gensrctx/dsf_define_model.h": [],
+    "core/ondemand/.gensrctx/dsf_define_modelCdrAux.ipp": []
+  }
+}

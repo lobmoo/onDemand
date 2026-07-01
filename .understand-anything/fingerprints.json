@@ -1,0 +1,1634 @@
+{
+  "version": "1.0.0",
+  "gitCommitHash": "96875dbcf86ac99ad8625fc00bbd687e9b8012c5",
+  "generatedAt": "2026-06-22T04:06:40.475Z",
+  "files": {
+    "core/main.cc": {
+      "filePath": "core/main.cc",
+      "contentHash": "f460c37ae4fe409dab062047e08b480f12596e70d3742ec9d0872bac5e516de2",
+      "functions": [
+        {
+          "name": "getConfiguredCount",
+          "params": [],
+          "returnType": "uint32_t",
+          "exported": true,
+          "lineCount": 16
+        },
+        {
+          "name": "processBucketSample",
+          "params": [
+            "bucket_id",
+            "ts"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 45
+        },
+        {
+          "name": "ensureBucketWorkerStarted",
+          "params": [],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 37
+        },
+        {
+          "name": "dataCallback",
+          "params": [
+            "vars"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 46
+        },
+        {
+          "name": "publish",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 63
+        },
+        {
+          "name": "subscribe",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 45
+        },
+        {
+          "name": "subscribe2",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 26
+        },
+        {
+          "name": "main",
+          "params": [
+            "argc",
+            "argv"
+          ],
+          "returnType": "int",
+          "exported": true,
+          "lineCount": 25
+        }
+      ],
+      "classes": [
+        {
+          "name": "BucketStats",
+          "methods": [],
+          "properties": [
+            "last_ts_ms",
+            "recv_count",
+            "lost_count",
+            "init_packet_count",
+            "has_baseline"
+          ],
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "OwnedBatchItem",
+          "methods": [],
+          "properties": [
+            "var_name",
+            "type_name",
+            "type_version",
+            "data",
+            "data_size",
+            "timestamp_ms",
+            "blobType"
+          ],
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "BatchEvent",
+          "methods": [],
+          "properties": [
+            "node_name",
+            "items"
+          ],
+          "exported": true,
+          "lineCount": 4
+        }
+      ],
+      "imports": [
+        {
+          "source": "bits/stdint-uintn.h",
+          "specifiers": [
+            "bits/stdint-uintn.h"
+          ]
+        },
+        {
+          "source": "chrono",
+          "specifiers": [
+            "chrono"
+          ]
+        },
+        {
+          "source": "condition_variable",
+          "specifiers": [
+            "condition_variable"
+          ]
+        },
+        {
+          "source": "cstdlib",
+          "specifiers": [
+            "cstdlib"
+          ]
+        },
+        {
+          "source": "deque",
+          "specifiers": [
+            "deque"
+          ]
+        },
+        {
+          "source": "filesystem",
+          "specifiers": [
+            "filesystem"
+          ]
+        },
+        {
+          "source": "iomanip",
+          "specifiers": [
+            "iomanip"
+          ]
+        },
+        {
+          "source": "iostream",
+          "specifiers": [
+            "iostream"
+          ]
+        },
+        {
+          "source": "mutex",
+          "specifiers": [
+            "mutex"
+          ]
+        },
+        {
+          "source": "string",
+          "specifiers": [
+            "string"
+          ]
+        },
+        {
+          "source": "string_view",
+          "specifiers": [
+            "string_view"
+          ]
+        },
+        {
+          "source": "thread",
+          "specifiers": [
+            "thread"
+          ]
+        },
+        {
+          "source": "unordered_map",
+          "specifiers": [
+            "unordered_map"
+          ]
+        },
+        {
+          "source": "vector",
+          "specifiers": [
+            "vector"
+          ]
+        },
+        {
+          "source": "unistd.h",
+          "specifiers": [
+            "unistd.h"
+          ]
+        },
+        {
+          "source": "atomic",
+          "specifiers": [
+            "atomic"
+          ]
+        },
+        {
+          "source": "charconv",
+          "specifiers": [
+            "charconv"
+          ]
+        },
+        {
+          "source": "cstring",
+          "specifiers": [
+            "cstring"
+          ]
+        },
+        {
+          "source": "pthread.h",
+          "specifiers": [
+            "pthread.h"
+          ]
+        },
+        {
+          "source": "log/logger.h",
+          "specifiers": [
+            "log/logger.h"
+          ]
+        },
+        {
+          "source": "ondemand/on_demand_pub.h",
+          "specifiers": [
+            "ondemand/on_demand_pub.h"
+          ]
+        },
+        {
+          "source": "ondemand/on_demand_sub.h",
+          "specifiers": [
+            "ondemand/on_demand_sub.h"
+          ]
+        }
+      ],
+      "exports": [
+        "getConfiguredCount",
+        "BucketStats",
+        "OwnedBatchItem",
+        "BatchEvent",
+        "dataCallback",
+        "publish",
+        "subscribe",
+        "subscribe2",
+        "main"
+      ],
+      "totalLines": 385,
+      "hasStructuralAnalysis": true
+    },
+    "core/ondemand/on_demand_pub.cc": {
+      "filePath": "core/ondemand/on_demand_pub.cc",
+      "contentHash": "175a2aacc8be5a53d67b1200b1463742683be79f69fc92f4dc2e8ecd0dba61c5",
+      "functions": [
+        {
+          "name": "OnDemandPub",
+          "params": [],
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "setFreqChangeCallback",
+          "params": [
+            "cb"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "~OnDemandPub",
+          "params": [],
+          "exported": true,
+          "lineCount": 1
+        },
+        {
+          "name": "init",
+          "params": [
+            "nodeName"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 51
+        },
+        {
+          "name": "start",
+          "params": [],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 21
+        },
+        {
+          "name": "createTableDefineWriter",
+          "params": [],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 25
+        },
+        {
+          "name": "createSubTableRegisterReader",
+          "params": [
+            "processFunc"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 29
+        },
+        {
+          "name": "createDataTransferWriter",
+          "params": [],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 55
+        },
+        {
+          "name": "tableDefinePublish",
+          "params": [
+            "pubTableDefine"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "onReceiveRegisterCb",
+          "params": [
+            "data"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "processReceiveRegister",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 81
+        },
+        {
+          "name": "processPublishTaskScheduler",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 118
+        },
+        {
+          "name": "publishGroupData",
+          "params": [
+            "bucketIndex",
+            "freqMs"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 115
+        },
+        {
+          "name": "cancelAllPublishTimers",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 16
+        },
+        {
+          "name": "processFreqChangeCallback",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 34
+        },
+        {
+          "name": "createVars",
+          "params": [
+            "VarDefines"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 116
+        },
+        {
+          "name": "deleteVars",
+          "params": [
+            "varNames"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 64
+        },
+        {
+          "name": "setVarData",
+          "params": [
+            "varName",
+            "data",
+            "size"
+          ],
+          "returnType": "WriteResult",
+          "exported": true,
+          "lineCount": 27
+        },
+        {
+          "name": "getVarId",
+          "params": [
+            "varName"
+          ],
+          "returnType": "uint32_t",
+          "exported": true,
+          "lineCount": 11
+        },
+        {
+          "name": "getVarIds",
+          "params": [
+            "names",
+            "ids",
+            "count"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 17
+        },
+        {
+          "name": "setVarData",
+          "params": [
+            "varId",
+            "data",
+            "size"
+          ],
+          "returnType": "WriteResult",
+          "exported": true,
+          "lineCount": 13
+        },
+        {
+          "name": "setVarDataBatch",
+          "params": [
+            "items",
+            "count"
+          ],
+          "returnType": "WriteResult",
+          "exported": true,
+          "lineCount": 57
+        },
+        {
+          "name": "getOrAssignNodeBit",
+          "params": [
+            "nodeHash"
+          ],
+          "returnType": "uint8_t",
+          "exported": true,
+          "lineCount": 17
+        },
+        {
+          "name": "recalcCurrentFreq",
+          "params": [
+            "meta"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 10
+        },
+        {
+          "name": "handleSubscribe",
+          "params": [
+            "nodeName",
+            "varFreqs"
+          ],
+          "returnType": "uint32_t",
+          "exported": true,
+          "lineCount": 180
+        },
+        {
+          "name": "handleUnsubscribe",
+          "params": [
+            "nodeName",
+            "varFreqs"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 73
+        },
+        {
+          "name": "onParticipantDiscovery",
+          "params": [
+            "info"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "cleanupParticipantSubscriptions",
+          "params": [
+            "participantName"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 35
+        },
+        {
+          "name": "forceUnsubscribeNode",
+          "params": [
+            "nodeMask"
+          ],
+          "returnType": "std::vector<std::pair<std::string, uint32_t>>",
+          "exported": true,
+          "lineCount": 35
+        },
+        {
+          "name": "stop",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 78
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "on_demand_pub.h",
+          "specifiers": [
+            "on_demand_pub.h"
+          ]
+        },
+        {
+          "source": "algorithm",
+          "specifiers": [
+            "algorithm"
+          ]
+        },
+        {
+          "source": "charconv",
+          "specifiers": [
+            "charconv"
+          ]
+        },
+        {
+          "source": "roaring/roaring64map.hh",
+          "specifiers": [
+            "roaring/roaring64map.hh"
+          ]
+        }
+      ],
+      "exports": [
+        "OnDemandPub",
+        "setFreqChangeCallback",
+        "~OnDemandPub",
+        "init",
+        "start",
+        "createTableDefineWriter",
+        "createSubTableRegisterReader",
+        "createDataTransferWriter",
+        "tableDefinePublish",
+        "onReceiveRegisterCb",
+        "processReceiveRegister",
+        "processPublishTaskScheduler",
+        "publishGroupData",
+        "cancelAllPublishTimers",
+        "processFreqChangeCallback",
+        "createVars",
+        "deleteVars",
+        "setVarData",
+        "getVarId",
+        "getVarIds",
+        "setVarData",
+        "setVarDataBatch",
+        "getOrAssignNodeBit",
+        "recalcCurrentFreq",
+        "handleSubscribe",
+        "handleUnsubscribe",
+        "onParticipantDiscovery",
+        "cleanupParticipantSubscriptions",
+        "forceUnsubscribeNode",
+        "stop"
+      ],
+      "totalLines": 1479,
+      "hasStructuralAnalysis": true
+    },
+    "core/ondemand/on_demand_pub.h": {
+      "filePath": "core/ondemand/on_demand_pub.h",
+      "contentHash": "a92a261fbbc77b37508ef9969bae649e2c18caed5aaffb9bcdbb8a6c35a6dfe8",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 391,
+      "hasStructuralAnalysis": true
+    },
+    "core/ondemand/on_demand_sub.cc": {
+      "filePath": "core/ondemand/on_demand_sub.cc",
+      "contentHash": "4afcb226eedead6ad165e9dce6bb32d27aa663f6f7c7a24e64d4deee6910bed6",
+      "functions": [
+        {
+          "name": "OnDemandSub",
+          "params": [],
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "~OnDemandSub",
+          "params": [],
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "init",
+          "params": [
+            "nodeName"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 45
+        },
+        {
+          "name": "createTableDefineReader",
+          "params": [
+            "processFunc"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 29
+        },
+        {
+          "name": "createSubTableRegisterWriter",
+          "params": [],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 25
+        },
+        {
+          "name": "createDataTransferReader",
+          "params": [
+            "processFunc",
+            "targetBucketIds"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 58
+        },
+        {
+          "name": "onReceiveTableDefineCb",
+          "params": [
+            "topicName",
+            "data"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "onReceiveDataTransferCb",
+          "params": [
+            "topicName",
+            "data"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 18
+        },
+        {
+          "name": "processDataTransfer",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 85
+        },
+        {
+          "name": "processTableDefine",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 156
+        },
+        {
+          "name": "start",
+          "params": [],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 31
+        },
+        {
+          "name": "setPartition",
+          "params": [
+            "name",
+            "partitionName"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 18
+        },
+        {
+          "name": "subscribe",
+          "params": [
+            "node_name",
+            "items",
+            "callback"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 79
+        },
+        {
+          "name": "unsubscribe",
+          "params": [
+            "node_name",
+            "items"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 60
+        },
+        {
+          "name": "processCallbackScheduler",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 149
+        },
+        {
+          "name": "callbackGroupData",
+          "params": [
+            "bucketIndex",
+            "freqMs"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 127
+        },
+        {
+          "name": "cancelAllCallbackTimers",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 14
+        },
+        {
+          "name": "getAvailableVars",
+          "params": [],
+          "returnType": "std::unordered_map<std::string, std::vector<std::string>>",
+          "exported": true,
+          "lineCount": 15
+        },
+        {
+          "name": "onParticipantDiscovery",
+          "params": [
+            "info"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "cleanupParticipantPublish",
+          "params": [
+            "pubNodeName"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 38
+        },
+        {
+          "name": "varReadSync",
+          "params": [
+            "node_name",
+            "var_name",
+            "out"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 71
+        },
+        {
+          "name": "stop",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 83
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "functional",
+          "specifiers": [
+            "functional"
+          ]
+        },
+        {
+          "source": "mutex",
+          "specifiers": [
+            "mutex"
+          ]
+        },
+        {
+          "source": "on_demand_sub.h",
+          "specifiers": [
+            "on_demand_sub.h"
+          ]
+        },
+        {
+          "source": "concurrentqueue.h",
+          "specifiers": [
+            "concurrentqueue.h"
+          ]
+        },
+        {
+          "source": "on_demand_common.h",
+          "specifiers": [
+            "on_demand_common.h"
+          ]
+        },
+        {
+          "source": "roaring/roaring64map.hh",
+          "specifiers": [
+            "roaring/roaring64map.hh"
+          ]
+        },
+        {
+          "source": "cstring",
+          "specifiers": [
+            "cstring"
+          ]
+        },
+        {
+          "source": "shared_mutex",
+          "specifiers": [
+            "shared_mutex"
+          ]
+        },
+        {
+          "source": "chrono",
+          "specifiers": [
+            "chrono"
+          ]
+        }
+      ],
+      "exports": [
+        "OnDemandSub",
+        "~OnDemandSub",
+        "init",
+        "createTableDefineReader",
+        "createSubTableRegisterWriter",
+        "createDataTransferReader",
+        "onReceiveTableDefineCb",
+        "onReceiveDataTransferCb",
+        "processDataTransfer",
+        "processTableDefine",
+        "start",
+        "setPartition",
+        "subscribe",
+        "unsubscribe",
+        "processCallbackScheduler",
+        "callbackGroupData",
+        "cancelAllCallbackTimers",
+        "getAvailableVars",
+        "onParticipantDiscovery",
+        "cleanupParticipantPublish",
+        "varReadSync",
+        "stop"
+      ],
+      "totalLines": 1258,
+      "hasStructuralAnalysis": true
+    },
+    "core/ondemand/on_demand_sub.h": {
+      "filePath": "core/ondemand/on_demand_sub.h",
+      "contentHash": "90a2ec45d026563ce163553b8b1ca6009c91088eb6844b3b8517b51ead156684",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 366,
+      "hasStructuralAnalysis": true
+    },
+    "core/ondemand/on_demand_common.h": {
+      "filePath": "core/ondemand/on_demand_common.h",
+      "contentHash": "7231b4c099ea647e7e1cecfd21214bf5294ec0654a5596d337218c2e5dd24f18",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 445,
+      "hasStructuralAnalysis": true
+    },
+    "core/ondemand/variable_store.h": {
+      "filePath": "core/ondemand/variable_store.h",
+      "contentHash": "cb0aad72e21f4a729cefe3cbf6d844a65ddd0f5d118520037bc9e5b9a8aebaf4",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 744,
+      "hasStructuralAnalysis": true
+    },
+    "core/ondemand/on_demand_listener.h": {
+      "filePath": "core/ondemand/on_demand_listener.h",
+      "contentHash": "119be7bc4b641e994dd327120b220ab197d91107a64d856f8ea7765f1accb190",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 141,
+      "hasStructuralAnalysis": true
+    },
+    "common/timer_wheel/timer_wheel.h": {
+      "filePath": "common/timer_wheel/timer_wheel.h",
+      "contentHash": "cfa2dc9d7e170493999a6f90c8e35a6ec52a5921c1ff2975d146ddc4acda3213",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 536,
+      "hasStructuralAnalysis": true
+    },
+    "common/timer_wheel/timer_scheduler.h": {
+      "filePath": "common/timer_wheel/timer_scheduler.h",
+      "contentHash": "84ab239f6de00bc5df1dc01922c5f173742913b582a889216f9d61439ea7d892",
+      "functions": [
+        {
+          "name": "TimerScheduler",
+          "params": [],
+          "exported": true,
+          "lineCount": 1
+        },
+        {
+          "name": "TimerScheduler",
+          "params": [
+            "tick_ms",
+            "thread_pool_size"
+          ],
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "~TimerScheduler",
+          "params": [],
+          "exported": true,
+          "lineCount": 17
+        },
+        {
+          "name": "Schedule",
+          "params": [
+            "callback",
+            "delay_ticks"
+          ],
+          "returnType": "std::shared_ptr<TimerEventInterface>",
+          "exported": true,
+          "lineCount": 17
+        },
+        {
+          "name": "ScheduleRecurring",
+          "params": [
+            "callback",
+            "delay_ticks",
+            "interval_ticks"
+          ],
+          "returnType": "std::shared_ptr<TimerEventInterface>",
+          "exported": true,
+          "lineCount": 19
+        },
+        {
+          "name": "Cancel",
+          "params": [
+            "timer"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 13
+        },
+        {
+          "name": "Pause",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "Resume",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "Stop",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 15
+        },
+        {
+          "name": "Post",
+          "params": [
+            "callback"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 10
+        },
+        {
+          "name": "RescheduleRecurring",
+          "params": [
+            "timer",
+            "delay_ticks"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "RescheduleRecurringNoLock",
+          "params": [
+            "timer",
+            "delay_ticks"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "TimerLoop",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 38
+        },
+        {
+          "name": "CallbackTimer::CallbackTimer",
+          "params": [
+            "callback",
+            "scheduler"
+          ],
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "CallbackTimer::execute",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 15
+        },
+        {
+          "name": "CallbackTimer::cancel",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "RecurringCallbackTimer::RecurringCallbackTimer",
+          "params": [
+            "callback",
+            "scheduler",
+            "interval_ticks"
+          ],
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "RecurringCallbackTimer::execute",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 17
+        },
+        {
+          "name": "RecurringCallbackTimer::cancel",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "RemoveFromActive",
+          "params": [
+            "timer"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        }
+      ],
+      "classes": [
+        {
+          "name": "TimerScheduler",
+          "methods": [
+            "Schedule",
+            "ScheduleRecurring",
+            "Cancel",
+            "Pause",
+            "Resume",
+            "Stop",
+            "Post",
+            "RemoveFromActive",
+            "RescheduleRecurring",
+            "RescheduleRecurringNoLock",
+            "TimerLoop",
+            "TimerScheduler",
+            "~TimerScheduler",
+            "CallbackTimer::CallbackTimer",
+            "CallbackTimer::execute",
+            "CallbackTimer::cancel",
+            "RecurringCallbackTimer::RecurringCallbackTimer",
+            "RecurringCallbackTimer::execute",
+            "RecurringCallbackTimer::cancel"
+          ],
+          "properties": [
+            "thread_pool_",
+            "timer_wheel_",
+            "should_stop_",
+            "is_paused_",
+            "timer_thread_",
+            "mutex_",
+            "tick_ms_",
+            "active_timers_",
+            "pendingTasks_",
+            "direct_execute_"
+          ],
+          "exported": true,
+          "lineCount": 103
+        }
+      ],
+      "imports": [
+        {
+          "source": "algorithm",
+          "specifiers": [
+            "algorithm"
+          ]
+        },
+        {
+          "source": "atomic",
+          "specifiers": [
+            "atomic"
+          ]
+        },
+        {
+          "source": "chrono",
+          "specifiers": [
+            "chrono"
+          ]
+        },
+        {
+          "source": "functional",
+          "specifiers": [
+            "functional"
+          ]
+        },
+        {
+          "source": "iostream",
+          "specifiers": [
+            "iostream"
+          ]
+        },
+        {
+          "source": "memory",
+          "specifiers": [
+            "memory"
+          ]
+        },
+        {
+          "source": "mutex",
+          "specifiers": [
+            "mutex"
+          ]
+        },
+        {
+          "source": "thread",
+          "specifiers": [
+            "thread"
+          ]
+        },
+        {
+          "source": "vector",
+          "specifiers": [
+            "vector"
+          ]
+        },
+        {
+          "source": "unordered_set",
+          "specifiers": [
+            "unordered_set"
+          ]
+        },
+        {
+          "source": "thread_pool.h",
+          "specifiers": [
+            "thread_pool.h"
+          ]
+        },
+        {
+          "source": "timer_wheel.h",
+          "specifiers": [
+            "timer_wheel.h"
+          ]
+        }
+      ],
+      "exports": [
+        "Schedule",
+        "ScheduleRecurring",
+        "Cancel",
+        "Pause",
+        "Resume",
+        "Stop",
+        "Post",
+        "TimerScheduler",
+        "TimerScheduler",
+        "~TimerScheduler",
+        "Schedule",
+        "ScheduleRecurring",
+        "Cancel",
+        "Pause",
+        "Resume",
+        "Stop",
+        "Post",
+        "RescheduleRecurring",
+        "RescheduleRecurringNoLock",
+        "TimerLoop",
+        "CallbackTimer::CallbackTimer",
+        "CallbackTimer::execute",
+        "CallbackTimer::cancel",
+        "RecurringCallbackTimer::RecurringCallbackTimer",
+        "RecurringCallbackTimer::execute",
+        "RecurringCallbackTimer::cancel",
+        "RemoveFromActive"
+      ],
+      "totalLines": 666,
+      "hasStructuralAnalysis": true
+    },
+    "common/timer_wheel/thread_pool.h": {
+      "filePath": "common/timer_wheel/thread_pool.h",
+      "contentHash": "07d8fd60574b7d3d6d86c8f5b1fa503efd273187462c184b7892785fe2b3ee7d",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 141,
+      "hasStructuralAnalysis": true
+    },
+    "common/fastdds_wrapper/fastdds_node.cc": {
+      "filePath": "common/fastdds_wrapper/fastdds_node.cc",
+      "contentHash": "eff776e1d5daadd5126430117694d7bbb2c2a3796ccf99d9700618c787306101",
+      "functions": [
+        {
+          "name": "FastDataNode",
+          "params": [
+            "domainId",
+            "participant_name",
+            "listener"
+          ],
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "FastDataNode",
+          "params": [
+            "domainId",
+            "participant_name",
+            "participant_qos",
+            "listener"
+          ],
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "FastDataNode",
+          "params": [
+            "domainId",
+            "participant_name",
+            "config",
+            "listener"
+          ],
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "FastDataNode",
+          "params": [
+            "qosXmlConfig",
+            "listener"
+          ],
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "~FastDataNode",
+          "params": [],
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "initDomainParticipant",
+          "params": [
+            "participant_name",
+            "participant_qos",
+            "publisher_qos",
+            "subscriber_qos",
+            "listener"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 54
+        },
+        {
+          "name": "initDomainParticipantForXml",
+          "params": [
+            "qosXmlConfig",
+            "listener"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 46
+        },
+        {
+          "name": "addTopicDataTypeCreator",
+          "params": [
+            "topicName",
+            "creator"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "createPublisher",
+          "params": [
+            "name",
+            "qos"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 25
+        },
+        {
+          "name": "createSubscriber",
+          "params": [
+            "name",
+            "qos"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 25
+        },
+        {
+          "name": "updatePublisherQos",
+          "params": [
+            "name",
+            "qos"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 47
+        },
+        {
+          "name": "updateSubscriberQos",
+          "params": [
+            "name",
+            "qos"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 47
+        },
+        {
+          "name": "createTopic",
+          "params": [
+            "topicName"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 35
+        },
+        {
+          "name": "isTopicTypeRegistered",
+          "params": [
+            "topicName"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "cleanup",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 37
+        },
+        {
+          "name": "destroyParticipantResources",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 25
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "fastdds_node.h",
+          "specifiers": [
+            "fastdds_node.h"
+          ]
+        },
+        {
+          "source": "fastdds/dds/domain/DomainParticipantFactory.hpp",
+          "specifiers": [
+            "fastdds/dds/domain/DomainParticipantFactory.hpp"
+          ]
+        }
+      ],
+      "exports": [
+        "FastDataNode",
+        "FastDataNode",
+        "FastDataNode",
+        "FastDataNode",
+        "~FastDataNode",
+        "initDomainParticipant",
+        "initDomainParticipantForXml",
+        "addTopicDataTypeCreator",
+        "createPublisher",
+        "createSubscriber",
+        "updatePublisherQos",
+        "updateSubscriberQos",
+        "createTopic",
+        "isTopicTypeRegistered",
+        "cleanup",
+        "destroyParticipantResources"
+      ],
+      "totalLines": 435,
+      "hasStructuralAnalysis": true
+    },
+    "common/fastdds_wrapper/fastdds_node.h": {
+      "filePath": "common/fastdds_wrapper/fastdds_node.h",
+      "contentHash": "f82797c31492419b1393d56536202bb4e840150132a3ce8d22baf5e6e1ab7bcb",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 339,
+      "hasStructuralAnalysis": true
+    },
+    "common/log/logger.cc": {
+      "filePath": "common/log/logger.cc",
+      "contentHash": "e70c62ffc7a37b40af6ee41bcc1febdd16e04debb315db7de18f9cc1e5e796da",
+      "functions": [
+        {
+          "name": "Logger",
+          "params": [],
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "Uninit",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "Init",
+          "params": [
+            "log_config_file_path"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "Init",
+          "params": [
+            "file_name",
+            "type",
+            "level",
+            "max_file_size",
+            "max_backup_index",
+            "is_async"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "GetLogStream",
+          "params": [
+            "level",
+            "file",
+            "line",
+            "func"
+          ],
+          "returnType": "LogStreamOptimized",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "Log",
+          "params": [
+            "level",
+            "msg",
+            "file",
+            "line",
+            "func"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "ShouldLog",
+          "params": [
+            "level"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "SetFlushEvery",
+          "params": [
+            "flush_every"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "SetFlushOnLevel",
+          "params": [
+            "flush_on_level"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "SetLogLevel",
+          "params": [
+            "level"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "SetLogPattern",
+          "params": [
+            "pattern"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "SetLogConsoleLevel",
+          "params": [
+            "level"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "SetLogFileLevel",
+          "params": [
+            "level"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "SetLogBufferSize",
+          "params": [
+            "size"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 4
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "logger.h",
+          "specifiers": [
+            "logger.h"
+          ]
+        },
+        {
+          "source": "logger_impl.h",
+          "specifiers": [
+            "logger_impl.h"
+          ]
+        }
+      ],
+      "exports": [
+        "Logger",
+        "Uninit",
+        "Init",
+        "Init",
+        "GetLogStream",
+        "Log",
+        "ShouldLog",
+        "SetFlushEvery",
+        "SetFlushOnLevel",
+        "SetLogLevel",
+        "SetLogPattern",
+        "SetLogConsoleLevel",
+        "SetLogFileLevel",
+        "SetLogBufferSize"
+      ],
+      "totalLines": 95,
+      "hasStructuralAnalysis": true
+    },
+    "common/log/logger.h": {
+      "filePath": "common/log/logger.h",
+      "contentHash": "1aa88a65c0e6e2d99417fc8d171a5d1de349b86b46908b5ba0156e11c5e440e6",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 205,
+      "hasStructuralAnalysis": true
+    }
+  }
+}

@@ -1,0 +1,300 @@
+{
+  "nodes": [
+    {
+      "id": "file:sample/node_example/HelloWorldOneFast/source/HelloWorldOne.hpp",
+      "type": "file",
+      "name": "HelloWorldOne.hpp",
+      "filePath": "sample/node_example/HelloWorldOneFast/source/HelloWorldOne.hpp",
+      "summary": "由 fastddsgen 自动生成的 IDL 数据结构头文件，定义了 HelloWorldOne 类，包含 index（uint32_t）和 points（vector<uint8_t>）两个成员，并提供完整的拷贝/移动构造、赋值运算符和访问器。",
+      "tags": ["data-model", "type-definition", "auto-generated", "dds-idl", "serialization"],
+      "complexity": "moderate",
+      "languageNotes": "该类由 fastddsgen 代码生成工具自动生成，遵循 eProsima FastDDS 的 TopicDataType 规范，使用 move 语义优化 points 向量的拷贝开销。"
+    },
+    {
+      "id": "file:sample/node_example/HelloWorldOneFast/source/HelloWorldOneCdrAux.hpp",
+      "type": "file",
+      "name": "HelloWorldOneCdrAux.hpp",
+      "filePath": "sample/node_example/HelloWorldOneFast/source/HelloWorldOneCdrAux.hpp",
+      "summary": "CDR 序列化辅助头文件，声明 HelloWorldOne 的最大序列化大小常量和 serialize_key 函数，供 CDR 编解码使用。",
+      "tags": ["type-definition", "auto-generated", "serialization", "dds-idl"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:sample/node_example/HelloWorldOneFast/source/HelloWorldOneCdrAux.ipp",
+      "type": "file",
+      "name": "HelloWorldOneCdrAux.ipp",
+      "filePath": "sample/node_example/HelloWorldOneFast/source/HelloWorldOneCdrAux.ipp",
+      "summary": "CDR 序列化辅助实现文件，提供 HelloWorldOne 的 calculate_serialized_size、serialize、deserialize 和 serialize_key 模板函数特化，支持 XCDRv2 和 PLAIN_CDR 两种编码。",
+      "tags": ["serialization", "auto-generated", "dds-idl", "template-specialization"],
+      "complexity": "moderate",
+      "languageNotes": "使用函数模板特化为 HelloWorldOne 类型提供 CDR 序列化/反序列化实现，支持 XCDRv2 编码的 DELIMIT_CDR2 算法和传统 PLAIN_CDR 算法。"
+    },
+    {
+      "id": "file:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.cxx",
+      "type": "file",
+      "name": "HelloWorldOnePubSubTypes.cxx",
+      "filePath": "sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.cxx",
+      "summary": "HelloWorldOnePubSubType 类的实现文件，提供 DDS TopicDataType 接口的 serialize、deserialize、calculate_serialized_size、compute_key 和 register_type_object_representation 方法，是 DDS 通信的类型序列化核心。",
+      "tags": ["serialization", "auto-generated", "dds-idl", "api-handler"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.hpp",
+      "type": "file",
+      "name": "HelloWorldOnePubSubTypes.hpp",
+      "filePath": "sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.hpp",
+      "summary": "HelloWorldOnePubSubType 类的头文件，继承自 eprosima::fastdds::dds::TopicDataType，声明 DDS 数据类型注册和序列化接口。",
+      "tags": ["type-definition", "auto-generated", "dds-idl", "serialization"],
+      "complexity": "moderate",
+      "languageNotes": "继承 TopicDataType 基类，实现 DDS 标准的数据类型序列化接口，包含 MD5 哈希用于 key 计算。"
+    },
+    {
+      "id": "file:sample/node_example/HelloWorldOneFast/source/HelloWorldOneTypeObjectSupport.cxx",
+      "type": "file",
+      "name": "HelloWorldOneTypeObjectSupport.cxx",
+      "filePath": "sample/node_example/HelloWorldOneFast/source/HelloWorldOneTypeObjectSupport.cxx",
+      "summary": "TypeObject 注册实现文件，提供 register_HelloWorldOne_type_identifier 函数，构建并注册 HelloWorldOne 的完整 TypeObject 结构体定义，包括成员 index 和 points 的类型标识。",
+      "tags": ["type-definition", "auto-generated", "dds-idl", "registry"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:sample/node_example/HelloWorldOneFast/source/HelloWorldOneTypeObjectSupport.hpp",
+      "type": "file",
+      "name": "HelloWorldOneTypeObjectSupport.hpp",
+      "filePath": "sample/node_example/HelloWorldOneFast/source/HelloWorldOneTypeObjectSupport.hpp",
+      "summary": "TypeObject 注册头文件，声明 register_HelloWorldOne_type_identifier 函数，用于在 FastDDS TypeObjectRegistry 中注册 HelloWorldOne 的类型标识。",
+      "tags": ["type-definition", "auto-generated", "dds-idl", "registry"],
+      "complexity": "simple"
+    },
+    {
+      "id": "class:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.hpp:HelloWorldOnePubSubType",
+      "type": "class",
+      "name": "HelloWorldOnePubSubType",
+      "filePath": "sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.hpp",
+      "lineRange": [45, 120],
+      "summary": "DDS TopicDataType 实现类，继承 eprosima::fastdds::dds::TopicDataType，为 HelloWorldOne 提供序列化、反序列化、大小计算、key 计算和 TypeObject 注册能力。",
+      "tags": ["dds-idl", "serialization", "api-handler"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.cxx:serialize",
+      "type": "function",
+      "name": "serialize",
+      "filePath": "sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.cxx",
+      "lineRange": [54, 89],
+      "summary": "将 HelloWorldOne 对象序列化为 DDS SerializedPayload，处理封装头、字节序和 CDR 编码。",
+      "tags": ["serialization", "dds-idl"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.cxx:deserialize",
+      "type": "function",
+      "name": "deserialize",
+      "filePath": "sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.cxx",
+      "lineRange": [91, 119],
+      "summary": "从 DDS SerializedPayload 反序列化出 HelloWorldOne 对象，处理封装头读取和字节序转换。",
+      "tags": ["serialization", "dds-idl"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.cxx:calculate_serialized_size",
+      "type": "function",
+      "name": "calculate_serialized_size",
+      "filePath": "sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.cxx",
+      "lineRange": [121, 139],
+      "summary": "计算 HelloWorldOne 对象的序列化后字节大小。",
+      "tags": ["serialization", "dds-idl", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.cxx:compute_key",
+      "type": "function",
+      "name": "compute_key",
+      "filePath": "sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.cxx",
+      "lineRange": [152, 209],
+      "summary": "两个重载：从 payload 或 data 计算 HelloWorldOne 的 InstanceHandle，使用 MD5 哈希标识实例。",
+      "tags": ["serialization", "dds-idl", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:sample/node_example/HelloWorldOneFast/source/HelloWorldOneTypeObjectSupport.cxx:register_HelloWorldOne_type_identifier",
+      "type": "function",
+      "name": "register_HelloWorldOne_type_identifier",
+      "filePath": "sample/node_example/HelloWorldOneFast/source/HelloWorldOneTypeObjectSupport.cxx",
+      "lineRange": [42, 161],
+      "summary": "构建 HelloWorldOne 的完整 TypeObject 定义并注册到 FastDDS TypeObjectRegistry，包括结构体成员 index 和 points（uint8_t 序列）的类型标识。",
+      "tags": ["registry", "dds-idl", "type-definition"],
+      "complexity": "complex"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:sample/node_example/HelloWorldOneFast/source/HelloWorldOne.hpp",
+      "target": "file:sample/node_example/HelloWorldOneFast/source/HelloWorldOneCdrAux.hpp",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:sample/node_example/HelloWorldOneFast/source/HelloWorldOneCdrAux.hpp",
+      "target": "file:sample/node_example/HelloWorldOneFast/source/HelloWorldOne.hpp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:sample/node_example/HelloWorldOneFast/source/HelloWorldOneCdrAux.ipp",
+      "target": "file:sample/node_example/HelloWorldOneFast/source/HelloWorldOneCdrAux.hpp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.cxx",
+      "target": "file:sample/node_example/HelloWorldOneFast/source/HelloWorldOneCdrAux.hpp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.cxx",
+      "target": "file:sample/node_example/HelloWorldOneFast/source/HelloWorldOneCdrAux.ipp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.cxx",
+      "target": "file:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.hpp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.cxx",
+      "target": "file:sample/node_example/HelloWorldOneFast/source/HelloWorldOneTypeObjectSupport.hpp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.hpp",
+      "target": "file:sample/node_example/HelloWorldOneFast/source/HelloWorldOne.hpp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:sample/node_example/HelloWorldOneFast/source/HelloWorldOneTypeObjectSupport.cxx",
+      "target": "file:sample/node_example/HelloWorldOneFast/source/HelloWorldOne.hpp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:sample/node_example/HelloWorldOneFast/source/HelloWorldOneTypeObjectSupport.cxx",
+      "target": "file:sample/node_example/HelloWorldOneFast/source/HelloWorldOneTypeObjectSupport.hpp",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.hpp",
+      "target": "class:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.hpp:HelloWorldOnePubSubType",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.cxx",
+      "target": "function:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.cxx:serialize",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.cxx",
+      "target": "function:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.cxx:deserialize",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.cxx",
+      "target": "function:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.cxx:calculate_serialized_size",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.cxx",
+      "target": "function:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.cxx:compute_key",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:sample/node_example/HelloWorldOneFast/source/HelloWorldOneTypeObjectSupport.cxx",
+      "target": "function:sample/node_example/HelloWorldOneFast/source/HelloWorldOneTypeObjectSupport.cxx:register_HelloWorldOne_type_identifier",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "function:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.cxx:serialize",
+      "target": "function:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.cxx:calculate_serialized_size",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.cxx:compute_key",
+      "target": "function:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.cxx:deserialize",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.cxx:compute_key",
+      "target": "function:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.cxx:compute_key",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.hpp:HelloWorldOnePubSubType",
+      "target": "function:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.cxx:serialize",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.hpp:HelloWorldOnePubSubType",
+      "target": "function:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.cxx:deserialize",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.hpp:HelloWorldOnePubSubType",
+      "target": "function:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.cxx:calculate_serialized_size",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.hpp:HelloWorldOnePubSubType",
+      "target": "function:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.cxx:compute_key",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:sample/node_example/HelloWorldOneFast/source/HelloWorldOnePubSubTypes.hpp:HelloWorldOnePubSubType",
+      "target": "function:sample/node_example/HelloWorldOneFast/source/HelloWorldOneTypeObjectSupport.cxx:register_HelloWorldOne_type_identifier",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

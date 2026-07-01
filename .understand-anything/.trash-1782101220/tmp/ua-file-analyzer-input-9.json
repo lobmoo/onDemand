@@ -1,0 +1,17 @@
+{
+  "projectRoot": "/home/wwk/workspace/onDemand",
+  "batchFiles": [
+    {"path": "common/log/logger.cc", "language": "cpp", "sizeLines": 94, "fileCategory": "code"},
+    {"path": "common/log/logger.h", "language": "c", "sizeLines": 204, "fileCategory": "code"},
+    {"path": "common/log/logger_impl.cc", "language": "cpp", "sizeLines": 290, "fileCategory": "code"},
+    {"path": "common/log/logger_impl.h", "language": "c", "sizeLines": 193, "fileCategory": "code"},
+    {"path": "common/log/logger_test.cc", "language": "cpp", "sizeLines": 695, "fileCategory": "code"}
+  ],
+  "batchImportData": {
+    "common/log/logger.cc": ["common/log/logger_impl.h","common/log/logger.h"],
+    "common/log/logger.h": [],
+    "common/log/logger_impl.cc": ["common/log/logger_impl.h"],
+    "common/log/logger_impl.h": [],
+    "common/log/logger_test.cc": ["common/log/logger.h"]
+  }
+}
