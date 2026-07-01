@@ -947,6 +947,25 @@ namespace ondemand
             }
         }
 
+        // 同步清理 liteBucketMembers_（变量可能同时存在于两处）
+        {
+            std::unique_lock liteLock(liteVarIndexMutex_);
+            for (const auto &varName : varNames) {
+                uint64_t varHash = fast_hash(make_meta_varname(nodeName_, varName));
+                uint32_t bucketIdx = static_cast<uint32_t>(
+                    BucketManager::CalculateBucketIndexFromHash(varHash));
+                auto &bucket = liteBucketMembers_[bucketIdx];
+                if (bucket.hashSet.erase(varHash) > 0) {
+                    for (auto it = bucket.entries.begin(); it != bucket.entries.end(); ++it) {
+                        if (it->hash == varHash) {
+                            bucket.entries.erase(it);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
         schedulerDirty_.store(true, std::memory_order_release);
 
         /*只重发受影响的 bucket 的 TableDefine，避免误触发其他 bucket 的差分删除*/
@@ -957,25 +976,41 @@ namespace ondemand
             pubTableDefine.description("onDemandPub TableDefine");
 
             const auto &members = bucketManager_.GetBucketMembers(i);
-            pubTableDefine.varDefines().reserve(members.size());
+            pubTableDefine.varDefines().reserve(members.size() + 32);
 
+            // 已创建的变量
             {
                 std::shared_lock lock(varIndexMutex_);
                 for (uint64_t varHash : members) {
-                    auto it = varIndex_.find(varHash);
-                    if (it == varIndex_.end()) {
+                    if (varIndex_.find(varHash) == varIndex_.end())
                         continue;
-                    }
-                    const auto &meta = it->second;
-                    (void)meta; // bucketIndex 等字段已在上方 affectedBuckets 中使用
                     auto idxIt = defineLookup_.find(varHash);
-                    if (idxIt == defineLookup_.end()) {
+                    if (idxIt == defineLookup_.end())
                         continue;
-                    }
 
                     DSF::Var::PubTableVarDefine pubTableVarDefine;
                     DSF::Var::VarRequest varRequest;
                     varRequest.varDefine(defineCache_[idxIt->second]);
+                    pubTableVarDefine.var(std::move(varRequest));
+                    pubTableDefine.varDefines().push_back(std::move(pubTableVarDefine));
+                }
+            }
+
+            // 仅注册未创建的变量（避免 sub 差分删除误删）
+            {
+                std::shared_lock liteLock(liteVarIndexMutex_);
+                for (const auto &entry : liteBucketMembers_[i].entries) {
+                    if (varIndex_.count(entry.hash))
+                        continue;
+                    const char *nameStr = namePool_.data() + entry.nameOffset;
+                    DSF::Var::Define liteDefine;
+                    liteDefine.name(nameStr);
+                    liteDefine.size(0);
+                    liteDefine.nodeName(nodeName_);
+
+                    DSF::Var::PubTableVarDefine pubTableVarDefine;
+                    DSF::Var::VarRequest varRequest;
+                    varRequest.varDefine(std::move(liteDefine));
                     pubTableVarDefine.var(std::move(varRequest));
                     pubTableDefine.varDefines().push_back(std::move(pubTableVarDefine));
                 }

@@ -332,11 +332,12 @@ namespace ondemand
                         bucketIdx = vit->second.bucketIndex;
                     }
 
-                    if (varStore_.write(varId, blob.data(), blob.size()) == WriteResult::SUCCESS) {
+                    WriteResult result = varStore_.write(varId, blob.data(), blob.size());
+                    if (result == WriteResult::SUCCESS) {
                         ++written;
                     } else {
                         ONDEMANDLOG_TIME(error, 5)
-                            << "Failed to write varId: " << varId << " for varHash: " << varHash;
+                            << "Failed to write varId: " << varId << " for varHash: " << varHash << " with result: " << static_cast<int>(result);
                     }
                 }
             }
@@ -444,7 +445,7 @@ namespace ondemand
                             continue;
 
                         hashes.push_back(varHash);
-                        sizes.push_back(static_cast<uint32_t>(varDefine.size()));
+                        sizes.push_back(static_cast<uint32_t>(varDefine.size() ? varDefine.size() : 2));
                         bucketIdxs.push_back(static_cast<uint32_t>(
                             BucketManager::CalculateBucketIndexFromHash(varHash)));
                         defineIdxs.push_back(static_cast<uint32_t>(i));
