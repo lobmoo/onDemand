@@ -321,12 +321,7 @@ void subscribe()
     //         LOG(info) << "    var name = " << v;
     //     }
     // }
-    // sub.setOnSubscriptionMatchedCallback([](const std::string &topicName, int currentCount,
-    //                                       int currentCountChange, int totalCount) {
-    //     LOG(critical) << "Subscription matched: topic=" << topicName
-    //               << " current=" << currentCount << " change=" << currentCountChange
-    //               << " total=" << totalCount;
-    // });
+  
     sub.subscribe("pubNode", items, dataCallback);
 
     // sub.unsubscribe("pubNode", unitems);

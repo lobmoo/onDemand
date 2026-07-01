@@ -28,8 +28,8 @@ namespace ondemand
     OnDemandPub::OnDemandPub()
         : varIndex_(), varIndexMutex_(), bucketManager_(), initialized_(false), running_(false),
           dataNode_(nullptr), nodeName_(), pubTableDefineWriter_(nullptr),
-          subTableRegisterReqReader_(nullptr), freqChangeCb_(nullptr),
-          maxVarsPerNode_(0), maxNodeNum_(64)
+          subTableRegisterReqReader_(nullptr), freqChangeCb_(nullptr), maxVarsPerNode_(0),
+          maxNodeNum_(64)
     {
     }
 
@@ -39,7 +39,10 @@ namespace ondemand
         freqChangeCb_ = std::move(cb);
     }
 
-    OnDemandPub::~OnDemandPub() { stop(); }
+    OnDemandPub::~OnDemandPub()
+    {
+        stop();
+    }
 
     /**
      * @brief 初始化发布者节点
@@ -182,8 +185,7 @@ namespace ondemand
                                                       DSF::Message::SubTableRegisterPubSubType>(
                 dataNode_, subTableRegisterReqReader_,
                 DSF::Message::MESSAGE_COMMAND_REQUEST_SUB_TABLE_REGISTER_TOPIC_NAME, processFunc,
-                readerQosBuilder,
-                createReaderListener<DSF::Message::SubTableRegister>())) {
+                readerQosBuilder, createReaderListener<DSF::Message::SubTableRegister>())) {
             ONDEMANDLOG(error)
                 << "Failed to register topic for SubTableRegister: "
                 << DSF::Message::MESSAGE_COMMAND_REQUEST_SUB_TABLE_REGISTER_TOPIC_NAME;
@@ -314,7 +316,9 @@ namespace ondemand
             switch (data->msgType()) {
                 case DSF::Message::MSGTYPE::SUB_TABLE_REGISTER: {
                     const std::string nodeName = data->nodeName();
-                    uint32_t missing = handleSubscribe(nodeName, data->varFreqs());
+                    std::vector<DSF::NamedValue> missingVarFreqs;
+                    uint32_t missing =
+                        handleSubscribe(nodeName, data->varFreqs(), &missingVarFreqs);
                     if (missing > 0) {
                         /*指数退避，不丢弃，持续重试直到变量被创建*/
                         const size_t total = data->varFreqs().size();
@@ -322,8 +326,7 @@ namespace ondemand
 
                         uint32_t &backoffMs = retryBackoffMsByNode[nodeName];
                         if (backoffMs == 0) {
-                            backoffMs =
-                                allMissing ? kMinAllMissingRetryMs : kMinPartialRetryMs;
+                            backoffMs = allMissing ? kMinAllMissingRetryMs : kMinPartialRetryMs;
                         } else {
                             const uint32_t minBase =
                                 allMissing ? kMinAllMissingRetryMs : kMinPartialRetryMs;
@@ -336,16 +339,15 @@ namespace ondemand
 
                         ONDEMANDLOG_TIME(warning, 5000)
                             << "SUB_TABLE_REGISTER retry: node=" << nodeName
-                            << " missing=" << missing << "/" << total
-                            << " delayMs=" << backoffMs;
+                            << " missing=" << missing << "/" << total << " delayMs=" << backoffMs;
 
                         /*构造只含缺失变量的重试消息，放入重试队列*/
                         auto retryData = std::make_shared<DSF::Message::SubTableRegister>();
                         retryData->msgType(data->msgType());
                         retryData->nodeName(data->nodeName());
                         retryData->tableName(data->tableName());
-                        for (const auto &vf : data->varFreqs()) {
-                            retryData->varFreqs().push_back(vf);
+                        for (auto &vf : missingVarFreqs) {
+                            retryData->varFreqs().push_back(std::move(vf));
                         }
                         std::this_thread::sleep_for(std::chrono::milliseconds(backoffMs));
                         {
@@ -357,10 +359,25 @@ namespace ondemand
                     }
                     break;
                 }
-                case DSF::Message::MSGTYPE::SUB_TABLE_UNREGISTER:
-                    retryBackoffMsByNode.erase(data->nodeName());
-                    handleUnsubscribe(data->nodeName(), data->varFreqs());
+                case DSF::Message::MSGTYPE::SUB_TABLE_UNREGISTER: {
+                    const std::string unsubNode = data->nodeName();
+                    retryBackoffMsByNode.erase(unsubNode);
+                    /*清空重试队列中该节点的所有待重试消息，防止注销后被重新订阅*/
+                    {
+                        std::lock_guard<std::mutex> lk(pubTableDefRetryQueueMutex_);
+                        std::queue<std::shared_ptr<DSF::Message::SubTableRegister>> remaining;
+                        while (!pubTableDefRetryQueue_.empty()) {
+                            auto item = std::move(pubTableDefRetryQueue_.front());
+                            pubTableDefRetryQueue_.pop();
+                            if (item->nodeName() != unsubNode) {
+                                remaining.push(std::move(item));
+                            }
+                        }
+                        pubTableDefRetryQueue_ = std::move(remaining);
+                    }
+                    handleUnsubscribe(unsubNode, data->varFreqs());
                     break;
+                }
                 default:
                     ONDEMANDLOG(error) << "Unknown registered type.";
                     break;
@@ -557,7 +574,7 @@ namespace ondemand
         std::vector<uint32_t> ids(n);
         for (size_t i = 0; i < n; ++i) {
             ids[i] = (*members)[i].varId;
-        }     
+        }
         varStore_.read_batch(ids.data(), n, [&](size_t i, const void *ptr, uint32_t sz) {
             if (!ptr || sz == 0) {
                 if (skippedCount == 0) {
@@ -589,8 +606,8 @@ namespace ondemand
         /* 如果有部分变量被跳过，打印一次警告*/
         if (skippedCount > 0) {
             ONDEMANDLOG_TIME(warning, 3000) << "Skipped " << skippedCount << "/" << members->size()
-                                             << " variables without data in bucket=" << bucketIndex
-                                             << " freq=" << freqMs << "ms";
+                                            << " variables without data in bucket=" << bucketIndex
+                                            << " freq=" << freqMs << "ms";
         }
 
         /*无跳过：直接用预计算 mask，避免重建 Roaring64Map（热路径优化）*/
@@ -736,7 +753,8 @@ namespace ondemand
 
             // 批量注册（一次 ConfigGuard）
             std::vector<uint64_t> hashes(newVars.size());
-            std::vector<uint32_t> sizes(newVars.size(), 0); //暂时不支持预设大小，统一传 0 由 VarStore 内部处理 优化内存
+            std::vector<uint32_t> sizes(
+                newVars.size(), 0); //暂时不支持预设大小，统一传 0 由 VarStore 内部处理 优化内存
             std::vector<uint32_t> ids(newVars.size());
             for (size_t i = 0; i < newVars.size(); ++i)
                 hashes[i] = newVars[i].varHash;
@@ -854,7 +872,6 @@ namespace ondemand
                 bucket.entries.push_back(LiteVarEntry{varHash, nameOffset});
                 affectedBuckets.insert(bucketIdx);
             }
-
         }
 
         // 2. 广播 PubTableDefine（从 liteBucketMembers_ 构造最小 Define）
@@ -898,8 +915,8 @@ namespace ondemand
 
             tableDefinePublish(pubTableDefine);
             std::this_thread::sleep_for(std::chrono::milliseconds(20));
-            ONDEMANDLOG(info) << "Published bucket " << bucketId << " with "
-                              << members.size() << " vars (lite)";
+            ONDEMANDLOG(info) << "Published bucket " << bucketId << " with " << members.size()
+                              << " vars (lite)";
         }
     }
 
@@ -1154,7 +1171,8 @@ namespace ondemand
      * @param  varFreqs 周期
      */
     uint32_t OnDemandPub::handleSubscribe(const std::string &nodeName,
-                                          const std::vector<DSF::NamedValue> &varFreqs)
+                                          const std::vector<DSF::NamedValue> &varFreqs,
+                                          std::vector<DSF::NamedValue> *missingVarFreqs)
     {
         uint64_t nodeHash = fast_hash(nodeName);
         const std::string ownPrefix = nodeName_ + "_";
@@ -1249,7 +1267,10 @@ namespace ondemand
                         if (bucket.hashSet.count(varHash)) {
                             const LiteVarEntry *found = nullptr;
                             for (const auto &e : bucket.entries) {
-                                if (e.hash == varHash) { found = &e; break; }
+                                if (e.hash == varHash) {
+                                    found = &e;
+                                    break;
+                                }
                             }
                             if (found) {
                                 DSF::Var::Define def;
@@ -1258,6 +1279,9 @@ namespace ondemand
                                 pendingCreates.push_back(std::move(def));
                             }
                         } else {
+                            if (missingVarFreqs) {
+                                missingVarFreqs->push_back(varFreq);
+                            }
                             ++missingCount;
                         }
                     } else {
@@ -1272,9 +1296,8 @@ namespace ondemand
                 // 收集需要扩展的变量
                 auto idxIt = defineLookup_.find(varHash);
                 if (idxIt != defineLookup_.end()) {
-                    uint32_t defineSize =
-                        static_cast<uint32_t>(defineCache_[idxIt->second].size());
-                    uint32_t targetSize = defineSize > 0 ? defineSize : 32u;
+                    uint32_t defineSize = static_cast<uint32_t>(defineCache_[idxIt->second].size());
+                    uint32_t targetSize = defineSize > 0 ? defineSize : 2u;
                     if (varStore_.slot_size(meta.varId) < targetSize) {
                         expandIds.push_back(meta.varId);
                         expandSizes.push_back(targetSize);
@@ -1283,12 +1306,11 @@ namespace ondemand
 
                 // 解析频率
                 uint32_t freq;
-                auto result = std::from_chars(varFreq.value().data(),
-                                              varFreq.value().data() + varFreq.value().size(), freq);
+                auto result = std::from_chars(
+                    varFreq.value().data(), varFreq.value().data() + varFreq.value().size(), freq);
                 if (std::errc() != result.ec) {
                     ONDEMANDLOG(warning) << "Invalid frequency value for var: " << metaName
-                                         << " node: " << nodeName
-                                         << " value: " << varFreq.value();
+                                         << " node: " << nodeName << " value: " << varFreq.value();
                     continue;
                 }
 
@@ -1450,7 +1472,7 @@ namespace ondemand
         }
 
         lock.unlock();
-        
+
         for (const auto &[varName, newFreq] : freqChanges) {
             freqChangeQueue_.enqueue({varName, newFreq});
         }
@@ -1489,6 +1511,20 @@ namespace ondemand
         auto freqChanges = forceUnsubscribeNode(nodeMask);
         nodeSlotMap_.erase(slotIt);
         lock.unlock();
+
+        /*清空重试队列中该节点的所有待重试消息，防止离线后被重新订阅*/
+        {
+            std::lock_guard<std::mutex> lk(pubTableDefRetryQueueMutex_);
+            std::queue<std::shared_ptr<DSF::Message::SubTableRegister>> remaining;
+            while (!pubTableDefRetryQueue_.empty()) {
+                auto item = std::move(pubTableDefRetryQueue_.front());
+                pubTableDefRetryQueue_.pop();
+                if (item->nodeName() != participantName) {
+                    remaining.push(std::move(item));
+                }
+            }
+            pubTableDefRetryQueue_ = std::move(remaining);
+        }
 
         ONDEMANDLOG(info) << "Participant cleanup: " << participantName << ", force-unsubscribed "
                           << freqChanges.size() << " vars";
