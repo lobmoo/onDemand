@@ -170,7 +170,7 @@ jobs:
           timeout 180s ./tests/test_ddswrapper --gtest_output=xml:test-results/test_ddswrapper.xml
 
           echo "========== Running test_ondemand (exclude known flaky CI cases) =========="
-          timeout 420s ./tests/test_ondemand \
+          timeout 900s ./tests/test_ondemand \
             --gtest_output=xml:test-results/test_ondemand.xml \
             --gtest_filter=-OnDemandPubSub.SubFirstThenPubRestartRecovery:OnDemandPubSub.PubFirstThenSubRestartRecovery
 

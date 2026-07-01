@@ -1021,7 +1021,7 @@ namespace ondemand
 
             /*差分删除: 即使是空表也要发布, 通知订阅者该表已清空*/
             tableDefinePublish(pubTableDefine);
-            std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            std::this_thread::sleep_for(std::chrono::milliseconds(20));
             ONDEMANDLOG(info) << "Published bucket " << i << " with "
                               << pubTableDefine.varDefines().size() << " variables (delete mode)";
         }
