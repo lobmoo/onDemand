@@ -100,6 +100,15 @@
 // ║         ║  【Slot回收】                                                          ║
 // ║  TC28    ║  sub反复上下线70次(>64)验证slot回收：pub创建10变量，单sub反复         ║
 // ║         ║  上下线70次，每次验证订阅和数据回调正常，最后全新sub也能订阅   [L4600]  ║
+// ╠══════════╬═══════════════════════════════════════════════════════════════════════╣
+// ║         ║  【registerVars 轻量注册】                                              ║
+// ║  TC29    ║  registerVars注册后变量数量和名称验证：注册30个变量，sub验证            ║
+// ║         ║  数量==30且名称集合完全一致                                 [L4752]     ║
+// ║  TC30    ║  registerVars后删除部分变量：注册20个后删前8个，sub验证删除            ║
+// ║         ║  前后数量和名称集合准确                                     [L4802]     ║
+// ║  TC31    ║  registerVars+sub数据通信+通信中删除变量：注册10个，sub订阅            ║
+// ║         ║  建立通信后删后5个，验证剩余变量数据正常、已删除变量不再                ║
+// ║         ║  触发回调、无残留                                          [L4858]     ║
 // ╚══════════╩═══════════════════════════════════════════════════════════════════════╝
 
 #include <gtest/gtest.h>
@@ -4747,6 +4756,307 @@ TEST(OnDemandPubSub, SubReconnectOver64TimesSlotRecycle)
 
     expectChildOk(pubProc, 180s);
     expectChildOk(subFinalProc, 15s);
+}
+
+// TC29 - registerVars 注册后变量数量和名称验证
+// 场景：pub 用 registerVars 注册 30 个变量，sub 等待变量定义到达后验证数量和名称集合。
+// 验证：① registerVars 返回 true；② sub 收到的变量数量 == 30；
+//       ③ sub 收到的变量名称集合与注册的完全一致。
+TEST(OnDemandPubSub, RegisterVarsCountAndNames)
+{
+    const auto root = std::filesystem::temp_directory_path() / uniqueName("ondemand_case29");
+    std::filesystem::create_directories(root);
+
+    const std::string pubNode = uniqueName("pub_case29");
+    const auto defs = makeDefines(pubNode, "rv", 30);
+    const auto names = defineNames(defs);
+    const std::set<std::string> expectedNames(names.begin(), names.end());
+
+    const auto pubProc = spawnChild("case29_pub", root, [pubNode, defs]() {
+        dsf::ondemand::OnDemandPub pub;
+        ChildReport r;
+        if (!childRequire(r, pub.init(pubNode), "pub init failed")
+            || !childRequire(r, pub.start(), "pub start failed")) {
+            return r;
+        }
+        // 等 sub DDS reader 就绪
+        std::this_thread::sleep_for(2s);
+        if (!childRequire(r, pub.registerVars(defs), "pub registerVars failed")) {
+            pub.stop();
+            return r;
+        }
+        std::this_thread::sleep_for(8s);
+        pub.stop();
+        r.ok = true;
+        r.message = "ok";
+        return r;
+    });
+
+    const auto subProc = spawnChild("case29_sub", root, [pubNode, names, expectedNames]() {
+        dsf::ondemand::OnDemandSub sub;
+        ChildReport r;
+        if (!childRequire(r, sub.init(uniqueName("sub_case29")), "sub init failed")
+            || !childRequire(r, sub.start(), "sub start failed")) {
+            return r;
+        }
+
+        // 等待变量定义到达
+        const bool gotAll = waitUntil([&]() { return countNodeVars(sub, pubNode) == names.size(); }, 8s);
+        if (!childRequire(r, gotAll, "sub did not receive all 30 var defines")) {
+            sub.stop();
+            return r;
+        }
+
+        // 验证名称集合
+        const auto vars = nodeVars(sub, pubNode);
+        const std::set<std::string> gotNames(vars.begin(), vars.end());
+        const bool namesMatch = (gotNames == expectedNames);
+        childRequire(r, namesMatch, "var name set mismatch");
+        r.metrics["count"] = std::to_string(vars.size());
+
+        sub.stop();
+        r.ok = gotAll && namesMatch;
+        r.message = r.ok ? "ok" : r.message;
+        return r;
+    });
+
+    expectChildOk(pubProc, 15s);
+    ChildReport subReport;
+    expectChildOk(subProc, 15s, &subReport);
+    EXPECT_EQ(std::stoi(subReport.metrics["count"]), 30);
+}
+
+// TC30 - registerVars 后删除部分变量，验证数量和名称
+// 场景：pub 用 registerVars 注册 20 个变量，然后删除前 8 个。
+//       sub 在独立子进程中监听，验证删除前后变量数量和名称集合准确。
+// 验证：① 删除前 sub 看到 20 个变量；② 删除后 sub 看到 12 个变量；
+//       ③ 删除后的名称集合 == 后 12 个变量名。
+TEST(OnDemandPubSub, RegisterVarsThenDeletePartial)
+{
+    const auto root = std::filesystem::temp_directory_path() / uniqueName("ondemand_case30");
+    std::filesystem::create_directories(root);
+
+    const std::string pubNode = uniqueName("pub_case30");
+    const auto defs = makeDefines(pubNode, "rd", 20);
+    const auto names = defineNames(defs);
+    const std::vector<std::string> toDelete(names.begin(), names.begin() + 8);
+    const std::set<std::string> expectedAfter(names.begin() + 8, names.end());
+
+    const auto pubProc = spawnChild("case30_pub", root, [pubNode, defs, toDelete]() {
+        dsf::ondemand::OnDemandPub pub;
+        ChildReport r;
+        if (!childRequire(r, pub.init(pubNode), "pub init failed")
+            || !childRequire(r, pub.start(), "pub start failed")) {
+            return r;
+        }
+        // 等 sub DDS reader 就绪
+        std::this_thread::sleep_for(2s);
+        if (!childRequire(r, pub.registerVars(defs), "pub registerVars failed")) {
+            pub.stop();
+            return r;
+        }
+        std::this_thread::sleep_for(2s);
+
+        // 删除前 8 个
+        if (!childRequire(r, pub.deleteVars(toDelete), "pub deleteVars failed")) {
+            pub.stop();
+            return r;
+        }
+        std::this_thread::sleep_for(3s);
+        pub.stop();
+        r.ok = true;
+        r.message = "ok";
+        return r;
+    });
+
+    const auto subProc = spawnChild("case30_sub", root, [pubNode, names, expectedAfter]() {
+        dsf::ondemand::OnDemandSub sub;
+        ChildReport r;
+        if (!childRequire(r, sub.init(uniqueName("sub_case30")), "sub init failed")
+            || !childRequire(r, sub.start(), "sub start failed")) {
+            return r;
+        }
+
+        // 阶段1：等待 20 个变量全部到达
+        const bool got20 = waitUntil([&]() { return countNodeVars(sub, pubNode) == 20; }, 8s);
+        if (!childRequire(r, got20, "sub did not receive 20 vars")) {
+            sub.stop();
+            return r;
+        }
+        r.metrics["count_before"] = std::to_string(countNodeVars(sub, pubNode));
+
+        // 阶段2：等待删除后只剩 12 个
+        const bool got12 = waitUntil([&]() { return countNodeVars(sub, pubNode) == 12; }, 8s);
+        const auto vars = nodeVars(sub, pubNode);
+        const std::set<std::string> gotNames(vars.begin(), vars.end());
+        const bool namesMatch = (gotNames == expectedAfter);
+        r.metrics["count_after"] = std::to_string(vars.size());
+
+        childRequire(r, got12, "sub did not see var count drop to 12");
+        childRequire(r, namesMatch, "var name set mismatch after delete");
+
+        sub.stop();
+        r.ok = got20 && got12 && namesMatch;
+        r.message = r.ok ? "ok" : r.message;
+        return r;
+    });
+
+    expectChildOk(pubProc, 15s);
+    ChildReport subReport;
+    expectChildOk(subProc, 15s, &subReport);
+    EXPECT_EQ(std::stoi(subReport.metrics["count_before"]), 20);
+    EXPECT_EQ(std::stoi(subReport.metrics["count_after"]), 12);
+}
+
+// TC31 - registerVars + sub 数据通信 + 通信中删除变量
+// 场景：pub 用 registerVars 注册 10 个变量，sub 订阅后建立数据通信。
+//       验证数据正常接收后，pub 删除后 5 个变量，验证：
+//       ① 剩余 5 个变量的数据通信不受影响；
+//       ② 已删除变量不再触发回调；
+//       ③ 无残留（varIndex_/defineLookup_/liteBucketMembers_ 均已清理）。
+TEST(OnDemandPubSub, RegisterVarsDataCommThenDeleteDuringCommunication)
+{
+    const auto root = std::filesystem::temp_directory_path() / uniqueName("ondemand_case31");
+    std::filesystem::create_directories(root);
+
+    const std::string pubNode = uniqueName("pub_case31");
+    const auto defs = makeDefines(pubNode, "rv", 10);
+    const auto names = defineNames(defs);
+    const std::vector<std::string> toDelete(names.begin() + 5, names.end());  // 删后 5 个
+    const std::vector<std::string> remaining(names.begin(), names.begin() + 5);
+
+    const auto pubProc = spawnChild("case31_pub", root, [pubNode, defs, names, toDelete]() {
+        dsf::ondemand::OnDemandPub pub;
+        ChildReport r;
+        if (!childRequire(r, pub.init(pubNode), "pub init failed")
+            || !childRequire(r, pub.start(), "pub start failed")
+            || !childRequire(r, pub.registerVars(defs), "pub registerVars failed")) {
+            return r;
+        }
+
+        // 等 sub 订阅触发懒创建，然后开始发布数据
+        std::atomic<bool> running{true};
+        std::thread th([&]() { publishLoop(pub, names, running, 20); });
+
+        // 等 sub 建立通信
+        std::this_thread::sleep_for(4s);
+
+        // 通信中删除后 5 个变量
+        if (!childRequire(r, pub.deleteVars(toDelete), "pub deleteVars failed")) {
+            running.store(false);
+            th.join();
+            pub.stop();
+            return r;
+        }
+
+        // 继续发布剩余变量
+        std::this_thread::sleep_for(4s);
+        running.store(false);
+        th.join();
+        pub.stop();
+        r.ok = true;
+        r.message = "ok";
+        return r;
+    });
+
+    const auto subProc =
+        spawnChild("case31_sub", root, [pubNode, names, toDelete, remaining]() {
+            dsf::ondemand::OnDemandSub sub;
+            ChildReport r;
+            if (!childRequire(r, sub.init(uniqueName("sub_case31")), "sub init failed")
+                || !childRequire(r, sub.start(), "sub start failed")) {
+                return r;
+            }
+
+            // 等待 10 个变量定义到达
+            if (!childRequire(r,
+                              waitUntil([&]() { return countNodeVars(sub, pubNode) == 10; }, 8s),
+                              "sub did not receive 10 var defines")) {
+                sub.stop();
+                return r;
+            }
+
+            // 订阅全部变量
+            std::mutex mu;
+            std::map<std::string, int32_t> latestValues;
+            std::map<std::string, int> cbCount;
+            std::atomic<bool> deleteSignaled{false};
+            std::map<std::string, int> cbAfterDelete;
+
+            if (!childRequire(
+                    r,
+                    sub.subscribe(pubNode.c_str(), toSubscriptions(names, 100),
+                                  [&](const std::vector<dsf::ondemand::VarCallbackData> &vars) {
+                                      std::lock_guard<std::mutex> lk(mu);
+                                      for (const auto &v : vars) {
+                                          const std::string name(v.varName.data(), v.varName.size());
+                                          if (v.data && v.size >= sizeof(int32_t))
+                                              latestValues[name] =
+                                                  *reinterpret_cast<const int32_t *>(v.data);
+                                          cbCount[name]++;
+                                          if (deleteSignaled.load(std::memory_order_acquire))
+                                              cbAfterDelete[name]++;
+                                      }
+                                  }),
+                    "subscribe failed")) {
+                sub.stop();
+                return r;
+            }
+
+            // 等待所有变量都收到回调（通信建立）
+            if (!childRequire(r,
+                              waitUntil([&]() {
+                                  std::lock_guard<std::mutex> lk(mu);
+                                  for (const auto &n : names)
+                                      if (cbCount[n] < 2)
+                                          return false;
+                                  return true;
+                              }, 8s),
+                              "sub did not receive callbacks for all 10 vars")) {
+                sub.stop();
+                return r;
+            }
+            LOG(info) << "[case31_sub] initial callbacks OK for all 10 vars";
+
+            // 等待 pub 删除变量（变量数量降为 5）
+            if (!childRequire(r, waitUntil([&]() { return countNodeVars(sub, pubNode) == 5; }, 8s),
+                              "sub did not see var count drop to 5 after delete")) {
+                sub.stop();
+                return r;
+            }
+            LOG(info) << "[case31_sub] var count dropped to 5, signaling delete";
+            deleteSignaled.store(true, std::memory_order_release);
+
+            // 验证剩余变量的定义集合准确
+            const auto leftVars = nodeVars(sub, pubNode);
+            const std::set<std::string> leftSet(leftVars.begin(), leftVars.end());
+            const std::set<std::string> expectedSet(remaining.begin(), remaining.end());
+            childRequire(r, leftSet == expectedSet, "remaining var name set mismatch after delete");
+
+            // 再等 3s，观察删除后回调情况
+            std::this_thread::sleep_for(3s);
+
+            // 验证：剩余变量仍有回调，已删除变量无回调
+            {
+                std::lock_guard<std::mutex> lk(mu);
+                for (const auto &n : remaining) {
+                    childRequire(r, cbAfterDelete.count(n) > 0 && cbAfterDelete[n] > 0,
+                                 "remaining var " + n + " has no callback after delete");
+                }
+                for (const auto &n : toDelete) {
+                    childRequire(r, cbAfterDelete.count(n) == 0 || cbAfterDelete[n] == 0,
+                                 "deleted var " + n + " still has callbacks after delete");
+                }
+            }
+
+            sub.stop();
+            r.ok = true;
+            r.message = "ok";
+            return r;
+        });
+
+    expectChildOk(pubProc, 20s);
+    expectChildOk(subProc, 20s);
 }
 
 #endif

@@ -23,7 +23,7 @@
 
 namespace
 {
-constexpr uint32_t kDefaultCount = 600000U;
+constexpr uint32_t kDefaultCount = 600U;
 
 uint32_t getConfiguredCount()
 {
@@ -241,47 +241,47 @@ void publish()
         vars.clear();
         vars.shrink_to_fit();
     }
-//     pub.setFreqChangeCallback([&pub](const std::string &varName, uint32_t freq) {
-//         LOG(info) << "FreqChangeCallback: var=" << varName << " newFreq=" << freq;
+    pub.setFreqChangeCallback([&pub](const std::string &varName, uint32_t freq) {
+        LOG(info) << "FreqChangeCallback: var=" << varName << " newFreq=" << freq;
 
-//         static std::once_flag cacheOnce;
-//         static std::vector<dsf::ondemand::OnDemandPub::VarWriteItem> batchItems;
-//         static std::vector<int> vals;
+        static std::once_flag cacheOnce;
+        static std::vector<dsf::ondemand::OnDemandPub::VarWriteItem> batchItems;
+        static std::vector<int> vals;
 
-//         std::call_once(cacheOnce, [&]() {
-//             // 只在第一次回调时把 varId 预缓存起来，后续直接复用。
-//             std::vector<uint32_t> varIds(count);
-//             for (int i = 0; i < count; ++i) {
-//                 varIds[i] = pub.getVarId(("var" + std::to_string(i)).c_str());
-//             }
+        std::call_once(cacheOnce, [&]() {
+            // 只在第一次回调时把 varId 预缓存起来，后续直接复用。
+            std::vector<uint32_t> varIds(count);
+            for (int i = 0; i < count; ++i) {
+                varIds[i] = pub.getVarId(("var" + std::to_string(i)).c_str());
+            }
 
-//             batchItems.resize(count);
-//             vals.resize(count);
-//             for (int i = 0; i < count; ++i) {
-//                 vals[i] = i + 30;
-//                 batchItems[i].id = varIds[i];
-//                 batchItems[i].data = &vals[i];
-//                 batchItems[i].size = sizeof(int);
-//             }
-//         });
+            batchItems.resize(count);
+            vals.resize(count);
+            for (int i = 0; i < count; ++i) {
+                vals[i] = i + 30;
+                batchItems[i].id = varIds[i];
+                batchItems[i].data = &vals[i];
+                batchItems[i].size = sizeof(int);
+            }
+        });
 
-//         std::thread setVarThread([&pub]() {
-// #if defined(__linux__)
-//             pthread_setname_np(pthread_self(), "setvar");
-// #endif
-//             while (true) {
-//                 pub.setVarDataBatch(batchItems.data(), count);
-//                 std::this_thread::sleep_for(std::chrono::milliseconds(10));
-//             }
-//         });
-//         setVarThread.detach();
+        std::thread setVarThread([&pub]() {
+#if defined(__linux__)
+            pthread_setname_np(pthread_self(), "setvar");
+#endif
+            while (true) {
+                pub.setVarDataBatch(batchItems.data(), count);
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            }
+        });
+        setVarThread.detach();
 
-//     });
-//     std::vector<std::string> varDelNames;
-//     for (int i = 0; i < count; ++i) {
-//         std::string varName = "var" + std::to_string(i);
-//         varDelNames.push_back(varName);
-//     }
+    });
+    std::vector<std::string> varDelNames;
+    for (int i = 0; i < count; ++i) {
+        std::string varName = "var" + std::to_string(i);
+        varDelNames.push_back(varName);
+    }
 
     // std::this_thread::sleep_for(std::chrono::seconds(5));
     // pub.deleteVars(varDelNames);

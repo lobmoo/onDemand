@@ -951,7 +951,8 @@ namespace ondemand
         {
             std::unique_lock liteLock(liteVarIndexMutex_);
             for (const auto &varName : varNames) {
-                uint64_t varHash = fast_hash(make_meta_varname(nodeName_, varName));
+                std::string metaName = make_meta_varname(nodeName_, varName);
+                uint64_t varHash = fast_hash(metaName);
                 uint32_t bucketIdx = static_cast<uint32_t>(
                     BucketManager::CalculateBucketIndexFromHash(varHash));
                 auto &bucket = liteBucketMembers_[bucketIdx];
@@ -962,6 +963,8 @@ namespace ondemand
                             break;
                         }
                     }
+                    affectedBuckets.insert(bucketIdx);
+                    ONDEMANDLOG(info) << "Deleted lite-registered variable: " << varName;
                 }
             }
         }
