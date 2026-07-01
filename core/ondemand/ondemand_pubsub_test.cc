@@ -4939,7 +4939,7 @@ TEST(OnDemandPubSub, RegisterVarsDataCommThenDeleteDuringCommunication)
         std::thread th([&]() { publishLoop(pub, names, running, 20); });
 
         // 等 sub 建立通信
-        std::this_thread::sleep_for(4s);
+        std::this_thread::sleep_for(2s);
 
         // 通信中删除后 5 个变量
         if (!childRequire(r, pub.deleteVars(toDelete), "pub deleteVars failed")) {
@@ -4950,7 +4950,7 @@ TEST(OnDemandPubSub, RegisterVarsDataCommThenDeleteDuringCommunication)
         }
 
         // 继续发布剩余变量
-        std::this_thread::sleep_for(4s);
+        std::this_thread::sleep_for(2s);
         running.store(false);
         th.join();
         pub.stop();
@@ -4970,7 +4970,7 @@ TEST(OnDemandPubSub, RegisterVarsDataCommThenDeleteDuringCommunication)
 
             // 等待 10 个变量定义到达
             if (!childRequire(r,
-                              waitUntil([&]() { return countNodeVars(sub, pubNode) == 10; }, 8s),
+                              waitUntil([&]() { return countNodeVars(sub, pubNode) == 10; }, 6s),
                               "sub did not receive 10 var defines")) {
                 sub.stop();
                 return r;
@@ -5011,7 +5011,7 @@ TEST(OnDemandPubSub, RegisterVarsDataCommThenDeleteDuringCommunication)
                                       if (cbCount[n] < 2)
                                           return false;
                                   return true;
-                              }, 8s),
+                              }, 6s),
                               "sub did not receive callbacks for all 10 vars")) {
                 sub.stop();
                 return r;
@@ -5019,7 +5019,7 @@ TEST(OnDemandPubSub, RegisterVarsDataCommThenDeleteDuringCommunication)
             LOG(info) << "[case31_sub] initial callbacks OK for all 10 vars";
 
             // 等待 pub 删除变量（变量数量降为 5）
-            if (!childRequire(r, waitUntil([&]() { return countNodeVars(sub, pubNode) == 5; }, 8s),
+            if (!childRequire(r, waitUntil([&]() { return countNodeVars(sub, pubNode) == 5; }, 6s),
                               "sub did not see var count drop to 5 after delete")) {
                 sub.stop();
                 return r;
@@ -5033,8 +5033,8 @@ TEST(OnDemandPubSub, RegisterVarsDataCommThenDeleteDuringCommunication)
             const std::set<std::string> expectedSet(remaining.begin(), remaining.end());
             childRequire(r, leftSet == expectedSet, "remaining var name set mismatch after delete");
 
-            // 再等 3s，观察删除后回调情况
-            std::this_thread::sleep_for(3s);
+            // 再等 2s，观察删除后回调情况
+            std::this_thread::sleep_for(2s);
 
             // 验证：剩余变量仍有回调，已删除变量无回调
             {
@@ -5055,8 +5055,8 @@ TEST(OnDemandPubSub, RegisterVarsDataCommThenDeleteDuringCommunication)
             return r;
         });
 
-    expectChildOk(pubProc, 20s);
-    expectChildOk(subProc, 20s);
+    expectChildOk(pubProc, 15s);
+    expectChildOk(subProc, 15s);
 }
 
 #endif
