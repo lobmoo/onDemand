@@ -28,8 +28,8 @@ namespace ondemand
     OnDemandPub::OnDemandPub()
         : varIndex_(), varIndexMutex_(), bucketManager_(), initialized_(false), running_(false),
           dataNode_(nullptr), nodeName_(), pubTableDefineWriter_(nullptr),
-          subTableRegisterReqReader_(nullptr), freqChangeCb_(nullptr),
-          maxVarsPerNode_(0), maxNodeNum_(64)
+          subTableRegisterReqReader_(nullptr), freqChangeCb_(nullptr), maxVarsPerNode_(0),
+          maxNodeNum_(64)
     {
     }
 
@@ -39,7 +39,10 @@ namespace ondemand
         freqChangeCb_ = std::move(cb);
     }
 
-    OnDemandPub::~OnDemandPub() { stop(); }
+    OnDemandPub::~OnDemandPub()
+    {
+        stop();
+    }
 
     /**
      * @brief 初始化发布者节点
@@ -182,8 +185,7 @@ namespace ondemand
                                                       DSF::Message::SubTableRegisterPubSubType>(
                 dataNode_, subTableRegisterReqReader_,
                 DSF::Message::MESSAGE_COMMAND_REQUEST_SUB_TABLE_REGISTER_TOPIC_NAME, processFunc,
-                readerQosBuilder,
-                createReaderListener<DSF::Message::SubTableRegister>())) {
+                readerQosBuilder, createReaderListener<DSF::Message::SubTableRegister>())) {
             ONDEMANDLOG(error)
                 << "Failed to register topic for SubTableRegister: "
                 << DSF::Message::MESSAGE_COMMAND_REQUEST_SUB_TABLE_REGISTER_TOPIC_NAME;
@@ -315,7 +317,8 @@ namespace ondemand
                 case DSF::Message::MSGTYPE::SUB_TABLE_REGISTER: {
                     const std::string nodeName = data->nodeName();
                     std::vector<DSF::NamedValue> missingVarFreqs;
-                    uint32_t missing = handleSubscribe(nodeName, data->varFreqs(), &missingVarFreqs);
+                    uint32_t missing =
+                        handleSubscribe(nodeName, data->varFreqs(), &missingVarFreqs);
                     if (missing > 0) {
                         /*指数退避，不丢弃，持续重试直到变量被创建*/
                         const size_t total = data->varFreqs().size();
@@ -323,8 +326,7 @@ namespace ondemand
 
                         uint32_t &backoffMs = retryBackoffMsByNode[nodeName];
                         if (backoffMs == 0) {
-                            backoffMs =
-                                allMissing ? kMinAllMissingRetryMs : kMinPartialRetryMs;
+                            backoffMs = allMissing ? kMinAllMissingRetryMs : kMinPartialRetryMs;
                         } else {
                             const uint32_t minBase =
                                 allMissing ? kMinAllMissingRetryMs : kMinPartialRetryMs;
@@ -337,8 +339,7 @@ namespace ondemand
 
                         ONDEMANDLOG_TIME(warning, 5000)
                             << "SUB_TABLE_REGISTER retry: node=" << nodeName
-                            << " missing=" << missing << "/" << total
-                            << " delayMs=" << backoffMs;
+                            << " missing=" << missing << "/" << total << " delayMs=" << backoffMs;
 
                         /*构造只含缺失变量的重试消息，放入重试队列*/
                         auto retryData = std::make_shared<DSF::Message::SubTableRegister>();
@@ -573,7 +574,7 @@ namespace ondemand
         std::vector<uint32_t> ids(n);
         for (size_t i = 0; i < n; ++i) {
             ids[i] = (*members)[i].varId;
-        }     
+        }
         varStore_.read_batch(ids.data(), n, [&](size_t i, const void *ptr, uint32_t sz) {
             if (!ptr || sz == 0) {
                 if (skippedCount == 0) {
@@ -605,8 +606,8 @@ namespace ondemand
         /* 如果有部分变量被跳过，打印一次警告*/
         if (skippedCount > 0) {
             ONDEMANDLOG_TIME(warning, 3000) << "Skipped " << skippedCount << "/" << members->size()
-                                             << " variables without data in bucket=" << bucketIndex
-                                             << " freq=" << freqMs << "ms";
+                                            << " variables without data in bucket=" << bucketIndex
+                                            << " freq=" << freqMs << "ms";
         }
 
         /*无跳过：直接用预计算 mask，避免重建 Roaring64Map（热路径优化）*/
@@ -752,7 +753,8 @@ namespace ondemand
 
             // 批量注册（一次 ConfigGuard）
             std::vector<uint64_t> hashes(newVars.size());
-            std::vector<uint32_t> sizes(newVars.size(), 0); //暂时不支持预设大小，统一传 0 由 VarStore 内部处理 优化内存
+            std::vector<uint32_t> sizes(
+                newVars.size(), 0); //暂时不支持预设大小，统一传 0 由 VarStore 内部处理 优化内存
             std::vector<uint32_t> ids(newVars.size());
             for (size_t i = 0; i < newVars.size(); ++i)
                 hashes[i] = newVars[i].varHash;
@@ -797,8 +799,9 @@ namespace ondemand
                 pubTableDefine.description("onDemandPub TableDefine");
 
                 const auto &members = bucketManager_.GetBucketMembers(bucketId);
-                pubTableDefine.varDefines().reserve(members.size());
+                pubTableDefine.varDefines().reserve(members.size() + 32);
 
+                // 已创建的变量（从 defineCache_ 取完整 Define）
                 for (uint64_t varHash : members) {
                     auto idxIt = defineLookup_.find(varHash);
                     if (idxIt == defineLookup_.end())
@@ -809,6 +812,26 @@ namespace ondemand
                     varRequest.varDefine(defineCache_[idxIt->second]);
                     pubTableVarDefine.var(std::move(varRequest));
                     pubTableDefine.varDefines().push_back(std::move(pubTableVarDefine));
+                }
+
+                // 仅注册未创建的变量（从 liteBucketMembers_ 取，构造最小 Define）
+                // 避免 sub 端差分删除误删这些变量
+                {
+                    std::shared_lock liteLock(liteVarIndexMutex_);
+                    for (const auto &entry : liteBucketMembers_[bucketId].entries) {
+                        if (varIndex_.count(entry.hash))
+                            continue; // 已在上面处理
+                        const char *nameStr = namePool_.data() + entry.nameOffset;
+                        DSF::Var::Define liteDefine;
+                        liteDefine.name(nameStr);
+                        liteDefine.nodeName(nodeName_);
+
+                        DSF::Var::PubTableVarDefine pubTableVarDefine;
+                        DSF::Var::VarRequest varRequest;
+                        varRequest.varDefine(std::move(liteDefine));
+                        pubTableVarDefine.var(std::move(varRequest));
+                        pubTableDefine.varDefines().push_back(std::move(pubTableVarDefine));
+                    }
                 }
 
                 if (!pubTableDefine.varDefines().empty()) {
@@ -823,6 +846,80 @@ namespace ondemand
         schedulerDirty_.store(true, std::memory_order_release);
         return true;
     }
+
+    bool OnDemandPub::registerVars(const std::vector<DSF::Var::Define> &VarDefines)
+    {
+        std::unordered_set<uint32_t> affectedBuckets;
+
+        // 1. 提取 name + size，按 bucket 分组存入 liteBucketMembers_
+        {
+            std::unique_lock lock(liteVarIndexMutex_);
+            for (const auto &def : VarDefines) {
+                std::string metaName = make_meta_varname(nodeName_, def.name());
+                uint64_t varHash = fast_hash(metaName);
+                uint32_t bucketIdx =
+                    static_cast<uint32_t>(BucketManager::CalculateBucketIndexFromHash(varHash));
+
+                auto &bucket = liteBucketMembers_[bucketIdx];
+                if (!bucket.hashSet.insert(varHash).second)
+                    continue;
+
+                uint32_t nameOffset = static_cast<uint32_t>(namePool_.size());
+                const std::string &name = def.name();
+                namePool_.insert(namePool_.end(), name.begin(), name.end());
+                namePool_.push_back('\0');
+
+                bucket.entries.push_back(LiteVarEntry{varHash, nameOffset});
+                affectedBuckets.insert(bucketIdx);
+            }
+        }
+
+        // 2. 广播 PubTableDefine（从 liteBucketMembers_ 构造最小 Define）
+        if (!affectedBuckets.empty())
+            broadcastLiteTableDefines(affectedBuckets);
+
+        ONDEMANDLOG(info) << "registerVars: done, " << VarDefines.size() << " vars, "
+                          << affectedBuckets.size() << " buckets";
+        return true;
+    }
+
+    void OnDemandPub::broadcastLiteTableDefines(const std::unordered_set<uint32_t> &bucketIds,
+                                                bool forceEmpty)
+    {
+        std::shared_lock lock(liteVarIndexMutex_);
+        for (uint32_t bucketId : bucketIds) {
+            const auto &members = liteBucketMembers_[bucketId].entries;
+            if (members.empty() && !forceEmpty)
+                continue;
+
+            DSF::Var::PubTableDefine pubTableDefine;
+            pubTableDefine.name(make_bucket_name_by_id(bucketId));
+            pubTableDefine.nodeName(nodeName_);
+            pubTableDefine.description("onDemandPub TableDefine");
+            pubTableDefine.varDefines().reserve(members.size());
+
+            for (const auto &entry : members) {
+                const char *nameStr = namePool_.data() + entry.nameOffset;
+
+                // 构造最小 Define（仅 name/nodeName，足够 sub 注册）
+                DSF::Var::Define define;
+                define.name(nameStr);
+                define.nodeName(nodeName_);
+
+                DSF::Var::PubTableVarDefine pubTableVarDefine;
+                DSF::Var::VarRequest varRequest;
+                varRequest.varDefine(std::move(define));
+                pubTableVarDefine.var(std::move(varRequest));
+                pubTableDefine.varDefines().push_back(std::move(pubTableVarDefine));
+            }
+
+            tableDefinePublish(pubTableDefine);
+            std::this_thread::sleep_for(std::chrono::milliseconds(20));
+            ONDEMANDLOG(info) << "Published bucket " << bucketId << " with " << members.size()
+                              << " vars (lite)";
+        }
+    }
+
     /**
      * @brief 删除变量并发布更新的表定义，支持增量更新
      * @param  varNames 变量名称列表，指定要删除的变量
@@ -850,6 +947,28 @@ namespace ondemand
             }
         }
 
+        // 同步清理 liteBucketMembers_（变量可能同时存在于两处）
+        {
+            std::unique_lock liteLock(liteVarIndexMutex_);
+            for (const auto &varName : varNames) {
+                std::string metaName = make_meta_varname(nodeName_, varName);
+                uint64_t varHash = fast_hash(metaName);
+                uint32_t bucketIdx = static_cast<uint32_t>(
+                    BucketManager::CalculateBucketIndexFromHash(varHash));
+                auto &bucket = liteBucketMembers_[bucketIdx];
+                if (bucket.hashSet.erase(varHash) > 0) {
+                    for (auto it = bucket.entries.begin(); it != bucket.entries.end(); ++it) {
+                        if (it->hash == varHash) {
+                            bucket.entries.erase(it);
+                            break;
+                        }
+                    }
+                    affectedBuckets.insert(bucketIdx);
+                    ONDEMANDLOG(info) << "Deleted lite-registered variable: " << varName;
+                }
+            }
+        }
+
         schedulerDirty_.store(true, std::memory_order_release);
 
         /*只重发受影响的 bucket 的 TableDefine，避免误触发其他 bucket 的差分删除*/
@@ -860,21 +979,17 @@ namespace ondemand
             pubTableDefine.description("onDemandPub TableDefine");
 
             const auto &members = bucketManager_.GetBucketMembers(i);
-            pubTableDefine.varDefines().reserve(members.size());
+            pubTableDefine.varDefines().reserve(members.size() + 32);
 
+            // 已创建的变量
             {
                 std::shared_lock lock(varIndexMutex_);
                 for (uint64_t varHash : members) {
-                    auto it = varIndex_.find(varHash);
-                    if (it == varIndex_.end()) {
+                    if (varIndex_.find(varHash) == varIndex_.end())
                         continue;
-                    }
-                    const auto &meta = it->second;
-                    (void)meta; // bucketIndex 等字段已在上方 affectedBuckets 中使用
                     auto idxIt = defineLookup_.find(varHash);
-                    if (idxIt == defineLookup_.end()) {
+                    if (idxIt == defineLookup_.end())
                         continue;
-                    }
 
                     DSF::Var::PubTableVarDefine pubTableVarDefine;
                     DSF::Var::VarRequest varRequest;
@@ -884,9 +999,29 @@ namespace ondemand
                 }
             }
 
+            // 仅注册未创建的变量（避免 sub 差分删除误删）
+            {
+                std::shared_lock liteLock(liteVarIndexMutex_);
+                for (const auto &entry : liteBucketMembers_[i].entries) {
+                    if (varIndex_.count(entry.hash))
+                        continue;
+                    const char *nameStr = namePool_.data() + entry.nameOffset;
+                    DSF::Var::Define liteDefine;
+                    liteDefine.name(nameStr);
+                    liteDefine.size(0);
+                    liteDefine.nodeName(nodeName_);
+
+                    DSF::Var::PubTableVarDefine pubTableVarDefine;
+                    DSF::Var::VarRequest varRequest;
+                    varRequest.varDefine(std::move(liteDefine));
+                    pubTableVarDefine.var(std::move(varRequest));
+                    pubTableDefine.varDefines().push_back(std::move(pubTableVarDefine));
+                }
+            }
+
             /*差分删除: 即使是空表也要发布, 通知订阅者该表已清空*/
             tableDefinePublish(pubTableDefine);
-            std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            std::this_thread::sleep_for(std::chrono::milliseconds(20));
             ONDEMANDLOG(info) << "Published bucket " << i << " with "
                               << pubTableDefine.varDefines().size() << " variables (delete mode)";
         }
@@ -1142,54 +1277,98 @@ namespace ondemand
         }
 
         // ── 第一阶段：收集有效变量 + 批量扩展 ──
+        // 支持懒创建：第一轮收集 pendingCreates → createVars → 第二轮重新收集
         std::vector<uint32_t> expandIds;
         std::vector<uint32_t> expandSizes;
         expandIds.reserve(varFreqs.size());
         expandSizes.reserve(varFreqs.size());
 
-        for (const auto &varFreq : varFreqs) {
-            std::string metaName = varFreq.name();
+        for (int pass = 0; pass < 2; ++pass) {
+            std::vector<DSF::Var::Define> pendingCreates;
 
-            if (metaName.compare(0, ownPrefix.size(), ownPrefix) != 0) {
-                continue;
-            }
+            for (const auto &varFreq : varFreqs) {
+                std::string metaName = varFreq.name();
 
-            uint64_t varHash = fast_hash(metaName);
-            auto it = varIndex_.find(varHash);
-            if (it == varIndex_.end()) {
-                ONDEMANDLOG(debug) << "handleSubscribe: var not yet created, will retry"
-                                   << " var=" << metaName << " node=" << nodeName;
-                if (missingVarFreqs) {
-                    missingVarFreqs->push_back(varFreq);
+                if (metaName.compare(0, ownPrefix.size(), ownPrefix) != 0) {
+                    continue;
                 }
-                ++missingCount;
-                continue;
-            }
 
-            auto &meta = it->second;
-
-            // 收集需要扩展的变量
-            auto idxIt = defineLookup_.find(varHash);
-            if (idxIt != defineLookup_.end()) {
-                uint32_t defineSize = static_cast<uint32_t>(defineCache_[idxIt->second].size());
-                uint32_t targetSize = defineSize > 0 ? defineSize : 2u;
-                if (varStore_.slot_size(meta.varId) < targetSize) {
-                    expandIds.push_back(meta.varId);
-                    expandSizes.push_back(targetSize);
+                uint64_t varHash = fast_hash(metaName);
+                auto it = varIndex_.find(varHash);
+                if (it == varIndex_.end()) {
+                    // 第一轮：查 liteBucketMembers_，找到则加入待创建列表
+                    if (pass == 0) {
+                        uint32_t bucketIdx = static_cast<uint32_t>(
+                            BucketManager::CalculateBucketIndexFromHash(varHash));
+                        std::shared_lock liteLock(liteVarIndexMutex_);
+                        const auto &bucket = liteBucketMembers_[bucketIdx];
+                        if (bucket.hashSet.count(varHash)) {
+                            const LiteVarEntry *found = nullptr;
+                            for (const auto &e : bucket.entries) {
+                                if (e.hash == varHash) {
+                                    found = &e;
+                                    break;
+                                }
+                            }
+                            if (found) {
+                                DSF::Var::Define def;
+                                def.name(namePool_.data() + found->nameOffset);
+                                def.nodeName(nodeName_);
+                                pendingCreates.push_back(std::move(def));
+                            }
+                        } else {
+                            if (missingVarFreqs) {
+                                missingVarFreqs->push_back(varFreq);
+                            }
+                            ++missingCount;
+                        }
+                    } else {
+                        // 第二轮：createVars 后仍然找不到，真的不存在
+                        ++missingCount;
+                    }
+                    continue;
                 }
+
+                auto &meta = it->second;
+
+                // 收集需要扩展的变量
+                auto idxIt = defineLookup_.find(varHash);
+                if (idxIt != defineLookup_.end()) {
+                    uint32_t defineSize = static_cast<uint32_t>(defineCache_[idxIt->second].size());
+                    uint32_t targetSize = defineSize > 0 ? defineSize : 2u;
+                    if (varStore_.slot_size(meta.varId) < targetSize) {
+                        expandIds.push_back(meta.varId);
+                        expandSizes.push_back(targetSize);
+                    }
+                }
+
+                // 解析频率
+                uint32_t freq;
+                auto result = std::from_chars(
+                    varFreq.value().data(), varFreq.value().data() + varFreq.value().size(), freq);
+                if (std::errc() != result.ec) {
+                    ONDEMANDLOG(warning) << "Invalid frequency value for var: " << metaName
+                                         << " node: " << nodeName << " value: " << varFreq.value();
+                    continue;
+                }
+
+                entries.push_back({varHash, &meta, freq});
             }
 
-            // 解析频率
-            uint32_t freq;
-            auto result = std::from_chars(varFreq.value().data(),
-                                          varFreq.value().data() + varFreq.value().size(), freq);
-            if (std::errc() != result.ec) {
-                ONDEMANDLOG(warning) << "Invalid frequency value for var: " << metaName
-                                     << " node: " << nodeName << " value: " << varFreq.value();
-                continue;
+            // 第一轮：有待创建变量 → createVars → 重跑第二轮
+            if (pass == 0 && !pendingCreates.empty()) {
+                ONDEMANDLOG(info) << "handleSubscribe: lazy creating " << pendingCreates.size()
+                                  << " vars for node=" << nodeName;
+                lock.unlock();
+                createVars(pendingCreates);
+                lock.lock();
+                entries.clear();
+                expandIds.clear();
+                expandSizes.clear();
+                missingCount = 0;
+                continue; // 第二轮
             }
-
-            entries.push_back({varHash, &meta, freq});
+            break; // 无需懒创建或已完成第二轮
         }
 
         // 批量扩展（一次 arena 重分配）
@@ -1331,7 +1510,7 @@ namespace ondemand
         }
 
         lock.unlock();
-        
+
         for (const auto &[varName, newFreq] : freqChanges) {
             freqChangeQueue_.enqueue({varName, newFreq});
         }
