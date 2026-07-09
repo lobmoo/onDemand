@@ -1048,9 +1048,32 @@ namespace ondemand
 
     void OnDemandSub::onParticipantDiscovery(const DdsWrapper::ParticipantInfo &info)
     {
+        if (info.status == DdsWrapper::ParticipantStatus::DISCOVERED) {
+            /* 新 participant 上线，记录其 GUID，用于后续区分同名实例 */
+            std::lock_guard<std::mutex> lock(pubGuidsMutex_);
+            pubGuids_[info.participant_name] = info.guid;
+            ONDEMANDLOG(info) << "Pub participant discovered: " << info.participant_name
+                              << ", guid=" << info.guid;
+            return;
+        }
+
         if (info.status != DdsWrapper::ParticipantStatus::REMOVED
             && info.status != DdsWrapper::ParticipantStatus::DROPPED) {
             return;
+        }
+
+        /* DROPPED/REMOVED：检查是否为当前实例，避免旧实例掉线误清新实例的变量 */
+        {
+            std::lock_guard<std::mutex> lock(pubGuidsMutex_);
+            auto it = pubGuids_.find(info.participant_name);
+            if (it != pubGuids_.end() && it->second != info.guid) {
+                ONDEMANDLOG(info) << "Pub participant stale drop ignored: " << info.participant_name
+                                  << ", dropped_guid=" << info.guid
+                                  << ", current_guid=" << it->second;
+                return;
+            }
+            /* GUID 匹配或映射不存在，正常清理并移除映射 */
+            pubGuids_.erase(info.participant_name);
         }
 
         (void)cleanupParticipantPublish(info.participant_name);

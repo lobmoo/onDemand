@@ -357,6 +357,10 @@ namespace ondemand
         std::atomic<bool> callbackDirty_{false};
 
         std::atomic<uint32_t> blobType_{static_cast<uint32_t>(DSF::Var::BLOB_TYPE::STRUCTS)};
+
+        /* participant GUID 跟踪：pubName -> guidPrefix*/
+        std::mutex pubGuidsMutex_;
+        std::unordered_map<std::string, std::string> pubGuids_;
     };
 
 } // namespace ondemand

@@ -1518,9 +1518,30 @@ namespace ondemand
 
     void OnDemandPub::onParticipantDiscovery(const DdsWrapper::ParticipantInfo &info)
     {
+        if (info.status == DdsWrapper::ParticipantStatus::DISCOVERED) {
+            std::lock_guard<std::mutex> lock(pubGuidsMutex_);
+            pubGuids_[info.participant_name] = info.guid;
+            ONDEMANDLOG(info) << "Sub participant discovered: " << info.participant_name
+                              << ", guid=" << info.guid;
+            return;
+        }
+
         if (info.status != DdsWrapper::ParticipantStatus::REMOVED
             && info.status != DdsWrapper::ParticipantStatus::DROPPED) {
             return;
+        }
+
+
+        {
+            std::lock_guard<std::mutex> lock(pubGuidsMutex_);
+            auto it = pubGuids_.find(info.participant_name);
+            if (it != pubGuids_.end() && it->second != info.guid) {
+                ONDEMANDLOG(info) << "Sub participant stale drop ignored: " << info.participant_name
+                                  << ", dropped_guid=" << info.guid
+                                  << ", current_guid=" << it->second;
+                return;
+            }
+            pubGuids_.erase(info.participant_name);
         }
 
         (void)cleanupParticipantSubscriptions(info.participant_name);

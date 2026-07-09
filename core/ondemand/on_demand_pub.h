@@ -409,6 +409,10 @@ namespace ondemand
         uint32_t maxVarsPerNode_; // 每个节点最大变量数，超过后拒绝新变量订阅
         uint32_t maxNodeNum_;     // 最大订阅者数，超过后拒绝新订阅者注册
         std::unordered_map<uint64_t, uint32_t> nodeVarCount_; // nodeHash -> 已订阅变量数
+
+        /* participant GUID 跟护：participantName -> guidPrefix*/
+        std::mutex pubGuidsMutex_;
+        std::unordered_map<std::string, std::string> pubGuids_;
     };
 
 } // namespace ondemand
