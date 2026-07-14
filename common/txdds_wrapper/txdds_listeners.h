@@ -48,7 +48,7 @@ struct MatchedInfo {
 
 struct ParticipantInfo {
     std::string participant_name;
-    std::string guid;         
+    std::string guid;
     int domain_id = 0;
     ParticipantStatus status = ParticipantStatus::DISCOVERED;
 };
@@ -89,9 +89,7 @@ protected:
         /* 将 guidPrefix 转为 hex 字符串，用于区分同名 participant 的不同实例 */
         {
             std::ostringstream oss;
-            oss << const_cast<BaoSky::rtps::DiscoveredParticipantData &>(info.info)
-                      .GetParticipantProxy()
-                      .guidPrefix;
+            oss << info.info.mParticipantGuid;
             pinfo.guid = oss.str();
         }
 

@@ -480,6 +480,24 @@ namespace ondemand
                     if (!varStore_.finalize()) {
                         ONDEMANDLOG(error) << "Failed to finalize VarStore after TableDefine";
                     }
+
+                    /*缓存 PubTableDefine，用于重连时恢复变量定义*/
+                    {
+                        std::lock_guard<std::mutex> cacheLock(pubTableDefineCacheMutex_);
+                        auto &vec = pubTableDefineCache_[tableDefine->nodeName()];
+                        bool found = false;
+                        for (auto &existing : vec) {
+                            if (existing->name() == tableDefine->name()) {
+                                existing = tableDefine;
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            vec.push_back(tableDefine);
+                        }
+                    }
+
                     lock.unlock();
 
                     /*通知外层同步 define 到 Var::state*/
@@ -627,6 +645,25 @@ namespace ondemand
             return false;
         }
 
+        /*存储订阅参数，用于重连时重发*/
+        {
+            std::lock_guard<std::mutex> lock(subscriptionItemsMutex_);
+            auto &stored = subscriptionItems_[node_name];
+            for (const auto &item : items) {
+                bool found = false;
+                for (auto &s : stored) {
+                    if (s.varName == item.varName) {
+                        s.frequency = item.frequency;
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    stored.emplace_back(item.varName, item.frequency);
+                }
+            }
+        }
+
         /*存储回调信息到本地, 供时间轮调度器使用*/
         if (callback) {
             std::lock_guard<std::mutex> lock(subscriptionCallbacksMutex_);
@@ -721,6 +758,25 @@ namespace ondemand
             callbackDirty_.store(true, std::memory_order_release);
             ONDEMANDLOG(info) << "Removed " << items.size()
                               << " callback subscriptions for node: " << node_name;
+        }
+
+        /*移除订阅参数存储*/
+        {
+            std::lock_guard<std::mutex> lock(subscriptionItemsMutex_);
+            auto it = subscriptionItems_.find(node_name);
+            if (it != subscriptionItems_.end()) {
+                auto &stored = it->second;
+                for (const auto &item : items) {
+                    stored.erase(std::remove_if(stored.begin(), stored.end(),
+                                                [&item](const SubscriptionItem &s) {
+                                                    return s.varName == item;
+                                                }),
+                                 stored.end());
+                }
+                if (stored.empty()) {
+                    subscriptionItems_.erase(it);
+                }
+            }
         }
 
         return true;
@@ -1049,11 +1105,29 @@ namespace ondemand
     void OnDemandSub::onParticipantDiscovery(const DdsWrapper::ParticipantInfo &info)
     {
         if (info.status == DdsWrapper::ParticipantStatus::DISCOVERED) {
-            /* 新 participant 上线，记录其 GUID，用于后续区分同名实例 */
-            std::lock_guard<std::mutex> lock(pubGuidsMutex_);
-            pubGuids_[info.participant_name] = info.guid;
-            ONDEMANDLOG(info) << "Pub participant discovered: " << info.participant_name
-                              << ", guid=" << info.guid;
+            bool isReconnect = false;
+            {
+                std::lock_guard<std::mutex> lock(pubGuidsMutex_);
+
+                /* 检测重连：guid 之前被 DROPPED erase 过，说明是同一实例重连 */
+                isReconnect = droppedPubGuids_.count(info.guid) > 0;
+                if (isReconnect) {
+                    droppedPubGuids_.erase(info.guid);
+                    ONDEMANDLOG(info) << "Pub participant reconnected: " << info.participant_name
+                                      << ", guid=" << info.guid << ", re-sending subscriptions";
+                } else {
+                    ONDEMANDLOG(info) << "Pub participant discovered: " << info.participant_name
+                                      << ", guid=" << info.guid;
+                }
+
+                pubGuids_[info.participant_name] = info.guid;
+            }
+
+            /* 重连时恢复变量定义缓存并重发订阅请求 */
+            if (isReconnect) {
+                restorePubTableDefineFromCache(info.participant_name);
+                resendSubscriptions();
+            }
             return;
         }
 
@@ -1072,11 +1146,88 @@ namespace ondemand
                                   << ", current_guid=" << it->second;
                 return;
             }
-            /* GUID 匹配或映射不存在，正常清理并移除映射 */
+            /* GUID 匹配或映射不存在，记录 guid 到 dropped 集合，正常清理 */
+            if (it != pubGuids_.end()) {
+                droppedPubGuids_.insert(it->second);
+            }
             pubGuids_.erase(info.participant_name);
         }
 
         (void)cleanupParticipantPublish(info.participant_name);
+    }
+
+    void OnDemandSub::resendSubscriptions()
+    {
+        std::unordered_map<std::string, std::vector<SubscriptionItem>> itemsCopy;
+        {
+            std::lock_guard<std::mutex> lock(subscriptionItemsMutex_);
+            itemsCopy = subscriptionItems_;
+        }
+
+        if (itemsCopy.empty()) {
+            return;
+        }
+
+        size_t resent = 0;
+        for (const auto &[pubNodeName, items] : itemsCopy) {
+            if (items.empty()) {
+                continue;
+            }
+
+            DSF::Message::SubTableRegister subReq;
+            std::string tableName;
+            {
+                std::shared_lock lock(varIndexMutex_);
+                for (const auto &item : items) {
+                    std::string metaVarName = make_meta_varname(pubNodeName, item.varName);
+                    uint64_t varHash = fast_hash(metaVarName);
+                    tableName = make_bucket_name_by_hash(varHash);
+
+                    DSF::NamedValue varFreq;
+                    varFreq.name(metaVarName);
+                    varFreq.value(std::to_string(item.frequency));
+                    subReq.varFreqs().emplace_back(varFreq);
+                }
+            }
+
+            subReq.msgType(DSF::Message::MSGTYPE::SUB_TABLE_REGISTER);
+            subReq.nodeName(nodeName_);
+            subReq.tableName(tableName);
+            if (subReq.varFreqs().empty()) {
+                continue;
+            }
+
+            auto writer = subTableRegisterReqWriter_;
+            if (writer && writer->writeMessage(subReq)) {
+                ++resent;
+                ONDEMANDLOG(info) << "Re-sent SubTableRegister for node: " << pubNodeName
+                                  << ", vars: " << subReq.varFreqs().size();
+            } else {
+                ONDEMANDLOG(error) << "Failed to re-send SubTableRegister for node: " << pubNodeName;
+            }
+        }
+
+        if (resent > 0) {
+            ONDEMANDLOG(info) << "Re-sent subscriptions for " << resent << " nodes after reconnect";
+        }
+    }
+
+    void OnDemandSub::restorePubTableDefineFromCache(const std::string &pubNodeName)
+    {
+        std::vector<std::shared_ptr<DSF::Var::PubTableDefine>> cached;
+        {
+            std::lock_guard<std::mutex> lock(pubTableDefineCacheMutex_);
+            auto it = pubTableDefineCache_.find(pubNodeName);
+            if (it == pubTableDefineCache_.end()) {
+                return;
+            }
+            cached = it->second;
+        }
+        for (auto &entry : cached) {
+            pubTableDefineQueue_.enqueue(entry);
+        }
+        ONDEMANDLOG(info) << "Restored " << cached.size()
+                          << " PubTableDefine from cache for: " << pubNodeName;
     }
 
     bool OnDemandSub::cleanupParticipantPublish(const std::string &pubNodeName)
@@ -1256,6 +1407,11 @@ namespace ondemand
         {
             std::lock_guard<std::mutex> lk(activePartitionsMutex_);
             activePartitions_.clear();
+        }
+
+        {
+            std::lock_guard<std::mutex> lock(pubTableDefineCacheMutex_);
+            pubTableDefineCache_.clear();
         }
 
         {
