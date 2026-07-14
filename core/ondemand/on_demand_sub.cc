@@ -1405,6 +1405,11 @@ namespace ondemand
         }
 
         {
+            std::lock_guard<std::mutex> lock(subscriptionItemsMutex_);
+            subscriptionItems_.clear();
+        }
+
+        {
             std::lock_guard<std::mutex> lk(activePartitionsMutex_);
             activePartitions_.clear();
         }
