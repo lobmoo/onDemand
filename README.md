@@ -1,652 +1,622 @@
-# OnDemand 模块架构文档
-
-## 概述
-
-OnDemand 是一个基于 FastDDS 的高性能按需变量发布/订阅系统，核心目标是：
-
-- 支持海量变量（10万+）的高效分发
-- 订阅方按需指定各变量的更新频率
-- 发布方只以订阅方要求的最低频率推送数据，避免无效传输
-- 支持运行时动态调整订阅关系和频率
-
-典型场景：一个系统有大量状态变量，不同消费者对不同变量有不同的刷新率需求，OnDemand 让每个变量只以"最需要的频率"被推送。
+> **版本**: v1.0 | **最后更新**: 2026-07-15 | **作者**: wwk
+>
 
 ---
 
-## 项目结构
+## 第一部分：项目概述
+### 1.1 一句话定义
+OnDemand 是面向**工业自动化场景**的高性能按需发布-订阅中间件——对标 IEC 61850 MMS/GOOSE、IEC 60870-5-104、OPC UA PubSub 等工业通信标准，在 DDS 之上实现**逐变量、逐订阅者的动态频率协商**，解决 SCADA/DCS 系统中 10 万+ 测点的按需分发问题。
 
-```
-core/
-├── ondemand/
-│   ├── on_demand_pub.h/cc      # 发布端
-│   ├── on_demand_sub.h/cc      # 订阅端
-│   ├── on_demand_common.h      # 公共工具（BucketManager、VarMetadata 等）
-│   ├── variable_store.h        # 变量数据存储
-│   ├── concurrentqueue.h       # 无锁队列（moodycamel）
-│   └── idl/                    # DDS 消息定义
-│       ├── dsf_define_var.idl
-│       ├── dsf_define_messages.idl
-│       └── dsf_define_datatypes.idl
-└── main.cc                     # 示例/测试代码
+#### ① 动态模型发现（最核心差异）
+> **无需预配置文件，发布者运行时广播模型，订阅者自动发现并解析。**
+>
+> <!-- 这是一张图片，ocr 内容为： -->
+![](https://cdn.nlark.com/yuque/0/2026/png/28969906/1784098437976-bad3224c-7e76-459a-9ed0-089d1b1733fe.png)
+>
 
-common/
-├── timer_wheel/                # 时间轮调度器
-│   ├── timer_wheel.h           # 分层时间轮核心
-│   ├── timer_scheduler.h       # 调度器封装
-│   └── thread_pool.h           # 线程池
-├── fastdds_wrapper/            # FastDDS 封装层
-└── log/                        # 日志
++ 发布者调用 `createVars()` / `registerVars()` 注册变量，系统自动广播 `PubTableDefine`
++ 订阅者通过 `setTableDefineCallback()` 接收变量定义，无需任何预配置
++ 变量支持运行时动态增删（`createVars` / `deleteVars`），模型实时更新
++ 变量定义包含：名称、大小、模型名、版本、描述、读写权限——兼容 IEC 61850 DO/DA 数据模型
+
+#### ② 变量级频率协商
+> **订阅者按需声明每个变量的期望周期，发布者自动取最小值发布，取消时自动上调。**
+>
+
+```plain
+场景示例（变量 "busbar_voltage"）:
+  保护装置 subscribe(10ms)  → currentFreq = 10ms  ← 按 10ms 发布
+  HMI       subscribe(1s)   → currentFreq = 10ms  ← 不变（已是最小值）
+  历史库    subscribe(10s)  → currentFreq = 10ms  ← 不变
+
+  保护装置 unsubscribe()    → currentFreq = 1s    ← 自动上调到次小值
+  HMI       unsubscribe()   → currentFreq = 10s   ← 继续上调
+  历史库    unsubscribe()   → currentFreq = 0xFFFF ← 无订阅者，停止发布
 ```
+
++ 对标 IEC 61850 Report Control Block 的按需报告，但粒度从**数据集级**细化到**单变量级**
++ 频率变更对发布者透明，无需人工干预
+
+#### ③ 大规模 + 高性能
++ 10 万+ 变量单节点，对标大型变电站/工厂测点规模
++ 20 桶分片并行传输，避免单链路瓶颈
++ Seqlock 双缓冲零拷贝读取，微秒级延迟
++ DDS 提供可靠传输、断网重连、Participant 存活检测
+
+### 1.4 与工业标准的对比
+| 特性 | IEC 61850 GOOSE | IEC 61850 RCB | IEC 104 | OPC UA PubSub | **OnDemand** |
+| --- | --- | --- | --- | --- | --- |
+| 传输机制 | 二层组播 | MMS/TCP | TCP 轮询 | UDP 多播 | **DDS** |
+| **配置方式** | **CID 文件预装** | **CID 文件预装** | **点表预装** | **信息模型预共享** | **运行时动态发现** |
+| **模型更新** | 停机改配 | 停机改配 | 双方改点表 | 重新发布模型 | **运行时热更新** |
+| 频率控制 | 固定周期 | 报告使能+触发选项 | 固定轮询 | 发布者决定 | **订阅者协商** |
+| 协商粒度 | 无 | 数据集级 | 站级 | Topic 级 | **变量级** |
+| 变量规模 | ~千级 | ~千级 | ~万级 | ~万级 | **10 万+** |
+| 多订阅者 | 广播 | 1:1 连接 | 1:1 连接 | 1:N | **N:M 动态协商** |
+| 频率自适应 | 无 | 条件触发 | 无 | 无 | **自动上调/下调** |
+| 零拷贝读取 | 无 | 无 | 无 | 无 | **Seqlock 双缓冲** |
+
+
+### 1.5 关键技术指标
+| 指标 | 目标值 | 工业对标 |
+| --- | --- | --- |
+| 变量规模 | 10 万+ 单节点 | 大型变电站测点规模 |
+| 频率精度 | 1ms tick（时间轮） | 满足保护级 3ms 要求 |
+| 读取延迟 | 零拷贝（Seqlock + 双缓冲） | 微秒级读取，满足实时控制 |
+| 并发写入 | 无锁写 + CAS 脏标记 | 多数据源并发采集 |
+| 传输并行度 | 20 桶 × 独立 DDS Topic | 避免单链路瓶颈 |
+| 最大订阅者 | 64 节点（subMask 位掩码） | 满足多客户端场景 |
+| 频率协商 | 变量级，自动上调/下调 | 超越现有工业标准 |
+| **模型发现** | **运行时动态广播，零配置** | **消除 CID/点表预装** |
+
 
 ---
 
-## 整体架构
+## 第二部分：整体架构
+### 2.1 系统拓扑图
+<!-- 这是一张图片，ocr 内容为： -->
+![](https://cdn.nlark.com/yuque/0/2026/png/28969906/1784095421737-9ac6cc4f-48f1-4a65-843b-0b7268496ae1.png)
 
-```
-┌──────────────────────────────────────┐       ┌──────────────────────────────────────┐
-│            Publisher Node             │       │           Subscriber Node             │
-│                                      │       │                                      │
-│  ┌────────────────────────────────┐  │       │  ┌────────────────────────────────┐  │
-│  │          OnDemandPub           │  │       │  │          OnDemandSub           │  │
-│  │                                │  │       │  │                                │  │
-│  │  varIndex_  (hash→VarMetadata) │  │       │  │  varIndex_  (hash→VarMetadata) │  │
-│  │  varStore_  (变量数据内存池)    │  │       │  │  varStore_  (变量数据内存池)    │  │
-│  │  bucketManager_ (20分桶)       │  │       │  │  varWriteStamps_ (写时间戳)     │  │
-│  │  publishScheduler_ (时间轮)    │  │       │  │  callbackScheduler_ (时间轮)    │  │
-│  │  publishGroupTimers_           │  │       │  │  callbackGroupTimers_           │  │
-│  │  dataTransferWriterMap_        │  │       │  │  dataTransferReaderMap_         │  │
-│  └────────────────────────────────┘  │       │  └────────────────────────────────┘  │
-└──────────────────────────────────────┘       └──────────────────────────────────────┘
-              │                                               │
-              │                FastDDS (Domain 66)            │
-              │   ┌──────────────────────────────────────┐   │
-              └──►│  dsf/sys/var/tableDefine             │──►│  PubTableDefine（变量定义广播）
-                  │  dsf/message/.../subTableRegister  ◄─│◄──│  SubTableRegister（订阅请求）
-                  │  dsf/var/data/transfer/bucket_N    ──│──►│  TableDataTransfer（数据推送）
-                  └──────────────────────────────────────┘
-```
+### 2.2 核心模块划分
+<!-- 这是一张图片，ocr 内容为： -->
+![](https://cdn.nlark.com/yuque/0/2026/png/28969906/1784095475260-7b640f2c-9947-49cd-8172-2069720c61da.png)
+
+### 2.3 DDS Topic 通信拓扑
+| Topic 名称 | 方向 | 消息类型 | 用途 | QoS |
+| --- | --- | --- | --- | --- |
+| `dsf/sys/var/tableDefine` | Pub → Sub | `PubTableDefine` | 广播变量定义（按 bucket 分批） | RELIABLE, TRANSIENT_LOCAL |
+| `dsf/message/commandRequest/subTableRegister` | Sub → Pub | `SubTableRegister` | 订阅/取消订阅请求 | RELIABLE, TRANSIENT_LOCAL |
+| `dsf/var/data/transfer/bucket_N` (N=0–19) | Pub → Sub | `TableDataTransfer` | 批量变量数据（20 个独立 topic） | BEST_EFFORT (异步) |
+
 
 ---
 
-## 核心组件
+## 第三部分：核心模块详解
+### 3.1 OnDemandPub（发布者）
+**职责**: 变量注册、订阅请求处理、频率协商、定时批量数据发布。
 
-### 1. OnDemandPub（发布端）
-
-负责变量注册、数据更新、订阅处理和定时推送。
-
-**关键成员变量：**
-
+#### 关键数据结构
 ```cpp
-// 变量索引：变量名 hash → 元数据
+// 变量索引: hash -> 元数据
 std::unordered_map<uint64_t, VarMetadata> varIndex_;
-std::shared_mutex varIndexMutex_;
 
-// 分桶管理（20个桶）
-BucketManager bucketManager_;
+// 发布分组: (bucketIndex, freqMs) -> 定时器 + 成员列表
+struct PublishGroupKey {
+    uint32_t bucketIndex;
+    uint32_t freqMs;
+};
+std::unordered_map<PublishGroupKey, PublishGroupEntry> groupMembers_;
 
-// 变量数据存储
-VarStore varStore_;
-
-// 节点槽位映射：节点名 hash → bit 位置（最多64个节点）
-std::unordered_map<uint64_t, uint8_t> nodeSlotMap_;
-uint8_t nextNodeSlot_ = 0;
-
-// DDS 通信
-std::shared_ptr<DDSTopicWriter<PubTableDefine>>    pubTableDefineWriter_;
-std::shared_ptr<DDSTopicReader<SubTableRegister>>  subTableRegisterReqReader_;
-std::unordered_map<uint32_t,
-    std::shared_ptr<DDSTopicWriter<TableDataTransfer>>> dataTransferWriterMap_;  // 每桶一个
-
-// 发布调度
-std::unique_ptr<TimerScheduler> publishScheduler_;
-std::unordered_map<PublishGroupKey,
-    std::shared_ptr<TimerEventInterface>> publishGroupTimers_;  // (桶,频率) → 定时器
-std::unordered_map<PublishGroupKey,
-    std::shared_ptr<std::vector<GroupVarInfo>>>   groupMembers_;  // (桶,频率) → 变量列表
-std::atomic<bool> schedulerDirty_{true};
-
-// 订阅请求队列（无锁）
-moodycamel::ConcurrentQueue<std::shared_ptr<SubTableRegister>> pubTableDefRegisterQueue_;
+// 轻量变量索引（registerVars 懒创建用）
+std::array<LiteBucket, 20> liteBucketMembers_;
 ```
 
-**关键方法：**
+#### 线程模型
+<!-- 这是一张图片，ocr 内容为： -->
+![](https://cdn.nlark.com/yuque/0/2026/png/28969906/1784095531269-50441904-60db-4016-90af-26b507402efb.png)
 
+#### 核心流程：订阅处理
 ```cpp
-bool init(const std::string& nodeName);
-bool start();
-bool createVars(const std::vector<DSF::Var::Define>& varDefines);
-bool setVarData(const char* varName, const void* data, size_t size);
-bool deleteVars(const std::vector<std::string>& varNames);
-void stop();
+// processReceiveRegister() 伪代码
+while (running) {
+    data = normalQueue.try_dequeue() ?: retryQueue.pop();  // 优先正常队列
+    if (!data) { sleep(100ms); continue; }
+
+    missing = handleSubscribe(nodeName, varFreqs);
+    if (missing > 0) {
+        // 指数退避：200ms → 400ms → 800ms → ... → 3000ms (cap)
+        retryQueue.push(onlyMissingVars(data));
+    }
+}
 ```
 
----
-
-### 2. OnDemandSub（订阅端）
-
-负责接收变量定义、发起订阅、接收数据并触发回调。
-
-**关键成员变量：**
-
+#### 核心流程：数据发布
 ```cpp
-// 变量索引
+// publishGroupData(bucketIndex, freqMs) 伪代码
+// 1. 收集该组内所有 dirty 变量
+ids = collectDirtyIds(groupMembers[{bucketIndex, freqMs}]);
+
+// 2. 批量零拷贝读
+varStore_.read_batch(ids, count, [&](i, ptr, size) {
+    // 3. 序列化到 RoaringBitmap mask + varData[]
+    mask.add(ids[i]);
+    varData.push_back(ptr, size);
+});
+
+// 4. 通过 DDS Writer 发送 TableDataTransfer
+writer->writeMessage({mask.serialize(), timestamp, varData, blobType});
+```
+
+### 3.2 OnDemandSub（订阅者）
+**职责**: 接收变量定义、发送订阅请求、接收数据存储到 VarStore、按频率触发用户回调。
+
+#### 关键数据结构
+```cpp
+// 变量索引: hash -> 元数据（含 varId 用于 VarStore 读取）
 std::unordered_map<uint64_t, VarMetadata> varIndex_;
-std::shared_mutex varIndexMutex_;
 
-// 变量数据存储
-VarStore varStore_;
+// 回调分组: (bucketIndex, freqMs) -> 定时器 + 成员 + 用户回调
+std::unordered_map<CallbackGroupKey, CallbackGroupEntry> callbackGroupMembers_;
 
-// 写时间戳追踪（用于回调时检测变更）
-struct VarWriteStamp {
-    std::atomic<uint64_t> timestampNs{0};
-    std::atomic<uint32_t> writeCount{0};
-};
-std::unique_ptr<VarWriteStamp[]> varWriteStamps_;
+// 写入时间戳/计数（按 bucket 粒度，lock-free）
+VarWriteStamp varWriteStamps_[20];
 
-// 订阅回调注册表
-std::unordered_map<uint64_t, SubCallbackInfo> subscriptionCallbacks_;
-std::mutex subscriptionCallbacksMutex_;
-
-// DDS 通信
-std::shared_ptr<DDSTopicReader<PubTableDefine>>    pubTableDefineReader_;
-std::shared_ptr<DDSTopicWriter<SubTableRegister>>  subTableRegisterReqWriter_;
-std::unordered_map<uint32_t,
-    std::shared_ptr<DDSTopicReader<TableDataTransfer>>> dataTransferReaderMap_;  // 每桶一个
-
-// 回调调度
-std::unique_ptr<TimerScheduler> callbackScheduler_;
-std::unordered_map<CallbackGroupKey,
-    std::shared_ptr<TimerEventInterface>>          callbackGroupTimers_;  // 频率 → 定时器
-std::unordered_map<CallbackGroupKey,
-    std::shared_ptr<std::vector<CallbackVarInfo>>> callbackGroupMembers_;
-std::atomic<bool> callbackDirty_{false};
-
-// 数据接收队列（无锁）
-moodycamel::ConcurrentQueue<std::shared_ptr<PubTableDefine>>    pubTableDefineQueue_;
-moodycamel::ConcurrentQueue<std::shared_ptr<TableDataTransfer>> dataTransferQueue_;
+// PubTableDefine 缓存（用于断网重连恢复）
+std::unordered_map<string, vector<shared_ptr<PubTableDefine>>> pubTableDefineCache_;
 ```
 
-**关键方法：**
+#### 线程模型
+<!-- 这是一张图片，ocr 内容为： -->
+![](https://cdn.nlark.com/yuque/0/2026/png/28969906/1784095555750-651bfee1-8fe1-4e93-96eb-f4cd9db15fdc.png)
 
+#### 核心流程：数据接收与回调
 ```cpp
-bool init(const std::string& nodeName);
-bool start();
-bool subscribe(const char* nodeName,
-               const std::vector<SubscriptionItem>& items,
-               DataCallback callback = nullptr);
-bool unsubscribe(const char* nodeName,
-                 const std::vector<std::string>& varNames);
-uint64_t getTotalReceivedVars() const;
-void stop();
+// onReceiveDataTransferCb() — DDS 回调线程
+void onReceiveDataTransferCb(topic, data) {
+    // 1. 解析 RoaringBitmap mask
+    mask = Roaring64Map::deserialize(data->mask());
+
+    // 2. 遍历 mask 中的变量，写入 VarStore
+    for (varHash : mask) {
+        meta = varIndex_[varHash];
+        varStore_.write(meta.varId, data->varData()[i]);
+        varWriteStamps_[bucket].writeCount++;  // atomic
+    }
+
+    // 3. 更新时间戳
+    varWriteStamps_[bucket].timestampNs = data->timestamp();
+}
+
+// callbackGroupData(bucketIndex, freqMs) — 定时器触发
+void callbackGroupData(bucketIndex, freqMs) {
+    // 1. 检查 writeCount 是否变化（跳过无新数据的回调）
+    if (currentWriteCount == lastWriteCount) return;
+
+    // 2. 批量零拷贝读取
+    vector<VarCallbackData> results;
+    varStore_.read_batch(ids, count, [&](i, ptr, size) {
+        results.push_back({varName, varType, ptr, size, timestamp});
+    });
+
+    // 3. 调用用户回调
+    callback(results);
+}
 ```
 
----
+### 3.3 VarStore（无锁变量存储）
+**职责**: 高性能、线程安全的变量值存储，支持零拷贝读取。
 
-## 主要数据结构
+#### 内存布局
+<!-- 这是一张图片，ocr 内容为： -->
+![](https://cdn.nlark.com/yuque/0/2026/png/28969906/1784095595091-2a24493a-5415-42f2-8529-b0abf7718cbc.png)
 
-### VarMetadata（变量元数据）
+#### Seqlock 协议
+<!-- 这是一张图片，ocr 内容为： -->
+![](https://cdn.nlark.com/yuque/0/2026/png/28969906/1784095660565-2da4b1a0-3532-4b24-9f41-c0625bdc946b.png)
 
-发布端和订阅端各自维护一份，含义略有差异。
+#### 线程安全模型
+<!-- 这是一张图片，ocr 内容为： -->
+![](https://cdn.nlark.com/yuque/0/2026/png/28969906/1784095687304-fb47b4ad-4e59-48d4-82ec-d4ea4b40452c.png)
 
-```cpp
-struct VarMetadata {
-    uint64_t varHash;                            // 变量名的 64 位 hash（唯一标识）
-    BucketManager::BucketIndex bucketIndex;      // 所属桶编号（0~19）
-    uint32_t varId;                              // VarStore 中的存储 ID（自增）
-    uint32_t currentFreq;                        // 当前推送频率（ms），0xFFFFFFFF 表示无订阅
-    uint32_t dataSize;                           // 变量数据大小（bytes）
-    std::shared_ptr<DSF::Var::Define> varDefine; // 变量定义（含名称、模型、描述等）
-
-    // 各频率的订阅信息（仅发布端使用）
-    struct FreqSub {
-        uint32_t freq;      // 订阅频率（ms）
-        uint16_t subCount;  // 该频率下的订阅节点数
-        uint64_t subMask;   // 订阅节点位掩码（最多 64 个节点，每位对应一个节点）
-    };
-    std::vector<FreqSub> freqSubs;  // 所有频率的订阅信息
-    uint8_t activeFreqCount;        // 当前活跃频率数量
-};
-```
-
-**频率协商逻辑：**
-
-`currentFreq` 始终取所有 `freqSubs` 中的最小值（最快频率），确保最需要数据的订阅方能及时收到。
-
-```
-示例：varA 有两个订阅方
-  subNode_A 请求 250ms → freqSubs[0] = { freq:250, subMask:0b01 }
-  subNode_B 请求 500ms → freqSubs[1] = { freq:500, subMask:0b10 }
-  currentFreq = min(250, 500) = 250ms
-```
-
----
-
-### VarStore（变量数据存储）
-
-无锁的变量值存储，支持高并发读写，核心是 Seqlock 机制。
-
-```cpp
-class VarStore {
-    // 变量元信息：hash → (id, offset, size)
-    struct VarMeta {
-        uint64_t hash;
-        uint32_t id;
-        uint32_t offset;  // 在 arena_ 中的偏移
-        uint32_t size;    // 数据大小
-    };
-    std::vector<VarMeta> metas_;
-    std::unordered_map<uint64_t, uint32_t> table_;  // hash → id
-
-    // 数据存储：64字节对齐的连续内存池
-    // 每个 Slot 包含 atomic 序列计数器 + 数据
-    struct Slot {
-        std::atomic<uint32_t> seq;  // 奇数=写入中，偶数=稳定
-        uint8_t data[...];          // 实际数据
-    };
-    uint8_t* arena_;
-
-    // 脏标记：哪些变量有新数据
-    std::atomic<bool>* dirty_flags_;
-    moodycamel::ConcurrentQueue<uint32_t> dirty_queue_;  // 脏变量 ID 队列
-
-    // 写计数器：订阅端用于检测数据是否更新
-    std::atomic<uint32_t>* write_counters_;
-
-    // 重配置保护（注册新变量时使用）
-    std::atomic<bool> op_flag_;      // 是否有读操作进行中
-    std::atomic<bool> config_flag_;  // 是否正在重配置
-};
-```
-
-**读写流程（Seqlock）：**
-
-```
-写入：
-  seq.store(seq+1, release)  // 置为奇数，标记写入中
-  memcpy(data, src)
-  seq.store(seq+1, release)  // 置为偶数，标记写入完成
-  dirty_flags_[id] = true
-  dirty_queue_.enqueue(id)
-
-读取：
-  loop:
-    s1 = seq.load(acquire)
-    if (s1 & 1) continue      // 写入中，重试
-    memcpy(dst, data)
-    s2 = seq.load(acquire)
-    if (s1 != s2) continue    // 读取期间被修改，重试
-    return true
-```
-
-**关键方法：**
-
-```cpp
-uint32_t register_var(uint64_t hash, uint32_t size);  // 注册变量，返回 ID
-bool     unregister_var(uint64_t hash);               // 软删除（标记 size=0）
-bool     finalize();                                  // 分配 arena 和 dirty_flags（注册完成后调用）
-bool     write(uint32_t id, const void* src);
-bool     write(uint32_t id, const void* src, uint32_t actual_size);
-bool     read(uint32_t id, void* dst) const;
-ScopedPtr read_ptr(uint32_t id) const;                // 零拷贝读取
-void     for_each_dirty(Fn&& fn, size_t batch=1000);  // 遍历脏变量
-```
-
----
-
-### BucketManager（分桶管理）
-
-将变量均匀分配到 20 个桶，每桶对应一个独立 DDS Topic，分散传输压力。
+### 3.4 BucketManager（桶管理）
+**职责**: 将变量哈希均匀分配到 20 个桶中，每个桶对应一个独立的 DDS Topic。
 
 ```cpp
 class BucketManager {
-    static constexpr int ONDEMAND_BUCKET_SIZE = 20;
-    using BucketIndex = uint32_t;
-    using Member = std::string;  // 变量名
+    // 核心：hash % 20 → bucket index
+    static BucketIndex CalculateBucketIndexFromHash(uint64_t hash) {
+        return hash % ONDEMAND_BUCKET_SIZE;  // ONDEMAND_BUCKET_SIZE = 20
+    }
 
-    std::vector<std::unordered_set<Member>> buckets_;  // 20 个桶
-    std::unordered_map<Member, uint64_t> table_;       // 变量名 → hash
-    size_t total_members_ = 0;
-    mutable std::mutex mutex_;
+    // 每个桶存储该桶内所有变量的 hash 集合
+    BucketTable buckets_;  // vector<unordered_set<uint64_t>>
 };
 ```
 
-**分桶算法：**
+**设计要点**:
 
++ 20 个桶 × 独立 DDS Topic → 并行传输，避免单 Topic 成为瓶颈
++ 桶数量固定为 20（编译期常量），平衡 Topic 数量与并行度
++ 变量分配基于 FNV-1a 哈希取模，天然均匀分布
+
+### 3.5 TimerScheduler / TimerWheel（定时器系统）
+**职责**: 提供毫秒级精度的周期性定时器，驱动数据发布和回调调度。
+
+#### 架构
+<!-- 这是一张图片，ocr 内容为： -->
+![](https://cdn.nlark.com/yuque/0/2026/png/28969906/1784095705578-ea6b9fd5-fadd-44fd-aac4-0b75a4ee2f26.png)
+
+#### 执行模式
+| 模式 | 场景 | 线程池 | 说明 |
+| --- | --- | --- | --- |
+| `direct_execute = true` | Pub 端 | 无 | 回调在 timer 线程直接执行，无线程池开销 |
+| `direct_execute = false` | Sub 端 | 有 | 回调投递到线程池，避免阻塞 timer 线程 |
+
+
+#### 关键实现
 ```cpp
-BucketIndex CalculateBucketIndex(const Member& member) {
-    return hash(member) % ONDEMAND_BUCKET_SIZE;
+// RecurringCallbackTimer::execute() — 周期性定时器
+void execute() {
+    // 1. 在 timer 线程内重调度（已持锁，无竞争）
+    scheduler_.RescheduleRecurringNoLock(this, interval_ticks_);
+
+    // 2. 将回调放入 pendingTasks_（不触发 syscall）
+    scheduler_.pendingTasks_.push_back([this]() {
+        if (!is_canceled_) callback_();
+    });
 }
-// 对应 DDS Topic: dsf/var/data/transfer/bucket_{0..19}
+
+// TimerLoop() — 主循环
+void TimerLoop() {
+    while (!should_stop_) {
+        if (now >= next_tick && !is_paused_) {
+            lock();
+            timer_wheel_.advance(1, kMaxExecutePerTick);  // 触发到期事件
+            unlock();
+
+            // 锁外执行回调（direct 或投递线程池）
+            for (auto& task : pendingTasks_) {
+                direct_execute_ ? task() : thread_pool_.enqueue(task);
+            }
+            pendingTasks_.clear();
+        }
+        sleep_until(next_tick);
+    }
+}
 ```
+
+### 3.6 DDS Wrapper（通信抽象层）
+**职责**: 编译期切换 FastDDS / TXDDS 后端，提供统一的读写接口。
+
+<!-- 这是一张图片，ocr 内容为： -->
+![](https://cdn.nlark.com/yuque/0/2026/png/28969906/1784095738312-0e3edce3-27d1-44c8-b5fc-21bfa4eb3e2f.png)
 
 ---
 
-### PublishGroupKey / CallbackGroupKey（调度分组键）
+## 第四部分：通信链路详解
+### 4.1 订阅建立流程
+### 4.2 数据推送流程
+<!-- 这是一个文本绘图，源码为：sequenceDiagram
+    participant User as 用户代码
+    participant Pub as Publisher
+    participant Timer as TimerScheduler
+    participant DDS as DDS Network
+    participant Sub as Subscriber
+    participant CB as 用户回调
 
-```cpp
-// 发布端：按 (桶编号, 频率) 分组
-struct PublishGroupKey {
-    uint32_t bucketIndex;  // 桶编号（0~19）
-    uint32_t freqMs;       // 推送频率（ms）
-};
+    User->>Pub: setVarData("varA", data, size)
+    Pub->>Pub: VarStore.write() → seqlock 双缓冲写入<br/>dirty_queue_.enqueue(id)
 
-// 订阅端：按频率分组
-struct CallbackGroupKey {
-    uint32_t freqMs;       // 回调频率（ms）
-};
-```
+    Timer->>Pub: 定时器触发 publishGroupData(bucket, freq)
+    Pub->>Pub: read_batch() → 批量零拷贝读 dirty 变量
+    Pub->>Pub: 序列化 RoaringBitmap mask + varData[]
+
+    Pub->>DDS: DDSTopicWriter.write(TableDataTransfer)
+    DDS->>Sub: onReceiveDataTransferCb
+
+    Sub->>Sub: 解析 mask → VarStore.write() 批量写入<br/>writeCount++ (atomic)
+
+    Note over Sub: CallbackScheduler 定时器触发
+    Sub->>Sub: callbackGroupData():<br/>检查 writeCount 变化 → read_batch()
+    Sub->>CB: DataCallback(vector<VarCallbackData>) -->
+![](https://cdn.nlark.com/yuque/__mermaid_v3/eaae819880b5c90840697fcac9cce4aa.svg)
+
+### 4.3 频率协商流程
+<!-- 这是一个文本绘图，源码为：sequenceDiagram
+    participant Sub1 as Subscriber A (10ms)
+    participant Sub2 as Subscriber B (100ms)
+    participant Pub as Publisher
+
+    Note over Pub: varX.currentFreq = 0xFFFFFFFF (无订阅)
+
+    Sub1->>Pub: subscribe(varX, 10ms)
+    Pub->>Pub: freqSubs: [{10ms, count=1}]<br/>currentFreq = 10ms<br/>调度 10ms 定时器
+
+    Sub2->>Pub: subscribe(varX, 100ms)
+    Pub->>Pub: freqSubs: [{10ms, count=1}, {100ms, count=1}]<br/>currentFreq = min(10, 100) = 10ms (不变)
+
+    Note over Pub: 以 10ms 频率发布 varX
+
+    Sub1->>Pub: unsubscribe(varX)
+    Pub->>Pub: freqSubs: [{100ms, count=1}]<br/>currentFreq = 100ms<br/>重调度定时器
+
+    Note over Pub: 以 100ms 频率发布 varX
+
+    Sub2->>Pub: unsubscribe(varX)
+    Pub->>Pub: freqSubs: []<br/>currentFreq = 0xFFFFFFFF (无订阅者)<br/>取消定时器 -->
+![](https://cdn.nlark.com/yuque/__mermaid_v3/ec47e8d7ae08db105e32c78494032e15.svg)
+
+### 4.4 断网重连流程
+<!-- 这是一个文本绘图，源码为：sequenceDiagram
+    participant Sub as Subscriber
+    participant DDS as DDS Network
+    participant Pub as Publisher (新实例)
+
+    Note over Sub: onParticipantDiscovery(DROPPED)<br/>检测到旧 Pub 掉线
+
+    Sub->>Sub: forceUnsubscribeNode(oldMask)<br/>清理旧变量定义
+
+    Note over Pub: 新 Pub 实例启动
+    Pub->>DDS: 广播 PubTableDefine (新实例)
+    DDS->>Sub: onReceiveTableDefineCb
+
+    Sub->>Sub: 检测到同名 Pub 新实例<br/>从 pubTableDefineCache_ 恢复定义<br/>restorePubTableDefineFromCache()
+
+    Sub->>Sub: resendSubscriptions()<br/>重发所有订阅请求
+
+    Sub->>DDS: SubTableRegister (全部订阅)
+    DDS->>Pub: handleSubscribe → 恢复发布 -->
+![](https://cdn.nlark.com/yuque/__mermaid_v3/3251ea6215c12888e4c9d351c4bca2bb.svg)
 
 ---
 
-### GroupVarInfo / CallbackVarInfo（分组内变量信息）
+## 第五部分：优秀设计亮点
+### 5.1 Seqlock + 双缓冲的无锁读写
+**问题**: 10 万变量的高频读写场景，传统互斥锁会导致严重的锁竞争和上下文切换。
 
-```cpp
-// 发布端：每个推送组内的变量信息
-struct GroupVarInfo {
-    uint64_t varHash;   // 变量 hash
-    uint32_t varId;     // VarStore ID
-    uint32_t dataSize;  // 数据大小
-};
+**方案**: 每个变量 Slot 使用 Seqlock + 双缓冲区：
 
-// 订阅端：每个回调组内的变量信息
-struct CallbackVarInfo {
-    uint64_t varHash;
-    int32_t  varId;
-    uint32_t dataSize;
-    std::string varName;
-    DataCallback callback;
-    uint32_t lastSeenWriteCount{0};  // 上次回调时的写计数，用于检测变更
-};
-```
++ **写端**: 始终写非活跃缓冲区（`1 - committed`），写完原子翻转 `committed`
++ **读端**: 读 `committed` 指向的缓冲区，用 seqlock 验证读取期间无翻转
++ **零拷贝**: `read_zero_copy()` 返回直接指向 arena 内存的指针，无 memcpy
+
+**为什么好**:
+
++ 读操作完全无锁（仅 atomic load），适合多读少写场景
++ 双缓冲保证读端永远不会读到半写状态
++ 64 字节对齐避免 false sharing
+
+**关键代码路径**: [variable_store.h:226-259](core/ondemand/variable_store.h#L226-L259) (`write`), [variable_store.h:365-429](core/ondemand/variable_store.h#L365-L429) (`ZeroCopyReadHandle`)
+
+### 5.2 Dirty Flag + 延迟重建的定时器管理
+**问题**: 每次订阅变更都重建所有定时器，10 万变量 × 频繁订阅 = 定时器风暴。
+
+**方案**:
+
++ `schedulerDirty_` 原子标记，订阅变更时仅置位
++ 50ms 后台扫描循环检测 dirty，diff 当前定时器组与期望组
++ 仅取消/新增差异定时器，避免全量重建
+
+**为什么好**:
+
++ 批量订阅变更只触发一次重建
++ diff 算法避免取消/重建未变化的定时器
++ 50ms 延迟合并高频订阅请求
+
+**关键代码路径**: [on_demand_pub.h:406](core/ondemand/on_demand_pub.h#L406) (`schedulerDirty_`), `processPublishTaskScheduler()`
+
+### 5.3 频率协商的最小值策略
+**问题**: 多个订阅者对同一变量有不同频率需求，需要找到最优发布频率。
+
+**方案**:
+
++ `VarMetadata.freqSubs` 维护 `(freq, count, subMask)` 列表
++ `currentFreq = min(all freqSubs)` — 始终取最小值
++ 取消订阅时：`count--`，若 `count == 0` 移除该频率条目，重新计算 min
+
+**为什么好**:
+
++ O(1) 查找当前频率（直接读 `currentFreq`）
++ 支持最多 64 个订阅者（`subMask` 位掩码）
++ 频率变更仅影响受影响的定时器组
+
+### 5.4 20 桶分片 + RoaringBitmap 批量传输
+**问题**: 单 DDS Topic 传输 10 万变量数据成为瓶颈。
+
+**方案**:
+
++ `BucketManager` 按 `hash % 20` 分桶，每桶独立 DDS Topic
++ `TableDataTransfer` 使用 RoaringBitmap 序列化变量掩码，仅传输有变化的变量
++ `varData[]` 按 mask 顺序排列，接收端按序解析
+
+**为什么好**:
+
++ 20 个 Topic 并行传输，带宽利用率提升 20 倍
++ RoaringBitmap 压缩率高（稀疏位图仅占几字节）
++ 仅传输 dirty 变量，减少无效数据
+
+### 5.5 指数退避重试队列
+**问题**: 订阅请求可能在变量创建之前到达（时序竞争），直接丢弃会导致订阅丢失。
+
+**方案**:
+
++ 正常队列 (`ConcurrentQueue`) + 重试队列 (`std::queue + mutex`)
++ 优先消费正常队列，空了再消费重试队列
++ 指数退避：200ms → 400ms → 800ms → ... → 3000ms (cap)
++ 重试消息仅包含缺失变量，避免重复处理
+
+**为什么好**:
+
++ 不丢弃任何订阅请求
++ 指数退避避免忙等
++ 重试队列与正常队列隔离，不阻塞新消息
+
+### 5.6 编译期 DDS 后端切换
+**问题**: 不同部署环境使用不同 DDS 实现（FastDDS / TXDDS），需要无缝切换。
+
+**方案**:
+
++ CMake 选项 `-DUSE_FASTDDS=ON` / `-DUSE_TXDDS=ON`
++ `dds_abstraction.h` 统一类型别名
++ 模板化的 `DDSTopicWriter<T>` / `DDSTopicReader<T>` 适配不同后端
+
+**为什么好**:
+
++ 零运行时开销（编译期绑定）
++ 上层代码完全无感知后端差异
++ 易于扩展新后端
+
+### 5.7 RAII 全覆盖的资源管理
+**问题**: DDS 资源（Participant、Writer、Reader）生命周期管理复杂，手动释放易遗漏。
+
+**方案**:
+
++ `DataNode` 封装 Participant 生命周期
++ `DDSTopicWriter<T>` / `DDSTopicReader<T>` 使用 `shared_ptr` 管理
++ `OpGuard` / `ConfigGuard` RAII 守卫管理 VarStore 并发访问
++ `ZeroCopyReadHandle` RAII 管理 `op_enter/op_exit`
+
+**为什么好**:
+
++ 异常安全：栈展开时自动释放
++ 无资源泄漏风险
++ 代码简洁，无手动 cleanup
+
+### 5.8 moodycamel 无锁队列的生产者-消费者模式
+**问题**: DDS 回调线程与业务处理线程之间需要高效、线程安全的数据传递。
+
+**方案**:
+
++ `moodycamel::ConcurrentQueue` 用于 DDS 回调 → 处理线程的数据传递
++ 单生产者（DDS 回调线程）、多消费者（处理线程）模式
++ 无锁设计，高并发下性能优于 `std::mutex + std::queue`
+
+**为什么好**:
+
++ 无锁，避免 DDS 回调线程阻塞
++ 批量 dequeue 支持（`try_dequeue_bulk`）
++ 适合高频数据传输场景
 
 ---
 
-### SubscriptionItem / VarCallbackData（用户接口类型）
+## 第六部分：线程模型总览
+### 6.1 全局线程清单
+| 线程名 | 所属模块 | 职责 | 数量 |
+| --- | --- | --- | --- |
+| `PubRegProc` | OnDemandPub | 处理订阅注册请求（从 ConcurrentQueue 消费） | 1 |
+| `PubScheduler` | OnDemandPub | 定时器主循环，触发 publishGroupData | 1 |
+| `FreqChangeCb` | OnDemandPub | 频率变化回调派发 | 1 |
+| `TimerScheduler` | TimerScheduler | 定时器主循环（1ms tick） | 1/模块 |
+| `SubTableDefine` | OnDemandSub | 处理变量定义（从 ConcurrentQueue 消费） | 1 |
+| `SubDataTransfer` | OnDemandSub | 处理数据传输（从 ConcurrentQueue 消费） | 1~N |
+| `CallbackScheduler` | OnDemandSub | 回调定时器主循环 | 1 |
+| ThreadPool Worker | TimerScheduler | 执行用户回调（sub 场景） | hardware_concurrency/4 |
+| DDS 内部线程 | FastDDS/TXDDS | DDS 发现、收发、回调 | 若干 |
 
-```cpp
-// 订阅请求项
-struct SubscriptionItem {
-    std::string varName;   // 变量名（格式：pubNodeName_varName）
-    uint32_t frequency;    // 期望的回调频率（ms）
-};
 
-// 回调数据项
-struct VarCallbackData {
-    std::string_view varName;   // 变量名（零拷贝）
-    const void*      data;      // 数据指针
-    size_t           size;      // 数据大小
-    uint64_t         timestampNs; // 发布时间戳（纳秒）
-};
+### 6.2 线程间通信方式
+| 生产者 | 消费者 | 通信方式 | 用途 |
+| --- | --- | --- | --- |
+| DDS 回调 | PubRegProc | `moodycamel::ConcurrentQueue` | 订阅请求传递 |
+| DDS 回调 | SubTableDefine | `moodycamel::ConcurrentQueue` | 变量定义传递 |
+| DDS 回调 | SubDataTransfer | `moodycamel::ConcurrentQueue` | 数据传输传递 |
+| PubRegProc | FreqChangeCb | `moodycamel::ConcurrentQueue` | 频率变化通知 |
+| PubRegProc | PubScheduler | `atomic<bool> schedulerDirty_` | 脏标记通知 |
+| DDS 回调 | Sub (重连) | `ParticipantListener` | Participant 上下线检测 |
 
-// 用户回调函数类型
-using DataCallback = std::function<void(const std::vector<VarCallbackData>& vars)>;
-```
+
+### 6.3 锁策略与锁序
+| 锁 | 保护对象 | 类型 | 持有时间 |
+| --- | --- | --- | --- |
+| `varIndexMutex_` | `varIndex_` | `shared_mutex` | 读多写少，读锁热路径 |
+| `DataTransferWriterMapMutex_` | `dataTransferWriterMap_` | `mutex` | 仅创建时持有 |
+| `publishGroupsMutex_` | `groupMembers_`, `publishGroupTimers_` | `mutex` | 调度器扫描 |
+| `freqChangeCbMutex_` | `freqChangeCb_` | `mutex` | 回调设置 |
+| `VarStore::reconfig_mu_` | arena 重分配 | `mutex + cv` | config 期间阻塞 op |
+| `VarStore::config_mu_` | config 互斥 | `mutex` | 注册/扩容 |
+
+
+**锁序规则**: `varIndexMutex_` → `publishGroupsMutex_`（禁止反序）
 
 ---
 
-### IDL 消息结构
+## 第七部分：部署与配置
+### 7.1 编译选项
+```bash
+source .env                          # 设置 LD_LIBRARY_PATH
+cd build
+cmake .. -DUSE_TXDDS=ON              # 或 -DUSE_FASTDDS=ON
+make -j$(nproc)
+```
 
-**DSF::Var::Define（变量定义）**
+| CMake 选项 | 说明 | 默认值 |
+| --- | --- | --- |
+| `-DUSE_TXDDS=ON` | 使用 TXDDS 后端 | OFF |
+| `-DUSE_FASTDDS=ON` | 使用 FastDDS 后端 | OFF |
 
-```idl
+
+### 7.2 DDS Domain / QoS 配置
+| 参数 | 值 | 说明 |
+| --- | --- | --- |
+| Domain ID | 66 | DDS 域 ID |
+| Discovery Multicast | 239.255.0.1:7400 | PDP 多播地址 |
+| User Multicast | 239.255.0.1:7401 | 用户数据多播 |
+| Discovery Keep Alive | 3000ms / 1000ms | PDP 心跳间隔/超时 |
+| Initial Announcements | 30 / 100ms | 初始公告次数/间隔 |
+
+
+### 7.3 关键可调参数
+| 参数 | 定义位置 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| 桶数量 | `ONDEMAND_BUCKET_SIZE` | 20 | 分桶数，影响并行度和 Topic 数量 |
+| 最大订阅者数 | `maxNodeNum_` | 64 | 受 subMask (uint64_t) 限制 |
+| 每节点最大变量数 | `maxVarsPerNode_` | 0 (无限) | 资源限制 |
+| 定时器 tick | `TimerScheduler(tick_ms)` | 1ms (pub) / 10ms (sub) | 定时器精度 |
+| 调度器重建延迟 | `processPublishTaskScheduler` 扫描间隔 | 50ms | dirty 后延迟重建 |
+| 重试退避范围 | `kMinPartialRetryMs` ~ `kMaxRetryMs` | 200ms ~ 3000ms | 指数退避范围 |
+| DDS Writer History Depth | `createTableDefineWriter` | 1 (定义) / 64 (注册) | QoS 历史深度 |
+
+
+---
+
+## 附录：IDL 类型定义
+### 核心类型
+```plain
+// 变量定义
 struct Define {
-    string name;              // 变量名
-    string modelName;         // 数据模型名
-    string modelVersion;      // 模型版本
-    string description;       // 描述
-    string nodeName;          // 所属节点名
-    boolean isReadonly;       // 是否只读
-    VarPublishMask publishMask; // PERIODIC / ON_DEMAND / BOTH
-    // 可选字段：events, alarms, initialValues, startIndexes, permission
+    string name;           // 变量名称
+    int32 size;            // 变量大小
+    string modelName;      // 模型名称
+    string modelVersion;   // 模型版本
+    string description;    // 描述
+    string nodeName;       // 创建节点名称
+    boolean isReadonly;    // 是否只读
+    VarPublishMask publishMask;  // 发布能力掩码
 };
-```
 
-**DSF::Var::PubTableDefine（变量定义广播）**
-
-```idl
+// 表定义（批量变量定义）
 struct PubTableDefine {
-    @key string name;                          // 桶名（如 "bucket_0"）
-    @key string nodeName;                      // 发布节点名
-    string description;
-    sequence<PubTableVarDefine> varDefines;   // 该桶内所有变量定义
+    @key string name;      // 表名称
+    @key string nodeName;  // 所属节点名称
+    string description;    // 表描述
+    sequence<PubTableVarDefine> varDefines;  // 表内变量定义
 };
-```
 
-**DSF::Message::SubTableRegister（订阅请求）**
+// 表数据传输
+struct TableDataTransfer {
+    DSF::DT_BLOB mask;           // RoaringBitmap 序列化掩码
+    DSF::Timespec timestamp;     // 数据发布时间
+    sequence<DSF::DT_BLOB> varData;  // 变量数据数组
+    BLOB_TYPE blobType;          // 序列化类型
+};
 
-```idl
+// 订阅注册请求
 struct SubTableRegister {
-    MSGTYPE msgType;                    // SUB_TABLE_REGISTER 或 UNSUB_TABLE_REGISTER
-    sequence<DSF::NamedValue> varFreqs; // 变量名 + 频率（字符串形式）
-    string tableName;                   // 桶名
-    string nodeName;                    // 订阅节点名
+    MSGTYPE msgType;
+    sequence<DSF::NamedValue> varFreqs;  // 变量名 + 频率(ms)
+    string tableName;
+    string nodeName;
     string user;
 };
 ```
 
-**DSF::Var::TableDataTransfer（变量数据推送）**
-
-```idl
-struct TableDataTransfer {
-    DSF::DT_BLOB mask;                 // Roaring64Map 序列化的变量 hash 集合
-    DSF::Timespec timestamp;           // 推送时间戳 { tv_sec, tv_nsec }
-    sequence<DSF::DT_BLOB> varData;   // 变量数据数组（与 mask 中的 hash 顺序对应）
-    BLOB_TYPE blobType;                // 序列化类型（STRUCTS）
-};
-```
-
-**DSF::NamedValue / DSF::Timespec**
-
-```idl
-struct NamedValue {
-    string name;
-    string value;
-};
-
-struct Timespec {
-    long tv_sec;           // Unix 时间戳（秒）
-    unsigned long tv_nsec; // 纳秒部分
-};
-```
-
----
-
-### TimerScheduler / TimerWheel（时间轮调度器）
-
-```cpp
-class TimerScheduler {
-    ThreadPool thread_pool_;                    // 工作线程池（默认 8 线程）
-    TimerWheel timer_wheel_;                    // 分层时间轮
-    std::atomic<bool> should_stop_;
-    std::thread timer_thread_;                  // 推进时间轮的专用线程
-    Tick tick_ms_;                              // 时钟精度（1ms）
-    std::unordered_set<
-        std::shared_ptr<TimerEventInterface>> active_timers_;
-};
-```
-
-**TimerWheel 结构：** 8 层分层时间轮，每层 256 个槽，支持从 1ms 到数天的定时范围。
-
-```cpp
-// 创建一次性定时器
-std::shared_ptr<TimerEventInterface> Schedule(Callback cb, Tick delay_ticks);
-
-// 创建周期性定时器
-std::shared_ptr<TimerEventInterface> ScheduleRecurring(
-    Callback cb, Tick delay_ticks, Tick interval_ticks);
-
-// 取消定时器
-void Cancel(std::shared_ptr<TimerEventInterface> timer);
-
-// 立即异步执行
-void Post(Callback cb);
-```
-
----
-
-## DDS 通信协议
-
-| Topic | 方向 | 消息类型 | 用途 |
-|-------|------|----------|------|
-| `dsf/sys/var/tableDefine` | Pub → Sub | `PubTableDefine` | 广播变量定义（每桶一条） |
-| `dsf/message/commandRequest/subTableRegister` | Sub → Pub | `SubTableRegister` | 发送订阅/取消订阅请求 |
-| `dsf/var/data/transfer/bucket_N`（N=0~19） | Pub → Sub | `TableDataTransfer` | 按桶推送变量数据 |
-
----
-
-## 数据流
-
-### 订阅建立流程
-
-```
-Subscriber                                    Publisher
-    │                                             │
-    │  subscribe("pubNode", items, cb)            │
-    │  → 存入 subscriptionCallbacks_              │
-    │  → callbackDirty_ = true                   │
-    │                                             │
-    │──── SubTableRegister (DDS) ───────────────►│
-    │     { nodeName, tableName, varFreqs }       │
-    │                                             │  processReceiveRegister()
-    │                                             │  getOrAssignNodeBit(nodeName) → bit
-    │                                             │  更新 VarMetadata.freqSubs[freq].subMask |= bit
-    │                                             │  recalcCurrentFreq() → 取最小频率
-    │                                             │  schedulerDirty_ = true
-    │                                             │
-    │                                             │  processPublishTaskScheduler()（50ms 扫描）
-    │                                             │  按 (bucketIndex, freqMs) 分组变量
-    │                                             │  新增组 → ScheduleRecurring(publishGroupData)
-    │                                             │  删除组 → Cancel(timer)
-```
-
-### 数据推送流程
-
-```
-Publisher TimerScheduler                      Subscriber
-    │                                             │
-    │  定时器到期（如 250ms）                      │
-    │  publishGroupData(bucketIndex=0, freq=250)  │
-    │  → 遍历 groupMembers_[{0,250}]              │
-    │  → 从 varStore_ 读取各变量数据              │
-    │  → 构建 Roaring64Map（变量 hash 集合）       │
-    │  → 序列化 TableDataTransfer                 │
-    │──── DDS: bucket_0 ──────────────────────►  │
-    │                                             │  processDataTransfer()
-    │                                             │  反序列化 Roaring64Map → hash 列表
-    │                                             │  varStore_.write(varId, data)
-    │                                             │  varWriteStamps_[id].writeCount++
-    │                                             │  varWriteStamps_[id].timestampNs = ts
-    │                                             │
-    │                                             │  callbackGroupData(freq=250)（定时器）
-    │                                             │  遍历 callbackGroupMembers_[{250}]
-    │                                             │  检测 writeCount != lastSeenWriteCount
-    │                                             │  构建 VarCallbackData 列表
-    │                                             │  调用用户 callback(vars)
-```
-
-### 取消订阅流程
-
-```
-Subscriber                                    Publisher
-    │                                             │
-    │  unsubscribe("pubNode", varNames)           │
-    │  → 从 subscriptionCallbacks_ 移除           │
-    │  → callbackDirty_ = true                   │
-    │                                             │
-    │──── SubTableRegister (UNSUB, DDS) ────────►│
-    │                                             │  handleUnsubscribe()
-    │                                             │  freqSubs[freq].subMask &= ~bit
-    │                                             │  subCount--
-    │                                             │  若 subCount==0 → 移除该 FreqSub
-    │                                             │  recalcCurrentFreq()
-    │                                             │  若无订阅 → currentFreq = 0xFFFFFFFF
-    │                                             │  schedulerDirty_ = true → 取消定时器
-```
-
----
-
-## 性能设计
-
-| 优化点 | 实现方式 |
-|--------|----------|
-| 分桶分散压力 | 20 个 Bucket，对应 20 个 DDS Topic，并行推送 |
-| 无锁存储 | VarStore 使用 Seqlock（atomic 序列计数器），读写无锁 |
-| 批量推送 | 同 (桶, 频率) 的变量合并为一次 DDS 消息 |
-| 压缩传输 | Roaring64Map 压缩变量 hash 集合，减少消息体积 |
-| 增量调度 | 50ms 扫描一次，只在订阅变化时重建定时器 |
-| 无锁队列 | moodycamel ConcurrentQueue 用于线程间传递消息 |
-| 读写分离 | varIndex_ 使用 shared_mutex，读多写少场景高效 |
-| 零拷贝读取 | VarStore::read_ptr() 返回 ScopedPtr，避免数据拷贝 |
-| 变更检测 | writeCount 计数器，回调时只处理有新数据的变量 |
-
----
-
-## 使用示例
-
-### 发布端
-
-```cpp
-OnDemandPub pub;
-pub.init("pubNode");
-pub.start();
-
-// 注册 10 万个变量
-std::vector<DSF::Var::Define> vars;
-for (int i = 0; i < 100000; ++i) {
-    DSF::Var::Define def;
-    def.varDefine().name("var" + std::to_string(i));
-    def.varDefine().nodeName("pubNode");
-    def.varDefine().modelName("int");
-    vars.push_back(def);
-}
-pub.createVars(vars);
-
-// 持续更新数据
-while (running) {
-    for (int i = 0; i < 100000; ++i) {
-        pub.setVarData(("var" + std::to_string(i)).c_str(), &i, sizeof(i));
-    }
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
-}
-pub.stop();
-```
-
-### 订阅端
-
-```cpp
-OnDemandSub sub;
-sub.init("subNode");
-sub.start();
-
-// 订阅 5 万个变量，250ms 频率
-std::vector<SubscriptionItem> items;
-for (int i = 0; i < 50000; ++i) {
-    items.push_back({"pubNode_var" + std::to_string(i), 250});
-}
-
-sub.subscribe("pubNode", items, [](const std::vector<VarCallbackData>& vars) {
-    for (auto& var : vars) {
-        // var.varName    - 变量名
-        // var.data       - 数据指针
-        // var.size       - 数据大小
-        // var.timestampNs - 发布时间戳（纳秒）
-    }
-});
-
-// 取消订阅
-std::vector<std::string> names = {"pubNode_var0", "pubNode_var1"};
-sub.unsubscribe("pubNode", names);
-
-sub.stop();
-```
-
----
-
-## 已知限制 & TODO
-
-1. IDL 中变量大小信息待完善（目前依赖模型定义推断）
-2. Key 类型优化，支持增量传输（只传变化的变量）
-3. Listener 生命周期优化0
-4. 极端场景（1亿变量、单频率、单 Bucket）的负载均衡
-5. 支持相位偏移，实现同频率触发的时间对齐
-6. 节点数上限 64（subMask 为 uint64_t）
