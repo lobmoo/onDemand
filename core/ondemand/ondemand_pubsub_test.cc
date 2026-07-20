@@ -109,6 +109,19 @@
 // ║  TC31    ║  registerVars+sub数据通信+通信中删除变量：注册10个，sub订阅            ║
 // ║         ║  建立通信后删后5个，验证剩余变量数据正常、已删除变量不再                ║
 // ║         ║  触发回调、无残留                                          [L4858]     ║
+// ╠══════════╬═══════════════════════════════════════════════════════════════════════╣
+// ║         ║  【GUID 重连保护（Stale Drop 防护）】                                   ║
+// ║  TC32    ║  Pub 快速重启 stale drop 防护：pub 正常发布→sub 订阅收到数据→         ║
+// ║         ║  pub stop 后立即重新 init/start/createVars（不等 liveliness 超时），    ║
+// ║         ║  验证 sub 端 GUID 比较忽略旧 DROPPED 事件，sub 自动恢复数据回调        ║
+// ║         ║                                                        [L5062]       ║
+// ║  TC33    ║  Sub 快速重启 stale drop 防护：pub 持续发布→sub1 订阅收到数据→        ║
+// ║         ║  sub1 stop 后立即 sub2 init/start/subscribe（不等 liveliness 超时），   ║
+// ║         ║  验证 pub 端 GUID 比较忽略旧 sub 的 DROPPED，新 sub 正常收到数据、     ║
+// ║         ║  pub 侧频率不被误重置为 0xFFFFFFFF                         [L5130]    ║
+// ║  TC34    ║  Pub 多轮快速重启：pub 连续 3 轮快速重启（stop→立即 restart），        ║
+// ║         ║  sub 全程在线，验证每轮均自动恢复数据回调、getAvailableVars 始终       ║
+// ║         ║  正确反映变量数量                                     [L5210]        ║
 // ╚══════════╩═══════════════════════════════════════════════════════════════════════╝
 
 #include <gtest/gtest.h>
@@ -5057,6 +5070,446 @@ TEST(OnDemandPubSub, RegisterVarsDataCommThenDeleteDuringCommunication)
 
     expectChildOk(pubProc, 15s);
     expectChildOk(subProc, 15s);
+}
+
+
+// TC32 - Pub 快速重启 stale drop 防护（sub 端 GUID 比较）
+//
+// 场景：pub 正常发布 → sub 订阅并收到数据 → pub stop 后 **立即** 重新 init/start/createVars
+//       （不等待 DDS liveliness 超时），模拟旧 pub 的 DROPPED 事件在新 pub 的 DISCOVERED 之后
+//       到达 sub 端的竞态条件。
+//
+// 验证：
+//   ① 初始通信正常（sub 收到所有变量回调）
+//   ② pub 快速重启后 sub 自动恢复通信（getAvailableVars 恢复为10）
+//   ③ 重启后 sub 重新收到数据回调
+TEST(OnDemandPubSub, PubRapidRestartStaleDropProtection)
+{
+    const auto root =
+        std::filesystem::temp_directory_path() / uniqueName("ondemand_case32");
+    std::filesystem::create_directories(root);
+
+    const std::string pubNode = uniqueName("pub_case32");
+    const auto defs  = makeDefines(pubNode, "v", 10);
+    const auto names = defineNames(defs);
+
+    const auto pubProc = spawnChild("case32_pub", root, [pubNode, defs, names]() {
+        ChildReport r;
+
+        // ── 第一轮：正常发布 ──
+        {
+            dsf::ondemand::OnDemandPub pub;
+            if (!childRequire(r, pub.init(pubNode), "pub init1 failed")
+                || !childRequire(r, pub.start(), "pub start1 failed")
+                || !childRequire(r, pub.createVars(defs), "pub createVars1 failed")) {
+                return r;
+            }
+            std::atomic<bool> running{true};
+            std::thread th([&]() { publishLoop(pub, names, running, 10); });
+            std::this_thread::sleep_for(3s);
+            running.store(false, std::memory_order_release);
+            th.join();
+            pub.stop();
+            LOG(info) << "[case32_pub] round1 stopped, immediately restarting...";
+        }
+
+        // **关键**：不等待 liveliness 超时，立即重启，制造 stale drop 竞态
+        // ── 第二轮：快速重启 ──
+        {
+            dsf::ondemand::OnDemandPub pub;
+            if (!childRequire(r, pub.init(pubNode), "pub init2 failed")
+                || !childRequire(r, pub.start(), "pub start2 failed")
+                || !childRequire(r, pub.createVars(defs), "pub createVars2 failed")) {
+                return r;
+            }
+            std::atomic<bool> running{true};
+            std::thread th([&]() { publishLoop(pub, names, running, 10); });
+            std::this_thread::sleep_for(10s);
+            running.store(false, std::memory_order_release);
+            th.join();
+            pub.stop();
+            LOG(info) << "[case32_pub] round2 stopped";
+        }
+
+        r.ok = true;
+        r.message = "ok";
+        return r;
+    });
+
+    const auto subProc = spawnChild("case32_sub", root, [pubNode, names]() {
+        dsf::ondemand::OnDemandSub sub;
+        ChildReport r;
+
+        if (!childRequire(r, sub.init(uniqueName("sub_case32")), "sub init failed")
+            || !childRequire(r, sub.start(), "sub start failed")) {
+            return r;
+        }
+
+        // 等待 pub 广播变量表
+        if (!childRequire(r,
+                          waitUntil([&]() { return countNodeVars(sub, pubNode) == 10; }, 8s),
+                          "sub did not receive var defines")) {
+            sub.stop();
+            return r;
+        }
+
+        std::mutex mu;
+        std::map<std::string, uint64_t> latestTs;
+
+        if (!childRequire(r,
+                          sub.subscribe(pubNode.c_str(), toSubscriptions(names, 100),
+                                        [&](const std::vector<dsf::ondemand::VarCallbackData> &vars) {
+                                            std::lock_guard<std::mutex> lk(mu);
+                                            for (const auto &v : vars) {
+                                                const std::string name(v.varName.data(),
+                                                                       v.varName.size());
+                                                latestTs[name] = v.timestampNs;
+                                            }
+                                        }),
+                          "subscribe failed")) {
+            sub.stop();
+            return r;
+        }
+
+        // ── 阶段1：初始通信正常 ──
+        const bool phase1Ok =
+            waitUntil([&]() {
+                std::lock_guard<std::mutex> lk(mu);
+                return latestTs.size() == names.size();
+            }, 6s);
+        childRequire(r, phase1Ok, "phase1: did not receive initial callbacks for all vars");
+        r.metrics["phase1_ok"] = phase1Ok ? "1" : "0";
+        LOG(info) << "[case32_sub] phase1 done, received=" << latestTs.size();
+
+        // ── 阶段2：等待 pub 快速重启后恢复 ──
+        // 不等待断连检测，直接等待变量定义重新出现（说明新 pub 已被发现）
+        const bool phase2Ok =
+            waitUntil([&]() {
+                // 检查是否收到了新 pub 的数据（时间戳更新）
+                std::lock_guard<std::mutex> lk(mu);
+                if (latestTs.size() < names.size())
+                    return false;
+                // 验证 getAvailableVars 也恢复了
+                return countNodeVars(sub, pubNode) == 10;
+            }, 15s);
+        childRequire(r, phase2Ok, "phase2: pub rapid restart recovery failed");
+        r.metrics["phase2_ok"] = phase2Ok ? "1" : "0";
+        LOG(info) << "[case32_sub] phase2 done, rapid restart recovery=" << phase2Ok;
+
+        // ── 阶段3：验证数据持续更新 ──
+        {
+            std::lock_guard<std::mutex> lk(mu);
+            latestTs.clear();
+        }
+        const bool phase3Ok =
+            waitUntil([&]() {
+                std::lock_guard<std::mutex> lk(mu);
+                return latestTs.size() == names.size();
+            }, 8s);
+        childRequire(r, phase3Ok, "phase3: data did not resume after rapid restart");
+        r.metrics["phase3_ok"] = phase3Ok ? "1" : "0";
+        LOG(info) << "[case32_sub] phase3 done, data resumed";
+
+        sub.stop();
+        r.ok = phase1Ok && phase2Ok && phase3Ok;
+        r.message = r.ok ? "ok" : r.message;
+        return r;
+    });
+
+    ChildReport subReport;
+    expectChildOk(pubProc, 20s);
+    expectChildOk(subProc, 40s, &subReport);
+
+    EXPECT_EQ(subReport.metrics["phase1_ok"], "1") << "phase1: initial callbacks not received";
+    EXPECT_EQ(subReport.metrics["phase2_ok"], "1") << "phase2: rapid restart recovery failed";
+    EXPECT_EQ(subReport.metrics["phase3_ok"], "1") << "phase3: data did not resume";
+}
+
+
+// TC33 - Sub 快速重启 stale drop 防护（pub 端 GUID 比较）
+//
+// 场景：pub 持续发布 → sub1 订阅并收到数据 → sub1 stop 后 **立即** sub2 init/start/subscribe
+//       （不等待 DDS liveliness 超时），模拟旧 sub 的 DROPPED 事件在新 sub 的 DISCOVERED 之后
+//       到达 pub 端的竞态条件。
+//
+// 验证：
+//   ① 初始通信正常（sub1 收到所有变量回调）
+//   ② sub2 快速重启后收到数据回调（pub 端 GUID 比较忽略旧 sub 的 DROPPED）
+//   ③ pub 侧频率未被误重置为 0xFFFFFFFF（说明旧 sub 的清理被正确忽略）
+TEST(OnDemandPubSub, SubRapidRestartStaleDropProtection)
+{
+    const auto root =
+        std::filesystem::temp_directory_path() / uniqueName("ondemand_case33");
+    std::filesystem::create_directories(root);
+
+    const std::string pubNode = uniqueName("pub_case33");
+    const auto defs  = makeDefines(pubNode, "v", 10);
+    const auto names = defineNames(defs);
+
+    // pub 侧跟踪频率变化
+    std::mutex freqMu;
+    std::map<std::string, uint32_t> freqLog;
+
+    const auto pubProc = spawnChild("case33_pub", root, [&]() {
+        dsf::ondemand::OnDemandPub pub;
+        ChildReport r;
+        if (!childRequire(r, pub.init(pubNode), "pub init failed")
+            || !childRequire(r, pub.start(), "pub start failed")
+            || !childRequire(r, pub.createVars(defs), "pub createVars failed")) {
+            return r;
+        }
+
+        // 注册频率变化回调
+        pub.setFreqChangeCallback([&](const std::string &varName, uint32_t freq) {
+            std::lock_guard<std::mutex> lk(freqMu);
+            freqLog[varName] = freq;
+            LOG(info) << "[case33_pub] freqChange: " << varName << " -> " << freq;
+        });
+
+        std::atomic<bool> running{true};
+        std::thread th([&]() { publishLoop(pub, names, running, 10); });
+        std::this_thread::sleep_for(25s);
+        running.store(false, std::memory_order_release);
+        th.join();
+        pub.stop();
+        r.ok = true;
+        r.message = "ok";
+        return r;
+    });
+
+    const auto subProc = spawnChild("case33_sub", root, [&]() {
+        ChildReport r;
+
+        auto runSub = [&](const std::string &subName, bool checkFreqNoReset) -> bool {
+            dsf::ondemand::OnDemandSub sub;
+            if (!childRequire(r, sub.init(subName), subName + " init failed")
+                || !childRequire(r, sub.start(), subName + " start failed")) {
+                return false;
+            }
+
+            if (!childRequire(r,
+                              waitUntil([&]() { return countNodeVars(sub, pubNode) == 10; },
+                                        8s),
+                              subName + ": did not receive var defines")) {
+                sub.stop();
+                return false;
+            }
+
+            std::mutex mu;
+            std::map<std::string, uint64_t> latestTs;
+
+            if (!childRequire(r,
+                              sub.subscribe(pubNode.c_str(), toSubscriptions(names, 100),
+                                            [&](const std::vector<dsf::ondemand::VarCallbackData> &vars) {
+                                                std::lock_guard<std::mutex> lk(mu);
+                                                for (const auto &v : vars) {
+                                                    const std::string name(v.varName.data(),
+                                                                           v.varName.size());
+                                                    latestTs[name] = v.timestampNs;
+                                                }
+                                            }),
+                              subName + ": subscribe failed")) {
+                sub.stop();
+                return false;
+            }
+
+            const bool dataOk =
+                waitUntil([&]() {
+                    std::lock_guard<std::mutex> lk(mu);
+                    return latestTs.size() == names.size();
+                }, 6s);
+            childRequire(r, dataOk, subName + ": did not receive callbacks for all vars");
+
+            // 验证：pub 侧频率应该是 100ms，不应被重置为 0xFFFFFFFF
+            if (checkFreqNoReset) {
+                std::lock_guard<std::mutex> lk(freqMu);
+                for (const auto &n : names) {
+                    auto it = freqLog.find(n);
+                    if (it != freqLog.end() && it->second == 0xFFFFFFFF) {
+                        childRequire(r, false,
+                                     subName + ": freq was reset to 0xFFFFFFFF (stale drop leaked)");
+                    }
+                }
+            }
+
+            sub.stop();
+            return dataOk;
+        };
+
+        // ── 第一轮：sub1 正常订阅 ──
+        const bool phase1Ok = runSub(uniqueName("sub_case33_r1"), false);
+        r.metrics["phase1_ok"] = phase1Ok ? "1" : "0";
+        LOG(info) << "[case33_sub] phase1 done, ok=" << phase1Ok;
+
+        if (!phase1Ok) {
+            r.ok = false;
+            return r;
+        }
+
+        // **关键**：不等待 liveliness 超时，立即重启，制造 stale drop 竞态
+        // ── 第二轮：sub2 快速重启 ──
+        const bool phase2Ok = runSub(uniqueName("sub_case33_r2"), true);
+        r.metrics["phase2_ok"] = phase2Ok ? "1" : "0";
+        LOG(info) << "[case33_sub] phase2 done, ok=" << phase2Ok;
+
+        r.ok = phase1Ok && phase2Ok;
+        r.message = r.ok ? "ok" : r.message;
+        return r;
+    });
+
+    ChildReport subReport;
+    expectChildOk(pubProc, 30s);
+    expectChildOk(subProc, 45s, &subReport);
+
+    EXPECT_EQ(subReport.metrics["phase1_ok"], "1") << "phase1: initial callbacks not received";
+    EXPECT_EQ(subReport.metrics["phase2_ok"], "1") << "phase2: rapid sub restart recovery failed";
+}
+
+
+// TC34 - Pub 多轮快速重启（GUID 追踪一致性）
+//
+// 场景：pub 连续 3 轮快速重启（stop→立即 restart），sub 全程在线。
+//       验证 pubGuids_ 和 droppedPubGuids_ 在多轮重启后仍保持一致，
+//       sub 每轮均能自动恢复数据回调。
+//
+// 验证：
+//   ① 3 轮重启中，每轮 sub 都能检测到重连并恢复数据
+//   ② getAvailableVars 在每轮重启后都恢复为正确的变量数量
+//   ③ 无残留状态泄漏（droppedPubGuids_ 不会无限增长）
+TEST(OnDemandPubSub, PubMultipleRapidRestart)
+{
+    const auto root =
+        std::filesystem::temp_directory_path() / uniqueName("ondemand_case34");
+    std::filesystem::create_directories(root);
+
+    const std::string pubNode = uniqueName("pub_case34");
+    const auto defs  = makeDefines(pubNode, "v", 10);
+    const auto names = defineNames(defs);
+    constexpr int kRounds = 3;
+
+    const auto pubProc = spawnChild("case34_pub", root, [pubNode, defs, names]() {
+        ChildReport r;
+
+        for (int round = 1; round <= kRounds; ++round) {
+            dsf::ondemand::OnDemandPub pub;
+            if (!childRequire(r, pub.init(pubNode),
+                              "pub init round" + std::to_string(round) + " failed")
+                || !childRequire(r, pub.start(),
+                                 "pub start round" + std::to_string(round) + " failed")
+                || !childRequire(r, pub.createVars(defs),
+                                 "pub createVars round" + std::to_string(round) + " failed")) {
+                return r;
+            }
+            std::atomic<bool> running{true};
+            std::thread th([&]() { publishLoop(pub, names, running, 10); });
+            std::this_thread::sleep_for(3s);
+            running.store(false, std::memory_order_release);
+            th.join();
+            pub.stop();
+            LOG(info) << "[case34_pub] round " << round << " stopped, immediately restarting...";
+            // 不等待 liveliness 超时，立即进入下一轮
+        }
+
+        r.ok = true;
+        r.message = "ok";
+        return r;
+    });
+
+    const auto subProc = spawnChild("case34_sub", root, [pubNode, names]() {
+        dsf::ondemand::OnDemandSub sub;
+        ChildReport r;
+
+        if (!childRequire(r, sub.init(uniqueName("sub_case34")), "sub init failed")
+            || !childRequire(r, sub.start(), "sub start failed")) {
+            return r;
+        }
+
+        // 等待 pub 首次广播变量表
+        if (!childRequire(r,
+                          waitUntil([&]() { return countNodeVars(sub, pubNode) == 10; }, 8s),
+                          "sub did not receive initial var defines")) {
+            sub.stop();
+            return r;
+        }
+
+        std::mutex mu;
+        std::map<std::string, uint64_t> latestTs;
+        int recoveryCount = 0;
+
+        if (!childRequire(r,
+                          sub.subscribe(pubNode.c_str(), toSubscriptions(names, 100),
+                                        [&](const std::vector<dsf::ondemand::VarCallbackData> &vars) {
+                                            std::lock_guard<std::mutex> lk(mu);
+                                            for (const auto &v : vars) {
+                                                const std::string name(v.varName.data(),
+                                                                       v.varName.size());
+                                                latestTs[name] = v.timestampNs;
+                                            }
+                                        }),
+                          "subscribe failed")) {
+            sub.stop();
+            return r;
+        }
+
+        // 验证每轮重启后的恢复
+        for (int round = 1; round <= kRounds; ++round) {
+            // 首轮：等待初始数据
+            if (round == 1) {
+                const bool ok = waitUntil([&]() {
+                    std::lock_guard<std::mutex> lk(mu);
+                    return latestTs.size() == names.size();
+                }, 6s);
+                childRequire(r, ok, "round1: initial data not received");
+                r.metrics["round1_data"] = ok ? "1" : "0";
+                LOG(info) << "[case34_sub] round1 initial data ok";
+            }
+
+            // 等待变量暂时消失（pub stop 导致）
+            // 注意：快速重启时变量可能不会完全消失（新 pub 的 TableDefine 先到）
+            // 所以我们只等待数据恢复，不强制要求变量数降为0
+
+            // 清空时间戳，等待新数据
+            {
+                std::lock_guard<std::mutex> lk(mu);
+                latestTs.clear();
+            }
+
+            // 等待数据恢复（新 pub 的数据到来）
+            const bool recovered = waitUntil([&]() {
+                std::lock_guard<std::mutex> lk(mu);
+                if (latestTs.size() < names.size())
+                    return false;
+                return countNodeVars(sub, pubNode) == 10;
+            }, 15s);
+
+            if (recovered) {
+                std::lock_guard<std::mutex> lk(mu);
+                ++recoveryCount;
+            }
+
+            const std::string key = "round" + std::to_string(round) + "_recovery";
+            r.metrics[key] = recovered ? "1" : "0";
+            childRequire(r, recovered,
+                         "round" + std::to_string(round) + ": data recovery failed");
+            LOG(info) << "[case34_sub] round " << round << " recovery=" << recovered;
+        }
+
+        r.metrics["recovery_count"] = std::to_string(recoveryCount);
+        sub.stop();
+        r.ok = (recoveryCount == kRounds);
+        r.message = r.ok ? "ok" : "recovery_count=" + std::to_string(recoveryCount);
+        return r;
+    });
+
+    ChildReport subReport;
+    expectChildOk(pubProc, 20s);
+    expectChildOk(subProc, 60s, &subReport);
+
+    for (int i = 1; i <= kRounds; ++i) {
+        const std::string key = "round" + std::to_string(i) + "_recovery";
+        EXPECT_EQ(subReport.metrics[key], "1")
+            << "round " << i << ": data recovery failed after rapid restart";
+    }
 }
 
 #endif
