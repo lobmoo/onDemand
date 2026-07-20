@@ -280,6 +280,7 @@ namespace ondemand
             if (!dataTransfer) {
                 continue;
             }
+
             const auto &maskBytes = dataTransfer->mask();
             const auto &varDataList = dataTransfer->varData();
             const auto &timeStamp = dataTransfer->timestamp();
@@ -305,6 +306,9 @@ namespace ondemand
             size_t idx = 0;
             size_t written = 0;
             uint32_t bucketIdx = ONDEMAND_BUCKET_SIZE;
+            std::vector<uint32_t> writeIds;
+            std::vector<const void *> writeDatas;
+            std::vector<uint32_t> writeSizes;
             {
                 std::shared_lock lock(varIndexMutex_);
                 for (auto it = roar.begin(); it != roar.end() && idx < varDataList.size();
@@ -332,13 +336,17 @@ namespace ondemand
                         bucketIdx = vit->second.bucketIndex;
                     }
 
-                    WriteResult result = varStore_.write(varId, blob.data(), blob.size());
-                    if (result == WriteResult::SUCCESS) {
-                        ++written;
-                    } else {
-                        ONDEMANDLOG_TIME(error, 5)
-                            << "Failed to write varId: " << varId << " for varHash: " << varHash << " with result: " << static_cast<int>(result);
-                    }
+                    writeIds.push_back(varId);
+                    writeDatas.push_back(blob.data());
+                    writeSizes.push_back(static_cast<uint32_t>(blob.size()));
+                }
+            }
+            /*批量写入：一次 OpGuard 覆盖所有变量*/
+            if (!writeIds.empty()) {
+                WriteResult result = varStore_.write_batch(
+                    writeIds.data(), writeDatas.data(), writeSizes.data(), writeIds.size());
+                if (result == WriteResult::SUCCESS || result == WriteResult::NOT_READY) {
+                    written = writeIds.size();
                 }
             }
             /*整张表写完后统一更新 bucket stamp，避免定时器读到半张表*/

@@ -335,14 +335,14 @@ namespace ondemand
         std::unordered_map<uint64_t, uint32_t> defineLookup_;
         BucketManager bucketManager_;
 
-        /*轻量变量索引（registerVars 使用）：按 bucket 预分组，O(1) 去重*/
+        /*轻量变量索引（registerVars 使用）：按 bucket 预分组，O(1) 去重 + O(1) 查找*/
         struct LiteVarEntry {
             uint64_t hash;
             uint32_t nameOffset; // name 在 namePool_ 中的偏移
         };
         struct LiteBucket {
             std::vector<LiteVarEntry> entries;
-            std::unordered_set<uint64_t> hashSet;
+            std::unordered_map<uint64_t, uint32_t> hashToNameOffset;   
         };
         std::array<LiteBucket, ONDEMAND_BUCKET_SIZE> liteBucketMembers_;
         std::vector<char> namePool_;

@@ -861,7 +861,7 @@ namespace ondemand
                     static_cast<uint32_t>(BucketManager::CalculateBucketIndexFromHash(varHash));
 
                 auto &bucket = liteBucketMembers_[bucketIdx];
-                if (!bucket.hashSet.insert(varHash).second)
+                if (bucket.hashToNameOffset.count(varHash))
                     continue;
 
                 uint32_t nameOffset = static_cast<uint32_t>(namePool_.size());
@@ -870,6 +870,7 @@ namespace ondemand
                 namePool_.push_back('\0');
 
                 bucket.entries.push_back(LiteVarEntry{varHash, nameOffset});
+                bucket.hashToNameOffset[varHash] = nameOffset;
                 affectedBuckets.insert(bucketIdx);
             }
         }
@@ -956,7 +957,7 @@ namespace ondemand
                 uint32_t bucketIdx =
                     static_cast<uint32_t>(BucketManager::CalculateBucketIndexFromHash(varHash));
                 auto &bucket = liteBucketMembers_[bucketIdx];
-                if (bucket.hashSet.erase(varHash) > 0) {
+                if (bucket.hashToNameOffset.erase(varHash) > 0) {
                     for (auto it = bucket.entries.begin(); it != bucket.entries.end(); ++it) {
                         if (it->hash == varHash) {
                             bucket.entries.erase(it);
@@ -1235,6 +1236,7 @@ namespace ondemand
             return 0;
         }
 
+        /*计算对应的bit位*/
         uint8_t nodeBit = getOrAssignNodeBit(nodeHash);
         if (nodeBit == 0xFF) {
             ONDEMANDLOG(error) << "Rejecting subscribe from node=" << nodeName
@@ -1302,20 +1304,12 @@ namespace ondemand
                             BucketManager::CalculateBucketIndexFromHash(varHash));
                         std::shared_lock liteLock(liteVarIndexMutex_);
                         const auto &bucket = liteBucketMembers_[bucketIdx];
-                        if (bucket.hashSet.count(varHash)) {
-                            const LiteVarEntry *found = nullptr;
-                            for (const auto &e : bucket.entries) {
-                                if (e.hash == varHash) {
-                                    found = &e;
-                                    break;
-                                }
-                            }
-                            if (found) {
-                                DSF::Var::Define def;
-                                def.name(namePool_.data() + found->nameOffset);
-                                def.nodeName(nodeName_);
-                                pendingCreates.push_back(std::move(def));
-                            }
+                        auto offIt = bucket.hashToNameOffset.find(varHash);
+                        if (offIt != bucket.hashToNameOffset.end()) {
+                            DSF::Var::Define def;
+                            def.name(namePool_.data() + offIt->second);
+                            def.nodeName(nodeName_);
+                            pendingCreates.push_back(std::move(def));
                         } else {
                             if (missingVarFreqs) {
                                 missingVarFreqs->push_back(varFreq);
@@ -1328,7 +1322,6 @@ namespace ondemand
                     }
                     continue;
                 }
-
                 auto &meta = it->second;
 
                 // 收集需要扩展的变量
@@ -1371,9 +1364,9 @@ namespace ondemand
             break; // 无需懒创建或已完成第二轮
         }
 
-        // 分批扩展（每批最多 2048 个，避免 ConfigGuard 长时间阻塞读写线程）
+        // 分批扩展（避免长时间阻塞读写线程）
         if (!expandIds.empty()) {
-            constexpr size_t kExpandBatch = 2048;
+            constexpr size_t kExpandBatch = 8192;
             for (size_t off = 0; off < expandIds.size(); off += kExpandBatch) {
                 size_t n = std::min(kExpandBatch, expandIds.size() - off);
                 varStore_.ensure_capacity_batch(expandIds.data() + off, expandSizes.data() + off,
