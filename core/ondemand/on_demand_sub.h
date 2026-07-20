@@ -346,8 +346,8 @@ namespace ondemand
         std::unordered_map<uint64_t, SubCallbackInfo> subscriptionCallbacks_;
         std::mutex subscriptionCallbacksMutex_;
 
-        /*订阅参数存储: nodeName -> items，用于重连时重发订阅请求*/
-        std::unordered_map<std::string, std::vector<SubscriptionItem>> subscriptionItems_;
+        /*订阅参数存储: nodeName -> (varName -> frequency)，用于重连时重发订阅请求*/
+        std::unordered_map<std::string, std::unordered_map<std::string, uint32_t>> subscriptionItems_;
         std::mutex subscriptionItemsMutex_;
 
         /*时间轮回调调度器*/

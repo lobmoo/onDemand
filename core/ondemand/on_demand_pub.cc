@@ -953,8 +953,8 @@ namespace ondemand
             for (const auto &varName : varNames) {
                 std::string metaName = make_meta_varname(nodeName_, varName);
                 uint64_t varHash = fast_hash(metaName);
-                uint32_t bucketIdx = static_cast<uint32_t>(
-                    BucketManager::CalculateBucketIndexFromHash(varHash));
+                uint32_t bucketIdx =
+                    static_cast<uint32_t>(BucketManager::CalculateBucketIndexFromHash(varHash));
                 auto &bucket = liteBucketMembers_[bucketIdx];
                 if (bucket.hashSet.erase(varHash) > 0) {
                     for (auto it = bucket.entries.begin(); it != bucket.entries.end(); ++it) {
@@ -1131,15 +1131,15 @@ namespace ondemand
                 }
                 if (items[i].id == UINT32_MAX || items[i].data == nullptr) {
                     ++invalidCount;
-                    continue;
-                }
-                /*已分配但不够大时扩容（size==0 的未分配项由 write_batch 返回 NOT_READY）*/
-                uint32_t slotSz = varStore_.slot_size(ids[i]);
-                if (slotSz > 0 && slotSz < sizes[i]) {
-                    varStore_.ensure_capacity(ids[i], sizes[i]);
                 }
             }
-            return varStore_.write_batch(ids, datas, sizes, count);
+            /*write_batch 内部已处理扩容（size>slot 时 ensure_capacity），无需逐个 slot_size 查询*/
+            auto res = varStore_.write_batch(ids, datas, sizes, count);
+            if (res != WriteResult::SUCCESS) {
+                ONDEMANDLOG(error)
+                    << "setVarDataBatch: write_batch failed with result=" << static_cast<int>(res);
+            }
+            return res;
         };
 
         WriteResult result = WriteResult::FAILED;
@@ -1371,9 +1371,14 @@ namespace ondemand
             break; // 无需懒创建或已完成第二轮
         }
 
-        // 批量扩展（一次 arena 重分配）
+        // 分批扩展（每批最多 2048 个，避免 ConfigGuard 长时间阻塞读写线程）
         if (!expandIds.empty()) {
-            varStore_.ensure_capacity_batch(expandIds.data(), expandSizes.data(), expandIds.size());
+            constexpr size_t kExpandBatch = 2048;
+            for (size_t off = 0; off < expandIds.size(); off += kExpandBatch) {
+                size_t n = std::min(kExpandBatch, expandIds.size() - off);
+                varStore_.ensure_capacity_batch(expandIds.data() + off, expandSizes.data() + off,
+                                                n);
+            }
         }
 
         // ── 第二阶段：处理订阅逻辑 ──
@@ -1530,7 +1535,6 @@ namespace ondemand
             && info.status != DdsWrapper::ParticipantStatus::DROPPED) {
             return;
         }
-
 
         {
             std::lock_guard<std::mutex> lock(pubGuidsMutex_);

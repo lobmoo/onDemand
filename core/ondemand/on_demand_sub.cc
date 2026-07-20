@@ -650,17 +650,7 @@ namespace ondemand
             std::lock_guard<std::mutex> lock(subscriptionItemsMutex_);
             auto &stored = subscriptionItems_[node_name];
             for (const auto &item : items) {
-                bool found = false;
-                for (auto &s : stored) {
-                    if (s.varName == item.varName) {
-                        s.frequency = item.frequency;
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found) {
-                    stored.emplace_back(item.varName, item.frequency);
-                }
+                stored[item.varName] = item.frequency; // O(1) 插入/更新
             }
         }
 
@@ -767,11 +757,7 @@ namespace ondemand
             if (it != subscriptionItems_.end()) {
                 auto &stored = it->second;
                 for (const auto &item : items) {
-                    stored.erase(std::remove_if(stored.begin(), stored.end(),
-                                                [&item](const SubscriptionItem &s) {
-                                                    return s.varName == item;
-                                                }),
-                                 stored.end());
+                    stored.erase(item); // O(1) 删除
                 }
                 if (stored.empty()) {
                     subscriptionItems_.erase(it);
@@ -1158,7 +1144,7 @@ namespace ondemand
 
     void OnDemandSub::resendSubscriptions()
     {
-        std::unordered_map<std::string, std::vector<SubscriptionItem>> itemsCopy;
+        std::unordered_map<std::string, std::unordered_map<std::string, uint32_t>> itemsCopy;
         {
             std::lock_guard<std::mutex> lock(subscriptionItemsMutex_);
             itemsCopy = subscriptionItems_;
@@ -1179,13 +1165,13 @@ namespace ondemand
             {
                 std::shared_lock lock(varIndexMutex_);
                 for (const auto &item : items) {
-                    std::string metaVarName = make_meta_varname(pubNodeName, item.varName);
+                    std::string metaVarName = make_meta_varname(pubNodeName, item.first);
                     uint64_t varHash = fast_hash(metaVarName);
                     tableName = make_bucket_name_by_hash(varHash);
 
                     DSF::NamedValue varFreq;
                     varFreq.name(metaVarName);
-                    varFreq.value(std::to_string(item.frequency));
+                    varFreq.value(std::to_string(item.second));
                     subReq.varFreqs().emplace_back(varFreq);
                 }
             }
