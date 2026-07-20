@@ -271,59 +271,63 @@ namespace ondemand
             if (!ids || !datas || !sizes)
                 return WriteResult::FAILED;
 
-            /* 先按需扩容（不持 OpGuard，避免与 config_begin 死锁），
-             * 扩容后在单次 OpGuard 内完成所有写入，消除两次 OpGuard 之间
-             * offset 被其他线程扩容改变的窗口。
-             * size==0 的未分配项跳过，由主循环返回 NOT_READY。*/
+            bool any_not_ready = false;
+            /* Step 1: relaxed 扫描，收集需要扩容的变量（不加锁） */
+            std::vector<uint32_t> expandIds;
+            std::vector<uint32_t> expandSizes;
             for (size_t i = 0; i < count; ++i) {
                 uint32_t id = ids[i];
                 if (id == kInvalidId || !datas[i])
                     continue;
-
-                bool need_expand = false;
-                {
-                    OpGuard g(this);
-                    if (!arena_ || id >= var_count_ || metas_[id].size == 0)
-                        continue;
-                    need_expand = sizes[i] > metas_[id].size;
-                }
-
-                if (need_expand)
-                    (void)ensure_capacity(id, sizes[i]);
-            }
-
-            OpGuard g(this);
-            if (!arena_ || !dirty_flags_)
-                return WriteResult::FAILED;
-            bool any_written = false;
-            bool any_not_ready = false;
-            for (size_t i = 0; i < count; ++i) {
-                uint32_t id = ids[i];
-                if (!datas[i])
-                    continue;
-                if (id >= var_count_ || metas_[id].size == 0) {
+                if (!arena_ || id >= var_count_) {
                     any_not_ready = true;
                     continue;
                 }
-                auto *slot = (Slot *)(arena_ + metas_[id].offset);
-                uint32_t size = metas_[id].size;
-                uint32_t actual = sizes[i] <= size ? sizes[i] : size;
-
-                slot->seq.fetch_add(1, std::memory_order_relaxed);
-                std::atomic_thread_fence(std::memory_order_release);
-                uint8_t write_idx = 1u - slot->committed.load(std::memory_order_relaxed);
-                std::memcpy(slot->data + write_idx * size, datas[i], actual);
-                slot->valid_size[write_idx] = actual;
-                slot->committed.store(write_idx, std::memory_order_release);
-                slot->seq.fetch_add(1, std::memory_order_release);
-
-                if (!dirty_flags_[id].exchange(true, std::memory_order_acq_rel))
-                    dirty_queue_.enqueue(id);
-                any_written = true;
+                uint32_t sz = metas_[id].size; // relaxed load，原子读
+                if (sz == 0) {
+                    any_not_ready = true;
+                    continue;
+                }
+                if (sizes[i] > sz) {
+                    expandIds.push_back(id);
+                    expandSizes.push_back(sizes[i]);
+                }
             }
-            if (any_written)
-                return WriteResult::SUCCESS;
-            return any_not_ready ? WriteResult::NOT_READY : WriteResult::FAILED;
+
+            /* Step 2: 批量扩容（一次 ConfigGuard，不逐个抢锁） */
+            if (!expandIds.empty())
+                ensure_capacity_batch(expandIds.data(), expandSizes.data(), expandIds.size());
+
+            /* Step 3: 单次 OpGuard 完成所有写入 */
+            {
+                OpGuard g(this);
+                if (!arena_ || !dirty_flags_)
+                    return WriteResult::FAILED;
+                for (size_t i = 0; i < count; ++i) {
+                    uint32_t id = ids[i];
+                    if (id == kInvalidId || !datas[i])
+                        continue;
+                    if (id >= var_count_ || metas_[id].size == 0) {
+                        any_not_ready = true;
+                        continue;
+                    }
+                    auto *slot = (Slot *)(arena_ + metas_[id].offset);
+                    uint32_t size = metas_[id].size;
+                    uint32_t actual = sizes[i] <= size ? sizes[i] : size;
+
+                    slot->seq.fetch_add(1, std::memory_order_relaxed);
+                    std::atomic_thread_fence(std::memory_order_release);
+                    uint8_t write_idx = 1u - slot->committed.load(std::memory_order_relaxed);
+                    std::memcpy(slot->data + write_idx * size, datas[i], actual);
+                    slot->valid_size[write_idx] = actual;
+                    slot->committed.store(write_idx, std::memory_order_release);
+                    slot->seq.fetch_add(1, std::memory_order_release);
+
+                    if (!dirty_flags_[id].exchange(true, std::memory_order_acq_rel))
+                        dirty_queue_.enqueue(id);
+                }
+            }
+            return any_not_ready ? WriteResult::NOT_READY : WriteResult::SUCCESS;
         }
 
         // ---- 读接口 ----

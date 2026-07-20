@@ -335,14 +335,14 @@ namespace ondemand
         std::unordered_map<uint64_t, uint32_t> defineLookup_;
         BucketManager bucketManager_;
 
-        /*轻量变量索引（registerVars 使用）：按 bucket 预分组，O(1) 去重*/
+        /*轻量变量索引（registerVars 使用）：按 bucket 预分组，O(1) 去重 + O(1) 查找*/
         struct LiteVarEntry {
             uint64_t hash;
             uint32_t nameOffset; // name 在 namePool_ 中的偏移
         };
         struct LiteBucket {
             std::vector<LiteVarEntry> entries;
-            std::unordered_set<uint64_t> hashSet;
+            std::unordered_map<uint64_t, uint32_t> hashToNameOffset;   
         };
         std::array<LiteBucket, ONDEMAND_BUCKET_SIZE> liteBucketMembers_;
         std::vector<char> namePool_;
@@ -409,6 +409,10 @@ namespace ondemand
         uint32_t maxVarsPerNode_; // 每个节点最大变量数，超过后拒绝新变量订阅
         uint32_t maxNodeNum_;     // 最大订阅者数，超过后拒绝新订阅者注册
         std::unordered_map<uint64_t, uint32_t> nodeVarCount_; // nodeHash -> 已订阅变量数
+
+        /* participant GUID 跟护：participantName -> guidPrefix*/
+        std::mutex pubGuidsMutex_;
+        std::unordered_map<std::string, std::string> pubGuids_;
     };
 
 } // namespace ondemand

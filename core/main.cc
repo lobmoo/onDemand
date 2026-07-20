@@ -23,7 +23,7 @@
 
 namespace
 {
-constexpr uint32_t kDefaultCount = 60U;
+constexpr uint32_t kDefaultCount = 600U;
 
 uint32_t getConfiguredCount()
 {
@@ -181,7 +181,6 @@ void dataCallback(const std::vector<dsf::ondemand::VarCallbackData> &vars)
 
     ensureBucketWorkerStarted();
 
-    LOG(info) << "Received batch: node=" << vars.front().nodeName << " count=" << vars.size();
     BatchEvent batch;
     if (!vars.front().nodeName.empty()) {
         batch.node_name.assign(vars.front().nodeName.data(), vars.front().nodeName.size());
@@ -206,6 +205,9 @@ void dataCallback(const std::vector<dsf::ondemand::VarCallbackData> &vars)
         dst.data_size = static_cast<uint32_t>(src.size);
         dst.timestamp_ms = src.timestampNs / 1000000ULL;
         dst.blobType = static_cast<int32_t>(src.blobType);
+        LOG(info) << "Callback: var=" << dst.var_name << " type=" << dst.type_name
+                  << " version=" << dst.type_version << " size=" << dst.data_size
+                  << " ts_ms=" << dst.timestamp_ms;
         batch.items.push_back(std::move(dst));
     }
 
@@ -287,6 +289,9 @@ void subscribe()
     //     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     // }
 
+
+
+    
     std::vector<dsf::ondemand::SubscriptionItem> items;
     std::vector<std::string> unitems;
     for (int i = 0; i < count; ++i) {
@@ -304,8 +309,13 @@ void subscribe()
     //         LOG(info) << "    var name = " << v;
     //     }
     // }
-  
+
     sub.subscribe("pubNode", items, dataCallback);
+
+    // sub.subscribe("pubNode", {{"var0", 1000}, {"var1", 1000}}, dataCallback);
+    // std::this_thread::sleep_for(std::chrono::seconds(10));
+    // sub.subscribe("pubNode", {{"var5", 1000}, {"var6", 1000}}, dataCallback);
+
 
     // sub.unsubscribe("pubNode", unitems);
     // sub.stop();

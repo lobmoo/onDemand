@@ -861,7 +861,7 @@ namespace ondemand
                     static_cast<uint32_t>(BucketManager::CalculateBucketIndexFromHash(varHash));
 
                 auto &bucket = liteBucketMembers_[bucketIdx];
-                if (!bucket.hashSet.insert(varHash).second)
+                if (bucket.hashToNameOffset.count(varHash))
                     continue;
 
                 uint32_t nameOffset = static_cast<uint32_t>(namePool_.size());
@@ -870,6 +870,7 @@ namespace ondemand
                 namePool_.push_back('\0');
 
                 bucket.entries.push_back(LiteVarEntry{varHash, nameOffset});
+                bucket.hashToNameOffset[varHash] = nameOffset;
                 affectedBuckets.insert(bucketIdx);
             }
         }
@@ -953,10 +954,10 @@ namespace ondemand
             for (const auto &varName : varNames) {
                 std::string metaName = make_meta_varname(nodeName_, varName);
                 uint64_t varHash = fast_hash(metaName);
-                uint32_t bucketIdx = static_cast<uint32_t>(
-                    BucketManager::CalculateBucketIndexFromHash(varHash));
+                uint32_t bucketIdx =
+                    static_cast<uint32_t>(BucketManager::CalculateBucketIndexFromHash(varHash));
                 auto &bucket = liteBucketMembers_[bucketIdx];
-                if (bucket.hashSet.erase(varHash) > 0) {
+                if (bucket.hashToNameOffset.erase(varHash) > 0) {
                     for (auto it = bucket.entries.begin(); it != bucket.entries.end(); ++it) {
                         if (it->hash == varHash) {
                             bucket.entries.erase(it);
@@ -1131,15 +1132,15 @@ namespace ondemand
                 }
                 if (items[i].id == UINT32_MAX || items[i].data == nullptr) {
                     ++invalidCount;
-                    continue;
-                }
-                /*已分配但不够大时扩容（size==0 的未分配项由 write_batch 返回 NOT_READY）*/
-                uint32_t slotSz = varStore_.slot_size(ids[i]);
-                if (slotSz > 0 && slotSz < sizes[i]) {
-                    varStore_.ensure_capacity(ids[i], sizes[i]);
                 }
             }
-            return varStore_.write_batch(ids, datas, sizes, count);
+            /*write_batch 内部已处理扩容（size>slot 时 ensure_capacity），无需逐个 slot_size 查询*/
+            auto res = varStore_.write_batch(ids, datas, sizes, count);
+            if (res != WriteResult::SUCCESS) {
+                ONDEMANDLOG(error)
+                    << "setVarDataBatch: write_batch failed with result=" << static_cast<int>(res);
+            }
+            return res;
         };
 
         WriteResult result = WriteResult::FAILED;
@@ -1235,6 +1236,7 @@ namespace ondemand
             return 0;
         }
 
+        /*计算对应的bit位*/
         uint8_t nodeBit = getOrAssignNodeBit(nodeHash);
         if (nodeBit == 0xFF) {
             ONDEMANDLOG(error) << "Rejecting subscribe from node=" << nodeName
@@ -1302,20 +1304,12 @@ namespace ondemand
                             BucketManager::CalculateBucketIndexFromHash(varHash));
                         std::shared_lock liteLock(liteVarIndexMutex_);
                         const auto &bucket = liteBucketMembers_[bucketIdx];
-                        if (bucket.hashSet.count(varHash)) {
-                            const LiteVarEntry *found = nullptr;
-                            for (const auto &e : bucket.entries) {
-                                if (e.hash == varHash) {
-                                    found = &e;
-                                    break;
-                                }
-                            }
-                            if (found) {
-                                DSF::Var::Define def;
-                                def.name(namePool_.data() + found->nameOffset);
-                                def.nodeName(nodeName_);
-                                pendingCreates.push_back(std::move(def));
-                            }
+                        auto offIt = bucket.hashToNameOffset.find(varHash);
+                        if (offIt != bucket.hashToNameOffset.end()) {
+                            DSF::Var::Define def;
+                            def.name(namePool_.data() + offIt->second);
+                            def.nodeName(nodeName_);
+                            pendingCreates.push_back(std::move(def));
                         } else {
                             if (missingVarFreqs) {
                                 missingVarFreqs->push_back(varFreq);
@@ -1328,7 +1322,6 @@ namespace ondemand
                     }
                     continue;
                 }
-
                 auto &meta = it->second;
 
                 // 收集需要扩展的变量
@@ -1371,9 +1364,14 @@ namespace ondemand
             break; // 无需懒创建或已完成第二轮
         }
 
-        // 批量扩展（一次 arena 重分配）
+        // 分批扩展（避免长时间阻塞读写线程）
         if (!expandIds.empty()) {
-            varStore_.ensure_capacity_batch(expandIds.data(), expandSizes.data(), expandIds.size());
+            constexpr size_t kExpandBatch = 8192;
+            for (size_t off = 0; off < expandIds.size(); off += kExpandBatch) {
+                size_t n = std::min(kExpandBatch, expandIds.size() - off);
+                varStore_.ensure_capacity_batch(expandIds.data() + off, expandSizes.data() + off,
+                                                n);
+            }
         }
 
         // ── 第二阶段：处理订阅逻辑 ──
@@ -1518,9 +1516,29 @@ namespace ondemand
 
     void OnDemandPub::onParticipantDiscovery(const DdsWrapper::ParticipantInfo &info)
     {
+        if (info.status == DdsWrapper::ParticipantStatus::DISCOVERED) {
+            std::lock_guard<std::mutex> lock(pubGuidsMutex_);
+            pubGuids_[info.participant_name] = info.guid;
+            ONDEMANDLOG(info) << "Sub participant discovered: " << info.participant_name
+                              << ", guid=" << info.guid;
+            return;
+        }
+
         if (info.status != DdsWrapper::ParticipantStatus::REMOVED
             && info.status != DdsWrapper::ParticipantStatus::DROPPED) {
             return;
+        }
+
+        {
+            std::lock_guard<std::mutex> lock(pubGuidsMutex_);
+            auto it = pubGuids_.find(info.participant_name);
+            if (it != pubGuids_.end() && it->second != info.guid) {
+                ONDEMANDLOG(info) << "Sub participant stale drop ignored: " << info.participant_name
+                                  << ", dropped_guid=" << info.guid
+                                  << ", current_guid=" << it->second;
+                return;
+            }
+            pubGuids_.erase(info.participant_name);
         }
 
         (void)cleanupParticipantSubscriptions(info.participant_name);

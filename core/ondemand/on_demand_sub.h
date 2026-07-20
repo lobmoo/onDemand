@@ -27,6 +27,7 @@
 #include <string_view>
 #include <sys/types.h>
 #include <set>
+#include <unordered_set>
 #include <shared_mutex>
 
 namespace dsf
@@ -288,6 +289,11 @@ namespace ondemand
          */
         void cancelAllCallbackTimers();
 
+        /**
+         * @brief 重连时重发所有订阅请求，触发 Pub 重发 PubTableDefine
+         */
+        void resendSubscriptions();
+
     private:
         std::string nodeName_;
         TableDefineCallback tableDefineCb_;
@@ -340,6 +346,10 @@ namespace ondemand
         std::unordered_map<uint64_t, SubCallbackInfo> subscriptionCallbacks_;
         std::mutex subscriptionCallbacksMutex_;
 
+        /*订阅参数存储: nodeName -> (varName -> frequency)，用于重连时重发订阅请求*/
+        std::unordered_map<std::string, std::unordered_map<std::string, uint32_t>> subscriptionItems_;
+        std::mutex subscriptionItemsMutex_;
+
         /*时间轮回调调度器*/
         std::unique_ptr<TimerScheduler> callbackScheduler_;
         std::mutex callbackGroupsMutex_;
@@ -357,6 +367,20 @@ namespace ondemand
         std::atomic<bool> callbackDirty_{false};
 
         std::atomic<uint32_t> blobType_{static_cast<uint32_t>(DSF::Var::BLOB_TYPE::STRUCTS)};
+
+        /* participant GUID 跟踪：pubName -> guidPrefix
+         * 用于区分同名 participant 的不同实例，防止旧实例 DROPPED 误清新实例的变量 */
+        std::mutex pubGuidsMutex_;
+        std::unordered_map<std::string, std::string> pubGuids_;
+        /* 记录被 DROPPED erase 过的 guid，用于检测重连（guid 不变的场景）*/
+        std::unordered_set<std::string> droppedPubGuids_;
+
+        /* PubTableDefine 缓存：pubName -> 该节点的全部 PubTableDefine（按 bucket）
+         * 用于重连时恢复变量定义，避免依赖 Pub 重发广播 */
+        std::mutex pubTableDefineCacheMutex_;
+        std::unordered_map<std::string, std::vector<std::shared_ptr<DSF::Var::PubTableDefine>>>
+            pubTableDefineCache_;
+        void restorePubTableDefineFromCache(const std::string &pubNodeName);
     };
 
 } // namespace ondemand

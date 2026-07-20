@@ -48,6 +48,7 @@ struct MatchedInfo {
 
 struct ParticipantInfo {
     std::string participant_name;
+    std::string guid;
     int domain_id = 0;
     ParticipantStatus status = ParticipantStatus::DISCOVERED;
 };
@@ -84,6 +85,14 @@ protected:
                                      .mEntityName;
         pinfo.domain_id =
             participant != nullptr ? static_cast<int>(participant->GetDomainId()) : -1;
+
+        /* 将 guidPrefix 转为 hex 字符串，用于区分同名 participant 的不同实例 */
+        {
+            std::ostringstream oss;
+            oss << info.info.mParticipantGuid;
+            pinfo.guid = oss.str();
+        }
+
         switch (info.status) {
             case BaoSky::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT:
                 pinfo.status = ParticipantStatus::DISCOVERED;

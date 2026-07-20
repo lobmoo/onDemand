@@ -18,6 +18,7 @@
 
 #include <functional>
 #include <memory>
+#include <sstream>
 #include <string>
 
 #include <fastdds/dds/core/detail/DDSReturnCode.hpp>
@@ -63,6 +64,10 @@ struct MatchedInfo {
  */
 struct ParticipantInfo {
     std::string participant_name;
+    std::string guid;         
+
+
+    
     int domain_id;
     ParticipantStatus status;
 };
@@ -103,6 +108,13 @@ protected:
         ParticipantInfo pinfo;
         pinfo.participant_name = info.participant_name.to_string();
         pinfo.domain_id = info.domain_id;
+
+        /* 将 guidPrefix 转为 hex 字符串，用于区分同名 participant 的不同实例 */
+        {
+            std::ostringstream oss;
+            oss << info.guid.guidPrefix;
+            pinfo.guid = oss.str();
+        }
 
         switch (reason) {
             case ParticipantDiscoveryStatus::DISCOVERED_PARTICIPANT:
