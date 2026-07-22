@@ -558,7 +558,7 @@ namespace ondemand
 
         processTableDefineThread_ = std::thread(&OnDemandSub::processTableDefine, this);
         {
-            size_t workerCount = 4;
+            size_t workerCount = 2;
             processDataTransferThreads_.clear();
             processDataTransferThreads_.reserve(workerCount);
             for (size_t i = 0; i < workerCount; ++i) {
@@ -817,9 +817,9 @@ namespace ondemand
                 int32_t varId;
                 uint32_t bucketIndex;
                 uint32_t dataSize;
-                std::string nodeName;
-                std::string varType;
-                std::string typeVersion;
+                std::string_view nodeName;     // 指向 varDefineIndex_ 中的共享存储
+                std::string_view varType;      // 指向 varDefineIndex_ 中的共享存储
+                std::string_view typeVersion;  // 指向 varDefineIndex_ 中的共享存储
             };
             std::unordered_map<uint64_t, VarLookup> varLookup;
             {

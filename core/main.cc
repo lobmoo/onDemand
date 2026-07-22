@@ -23,7 +23,7 @@
 
 namespace
 {
-constexpr uint32_t kDefaultCount = 600U;
+constexpr uint32_t kDefaultCount = 100000U;
 
 uint32_t getConfiguredCount()
 {
@@ -265,7 +265,7 @@ void publish()
 #endif
                     while (true) {
                         pub.setVarDataBatch(batchItems.data(), count);
-                        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
                     }
                 }).detach();
                 LOG(info) << "Write thread started after lazy creation";

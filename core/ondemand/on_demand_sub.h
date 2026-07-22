@@ -257,10 +257,10 @@ namespace ondemand
             int32_t varId;
             uint32_t dataSize;
             uint32_t bucketIndex;
-            std::string nodeName;
-            std::string varName;
-            std::string varType;
-            std::string typeVersion;
+            std::string_view nodeName;    // 指向 varDefineIndex_ 中的共享存储
+            std::string varName;          // 来自本地 snapshot，需保留所有权
+            std::string_view varType;     // 指向 varDefineIndex_ 中的共享存储
+            std::string_view typeVersion; // 指向 varDefineIndex_ 中的共享存储
         };
 
         /**
