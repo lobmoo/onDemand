@@ -369,6 +369,11 @@ namespace ondemand
         std::unordered_map<uint32_t,
                            std::shared_ptr<DdsWrapper::DDSTopicWriter<DSF::Var::TableDataTransfer>>>
             dataTransferWriterMap_;
+        /*热路径 writer 缓存：避免 publishGroupData 每次 mutex + map 查找*/
+        static constexpr uint32_t kMaxBucketCache = ONDEMAND_BUCKET_SIZE;
+        std::array<std::shared_ptr<DdsWrapper::DDSTopicWriter<DSF::Var::TableDataTransfer>>,
+                   kMaxBucketCache>
+            cachedWriters_{};
 
         VarStore varStore_;
 

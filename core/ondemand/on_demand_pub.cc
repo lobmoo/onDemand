@@ -247,6 +247,8 @@ namespace ondemand
                 return false;
             }
             dataTransferWriterMap_.emplace(bucketId, writer);
+            if (bucketId < kMaxBucketCache)
+                cachedWriters_[bucketId] = writer;
             ONDEMANDLOG(info) << "Created DataTransfer writer for bucketId: " << bucketId
                               << ", topic: " << topicName;
         }
@@ -563,6 +565,7 @@ namespace ondemand
         } guard{*running};
 
         DSF::Var::TableDataTransfer msg;
+        /*一次性预分配所有 blob 槽位，避免 N 次 emplace_back 触发多次 realloc*/
         msg.varData().reserve(members->size());
 
         /*用于记录实际发送的变量 hash（只包含有数据的变量）*/
@@ -571,11 +574,15 @@ namespace ondemand
 
         /*批量读：一次 op_enter 覆盖所有变量，避免 N 次独立锁开销*/
         const size_t n = members->size();
-        std::vector<uint32_t> ids(n);
-        for (size_t i = 0; i < n; ++i) {
-            ids[i] = (*members)[i].varId;
+        /*thread_local 避免每次调用都堆分配 ids 数组*/
+        thread_local std::vector<uint32_t> tl_ids;
+        if (tl_ids.size() < n) {
+            tl_ids.resize(n);
         }
-        varStore_.read_batch(ids.data(), n, [&](size_t i, const void *ptr, uint32_t sz) {
+        for (size_t i = 0; i < n; ++i) {
+            tl_ids[i] = (*members)[i].varId;
+        }
+        varStore_.read_batch(tl_ids.data(), n, [&](size_t i, const void *ptr, uint32_t sz) {
             if (!ptr || sz == 0) {
                 if (skippedCount == 0) {
                     for (size_t j = 0; j < i; ++j)
@@ -629,18 +636,21 @@ namespace ondemand
         msg.timestamp().tv_nsec(static_cast<uint32_t>(nsec.count()));
         msg.blobType(static_cast<DSF::Var::BLOB_TYPE>(blobType_.load(std::memory_order_acquire)));
 
-        /*发送*/
-        {
+        /*发送：直接从缓存数组取 writer，无需 mutex + map 查找*/
+        auto writer = (bucketIndex < kMaxBucketCache) ? cachedWriters_[bucketIndex] : nullptr;
+        if (!writer) {
+            /*缓存未命中，走 map 查找（仅首次或异常情况）*/
             std::lock_guard<std::mutex> lock(DataTransferWriterMapMutex_);
             auto writerIt = dataTransferWriterMap_.find(bucketIndex);
             if (writerIt == dataTransferWriterMap_.end() || !writerIt->second) {
                 ONDEMANDLOG_TIME(warning, 5000) << "No writer for bucketIndex=" << bucketIndex;
                 return;
             }
-            if (!writerIt->second->writeMessage(msg)) {
-                ONDEMANDLOG(error) << "Failed to send batch data for bucket=" << bucketIndex
-                                   << " freq=" << freqMs << "ms";
-            }
+            writer = writerIt->second;
+        }
+        if (!writer->writeMessage(msg)) {
+            ONDEMANDLOG(error) << "Failed to send batch data for bucket=" << bucketIndex
+                               << " freq=" << freqMs << "ms";
         }
     }
 
@@ -1687,6 +1697,7 @@ namespace ondemand
         {
             std::lock_guard<std::mutex> lock(DataTransferWriterMapMutex_);
             dataTransferWriterMap_.clear();
+            cachedWriters_.fill(nullptr);
         }
         dataNode_.reset();
         dataNode_ = nullptr;
