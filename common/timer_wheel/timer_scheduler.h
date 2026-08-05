@@ -1,12 +1,12 @@
 /**
  * @file timer_scheduler.h
- * @brief
+ * @brief 
  * @author wwk (1162431386@qq.com)
  * @version 1.0
  * @date 2025-09-29
- *
+ * 
  * @copyright Copyright (c) 2025  by  wwk : wwk.lobmo@gmail.com
- *
+ * 
  * @par 修改日志:
  * <table>
  * <tr><th>Date       <th>Version <th>Author  <th>Description
@@ -32,10 +32,10 @@
 /*
 TimerScheduler 架构:
 ┌─────────────────┐
-│   User Code     │
+│   User Code     │ 
 ├─────────────────┤
 │ TimerScheduler  │  ← 高级接口封装
-├─────────────────┤
+├─────────────────┤  
 │   TimerWheel    │  ← 底层时间轮算法
 ├─────────────────┤
 │   ThreadPool    │  ← 异步执行引擎
@@ -79,7 +79,7 @@ public:
 private:
     // 单次执行定时器实现
     class CallbackTimer : public TimerEventInterface,
-                           public std::enable_shared_from_this<CallbackTimer>
+                          public std::enable_shared_from_this<CallbackTimer>
     {
         friend class TimerScheduler;
 
@@ -94,7 +94,6 @@ private:
         Callback callback_;
         TimerScheduler &scheduler_;
         std::atomic<bool> is_canceled_;
-
     };
 
     // 周期性执行定时器实现
@@ -130,7 +129,7 @@ private:
     ThreadPool thread_pool_;
     TimerWheel timer_wheel_;
     std::atomic<bool> should_stop_;
-    std::atomic<bool> is_paused_;  // 暂停标志
+    std::atomic<bool> is_paused_; // 暂停标志
     std::thread timer_thread_;
     std::mutex mutex_;
     Tick tick_ms_; // 时钟周期（毫秒）
@@ -151,8 +150,8 @@ private:
 // ============ 实现部分（通常在.cc文件中） ============
 
 inline TimerScheduler::TimerScheduler(Tick tick_ms, size_t thread_pool_size)
-    : mutex_(), active_timers_(), timer_wheel_(), tick_ms_(tick_ms),
-      should_stop_(false), is_paused_(false), timer_thread_(),
+    : mutex_(), active_timers_(), timer_wheel_(), tick_ms_(tick_ms), should_stop_(false),
+      is_paused_(false), timer_thread_(),
       thread_pool_(thread_pool_size == 0 ? 1 : thread_pool_size),
       direct_execute_(thread_pool_size == 0)
 {
@@ -169,7 +168,7 @@ inline TimerScheduler::~TimerScheduler()
 
     // 取消所有活跃的周期性定时器，防止悬空引用
     std::lock_guard<std::mutex> lock(mutex_);
-    for (auto& timer : active_timers_) {
+    for (auto &timer : active_timers_) {
         if (timer) {
             timer->cancel();
         }
@@ -247,7 +246,7 @@ inline void TimerScheduler::Stop()
     }
 
     std::lock_guard<std::mutex> lock(mutex_);
-    for (auto& timer : active_timers_) {
+    for (auto &timer : active_timers_) {
         if (timer) {
             timer->cancel();
         }
@@ -291,14 +290,10 @@ inline void TimerScheduler::TimerLoop()
 
         if (now >= next_tick) {
             if (!is_paused_.load(std::memory_order_acquire)) {
-                /*查询最近的到期 timer，一次 advance 跳过去，避免每 tick 空转*/
-                Tick ticksToAdvance = 1;
+                constexpr size_t kMaxExecutePerTick = 10;
                 {
                     std::lock_guard<std::mutex> lock(mutex_);
-                    ticksToAdvance = timer_wheel_.ticks_to_next_event(1000);
-                    if (ticksToAdvance == 0)
-                        ticksToAdvance = 1;
-                    timer_wheel_.advance(ticksToAdvance);
+                    timer_wheel_.advance(1, kMaxExecutePerTick);
                 }
                 // 锁已释放：direct_execute_=true 直接在 timer 线程跑（pub 场景，无线程池开销）
                 // direct_execute_=false 投递到线程池（sub 场景，用户回调可能慢）
@@ -310,17 +305,11 @@ inline void TimerScheduler::TimerLoop()
                     }
                 }
                 pendingTasks_.clear();
+            }
 
-                /*跳过的 tick，对齐到下一个 tick 边界*/
-                next_tick += kTickDuration * ticksToAdvance;
-                if (now > next_tick) {
-                    next_tick = now + kTickDuration;
-                }
-            } else {
-                next_tick += kTickDuration;
-                if (now > next_tick) {
-                    next_tick = now + kTickDuration;
-                }
+            next_tick += kTickDuration;
+            if (now > next_tick) {
+                next_tick = now + kTickDuration;
             }
         }
 
@@ -377,12 +366,11 @@ inline void TimerScheduler::RecurringCallbackTimer::execute()
 
     // 只往 pendingTasks_ push，不触发 syscall
     auto self = shared_from_this();
-    scheduler_.pendingTasks_.push_back(
-        [self, callback = callback_, &is_canceled = is_canceled_]() {
-            if (!is_canceled.load(std::memory_order_acquire)) {
-                callback();
-            }
-        });
+    scheduler_.pendingTasks_.push_back([self, callback = callback_, &is_canceled = is_canceled_]() {
+        if (!is_canceled.load(std::memory_order_acquire)) {
+            callback();
+        }
+    });
 }
 
 inline void TimerScheduler::RecurringCallbackTimer::cancel()
@@ -391,9 +379,283 @@ inline void TimerScheduler::RecurringCallbackTimer::cancel()
     TimerEventInterface::cancel();
 }
 
-
 inline void TimerScheduler::RemoveFromActive(std::shared_ptr<TimerEventInterface> timer)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     active_timers_.erase(timer);
 }
+
+// ============ 使用示例 TEST ============
+
+#if 0
+class TimerTester {
+private:
+    std::atomic<int> counter_{0};
+    std::atomic<int> single_executed_{0};
+    std::atomic<int> recurring_executed_{0};
+    std::atomic<int> post_executed_{0};
+    
+public:
+    void TestBasicFunctionality() {
+        std::cout << "=== 测试基本功能 ===" << std::endl;
+        
+        TimerScheduler scheduler(10, 2); // 10ms tick, 2个工作线程
+        
+        std::cout << "创建TimerScheduler成功 (10ms tick, 2 threads)" << std::endl;
+        
+        // 测试立即执行
+        scheduler.Post([this]() {
+            post_executed_++;
+            std::cout << "Post任务执行完成" << std::endl;
+        });
+        
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+        
+        if (post_executed_ == 1) {
+            std::cout << "✅ Post功能测试通过" << std::endl;
+        } else {
+            std::cout << "❌ Post功能测试失败" << std::endl;
+        }
+        
+        std::cout << std::endl;
+    }
+    
+    void TestSingleTimer() {
+        std::cout << "=== 测试单次定时器 ===" << std::endl;
+        
+        TimerScheduler scheduler(10, 2);
+        single_executed_ = 0;
+        
+        auto start_time = std::chrono::steady_clock::now();
+        
+        // 调度一个1秒后执行的任务 (100 ticks * 10ms = 1000ms)
+        auto timer = scheduler.Schedule([this, start_time]() {
+            auto end_time = std::chrono::steady_clock::now();
+            auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
+            
+            single_executed_++;
+            std::cout << "单次定时器执行，延迟: " << duration.count() << "ms" << std::endl;
+        }, 100);
+        
+        std::cout << "调度单次定时器 (1000ms后执行)" << std::endl;
+        
+        // 等待1.2秒确保任务执行
+        std::this_thread::sleep_for(std::chrono::milliseconds(1200));
+        
+        if (single_executed_ == 1) {
+            std::cout << "✅ 单次定时器测试通过" << std::endl;
+        } else {
+            std::cout << "❌ 单次定时器测试失败, 执行次数: " << single_executed_ << std::endl;
+        }
+        
+        std::cout << std::endl;
+    }
+    
+    void TestRecurringTimer() {
+        std::cout << "=== 测试周期性定时器 ===" << std::endl;
+        
+        TimerScheduler scheduler(10, 2);
+        recurring_executed_ = 0;
+        
+        // 调度一个500ms后开始，每500ms执行一次的任务
+        auto timer = scheduler.ScheduleRecurring([this]() {
+            recurring_executed_++;
+            std::cout << "周期性定时器执行，第 " << recurring_executed_ << " 次" << std::endl;
+        }, 50, 50); // 500ms延迟，每500ms执行一次
+        
+        std::cout << "调度周期性定时器 (500ms后开始，每500ms执行一次)" << std::endl;
+        
+        // 运行2.5秒，应该执行3-4次
+        std::this_thread::sleep_for(std::chrono::milliseconds(2500));
+        
+        int executions = recurring_executed_;
+        
+        // 取消定时器
+        scheduler.Cancel(timer);
+        std::cout << "取消周期性定时器" << std::endl;
+        
+        // 再等待1秒，确认不会继续执行
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        
+        if (executions >= 3 && recurring_executed_ == executions) {
+            std::cout << "✅ 周期性定时器测试通过 (执行 " << executions << " 次)" << std::endl;
+        } else {
+            std::cout << "❌ 周期性定时器测试失败" << std::endl;
+            std::cout << "   取消前执行: " << executions << " 次" << std::endl;
+            std::cout << "   取消后执行: " << recurring_executed_ << " 次" << std::endl;
+        }
+        
+        std::cout << std::endl;
+    }
+    
+    void TestTimerCancel() {
+        std::cout << "=== 测试定时器取消 ===" << std::endl;
+        
+        TimerScheduler scheduler(10, 2);
+        std::atomic<int> canceled_timer_executed{0};
+        
+        // 调度一个2秒后执行的任务
+        auto timer = scheduler.Schedule([&canceled_timer_executed]() {
+            canceled_timer_executed++;
+            std::cout << "这个任务不应该执行!" << std::endl;
+        }, 200); // 2秒后执行
+        
+        std::cout << "调度单次定时器 (2000ms后执行)" << std::endl;
+        
+        // 等待500ms后取消
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        scheduler.Cancel(timer);
+        std::cout << "取消定时器 (500ms后)" << std::endl;
+        
+        // 再等待2秒确认任务不会执行
+        std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+        
+        if (canceled_timer_executed == 0) {
+            std::cout << "✅ 定时器取消测试通过" << std::endl;
+        } else {
+            std::cout << "❌ 定时器取消测试失败，已取消的定时器仍然执行了" << std::endl;
+        }
+        
+        std::cout << std::endl;
+    }
+    
+    void TestMultipleTimers() {
+        std::cout << "=== 测试多个定时器 ===" << std::endl;
+        
+        TimerScheduler scheduler(10, 4); // 增加线程数
+        std::vector<std::atomic<int>> counters(5);
+        std::vector<std::shared_ptr<TimerEventInterface>> timers;
+        
+        // 创建5个不同延迟的定时器
+        for (int i = 0; i < 5; ++i) {
+            timers.push_back(scheduler.Schedule([&counters, i]() {
+                counters[i]++;
+                std::cout << "定时器 " << i << " 执行 (延迟 " << (i+1)*200 << "ms)" << std::endl;
+            }, (i+1) * 20)); // 200ms, 400ms, 600ms, 800ms, 1000ms
+        }
+        
+        std::cout << "创建5个定时器，延迟分别为 200ms, 400ms, 600ms, 800ms, 1000ms" << std::endl;
+        
+        // 等待所有任务完成
+        std::this_thread::sleep_for(std::chrono::milliseconds(1200));
+        
+        bool all_executed = true;
+        for (int i = 0; i < 5; ++i) {
+            if (counters[i] != 1) {
+                all_executed = false;
+                break;
+            }
+        }
+        
+        if (all_executed) {
+            std::cout << "✅ 多个定时器测试通过" << std::endl;
+        } else {
+            std::cout << "❌ 多个定时器测试失败" << std::endl;
+            for (int i = 0; i < 5; ++i) {
+                std::cout << "   定时器 " << i << " 执行次数: " << counters[i] << std::endl;
+            }
+        }
+        
+        std::cout << std::endl;
+    }
+    
+    void TestHighFrequencyTimers() {
+        std::cout << "=== 测试高频定时器 ===" << std::endl;
+        
+        TimerScheduler scheduler(1, 4); // 1ms tick, 更高精度
+        std::atomic<int> high_freq_counter{0};
+        
+        // 创建一个每50ms执行一次的高频定时器
+        auto timer = scheduler.ScheduleRecurring([&high_freq_counter]() {
+            high_freq_counter++;
+            if (high_freq_counter % 10 == 0) {
+                std::cout << "高频定时器执行 " << high_freq_counter << " 次" << std::endl;
+            }
+        }, 10, 5); // 10ms后开始，每5ms执行一次
+        
+        std::cout << "创建高频定时器 (每5ms执行一次)" << std::endl;
+        
+        // 运行500ms
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        scheduler.Cancel(timer);
+        
+        // 理论上应该执行约100次 (500ms / 5ms)
+        int executions = high_freq_counter;
+        std::cout << "高频定时器总执行次数: " << executions << std::endl;
+        
+        if (executions >= 80 && executions <= 120) { // 允许一定误差
+            std::cout << "✅ 高频定时器测试通过" << std::endl;
+        } else {
+            std::cout << "❌ 高频定时器测试失败，执行次数超出预期范围" << std::endl;
+        }
+        
+        std::cout << std::endl;
+    }
+    
+    void TestStressLoad() {
+        std::cout << "=== 测试压力负载 ===" << std::endl;
+        
+        TimerScheduler scheduler(5, 8); // 5ms tick, 8个线程
+        std::atomic<int> stress_counter{0};
+        std::vector<std::shared_ptr<TimerEventInterface>> stress_timers;
+        
+        std::cout << "创建100个随机延迟的定时器..." << std::endl;
+        
+        // 创建100个随机延迟的定时器
+        for (int i = 0; i < 100; ++i) {
+            int delay = (i % 50) + 1; // 1-50的随机延迟
+            stress_timers.push_back(scheduler.Schedule([&stress_counter, i]() {
+                stress_counter++;
+                if (stress_counter % 20 == 0) {
+                    std::cout << "压力测试: 已完成 " << stress_counter << " 个任务" << std::endl;
+                }
+            }, delay));
+        }
+        
+        // 等待所有任务完成
+        std::this_thread::sleep_for(std::chrono::milliseconds(300)); // 50*5ms = 250ms + 缓冲
+        
+        if (stress_counter == 100) {
+            std::cout << "✅ 压力负载测试通过 (100/100 任务完成)" << std::endl;
+        } else {
+            std::cout << "❌ 压力负载测试失败 (" << stress_counter << "/100 任务完成)" << std::endl;
+        }
+        
+        std::cout << std::endl;
+    }
+    
+    void RunAllTests() {
+        std::cout << "开始TimerScheduler功能测试...\n" << std::endl;
+        
+        auto start_time = std::chrono::steady_clock::now();
+        
+        TestBasicFunctionality();
+        TestSingleTimer();
+        TestRecurringTimer();
+        TestTimerCancel();
+        TestMultipleTimers();
+        TestHighFrequencyTimers();
+        TestStressLoad();
+        
+        auto end_time = std::chrono::steady_clock::now();
+        auto total_time = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
+        
+        std::cout << "=== 测试总结 ===" << std::endl;
+        std::cout << "总测试时间: " << total_time.count() << "ms" << std::endl;
+        std::cout << "TimerScheduler功能测试完成!" << std::endl;
+    }
+};
+
+
+int main() {
+    try {
+        TimerTester tester;
+        tester.RunAllTests();
+    } catch (const std::exception& e) {
+        std::cerr << "测试过程中发生异常: " << e.what() << std::endl;
+        return 1;
+    }
+    
+    return 0;
+}
+#endif
