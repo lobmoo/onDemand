@@ -302,26 +302,12 @@ inline void TimerScheduler::TimerLoop()
                 }
                 // 锁已释放：direct_execute_=true 直接在 timer 线程跑（pub 场景，无线程池开销）
                 // direct_execute_=false 投递到线程池（sub 场景，用户回调可能慢）
-                if (direct_execute_) {
-                    for (auto &task : pendingTasks_) {
-                        try {
-                            task();
-                        } catch (const std::exception &e) {
-                            std::cerr << "Timer callback error: " << e.what() << std::endl;
-                        }
+                for (auto &task : pendingTasks_) {
+                    if (direct_execute_) {
+                        task();
+                    } else {
+                        thread_pool_.enqueue_void(std::move(task));
                     }
-                } else if (!pendingTasks_.empty()) {
-                    /*批量投递：一次 lock + 一次 notify，替代 N 次 enqueue_void*/
-                    auto batch = std::move(pendingTasks_);
-                    thread_pool_.enqueue_void([batch = std::move(batch)]() mutable {
-                        for (auto &task : batch) {
-                            try {
-                                task();
-                            } catch (const std::exception &e) {
-                                std::cerr << "Timer callback error: " << e.what() << std::endl;
-                            }
-                        }
-                    });
                 }
                 pendingTasks_.clear();
 
