@@ -42,7 +42,7 @@ constexpr uint32_t DSF_Var_DataTransfer_max_key_cdr_typesize {0UL};
 
 
 
-constexpr uint32_t DSF_Var_PubTableVarDefine_max_cdr_typesize {1332UL};
+constexpr uint32_t DSF_Var_PubTableVarDefine_max_cdr_typesize {1340UL};
 constexpr uint32_t DSF_Var_PubTableVarDefine_max_key_cdr_typesize {0UL};
 
 

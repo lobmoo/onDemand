@@ -393,10 +393,7 @@ namespace ondemand
                     std::unordered_set<uint64_t> incomingHashes;
                     incomingHashes.reserve(tableDefine->varDefines().size());
                     for (const auto &varDef : tableDefine->varDefines()) {
-                        const auto &varDefine = varDef.var().varDefine();
-                        std::string varName =
-                            make_meta_varname(varDefine.nodeName(), varDefine.name());
-                        incomingHashes.insert(fast_hash(varName));
+                        incomingHashes.insert(varDef.id());
                     }
 
                     /*差分删除：varIndex_ 中属于该 bucket 且属于同一 pub 节点但本次 TableDefine 里没有的变量*/
@@ -444,10 +441,8 @@ namespace ondemand
                     defineIdxs.reserve(n);
 
                     for (size_t i = 0; i < n; ++i) {
+                        uint64_t varHash = varDefines[i].id();
                         const auto &varDefine = varDefines[i].var().varDefine();
-                        std::string varName =
-                            make_meta_varname(varDefine.nodeName(), varDefine.name());
-                        uint64_t varHash = fast_hash(varName);
 
                         if (varIndex_.find(varHash) != varIndex_.end())
                             continue;

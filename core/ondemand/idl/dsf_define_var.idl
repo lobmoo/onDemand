@@ -115,7 +115,7 @@ module DSF {
         };
 
         struct PubTableVarDefine {
-            uint16 id; // 变量在表中的ID
+            uint64 id; // 变量在表中的ID
             VarRequest var; // 变量创建及删除请求
         };
 

@@ -2328,7 +2328,7 @@ public:
      * @param _id New value for member id
      */
     eProsima_user_DllExport void id(
-            uint16_t _id)
+            uint64_t _id)
     {
         m_id = _id;
     }
@@ -2337,7 +2337,7 @@ public:
      * @brief This function returns the value of member id
      * @return Value of member id
      */
-    eProsima_user_DllExport uint16_t id() const
+    eProsima_user_DllExport uint64_t id() const
     {
         return m_id;
     }
@@ -2346,7 +2346,7 @@ public:
      * @brief This function returns a reference to member id
      * @return Reference to member id
      */
-    eProsima_user_DllExport uint16_t& id()
+    eProsima_user_DllExport uint64_t& id()
     {
         return m_id;
     }
@@ -2394,7 +2394,7 @@ public:
 
 private:
 
-    uint16_t m_id{0};
+    uint64_t m_id{0};
     VarRequest m_var;
 
 };

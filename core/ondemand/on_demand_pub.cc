@@ -818,6 +818,7 @@ namespace ondemand
                         continue;
 
                     DSF::Var::PubTableVarDefine pubTableVarDefine;
+                    pubTableVarDefine.id(varHash);
                     DSF::Var::VarRequest varRequest;
                     varRequest.varDefine(defineCache_[idxIt->second]);
                     pubTableVarDefine.var(std::move(varRequest));
@@ -837,6 +838,7 @@ namespace ondemand
                         liteDefine.nodeName(nodeName_);
 
                         DSF::Var::PubTableVarDefine pubTableVarDefine;
+                        pubTableVarDefine.id(entry.hash);
                         DSF::Var::VarRequest varRequest;
                         varRequest.varDefine(std::move(liteDefine));
                         pubTableVarDefine.var(std::move(varRequest));
@@ -918,6 +920,7 @@ namespace ondemand
                 define.nodeName(nodeName_);
 
                 DSF::Var::PubTableVarDefine pubTableVarDefine;
+                pubTableVarDefine.id(entry.hash);
                 DSF::Var::VarRequest varRequest;
                 varRequest.varDefine(std::move(define));
                 pubTableVarDefine.var(std::move(varRequest));
@@ -1003,6 +1006,7 @@ namespace ondemand
                         continue;
 
                     DSF::Var::PubTableVarDefine pubTableVarDefine;
+                    pubTableVarDefine.id(varHash);
                     DSF::Var::VarRequest varRequest;
                     varRequest.varDefine(defineCache_[idxIt->second]);
                     pubTableVarDefine.var(std::move(varRequest));
@@ -1023,6 +1027,7 @@ namespace ondemand
                     liteDefine.nodeName(nodeName_);
 
                     DSF::Var::PubTableVarDefine pubTableVarDefine;
+                    pubTableVarDefine.id(entry.hash);
                     DSF::Var::VarRequest varRequest;
                     varRequest.varDefine(std::move(liteDefine));
                     pubTableVarDefine.var(std::move(varRequest));
