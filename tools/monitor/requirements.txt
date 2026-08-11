@@ -1,0 +1,8 @@
+scapy>=2.5.0
+# fastdds 不在 PyPI 上，需要从源码编译: https://github.com/eProsima/Fast-DDS-python
+# pip install fastdds 会失败，DDS 层会自动降级 (跳过)
+# fastdds>=2.12.0
+# rich 和 textual 用于 TUI 增强渲染，当前用纯 curses 实现
+# rich>=13.0
+# textual>=0.40
+numpy>=1.24
