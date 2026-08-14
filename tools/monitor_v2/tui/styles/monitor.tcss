@@ -1,0 +1,145 @@
+/* OnDemand DDS Monitor v2.0 - Textual CSS */
+
+Screen {
+    background: $surface;
+}
+
+#header {
+    dock: top;
+    height: 3;
+    background: $accent;
+    color: $text;
+    content-align: center middle;
+}
+
+#nav-bar {
+    dock: top;
+    height: 3;
+    background: $primary;
+    layout: horizontal;
+}
+
+.nav-tab {
+    width: auto;
+    padding: 0 2;
+    background: $primary;
+    color: $text;
+    content-align: center middle;
+}
+
+.nav-tab.active {
+    background: $accent;
+    color: $text;
+    text-style: bold;
+}
+
+#footer-bar {
+    dock: bottom;
+    height: 1;
+    background: $primary-darken-2;
+    color: $text-muted;
+    padding: 0 1;
+}
+
+#content {
+    height: 1fr;
+}
+
+/* Domain list */
+.domain-table {
+    height: 1fr;
+}
+
+.domain-item {
+    height: 3;
+    padding: 0 1;
+}
+
+.domain-item:hover {
+    background: $primary-darken-1;
+}
+
+.domain-item.selected {
+    background: $accent-darken-1;
+}
+
+/* Stats panel */
+.stats-panel {
+    dock: top;
+    height: auto;
+    max-height: 8;
+    padding: 0 1;
+    background: $primary-darken-1;
+}
+
+.stat-label {
+    color: $text-muted;
+}
+
+.stat-value {
+    color: $text;
+    text-style: bold;
+}
+
+.stat-value.ok {
+    color: $success;
+}
+
+.stat-value.warn {
+    color: $warning;
+}
+
+.stat-value.crit {
+    color: $error;
+}
+
+/* Packet table */
+.packet-table {
+    height: 1fr;
+}
+
+/* Topic list */
+.topic-table {
+    height: 1fr;
+}
+
+/* Variable list */
+.var-table {
+    height: 1fr;
+}
+
+/* Detail view */
+.detail-panel {
+    height: 1fr;
+    padding: 1;
+}
+
+/* Search bar */
+.search-bar {
+    dock: top;
+    height: 3;
+    padding: 0 1;
+}
+
+.search-input {
+    width: 1fr;
+}
+
+/* Status indicators */
+.status-ok {
+    color: $success;
+}
+
+.status-warn {
+    color: $warning;
+}
+
+.status-crit {
+    color: $error;
+}
+
+/* Event log */
+.event-log {
+    height: 10;
+    border: solid $primary;
+}

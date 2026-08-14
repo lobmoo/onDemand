@@ -347,6 +347,9 @@ class Stats:
         self.pub_table_defines = []  # PubTableDefine 消息列表 (最近N条)
         self.sub_registers = []      # SubTableRegister 消息列表 (最近N条)
         self.data_transfers = []     # TableDataTransfer 简要信息 (最近N条)
+
+        # RTPS 包详情 (最近100条)
+        self.rtps_packets = deque(maxlen=500)
         self.known_vars = {}         # varHash -> {"name", "nodeName", "size", "bucket", "table"}
         self.known_subs = {}         # nodeName -> {"vars": [...], "tableName", "last_seen"}
 
@@ -409,6 +412,34 @@ class Stats:
                             self.topic_rate[tname].add(now)
                             tinfo["count"] += 1
                             break
+
+    def on_rtps_packet(self, sport, dport, wid_hex, submsg_type, topic_name=None, payload_len=0, domain_id=-1):
+        """记录RTPS包详情"""
+        now = time.time()
+
+        # 识别消息类型
+        msg_type = "Unknown"
+        if wid_hex == "000100c2":
+            msg_type = "SPDP"
+        elif wid_hex == "000003c2":
+            msg_type = "SEDP-Pub"
+        elif wid_hex == "000004c2":
+            msg_type = "SEDP-Sub"
+        elif wid_hex and wid_hex.endswith("03"):
+            bucket = int(wid_hex[:6], 16) - 3
+            msg_type = f"Data-B{bucket}"
+
+        with self.lock:
+            self.rtps_packets.append({
+                "time": now,
+                "sport": sport,
+                "dport": dport,
+                "domain": domain_id,
+                "wid": wid_hex or "",
+                "type": msg_type,
+                "topic": topic_name or "",
+                "size": payload_len,
+            })
 
     def on_topic_discover(self, topic_name, type_name, wid_hex):
         """SEDP 发现: 记录 topic ↔ writer 映射"""
@@ -604,6 +635,8 @@ class Stats:
                 "known_subs": dict(self.known_subs),
                 "total_vars": total_vars,
                 "bucket_var_count": bucket_var_count,
+                # RTPS 包详情
+                "rtps_packets": list(self.rtps_packets),
             }
 
 
@@ -611,9 +644,11 @@ class Stats:
 #  抓包线程 (原生 socket)
 # ═══════════════════════════════════════════════════════════════
 class PcapWorker:
-    def __init__(self, iface, stats, port_filter=None):
+    def __init__(self, iface, stats, port_filter=None, domain_id=-1):
         self.iface = iface
         self.stats = stats
+        self.domain_id = domain_id
+        self.parsed_domain_id = -1  # 从SPDP包解析出的domain id
         self.port_filter = port_filter
         self.running = threading.Event()
         self.sock = None
@@ -706,6 +741,23 @@ class PcapWorker:
                 port = dport if dport in (7400, 7401) else sport
                 self.stats.on_submsg(sid, wid_hex=wid, frag_len=length, port=port)
 
+                # 获取topic名称
+                topic_name = None
+                for tname, tinfo in self.stats.topic_writers.items():
+                    if tinfo["wid"] == wid:
+                        topic_name = tname
+                        break
+
+                # SPDP包: 解析domain id并缓存
+                if wid == "000100c2":
+                    did = self._parse_spdp_domain_id(payload, offset, length, is_be)
+                    if did >= 0:
+                        self.parsed_domain_id = did
+
+                # page 0用解析出的domain id
+                domain_for_pkt = self.parsed_domain_id if self.parsed_domain_id >= 0 else self.domain_id
+                self.stats.on_rtps_packet(sport, dport, wid, sid, topic_name, length, domain_for_pkt)
+
                 # SEDP discovery: 解析 inline QoS 提取 topic name
                 if wid in ("000003c2", "000004c2"):  # SEDP-Pub / SEDP-Sub
                     self._parse_sedp(payload, offset, length, is_be, wid)
@@ -737,6 +789,54 @@ class PcapWorker:
                 logging.info("SEDP discovered: topic=%s type=%s wid=%s", topic_name, type_name, wid_hex)
         except Exception as e:
             logging.debug("SEDP parse error: %s", e)
+
+    def _parse_spdp_domain_id(self, payload, submsg_offset, submsg_len, is_be):
+        """从SPDP包中解析domain id
+        参数列表格式: CDR Header(4字节) + [PID(2) + Len(2) + Value(N)]...
+        CDR Header: 2字节encapsulation kind + 2字节options
+          0x0000=CDR_BE, 0x0001=CDR_LE, 0x0002=PL_CDR_BE, 0x0003=PL_CDR_LE
+        PID_DOMAIN_ID = 0x000F
+        """
+        try:
+            body = submsg_offset + 4
+            octets_to_inline = struct.unpack_from(">H" if is_be else "<H", payload, body + 2)[0]
+            inline_start = body + octets_to_inline
+            inline_end = submsg_offset + 4 + submsg_len
+
+            if inline_start + 4 >= inline_end or inline_start >= len(payload):
+                return -1
+
+            # 从CDR Header读取真正的字节序 (前2字节是encapsulation kind，始终大端)
+            cdr_kind = struct.unpack_from(">H", payload, inline_start)[0]
+            if cdr_kind in (0x0002, 0x0000):  # PL_CDR_BE / CDR_BE
+                cdr_be = True
+            else:  # PL_CDR_LE / CDR_LE (0x0003 / 0x0001)
+                cdr_be = False
+
+            fmt = ">H" if cdr_be else "<H"
+            fmt_i = ">I" if cdr_be else "<I"
+
+            # 跳过CDR Header (4字节)
+            offset = inline_start + 4
+            search_end = min(inline_end, len(payload))
+
+            # 逐个解析参数
+            while offset + 4 <= search_end:
+                pid = struct.unpack_from(fmt, payload, offset)[0]
+                plen = struct.unpack_from(fmt, payload, offset + 2)[0]
+                if pid == 0x0001:  # PID_SENTINEL
+                    break
+                if pid == 0x000F and plen >= 4:  # PID_DOMAIN_ID
+                    return struct.unpack_from(fmt_i, payload, offset + 4)[0]
+                if plen == 0:
+                    break
+                offset += 4 + plen
+                r = offset % 4
+                if r:
+                    offset += 4 - r
+            return -1
+        except Exception:
+            return -1
 
     def _find_payload_offset(self, payload, inline_start, inline_end, is_be):
         """找到 inline QoS 之后的序列化 payload 起始位置"""
@@ -866,7 +966,7 @@ def sep(s, y, mx, label=""):
     else:
         safe(s, y, 2, "─" * (mx - 4), curses.color_pair(C_DIM))
 
-VIEWS = ["Overview", "Writers", "Protocol", "Topics", "Variables"]
+VIEWS = ["RTPS Packets", "Overview", "Writers", "Protocol", "Topics", "Variables"]
 
 
 def draw_overview(s, snap, cfg, scroll, my, mx):
@@ -1068,6 +1168,85 @@ def draw_topics(s, snap, cfg, scroll, my, mx):
             y += 1
 
 
+def draw_rtps_packets(s, snap, cfg, scroll, my, mx):
+    """F1: RTPS Packets 视图 - 显示所有抓到的RTPS协议包"""
+    y = 3 - scroll
+
+    rtps_packets = snap.get("rtps_packets", [])
+    pkt_total = snap.get("pkt_rtps", 0)
+
+    # 统计信息
+    if y >= 3: sep(s, y, mx, "RTPS Packets Summary")
+    y += 1
+    if y >= 3:
+        safe(s, y, 4, f"  Total RTPS Packets: {pkt_total:>10,}", curses.color_pair(C_CYA), mx=mx)
+    y += 1
+    if y >= 3:
+        safe(s, y, 4, f"  Recent Buffer:      {len(rtps_packets):>10,}", curses.color_pair(C_CYA), mx=mx)
+    y += 2
+
+    # 按Domain分组统计
+    domain_stats = defaultdict(int)
+    type_stats = defaultdict(int)
+    for pkt in rtps_packets:
+        domain_stats[pkt["domain"]] += 1
+        type_stats[pkt["type"]] += 1
+
+    if y >= 3: sep(s, y, mx, "By Domain ID")
+    y += 1
+    for domain, count in sorted(domain_stats.items()):
+        if y >= my - 2: break
+        if y < 3: y += 1; continue
+        domain_label = f"Domain {domain}" if domain >= 0 else "Unknown"
+        safe(s, y, 4, f"  {domain_label:<15s}: {count:>8,} packets", mx=mx)
+        y += 1
+
+    y += 1
+    if y >= 3: sep(s, y, mx, "By Message Type")
+    y += 1
+    for msg_type, count in sorted(type_stats.items(), key=lambda x: -x[1]):
+        if y >= my - 2: break
+        if y < 3: y += 1; continue
+        safe(s, y, 4, f"  {msg_type:<15s}: {count:>8,} packets", mx=mx)
+        y += 1
+
+    y += 1
+    if y >= 3: sep(s, y, mx, "Recent RTPS Packets (last 50)")
+    y += 1
+
+    # 表头
+    if y >= 3 and y < my - 2:
+        header = f"  {'Time':<10s} {'Src':<20s} {'Dst':<20s} {'Domain':<8s} {'Type':<12s} {'Topic':<30s} {'Size':>6s}"
+        safe(s, y, 4, header, curses.color_pair(C_YEL), mx=mx)
+    y += 1
+
+    # 显示最近的包
+    for pkt in list(rtps_packets)[-50:]:
+        if y >= my - 2: break
+        if y < 3: y += 1; continue
+
+        t = time.strftime("%H:%M:%S", time.localtime(pkt["time"]))
+        src = f"{pkt['sport']}"
+        dst = f"{pkt['dport']}"
+        domain = f"{pkt['domain']}" if pkt['domain'] >= 0 else "?"
+        msg_type = pkt["type"][:11]
+        topic = pkt["topic"][:29] if pkt["topic"] else "-"
+        size = f"{pkt['size']}"
+
+        # 根据消息类型着色
+        color = 0
+        if "SPDP" in msg_type:
+            color = C_CYA
+        elif "SEDP" in msg_type:
+            color = C_YEL
+        elif "Data" in msg_type:
+            color = C_GRN
+
+        line = f"  {t:<10s} {src:<20s} {dst:<20s} {domain:<8s} {msg_type:<12s} {topic:<30s} {size:>6s}"
+        safe(s, y, 4, line, curses.color_pair(color), mx=mx)
+        y += 1
+
+
 def draw_variables(s, snap, cfg, scroll, my, mx):
     """F5: Variables 视图 - 显示解码后的变量定义、订阅和传输"""
     y = 3 - scroll
@@ -1191,7 +1370,7 @@ def tui(stdscr, cfg, stats):
     stdscr.timeout(1000 // cfg["hz"])
     init_colors()
 
-    view = 1
+    view = 0
     scroll = 0
     paused = False
     num_views = len(VIEWS)
@@ -1204,9 +1383,9 @@ def tui(stdscr, cfg, stats):
             stats.reset()
             scroll = 0
         elif k == curses.KEY_LEFT:
-            view = max(1, view - 1); scroll = 0
+            view = max(0, view - 1); scroll = 0
         elif k == curses.KEY_RIGHT:
-            view = min(num_views, view + 1); scroll = 0
+            view = min(num_views - 1, view + 1); scroll = 0
         elif k == curses.KEY_UP: scroll = max(0, scroll - 1)
         elif k == curses.KEY_DOWN: scroll += 1
 
@@ -1223,9 +1402,8 @@ def tui(stdscr, cfg, stats):
         safe(stdscr, 0, max(0, (mx - len(title)) // 2), title, curses.color_pair(C_HDR) | curses.A_BOLD, mx)
         x = 2
         for i, name in enumerate(VIEWS):
-            vid = i + 1
-            attr = (curses.color_pair(C_HDR) | curses.A_BOLD) if vid == view else curses.color_pair(C_CYA)
-            label = f" [{vid}] {name} "
+            attr = (curses.color_pair(C_HDR) | curses.A_BOLD) if i == view else curses.color_pair(C_CYA)
+            label = f" [{i}] {name} "
             safe(stdscr, 1, x, label, attr, mx)
             x += len(label) + 1
 
@@ -1234,7 +1412,8 @@ def tui(stdscr, cfg, stats):
         footer = f" iface={cfg['iface']}  domain={cfg['domain']}{pause_str}  [←→]Switch [↑↓]Scroll [P]Pause [C]Clear [Q]Quit"
         safe(stdscr, my - 1, 0, footer[:mx], curses.color_pair(C_DIM), mx)
 
-        if view == 1: draw_overview(stdscr, snap, cfg, scroll, my, mx)
+        if view == 0: draw_rtps_packets(stdscr, snap, cfg, scroll, my, mx)
+        elif view == 1: draw_overview(stdscr, snap, cfg, scroll, my, mx)
         elif view == 2: draw_writers(stdscr, snap, cfg, scroll, my, mx)
         elif view == 3: draw_protocol(stdscr, snap, cfg, scroll, my, mx)
         elif view == 4: draw_topics(stdscr, snap, cfg, scroll, my, mx)
@@ -1338,7 +1517,7 @@ def main():
 
     stats = Stats()
     stats.register_known_topics()  # 预注册已知 topic
-    pcap = PcapWorker(args.interface, stats, port_filter=ports)
+    pcap = PcapWorker(args.interface, stats, port_filter=ports, domain_id=args.domain)
     pcap.start()
     time.sleep(0.5)  # 等待抓包线程启动
 
