@@ -55,7 +55,6 @@ def parse_rtps_packet(payload: bytes) -> Dict:
         length = struct.unpack_from(fmt, payload, offset + 2)[0]
 
         if length == 0:
-            # extends to end of packet
             length = len(payload) - offset - 4
             if length <= 0:
                 break
@@ -63,27 +62,63 @@ def parse_rtps_packet(payload: bytes) -> Dict:
         body_offset = offset + 4
         writer_id = ""
         if sid in (0x15, 0x16) and length >= 12:
-            # DATA: extraFlags(2) + octetsToInlineQoS(2) + readerId(4) + writerId(4)
             writer_id = payload[body_offset + 8:body_offset + 12].hex()
         elif sid in (0x06, 0x07, 0x08) and length >= 8:
-            # ACKNACK/HEARTBEAT/GAP: readerId(4) + writerId(4)
             writer_id = payload[body_offset + 4:body_offset + 8].hex()
 
         submsgs.append({
-            "id": sid,
-            "writer_id": writer_id,
-            "length": length,
-            "is_be": is_be,
-            "offset": offset,
-            "body_offset": body_offset,
+            "id": sid, "writer_id": writer_id, "length": length,
+            "is_be": is_be, "offset": offset, "body_offset": body_offset,
         })
-
         offset = body_offset + length
 
     return {"valid": True, "submsgs": submsgs}
 
 
-def extract_inline_qos_topic(buf: bytes, offset: int, end: int, is_be: bool) -> Optional[str]:
+def _read_inline_qos_at(payload, body_offset, is_be):
+    """Calculate the correct offset to inline QoS start.
+    
+    DATA submessage body layout:
+      extraFlags(2) + octetsToInlineQoS(2) + readerId(4) + writerId(4) + SN(8)
+    
+    octetsToInlineQoS = number of octets from END of that field to inline QoS start.
+    So inline QoS starts at: body + 4 + octetsToInlineQoS
+    """
+    octets_to_inline = struct.unpack_from(">H" if is_be else "<H", payload, body_offset + 2)[0]
+    # Correct: inline QoS starts after extraFlags(2)+octets(2) + octets_to_inline
+    inline_start = body_offset + 4 + octets_to_inline
+    return inline_start
+
+
+def _find_serialized_payload(payload, body_offset, submsg_end, is_be):
+    """Find the serialized payload after inline QoS.
+    
+    Inline QoS ends at PID_SENTINEL. After that may be padding, then payload.
+    """
+    inline_start = _read_inline_qos_at(payload, body_offset, is_be)
+    fmt = ">H" if is_be else "<H"
+    offset = inline_start
+
+    while offset + 4 <= submsg_end:
+        pid = struct.unpack_from(fmt, payload, offset)[0]
+        plen = struct.unpack_from(fmt, payload, offset + 2)[0]
+        if pid == PID_SENTINEL:
+            offset += 4
+            # align to 4
+            r = offset % 4
+            if r:
+                offset += 4 - r
+            return offset
+        if plen == 0:
+            break
+        offset += 4 + plen
+        r = offset % 4
+        if r:
+            offset += 4 - r
+    return None
+
+
+def extract_inline_qos_topic(buf, offset, end, is_be):
     """Extract PID_TOPIC_NAME from inline QoS parameter list."""
     fmt = ">H" if is_be else "<H"
     while offset + 4 <= end:
@@ -103,7 +138,7 @@ def extract_inline_qos_topic(buf: bytes, offset: int, end: int, is_be: bool) -> 
     return None
 
 
-def extract_inline_qos_type(buf: bytes, offset: int, end: int, is_be: bool) -> Optional[str]:
+def extract_inline_qos_type(buf, offset, end, is_be):
     """Extract PID_TYPE_NAME from inline QoS parameter list."""
     fmt = ">H" if is_be else "<H"
     while offset + 4 <= end:
@@ -123,30 +158,65 @@ def extract_inline_qos_type(buf: bytes, offset: int, end: int, is_be: bool) -> O
     return None
 
 
-def parse_spdp_domain_id(payload: bytes, submsg_offset: int, submsg_len: int, is_be: bool) -> int:
-    """Parse domain ID from SPDP DATA submessage. Returns -1 on failure."""
+def parse_spdp_domain_id(payload, submsg_offset, submsg_len, is_be):
+    """Parse domain ID from SPDP DATA submessage.
+    
+    Strategy:
+    1. Try inline QoS first (PID_DOMAIN_ID)
+    2. If not found, parse serialized payload (ParticipantBuiltinTopicData)
+    
+    Returns -1 on failure.
+    """
     try:
         body = submsg_offset + 4
-        octets_to_inline = struct.unpack_from(">H" if is_be else "<H", payload, body + 2)[0]
-        inline_start = body + octets_to_inline
-        inline_end = submsg_offset + 4 + submsg_len
-
-        if inline_start + 4 >= inline_end or inline_start >= len(payload):
+        submsg_end = submsg_offset + 4 + submsg_len
+        
+        # --- Strategy 1: Try inline QoS ---
+        inline_start = _read_inline_qos_at(payload, body, is_be)
+        
+        if inline_start + 4 < submsg_end and inline_start < len(payload):
+            # Read CDR header for actual byte order
+            cdr_kind = struct.unpack_from(">H", payload, inline_start)[0]
+            cdr_be = cdr_kind in (0x0002, 0x0000)  # PL_CDR_BE / CDR_BE
+            
+            fmt = ">H" if cdr_be else "<H"
+            fmt_i = ">I" if cdr_be else "<I"
+            
+            offset = inline_start + 4  # skip CDR header
+            search_end = min(submsg_end, len(payload))
+            
+            while offset + 4 <= search_end:
+                pid = struct.unpack_from(fmt, payload, offset)[0]
+                plen = struct.unpack_from(fmt, payload, offset + 2)[0]
+                if pid == PID_SENTINEL:
+                    break
+                if pid == PID_DOMAIN_ID and plen >= 4:
+                    return struct.unpack_from(fmt_i, payload, offset + 4)[0]
+                if plen == 0:
+                    break
+                offset += 4 + plen
+                r = offset % 4
+                if r:
+                    offset += 4 - r
+        
+        # --- Strategy 2: Parse serialized payload ---
+        payload_start = _find_serialized_payload(payload, body, submsg_end, is_be)
+        if payload_start is None or payload_start >= submsg_end:
             return -1
-
-        # Read CDR header for actual byte order
-        cdr_kind = struct.unpack_from(">H", payload, inline_start)[0]
-        if cdr_kind in (0x0002, 0x0000):  # PL_CDR_BE / CDR_BE
-            cdr_be = True
-        else:  # PL_CDR_LE / CDR_LE
-            cdr_be = False
-
+        
+        # The serialized payload is a CDR parameter list (PL_CDR)
+        # Read CDR header
+        if payload_start + 4 > len(payload):
+            return -1
+        cdr_kind = struct.unpack_from(">H", payload, payload_start)[0]
+        cdr_be = cdr_kind in (0x0002, 0x0000)
+        
         fmt = ">H" if cdr_be else "<H"
-        fmt_i = ">I" if cdr_be else "<I"
-
-        offset = inline_start + 4  # skip CDR header
-        search_end = min(inline_end, len(payload))
-
+        fmt_i = ">i" if cdr_be else "<i"  # domainId is signed int32
+        
+        offset = payload_start + 4
+        search_end = min(submsg_end, len(payload))
+        
         while offset + 4 <= search_end:
             pid = struct.unpack_from(fmt, payload, offset)[0]
             plen = struct.unpack_from(fmt, payload, offset + 2)[0]
@@ -160,6 +230,7 @@ def parse_spdp_domain_id(payload: bytes, submsg_offset: int, submsg_len: int, is
             r = offset % 4
             if r:
                 offset += 4 - r
+        
         return -1
-    except Exception:
+    except Exception as e:
         return -1
