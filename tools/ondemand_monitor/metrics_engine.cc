@@ -6,6 +6,8 @@ namespace ondemand_monitor {
 
 // Activity threshold: 5 seconds (PDP-based)
 static constexpr uint64_t ACTIVITY_THRESHOLD_US = 5 * 1000000ULL;
+// Cleanup threshold: 10 seconds - remove inactive participants
+static constexpr uint64_t CLEANUP_THRESHOLD_US = 10 * 1000000ULL;
 
 GUID_t MetricsEngine::GetParticipantGuid(const GUID_t& endpoint_guid) const {
     // First check endpoint-specific mapping (from SEDP endpoint_guid + participant_name)
@@ -90,14 +92,16 @@ void MetricsEngine::OnData(const DataSubmessage& data, uint64_t timestamp_us) {
 
     if (is_spdp) {
         // SPDP packet: update participant info (domain_id, name)
-        // Use participant name to identify unique participants
-        // Since PID_PARTICIPANT_GUID may be the same for all participants in some DDS implementations,
-        // we use the participant name as the key
         GUID_t participant_guid;
         if (data.has_participant_guid) {
             participant_guid = data.participant_guid;
         } else {
             participant_guid = GetParticipantGuid(data.writer_guid);
+        }
+
+        // Skip Domain 0 - it's FastDDS internal discovery, not user data
+        if (data.has_domain_id && data.domain_id == 0) {
+            return;
         }
 
         // If we have a participant name, use it to find or create a unique participant
@@ -113,9 +117,7 @@ void MetricsEngine::OnData(const DataSubmessage& data, uint64_t timestamp_us) {
             }
             if (!found) {
                 // Create new participant with unique GUID based on name
-                // Use a hash of the name as the entityId to make it unique
                 participant_guid = GetParticipantGuid(data.writer_guid);
-                // Modify the entityId to include a hash of the name for uniqueness
                 uint32_t name_hash = std::hash<std::string>{}(data.participant_name);
                 participant_guid.entityId[0] = (name_hash >> 24) & 0xFF;
                 participant_guid.entityId[1] = (name_hash >> 16) & 0xFF;
@@ -448,20 +450,50 @@ void MetricsEngine::OnAcknack(const AcknackSubmessage& ack, uint64_t timestamp_u
     total_nacks_ += nack_count;
 }
 
-std::vector<ParticipantInfo> MetricsEngine::GetParticipants() const {
-    std::shared_lock lock(mutex_);
+std::vector<ParticipantInfo> MetricsEngine::GetParticipants() {
+    std::unique_lock lock(mutex_);
     std::vector<ParticipantInfo> result;
-    result.reserve(participants_.size());
 
-    // Get current time for activity check (use system_clock to match pcap timestamps)
+    // Get current time for activity check
     auto now = std::chrono::duration_cast<std::chrono::microseconds>(
         std::chrono::system_clock::now().time_since_epoch()).count();
 
+    // Cleanup: remove participants inactive for more than 10 seconds
+    auto it = participants_.begin();
+    while (it != participants_.end()) {
+        auto& [guid, info] = *it;
+        bool should_remove = false;
+
+        // Remove if inactive for too long
+        if (info.last_pdp_seen_us > 0 && (now - info.last_pdp_seen_us) > CLEANUP_THRESHOLD_US) {
+            should_remove = true;
+        }
+        // Remove Domain 0 participants (FastDDS internal)
+        if (info.domain_id == 0) {
+            should_remove = true;
+        }
+
+        if (should_remove) {
+            // Remove associated endpoints
+            auto ep_it = endpoints_.begin();
+            while (ep_it != endpoints_.end()) {
+                if (ep_it->second.participant_guid == guid) {
+                    ep_it = endpoints_.erase(ep_it);
+                } else {
+                    ++ep_it;
+                }
+            }
+            // Remove from discovered_pub_sub_
+            discovered_pub_sub_.erase(guid);
+            it = participants_.erase(it);
+        } else {
+            ++it;
+        }
+    }
+
+    // Build result with activity status
     for (const auto& [guid, info] : participants_) {
         ParticipantInfo copy = info;
-        // Check if participant is active based on PDP (discovery) packets
-        // Active if last PDP seen within last 5 seconds
-        // If last_pdp_seen_us == 0, never received PDP, mark as inactive
         copy.is_active = (info.last_pdp_seen_us > 0) &&
                          ((now - info.last_pdp_seen_us) < ACTIVITY_THRESHOLD_US);
         result.push_back(copy);

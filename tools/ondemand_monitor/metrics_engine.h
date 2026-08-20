@@ -74,7 +74,7 @@ public:
     void OnAcknack(const AcknackSubmessage& ack, uint64_t timestamp_us);
 
     // Query API (thread-safe)
-    std::vector<ParticipantInfo> GetParticipants() const;
+    std::vector<ParticipantInfo> GetParticipants();
     std::vector<EndpointInfo> GetEndpoints(const GUID_t& participant_guid) const;
     std::vector<TransferStats> GetTransferStats() const;
 
