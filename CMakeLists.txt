@@ -43,3 +43,8 @@ if(SAMPLE)
     add_subdirectory(sample/node_example)
     add_subdirectory(sample/data_memory_manger)
 endif()
+
+option(BUILD_MONITOR "Build OnDemand monitor tool" ON)
+if(BUILD_MONITOR)
+    add_subdirectory(tools/ondemand_monitor)
+endif()
