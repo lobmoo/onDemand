@@ -142,9 +142,11 @@ private:
     std::unordered_map<std::string, GUID_t> name_to_participant_;
     // Pending SEDP endpoints: endpoint GUID → participant name (stored before SPDP arrives)
     std::unordered_map<GUID_t, std::string, GUIDHash> sedp_endpoint_name_;
-    // Cached pub/sub participant GUIDs (set when SPDP discovers named participants)
-    GUID_t cached_pub_guid_;
-    GUID_t cached_sub_guid_;
+    // Cached pub/sub participant GUIDs (support multiple subscribers)
+    // Key: participant GUID, Value: true if pub, false if sub
+    std::unordered_map<GUID_t, bool, GUIDHash> discovered_pub_sub_;
+    // Quick lookup: GUID prefix → participant GUID for pub/sub nodes
+    std::unordered_map<std::array<uint8_t, 12>, GUID_t, GUIDPrefixHash> prefix_to_pub_sub_;
 
     // Transfer stats: key = hash(writer_guid, reader_guid)
     struct PairKey {

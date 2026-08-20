@@ -13,11 +13,19 @@ GUID_t MetricsEngine::GetParticipantGuid(const GUID_t& endpoint_guid) const {
     if (ep_it != endpoint_to_participant_.end()) {
         return ep_it->second;
     }
-    // Then check GUID prefix mapping (from SPDP)
+
+    // Check pub/sub specific mapping (more accurate for multi-node scenarios)
+    auto pubsub_it = prefix_to_pub_sub_.find(endpoint_guid.prefix);
+    if (pubsub_it != prefix_to_pub_sub_.end()) {
+        return pubsub_it->second;
+    }
+
+    // Then check general GUID prefix mapping (from SPDP)
     auto it = prefix_to_participant_.find(endpoint_guid.prefix);
     if (it != prefix_to_participant_.end()) {
         return it->second;
     }
+
     // Fallback: create a participant GUID based on the endpoint GUID prefix
     // Use a default entityId for the participant
     GUID_t participant_guid = endpoint_guid;
@@ -127,39 +135,28 @@ void MetricsEngine::OnData(const DataSubmessage& data, uint64_t timestamp_us) {
             name_to_participant_[data.participant_name] = participant_guid;
 
             // Cache pub/sub participant GUIDs for entity ID-based endpoint assignment
-            if (data.participant_name.find("pub") != std::string::npos ||
-                data.participant_name.find("Pub") != std::string::npos) {
-                if (!(cached_pub_guid_ == participant_guid)) {
-                    cached_pub_guid_ = participant_guid;
-                    // Retroactively fix data writer endpoints assigned to wrong participant
+            bool is_pub = (data.participant_name.find("pub") != std::string::npos ||
+                           data.participant_name.find("Pub") != std::string::npos);
+            bool is_sub = (data.participant_name.find("sub") != std::string::npos ||
+                           data.participant_name.find("Sub") != std::string::npos);
+
+            if (is_pub || is_sub) {
+                // Register this participant as pub/sub
+                bool is_new = (discovered_pub_sub_.find(participant_guid) == discovered_pub_sub_.end());
+                discovered_pub_sub_[participant_guid] = is_pub;
+                prefix_to_pub_sub_[participant_guid.prefix] = participant_guid;
+
+                if (is_new) {
+                    // Retroactively fix endpoints that belong to this participant
+                    // Match by GUID prefix - endpoints with same prefix belong to this participant
                     for (auto& [ep_guid, ep] : endpoints_) {
-                        bool is_dw = (ep_guid.entityId[0] == 0x00 &&
-                                      ep_guid.entityId[1] == 0x00 &&
-                                      ep_guid.entityId[3] == 0x03 &&
-                                      ep_guid.entityId[2] >= 0x03);
-                        if (is_dw && ep.is_writer && !(ep.participant_guid == participant_guid)) {
-                            auto& old_p = participants_[ep.participant_guid];
-                            if (old_p.endpoints_count > 0) old_p.endpoints_count--;
-                            ep.participant_guid = participant_guid;
-                            participant.endpoints_count++;
-                        }
-                    }
-                }
-            } else if (data.participant_name.find("sub") != std::string::npos ||
-                       data.participant_name.find("Sub") != std::string::npos) {
-                if (!(cached_sub_guid_ == participant_guid)) {
-                    cached_sub_guid_ = participant_guid;
-                    // Retroactively fix data reader endpoints assigned to wrong participant
-                    for (auto& [ep_guid, ep] : endpoints_) {
-                        bool is_dr = (ep_guid.entityId[0] == 0x00 &&
-                                      ep_guid.entityId[1] == 0x00 &&
-                                      ep_guid.entityId[3] == 0x04 &&
-                                      ep_guid.entityId[2] >= 0x03);
-                        if (is_dr && ep.is_reader && !(ep.participant_guid == participant_guid)) {
-                            auto& old_p = participants_[ep.participant_guid];
-                            if (old_p.endpoints_count > 0) old_p.endpoints_count--;
-                            ep.participant_guid = participant_guid;
-                            participant.endpoints_count++;
+                        if (ep_guid.prefix == participant_guid.prefix) {
+                            if (!(ep.participant_guid == participant_guid)) {
+                                auto& old_p = participants_[ep.participant_guid];
+                                if (old_p.endpoints_count > 0) old_p.endpoints_count--;
+                                ep.participant_guid = participant_guid;
+                                participant.endpoints_count++;
+                            }
                         }
                     }
                 }
@@ -198,32 +195,38 @@ void MetricsEngine::OnData(const DataSubmessage& data, uint64_t timestamp_us) {
     } else {
         // Regular data packet: track both writer and reader endpoints
 
-        // Identify participant by entity ID pattern:
-        // Data writers (byte[3]=0x03, byte[2]>=0x03) belong to the publisher
-        // Data readers (byte[3]=0x04, byte[2]>=0x03) belong to the subscriber
+        // Find participant for writer using entity ID pattern
+        // Writer endpoints (entityId[3]=0x03) belong to publisher
         bool is_data_writer = (data.writer_guid.entityId[0] == 0x00 &&
                                data.writer_guid.entityId[1] == 0x00 &&
                                data.writer_guid.entityId[3] == 0x03 &&
                                data.writer_guid.entityId[2] >= 0x03);
 
-        GUID_t participant_guid;
-        if (is_data_writer && cached_pub_guid_.prefix[0] != 0) {
-            participant_guid = cached_pub_guid_;
-        } else if (!is_data_writer && cached_sub_guid_.prefix[0] != 0) {
-            participant_guid = cached_sub_guid_;
-        } else {
-            participant_guid = GetParticipantGuid(data.writer_guid);
+        GUID_t writer_participant_guid;
+        if (is_data_writer) {
+            // Find the first pub participant
+            for (const auto& [guid, is_pub] : discovered_pub_sub_) {
+                if (is_pub) {
+                    writer_participant_guid = guid;
+                    break;
+                }
+            }
+        }
+
+        // Fallback to GUID prefix matching if no pub participant found
+        if (writer_participant_guid.prefix[0] == 0) {
+            writer_participant_guid = GetParticipantGuid(data.writer_guid);
         }
 
         UpdateEndpoint(data.writer_guid, true, timestamp_us);
-        auto& participant = participants_[participant_guid];
+        auto& participant = participants_[writer_participant_guid];
 
         if (data.has_domain_id) {
             participant.domain_id = data.domain_id;
         }
         if (data.has_participant_name && !data.participant_name.empty()) {
             participant.name = data.participant_name;
-            name_to_participant_[data.participant_name] = participant_guid;
+            name_to_participant_[data.participant_name] = writer_participant_guid;
         }
 
         // SEDP endpoint association: when we have both endpoint_guid and participant_name,
@@ -282,13 +285,42 @@ void MetricsEngine::OnData(const DataSubmessage& data, uint64_t timestamp_us) {
             UpdateEndpoint(data.reader_guid, false, timestamp_us);
             auto& reader_endpoint = endpoints_[data.reader_guid];
 
-            // Assign reader endpoint to the subscriber participant
-            if (cached_sub_guid_.prefix[0] != 0 &&
-                !(reader_endpoint.participant_guid == cached_sub_guid_)) {
-                auto& old_p = participants_[reader_endpoint.participant_guid];
-                if (old_p.endpoints_count > 0) old_p.endpoints_count--;
-                reader_endpoint.participant_guid = cached_sub_guid_;
-                participants_[cached_sub_guid_].endpoints_count++;
+            // In this DDS implementation, reader GUIDs in data packets share the writer's prefix
+            // We cannot directly map them to subscriber participants via GUID prefix
+            // Instead, use entity ID pattern to detect readers, and assign to subscribers
+            // based on discovery order (each subscriber gets 20 reader endpoints for 20 buckets)
+
+            bool is_data_reader = (data.reader_guid.entityId[0] == 0x00 &&
+                                   data.reader_guid.entityId[1] == 0x00 &&
+                                   data.reader_guid.entityId[3] == 0x04 &&
+                                   data.reader_guid.entityId[2] >= 0x03);
+
+            if (is_data_reader) {
+                // Find the first subscriber participant to assign this reader to
+                // In multi-subscriber scenario, we assign based on bucket index
+                uint32_t bucket_idx = data.reader_guid.entityId[2] - 3;
+
+                // Collect all subscriber GUIDs
+                std::vector<GUID_t> sub_guids;
+                for (const auto& [guid, is_pub] : discovered_pub_sub_) {
+                    if (!is_pub) {
+                        sub_guids.push_back(guid);
+                    }
+                }
+
+                if (!sub_guids.empty()) {
+                    // Assign reader to subscriber based on bucket index
+                    // This distributes readers evenly across subscribers
+                    size_t sub_idx = bucket_idx % sub_guids.size();
+                    GUID_t target_sub = sub_guids[sub_idx];
+
+                    if (!(reader_endpoint.participant_guid == target_sub)) {
+                        auto& old_p = participants_[reader_endpoint.participant_guid];
+                        if (old_p.endpoints_count > 0) old_p.endpoints_count--;
+                        reader_endpoint.participant_guid = target_sub;
+                        participants_[target_sub].endpoints_count++;
+                    }
+                }
             }
 
             // Infer reader's topic from writer if reader doesn't have one yet
