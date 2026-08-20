@@ -497,24 +497,12 @@ ftxui::Component MonitorUi::BuildEndpointsPage() {
 
 ftxui::Component MonitorUi::BuildTransferPage() {
     return ftxui::Renderer([this] {
-        ftxui::Elements lines;
-        for (size_t i = 0; i < transfers_.size(); ++i) {
-            auto& t = transfers_[i];
-            lines.push_back(ftxui::hbox({
-                ftxui::text(FormatGuid(t.writer_guid)) | ftxui::flex,
-                ftxui::text(" -> "),
-                ftxui::text(FormatGuid(t.reader_guid)) | ftxui::flex,
-                ftxui::text(" | "),
-                ftxui::text(FormatNumber(t.data_count) + " msgs"),
-                ftxui::text(" | "),
-                ftxui::text("NACK: " + std::to_string(t.nack_count)),
-            }) | (selected_transfer_ == static_cast<int>(i) ? ftxui::inverted : ftxui::nothing));
-        }
-
         return ftxui::vbox({
             ftxui::text("Transfer Stats") | ftxui::bold | ftxui::center,
             ftxui::separator(),
-            ftxui::vbox(std::move(lines)) | ftxui::yframe,
+            ftxui::text(""),
+            ftxui::text("  [TODO] 此页面待开发...") | ftxui::dim,
+            ftxui::text(""),
         });
     });
 }
