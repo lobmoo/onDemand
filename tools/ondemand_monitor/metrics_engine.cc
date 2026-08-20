@@ -147,8 +147,8 @@ void MetricsEngine::OnData(const DataSubmessage& data, uint64_t timestamp_us) {
                 prefix_to_pub_sub_[participant_guid.prefix] = participant_guid;
 
                 if (is_new) {
-                    // Retroactively fix endpoints that belong to this participant
-                    // Match by GUID prefix - endpoints with same prefix belong to this participant
+                    // When a new pub/sub is discovered, retroactively fix endpoints
+                    // that belong to this participant (by GUID prefix)
                     for (auto& [ep_guid, ep] : endpoints_) {
                         if (ep_guid.prefix == participant_guid.prefix) {
                             if (!(ep.participant_guid == participant_guid)) {
@@ -156,6 +156,36 @@ void MetricsEngine::OnData(const DataSubmessage& data, uint64_t timestamp_us) {
                                 if (old_p.endpoints_count > 0) old_p.endpoints_count--;
                                 ep.participant_guid = participant_guid;
                                 participant.endpoints_count++;
+                            }
+                        }
+                    }
+
+                    // Also reassign reader endpoints based on bucket distribution
+                    // This handles the case where readers were assigned to wrong participant
+                    if (is_sub) {
+                        std::vector<GUID_t> sub_guids;
+                        for (const auto& [guid, is_pub_flag] : discovered_pub_sub_) {
+                            if (!is_pub_flag) {
+                                sub_guids.push_back(guid);
+                            }
+                        }
+
+                        for (auto& [ep_guid, ep] : endpoints_) {
+                            bool is_dr = (ep_guid.entityId[0] == 0x00 &&
+                                          ep_guid.entityId[1] == 0x00 &&
+                                          ep_guid.entityId[3] == 0x04 &&
+                                          ep_guid.entityId[2] >= 0x03);
+                            if (is_dr && ep.is_reader) {
+                                uint32_t bucket_idx = ep_guid.entityId[2] - 3;
+                                size_t sub_idx = bucket_idx % sub_guids.size();
+                                GUID_t target_sub = sub_guids[sub_idx];
+
+                                if (!(ep.participant_guid == target_sub)) {
+                                    auto& old_p = participants_[ep.participant_guid];
+                                    if (old_p.endpoints_count > 0) old_p.endpoints_count--;
+                                    ep.participant_guid = target_sub;
+                                    participants_[target_sub].endpoints_count++;
+                                }
                             }
                         }
                     }

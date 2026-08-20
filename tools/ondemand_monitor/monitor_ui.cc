@@ -258,9 +258,19 @@ ftxui::Component MonitorUi::BuildParticipantsPage() {
         constexpr int COL_BYTES = 10;    // Bytes
         constexpr int COL_NACK = 8;      // NACK
 
-        // Group topics by participant
+        // Group topics by participant, filtering out Domain 0 noise
         for (size_t i = 0; i < participants_.size(); ++i) {
             auto& p = participants_[i];
+
+            // Skip Domain 0 participants with no name (noise from network)
+            if (p.domain_id == 0 && p.name.empty()) {
+                continue;
+            }
+            // Skip Domain 0 participants with no endpoints and inactive
+            if (p.domain_id == 0 && p.endpoints_count == 0 && !p.is_active) {
+                continue;
+            }
+
             std::string name = p.name.empty() ? "Participant-" + std::to_string(i + 1) : p.name;
 
             // Participant header
