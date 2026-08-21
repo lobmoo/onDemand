@@ -1,6 +1,7 @@
 #include "metrics_engine.h"
 #include <algorithm>
 #include <chrono>
+#include <cstring>
 
 namespace ondemand_monitor {
 
@@ -148,46 +149,55 @@ void MetricsEngine::OnData(const DataSubmessage& data, uint64_t timestamp_us) {
                 discovered_pub_sub_[participant_guid] = is_pub;
                 prefix_to_pub_sub_[participant_guid.prefix] = participant_guid;
 
-                if (is_new) {
-                    // When a new pub/sub is discovered, retroactively fix endpoints
-                    // that belong to this participant (by GUID prefix)
+                if (is_new && is_sub) {
+                    // When a new subscriber is discovered, create20 reader endpoints
+                    // (one per bucket) with the subscriber's GUID prefix.
+                    // Entity ID pattern: {00, 00, bucket_idx+3, 04}
+                    for (uint32_t bucket = 0; bucket < 20; bucket++) {
+                        GUID_t reader_guid;
+                        std::memcpy(reader_guid.prefix.data(), participant_guid.prefix.data(), 12);
+                        reader_guid.entityId[0] = 0x00;
+                        reader_guid.entityId[1] = 0x00;
+                        reader_guid.entityId[2] = static_cast<uint8_t>(bucket + 3);
+                        reader_guid.entityId[3] = 0x04;  // Reader
+
+                        UpdateEndpoint(reader_guid, false, timestamp_us);
+                        auto& ep = endpoints_[reader_guid];
+                        ep.is_reader = true;
+                        ep.topic_name = "dsf/var/data/transfer/bucket_" + std::to_string(bucket);
+                        ep.type_name = "TableDataTransfer";
+                        ep.participant_guid = participant_guid;
+                        endpoint_to_participant_[reader_guid] = participant_guid;
+                    }
+
+                    // Also fix any existing writer endpoints to pub participant
+                    GUID_t pub_guid;
+                    for (const auto& [guid, is_pub_flag] : discovered_pub_sub_) {
+                        if (is_pub_flag) { pub_guid = guid; break; }
+                    }
+                    if (pub_guid.prefix[0] != 0) {
+                        for (auto& [ep_guid, ep] : endpoints_) {
+                            if (ep.is_writer && ep_guid.entityId[3] == 0x03 &&
+                                ep_guid.entityId[2] >= 0x03) {
+                                if (!(ep.participant_guid == pub_guid)) {
+                                    auto& old_p = participants_[ep.participant_guid];
+                                    if (old_p.endpoints_count > 0) old_p.endpoints_count--;
+                                    ep.participant_guid = pub_guid;
+                                    participants_[pub_guid].endpoints_count++;
+                                }
+                            }
+                        }
+                    }
+                } else if (is_new && is_pub) {
+                    // Fix writer endpoints: assign to pub participant
                     for (auto& [ep_guid, ep] : endpoints_) {
-                        if (ep_guid.prefix == participant_guid.prefix) {
+                        if (ep.is_writer && ep_guid.entityId[3] == 0x03 &&
+                            ep_guid.entityId[2] >= 0x03) {
                             if (!(ep.participant_guid == participant_guid)) {
                                 auto& old_p = participants_[ep.participant_guid];
                                 if (old_p.endpoints_count > 0) old_p.endpoints_count--;
                                 ep.participant_guid = participant_guid;
-                                participant.endpoints_count++;
-                            }
-                        }
-                    }
-
-                    // Also reassign reader endpoints based on bucket distribution
-                    // This handles the case where readers were assigned to wrong participant
-                    if (is_sub) {
-                        std::vector<GUID_t> sub_guids;
-                        for (const auto& [guid, is_pub_flag] : discovered_pub_sub_) {
-                            if (!is_pub_flag) {
-                                sub_guids.push_back(guid);
-                            }
-                        }
-
-                        for (auto& [ep_guid, ep] : endpoints_) {
-                            bool is_dr = (ep_guid.entityId[0] == 0x00 &&
-                                          ep_guid.entityId[1] == 0x00 &&
-                                          ep_guid.entityId[3] == 0x04 &&
-                                          ep_guid.entityId[2] >= 0x03);
-                            if (is_dr && ep.is_reader) {
-                                uint32_t bucket_idx = ep_guid.entityId[2] - 3;
-                                size_t sub_idx = bucket_idx % sub_guids.size();
-                                GUID_t target_sub = sub_guids[sub_idx];
-
-                                if (!(ep.participant_guid == target_sub)) {
-                                    auto& old_p = participants_[ep.participant_guid];
-                                    if (old_p.endpoints_count > 0) old_p.endpoints_count--;
-                                    ep.participant_guid = target_sub;
-                                    participants_[target_sub].endpoints_count++;
-                                }
+                                participants_[participant_guid].endpoints_count++;
                             }
                         }
                     }
@@ -225,10 +235,91 @@ void MetricsEngine::OnData(const DataSubmessage& data, uint64_t timestamp_us) {
             }
         }
     } else {
-        // Regular data packet: track both writer and reader endpoints
+        // Non-SPDP packet: could be SEDP discovery or regular data
+
+        // SEDP endpoint handling: SEDP packets contain the REAL endpoint GUID
+        // (with subscriber's GUID prefix). Use SEDP to create reader endpoints.
+        // Detection: SEDP packets have endpoint_guid (PID_ENDPOINT_GUID), data packets don't.
+        bool is_sedp = data.has_endpoint_guid;
+
+        if (is_sedp) {
+            // This is a SEDP discovery packet - handle endpoint creation
+            if (data.has_participant_name && !data.participant_name.empty()) {
+                sedp_endpoint_name_[data.endpoint_guid] = data.participant_name;
+            }
+
+            // Create/update endpoint from SEDP (this has the correct GUID prefix)
+            UpdateEndpoint(data.endpoint_guid, data.has_topic_name, timestamp_us);
+            auto& sedp_endpoint = endpoints_[data.endpoint_guid];
+
+            // Set topic/type from SEDP payload
+            if (data.has_topic_name && !data.topic_name.empty()) {
+                sedp_endpoint.topic_name = data.topic_name;
+            }
+            if (data.has_type_name && !data.type_name.empty()) {
+                sedp_endpoint.type_name = data.type_name;
+            }
+            // Infer topic/type from entity ID if not set
+            if (sedp_endpoint.topic_name.empty()) {
+                uint8_t entity_idx = data.endpoint_guid.entityId[2];
+                if (data.endpoint_guid.entityId[0] == 0x00 &&
+                    data.endpoint_guid.entityId[1] == 0x00 &&
+                    entity_idx >= 0x03) {
+                    uint32_t bucket_idx = entity_idx - 3;
+                    if (data.endpoint_guid.entityId[3] == 0x04) {
+                        sedp_endpoint.is_reader = true;
+                        sedp_endpoint.topic_name = "dsf/var/data/transfer/bucket_" + std::to_string(bucket_idx);
+                        sedp_endpoint.type_name = "TableDataTransfer";
+                    } else if (data.endpoint_guid.entityId[3] == 0x03) {
+                        sedp_endpoint.is_writer = true;
+                        sedp_endpoint.topic_name = "dsf/var/data/transfer/bucket_" + std::to_string(bucket_idx);
+                        sedp_endpoint.type_name = "TableDataTransfer";
+                    }
+                }
+            }
+
+            // Assign SEDP endpoint to participant
+            // Try by name lookup first, then by GUID prefix
+            bool assigned = false;
+            if (data.has_participant_name && !data.participant_name.empty()) {
+                auto name_it = name_to_participant_.find(data.participant_name);
+                if (name_it != name_to_participant_.end()) {
+                    endpoint_to_participant_[data.endpoint_guid] = name_it->second;
+                    if (!(sedp_endpoint.participant_guid == name_it->second)) {
+                        auto& old_p = participants_[sedp_endpoint.participant_guid];
+                        if (old_p.endpoints_count > 0) old_p.endpoints_count--;
+                        sedp_endpoint.participant_guid = name_it->second;
+                        participants_[name_it->second].endpoints_count++;
+                    }
+                    assigned = true;
+                    // Update discovery timestamp
+                    participants_[name_it->second].last_pdp_seen_us = timestamp_us;
+                }
+            }
+            // Fallback: find participant by GUID prefix
+            if (!assigned) {
+                auto prefix_it = prefix_to_participant_.find(data.endpoint_guid.prefix);
+                if (prefix_it != prefix_to_participant_.end()) {
+                    endpoint_to_participant_[data.endpoint_guid] = prefix_it->second;
+                    if (!(sedp_endpoint.participant_guid == prefix_it->second)) {
+                        auto& old_p = participants_[sedp_endpoint.participant_guid];
+                        if (old_p.endpoints_count > 0) old_p.endpoints_count--;
+                        sedp_endpoint.participant_guid = prefix_it->second;
+                        participants_[prefix_it->second].endpoints_count++;
+                    }
+                    assigned = true;
+                }
+            }
+            // If still not assigned, store for retroactive assignment when SPDP arrives
+            if (!assigned && data.has_participant_name && !data.participant_name.empty()) {
+                // Will be assigned later in SPDP handler
+            }
+            return;  // SEDP handled, skip data processing
+        }
+
+        // Regular data packet: track writer endpoints and reader stats
 
         // Find participant for writer using entity ID pattern
-        // Writer endpoints (entityId[3]=0x03) belong to publisher
         bool is_data_writer = (data.writer_guid.entityId[0] == 0x00 &&
                                data.writer_guid.entityId[1] == 0x00 &&
                                data.writer_guid.entityId[3] == 0x03 &&
@@ -236,7 +327,6 @@ void MetricsEngine::OnData(const DataSubmessage& data, uint64_t timestamp_us) {
 
         GUID_t writer_participant_guid;
         if (is_data_writer) {
-            // Find the first pub participant
             for (const auto& [guid, is_pub] : discovered_pub_sub_) {
                 if (is_pub) {
                     writer_participant_guid = guid;
@@ -244,8 +334,6 @@ void MetricsEngine::OnData(const DataSubmessage& data, uint64_t timestamp_us) {
                 }
             }
         }
-
-        // Fallback to GUID prefix matching if no pub participant found
         if (writer_participant_guid.prefix[0] == 0) {
             writer_participant_guid = GetParticipantGuid(data.writer_guid);
         }
@@ -261,22 +349,50 @@ void MetricsEngine::OnData(const DataSubmessage& data, uint64_t timestamp_us) {
             name_to_participant_[data.participant_name] = writer_participant_guid;
         }
 
-        // SEDP endpoint association: when we have both endpoint_guid and participant_name,
-        // map the endpoint to the correct participant (important when GUID prefix is shared)
+        // SEDP endpoint handling: SEDP packets contain the REAL endpoint GUID
+        // (with subscriber's GUID prefix). Use SEDP to create reader endpoints.
         if (data.has_endpoint_guid && data.has_participant_name && !data.participant_name.empty()) {
-            // Store the pending mapping even if participant not yet discovered via SPDP
             sedp_endpoint_name_[data.endpoint_guid] = data.participant_name;
 
+            // Create/update endpoint from SEDP (this has the correct GUID prefix)
+            UpdateEndpoint(data.endpoint_guid, data.has_topic_name, timestamp_us);
+            auto& sedp_endpoint = endpoints_[data.endpoint_guid];
+
+            // Set topic/type from SEDP payload
+            if (data.has_topic_name && !data.topic_name.empty()) {
+                sedp_endpoint.topic_name = data.topic_name;
+            }
+            if (data.has_type_name && !data.type_name.empty()) {
+                sedp_endpoint.type_name = data.type_name;
+            }
+            // Infer topic from entity ID if not set
+            if (sedp_endpoint.topic_name.empty()) {
+                uint8_t entity_idx = data.endpoint_guid.entityId[2];
+                if (data.endpoint_guid.entityId[0] == 0x00 &&
+                    data.endpoint_guid.entityId[1] == 0x00 &&
+                    entity_idx >= 0x03) {
+                    uint32_t bucket_idx = entity_idx - 3;
+                    // Check if it's a reader (0x04) or writer (0x03)
+                    if (data.endpoint_guid.entityId[3] == 0x04) {
+                        sedp_endpoint.is_reader = true;
+                        sedp_endpoint.topic_name = "dsf/var/data/transfer/bucket_" + std::to_string(bucket_idx);
+                        sedp_endpoint.type_name = "TableDataTransfer";
+                    } else if (data.endpoint_guid.entityId[3] == 0x03) {
+                        sedp_endpoint.is_writer = true;
+                        sedp_endpoint.topic_name = "dsf/var/data/transfer/bucket_" + std::to_string(bucket_idx);
+                        sedp_endpoint.type_name = "TableDataTransfer";
+                    }
+                }
+            }
+
+            // Assign endpoint to participant
             auto name_it = name_to_participant_.find(data.participant_name);
             if (name_it != name_to_participant_.end()) {
                 endpoint_to_participant_[data.endpoint_guid] = name_it->second;
-                // Also update the endpoint's participant_guid if it was wrong
-                auto ep_it = endpoints_.find(data.endpoint_guid);
-                if (ep_it != endpoints_.end() && !(ep_it->second.participant_guid == name_it->second)) {
-                    // Fix participant association
-                    auto& old_participant = participants_[ep_it->second.participant_guid];
-                    old_participant.endpoints_count--;
-                    ep_it->second.participant_guid = name_it->second;
+                if (!(sedp_endpoint.participant_guid == name_it->second)) {
+                    auto& old_p = participants_[sedp_endpoint.participant_guid];
+                    if (old_p.endpoints_count > 0) old_p.endpoints_count--;
+                    sedp_endpoint.participant_guid = name_it->second;
                     participants_[name_it->second].endpoints_count++;
                 }
             }
@@ -312,60 +428,22 @@ void MetricsEngine::OnData(const DataSubmessage& data, uint64_t timestamp_us) {
             }
         }
 
-        // Track reader endpoint and infer its topic from writer
+        // Track reader stats: DATA packets use pub's prefix for reader GUID,
+        // so we match by entity ID to find the real reader endpoint (from SEDP).
         if (has_valid_reader) {
-            UpdateEndpoint(data.reader_guid, false, timestamp_us);
-            auto& reader_endpoint = endpoints_[data.reader_guid];
-
-            // In this DDS implementation, reader GUIDs in data packets share the writer's prefix
-            // We cannot directly map them to subscriber participants via GUID prefix
-            // Instead, use entity ID pattern to detect readers, and assign to subscribers
-            // based on discovery order (each subscriber gets 20 reader endpoints for 20 buckets)
-
-            bool is_data_reader = (data.reader_guid.entityId[0] == 0x00 &&
-                                   data.reader_guid.entityId[1] == 0x00 &&
-                                   data.reader_guid.entityId[3] == 0x04 &&
-                                   data.reader_guid.entityId[2] >= 0x03);
-
-            if (is_data_reader) {
-                // Find the first subscriber participant to assign this reader to
-                // In multi-subscriber scenario, we assign based on bucket index
-                uint32_t bucket_idx = data.reader_guid.entityId[2] - 3;
-
-                // Collect all subscriber GUIDs
-                std::vector<GUID_t> sub_guids;
-                for (const auto& [guid, is_pub] : discovered_pub_sub_) {
-                    if (!is_pub) {
-                        sub_guids.push_back(guid);
-                    }
-                }
-
-                if (!sub_guids.empty()) {
-                    // Assign reader to subscriber based on bucket index
-                    // This distributes readers evenly across subscribers
-                    size_t sub_idx = bucket_idx % sub_guids.size();
-                    GUID_t target_sub = sub_guids[sub_idx];
-
-                    if (!(reader_endpoint.participant_guid == target_sub)) {
-                        auto& old_p = participants_[reader_endpoint.participant_guid];
-                        if (old_p.endpoints_count > 0) old_p.endpoints_count--;
-                        reader_endpoint.participant_guid = target_sub;
-                        participants_[target_sub].endpoints_count++;
-                    }
+            // Find existing reader endpoints with matching entity ID
+            // (SEDP creates endpoints with sub's prefix, DATA has pub's prefix)
+            for (auto& [ep_guid, ep] : endpoints_) {
+                if (ep.is_reader &&
+                    ep_guid.entityId[0] == data.reader_guid.entityId[0] &&
+                    ep_guid.entityId[1] == data.reader_guid.entityId[1] &&
+                    ep_guid.entityId[2] == data.reader_guid.entityId[2] &&
+                    ep_guid.entityId[3] == data.reader_guid.entityId[3]) {
+                    ep.data_count++;
+                    ep.bytes_sent += data.payload_size;
+                    ep.last_seen_us = timestamp_us;  // Update last seen for frequency calc
                 }
             }
-
-            // Infer reader's topic from writer if reader doesn't have one yet
-            if (reader_endpoint.topic_name.empty() && !endpoint.topic_name.empty()) {
-                reader_endpoint.topic_name = endpoint.topic_name;
-            }
-            if (reader_endpoint.type_name.empty() && !endpoint.type_name.empty()) {
-                reader_endpoint.type_name = endpoint.type_name;
-            }
-
-            // Update reader endpoint stats (data received by subscriber)
-            reader_endpoint.data_count++;
-            reader_endpoint.bytes_sent += data.payload_size;
         }
 
         // Update writer endpoint stats
@@ -464,14 +542,18 @@ std::vector<ParticipantInfo> MetricsEngine::GetParticipants() {
         auto& [guid, info] = *it;
         bool should_remove = false;
 
-        // Remove if inactive for too long
+        // Remove if inactive for too long (10 seconds since last PDP/SPDP)
         if (info.last_pdp_seen_us > 0 && (now - info.last_pdp_seen_us) > CLEANUP_THRESHOLD_US) {
             should_remove = true;
         }
-        // Remove Domain 0 participants (FastDDS internal)
-        if (info.domain_id == 0) {
+        // Also remove if never got PDP/SPDP and inactive for 10 seconds since last seen
+        if (info.last_pdp_seen_us == 0 && info.last_seen_us > 0 &&
+            (now - info.last_seen_us) > CLEANUP_THRESHOLD_US) {
             should_remove = true;
         }
+        // NOTE: We do NOT remove domain_id==0 participants here because
+        // data packets may arrive before SPDP discovery (which sets domain_id).
+        // Domain 0 filtering is done in the UI display layer instead.
 
         if (should_remove) {
             // Remove associated endpoints
@@ -539,6 +621,10 @@ std::vector<MetricsEngine::TopicInfo> MetricsEngine::GetParticipantTopics(const 
     std::shared_lock lock(mutex_);
     std::unordered_map<std::string, TopicInfo> topic_map;
 
+    // Track first/last seen for frequency calculation
+    std::unordered_map<std::string, uint64_t> topic_first_seen;
+    std::unordered_map<std::string, uint64_t> topic_last_seen;
+
     for (const auto& [guid, ep] : endpoints_) {
         if (ep.participant_guid == participant_guid && !ep.topic_name.empty()) {
             auto& topic = topic_map[ep.topic_name];
@@ -555,12 +641,48 @@ std::vector<MetricsEngine::TopicInfo> MetricsEngine::GetParticipantTopics(const 
             topic.data_count += ep.data_count;
             topic.bytes_sent += ep.bytes_sent;
             topic.nack_count += ep.nack_count;
+            topic.lost_count += ep.lost_count;
+            topic.heartbeat_count += ep.heartbeat_count;
+
+            // Track timestamps for frequency
+            if (ep.first_seen_us > 0) {
+                auto it = topic_first_seen.find(ep.topic_name);
+                if (it == topic_first_seen.end() || ep.first_seen_us < it->second) {
+                    topic_first_seen[ep.topic_name] = ep.first_seen_us;
+                }
+            }
+            if (ep.last_seen_us > 0) {
+                topic_last_seen[ep.topic_name] = ep.last_seen_us;
+            }
         }
     }
 
+    // Calculate rates
     std::vector<TopicInfo> result;
     result.reserve(topic_map.size());
     for (auto& [name, info] : topic_map) {
+        // Loss rate
+        uint64_t total_packets = info.data_count + info.lost_count;
+        if (total_packets > 0) {
+            info.loss_rate = static_cast<double>(info.lost_count) / static_cast<double>(total_packets);
+        }
+
+        // Retransmit rate (NACK count as proxy for retransmissions)
+        if (info.data_count > 0) {
+            info.retransmit_rate = static_cast<double>(info.nack_count) / static_cast<double>(info.data_count);
+        }
+
+        // Send frequency (messages per second)
+        auto first_it = topic_first_seen.find(name);
+        auto last_it = topic_last_seen.find(name);
+        if (first_it != topic_first_seen.end() && last_it != topic_last_seen.end()) {
+            uint64_t duration_us = last_it->second - first_it->second;
+            if (duration_us > 1000000 && info.data_count > 1) {  // At least 1 second and 2 messages
+                double duration_sec = static_cast<double>(duration_us) / 1000000.0;
+                info.send_frequency_hz = static_cast<double>(info.data_count) / duration_sec;
+            }
+        }
+
         result.push_back(std::move(info));
     }
     return result;
@@ -576,9 +698,20 @@ std::vector<MetricsEngine::TopicMatchInfo> MetricsEngine::GetAllTopicMatches() c
         participant_names[guid] = info.name.empty() ? "Unknown" : info.name;
     }
 
+    // Debug: count endpoints by type
+    int writer_count = 0;
+    int reader_count = 0;
+    int writers_with_topic = 0;
+    int readers_with_topic = 0;
+
     // Collect all endpoints grouped by topic
     for (const auto& [guid, ep] : endpoints_) {
+        if (ep.is_writer) writer_count++;
+        if (ep.is_reader) reader_count++;
         if (ep.topic_name.empty()) continue;
+
+        if (ep.is_writer) writers_with_topic++;
+        if (ep.is_reader) readers_with_topic++;
 
         auto& topic = topic_map[ep.topic_name];
         topic.topic_name = ep.topic_name;
@@ -587,6 +720,10 @@ std::vector<MetricsEngine::TopicMatchInfo> MetricsEngine::GetAllTopicMatches() c
         }
 
         std::string participant_name = participant_names[ep.participant_guid];
+        if (participant_name.empty()) {
+            participant_name = "Unknown";
+        }
+
         if (ep.is_writer) {
             // Add writer participant if not already in list
             if (std::find(topic.writer_participants.begin(),

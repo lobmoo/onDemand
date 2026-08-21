@@ -87,6 +87,11 @@ public:
         uint64_t data_count = 0;
         uint64_t bytes_sent = 0;
         uint64_t nack_count = 0;
+        uint64_t lost_count = 0;      // Lost packets detected by SN gap
+        uint64_t heartbeat_count = 0; // Heartbeat count for frequency calc
+        double loss_rate = 0.0;       // loss_rate = lost / (data + lost)
+        double retransmit_rate = 0.0; // retransmit_rate = nack / data
+        double send_frequency_hz = 0.0; // Messages per second
     };
     std::vector<TopicInfo> GetParticipantTopics(const GUID_t& participant_guid) const;
 

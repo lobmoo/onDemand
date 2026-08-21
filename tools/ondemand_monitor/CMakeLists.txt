@@ -32,12 +32,9 @@ set_target_properties(ftxui::component PROPERTIES
 # Find libpcap
 find_library(PCAP_LIBRARY pcap)
 if(NOT PCAP_LIBRARY)
-  find_package(PkgConfig)
-  if(PkgConfig_FOUND)
-    pkg_check_modules(PCAP REQUIRED libpcap)
-    set(PCAP_LIBRARY ${PCAP_LIBRARIES})
-    set(PCAP_INCLUDE_DIRS ${PCAP_INCLUDE_DIRS})
-  else()
+  # Try common locations (runtime library without -dev package)
+  set(PCAP_LIBRARY "/usr/lib/x86_64-linux-gnu/libpcap.so.0.8")
+  if(NOT EXISTS "${PCAP_LIBRARY}")
     message(FATAL_ERROR "libpcap not found. Install with: sudo apt install libpcap-dev")
   endif()
 endif()
@@ -60,7 +57,10 @@ set(MONITOR_INCLUDE_DIRS
   ${CMAKE_SOURCE_DIR}/core/ondemand  # for concurrentqueue.h
 )
 
-include_directories(${MONITOR_INCLUDE_DIRS})
+# Add pcap include if using local header
+set(PCAP_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR})
+
+include_directories(${MONITOR_INCLUDE_DIRS} ${PCAP_INCLUDE_DIRS})
 
 # Source files
 set(MONITOR_SOURCES

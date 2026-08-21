@@ -232,6 +232,7 @@ const uint8_t* RtpsParser::ParseDataSubmessage(const uint8_t* sm, uint32_t len,
     // SerializedPayload (if D flag set) - also parse for parameters
     out.serialized_payload = nullptr;
     out.payload_size = 0;
+
     if (flags & 0x04) {
         out.serialized_payload = ptr;
         out.payload_size = (sm + len) - ptr;
@@ -252,11 +253,18 @@ const uint8_t* RtpsParser::ParseDataSubmessage(const uint8_t* sm, uint32_t len,
             // 0x0001 = CDR_LE, 0x0300 = PL_CDR_LE
             bool payload_little_endian = (cdr_encoding == 0x0001 || cdr_encoding == 0x0300 || little_endian);
 
+            // Only parse as ParameterList if encoding is PL_CDR (0x0003 when stored in wire byte order)
+            // On little-endian host, PL_CDR_LE reads as 0x0300
+            bool is_pl_cdr = (cdr_encoding == 0x0300);
+
             // Skip CDR header (4 bytes)
             payload_ptr += 4;
             // Save parameter list start for alignment calculation
             const uint8_t* param_list_start = payload_ptr;
 
+            // Only parse as ParameterList if encoding is PL_CDR
+            // For regular CDR (encoding=0x0100), the payload is data, not parameters
+            if (is_pl_cdr) {
             // Parse ParameterList
             while (payload_ptr + 4 <= payload_end) {
                 uint16_t param_id = payload_little_endian ?
@@ -352,8 +360,6 @@ const uint8_t* RtpsParser::ParseDataSubmessage(const uint8_t* sm, uint32_t len,
                     std::memcpy(out.participant_guid.prefix.data(), param_data, 12);
                     std::memcpy(out.participant_guid.entityId.data(), param_data + 12, 4);
                     out.has_participant_guid = true;
-
-                    // Debug: log participant GUID
                 }
 
                 // Move to next parameter (align to 4 bytes)
@@ -363,6 +369,7 @@ const uint8_t* RtpsParser::ParseDataSubmessage(const uint8_t* sm, uint32_t len,
                     payload_ptr++;
                 }
             }
+            }  // end if (is_pl_cdr)
         }
     }
 

@@ -25,11 +25,15 @@ public:
     void Run();
 
 private:
+    // View mode for two-level navigation
+    enum class ViewMode {
+        LIST_VIEW,    // Level 1: Participant list
+        DETAIL_VIEW   // Level 2: Selected participant details
+    };
+
     // UI components
-    ftxui::Component BuildOverviewPage();
-    ftxui::Component BuildParticipantsPage();
-    ftxui::Component BuildEndpointsPage();
-    ftxui::Component BuildTransferPage();
+    ftxui::Component BuildListView();
+    ftxui::Component BuildDetailView();
     ftxui::Component BuildStatusBar();
 
     // Data refresh
@@ -50,18 +54,18 @@ private:
     MetricsEngine& engine_;
     ftxui::ScreenInteractive screen_;
 
-    // UI state
-    int selected_tab_ = 0;
-    int selected_participant_ = 0;
-    int selected_endpoint_ = 0;
-    int selected_transfer_ = 0;
+    // UI state - two-level navigation
+    ViewMode view_mode_ = ViewMode::LIST_VIEW;
+    int selected_index_ = 0;  // Selected participant in list view
 
     // Data snapshots
     MetricsEngine::Summary summary_;
     std::vector<ParticipantInfo> participants_;
-    std::vector<EndpointInfo> endpoints_;
     std::vector<TransferStats> transfers_;
     std::vector<MetricsEngine::TopicMatchInfo> topic_matches_;
+
+    // Menu entries for list view
+    std::vector<std::string> menu_entries_;
 
     // Running state
     std::atomic<bool> running_{false};

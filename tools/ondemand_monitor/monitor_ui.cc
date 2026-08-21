@@ -103,42 +103,47 @@ void MonitorUi::RefreshData() {
     participants_ = engine_.GetParticipants();
     transfers_ = engine_.GetTransferStats();
     topic_matches_ = engine_.GetAllTopicMatches();
-
-    // Get endpoints for selected participant
-    if (selected_participant_ < static_cast<int>(participants_.size())) {
-        endpoints_ = engine_.GetEndpoints(participants_[selected_participant_].guid);
-    } else {
-        endpoints_.clear();
-    }
 }
 
-ftxui::Component MonitorUi::BuildOverviewPage() {
-    return ftxui::Renderer([this] {
-        // Use cached data from RefreshData()
-        auto s = summary_;
-        auto participants = participants_;
+ftxui::Component MonitorUi::BuildListView() {
+    // Update menu entries from participants
+    auto update_entries = [this] {
+        menu_entries_.clear();
+        for (const auto& p : participants_) {
+            if (p.domain_id == 0 && p.name.empty()) continue;
+            if (p.domain_id == 0 && p.endpoints_count == 0 && !p.is_active) continue;
 
-        // Group participants by domain ID, filtering out noise participants
-        std::map<uint32_t, std::vector<ParticipantInfo>> domain_map;
-        for (const auto& p : participants) {
-            // Skip participants that are likely noise:
-            // - Domain 0 with no name (other DDS nodes on network)
-            // - Domain 0 with name but no endpoints (inactive discovery)
-            if (p.domain_id == 0 && p.name.empty()) {
-                continue;
-            }
-            // Also skip Domain 0 participants with name but no endpoints and no recent activity
-            if (p.domain_id == 0 && p.endpoints_count == 0 && !p.is_active) {
-                continue;
-            }
-            domain_map[p.domain_id].push_back(p);
+            std::string name = p.name.empty() ? "Participant" : p.name;
+            char entry[128];
+            snprintf(entry, sizeof(entry), "[Domain:%u] %-20s Endpoints:%-4u %s",
+                     p.domain_id, name.c_str(), p.endpoints_count,
+                     p.is_active ? "Active" : "Inactive");
+            menu_entries_.push_back(entry);
         }
+    };
 
-        // Stats summary (compact, single line)
+    // Initial update
+    update_entries();
+
+    // Menu option with on_enter callback
+    auto menu_option = ftxui::MenuOption::Vertical();
+    menu_option.on_enter = [this] {
+        view_mode_ = ViewMode::DETAIL_VIEW;
+    };
+
+    auto menu = ftxui::Menu(&menu_entries_, &selected_index_, menu_option);
+
+    // Wrap menu with stats display
+    return ftxui::Renderer(menu, [this, &menu, update_entries] {
+        // Update entries each frame
+        update_entries();
+
+        // Stats summary
+        auto s = summary_;
         auto stats = ftxui::vbox({
             ftxui::hbox({
                 ftxui::text("Domain: ") | ftxui::bold,
-                ftxui::text(std::to_string(domain_map.size())) | ftxui::color(ftxui::Color::Green),
+                ftxui::text(std::to_string(s.total_participants > 0 ? 1 : 0)) | ftxui::color(ftxui::Color::Green),
                 ftxui::text("  Participant: ") | ftxui::bold,
                 ftxui::text(std::to_string(s.total_participants)) | ftxui::color(ftxui::Color::Green),
                 ftxui::text("  Endpoint: ") | ftxui::bold,
@@ -158,371 +163,241 @@ ftxui::Component MonitorUi::BuildOverviewPage() {
             }),
         });
 
-        // Build participant table with fixed-width columns for alignment
-        ftxui::Elements table_lines;
-
-        // Column widths for alignment
-        constexpr int COL_DOMAIN = 10;
-        constexpr int COL_NAME = 21;
-        constexpr int COL_ENDPOINTS = 11;
-        constexpr int COL_HEARTBEAT = 11;
-        constexpr int COL_ACKNACK = 11;
-        constexpr int COL_NACK = 11;
-        constexpr int COL_STATUS = 12;
-
-        // Table header with consistent column widths
-        char hdr_domain[16], hdr_name[32], hdr_endpoints[16], hdr_heartbeat[16], hdr_acknack[16], hdr_nack[16], hdr_status[16];
-        snprintf(hdr_domain, sizeof(hdr_domain), "%-*s", COL_DOMAIN, "Domain");
-        snprintf(hdr_name, sizeof(hdr_name), "%-*s", COL_NAME, "Participant Name");
-        snprintf(hdr_endpoints, sizeof(hdr_endpoints), "%-*s", COL_ENDPOINTS, "Endpoints");
-        snprintf(hdr_heartbeat, sizeof(hdr_heartbeat), "%-*s", COL_HEARTBEAT, "Heartbeat");
-        snprintf(hdr_acknack, sizeof(hdr_acknack), "%-*s", COL_ACKNACK, "ACKNACK");
-        snprintf(hdr_nack, sizeof(hdr_nack), "%-*s", COL_NACK, "NACK");
-        snprintf(hdr_status, sizeof(hdr_status), "%-*s", COL_STATUS, "Status");
-
-        table_lines.push_back(ftxui::hbox({
-            ftxui::text("  "),
-            ftxui::text(hdr_domain) | ftxui::bold,
-            ftxui::text(hdr_name) | ftxui::bold,
-            ftxui::text(hdr_endpoints) | ftxui::bold,
-            ftxui::text(hdr_heartbeat) | ftxui::bold,
-            ftxui::text(hdr_acknack) | ftxui::bold,
-            ftxui::text(hdr_nack) | ftxui::bold,
-            ftxui::text(hdr_status) | ftxui::bold,
-        }));
-        table_lines.push_back(ftxui::separator());
-
-        // Table rows
-        for (const auto& [domain_id, domain_participants] : domain_map) {
-            for (size_t i = 0; i < domain_participants.size(); ++i) {
-                const auto& p = domain_participants[i];
-
-                // Format participant name (use GUID if name is empty)
-                std::string name = p.name.empty() ? "Participant-" + std::to_string(i + 1) : p.name;
-
-                // Format all columns with consistent widths
-                char domain_str[16], name_str[32], endpoints_str[16], heartbeat_str[16], acknack_str[16], nack_str[16], status_str[16];
-                snprintf(domain_str, sizeof(domain_str), "%-*u", COL_DOMAIN, domain_id);
-                snprintf(name_str, sizeof(name_str), "%-*s", COL_NAME, name.c_str());
-                snprintf(endpoints_str, sizeof(endpoints_str), "%-*u", COL_ENDPOINTS, p.endpoints_count);
-                snprintf(heartbeat_str, sizeof(heartbeat_str), "%-*llu", COL_HEARTBEAT, (unsigned long long)p.heartbeat_count);
-                snprintf(acknack_str, sizeof(acknack_str), "%-*llu", COL_ACKNACK, (unsigned long long)p.acknack_count);
-                snprintf(nack_str, sizeof(nack_str), "%-*llu", COL_NACK, (unsigned long long)p.nack_count);
-                snprintf(status_str, sizeof(status_str), "%-*s", COL_STATUS, p.is_active ? "Active" : "Inactive");
-
-                auto status_color = p.is_active ? ftxui::Color::Green : ftxui::Color::Red;
-
-                table_lines.push_back(ftxui::hbox({
-                    ftxui::text("  "),
-                    ftxui::text(domain_str),
-                    ftxui::text(name_str),
-                    ftxui::text(endpoints_str),
-                    ftxui::text(heartbeat_str),
-                    ftxui::text(acknack_str),
-                    ftxui::text(nack_str),
-                    ftxui::text(status_str) | ftxui::color(status_color),
-                }));
-            }
-        }
-
-        // If no participants found
-        if (domain_map.empty()) {
-            table_lines.push_back(ftxui::text("  No participants discovered yet...") | ftxui::dim);
-        }
-
-        auto table = ftxui::vbox(std::move(table_lines)) | ftxui::border;
-
         return ftxui::vbox({
-            ftxui::text("OnDemand Monitor - Discovery Overview") | ftxui::bold | ftxui::center,
+            ftxui::text("OnDemand Monitor - Participant List") | ftxui::bold | ftxui::center,
+            ftxui::text("[↑↓ Navigate] [Enter: View Details] [q: Quit]") | ftxui::dim | ftxui::center,
             ftxui::separator(),
             stats,
             ftxui::separator(),
-            table | ftxui::flex,
+            menu->Render() | ftxui::flex | ftxui::border,
         });
     });
 }
 
-ftxui::Component MonitorUi::BuildParticipantsPage() {
-    return ftxui::Renderer([this] {
-        ftxui::Elements lines;
+ftxui::Component MonitorUi::BuildDetailView() {
+    auto component = ftxui::Renderer([this] {
+        // Get filtered participants (same filter as list view)
+        std::vector<const ParticipantInfo*> filtered;
+        for (const auto& p : participants_) {
+            if (p.domain_id == 0 && p.name.empty()) continue;
+            if (p.domain_id == 0 && p.endpoints_count == 0 && !p.is_active) continue;
+            filtered.push_back(&p);
+        }
 
-        // Use cached topic matches
-        auto all_matches = topic_matches_;
+        // Check if selected index is valid
+        if (filtered.empty() || selected_index_ >= static_cast<int>(filtered.size())) {
+            return ftxui::vbox({
+                ftxui::text("No participant selected") | ftxui::dim | ftxui::center,
+                ftxui::text("Press ESC to return to list") | ftxui::dim | ftxui::center,
+            });
+        }
 
-        // Fixed widths for all columns
-        constexpr int COL_TOPIC = 40;    // Topic Name
-        constexpr int COL_ROLE = 6;      // Role
-        constexpr int COL_MATCH = 20;    // Match With
-        constexpr int COL_STATUS = 10;   // Status (longest: "Unmatched" = 9 chars)
-        constexpr int COL_COUNT = 10;    // Data Count
-        constexpr int COL_BYTES = 10;    // Bytes
-        constexpr int COL_NACK = 8;      // NACK
+        const auto& p = *filtered[selected_index_];
+        std::string name = p.name.empty() ? "Participant-" + std::to_string(selected_index_ + 1) : p.name;
 
-        // Group topics by participant, filtering out Domain 0 noise
-        for (size_t i = 0; i < participants_.size(); ++i) {
-            auto& p = participants_[i];
+        // Participant info header
+        auto info = ftxui::vbox({
+            ftxui::hbox({
+                ftxui::text("◀ ") | ftxui::bold,
+                ftxui::text(name) | ftxui::bold | ftxui::color(ftxui::Color::Cyan),
+                ftxui::text("  (Domain: " + std::to_string(p.domain_id) + ")") | ftxui::dim,
+            }),
+            ftxui::hbox({
+                ftxui::text("  GUID: ") | ftxui::dim,
+                ftxui::text(FormatGuid(p.guid)),
+            }),
+            ftxui::hbox({
+                ftxui::text("  Endpoints: ") | ftxui::dim,
+                ftxui::text(std::to_string(p.endpoints_count)) | ftxui::color(ftxui::Color::Green),
+                ftxui::text("  Status: ") | ftxui::dim,
+                ftxui::text(p.is_active ? "Active" : "Inactive") | ftxui::color(p.is_active ? ftxui::Color::Green : ftxui::Color::Red),
+            }),
+        });
 
-            // Skip Domain 0 participants with no name (noise from network)
-            if (p.domain_id == 0 && p.name.empty()) {
-                continue;
-            }
-            // Skip Domain 0 participants with no endpoints and inactive
-            if (p.domain_id == 0 && p.endpoints_count == 0 && !p.is_active) {
-                continue;
-            }
+        // Get topics for this participant
+        auto topics = engine_.GetParticipantTopics(p.guid);
 
-            std::string name = p.name.empty() ? "Participant-" + std::to_string(i + 1) : p.name;
+        ftxui::Elements topic_lines;
 
-            // Participant header
-            lines.push_back(ftxui::hbox({
-                ftxui::text("▼ " + name) | ftxui::bold | ftxui::color(ftxui::Color::Cyan),
-                ftxui::text(" (Domain: " + std::to_string(p.domain_id) + ")") | ftxui::dim,
-                ftxui::text("  Endpoints: " + std::to_string(p.endpoints_count)) | ftxui::dim,
+        if (topics.empty()) {
+            topic_lines.push_back(ftxui::text("  No topics discovered yet...") | ftxui::dim);
+        } else {
+            // Column widths
+            constexpr int COL_TOPIC = 36;
+            constexpr int COL_ROLE = 5;
+            constexpr int COL_MATCH = 20;
+            constexpr int COL_STATUS = 9;
+            constexpr int COL_COUNT = 9;
+            constexpr int COL_BYTES = 9;
+            constexpr int COL_LOSS = 8;
+            constexpr int COL_NACK = 7;
+            constexpr int COL_RETRANS = 7;
+            constexpr int COL_FREQ = 9;
+
+            // Table header
+            topic_lines.push_back(ftxui::hbox({
+                ftxui::text("  Topic Name") | ftxui::bold | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, COL_TOPIC),
+                ftxui::text("Role") | ftxui::bold | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, COL_ROLE),
+                ftxui::text("Match With") | ftxui::bold | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, COL_MATCH),
+                ftxui::text("Status") | ftxui::bold | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, COL_STATUS),
+                ftxui::text("Count") | ftxui::bold | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, COL_COUNT) | ftxui::align_right,
+                ftxui::text("Bytes") | ftxui::bold | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, COL_BYTES) | ftxui::align_right,
+                ftxui::text("Loss%") | ftxui::bold | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, COL_LOSS) | ftxui::align_right,
+                ftxui::text("NACK") | ftxui::bold | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, COL_NACK) | ftxui::align_right,
+                ftxui::text("Ret%") | ftxui::bold | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, COL_RETRANS) | ftxui::align_right,
+                ftxui::text("Freq") | ftxui::bold | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, COL_FREQ) | ftxui::align_right,
             }));
+            topic_lines.push_back(ftxui::separator());
 
-            // Get topics for this participant
-            auto topics = engine_.GetParticipantTopics(p.guid);
-
-            if (topics.empty()) {
-                lines.push_back(ftxui::text("    No topics discovered yet...") | ftxui::dim);
-            } else {
-                // Table header with fixed widths
-                char hdr_topic[64], hdr_role[16], hdr_match[32], hdr_status[16], hdr_count[16], hdr_bytes[16], hdr_nack[16];
-                snprintf(hdr_topic, sizeof(hdr_topic), "    %-*s", COL_TOPIC - 4, "Topic Name");
-                snprintf(hdr_role, sizeof(hdr_role), "%-*s", COL_ROLE, "Role");
-                snprintf(hdr_match, sizeof(hdr_match), "%-*s", COL_MATCH, "Match With");
-                snprintf(hdr_status, sizeof(hdr_status), "%-*s", COL_STATUS, "Status");
-                snprintf(hdr_count, sizeof(hdr_count), "%-*s", COL_COUNT, "Count");
-                snprintf(hdr_bytes, sizeof(hdr_bytes), "%-*s", COL_BYTES, "Bytes");
-                snprintf(hdr_nack, sizeof(hdr_nack), "%-*s", COL_NACK, "NACK");
-
-                lines.push_back(ftxui::hbox({
-                    ftxui::text(hdr_topic) | ftxui::bold,
-                    ftxui::text(hdr_role) | ftxui::bold,
-                    ftxui::text(hdr_match) | ftxui::bold,
-                    ftxui::text(hdr_status) | ftxui::bold,
-                    ftxui::text(hdr_count) | ftxui::bold,
-                    ftxui::text(hdr_bytes) | ftxui::bold,
-                    ftxui::text(hdr_nack) | ftxui::bold,
-                }));
-                lines.push_back(ftxui::separator());
-
-                // Topic rows
-                for (const auto& topic : topics) {
-                    // Find matching info from all_matches
-                    const MetricsEngine::TopicMatchInfo* match_info = nullptr;
-                    for (const auto& m : all_matches) {
-                        if (m.topic_name == topic.topic_name) {
-                            match_info = &m;
-                            break;
-                        }
+            // Topic rows
+            for (const auto& topic : topics) {
+                // Find matching info from topic_matches_
+                const MetricsEngine::TopicMatchInfo* match_info = nullptr;
+                for (const auto& m : topic_matches_) {
+                    if (m.topic_name == topic.topic_name) {
+                        match_info = &m;
+                        break;
                     }
-
-                    // Determine role
-                    std::string role;
-                    if (topic.has_writer && topic.has_reader) {
-                        role = "W+R";
-                    } else if (topic.has_writer) {
-                        role = "W";
-                    } else {
-                        role = "R";
-                    }
-
-                    // Build matched participants list
-                    std::string matched_with;
-                    if (match_info) {
-                        std::vector<std::string> matched_names;
-                        if (topic.has_writer) {
-                            for (const auto& reader : match_info->reader_participants) {
-                                if (reader != name) {
-                                    matched_names.push_back(reader);
-                                }
-                            }
-                        } else {
-                            for (const auto& writer : match_info->writer_participants) {
-                                if (writer != name) {
-                                    matched_names.push_back(writer);
-                                }
-                            }
-                        }
-
-                        if (matched_names.empty()) {
-                            matched_with = "--";
-                        } else {
-                            for (size_t j = 0; j < matched_names.size(); ++j) {
-                                if (j > 0) matched_with += ", ";
-                                matched_with += matched_names[j];
-                            }
-                        }
-                    } else {
-                        matched_with = "--";
-                    }
-
-                    // Truncate match names if too long
-                    if (matched_with.size() > static_cast<size_t>(COL_MATCH - 1)) {
-                        matched_with = matched_with.substr(0, COL_MATCH - 4) + "...";
-                    }
-
-                    // Match status
-                    bool matched = match_info && match_info->is_matched;
-                    std::string match_status = matched ? "Matched" : "No";
-
-                    // Format all columns with fixed widths
-                    char col_topic[64], col_role[16], col_match[32], col_status[16], col_count[16], col_bytes[16], col_nack[16];
-                    snprintf(col_topic, sizeof(col_topic), "    %-*s", COL_TOPIC - 4, topic.topic_name.c_str());
-                    snprintf(col_role, sizeof(col_role), "%-*s", COL_ROLE, role.c_str());
-                    snprintf(col_match, sizeof(col_match), "%-*s", COL_MATCH, matched_with.c_str());
-                    snprintf(col_status, sizeof(col_status), "%-*s", COL_STATUS, match_status.c_str());
-                    snprintf(col_count, sizeof(col_count), "%-*llu", COL_COUNT, (unsigned long long)topic.data_count);
-                    snprintf(col_bytes, sizeof(col_bytes), "%-*s", COL_BYTES, FormatSize(topic.bytes_sent).c_str());
-                    snprintf(col_nack, sizeof(col_nack), "%-*llu", COL_NACK, (unsigned long long)topic.nack_count);
-
-                    // Color elements
-                    auto status_elem = matched ?
-                        (ftxui::text(col_status) | ftxui::color(ftxui::Color::Green)) :
-                        (ftxui::text(col_status) | ftxui::color(ftxui::Color::Red));
-
-                    auto nack_elem = topic.nack_count > 0 ?
-                        (ftxui::text(col_nack) | ftxui::color(ftxui::Color::Red)) :
-                        ftxui::text(col_nack);
-
-                    lines.push_back(ftxui::hbox({
-                        ftxui::text(col_topic),
-                        ftxui::text(col_role),
-                        ftxui::text(col_match),
-                        status_elem,
-                        ftxui::text(col_count),
-                        ftxui::text(col_bytes),
-                        nack_elem,
-                    }));
                 }
-            }
 
-            lines.push_back(ftxui::separator());
-        }
-
-        if (participants_.empty()) {
-            lines.push_back(ftxui::text("No participants discovered yet...") | ftxui::dim | ftxui::center);
-        }
-
-        return ftxui::vbox({
-            ftxui::text("Participants - Topic Matching") | ftxui::bold | ftxui::center,
-            ftxui::separator(),
-            ftxui::vbox(std::move(lines)) | ftxui::yframe,
-        });
-    });
-}
-
-ftxui::Component MonitorUi::BuildEndpointsPage() {
-    return ftxui::Renderer([this] {
-        ftxui::Elements lines;
-
-        // Header
-        {
-            ftxui::Elements header;
-            header.push_back(ftxui::text("R") | ftxui::bold | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, 2));
-            header.push_back(ftxui::text(" | "));
-            header.push_back(ftxui::text("Topic") | ftxui::bold | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, 36));
-            header.push_back(ftxui::text(" | "));
-            header.push_back(ftxui::text("DataCount") | ftxui::bold | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, 10));
-            header.push_back(ftxui::text(" | "));
-            header.push_back(ftxui::text("Bytes") | ftxui::bold | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, 9));
-            header.push_back(ftxui::text(" | "));
-            header.push_back(ftxui::text("Loss%") | ftxui::bold | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, 8));
-            header.push_back(ftxui::text(" | "));
-            header.push_back(ftxui::text("Lost") | ftxui::bold | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, 8));
-            header.push_back(ftxui::text(" | "));
-            header.push_back(ftxui::text("NACK") | ftxui::bold | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, 6));
-            header.push_back(ftxui::text(" | "));
-            header.push_back(ftxui::text("LastSeen") | ftxui::bold | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, 8));
-            lines.push_back(ftxui::hbox(std::move(header)));
-        }
-        lines.push_back(ftxui::separator());
-
-        auto now_us = std::chrono::duration_cast<std::chrono::microseconds>(
-            std::chrono::steady_clock::now().time_since_epoch()).count();
-
-        for (size_t i = 0; i < endpoints_.size(); ++i) {
-            auto& ep = endpoints_[i];
-
-            // Calculate packet loss rate
-            std::string loss_pct;
-            if (ep.data_count > 0 && ep.lost_count > 0) {
-                double rate = (double)ep.lost_count / (double)(ep.data_count + ep.lost_count) * 100.0;
-                char buf[16];
-                snprintf(buf, sizeof(buf), "%.2f%%", rate);
-                loss_pct = buf;
-            } else {
-                loss_pct = "0%";
-            }
-
-            // Format last seen age
-            std::string last_seen;
-            if (ep.last_seen_us > 0 && now_us > ep.last_seen_us) {
-                auto age_ms = (now_us - ep.last_seen_us) / 1000;
-                if (age_ms < 1000) {
-                    last_seen = std::to_string(age_ms) + "ms";
+                // Determine role
+                std::string role;
+                if (topic.has_writer && topic.has_reader) {
+                    role = "W+R";
+                } else if (topic.has_writer) {
+                    role = "W";
                 } else {
-                    last_seen = std::to_string(age_ms / 1000) + "s";
+                    role = "R";
                 }
-            } else {
-                last_seen = "-";
-            }
 
-            ftxui::Elements row;
-            row.push_back(ftxui::text(ep.is_writer ? "W" : "R") | ftxui::bold | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, 2));
-            row.push_back(ftxui::text(" | "));
-            row.push_back(ftxui::text(ep.topic_name) | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, 36) | ftxui::bold);
-            row.push_back(ftxui::text(" | "));
-            row.push_back(ftxui::text(std::to_string(ep.data_count)) | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, 10) | ftxui::align_right);
-            row.push_back(ftxui::text(" | "));
-            row.push_back(ftxui::text(FormatSize(ep.bytes_sent)) | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, 9) | ftxui::align_right);
-            row.push_back(ftxui::text(" | "));
-            if (ep.lost_count > 0) {
-                row.push_back(ftxui::text(loss_pct) | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, 8) | ftxui::align_right | ftxui::color(ftxui::Color::Red));
-            } else {
-                row.push_back(ftxui::text(loss_pct) | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, 8) | ftxui::align_right);
-            }
-            row.push_back(ftxui::text(" | "));
-            if (ep.lost_count > 0) {
-                row.push_back(ftxui::text(std::to_string(ep.lost_count)) | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, 8) | ftxui::align_right | ftxui::color(ftxui::Color::Red));
-            } else {
-                row.push_back(ftxui::text(std::to_string(ep.lost_count)) | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, 8) | ftxui::align_right);
-            }
-            row.push_back(ftxui::text(" | "));
-            row.push_back(ftxui::text(std::to_string(ep.nack_count)) | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, 6) | ftxui::align_right);
-            row.push_back(ftxui::text(" | "));
-            row.push_back(ftxui::text(last_seen) | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, 8) | ftxui::align_right);
+                // Build matched participants list
+                std::string matched_with;
+                if (match_info) {
+                    std::vector<std::string> matched_names;
+                    if (topic.has_writer) {
+                        for (const auto& reader : match_info->reader_participants) {
+                            if (reader != name) {
+                                matched_names.push_back(reader);
+                            }
+                        }
+                    } else {
+                        for (const auto& writer : match_info->writer_participants) {
+                            if (writer != name) {
+                                matched_names.push_back(writer);
+                            }
+                        }
+                    }
 
-            lines.push_back(ftxui::hbox(std::move(row)) | (selected_endpoint_ == static_cast<int>(i) ? ftxui::inverted : ftxui::nothing));
+                    if (matched_names.empty()) {
+                        matched_with = "--";
+                    } else {
+                        for (size_t j = 0; j < matched_names.size(); ++j) {
+                            if (j > 0) matched_with += ", ";
+                            matched_with += matched_names[j];
+                        }
+                    }
+                } else {
+                    matched_with = "--";
+                }
+
+                // Truncate match names if too long
+                if (matched_with.size() > static_cast<size_t>(COL_MATCH - 1)) {
+                    matched_with = matched_with.substr(0, COL_MATCH - 4) + "...";
+                }
+
+                // Match status
+                bool matched = match_info && match_info->is_matched;
+                std::string match_status = matched ? "Matched" : "No";
+
+                // Format loss rate
+                char loss_str[16];
+                if (topic.loss_rate > 0.001) {
+                    snprintf(loss_str, sizeof(loss_str), "%.1f%%", topic.loss_rate * 100.0);
+                } else {
+                    snprintf(loss_str, sizeof(loss_str), "0%%");
+                }
+
+                // Format retransmit rate
+                char retrans_str[16];
+                if (topic.retransmit_rate > 0.001) {
+                    snprintf(retrans_str, sizeof(retrans_str), "%.1f%%", topic.retransmit_rate * 100.0);
+                } else {
+                    snprintf(retrans_str, sizeof(retrans_str), "0%%");
+                }
+
+                // Format frequency
+                char freq_str[16];
+                if (topic.send_frequency_hz > 0.1) {
+                    snprintf(freq_str, sizeof(freq_str), "%.1f Hz", topic.send_frequency_hz);
+                } else {
+                    snprintf(freq_str, sizeof(freq_str), "--");
+                }
+
+                // Color elements
+                auto status_elem = matched ?
+                    (ftxui::text(match_status) | ftxui::color(ftxui::Color::Green)) :
+                    (ftxui::text(match_status) | ftxui::color(ftxui::Color::Red));
+
+                auto loss_elem = topic.loss_rate > 0.01 ?
+                    (ftxui::text(loss_str) | ftxui::color(ftxui::Color::Red)) :
+                    ftxui::text(loss_str);
+
+                auto nack_elem = topic.nack_count > 0 ?
+                    (ftxui::text(std::to_string(topic.nack_count)) | ftxui::color(ftxui::Color::Yellow)) :
+                    ftxui::text(std::to_string(topic.nack_count));
+
+                auto retrans_elem = topic.retransmit_rate > 0.01 ?
+                    (ftxui::text(retrans_str) | ftxui::color(ftxui::Color::Red)) :
+                    ftxui::text(retrans_str);
+
+                topic_lines.push_back(ftxui::hbox({
+                    ftxui::text(topic.topic_name) | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, COL_TOPIC),
+                    ftxui::text(role) | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, COL_ROLE),
+                    ftxui::text(matched_with) | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, COL_MATCH),
+                    status_elem | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, COL_STATUS),
+                    ftxui::text(FormatNumber(topic.data_count)) | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, COL_COUNT) | ftxui::align_right,
+                    ftxui::text(FormatSize(topic.bytes_sent)) | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, COL_BYTES) | ftxui::align_right,
+                    loss_elem | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, COL_LOSS) | ftxui::align_right,
+                    nack_elem | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, COL_NACK) | ftxui::align_right,
+                    retrans_elem | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, COL_RETRANS) | ftxui::align_right,
+                    ftxui::text(freq_str) | ftxui::size(ftxui::WIDTH, ftxui::EQUAL, COL_FREQ) | ftxui::align_right,
+                }));
+            }
         }
 
-        return ftxui::vbox({
-            ftxui::text("Endpoints  [↑↓ Navigate]") | ftxui::bold | ftxui::center,
-            ftxui::separator(),
-            ftxui::vbox(std::move(lines)) | ftxui::yframe,
-        });
-    });
-}
+        // Navigation hint
+        auto nav_hint = ftxui::text("[ESC: Back to List] [q: Quit]") | ftxui::dim | ftxui::center;
 
-ftxui::Component MonitorUi::BuildTransferPage() {
-    return ftxui::Renderer([this] {
         return ftxui::vbox({
-            ftxui::text("Transfer Stats") | ftxui::bold | ftxui::center,
+            ftxui::text("Participant Details") | ftxui::bold | ftxui::center,
             ftxui::separator(),
-            ftxui::text(""),
-            ftxui::text("  [TODO] 此页面待开发...") | ftxui::dim,
-            ftxui::text(""),
+            info,
+            ftxui::separator(),
+            ftxui::text("Topics:") | ftxui::bold,
+            ftxui::vbox(std::move(topic_lines)) | ftxui::flex,
+            ftxui::separator(),
+            nav_hint,
         });
     });
+
+    return component;
 }
 
 ftxui::Component MonitorUi::BuildStatusBar() {
     return ftxui::Renderer([this] {
         auto dropped = worker_.GetDropped();
         auto s = summary_;  // Use cached data
+
+        // Dynamic hint based on current view mode
+        std::string mode_hint;
+        if (view_mode_ == ViewMode::LIST_VIEW) {
+            mode_hint = "[↑↓ Navigate] [Enter: Details] [q: Quit]";
+        } else {
+            mode_hint = "[ESC: Back] [q: Quit]";
+        }
+
         return ftxui::hbox({
-            ftxui::text(" [Tab] Switch Page  [q] Quit") | ftxui::dim,
+            ftxui::text(" " + mode_hint) | ftxui::dim,
             ftxui::filler(),
             ftxui::text("Packets: " + FormatNumber(s.total_data_messages) + "  "),
             ftxui::text("Dropped: " + std::to_string(dropped) + "  ") |
@@ -534,65 +409,46 @@ ftxui::Component MonitorUi::BuildStatusBar() {
 void MonitorUi::Run() {
     running_.store(true);
 
-    // Build tab structure
-    auto overview = BuildOverviewPage();
-    auto participants = BuildParticipantsPage();
-    auto endpoints = BuildEndpointsPage();
-    auto transfer = BuildTransferPage();
-
-    // Use Container::Tab
-    ftxui::Components pages = {overview, participants, endpoints, transfer};
-    auto tabs = ftxui::Container::Tab(pages, &selected_tab_);
-
-    // Use Toggle for tab selection
-    std::vector<std::string> tab_labels = {
-        "1:Overview", "2:Participants", "3:Endpoints", "4:Transfer"
-    };
-    ftxui::Component tab_selector = ftxui::Toggle(tab_labels, &selected_tab_);
-
+    // Build the two view components
+    auto list_view = BuildListView();
+    auto detail_view = BuildDetailView();
     auto status_bar = BuildStatusBar();
 
-    ftxui::Components main_components = {tab_selector, tabs, status_bar};
-    auto layout = ftxui::Container::Vertical(main_components);
+    // Container with all components
+    ftxui::Components children = {list_view, detail_view, status_bar};
+    auto container = ftxui::Container::Vertical(children);
 
-    auto component = ftxui::Renderer(layout, [&] {
+    // Main component with conditional view switching
+    auto component = ftxui::Renderer(container, [&] {
+        ftxui::Element main_content;
+
+        if (view_mode_ == ViewMode::LIST_VIEW) {
+            main_content = list_view->Render();
+        } else {
+            main_content = detail_view->Render();
+        }
+
         return ftxui::vbox({
-            tab_selector->Render(),
-            ftxui::separator(),
-            tabs->Render() | ftxui::flex,
+            main_content | ftxui::flex,
             status_bar->Render(),
         });
     });
 
-    // Keyboard handling
+    // Global keyboard handling
     component |= ftxui::CatchEvent([&](ftxui::Event event) {
-        if (event == ftxui::Event::Character('q') || event == ftxui::Event::Escape) {
+        // q to quit
+        if (event == ftxui::Event::Character('q')) {
             running_.store(false);
             return true;
         }
-        if (event == ftxui::Event::Tab) {
-            selected_tab_ = (selected_tab_ + 1) % 4;
-            return true;
-        }
-        if (event == ftxui::Event::TabReverse) {
-            selected_tab_ = (selected_tab_ + 3) % 4;
-            return true;
-        }
-        // Number keys for direct tab selection
-        if (event == ftxui::Event::Character('1')) {
-            selected_tab_ = 0;
-            return true;
-        }
-        if (event == ftxui::Event::Character('2')) {
-            selected_tab_ = 1;
-            return true;
-        }
-        if (event == ftxui::Event::Character('3')) {
-            selected_tab_ = 2;
-            return true;
-        }
-        if (event == ftxui::Event::Character('4')) {
-            selected_tab_ = 3;
+        // ESC to go back from detail to list
+        if (event == ftxui::Event::Escape) {
+            if (view_mode_ == ViewMode::DETAIL_VIEW) {
+                view_mode_ = ViewMode::LIST_VIEW;
+                return true;
+            }
+            // If already in list view, ESC quits
+            running_.store(false);
             return true;
         }
         return false;

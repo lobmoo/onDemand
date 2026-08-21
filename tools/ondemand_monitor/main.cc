@@ -37,9 +37,10 @@ void print_usage(const char* prog) {
               << "  sudo " << prog << " -i lo -f 'udp port 7410'\n"
               << "  sudo " << prog << " -i any -f 'udp portrange 7400-7500'\n\n"
               << "Keyboard shortcuts:\n"
-              << "  Tab/1-4   Switch between pages\n"
-              << "  ↑/↓       Navigate lists\n"
-              << "  q/ESC     Quit\n";
+              << "  ↑/↓/j/k   Navigate participant list\n"
+              << "  Enter      View participant details\n"
+              << "  ESC        Back to list (from details)\n"
+              << "  q          Quit\n";
 }
 
 bool parse_args(int argc, char* argv[], MonitorConfig& config) {
