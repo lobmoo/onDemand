@@ -128,6 +128,22 @@ struct AcknackSubmessage {
     bool final_flag;
 };
 
+// Parsed DATA_FRAG submessage (fragmented sample)
+// Large samples (e.g. tableDefine with big variable tables) are split into
+// multiple DATA_FRAG submessages sharing the same writerSN.
+struct FragSubmessage {
+    GUID_t writer_guid;
+    GUID_t reader_guid;
+    SequenceNumber_t seq_num;
+    uint32_t frag_start;     // fragmentStartingNum (1-based)
+    uint16_t frag_count;     // fragmentsInSubmessage
+    uint16_t frag_size;      // fragmentSize
+    uint32_t payload_size;   // actual payload bytes carried by this submessage
+
+    uint16_t src_port = 0;
+    uint16_t dst_port = 0;
+};
+
 class RtpsParser {
 public:
     // Parse RTPS message header
@@ -137,6 +153,7 @@ public:
     using DataCallback = void (*)(void* user, DataSubmessage&);
     using HeartbeatCallback = void (*)(void* user, const HeartbeatSubmessage&);
     using AcknackCallback = void (*)(void* user, const AcknackSubmessage&);
+    using FragCallback = void (*)(void* user, FragSubmessage&);
 
     static void ParseSubmessages(
         const uint8_t* data, uint32_t len,
@@ -144,18 +161,30 @@ public:
         void* user,
         DataCallback on_data,
         HeartbeatCallback on_heartbeat,
-        AcknackCallback on_acknack);
+        AcknackCallback on_acknack,
+        FragCallback on_frag = nullptr);
 
 private:
+    // src_prefix = sender's prefix (packet header or INFO_SRC); peer_prefix =
+    // receiver's prefix (INFO_DST, falling back to src when absent). EntityIds
+    // are only 4 bytes on the wire; pairing them with the correct side's prefix
+    // is what yields valid full GUIDs.
     static bool ValidateHeader(const uint8_t* data, uint32_t len);
     static const uint8_t* ParseDataSubmessage(const uint8_t* sm, uint32_t len,
                                                 const std::array<uint8_t, 12>& src_prefix,
+                                                const std::array<uint8_t, 12>& peer_prefix,
                                                 DataSubmessage& out);
+    static const uint8_t* ParseFragSubmessage(const uint8_t* sm, uint32_t len,
+                                               const std::array<uint8_t, 12>& src_prefix,
+                                               const std::array<uint8_t, 12>& peer_prefix,
+                                               FragSubmessage& out);
     static const uint8_t* ParseHeartbeatSubmessage(const uint8_t* sm, uint32_t len,
                                                      const std::array<uint8_t, 12>& src_prefix,
+                                                     const std::array<uint8_t, 12>& peer_prefix,
                                                      HeartbeatSubmessage& out);
     static const uint8_t* ParseAcknackSubmessage(const uint8_t* sm, uint32_t len,
                                                    const std::array<uint8_t, 12>& src_prefix,
+                                                   const std::array<uint8_t, 12>& peer_prefix,
                                                    AcknackSubmessage& out);
 };
 

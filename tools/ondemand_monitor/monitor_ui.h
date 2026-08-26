@@ -3,7 +3,6 @@
 #include <ftxui/component/component.hpp>
 #include <ftxui/component/screen_interactive.hpp>
 #include <ftxui/dom/elements.hpp>
-#include <functional>
 #include <atomic>
 
 #include "metrics_engine.h"
@@ -25,10 +24,11 @@ public:
     void Run();
 
 private:
-    // View mode for two-level navigation
+    // Two-level navigation: home page lists nodes (↑↓ to select, Enter to
+    // enter); detail page shows that node's business topics (ESC to go back).
     enum class ViewMode {
-        LIST_VIEW,    // Level 1: Participant list
-        DETAIL_VIEW   // Level 2: Selected participant details
+        LIST_VIEW,    // Level 1: node (participant) selection list
+        DETAIL_VIEW   // Level 2: selected node's topic tables
     };
 
     // UI components
@@ -38,6 +38,10 @@ private:
 
     // Data refresh
     void RefreshData();
+    // Re-fetch the selected node's topic cache. Called by RefreshData each
+    // tick AND synchronously after selection/tab changes so a keypress shows
+    // fresh data on the very next frame instead of waiting a full tick.
+    void UpdateTopicCache();
 
     // Format helpers
     ftxui::Element FormatHeader(const std::string& title);
@@ -56,15 +60,20 @@ private:
 
     // UI state - two-level navigation
     ViewMode view_mode_ = ViewMode::LIST_VIEW;
-    int selected_index_ = 0;  // Selected participant in list view
+    int selected_index_ = 0;   // Selected node in the home-page list
+    int topic_tab_index_ = 0;  // Topic category tab inside detail view
 
     // Data snapshots
     MetricsEngine::Summary summary_;
     std::vector<ParticipantInfo> participants_;
     std::vector<TransferStats> transfers_;
     std::vector<MetricsEngine::TopicMatchInfo> topic_matches_;
+    // Topics of the currently selected node, fetched ONCE per RefreshData tick.
+    // Both the home-page preview and the detail view render from this cache —
+    // querying the engine inside render lambdas caused visible ←→ lag.
+    std::vector<MetricsEngine::TopicInfo> cached_topics_;
 
-    // Menu entries for list view
+    // Node list entries for the home page
     std::vector<std::string> menu_entries_;
 
     // Running state

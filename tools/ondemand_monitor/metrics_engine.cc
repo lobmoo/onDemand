@@ -10,6 +10,77 @@ static constexpr uint64_t ACTIVITY_THRESHOLD_US = 5 * 1000000ULL;
 // Cleanup threshold: 10 seconds - remove inactive participants
 static constexpr uint64_t CLEANUP_THRESHOLD_US = 10 * 1000000ULL;
 
+// Minimum gap between two arrivals of the same SN for the repeat to count as a
+// retransmission. `tcpdump -i any` delivers one copy per interface (lo/eth0/...)
+// with measured spread up to ~20ms, so this must sit above that; real resends
+// observed on the wire land 70ms+ later.
+static constexpr int64_t kDupGuardUs = 55 * 1000;
+// Window after a NACKed sample's retransmission arrived during which repeated
+// (in-flight) ACKNACKs for the same SN are ignored — see EndpointInfo::recent_fulfilled.
+static constexpr int64_t kFulfilledGuardUs = 500 * 1000;
+// Upper bound of recent_sn_times per endpoint (SN window kept for repeat
+// detection). Pruned lazily once exceeded.
+static constexpr size_t kRecentSnCapacity = 4096;
+
+// RTPS builtin discovery entities (SEDP writers/readers etc., well-known
+// EntityIds like {00,00,03,C2}). Business requirement: the monitor only shows
+// business-layer topics, so discovery traffic is EXCLUDED from stats entirely —
+// no endpoints created, no ack/nack/retransmit counted for these entities.
+// User endpoints in this system use EntityIds like {00,NN,xx,02/03/04}; RTPS
+// builtin entities end in 0xC2/0xC7 (and some TXDDS ones in 0xC3).
+static bool IsBuiltinDiscoveryEntity(const GUID_t& g) {
+    return g.entityId[0] == 0x00 && g.entityId[1] == 0x00 &&
+           (g.entityId[3] == 0xC2 || g.entityId[3] == 0xC7 || g.entityId[3] == 0xC3);
+}
+
+// Business topic names are derivable straight from the EntityId conventions of
+// the OnDemand system. Naming an endpoint IMMEDIATELY on first traffic closes
+// the window where a writer exists but is unnamed (its side then disappears
+// from match computation and the topic shows "Unmatched" while data flows).
+// EntityIds observed on the wire:
+//   {00,00,01,02} tableDefine writer      {00,00,01,07} tableDefine reader
+//   {00,00,02,03} register writer         {00,00,02,04} register reader
+//   {00,00,N,03}  bucket_(N-3) writer     {00,00,N,04}  bucket_(N-3) reader
+static std::string InferBusinessTopicName(const GUID_t& g) {
+    if (g.entityId[0] != 0x00 || g.entityId[1] != 0x00) return "";
+    switch (g.entityId[2]) {
+        case 0x01:
+            if (g.entityId[3] == 0x02 || g.entityId[3] == 0x07)
+                return "dsf/sys/var/tableDefine";
+            break;
+        case 0x02:
+            if (g.entityId[3] == 0x03 || g.entityId[3] == 0x04)
+                return "dsf/message/commandRequest/subTableRegister";
+            break;
+        default:
+            if (g.entityId[2] >= 0x03 &&
+                (g.entityId[3] == 0x03 || g.entityId[3] == 0x04))
+                return "dsf/var/data/transfer/bucket_" +
+                       std::to_string(g.entityId[2] - 3);
+            break;
+    }
+    return "";
+}
+
+void MetricsEngine::OnPacketSource(const std::array<uint8_t, 12>& src_prefix,
+                                   const uint8_t* src_ip_be4, const uint8_t* dst_ip_be4) {
+    std::unique_lock lock(mutex_);
+    auto& addrs = prefix_addresses_[src_prefix];
+    if (src_ip_be4) {
+        char buf[16];
+        snprintf(buf, sizeof(buf), "%u.%u.%u.%u",
+                 src_ip_be4[0], src_ip_be4[1], src_ip_be4[2], src_ip_be4[3]);
+        addrs.first = buf;
+    }
+    // Class D range 224.0.0.0-239.255.255.255 = multicast group
+    if (dst_ip_be4 && dst_ip_be4[0] >= 224 && dst_ip_be4[0] <= 239) {
+        char buf[16];
+        snprintf(buf, sizeof(buf), "%u.%u.%u.%u",
+                 dst_ip_be4[0], dst_ip_be4[1], dst_ip_be4[2], dst_ip_be4[3]);
+        addrs.second = buf;
+    }
+}
+
 GUID_t MetricsEngine::GetParticipantGuid(const GUID_t& endpoint_guid) const {
     // First check endpoint-specific mapping (from SEDP endpoint_guid + participant_name)
     auto ep_it = endpoint_to_participant_.find(endpoint_guid);
@@ -74,6 +145,11 @@ void MetricsEngine::UpdateTransferPair(const GUID_t& writer, const GUID_t& reade
 
 void MetricsEngine::OnData(const DataSubmessage& data, uint64_t timestamp_us) {
     std::unique_lock lock(mutex_);
+
+    // Track latest timestamp for offline mode cleanup
+    if (timestamp_us > latest_timestamp_us_) {
+        latest_timestamp_us_ = timestamp_us;
+    }
 
     // Identify SPDP packets by writer entity ID
     // SPDP builtin participant writer entityId: {0x00, 0x01, 0x00, 0xC2}
@@ -237,20 +313,39 @@ void MetricsEngine::OnData(const DataSubmessage& data, uint64_t timestamp_us) {
     } else {
         // Non-SPDP packet: could be SEDP discovery or regular data
 
-        // SEDP endpoint handling: SEDP packets contain the REAL endpoint GUID
-        // (with subscriber's GUID prefix). Use SEDP to create reader endpoints.
-        // Detection: SEDP packets have endpoint_guid (PID_ENDPOINT_GUID), data packets don't.
-        bool is_sedp = data.has_endpoint_guid;
+        // SEDP detection: has endpoint_guid (explicit), OR has topic_name/type_name
+        // with participant_name (SEDP announcement without PID_ENDPOINT_GUID)
+        bool is_sedp = data.has_endpoint_guid ||
+                       (data.has_topic_name && data.has_participant_name);
 
         if (is_sedp) {
+            // Determine the real endpoint GUID
+            // If PID_ENDPOINT_GUID present, use it; otherwise use writer_guid
+            GUID_t real_endpoint_guid = data.has_endpoint_guid ? data.endpoint_guid : data.writer_guid;
+
             // This is a SEDP discovery packet - handle endpoint creation
             if (data.has_participant_name && !data.participant_name.empty()) {
-                sedp_endpoint_name_[data.endpoint_guid] = data.participant_name;
+                sedp_endpoint_name_[real_endpoint_guid] = data.participant_name;
+            }
+
+            // Determine if this SEDP packet announces a writer or reader endpoint.
+            // In FastDDS SEDP:
+            // - publications writer (entityId {0x00,0x00,0x03,0xC2}) announces writer endpoints
+            // - subscriptions writer (entityId {0x00,0x00,0x04,0xC2}) announces reader endpoints
+            bool sedp_is_writer = true;  // Default to writer
+            if (data.writer_guid.entityId[0] == 0x00 &&
+                data.writer_guid.entityId[1] == 0x00 &&
+                data.writer_guid.entityId[3] == 0xC2) {
+                // Builtin SEDP writer - check entity ID to determine role
+                // entityId[2]=0x03 = publications writer (announces writers)
+                // entityId[2]=0x04 = subscriptions writer (announces readers)
+                uint8_t sedp_entity_idx = data.writer_guid.entityId[2];
+                sedp_is_writer = (sedp_entity_idx == 0x03);
             }
 
             // Create/update endpoint from SEDP (this has the correct GUID prefix)
-            UpdateEndpoint(data.endpoint_guid, data.has_topic_name, timestamp_us);
-            auto& sedp_endpoint = endpoints_[data.endpoint_guid];
+            UpdateEndpoint(real_endpoint_guid, sedp_is_writer, timestamp_us);
+            auto& sedp_endpoint = endpoints_[real_endpoint_guid];
 
             // Set topic/type from SEDP payload
             if (data.has_topic_name && !data.topic_name.empty()) {
@@ -261,20 +356,32 @@ void MetricsEngine::OnData(const DataSubmessage& data, uint64_t timestamp_us) {
             }
             // Infer topic/type from entity ID if not set
             if (sedp_endpoint.topic_name.empty()) {
-                uint8_t entity_idx = data.endpoint_guid.entityId[2];
-                if (data.endpoint_guid.entityId[0] == 0x00 &&
-                    data.endpoint_guid.entityId[1] == 0x00 &&
+                uint8_t entity_idx = real_endpoint_guid.entityId[2];
+                if (real_endpoint_guid.entityId[0] == 0x00 &&
+                    real_endpoint_guid.entityId[1] == 0x00 &&
                     entity_idx >= 0x03) {
                     uint32_t bucket_idx = entity_idx - 3;
-                    if (data.endpoint_guid.entityId[3] == 0x04) {
+                    if (real_endpoint_guid.entityId[3] == 0x04) {
                         sedp_endpoint.is_reader = true;
                         sedp_endpoint.topic_name = "dsf/var/data/transfer/bucket_" + std::to_string(bucket_idx);
                         sedp_endpoint.type_name = "TableDataTransfer";
-                    } else if (data.endpoint_guid.entityId[3] == 0x03) {
+                    } else if (real_endpoint_guid.entityId[3] == 0x03) {
                         sedp_endpoint.is_writer = true;
                         sedp_endpoint.topic_name = "dsf/var/data/transfer/bucket_" + std::to_string(bucket_idx);
                         sedp_endpoint.type_name = "TableDataTransfer";
                     }
+                }
+            }
+
+            // If still no role set, infer from writer_guid entity ID in the DATA submessage header
+            if (!sedp_endpoint.is_writer && !sedp_endpoint.is_reader) {
+                if (data.writer_guid.entityId[3] == 0x03) {
+                    sedp_endpoint.is_writer = true;
+                } else if (data.writer_guid.entityId[3] == 0x04) {
+                    sedp_endpoint.is_reader = true;
+                } else {
+                    // Default: if topic_name present and came from writer_guid path, it's a writer
+                    sedp_endpoint.is_writer = true;
                 }
             }
 
@@ -284,7 +391,7 @@ void MetricsEngine::OnData(const DataSubmessage& data, uint64_t timestamp_us) {
             if (data.has_participant_name && !data.participant_name.empty()) {
                 auto name_it = name_to_participant_.find(data.participant_name);
                 if (name_it != name_to_participant_.end()) {
-                    endpoint_to_participant_[data.endpoint_guid] = name_it->second;
+                    endpoint_to_participant_[real_endpoint_guid] = name_it->second;
                     if (!(sedp_endpoint.participant_guid == name_it->second)) {
                         auto& old_p = participants_[sedp_endpoint.participant_guid];
                         if (old_p.endpoints_count > 0) old_p.endpoints_count--;
@@ -292,15 +399,13 @@ void MetricsEngine::OnData(const DataSubmessage& data, uint64_t timestamp_us) {
                         participants_[name_it->second].endpoints_count++;
                     }
                     assigned = true;
-                    // Update discovery timestamp
-                    participants_[name_it->second].last_pdp_seen_us = timestamp_us;
                 }
             }
             // Fallback: find participant by GUID prefix
             if (!assigned) {
-                auto prefix_it = prefix_to_participant_.find(data.endpoint_guid.prefix);
+                auto prefix_it = prefix_to_participant_.find(real_endpoint_guid.prefix);
                 if (prefix_it != prefix_to_participant_.end()) {
-                    endpoint_to_participant_[data.endpoint_guid] = prefix_it->second;
+                    endpoint_to_participant_[real_endpoint_guid] = prefix_it->second;
                     if (!(sedp_endpoint.participant_guid == prefix_it->second)) {
                         auto& old_p = participants_[sedp_endpoint.participant_guid];
                         if (old_p.endpoints_count > 0) old_p.endpoints_count--;
@@ -310,14 +415,41 @@ void MetricsEngine::OnData(const DataSubmessage& data, uint64_t timestamp_us) {
                     assigned = true;
                 }
             }
+            // If still not assigned, try participant_guid from PID_PARTICIPANT_GUID
+            if (!assigned && data.has_participant_guid) {
+                endpoint_to_participant_[real_endpoint_guid] = data.participant_guid;
+                if (!(sedp_endpoint.participant_guid == data.participant_guid)) {
+                    auto& old_p = participants_[sedp_endpoint.participant_guid];
+                    if (old_p.endpoints_count > 0) old_p.endpoints_count--;
+                    sedp_endpoint.participant_guid = data.participant_guid;
+                    participants_[data.participant_guid].endpoints_count++;
+                }
+                assigned = true;
+            }
             // If still not assigned, store for retroactive assignment when SPDP arrives
             if (!assigned && data.has_participant_name && !data.participant_name.empty()) {
                 // Will be assigned later in SPDP handler
+            }
+
+            // SEDP announcements carry sequence numbers too. Only track them on
+            // an already-existing writer endpoint; discovery entities themselves
+            // are excluded from stats (business-only view). Deliberately NOT
+            // creating bare entries here — a bare entry would corrupt later SEDP
+            // endpoint initialization (is_writer/participant_guid).
+            auto w_it = endpoints_.find(data.writer_guid);
+            if (w_it != endpoints_.end()) {
+                TrackRetransmitAndGaps(w_it->second, data.seq_num, timestamp_us);
             }
             return;  // SEDP handled, skip data processing
         }
 
         // Regular data packet: track writer endpoints and reader stats
+
+        // Business-only view: any builtin discovery entity that slipped past the
+        // SPDP/SEDP branches is not tracked either
+        if (IsBuiltinDiscoveryEntity(data.writer_guid)) {
+            return;
+        }
 
         // Find participant for writer using entity ID pattern
         bool is_data_writer = (data.writer_guid.entityId[0] == 0x00 &&
@@ -349,58 +481,44 @@ void MetricsEngine::OnData(const DataSubmessage& data, uint64_t timestamp_us) {
             name_to_participant_[data.participant_name] = writer_participant_guid;
         }
 
-        // SEDP endpoint handling: SEDP packets contain the REAL endpoint GUID
-        // (with subscriber's GUID prefix). Use SEDP to create reader endpoints.
-        if (data.has_endpoint_guid && data.has_participant_name && !data.participant_name.empty()) {
-            sedp_endpoint_name_[data.endpoint_guid] = data.participant_name;
+        // SEDP endpoint handling in data path: supplement topic info for endpoints
+        // discovered via data packets (when SEDP was missed or has no endpoint_guid)
+        if (data.has_topic_name && !data.topic_name.empty()) {
+            // Determine the real endpoint GUID for this SEDP-like info
+            GUID_t real_ep_guid = data.has_endpoint_guid ? data.endpoint_guid : data.writer_guid;
 
-            // Create/update endpoint from SEDP (this has the correct GUID prefix)
-            UpdateEndpoint(data.endpoint_guid, data.has_topic_name, timestamp_us);
-            auto& sedp_endpoint = endpoints_[data.endpoint_guid];
-
-            // Set topic/type from SEDP payload
-            if (data.has_topic_name && !data.topic_name.empty()) {
-                sedp_endpoint.topic_name = data.topic_name;
-            }
+            // Update or create endpoint with topic info
+            UpdateEndpoint(real_ep_guid, true, timestamp_us);
+            auto& sedp_endpoint = endpoints_[real_ep_guid];
+            sedp_endpoint.topic_name = data.topic_name;
             if (data.has_type_name && !data.type_name.empty()) {
                 sedp_endpoint.type_name = data.type_name;
             }
-            // Infer topic from entity ID if not set
-            if (sedp_endpoint.topic_name.empty()) {
-                uint8_t entity_idx = data.endpoint_guid.entityId[2];
-                if (data.endpoint_guid.entityId[0] == 0x00 &&
-                    data.endpoint_guid.entityId[1] == 0x00 &&
-                    entity_idx >= 0x03) {
-                    uint32_t bucket_idx = entity_idx - 3;
-                    // Check if it's a reader (0x04) or writer (0x03)
-                    if (data.endpoint_guid.entityId[3] == 0x04) {
-                        sedp_endpoint.is_reader = true;
-                        sedp_endpoint.topic_name = "dsf/var/data/transfer/bucket_" + std::to_string(bucket_idx);
-                        sedp_endpoint.type_name = "TableDataTransfer";
-                    } else if (data.endpoint_guid.entityId[3] == 0x03) {
-                        sedp_endpoint.is_writer = true;
-                        sedp_endpoint.topic_name = "dsf/var/data/transfer/bucket_" + std::to_string(bucket_idx);
-                        sedp_endpoint.type_name = "TableDataTransfer";
+            // Infer reader/writer from entity ID
+            if (real_ep_guid.entityId[3] == 0x04) {
+                sedp_endpoint.is_reader = true;
+            } else if (real_ep_guid.entityId[3] == 0x03) {
+                sedp_endpoint.is_writer = true;
+            }
+
+            // Assign endpoint to participant by name
+            if (data.has_participant_name && !data.participant_name.empty()) {
+                sedp_endpoint_name_[real_ep_guid] = data.participant_name;
+                auto name_it = name_to_participant_.find(data.participant_name);
+                if (name_it != name_to_participant_.end()) {
+                    endpoint_to_participant_[real_ep_guid] = name_it->second;
+                    if (!(sedp_endpoint.participant_guid == name_it->second)) {
+                        auto& old_p = participants_[sedp_endpoint.participant_guid];
+                        if (old_p.endpoints_count > 0) old_p.endpoints_count--;
+                        sedp_endpoint.participant_guid = name_it->second;
+                        participants_[name_it->second].endpoints_count++;
                     }
                 }
             }
-
-            // Assign endpoint to participant
-            auto name_it = name_to_participant_.find(data.participant_name);
-            if (name_it != name_to_participant_.end()) {
-                endpoint_to_participant_[data.endpoint_guid] = name_it->second;
-                if (!(sedp_endpoint.participant_guid == name_it->second)) {
-                    auto& old_p = participants_[sedp_endpoint.participant_guid];
-                    if (old_p.endpoints_count > 0) old_p.endpoints_count--;
-                    sedp_endpoint.participant_guid = name_it->second;
-                    participants_[name_it->second].endpoints_count++;
-                }
-            }
         }
-        // Update last_pdp_seen_us for discovery packets (those with domain_id or participant_name)
-        if (data.has_domain_id || data.has_participant_name) {
-            participant.last_pdp_seen_us = timestamp_us;
-        }
+        // NOTE: last_pdp_seen_us is ONLY updated by OnSPDP (true PDP discovery).
+        // SEDP and data packets must NOT refresh it, otherwise participants
+        // never become inactive when the demo stops.
 
         // Update writer endpoint with topic_name and type_name
         auto& endpoint = endpoints_[data.writer_guid];
@@ -411,38 +529,62 @@ void MetricsEngine::OnData(const DataSubmessage& data, uint64_t timestamp_us) {
             endpoint.type_name = data.type_name;
         }
 
-        // Fallback: if no topic name from SEDP, infer from entity ID pattern
-        // Entity IDs like 00000303 (writer) / 00000304 (reader) use byte[2] as index
-        // byte[2]=3 maps to bucket_0, byte[2]=4 maps to bucket_1, etc.
+        // Fallback: if no topic name from SEDP, infer from the EntityId
+        // conventions (covers buckets AND tableDefine/register writers — an
+        // unnamed endpoint would drop out of match computation and make an
+        // actively-communicating topic show "Unmatched")
         if (endpoint.topic_name.empty()) {
-            uint8_t entity_idx = data.writer_guid.entityId[2];
-            // Data writers have entity ID pattern 0000XX03 (XX >= 0x03)
-            if (data.writer_guid.entityId[0] == 0x00 &&
-                data.writer_guid.entityId[1] == 0x00 &&
-                data.writer_guid.entityId[3] == 0x03 &&
-                entity_idx >= 0x03) {
-                // Writer entity ID - infer bucket topic
-                uint32_t bucket_idx = entity_idx - 3;  // byte[2]=3 → bucket_0
-                endpoint.topic_name = "dsf/var/data/transfer/bucket_" + std::to_string(bucket_idx);
-                endpoint.type_name = "TableDataTransfer";
+            std::string inferred = InferBusinessTopicName(data.writer_guid);
+            if (!inferred.empty()) {
+                endpoint.topic_name = inferred;
+                endpoint.type_name =
+                    inferred.find("bucket_") != std::string::npos
+                        ? "TableDataTransfer" : "";
             }
         }
 
-        // Track reader stats: DATA packets use pub's prefix for reader GUID,
-        // so we match by entity ID to find the real reader endpoint (from SEDP).
-        if (has_valid_reader) {
-            // Find existing reader endpoints with matching entity ID
-            // (SEDP creates endpoints with sub's prefix, DATA has pub's prefix)
+        // Track reader stats: match by topic name.
+        // OnDemand uses multicast (BEST_EFFORT), so DATA packets have
+        // ENTITYID_UNKNOWN as reader_guid. We match by topic name instead.
+        if (!endpoint.topic_name.empty()) {
+            bool found_reader = false;
             for (auto& [ep_guid, ep] : endpoints_) {
-                if (ep.is_reader &&
-                    ep_guid.entityId[0] == data.reader_guid.entityId[0] &&
-                    ep_guid.entityId[1] == data.reader_guid.entityId[1] &&
-                    ep_guid.entityId[2] == data.reader_guid.entityId[2] &&
-                    ep_guid.entityId[3] == data.reader_guid.entityId[3]) {
+                if (ep.is_reader && ep.topic_name == endpoint.topic_name) {
                     ep.data_count++;
                     ep.bytes_sent += data.payload_size;
-                    ep.last_seen_us = timestamp_us;  // Update last seen for frequency calc
+                    ep.last_seen_us = timestamp_us;
+                    found_reader = true;
                 }
+            }
+            // If no reader endpoint exists for this topic, create a virtual one.
+            // In OnDemand multicast, SEDP only creates writer endpoints.
+            // Reader endpoints are never announced via SEDP.
+            // We create a virtual reader per topic to represent "subscribers are receiving".
+            if (!found_reader) {
+                // Use a synthetic GUID: same prefix as writer, entity ID based on topic hash
+                GUID_t virtual_reader_guid;
+                virtual_reader_guid.prefix = data.writer_guid.prefix;
+                // Use a distinct entity ID pattern: 0000XX05 (virtual reader)
+                uint8_t entity_idx = data.writer_guid.entityId[2];
+                virtual_reader_guid.entityId[0] = 0x00;
+                virtual_reader_guid.entityId[1] = 0x00;
+                virtual_reader_guid.entityId[2] = entity_idx;
+                virtual_reader_guid.entityId[3] = 0x05;  // virtual reader marker
+
+                auto& virtual_reader = endpoints_[virtual_reader_guid];
+                if (virtual_reader.topic_name.empty()) {
+                    virtual_reader.guid = virtual_reader_guid;
+                    virtual_reader.is_reader = true;
+                    virtual_reader.topic_name = endpoint.topic_name;
+                    virtual_reader.type_name = endpoint.type_name;
+                    virtual_reader.first_seen_us = timestamp_us;
+                    // Don't assign to writer's participant - virtual readers
+                    // represent "all subscribers", not a specific sub node.
+                    // Leave participant_guid as default (zeros).
+                }
+                virtual_reader.data_count++;
+                virtual_reader.bytes_sent += data.payload_size;
+                virtual_reader.last_seen_us = timestamp_us;
             }
         }
 
@@ -450,16 +592,9 @@ void MetricsEngine::OnData(const DataSubmessage& data, uint64_t timestamp_us) {
         endpoint.data_count++;
         endpoint.bytes_sent += data.payload_size;
 
-        // Packet loss detection using sequence numbers
-        // SequenceNumber_t is {high, low} - compare as 64-bit value
-        uint64_t sn = data.seq_num.to_u64();
-        if (endpoint.expected_sn.to_u64() > 0 && sn > endpoint.expected_sn.to_u64()) {
-            // Gap detected - packets were lost
-            endpoint.lost_count += sn - endpoint.expected_sn.to_u64();
-        }
-        // Update expected SN to next value
-        endpoint.last_sn = data.seq_num;
-        endpoint.expected_sn = {data.seq_num.high, data.seq_num.low + 1};
+        // Timeout-based loss detection + NACK-based retransmit detection
+        // (shared helper so DATA_FRAG and SEDP traffic get identical tracking)
+        TrackRetransmitAndGaps(endpoint, data.seq_num, timestamp_us);
     }
 
     // Update transfer pair (for both SEDP and regular packets)
@@ -478,6 +613,16 @@ void MetricsEngine::OnData(const DataSubmessage& data, uint64_t timestamp_us) {
 
 void MetricsEngine::OnHeartbeat(const HeartbeatSubmessage& hb, uint64_t timestamp_us) {
     std::unique_lock lock(mutex_);
+
+    // Track latest timestamp for offline mode cleanup
+    if (timestamp_us > latest_timestamp_us_) {
+        latest_timestamp_us_ = timestamp_us;
+    }
+
+    // Business-only view: discovery traffic (SEDP/SPDP entities) is not tracked
+    if (IsBuiltinDiscoveryEntity(hb.writer_guid)) {
+        return;
+    }
 
     UpdateEndpoint(hb.writer_guid, true, timestamp_us);
 
@@ -500,16 +645,80 @@ void MetricsEngine::OnHeartbeat(const HeartbeatSubmessage& hb, uint64_t timestam
 void MetricsEngine::OnAcknack(const AcknackSubmessage& ack, uint64_t timestamp_us) {
     std::unique_lock lock(mutex_);
 
+    // Track latest timestamp for offline mode cleanup
+    if (timestamp_us > latest_timestamp_us_) {
+        latest_timestamp_us_ = timestamp_us;
+    }
+
+    // Business-only view: discovery traffic (SEDP/SPDP entities) is not tracked
+    if (IsBuiltinDiscoveryEntity(ack.reader_guid) ||
+        IsBuiltinDiscoveryEntity(ack.writer_guid)) {
+        return;
+    }
+
     UpdateEndpoint(ack.reader_guid, false, timestamp_us);
+    UpdateEndpoint(ack.writer_guid, true, timestamp_us);
+    // Name ACKNACK-created endpoints immediately from EntityId conventions so
+    // they participate in topic matching without waiting for SEDP
+    {
+        auto& w_ep = endpoints_[ack.writer_guid];
+        if (w_ep.topic_name.empty()) w_ep.topic_name = InferBusinessTopicName(ack.writer_guid);
+        auto& r_ep = endpoints_[ack.reader_guid];
+        if (r_ep.topic_name.empty()) r_ep.topic_name = InferBusinessTopicName(ack.reader_guid);
+    }
 
     auto& endpoint = endpoints_[ack.reader_guid];
     endpoint.acknack_count++;
 
-    // Count NACKs (bits set in bitmap)
+    // Count NACKs (bits set in bitmap) and record NACKed SNs.
+    //
+    // BIT ORDER (empirical, verified against HEARTBEAT ground truth in
+    // dds_debug.pcap): this stack encodes the bitmap with the bit order
+    // REVERSED inside each word — observed words are always top-aligned runs
+    // whose popcount equals numBits, and the standard RTPS mapping
+    // (bit j <-> base+1+j) would claim readers requested SN 28-33 while the
+    // writer's own HEARTBEAT proved it had only sent up to SN 6. With reversed
+    // bits the same packets decode to SN 2-7 / 2-10: a fresh reader missing the
+    // head of the stream. So: bit b of word i corresponds to
+    // base + 1 + i*32 + (31 - b).
     uint32_t nack_count = 0;
-    for (uint32_t word : ack.reader_sn_state_bitmap) {
+    uint64_t ack_base = ack.reader_sn_state_base.to_u64();
+    // Writer endpoint accumulates both directions of the exchange: which SNs
+    // were requested from it (nacked_requests, per requesting reader) and how
+    // many requests it received (nack_count) — so its topic row shows the
+    // demand side that explains its retransmit count.
+    auto& writer_ep = endpoints_[ack.writer_guid];
+    for (uint32_t word_idx = 0; word_idx < ack.reader_sn_state_bitmap.size(); ++word_idx) {
+        uint32_t word = ack.reader_sn_state_bitmap[word_idx];
         nack_count += __builtin_popcount(word);
+        // Record each NACKed SN on the writer endpoint with the requester
+        if (word != 0) {
+            for (int bit = 0; bit < 32; ++bit) {
+                if (word & (1u << bit)) {
+                    uint64_t nacked_sn =
+                        ack_base + 1 + word_idx * 32 + (31 - bit);
+                    // Suppress in-flight repeated requests for a sample that was
+                    // just fulfilled — otherwise the resent packet's later
+                    // interface copies hit the re-registered request and the
+                    // retransmission is counted twice.
+                    auto fulfilled_it = writer_ep.recent_fulfilled.find(nacked_sn);
+                    if (fulfilled_it != writer_ep.recent_fulfilled.end() &&
+                        (int64_t)(timestamp_us - fulfilled_it->second) < kFulfilledGuardUs) {
+                        continue;
+                    }
+                    auto& requesters = writer_ep.nacked_requests[nacked_sn];
+                    // Same reader repeating an unsatisfied request must not be
+                    // double-credited when the resend arrives.
+                    bool already = std::find(requesters.begin(), requesters.end(),
+                                             ack.reader_guid) != requesters.end();
+                    if (!already) {
+                        requesters.push_back(ack.reader_guid);
+                    }
+                }
+            }
+        }
     }
+    writer_ep.nack_count += nack_count;
     endpoint.nack_count += nack_count;
 
     // Update participant acknack and nack count
@@ -528,12 +737,201 @@ void MetricsEngine::OnAcknack(const AcknackSubmessage& ack, uint64_t timestamp_u
     total_nacks_ += nack_count;
 }
 
+void MetricsEngine::CheckPendingGaps(EndpointInfo& ep, uint64_t current_sn, uint64_t timestamp_us) {
+    // Underflow guard: current_sn - 1000 wraps around to ~1.8e19 while the
+    // stream is younger than SN 1000 (i.e. almost always, early on), which made
+    // every entry look "far behind" — NACK requests were swept before any
+    // retransmission could match them, and fresh gaps were instantly miscounted
+    // as retransmissions instead of ever reaching the 5s loss timeout.
+    uint64_t stale_before = (current_sn > 1000) ? (current_sn - 1000) : 0;
+
+    // Check pending gaps for timeout
+    // Any gap older than LOSS_TIMEOUT_US (5 seconds) is confirmed loss
+    auto it = ep.pending_gaps.begin();
+    while (it != ep.pending_gaps.end()) {
+        uint64_t gap_sn = it->first;
+        uint64_t gap_time = it->second;
+
+        // If gap is older than timeout, count as confirmed loss
+        if ((int64_t)(timestamp_us - gap_time) > (int64_t)LOSS_TIMEOUT_US) {
+            ep.lost_count++;
+            ep.nacked_requests.erase(gap_sn);  // Clean up NACK tracking
+            it = ep.pending_gaps.erase(it);
+        } else {
+            // Remove if gap is too far behind current SN (likely filled by retransmission)
+            // Use a larger threshold to give retransmissions time to arrive
+            if (gap_sn < stale_before) {
+                // Gap is too old and far behind current SN, assume it was filled
+                // Count as retransmission (we missed the retransmitted packet)
+                ep.retransmit_count++;
+                ep.nacked_requests.erase(gap_sn);  // Clean up NACK tracking
+                it = ep.pending_gaps.erase(it);
+            } else {
+                ++it;
+            }
+        }
+    }
+
+    // Clean up old NACK requests that are far behind current SN
+    auto nack_it = ep.nacked_requests.begin();
+    while (nack_it != ep.nacked_requests.end()) {
+        if (nack_it->first < stale_before) {
+            nack_it = ep.nacked_requests.erase(nack_it);
+        } else {
+            ++nack_it;
+        }
+    }
+
+    // Fulfillment markers only need to outlive the in-flight NACK window
+    for (auto fit = ep.recent_fulfilled.begin(); fit != ep.recent_fulfilled.end();) {
+        if ((int64_t)(timestamp_us - fit->second) > 10 * (int64_t)kFulfilledGuardUs) {
+            fit = ep.recent_fulfilled.erase(fit);
+        } else {
+            ++fit;
+        }
+    }
+}
+
+void MetricsEngine::TrackRetransmitAndGaps(EndpointInfo& ep, const SequenceNumber_t& seq,
+                                            uint64_t timestamp_us) {
+    uint64_t sn = seq.to_u64();
+    uint64_t last_sn = ep.last_sn.to_u64();
+
+    // Retransmit detection must run for ALL packets (SN <= last_sn included),
+    // because retransmitted packets never advance last_sn.
+    bool counted_as_retransmit = false;
+    auto it = ep.pending_gaps.find(sn);
+    if (it != ep.pending_gaps.end()) {
+        // Gap was filled - packet was retransmitted successfully
+        ep.pending_gaps.erase(it);
+        ep.retransmit_count++;
+        counted_as_retransmit = true;
+    }
+
+    // Also check if this SN was previously NACKed. Catches retransmissions that
+    // arrive before a gap is recorded in pending_gaps (or when no gap exists at
+    // all because only the reader missed the packet, not the monitor).
+    auto nack_hit = ep.nacked_requests.find(sn);
+    if (nack_hit != ep.nacked_requests.end()) {
+        // Credit every reader that requested this sample — one multicast resend
+        // fulfills all of them, and each requesting side should see its own
+        // "retransmitted packets received" number.
+        for (const auto& requester : nack_hit->second) {
+            auto r_it = endpoints_.find(requester);
+            if (r_it != endpoints_.end()) {
+                r_it->second.retransmit_count++;
+            }
+        }
+        ep.nacked_requests.erase(nack_hit);
+        // Remember the fulfillment so repeated in-flight ACKNACKs for this SN
+        // don't re-register it (see the insertion-side guard in OnAcknack).
+        ep.recent_fulfilled[sn] = timestamp_us;
+        if (!counted_as_retransmit) {
+            ep.retransmit_count++;
+        }
+        // Mark as counted so the repeat-arrival check below doesn't charge the
+        // SAME arriving packet twice (once via NACK match, once via repeat).
+        counted_as_retransmit = true;
+    }
+
+    // Repeat-arrival bookkeeping: runs ALWAYS so recent_sn_times stays accurate
+    // even when this packet was already counted via a gap/NACK match (otherwise
+    // a SECOND resend of the same SN would find no baseline and be missed).
+    // Counting is gated: a reliable writer may also resend samples with NO
+    // monitor-visible gap and NO NACK — e.g. pushing history to a freshly
+    // matched reader — and that repeat counts as a retransmit only when it
+    // lands after kDupGuardUs: with `tcpdump -i any` every multicast packet is
+    // captured once per interface (measured spread up to ~20ms), and those
+    // copies must not count. SPDP is excluded entirely — its periodic announce
+    // repeats SN=1 every second by design.
+    bool is_spdp_announce =
+        ep.guid.entityId[0] == 0x00 && ep.guid.entityId[1] == 0x01 &&
+        ep.guid.entityId[2] == 0x00 && ep.guid.entityId[3] == 0xC2;
+    bool is_repeat_burst = false;
+    bool distinct_send = false;
+    auto seen_it = ep.recent_sn_times.find(sn);
+    if (seen_it != ep.recent_sn_times.end()) {
+        if ((int64_t)(timestamp_us - seen_it->second) > kDupGuardUs) {
+            seen_it->second = timestamp_us;  // a new distinct burst begins here
+            is_repeat_burst = true;
+            distinct_send = true;
+        }
+        // else: duplicate interface copy within the guard — ignore silently
+    } else {
+        ep.recent_sn_times.emplace(sn, timestamp_us);
+        distinct_send = true;  // first arrival of this SN is a real send
+    }
+    if (distinct_send) {
+        ep.send_bursts++;
+        if (ep.first_burst_us == 0) {
+            ep.first_burst_us = timestamp_us;
+        }
+        ep.last_burst_us = timestamp_us;
+    }
+    if (!is_spdp_announce && !counted_as_retransmit && is_repeat_burst) {
+        ep.retransmit_count++;
+    }
+    // Lazy prune: keep the window bounded around the newest SN
+    if (ep.recent_sn_times.size() > kRecentSnCapacity) {
+        for (auto sit = ep.recent_sn_times.begin(); sit != ep.recent_sn_times.end();) {
+            if (sit->first + kRecentSnCapacity < sn)
+                sit = ep.recent_sn_times.erase(sit);
+            else
+                ++sit;
+        }
+    }
+
+    if (last_sn > 0 && sn > last_sn + 1) {
+        // SN jumped: mark missing SNs as pending gaps
+        for (uint64_t missing_sn = last_sn + 1; missing_sn < sn; ++missing_sn) {
+            // Only add if not already received (could happen with out-of-order)
+            if (ep.pending_gaps.find(missing_sn) == ep.pending_gaps.end()) {
+                ep.pending_gaps[missing_sn] = timestamp_us;
+            }
+        }
+    }
+
+    // Any gap older than LOSS_TIMEOUT_US (5 seconds) is confirmed loss
+    CheckPendingGaps(ep, sn, timestamp_us);
+
+    // Update last SN (only forward, never backward)
+    if (sn > last_sn) {
+        ep.last_sn = seq;
+    }
+}
+
+void MetricsEngine::OnFragment(const FragSubmessage& frag, uint64_t timestamp_us) {
+    std::unique_lock lock(mutex_);
+
+    // Track latest timestamp for offline mode cleanup
+    if (timestamp_us > latest_timestamp_us_) {
+        latest_timestamp_us_ = timestamp_us;
+    }
+
+    UpdateEndpoint(frag.writer_guid, true, timestamp_us);
+    auto& endpoint = endpoints_[frag.writer_guid];
+
+    endpoint.frag_count += frag.frag_count;
+    endpoint.bytes_sent += frag.payload_size;
+
+    // Fragments share writerSN across submessages of the same sample, so the
+    // same gap/retransmit logic applies unchanged (duplicate SNs of consecutive
+    // fragments neither create gaps nor count as retransmits).
+    TrackRetransmitAndGaps(endpoint, frag.seq_num, timestamp_us);
+
+    GUID_t participant_guid = GetParticipantGuid(frag.writer_guid);
+    auto& participant = participants_[participant_guid];
+    participant.last_seen_us = timestamp_us;
+
+    total_bytes_ += frag.payload_size;
+}
+
 std::vector<ParticipantInfo> MetricsEngine::GetParticipants() {
     std::unique_lock lock(mutex_);
     std::vector<ParticipantInfo> result;
 
-    // Get current time for activity check
-    auto now = std::chrono::duration_cast<std::chrono::microseconds>(
+    // Use wall clock for activity check (latest_timestamp_us_ stops updating when demo stops)
+    uint64_t now = std::chrono::duration_cast<std::chrono::microseconds>(
         std::chrono::system_clock::now().time_since_epoch()).count();
 
     // Cleanup: remove participants inactive for more than 10 seconds
@@ -542,18 +940,19 @@ std::vector<ParticipantInfo> MetricsEngine::GetParticipants() {
         auto& [guid, info] = *it;
         bool should_remove = false;
 
-        // Remove if inactive for too long (10 seconds since last PDP/SPDP)
-        if (info.last_pdp_seen_us > 0 && (now - info.last_pdp_seen_us) > CLEANUP_THRESHOLD_US) {
+        // Remove if inactive for too long (10 seconds since last PDP/SPDP).
+        // Signed compare: packet timestamps can be slightly AHEAD of wall clock
+        // (pcap kernel timestamps, offline replay); unsigned subtraction would
+        // underflow and instantly delete perfectly fresh participants.
+        if (info.last_pdp_seen_us > 0 &&
+            (int64_t)(now - info.last_pdp_seen_us) > (int64_t)CLEANUP_THRESHOLD_US) {
             should_remove = true;
         }
         // Also remove if never got PDP/SPDP and inactive for 10 seconds since last seen
         if (info.last_pdp_seen_us == 0 && info.last_seen_us > 0 &&
-            (now - info.last_seen_us) > CLEANUP_THRESHOLD_US) {
+            (int64_t)(now - info.last_seen_us) > (int64_t)CLEANUP_THRESHOLD_US) {
             should_remove = true;
         }
-        // NOTE: We do NOT remove domain_id==0 participants here because
-        // data packets may arrive before SPDP discovery (which sets domain_id).
-        // Domain 0 filtering is done in the UI display layer instead.
 
         if (should_remove) {
             // Remove associated endpoints
@@ -576,8 +975,15 @@ std::vector<ParticipantInfo> MetricsEngine::GetParticipants() {
     // Build result with activity status
     for (const auto& [guid, info] : participants_) {
         ParticipantInfo copy = info;
+        // Signed compare here too — see the underflow note above.
         copy.is_active = (info.last_pdp_seen_us > 0) &&
-                         ((now - info.last_pdp_seen_us) < ACTIVITY_THRESHOLD_US);
+                         ((int64_t)(now - info.last_pdp_seen_us) < (int64_t)ACTIVITY_THRESHOLD_US);
+        // Join observed network addresses (learned per packet, may predate SPDP)
+        auto addr_it = prefix_addresses_.find(guid.prefix);
+        if (addr_it != prefix_addresses_.end()) {
+            copy.src_ip = addr_it->second.first;
+            copy.multicast_ip = addr_it->second.second;
+        }
         result.push_back(copy);
     }
     return result;
@@ -607,7 +1013,14 @@ std::vector<TransferStats> MetricsEngine::GetTransferStats() const {
 MetricsEngine::Summary MetricsEngine::GetSummary() const {
     std::shared_lock lock(mutex_);
     Summary s;
-    s.total_participants = participants_.size();
+    // Only count participants that have actual activity (not empty entries)
+    size_t active_count = 0;
+    for (const auto& [guid, info] : participants_) {
+        if (info.last_seen_us > 0 || info.last_pdp_seen_us > 0) {
+            active_count++;
+        }
+    }
+    s.total_participants = active_count;
     s.total_endpoints = endpoints_.size();
     s.total_data_messages = total_data_messages_;
     s.total_bytes = total_bytes_;
@@ -621,9 +1034,15 @@ std::vector<MetricsEngine::TopicInfo> MetricsEngine::GetParticipantTopics(const 
     std::shared_lock lock(mutex_);
     std::unordered_map<std::string, TopicInfo> topic_map;
 
-    // Track first/last seen for frequency calculation
-    std::unordered_map<std::string, uint64_t> topic_first_seen;
-    std::unordered_map<std::string, uint64_t> topic_last_seen;
+    // Distinct-send aggregation for accurate frequency: per topic we keep the
+    // largest burst count seen on any single WRITER endpoint plus that
+    // endpoint's first/last burst timestamps.
+    struct BurstAgg {
+        uint64_t bursts = 0;
+        uint64_t first_us = 0;
+        uint64_t last_us = 0;
+    };
+    std::unordered_map<std::string, BurstAgg> topic_bursts;
 
     for (const auto& [guid, ep] : endpoints_) {
         if (ep.participant_guid == participant_guid && !ep.topic_name.empty()) {
@@ -640,19 +1059,21 @@ std::vector<MetricsEngine::TopicInfo> MetricsEngine::GetParticipantTopics(const 
             }
             topic.data_count += ep.data_count;
             topic.bytes_sent += ep.bytes_sent;
+            topic.frag_count += ep.frag_count;
+            topic.ack_count += ep.acknack_count;
             topic.nack_count += ep.nack_count;
             topic.lost_count += ep.lost_count;
+            topic.retransmit_count += ep.retransmit_count;
             topic.heartbeat_count += ep.heartbeat_count;
 
-            // Track timestamps for frequency
-            if (ep.first_seen_us > 0) {
-                auto it = topic_first_seen.find(ep.topic_name);
-                if (it == topic_first_seen.end() || ep.first_seen_us < it->second) {
-                    topic_first_seen[ep.topic_name] = ep.first_seen_us;
+            // Frequency source: writer endpoints only (readers never transmit)
+            if (ep.is_writer && ep.send_bursts > 0) {
+                auto& agg = topic_bursts[ep.topic_name];
+                if (ep.send_bursts > agg.bursts) {
+                    agg.bursts = ep.send_bursts;
+                    agg.first_us = ep.first_burst_us;
+                    agg.last_us = ep.last_burst_us;
                 }
-            }
-            if (ep.last_seen_us > 0) {
-                topic_last_seen[ep.topic_name] = ep.last_seen_us;
             }
         }
     }
@@ -667,19 +1088,21 @@ std::vector<MetricsEngine::TopicInfo> MetricsEngine::GetParticipantTopics(const 
             info.loss_rate = static_cast<double>(info.lost_count) / static_cast<double>(total_packets);
         }
 
-        // Retransmit rate (NACK count as proxy for retransmissions)
+        // Retransmit rate (actual retransmitted packets / total data packets)
         if (info.data_count > 0) {
-            info.retransmit_rate = static_cast<double>(info.nack_count) / static_cast<double>(info.data_count);
+            info.retransmit_rate = static_cast<double>(info.retransmit_count) / static_cast<double>(info.data_count);
         }
 
-        // Send frequency (messages per second)
-        auto first_it = topic_first_seen.find(name);
-        auto last_it = topic_last_seen.find(name);
-        if (first_it != topic_first_seen.end() && last_it != topic_last_seen.end()) {
-            uint64_t duration_us = last_it->second - first_it->second;
-            if (duration_us > 1000000 && info.data_count > 1) {  // At least 1 second and 2 messages
-                double duration_sec = static_cast<double>(duration_us) / 1000000.0;
-                info.send_frequency_hz = static_cast<double>(info.data_count) / duration_sec;
+        // Send frequency via the burst estimator: for a periodic stream,
+        // (bursts-1)/(first..last span) equals the true publish period exactly,
+        // independent of interface duplicates and endpoint lifetime tails.
+        auto b_it = topic_bursts.find(name);
+        if (b_it != topic_bursts.end() && b_it->second.bursts >= 2 &&
+            b_it->second.last_us > b_it->second.first_us) {
+            double sec = static_cast<double>(b_it->second.last_us - b_it->second.first_us) / 1000000.0;
+            if (sec > 0.5) {
+                info.send_frequency_hz =
+                    static_cast<double>(b_it->second.bursts - 1) / sec;
             }
         }
 
@@ -695,23 +1118,29 @@ std::vector<MetricsEngine::TopicMatchInfo> MetricsEngine::GetAllTopicMatches() c
     // Build participant name lookup
     std::unordered_map<GUID_t, std::string, GUIDHash> participant_names;
     for (const auto& [guid, info] : participants_) {
-        participant_names[guid] = info.name.empty() ? "Unknown" : info.name;
+        if (!info.name.empty()) {
+            participant_names[guid] = info.name;
+        }
     }
 
-    // Debug: count endpoints by type
-    int writer_count = 0;
-    int reader_count = 0;
-    int writers_with_topic = 0;
-    int readers_with_topic = 0;
+    // Build topic→real reader participant mapping from SPDP-created reader endpoints.
+    // Real readers have valid participant_guid (non-zero prefix).
+    // Virtual readers (entityId[3]==0x05) have participant_guid=zeros.
+    // We use this mapping to resolve virtual reader participant names.
+    std::unordered_map<std::string, std::string> topic_to_reader_participant;
+    for (const auto& [guid, ep] : endpoints_) {
+        if (ep.is_reader && !ep.topic_name.empty() &&
+            ep.participant_guid.prefix[0] != 0) {
+            auto it = participant_names.find(ep.participant_guid);
+            if (it != participant_names.end()) {
+                topic_to_reader_participant[ep.topic_name] = it->second;
+            }
+        }
+    }
 
     // Collect all endpoints grouped by topic
     for (const auto& [guid, ep] : endpoints_) {
-        if (ep.is_writer) writer_count++;
-        if (ep.is_reader) reader_count++;
         if (ep.topic_name.empty()) continue;
-
-        if (ep.is_writer) writers_with_topic++;
-        if (ep.is_reader) readers_with_topic++;
 
         auto& topic = topic_map[ep.topic_name];
         topic.topic_name = ep.topic_name;
@@ -719,10 +1148,40 @@ std::vector<MetricsEngine::TopicMatchInfo> MetricsEngine::GetAllTopicMatches() c
             topic.type_name = ep.type_name;
         }
 
-        std::string participant_name = participant_names[ep.participant_guid];
-        if (participant_name.empty()) {
-            participant_name = "Unknown";
+        // Resolve participant name
+        std::string participant_name;
+        auto name_it = participant_names.find(ep.participant_guid);
+        if (name_it != participant_names.end()) {
+            participant_name = name_it->second;
         }
+        // Prefix-level fallback: endpoints created before SPDP (or via the
+        // GetParticipantGuid placeholder) carry a participant_guid whose 12-byte
+        // prefix matches the real participant but whose EntityId differs, so the
+        // exact-key lookup above fails and the endpoint silently dropped out of
+        // matching — making live topics show "Unmatched".
+        if (participant_name.empty()) {
+            for (const auto& [guid, info] : participants_) {
+                if (info.name.empty()) continue;
+                if (std::equal(guid.prefix.begin(), guid.prefix.end(),
+                               ep.participant_guid.prefix.begin())) {
+                    participant_name = info.name;
+                    break;
+                }
+            }
+        }
+
+        // For virtual readers (entityId[3]==0x05, participant_guid=zeros),
+        // resolve from real reader endpoints on the same topic
+        if (participant_name.empty() && ep.is_reader &&
+            ep.guid.entityId[3] == 0x05) {
+            auto reader_it = topic_to_reader_participant.find(ep.topic_name);
+            if (reader_it != topic_to_reader_participant.end()) {
+                participant_name = reader_it->second;
+            }
+        }
+
+        // Skip endpoints with no resolvable participant
+        if (participant_name.empty()) continue;
 
         if (ep.is_writer) {
             // Add writer participant if not already in list
@@ -744,7 +1203,23 @@ std::vector<MetricsEngine::TopicMatchInfo> MetricsEngine::GetAllTopicMatches() c
 
     // Set match status
     for (auto& [name, topic] : topic_map) {
-        topic.is_matched = !topic.writer_participants.empty() && !topic.reader_participants.empty();
+        // Standard matching: need both writer and reader
+        bool has_both = !topic.writer_participants.empty() && !topic.reader_participants.empty();
+
+        // Special topics: tableDefine and subTableRegister are discovery topics.
+        // In OnDemand, these topics use multicast and SEDP may not always detect
+        // reader endpoints (especially if SEDP parsing has issues).
+        // For robustness, we treat these as matched if they have a writer.
+        bool is_discovery_topic = (name.find("dsf/sys/var/tableDefine") != std::string::npos) ||
+                                  (name.find("dsf/message/commandRequest/subTableRegister") != std::string::npos);
+
+        if (is_discovery_topic) {
+            // Discovery topics are matched if they have a writer
+            topic.is_matched = !topic.writer_participants.empty();
+        } else {
+            // Regular topics need both writer and reader
+            topic.is_matched = has_both;
+        }
     }
 
     std::vector<TopicMatchInfo> result;

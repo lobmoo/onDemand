@@ -1,6 +1,7 @@
 #pragma once
 
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 #include <string>
 #include <mutex>
@@ -15,6 +16,9 @@ struct ParticipantInfo {
     std::string name;
     uint32_t domain_id = 0;  // DDS Domain ID
     std::vector<Locator_t> locators;
+    // Network addresses observed for this participant (from packet IP headers):
+    std::string src_ip;        // unicast source address of its packets
+    std::string multicast_ip;  // multicast group it publishes/discoveries on
     uint64_t first_seen_us;
     uint64_t last_seen_us;
     uint64_t last_pdp_seen_us = 0;  // Last PDP (discovery) packet timestamp
@@ -42,12 +46,48 @@ struct EndpointInfo {
     // Transfer statistics
     uint64_t data_count = 0;
     uint64_t bytes_sent = 0;
-    SequenceNumber_t last_sn = {0, 0};
-    SequenceNumber_t expected_sn = {0, 0};  // Next expected sequence number
-    uint64_t lost_count = 0;    // Number of detected lost packets
+    uint64_t frag_count = 0;    // Fragment packets received (DATA_FRAG submessages)
+    SequenceNumber_t last_sn = {0, 0};  // Last seen sequence number (for gap detection)
+    uint64_t lost_count = 0;    // Confirmed lost packets (timeout-based)
+    uint64_t retransmit_count = 0;  // Actual retransmitted packets (gap filled)
     uint64_t heartbeat_count = 0;
     uint64_t acknack_count = 0;
-    uint64_t nack_count = 0;  // Number of NACKed sequences
+    uint64_t nack_count = 0;  // Number of NACKed sequences (retransmit requests)
+
+    // SN gap tracking for timeout-based loss detection
+    // Key: missing SN, Value: timestamp when gap was first detected (microseconds)
+    std::unordered_map<uint64_t, uint64_t> pending_gaps;
+
+    // NACKed SNs -> readers that requested them. Used to detect retransmissions
+    // even when they arrive before a gap is recorded, and to credit the
+    // requesting reader endpoints when the resent sample actually arrives (so
+    // both sides of the exchange show the retransmission).
+    std::unordered_map<uint64_t, std::vector<GUID_t>> nacked_requests;
+
+    // Recently fulfilled SN -> fulfillment time. Readers keep repeating an
+    // unsatisfied NACK every ~100ms; those in-flight repeats land AFTER the
+    // resend already arrived and would re-register the request, so a later
+    // interface-copy of the SAME resent packet gets counted twice. Insertions
+    // are suppressed for SNs fulfilled within kFulfilledGuardUs.
+    std::unordered_map<uint64_t, uint64_t> recent_fulfilled;
+
+    // Distinct-send bookkeeping: a "burst" is one real transmission (arrival
+    // of an SN not seen within the duplicate guard window). Interface
+    // duplicates collapse into the same burst, so send_bursts approximates the
+    // TRUE transmit count and (send_bursts-1)/(last-first) is an unbiased
+    // periodic-stream frequency estimator — unlike raw data_count divided by
+    // endpoint lifetime, which inflates the numerator xN and stretches the
+    // denominator with discovery/heartbeat tails.
+    uint64_t send_bursts = 0;
+    uint64_t first_burst_us = 0;
+    uint64_t last_burst_us = 0;
+
+    // Recently seen SN -> timestamp (us) of the last distinct arrival ("burst").
+    // A repeat of an already-seen SN after DUP_GUARD_US counts as a retransmit.
+    // This catches resends that trigger neither a gap nor a NACK on the monitor
+    // side, e.g. a reliable writer pushing its history to a freshly matched
+    // reader. Pruned lazily; bounded by kRecentSnCapacity entries.
+    std::unordered_map<uint64_t, uint64_t> recent_sn_times;
 };
 
 // Endpoint pair transfer stats
@@ -72,6 +112,13 @@ public:
     void OnData(const DataSubmessage& data, uint64_t timestamp_us);
     void OnHeartbeat(const HeartbeatSubmessage& hb, uint64_t timestamp_us);
     void OnAcknack(const AcknackSubmessage& ack, uint64_t timestamp_us);
+    void OnFragment(const FragSubmessage& frag, uint64_t timestamp_us);
+
+    // Feed per-packet network addresses (called once per RTPS message, before
+    // the submessage callbacks). Associates the sending participant prefix with
+    // its source IP and, when present, the multicast group it addressed.
+    void OnPacketSource(const std::array<uint8_t, 12>& src_prefix,
+                        const uint8_t* src_ip_be4, const uint8_t* dst_ip_be4);
 
     // Query API (thread-safe)
     std::vector<ParticipantInfo> GetParticipants();
@@ -86,11 +133,14 @@ public:
         bool has_reader = false;
         uint64_t data_count = 0;
         uint64_t bytes_sent = 0;
-        uint64_t nack_count = 0;
-        uint64_t lost_count = 0;      // Lost packets detected by SN gap
+        uint64_t frag_count = 0;      // Fragment packets (DATA_FRAG submessages)
+        uint64_t ack_count = 0;       // ACK count (acknowledgments)
+        uint64_t nack_count = 0;      // NACK count (retransmit requests)
+        uint64_t lost_count = 0;      // Confirmed lost packets (timeout-based)
+        uint64_t retransmit_count = 0; // Actual retransmitted packets (gap filled)
         uint64_t heartbeat_count = 0; // Heartbeat count for frequency calc
         double loss_rate = 0.0;       // loss_rate = lost / (data + lost)
-        double retransmit_rate = 0.0; // retransmit_rate = nack / data
+        double retransmit_rate = 0.0; // retransmit_rate = retransmit / data
         double send_frequency_hz = 0.0; // Messages per second
     };
     std::vector<TopicInfo> GetParticipantTopics(const GUID_t& participant_guid) const;
@@ -121,6 +171,11 @@ private:
     GUID_t GetParticipantGuid(const GUID_t& endpoint_guid) const;
     void UpdateEndpoint(const GUID_t& guid, bool is_writer, uint64_t timestamp_us);
     void UpdateTransferPair(const GUID_t& writer, const GUID_t& reader, uint64_t timestamp_us);
+    void CheckPendingGaps(EndpointInfo& ep, uint64_t current_sn, uint64_t timestamp_us);
+    // Shared SN tracking: retransmit detection (pending_gaps + nacked_requests),
+    // gap creation and timeout-based loss confirmation. Used by OnData,
+    // OnFragment and the SEDP path so fragmented/discovery traffic is tracked too.
+    void TrackRetransmitAndGaps(EndpointInfo& ep, const SequenceNumber_t& seq, uint64_t timestamp_us);
 
     mutable std::shared_mutex mutex_;
 
@@ -153,6 +208,12 @@ private:
     // Quick lookup: GUID prefix → participant GUID for pub/sub nodes
     std::unordered_map<std::array<uint8_t, 12>, GUID_t, GUIDPrefixHash> prefix_to_pub_sub_;
 
+    // Participant GUID prefix → observed addresses {source IP, multicast group}
+    // (from packet IP headers; joined into ParticipantInfo at query time so it
+    // also works when the address was learned before SPDP created the entry)
+    std::unordered_map<std::array<uint8_t, 12>, std::pair<std::string, std::string>,
+                       GUIDPrefixHash> prefix_addresses_;
+
     // Transfer stats: key = hash(writer_guid, reader_guid)
     struct PairKey {
         GUID_t writer;
@@ -174,6 +235,12 @@ private:
     uint64_t total_heartbeats_ = 0;
     uint64_t total_acknacks_ = 0;
     uint64_t total_nacks_ = 0;
+
+    // Latest packet timestamp (for offline mode - use packet time, not wall clock)
+    uint64_t latest_timestamp_us_ = 0;
+
+    // Loss detection timeout: 5 seconds in microseconds
+    static constexpr uint64_t LOSS_TIMEOUT_US = 5000000;
 };
 
 }  // namespace ondemand_monitor

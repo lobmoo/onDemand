@@ -22,20 +22,23 @@ static void signal_handler(int sig) {
 
 struct MonitorConfig {
     std::string interface = "any";
-    std::string filter = "udp";  // Capture all UDP traffic to find SEDP packets
+    std::string filter = "udp portrange 7400-7500";  // Capture DDS traffic (SPDP/SEDP/data)
+    std::string pcap_file;       // Offline pcap file (empty = live mode)
 };
 
 void print_usage(const char* prog) {
-    std::cout << "Usage: sudo " << prog << " [OPTIONS]\n"
+    std::cout << "Usage: " << prog << " [OPTIONS]\n"
               << "OnDemand DDS Monitor - Real-time RTPS traffic analyzer\n\n"
               << "Options:\n"
               << "  -i, --interface <name>    Network interface (default: any)\n"
-              << "  -f, --filter <expr>       BPF filter (default: udp port 7410 or udp port 7411)\n"
+              << "  -r, --read <file>         Read from pcap file (offline mode)\n"
+              << "  -f, --filter <expr>       BPF filter (default: udp)\n"
               << "  -h, --help                Show this help\n\n"
               << "Examples:\n"
               << "  sudo " << prog << " -i eth0\n"
               << "  sudo " << prog << " -i lo -f 'udp port 7410'\n"
-              << "  sudo " << prog << " -i any -f 'udp portrange 7400-7500'\n\n"
+              << "  " << prog << " -r capture.pcap\n"
+              << "  " << prog << " -r capture.pcap -f 'udp port 7410'\n\n"
               << "Keyboard shortcuts:\n"
               << "  ↑/↓/j/k   Navigate participant list\n"
               << "  Enter      View participant details\n"
@@ -46,16 +49,20 @@ void print_usage(const char* prog) {
 bool parse_args(int argc, char* argv[], MonitorConfig& config) {
     static struct option long_options[] = {
         {"interface", required_argument, 0, 'i'},
+        {"read", required_argument, 0, 'r'},
         {"filter", required_argument, 0, 'f'},
         {"help", no_argument, 0, 'h'},
         {0, 0, 0, 0}
     };
 
     int opt;
-    while ((opt = getopt_long(argc, argv, "i:f:h", long_options, nullptr)) != -1) {
+    while ((opt = getopt_long(argc, argv, "i:r:f:h", long_options, nullptr)) != -1) {
         switch (opt) {
             case 'i':
                 config.interface = optarg;
+                break;
+            case 'r':
+                config.pcap_file = optarg;
                 break;
             case 'f':
                 config.filter = optarg;
@@ -81,21 +88,31 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    // Check root
-    if (geteuid() != 0) {
+    // Check root only for live capture mode
+    bool is_offline = !config.pcap_file.empty();
+    if (!is_offline && geteuid() != 0) {
         std::cerr << "Error: Raw socket requires root privileges.\n"
-                  << "Please run with: sudo " << argv[0] << "\n";
+                  << "Please run with: sudo " << argv[0] << "\n"
+                  << "Or use offline mode: " << argv[0] << " -r <pcap_file>\n";
         return 1;
     }
 
-    std::cout << "OnDemand Monitor starting...\n"
-              << "  Interface: " << config.interface << "\n"
-              << "  Filter: " << config.filter << "\n"
-              << "Press 'q' to quit.\n";
+    if (is_offline) {
+        std::cout << "OnDemand Monitor (offline mode)\n"
+                  << "  File: " << config.pcap_file << "\n"
+                  << "  Filter: " << config.filter << "\n";
+    } else {
+        std::cout << "OnDemand Monitor starting...\n"
+                  << "  Interface: " << config.interface << "\n"
+                  << "  Filter: " << config.filter << "\n"
+                  << "Press 'q' to quit.\n";
+    }
 
     try {
-        // Create components
-        ondemand_monitor::PcapWorker pcap_worker(config.interface, config.filter);
+        // Create components based on mode
+        ondemand_monitor::PcapWorker pcap_worker = is_offline ?
+            ondemand_monitor::PcapWorker(config.pcap_file) :
+            ondemand_monitor::PcapWorker(config.interface, config.filter);
         ondemand_monitor::MetricsEngine metrics_engine;
         ondemand_monitor::MonitorUi ui(pcap_worker, metrics_engine);
 

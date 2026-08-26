@@ -33,10 +33,19 @@ void RtpsParser::ParseSubmessages(
     void* user,
     DataCallback on_data,
     HeartbeatCallback on_heartbeat,
-    AcknackCallback on_acknack) {
+    AcknackCallback on_acknack,
+    FragCallback on_frag) {
 
     const uint8_t* ptr = data + 20;  // Skip RTPS header
     const uint8_t* end = data + len;
+
+    // Track INFO_SRC/INFO_DST prefixes as we walk submessages.
+    // Entity IDs in submessages are only 4 bytes; full GUIDs require these
+    // prefixes. E.g. an ACKNACK travels reader->writer, so its writerEntityId
+    // must be combined with INFO_DST (the destination = writer prefix), NOT
+    // with the packet source (which is the reader).
+    std::array<uint8_t, 12> info_src_prefix = src_guid_prefix;
+    std::array<uint8_t, 12> info_dst_prefix = src_guid_prefix;
 
     while (ptr + 4 <= end) {
         uint8_t submsg_id = ptr[0];
@@ -54,11 +63,32 @@ void RtpsParser::ParseSubmessages(
             break;  // Malformed
         }
 
+        // The "peer" is the other side of the exchange: destination prefix when
+        // INFO_DST was seen, else fall back to the source prefix. Combined with
+        // the 4-byte EntityIds this yields correct full GUIDs per direction.
+        const std::array<uint8_t, 12>& peer_prefix =
+            info_dst_prefix;  // updated below when INFO_DST present
+
         switch (submsg_id) {
+            case SubmessageId::INFO_DST: {
+                // Body: GuidPrefix_t (12 bytes)
+                if (ptr + 4 + 12 <= submsg_end) {
+                    std::memcpy(info_dst_prefix.data(), ptr + 4, 12);
+                }
+                break;
+            }
+            case SubmessageId::INFO_SRC: {
+                // Body: version(2) vendorId(2) guidPrefix(12)
+                if (ptr + 4 + 16 <= submsg_end) {
+                    std::memcpy(info_src_prefix.data(), ptr + 8, 12);
+                }
+                break;
+            }
             case SubmessageId::DATA: {
                 if (on_data) {
                     DataSubmessage ds;
-                    if (ParseDataSubmessage(ptr, submsg_end - ptr, src_guid_prefix, ds)) {
+                    if (ParseDataSubmessage(ptr, submsg_end - ptr, src_guid_prefix,
+                                            peer_prefix, ds)) {
                         on_data(user, ds);
                     }
                 }
@@ -67,7 +97,8 @@ void RtpsParser::ParseSubmessages(
             case SubmessageId::HEARTBEAT: {
                 if (on_heartbeat) {
                     HeartbeatSubmessage hb;
-                    if (ParseHeartbeatSubmessage(ptr, submsg_end - ptr, src_guid_prefix, hb)) {
+                    if (ParseHeartbeatSubmessage(ptr, submsg_end - ptr, src_guid_prefix,
+                                                 peer_prefix, hb)) {
                         on_heartbeat(user, hb);
                     }
                 }
@@ -76,8 +107,22 @@ void RtpsParser::ParseSubmessages(
             case SubmessageId::ACKNACK: {
                 if (on_acknack) {
                     AcknackSubmessage ack;
-                    if (ParseAcknackSubmessage(ptr, submsg_end - ptr, src_guid_prefix, ack)) {
+                    if (ParseAcknackSubmessage(ptr, submsg_end - ptr, src_guid_prefix,
+                                               peer_prefix, ack)) {
                         on_acknack(user, ack);
+                    }
+                }
+                break;
+            }
+            case SubmessageId::DATAFRAG: {
+                // Large samples are split into DATA_FRAG submessages. Without this
+                // branch, fragmented topics (e.g. tableDefine) are invisible to the
+                // monitor: no SN tracking, no gap/retransmit detection.
+                if (on_frag) {
+                    FragSubmessage fs;
+                    if (ParseFragSubmessage(ptr, submsg_end - ptr, src_guid_prefix,
+                                            peer_prefix, fs)) {
+                        on_frag(user, fs);
                     }
                 }
                 break;
@@ -93,6 +138,7 @@ void RtpsParser::ParseSubmessages(
 
 const uint8_t* RtpsParser::ParseDataSubmessage(const uint8_t* sm, uint32_t len,
                                                  const std::array<uint8_t, 12>& src_prefix,
+                                                 const std::array<uint8_t, 12>& peer_prefix,
                                                  DataSubmessage& out) {
     if (len < 24) return nullptr;
 
@@ -106,9 +152,10 @@ const uint8_t* RtpsParser::ParseDataSubmessage(const uint8_t* sm, uint32_t len,
         ntohs(*reinterpret_cast<const uint16_t*>(ptr + 2));
     ptr += 4;
 
-    // readerEntityId (4 bytes)
+    // readerEntityId (4 bytes); DATA flows writer->reader, so the reader is the
+    // peer: its prefix comes from INFO_DST (falls back to src when absent).
     std::memcpy(out.reader_guid.entityId.data(), ptr, 4);
-    std::memcpy(out.reader_guid.prefix.data(), src_prefix.data(), 12);
+    std::memcpy(out.reader_guid.prefix.data(), peer_prefix.data(), 12);
     ptr += 4;
 
     // writerEntityId (4 bytes)
@@ -129,22 +176,12 @@ const uint8_t* RtpsParser::ParseDataSubmessage(const uint8_t* sm, uint32_t len,
     out.inline_qos = nullptr;
     out.inline_qos_len = 0;
     if (flags & 0x02) {
-        // Calculate InlineQoS length from octetsToInlineQoS
+        // Calculate InlineQoS start from octetsToInlineQos
         const uint8_t* inline_qos_start = sm + 4 + octets_to_inline_qos;
-        const uint8_t* inline_qos_end = nullptr;
-
-        // Find end of InlineQoS (before serialized payload or end of submessage)
-        if (flags & 0x04) {
-            // D flag set: serialized payload follows InlineQoS
-            inline_qos_end = sm + len;  // Will be adjusted below
-        } else {
-            inline_qos_end = sm + len;
-        }
-
-        out.inline_qos = inline_qos_start;
-        out.inline_qos_len = static_cast<uint16_t>(inline_qos_end - inline_qos_start);
+        const uint8_t* inline_qos_end = sm + len;  // Default to end of submessage
 
         // Parse ParameterList to extract domain_id and participant_name
+        // Also find end of InlineQoS (PID_SENTINEL)
         const uint8_t* param_ptr = inline_qos_start;
         while (param_ptr + 4 <= inline_qos_end) {
             uint16_t param_id = little_endian ?
@@ -156,6 +193,7 @@ const uint8_t* RtpsParser::ParseDataSubmessage(const uint8_t* sm, uint32_t len,
 
             // PID_SENTINEL marks end of parameter list
             if (param_id == 0x0001) {
+                inline_qos_end = param_ptr + 4;  // Include PID_SENTINEL
                 break;
             }
 
@@ -219,6 +257,18 @@ const uint8_t* RtpsParser::ParseDataSubmessage(const uint8_t* sm, uint32_t len,
                 std::memcpy(out.endpoint_guid.entityId.data(), param_data + 12, 4);
                 out.has_endpoint_guid = true;
             }
+            // PID_PARTICIPANT_GUID = 0x0050 (GUID: 12 bytes prefix + 4 bytes entityId = 16 bytes)
+            else if (param_id == 0x0050 && param_len >= 16) {
+                std::memcpy(out.participant_guid.prefix.data(), param_data, 12);
+                std::memcpy(out.participant_guid.entityId.data(), param_data + 12, 4);
+                out.has_participant_guid = true;
+            }
+            // PID_ENDPOINT_GUID = 0x005A (GUID: 12 bytes prefix + 4 bytes entityId = 16 bytes)
+            else if (param_id == 0x005A && param_len >= 16) {
+                std::memcpy(out.endpoint_guid.prefix.data(), param_data, 12);
+                std::memcpy(out.endpoint_guid.entityId.data(), param_data + 12, 4);
+                out.has_endpoint_guid = true;
+            }
 
             // Move to next parameter (align to 4 bytes)
             param_ptr = param_data + param_len;
@@ -227,6 +277,9 @@ const uint8_t* RtpsParser::ParseDataSubmessage(const uint8_t* sm, uint32_t len,
                 param_ptr++;
             }
         }
+
+        out.inline_qos = inline_qos_start;
+        out.inline_qos_len = static_cast<uint16_t>(inline_qos_end - inline_qos_start);
     }
 
     // SerializedPayload (if D flag set) - also parse for parameters
@@ -253,9 +306,9 @@ const uint8_t* RtpsParser::ParseDataSubmessage(const uint8_t* sm, uint32_t len,
             // 0x0001 = CDR_LE, 0x0300 = PL_CDR_LE
             bool payload_little_endian = (cdr_encoding == 0x0001 || cdr_encoding == 0x0300 || little_endian);
 
-            // Only parse as ParameterList if encoding is PL_CDR (0x0003 when stored in wire byte order)
-            // On little-endian host, PL_CDR_LE reads as 0x0300
-            bool is_pl_cdr = (cdr_encoding == 0x0300);
+            // Only parse as ParameterList if encoding is PL_CDR
+            // PL_CDR_LE = 0x0300 (little-endian host), PL_CDR_BE = 0x0002 (big-endian)
+            bool is_pl_cdr = (cdr_encoding == 0x0300 || cdr_encoding == 0x0002);
 
             // Skip CDR header (4 bytes)
             payload_ptr += 4;
@@ -379,15 +432,17 @@ const uint8_t* RtpsParser::ParseDataSubmessage(const uint8_t* sm, uint32_t len,
 
 const uint8_t* RtpsParser::ParseHeartbeatSubmessage(const uint8_t* sm, uint32_t len,
                                                       const std::array<uint8_t, 12>& src_prefix,
+                                                      const std::array<uint8_t, 12>& peer_prefix,
                                                       HeartbeatSubmessage& out) {
     if (len < 32) return nullptr;
 
     uint8_t flags = sm[1];
     const uint8_t* ptr = sm + 4;
 
-    // readerEntityId (4 bytes)
+    // readerEntityId (4 bytes); HEARTBEAT flows writer->reader, so the reader
+    // is the peer and its prefix comes from INFO_DST.
     std::memcpy(out.reader_guid.entityId.data(), ptr, 4);
-    std::memcpy(out.reader_guid.prefix.data(), src_prefix.data(), 12);
+    std::memcpy(out.reader_guid.prefix.data(), peer_prefix.data(), 12);
     ptr += 4;
 
     // writerEntityId (4 bytes)
@@ -414,20 +469,25 @@ const uint8_t* RtpsParser::ParseHeartbeatSubmessage(const uint8_t* sm, uint32_t 
 
 const uint8_t* RtpsParser::ParseAcknackSubmessage(const uint8_t* sm, uint32_t len,
                                                     const std::array<uint8_t, 12>& src_prefix,
+                                                    const std::array<uint8_t, 12>& peer_prefix,
                                                     AcknackSubmessage& out) {
     if (len < 24) return nullptr;
 
     uint8_t flags = sm[1];
     const uint8_t* ptr = sm + 4;
 
-    // readerEntityId (4 bytes)
+    // ACKNACK flows reader->writer: the sender is the READER (prefix = packet
+    // source / INFO_SRC), the destination is the WRITER (prefix = INFO_DST).
+    // Using the source prefix for the writer here was the root cause of
+    // retransmit counts staying at 0 — NACKed SNs landed on a GUID that no
+    // DATA ever referenced.
     std::memcpy(out.reader_guid.entityId.data(), ptr, 4);
     std::memcpy(out.reader_guid.prefix.data(), src_prefix.data(), 12);
     ptr += 4;
 
     // writerEntityId (4 bytes)
     std::memcpy(out.writer_guid.entityId.data(), ptr, 4);
-    std::memcpy(out.writer_guid.prefix.data(), src_prefix.data(), 12);
+    std::memcpy(out.writer_guid.prefix.data(), peer_prefix.data(), 12);
     ptr += 4;
 
     // readerSNState.base (8 bytes)
@@ -452,6 +512,88 @@ const uint8_t* RtpsParser::ParseAcknackSubmessage(const uint8_t* sm, uint32_t le
 
     out.final_flag = (flags & 0x02) != 0;
     return ptr;
+}
+
+const uint8_t* RtpsParser::ParseFragSubmessage(const uint8_t* sm, uint32_t len,
+                                                const std::array<uint8_t, 12>& src_prefix,
+                                                const std::array<uint8_t, 12>& peer_prefix,
+                                                FragSubmessage& out) {
+    // Wire layout mirrors ParseDataSubmessage's convention (verified against
+    // FastDDS captures): sm+2 = octetsToNext (used by dispatch), sm+4..5 =
+    // extraFlags, sm+6..7 = octetsToInlineQos (offset from sm+4), then
+    // readerId(4) writerId(4) writerSN(8) fragmentStartingNum(4)
+    // fragmentsInSubmessage(2) fragmentSize(2) fragmentPadding(2) = 26 fixed.
+    constexpr uint32_t FIXED = 26;
+    if (len < 8 + FIXED) return nullptr;
+
+    uint8_t flags = sm[1];
+    bool little_endian = (flags & 0x01) != 0;
+    uint16_t otiq = little_endian ?
+        *reinterpret_cast<const uint16_t*>(sm + 6) :
+        ntohs(*reinterpret_cast<const uint16_t*>(sm + 6));
+
+    const uint8_t* ptr = sm + 8;
+
+    // readerEntityId (4 bytes); DATA_FRAG flows writer->reader like DATA.
+    std::memcpy(out.reader_guid.entityId.data(), ptr, 4);
+    std::memcpy(out.reader_guid.prefix.data(), peer_prefix.data(), 12);
+    ptr += 4;
+
+    // writerEntityId (4 bytes)
+    std::memcpy(out.writer_guid.entityId.data(), ptr, 4);
+    std::memcpy(out.writer_guid.prefix.data(), src_prefix.data(), 12);
+    ptr += 4;
+
+    // writerSN (8 bytes)
+    out.seq_num.high = little_endian ?
+        *reinterpret_cast<const int32_t*>(ptr) :
+        ntohl(*reinterpret_cast<const int32_t*>(ptr));
+    out.seq_num.low = little_endian ?
+        *reinterpret_cast<const uint32_t*>(ptr + 4) :
+        ntohl(*reinterpret_cast<const uint32_t*>(ptr + 4));
+    ptr += 8;
+
+    // fragmentStartingNum (4 bytes, 1-based)
+    out.frag_start = little_endian ?
+        *reinterpret_cast<const uint32_t*>(ptr) :
+        ntohl(*reinterpret_cast<const uint32_t*>(ptr));
+    ptr += 4;
+
+    // fragmentsInSubmessage / fragmentSize / fragmentPadding (2+2+2)
+    out.frag_count = little_endian ?
+        *reinterpret_cast<const uint16_t*>(ptr) :
+        ntohs(*reinterpret_cast<const uint16_t*>(ptr));
+    ptr += 2;
+    out.frag_size = little_endian ?
+        *reinterpret_cast<const uint16_t*>(ptr) :
+        ntohs(*reinterpret_cast<const uint16_t*>(ptr));
+    ptr += 2;
+    ptr += 2;  // fragmentPadding
+
+    // Payload starts after inline QoS when the Q flag (0x02) is set;
+    // otherwise octetsToInlineQos already points at the payload.
+    const uint8_t* payload_start = sm + 4 + otiq;
+    if (payload_start > sm + len || payload_start < ptr) return nullptr;  // Malformed
+    if (flags & 0x02) {
+        // Skip inline QoS parameter list up to PID_SENTINEL
+        const uint8_t* p = payload_start;
+        while (p + 4 <= sm + len) {
+            uint16_t pid = little_endian ?
+                *reinterpret_cast<const uint16_t*>(p) :
+                ntohs(*reinterpret_cast<const uint16_t*>(p));
+            uint16_t plen = little_endian ?
+                *reinterpret_cast<const uint16_t*>(p + 2) :
+                ntohs(*reinterpret_cast<const uint16_t*>(p + 2));
+            p += 4 + ((plen + 3u) & ~3u);
+            if (pid == 0x0001) break;  // PID_SENTINEL
+        }
+        payload_start = p;
+    }
+    out.payload_size = (sm + len > payload_start) ?
+        static_cast<uint32_t>(sm + len - payload_start) : 0;
+    if (out.frag_count == 0) out.frag_count = 1;  // Defensive: at least one fragment
+
+    return sm + len;
 }
 
 }  // namespace ondemand_monitor

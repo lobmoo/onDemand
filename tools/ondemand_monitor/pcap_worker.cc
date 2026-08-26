@@ -1,6 +1,8 @@
 #include "pcap_worker.h"
 #include <iostream>
 #include <cstring>
+#include <chrono>
+#include <thread>
 #include <netinet/ip.h>
 #include <netinet/udp.h>
 #include <arpa/inet.h>
@@ -8,7 +10,11 @@
 namespace ondemand_monitor {
 
 PcapWorker::PcapWorker(const std::string& interface, const std::string& filter)
-    : interface_(interface), filter_(filter) {
+    : interface_(interface), filter_(filter), is_offline_(false) {
+}
+
+PcapWorker::PcapWorker(const std::string& pcap_file)
+    : pcap_file_(pcap_file), is_offline_(true) {
 }
 
 PcapWorker::~PcapWorker() {
@@ -22,32 +28,42 @@ void PcapWorker::Start() {
 
     char errbuf[PCAP_ERRBUF_SIZE];
 
-    // Open device
-    handle_ = pcap_open_live(interface_.c_str(), 65536, 1, 100, errbuf);
-    if (!handle_) {
-        throw std::runtime_error(std::string("pcap_open_live failed: ") + errbuf);
+    if (is_offline_) {
+        // Open pcap file
+        handle_ = pcap_open_offline(pcap_file_.c_str(), errbuf);
+        if (!handle_) {
+            throw std::runtime_error(std::string("pcap_open_offline failed: ") + errbuf);
+        }
+    } else {
+        // Open live device
+        handle_ = pcap_open_live(interface_.c_str(), 65536, 1, 100, errbuf);
+        if (!handle_) {
+            throw std::runtime_error(std::string("pcap_open_live failed: ") + errbuf);
+        }
     }
 
     // Get link type for header parsing
     link_type_ = pcap_datalink(handle_);
 
-    // Compile filter
-    struct bpf_program fp;
-    if (pcap_compile(handle_, &fp, filter_.c_str(), 1, PCAP_NETMASK_UNKNOWN) == -1) {
-        pcap_close(handle_);
-        throw std::runtime_error(std::string("pcap_compile failed: ") + pcap_geterr(handle_));
-    }
+    // Compile and set filter (only if filter is specified)
+    if (!filter_.empty()) {
+        struct bpf_program fp;
+        if (pcap_compile(handle_, &fp, filter_.c_str(), 1, PCAP_NETMASK_UNKNOWN) == -1) {
+            pcap_close(handle_);
+            throw std::runtime_error(std::string("pcap_compile failed: ") + pcap_geterr(handle_));
+        }
 
-    // Set filter
-    if (pcap_setfilter(handle_, &fp) == -1) {
+        if (pcap_setfilter(handle_, &fp) == -1) {
+            pcap_freecode(&fp);
+            pcap_close(handle_);
+            throw std::runtime_error(std::string("pcap_setfilter failed: ") + pcap_geterr(handle_));
+        }
         pcap_freecode(&fp);
-        pcap_close(handle_);
-        throw std::runtime_error(std::string("pcap_setfilter failed: ") + pcap_geterr(handle_));
     }
-    pcap_freecode(&fp);
 
     // Start capture thread
     running_.store(true);
+    finished_.store(false);
     capture_thread_ = std::thread(&PcapWorker::CaptureLoop, this);
 }
 
@@ -73,10 +89,29 @@ void PcapWorker::Stop() {
 }
 
 void PcapWorker::CaptureLoop() {
-    int ret = pcap_loop(handle_, -1, PacketHandler, reinterpret_cast<u_char*>(this));
-    if (ret == PCAP_ERROR) {
-        fprintf(stderr, "pcap_loop error: %s\n", pcap_geterr(handle_));
+    // In offline mode, read packets slowly to allow UI to process
+    if (is_offline_) {
+        struct pcap_pkthdr* header;
+        const u_char* data;
+        int ret;
+        while ((ret = pcap_next_ex(handle_, &header, &data)) == 1) {
+            if (!running_.load()) break;
+            PacketHandler(reinterpret_cast<u_char*>(this), header, data);
+            // Small delay every 100 packets to allow UI to process
+            static int count = 0;
+            if (++count % 100 == 0) {
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            }
+        }
+    } else {
+        int ret = pcap_loop(handle_, -1, PacketHandler, reinterpret_cast<u_char*>(this));
+        if (ret == PCAP_ERROR) {
+            fprintf(stderr, "pcap_loop error: %s\n", pcap_geterr(handle_));
+        }
     }
+
+    // Mark as finished (important for offline mode)
+    finished_.store(true);
 }
 
 void PcapWorker::PacketHandler(u_char* user, const struct pcap_pkthdr* header, const u_char* packet) {
@@ -135,6 +170,9 @@ void PcapWorker::PacketHandler(u_char* user, const struct pcap_pkthdr* header, c
     pkt.len = payload_len;
     pkt.src_port = src_port;
     pkt.dst_port = dst_port;
+    // IPv4 src/dst addresses (fixed offsets in the IP header, network order)
+    std::memcpy(pkt.src_ip, ip_header + 12, 4);
+    std::memcpy(pkt.dst_ip, ip_header + 16, 4);
     std::memcpy(pkt.data, udp_payload, payload_len);
 
     if (!worker->queue_.enqueue(pkt)) {

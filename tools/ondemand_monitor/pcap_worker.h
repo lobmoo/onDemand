@@ -13,12 +13,17 @@ struct RawPacket {
     uint32_t len;
     uint16_t src_port = 0;   // UDP source port
     uint16_t dst_port = 0;   // UDP destination port
+    uint8_t src_ip[4] = {0};  // IPv4 source address (network byte order)
+    uint8_t dst_ip[4] = {0};  // IPv4 destination address (network byte order)
     uint8_t data[65536];  // Max UDP payload
 };
 
 class PcapWorker {
 public:
+    // Live capture mode
     PcapWorker(const std::string& interface, const std::string& filter);
+    // Offline mode (read from pcap file)
+    PcapWorker(const std::string& pcap_file);
     ~PcapWorker();
 
     // Non-copyable
@@ -31,6 +36,8 @@ public:
     // Consumer interface
     size_t PopPackets(RawPacket* out, size_t max_count);
     uint64_t GetDropped() const { return dropped_.load(); }
+    bool IsOffline() const { return is_offline_; }
+    bool IsFinished() const { return finished_.load(); }
 
 private:
     void CaptureLoop();
@@ -38,10 +45,13 @@ private:
 
     std::string interface_;
     std::string filter_;
+    std::string pcap_file_;
+    bool is_offline_ = false;
     pcap_t* handle_ = nullptr;
     int link_type_ = 0;  // DLT_EN10MB=1, DLT_LINUX_SLL=113
 
     std::atomic<bool> running_{false};
+    std::atomic<bool> finished_{false};  // True when offline file is fully read
     std::thread capture_thread_;
 
     moodycamel::ConcurrentQueue<RawPacket> queue_;

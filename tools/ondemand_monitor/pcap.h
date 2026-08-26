@@ -7,6 +7,9 @@
 extern "C" {
 #endif
 
+// Basic types
+typedef unsigned char u_char;
+
 #define PCAP_ERRBUF_SIZE 256
 #define PCAP_NETMASK_UNKNOWN 0xffffffff
 #define PCAP_ERROR -1
@@ -36,10 +39,13 @@ typedef void (*pcap_handler)(u_char *user, const struct pcap_pkthdr *h, const u_
 
 // Functions
 pcap_t *pcap_open_live(const char *device, int snaplen, int promisc, int to_ms, char *errbuf);
+pcap_t *pcap_open_offline(const char *fname, char *errbuf);
 int pcap_compile(pcap_t *p, struct bpf_program *fp, const char *str, int optimize, uint32_t netmask);
 int pcap_setfilter(pcap_t *p, struct bpf_program *fp);
 int pcap_datalink(pcap_t *p);
 int pcap_loop(pcap_t *p, int cnt, pcap_handler callback, u_char *user);
+int pcap_next_ex(pcap_t *p, struct pcap_pkthdr **pkt_header, const u_char **pkt_data);
+const u_char *pcap_next(pcap_t *p, struct pcap_pkthdr *h);
 void pcap_breakloop(pcap_t *p);
 void pcap_close(pcap_t *p);
 void pcap_freecode(struct bpf_program *fp);
