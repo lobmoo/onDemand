@@ -667,12 +667,16 @@ void MonitorUi::Run() {
 
     // Data processing thread
     std::thread process_thread([this] {
-        RawPacket packets[64];
+        // Heap batch buffer, allocated once: a raw array of 64 packets used to
+        // live on this thread's stack (~4MB with the old fixed-size layout,
+        // dangerously close to the default 8MB stack limit).
+        std::vector<RawPacket> packets(64);
         while (running_.load()) {
-            size_t count = worker_.PopPackets(packets, 64);
+            size_t count = worker_.PopPackets(packets.data(), packets.size());
             for (size_t i = 0; i < count; ++i) {
                 RtpsMessage msg;
-                bool parsed = RtpsParser::ParseHeader(packets[i].data, packets[i].len, msg);
+                bool parsed = RtpsParser::ParseHeader(packets[i].data.data(),
+                                                      packets[i].len, msg);
                 if (parsed) {
                     // Associate the sender's GUID prefix with its IP addresses
                     engine_.OnPacketSource(msg.source_guid_prefix,
@@ -688,7 +692,7 @@ void MonitorUi::Run() {
                                 packets[i].src_port, packets[i].dst_port};
 
                     RtpsParser::ParseSubmessages(
-                        packets[i].data, packets[i].len,
+                        packets[i].data.data(), packets[i].len,
                         msg.source_guid_prefix, &ctx,
                         [](void* user, DataSubmessage& data) {
                             auto* ctx = static_cast<Context*>(user);

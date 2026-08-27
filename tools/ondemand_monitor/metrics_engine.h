@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <mutex>
+#include <atomic>
 #include <shared_mutex>
 #include "rtps_parser.h"
 
@@ -19,8 +20,8 @@ struct ParticipantInfo {
     // Network addresses observed for this participant (from packet IP headers):
     std::string src_ip;        // unicast source address of its packets
     std::string multicast_ip;  // multicast group it publishes/discoveries on
-    uint64_t first_seen_us;
-    uint64_t last_seen_us;
+    uint64_t first_seen_us = 0;
+    uint64_t last_seen_us = 0;
     uint64_t last_pdp_seen_us = 0;  // Last PDP (discovery) packet timestamp
     uint32_t endpoints_count = 0;
     uint64_t heartbeat_count = 0;  // Heartbeat packets count
@@ -37,8 +38,8 @@ struct EndpointInfo {
     bool is_reader = false;
     std::string topic_name;
     std::string type_name;
-    uint64_t first_seen_us;
-    uint64_t last_seen_us;
+    uint64_t first_seen_us = 0;
+    uint64_t last_seen_us = 0;
 
     // Matched endpoints
     std::vector<GUID_t> matched_guids;
@@ -82,6 +83,16 @@ struct EndpointInfo {
     uint64_t first_burst_us = 0;
     uint64_t last_burst_us = 0;
 
+    // DATA_FRAG continuation tracking. Consecutive fragments of one sample
+    // share the writerSN; if inter-fragment spacing exceeds kDupGuardUs the
+    // repeat-burst heuristic would misread "same sample still in flight" as a
+    // retransmission. Remembering the last fragment's position lets OnFragment
+    // recognize a monotonically advancing fragment of the CURRENT sample and
+    // refresh that SN's burst baseline instead.
+    uint64_t last_frag_sn = 0;
+    uint32_t last_frag_start = 0;
+    uint64_t last_frag_us = 0;
+
     // Recently seen SN -> timestamp (us) of the last distinct arrival ("burst").
     // A repeat of an already-seen SN after DUP_GUARD_US counts as a retransmit.
     // This catches resends that trigger neither a gap nor a NACK on the monitor
@@ -119,6 +130,13 @@ public:
     // its source IP and, when present, the multicast group it addressed.
     void OnPacketSource(const std::array<uint8_t, 12>& src_prefix,
                         const uint8_t* src_ip_be4, const uint8_t* dst_ip_be4);
+
+    // Offline (pcap file) mode: participant activity/cleanup compares packet
+    // timestamps against latest_timestamp_us_ instead of the wall clock.
+    // Comparing replayed file timestamps against wall time would instantly
+    // evict every participant when replaying an older capture. Call before
+    // feeding any data.
+    void SetOfflineMode(bool offline) { offline_mode_.store(offline); }
 
     // Query API (thread-safe)
     std::vector<ParticipantInfo> GetParticipants();
@@ -238,6 +256,9 @@ private:
 
     // Latest packet timestamp (for offline mode - use packet time, not wall clock)
     uint64_t latest_timestamp_us_ = 0;
+
+    // See SetOfflineMode()
+    std::atomic<bool> offline_mode_{false};
 
     // Loss detection timeout: 5 seconds in microseconds
     static constexpr uint64_t LOSS_TIMEOUT_US = 5000000;

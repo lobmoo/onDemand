@@ -9,19 +9,22 @@ namespace ondemand_monitor {
 
 // RTPS Protocol Version
 struct ProtocolVersion {
-    uint8_t major;
-    uint8_t minor;
+    uint8_t major = 0;
+    uint8_t minor = 0;
 };
 
 // RTPS Vendor ID
 struct VendorId {
-    uint8_t vendorId[2];
+    uint8_t vendorId[2] = {0, 0};
 };
 
-// RTPS GUID
+// RTPS GUID.
+// Members are value-initialized: GUID_t used to be default-indeterminate, and
+// an uninitialized local (see MetricsEngine::OnData) then seeded maps with
+// garbage keys — one ghost participant leaked per data packet.
 struct GUID_t {
-    std::array<uint8_t, 12> prefix;  // GuidPrefix_t
-    std::array<uint8_t, 4> entityId;  // EntityId_t
+    std::array<uint8_t, 12> prefix{};  // GuidPrefix_t
+    std::array<uint8_t, 4> entityId{};  // EntityId_t
 
     bool operator==(const GUID_t& other) const {
         return prefix == other.prefix && entityId == other.entityId;
@@ -46,8 +49,8 @@ struct Locator_t {
 
 // RTPS SequenceNumber
 struct SequenceNumber_t {
-    int32_t high;
-    uint32_t low;
+    int32_t high = 0;
+    uint32_t low = 0;
 
     bool operator<(const SequenceNumber_t& other) const {
         if (high != other.high) return high < other.high;

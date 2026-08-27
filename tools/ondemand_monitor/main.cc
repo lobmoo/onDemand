@@ -114,6 +114,9 @@ int main(int argc, char* argv[]) {
             ondemand_monitor::PcapWorker(config.pcap_file) :
             ondemand_monitor::PcapWorker(config.interface, config.filter);
         ondemand_monitor::MetricsEngine metrics_engine;
+        // Offline replay must age participants out in the packet-time domain,
+        // not against the wall clock (see MetricsEngine::SetOfflineMode).
+        metrics_engine.SetOfflineMode(is_offline);
         ondemand_monitor::MonitorUi ui(pcap_worker, metrics_engine);
 
         // Start capture

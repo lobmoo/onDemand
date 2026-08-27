@@ -8,6 +8,31 @@ namespace ondemand_monitor {
 // RTPS magic: "RTPS"
 static const uint8_t RTPS_MAGIC[4] = {'R', 'T', 'P', 'S'};
 
+// Byte-wise scalar readers. Wire fields are only 2/4-byte aligned at best, so
+// dereferencing them via reinterpret_cast is formally undefined behavior
+// (Core Guidelines ES.42) and hard-faults on strict-alignment targets. memcpy
+// compiles to the same move instruction on x86 while being legal everywhere.
+// `le` selects little-endian (RTPS endianness flag) vs big-endian interpretation.
+namespace {
+
+inline uint16_t ReadU16(const uint8_t* p, bool le) {
+    uint16_t v;
+    std::memcpy(&v, p, sizeof(v));
+    return le ? v : ntohs(v);
+}
+
+inline uint32_t ReadU32(const uint8_t* p, bool le) {
+    uint32_t v;
+    std::memcpy(&v, p, sizeof(v));
+    return le ? v : ntohl(v);
+}
+
+inline int32_t ReadI32(const uint8_t* p, bool le) {
+    return static_cast<int32_t>(ReadU32(p, le));
+}
+
+}  // namespace
+
 bool RtpsParser::ValidateHeader(const uint8_t* data, uint32_t len) {
     if (len < 20) return false;
     return std::memcmp(data, RTPS_MAGIC, 4) == 0;
@@ -49,14 +74,8 @@ void RtpsParser::ParseSubmessages(
 
     while (ptr + 4 <= end) {
         uint8_t submsg_id = ptr[0];
-        uint8_t flags = ptr[1];
-        uint16_t octets_to_next = *reinterpret_cast<const uint16_t*>(ptr + 2);
-
-        // Handle endianness flag (bit 0)
-        bool little_endian = (flags & 0x01) != 0;
-        if (!little_endian) {
-            octets_to_next = ntohs(octets_to_next);
-        }
+        // Endianness flag (bit 0) applies to octetsToNext itself
+        uint16_t octets_to_next = ReadU16(ptr + 2, (ptr[1] & 0x01) != 0);
 
         const uint8_t* submsg_end = (octets_to_next == 0) ? end : ptr + 4 + octets_to_next;
         if (submsg_end > end) {
@@ -147,9 +166,7 @@ const uint8_t* RtpsParser::ParseDataSubmessage(const uint8_t* sm, uint32_t len,
     const uint8_t* ptr = sm + 4;
 
     // extraFlags (2 bytes) + octetsToInlineQos (2 bytes)
-    uint16_t octets_to_inline_qos = little_endian ?
-        *reinterpret_cast<const uint16_t*>(ptr + 2) :
-        ntohs(*reinterpret_cast<const uint16_t*>(ptr + 2));
+    uint16_t octets_to_inline_qos = ReadU16(ptr + 2, little_endian);
     ptr += 4;
 
     // readerEntityId (4 bytes); DATA flows writer->reader, so the reader is the
@@ -164,12 +181,8 @@ const uint8_t* RtpsParser::ParseDataSubmessage(const uint8_t* sm, uint32_t len,
     ptr += 4;
 
     // writerSeqNum (8 bytes)
-    out.seq_num.high = little_endian ?
-        *reinterpret_cast<const int32_t*>(ptr) :
-        ntohl(*reinterpret_cast<const int32_t*>(ptr));
-    out.seq_num.low = little_endian ?
-        *reinterpret_cast<const uint32_t*>(ptr + 4) :
-        ntohl(*reinterpret_cast<const uint32_t*>(ptr + 4));
+    out.seq_num.high = ReadI32(ptr, little_endian);
+    out.seq_num.low = ReadU32(ptr + 4, little_endian);
     ptr += 8;
 
     // InlineQoS (if Q flag set)
@@ -184,12 +197,8 @@ const uint8_t* RtpsParser::ParseDataSubmessage(const uint8_t* sm, uint32_t len,
         // Also find end of InlineQoS (PID_SENTINEL)
         const uint8_t* param_ptr = inline_qos_start;
         while (param_ptr + 4 <= inline_qos_end) {
-            uint16_t param_id = little_endian ?
-                *reinterpret_cast<const uint16_t*>(param_ptr) :
-                ntohs(*reinterpret_cast<const uint16_t*>(param_ptr));
-            uint16_t param_len = little_endian ?
-                *reinterpret_cast<const uint16_t*>(param_ptr + 2) :
-                ntohs(*reinterpret_cast<const uint16_t*>(param_ptr + 2));
+            uint16_t param_id = ReadU16(param_ptr, little_endian);
+            uint16_t param_len = ReadU16(param_ptr + 2, little_endian);
 
             // PID_SENTINEL marks end of parameter list
             if (param_id == 0x0001) {
@@ -201,16 +210,12 @@ const uint8_t* RtpsParser::ParseDataSubmessage(const uint8_t* sm, uint32_t len,
 
             // PID_DOMAIN_ID = 0x000f (4 bytes, uint32_t)
             if (param_id == 0x000f && param_len >= 4) {
-                out.domain_id = little_endian ?
-                    *reinterpret_cast<const uint32_t*>(param_data) :
-                    ntohl(*reinterpret_cast<const uint32_t*>(param_data));
+                out.domain_id = ReadU32(param_data, little_endian);
                 out.has_domain_id = true;
             }
             // PID_PARTICIPANT_NAME = 0x0029 (string: 4 bytes length + data)
             else if (param_id == 0x0029 && param_len >= 4) {
-                uint32_t str_len = little_endian ?
-                    *reinterpret_cast<const uint32_t*>(param_data) :
-                    ntohl(*reinterpret_cast<const uint32_t*>(param_data));
+                uint32_t str_len = ReadU32(param_data, little_endian);
                 if (str_len > 0 && str_len <= static_cast<uint32_t>(param_len - 4)) {
                     out.participant_name = std::string(
                         reinterpret_cast<const char*>(param_data + 4), str_len);
@@ -223,9 +228,7 @@ const uint8_t* RtpsParser::ParseDataSubmessage(const uint8_t* sm, uint32_t len,
             }
             // PID_TOPIC_NAME = 0x0005 (string: 4 bytes length + data)
             else if (param_id == 0x0005 && param_len >= 4) {
-                uint32_t str_len = little_endian ?
-                    *reinterpret_cast<const uint32_t*>(param_data) :
-                    ntohl(*reinterpret_cast<const uint32_t*>(param_data));
+                uint32_t str_len = ReadU32(param_data, little_endian);
                 if (str_len > 0 && str_len <= static_cast<uint32_t>(param_len - 4)) {
                     out.topic_name = std::string(
                         reinterpret_cast<const char*>(param_data + 4), str_len);
@@ -238,9 +241,7 @@ const uint8_t* RtpsParser::ParseDataSubmessage(const uint8_t* sm, uint32_t len,
             }
             // PID_TYPE_NAME = 0x0007 (string: 4 bytes length + data)
             else if (param_id == 0x0007 && param_len >= 4) {
-                uint32_t str_len = little_endian ?
-                    *reinterpret_cast<const uint32_t*>(param_data) :
-                    ntohl(*reinterpret_cast<const uint32_t*>(param_data));
+                uint32_t str_len = ReadU32(param_data, little_endian);
                 if (str_len > 0 && str_len <= static_cast<uint32_t>(param_len - 4)) {
                     out.type_name = std::string(
                         reinterpret_cast<const char*>(param_data + 4), str_len);
@@ -262,12 +263,6 @@ const uint8_t* RtpsParser::ParseDataSubmessage(const uint8_t* sm, uint32_t len,
                 std::memcpy(out.participant_guid.prefix.data(), param_data, 12);
                 std::memcpy(out.participant_guid.entityId.data(), param_data + 12, 4);
                 out.has_participant_guid = true;
-            }
-            // PID_ENDPOINT_GUID = 0x005A (GUID: 12 bytes prefix + 4 bytes entityId = 16 bytes)
-            else if (param_id == 0x005A && param_len >= 16) {
-                std::memcpy(out.endpoint_guid.prefix.data(), param_data, 12);
-                std::memcpy(out.endpoint_guid.entityId.data(), param_data + 12, 4);
-                out.has_endpoint_guid = true;
             }
 
             // Move to next parameter (align to 4 bytes)
@@ -297,8 +292,10 @@ const uint8_t* RtpsParser::ParseDataSubmessage(const uint8_t* sm, uint32_t len,
         const uint8_t* payload_end = sm + len;
 
         if (out.payload_size >= 8) {
-            // Read CDR encoding to determine endianness
-            uint16_t cdr_encoding = *reinterpret_cast<const uint16_t*>(payload_ptr);
+            // Read CDR encoding to determine endianness (raw LE host read is
+            // fine here: the two encoding constants are byte-symmetric checks
+            // resolved below; kept via memcpy for alignment safety)
+            uint16_t cdr_encoding = ReadU16(payload_ptr, true);
             // CDR encoding values (in wire byte order):
             // 0x0000 = CDR Big Endian, 0x0001 = CDR Little Endian
             // 0x0002 = PL_CDR Big Endian, 0x0003 = PL_CDR Little Endian
@@ -320,12 +317,8 @@ const uint8_t* RtpsParser::ParseDataSubmessage(const uint8_t* sm, uint32_t len,
             if (is_pl_cdr) {
             // Parse ParameterList
             while (payload_ptr + 4 <= payload_end) {
-                uint16_t param_id = payload_little_endian ?
-                    *reinterpret_cast<const uint16_t*>(payload_ptr) :
-                    ntohs(*reinterpret_cast<const uint16_t*>(payload_ptr));
-                uint16_t param_len = payload_little_endian ?
-                    *reinterpret_cast<const uint16_t*>(payload_ptr + 2) :
-                    ntohs(*reinterpret_cast<const uint16_t*>(payload_ptr + 2));
+                uint16_t param_id = ReadU16(payload_ptr, payload_little_endian);
+                uint16_t param_len = ReadU16(payload_ptr + 2, payload_little_endian);
 
                 // PID_SENTINEL marks end of parameter list
                 if (param_id == 0x0001) {
@@ -336,16 +329,12 @@ const uint8_t* RtpsParser::ParseDataSubmessage(const uint8_t* sm, uint32_t len,
 
                 // PID_DOMAIN_ID = 0x000f (4 bytes, uint32_t)
                 if (param_id == 0x000f && param_len >= 4 && !out.has_domain_id) {
-                    out.domain_id = payload_little_endian ?
-                        *reinterpret_cast<const uint32_t*>(param_data) :
-                        ntohl(*reinterpret_cast<const uint32_t*>(param_data));
+                    out.domain_id = ReadU32(param_data, payload_little_endian);
                     out.has_domain_id = true;
                 }
                 // PID_PARTICIPANT_NAME = 0x0029 (string: 4 bytes length + data)
                 else if (param_id == 0x0029 && param_len >= 4 && !out.has_participant_name) {
-                    uint32_t str_len = payload_little_endian ?
-                        *reinterpret_cast<const uint32_t*>(param_data) :
-                        ntohl(*reinterpret_cast<const uint32_t*>(param_data));
+                    uint32_t str_len = ReadU32(param_data, payload_little_endian);
                     if (str_len > 0 && str_len <= static_cast<uint32_t>(param_len - 4)) {
                         out.participant_name = std::string(
                             reinterpret_cast<const char*>(param_data + 4), str_len);
@@ -359,9 +348,7 @@ const uint8_t* RtpsParser::ParseDataSubmessage(const uint8_t* sm, uint32_t len,
                 // PID 0x0062 - Vendor-specific parameter that contains participant/node name
                 // Format: 4 bytes string length + string data
                 else if (param_id == 0x0062 && param_len >= 4 && !out.has_participant_name) {
-                    uint32_t str_len = payload_little_endian ?
-                        *reinterpret_cast<const uint32_t*>(param_data) :
-                        ntohl(*reinterpret_cast<const uint32_t*>(param_data));
+                    uint32_t str_len = ReadU32(param_data, payload_little_endian);
                     if (str_len > 0 && str_len <= static_cast<uint32_t>(param_len - 4)) {
                         out.participant_name = std::string(
                             reinterpret_cast<const char*>(param_data + 4), str_len);
@@ -374,9 +361,7 @@ const uint8_t* RtpsParser::ParseDataSubmessage(const uint8_t* sm, uint32_t len,
                 }
                 // PID_TOPIC_NAME = 0x0005 (string: 4 bytes length + data)
                 else if (param_id == 0x0005 && param_len >= 4 && !out.has_topic_name) {
-                    uint32_t str_len = payload_little_endian ?
-                        *reinterpret_cast<const uint32_t*>(param_data) :
-                        ntohl(*reinterpret_cast<const uint32_t*>(param_data));
+                    uint32_t str_len = ReadU32(param_data, payload_little_endian);
                     if (str_len > 0 && str_len <= static_cast<uint32_t>(param_len - 4)) {
                         out.topic_name = std::string(
                             reinterpret_cast<const char*>(param_data + 4), str_len);
@@ -389,9 +374,7 @@ const uint8_t* RtpsParser::ParseDataSubmessage(const uint8_t* sm, uint32_t len,
                 }
                 // PID_TYPE_NAME = 0x0007 (string: 4 bytes length + data)
                 else if (param_id == 0x0007 && param_len >= 4 && !out.has_type_name) {
-                    uint32_t str_len = payload_little_endian ?
-                        *reinterpret_cast<const uint32_t*>(param_data) :
-                        ntohl(*reinterpret_cast<const uint32_t*>(param_data));
+                    uint32_t str_len = ReadU32(param_data, payload_little_endian);
                     if (str_len > 0 && str_len <= static_cast<uint32_t>(param_len - 4)) {
                         out.type_name = std::string(
                             reinterpret_cast<const char*>(param_data + 4), str_len);
@@ -437,6 +420,9 @@ const uint8_t* RtpsParser::ParseHeartbeatSubmessage(const uint8_t* sm, uint32_t 
     if (len < 32) return nullptr;
 
     uint8_t flags = sm[1];
+    // Endianness flag was previously ignored here — sequence numbers were read
+    // in host order, silently corrupting HB accounting on big-endian senders.
+    bool little_endian = (flags & 0x01) != 0;
     const uint8_t* ptr = sm + 4;
 
     // readerEntityId (4 bytes); HEARTBEAT flows writer->reader, so the reader
@@ -451,13 +437,13 @@ const uint8_t* RtpsParser::ParseHeartbeatSubmessage(const uint8_t* sm, uint32_t 
     ptr += 4;
 
     // firstSeqNumber (8 bytes)
-    out.first_sn.high = *reinterpret_cast<const int32_t*>(ptr);
-    out.first_sn.low = *reinterpret_cast<const uint32_t*>(ptr + 4);
+    out.first_sn.high = ReadI32(ptr, little_endian);
+    out.first_sn.low = ReadU32(ptr + 4, little_endian);
     ptr += 8;
 
     // lastSeqNumber (8 bytes)
-    out.last_sn.high = *reinterpret_cast<const int32_t*>(ptr);
-    out.last_sn.low = *reinterpret_cast<const uint32_t*>(ptr + 4);
+    out.last_sn.high = ReadI32(ptr, little_endian);
+    out.last_sn.low = ReadU32(ptr + 4, little_endian);
     ptr += 8;
 
     // count (4 bytes) - ignored
@@ -474,6 +460,8 @@ const uint8_t* RtpsParser::ParseAcknackSubmessage(const uint8_t* sm, uint32_t le
     if (len < 24) return nullptr;
 
     uint8_t flags = sm[1];
+    // Endianness flag previously ignored — see ParseHeartbeatSubmessage
+    bool little_endian = (flags & 0x01) != 0;
     const uint8_t* ptr = sm + 4;
 
     // ACKNACK flows reader->writer: the sender is the READER (prefix = packet
@@ -491,19 +479,19 @@ const uint8_t* RtpsParser::ParseAcknackSubmessage(const uint8_t* sm, uint32_t le
     ptr += 4;
 
     // readerSNState.base (8 bytes)
-    out.reader_sn_state_base.high = *reinterpret_cast<const int32_t*>(ptr);
-    out.reader_sn_state_base.low = *reinterpret_cast<const uint32_t*>(ptr + 4);
+    out.reader_sn_state_base.high = ReadI32(ptr, little_endian);
+    out.reader_sn_state_base.low = ReadU32(ptr + 4, little_endian);
     ptr += 8;
 
     // readerSNState (numBits + bitmap)
     if (ptr + 4 <= sm + len) {
-        uint32_t num_bits = *reinterpret_cast<const uint32_t*>(ptr);
+        uint32_t num_bits = ReadU32(ptr, little_endian);
         ptr += 4;
         uint32_t num_words = (num_bits + 31) / 32;
 
         out.reader_sn_state_bitmap.clear();
         for (uint32_t i = 0; i < num_words && ptr + 4 <= sm + len; ++i) {
-            out.reader_sn_state_bitmap.push_back(*reinterpret_cast<const uint32_t*>(ptr));
+            out.reader_sn_state_bitmap.push_back(ReadU32(ptr, little_endian));
             ptr += 4;
         }
     }
@@ -528,9 +516,7 @@ const uint8_t* RtpsParser::ParseFragSubmessage(const uint8_t* sm, uint32_t len,
 
     uint8_t flags = sm[1];
     bool little_endian = (flags & 0x01) != 0;
-    uint16_t otiq = little_endian ?
-        *reinterpret_cast<const uint16_t*>(sm + 6) :
-        ntohs(*reinterpret_cast<const uint16_t*>(sm + 6));
+    uint16_t otiq = ReadU16(sm + 6, little_endian);
 
     const uint8_t* ptr = sm + 8;
 
@@ -545,28 +531,18 @@ const uint8_t* RtpsParser::ParseFragSubmessage(const uint8_t* sm, uint32_t len,
     ptr += 4;
 
     // writerSN (8 bytes)
-    out.seq_num.high = little_endian ?
-        *reinterpret_cast<const int32_t*>(ptr) :
-        ntohl(*reinterpret_cast<const int32_t*>(ptr));
-    out.seq_num.low = little_endian ?
-        *reinterpret_cast<const uint32_t*>(ptr + 4) :
-        ntohl(*reinterpret_cast<const uint32_t*>(ptr + 4));
+    out.seq_num.high = ReadI32(ptr, little_endian);
+    out.seq_num.low = ReadU32(ptr + 4, little_endian);
     ptr += 8;
 
     // fragmentStartingNum (4 bytes, 1-based)
-    out.frag_start = little_endian ?
-        *reinterpret_cast<const uint32_t*>(ptr) :
-        ntohl(*reinterpret_cast<const uint32_t*>(ptr));
+    out.frag_start = ReadU32(ptr, little_endian);
     ptr += 4;
 
     // fragmentsInSubmessage / fragmentSize / fragmentPadding (2+2+2)
-    out.frag_count = little_endian ?
-        *reinterpret_cast<const uint16_t*>(ptr) :
-        ntohs(*reinterpret_cast<const uint16_t*>(ptr));
+    out.frag_count = ReadU16(ptr, little_endian);
     ptr += 2;
-    out.frag_size = little_endian ?
-        *reinterpret_cast<const uint16_t*>(ptr) :
-        ntohs(*reinterpret_cast<const uint16_t*>(ptr));
+    out.frag_size = ReadU16(ptr, little_endian);
     ptr += 2;
     ptr += 2;  // fragmentPadding
 
@@ -578,12 +554,8 @@ const uint8_t* RtpsParser::ParseFragSubmessage(const uint8_t* sm, uint32_t len,
         // Skip inline QoS parameter list up to PID_SENTINEL
         const uint8_t* p = payload_start;
         while (p + 4 <= sm + len) {
-            uint16_t pid = little_endian ?
-                *reinterpret_cast<const uint16_t*>(p) :
-                ntohs(*reinterpret_cast<const uint16_t*>(p));
-            uint16_t plen = little_endian ?
-                *reinterpret_cast<const uint16_t*>(p + 2) :
-                ntohs(*reinterpret_cast<const uint16_t*>(p + 2));
+            uint16_t pid = ReadU16(p, little_endian);
+            uint16_t plen = ReadU16(p + 2, little_endian);
             p += 4 + ((plen + 3u) & ~3u);
             if (pid == 0x0001) break;  // PID_SENTINEL
         }

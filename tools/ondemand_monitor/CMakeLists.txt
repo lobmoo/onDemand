@@ -85,5 +85,16 @@ target_link_libraries(ondemand_monitor
   pthread
 )
 
+# Unit tests (engine statistics logic; no pcap/FTXUI dependencies)
+enable_testing()
+foreach(monitor_test engine_repro_test stats_logic_test)
+  add_executable(${monitor_test}
+    tests/${monitor_test}.cc
+    metrics_engine.cc
+    rtps_parser.cc
+  )
+  add_test(NAME ${monitor_test} COMMAND ${monitor_test})
+endforeach()
+
 # Installation
 install(TARGETS ondemand_monitor DESTINATION bin)

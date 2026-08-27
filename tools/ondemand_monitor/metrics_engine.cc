@@ -21,6 +21,19 @@ static constexpr int64_t kFulfilledGuardUs = 500 * 1000;
 // Upper bound of recent_sn_times per endpoint (SN window kept for repeat
 // detection). Pruned lazily once exceeded.
 static constexpr size_t kRecentSnCapacity = 4096;
+// Max SN jump for which missing SNs are materialized as pending gaps. A
+// corrupt parse or a writer restart can produce an enormous forward jump;
+// per-SN bookkeeping for it would spin the gap-creation loop and poison loss
+// stats with millions of phantom gaps. Beyond this bound the stream is treated
+// as discontinuous: no gaps, last_sn simply advances.
+static constexpr uint64_t kMaxGapJump = 65536;
+// Max spacing between consecutive fragments of ONE sample (same writerSN,
+// monotonically advancing fragmentStartingNum) for it to count as normal
+// in-flight transmission rather than a retransmission. Trades a possible
+// undercount of genuine fragment retransmits inside this window against the
+// certain overcount of slow-but-normal multi-fragment samples (a 64KB sample
+// at ~10Mbps takes >50ms — past kDupGuardUs).
+static constexpr int64_t kFragContinuationUs = 500 * 1000;
 
 // RTPS builtin discovery entities (SEDP writers/readers etc., well-known
 // EntityIds like {00,00,03,C2}). Business requirement: the monitor only shows
@@ -31,6 +44,15 @@ static constexpr size_t kRecentSnCapacity = 4096;
 static bool IsBuiltinDiscoveryEntity(const GUID_t& g) {
     return g.entityId[0] == 0x00 && g.entityId[1] == 0x00 &&
            (g.entityId[3] == 0xC2 || g.entityId[3] == 0xC7 || g.entityId[3] == 0xC3);
+}
+
+// SPDP builtin participant writer/reader EntityIds {00,01,00,C2}/{00,01,00,C7}.
+// IsBuiltinDiscoveryEntity only covers the SEDP-style {00,00,x,Cx} pattern;
+// the SPDP pair has entityId[1]==0x01 and needs its own check (used where no
+// earlier SPDP branch has already filtered the traffic, e.g. OnFragment).
+static bool IsSpdpEntity(const GUID_t& g) {
+    return g.entityId[0] == 0x00 && g.entityId[1] == 0x01 &&
+           (g.entityId[3] == 0xC2 || g.entityId[3] == 0xC7);
 }
 
 // Business topic names are derivable straight from the EntityId conventions of
@@ -292,6 +314,51 @@ void MetricsEngine::OnData(const DataSubmessage& data, uint64_t timestamp_us) {
         // Note: if multiple participants share the same prefix, the last one wins
         prefix_to_participant_[participant_guid.prefix] = participant_guid;
 
+        // Retroactively adopt ANY endpoint created under this GUID prefix
+        // before the participant was known — typically SEDP arriving ahead of
+        // SPDP, where UpdateEndpoint fell back to the GetParticipantGuid
+        // placeholder {..:000001c1}. The name-based remount below only helps
+        // when the SEDP payload carried PID_PARTICIPANT_NAME (FastDDS does not
+        // send it), so a neutrally-named node would otherwise keep a nameless
+        // ghost participant holding all of its endpoints forever.
+        {
+            std::vector<GUID_t> adopt;
+            for (auto& [ep_guid, ep] : endpoints_) {
+                if (ep.participant_guid.prefix == participant_guid.prefix &&
+                    !(ep.participant_guid == participant_guid)) {
+                    adopt.push_back(ep_guid);
+                }
+            }
+            for (const auto& ep_guid : adopt) {
+                auto& ep = endpoints_[ep_guid];
+                GUID_t old_key = ep.participant_guid;
+                uint64_t moved_hb = 0, moved_ack = 0, moved_nack = 0;
+                auto old_it = participants_.find(old_key);
+                if (old_it != participants_.end()) {
+                    auto& old_p = old_it->second;
+                    if (old_p.endpoints_count > 0) old_p.endpoints_count--;
+                    // Preserve counters accumulated under the placeholder so
+                    // adoption doesn't reset a node's visible history.
+                    moved_hb = old_p.heartbeat_count;
+                    moved_ack = old_p.acknack_count;
+                    moved_nack = old_p.nack_count;
+                    // Pure placeholder (no name, never saw PDP, no endpoints
+                    // left) is an artifact, not a node — drop it instead of
+                    // letting it linger in the node list for one clean cycle.
+                    if (old_p.endpoints_count == 0 && old_p.name.empty() &&
+                        old_p.last_pdp_seen_us == 0) {
+                        participants_.erase(old_it);
+                    }
+                }
+                ep.participant_guid = participant_guid;
+                endpoint_to_participant_[ep_guid] = participant_guid;
+                participant.heartbeat_count += moved_hb;
+                participant.acknack_count += moved_ack;
+                participant.nack_count += moved_nack;
+                participant.endpoints_count++;
+            }
+        }
+
         // Retroactively fix endpoints that were seen in SEDP before this SPDP arrived
         if (data.has_participant_name && !data.participant_name.empty()) {
             for (auto& [ep_guid, ep_name] : sedp_endpoint_name_) {
@@ -457,7 +524,11 @@ void MetricsEngine::OnData(const DataSubmessage& data, uint64_t timestamp_us) {
                                data.writer_guid.entityId[3] == 0x03 &&
                                data.writer_guid.entityId[2] >= 0x03);
 
-        GUID_t writer_participant_guid;
+        // Zero-initialized explicitly: this used to be an uninitialized local,
+        // and with no pub participant discovered yet the garbage prefix byte
+        // skipped the fallback below, indexing participants_ under a random
+        // key — one ghost participant leaked per packet.
+        GUID_t writer_participant_guid{};
         if (is_data_writer) {
             for (const auto& [guid, is_pub] : discovered_pub_sub_) {
                 if (is_pub) {
@@ -548,11 +619,44 @@ void MetricsEngine::OnData(const DataSubmessage& data, uint64_t timestamp_us) {
         // ENTITYID_UNKNOWN as reader_guid. We match by topic name instead.
         if (!endpoint.topic_name.empty()) {
             bool found_reader = false;
+            uint64_t sn_u64 = data.seq_num.to_u64();
             for (auto& [ep_guid, ep] : endpoints_) {
                 if (ep.is_reader && ep.topic_name == endpoint.topic_name) {
                     ep.data_count++;
                     ep.bytes_sent += data.payload_size;
                     ep.last_seen_us = timestamp_us;
+
+                    // Track distinct bursts on the reader side too, using the
+                    // same kDupGuardUs deduplication that writers use. Without
+                    // this, `-i any` multi-interface copies inflate data_count
+                    // and make the receive frequency appear N× too high.
+                    bool distinct = false;
+                    auto seen = ep.recent_sn_times.find(sn_u64);
+                    if (seen != ep.recent_sn_times.end()) {
+                        if ((int64_t)(timestamp_us - seen->second) > kDupGuardUs) {
+                            seen->second = timestamp_us;
+                            distinct = true;
+                        }
+                    } else {
+                        ep.recent_sn_times.emplace(sn_u64, timestamp_us);
+                        distinct = true;
+                    }
+                    if (distinct) {
+                        ep.send_bursts++;
+                        if (ep.first_burst_us == 0) ep.first_burst_us = timestamp_us;
+                        ep.last_burst_us = timestamp_us;
+                    }
+                    // Lazy prune (same bound as writer path)
+                    if (ep.recent_sn_times.size() > kRecentSnCapacity) {
+                        for (auto sit = ep.recent_sn_times.begin();
+                             sit != ep.recent_sn_times.end();) {
+                            if (sit->first + kRecentSnCapacity < sn_u64)
+                                sit = ep.recent_sn_times.erase(sit);
+                            else
+                                ++sit;
+                        }
+                    }
+
                     found_reader = true;
                 }
             }
@@ -738,47 +842,29 @@ void MetricsEngine::OnAcknack(const AcknackSubmessage& ack, uint64_t timestamp_u
 }
 
 void MetricsEngine::CheckPendingGaps(EndpointInfo& ep, uint64_t current_sn, uint64_t timestamp_us) {
-    // Underflow guard: current_sn - 1000 wraps around to ~1.8e19 while the
-    // stream is younger than SN 1000 (i.e. almost always, early on), which made
-    // every entry look "far behind" — NACK requests were swept before any
-    // retransmission could match them, and fresh gaps were instantly miscounted
-    // as retransmissions instead of ever reaching the 5s loss timeout.
-    uint64_t stale_before = (current_sn > 1000) ? (current_sn - 1000) : 0;
+    (void)current_sn;  // reserved for future SN-windowed cleanup
 
-    // Check pending gaps for timeout
-    // Any gap older than LOSS_TIMEOUT_US (5 seconds) is confirmed loss
+    // Check pending gaps for timeout.
+    // Semantics: a gap that was never filled by an arriving packet is a LOSS,
+    // full stop. The previous behavior additionally swept gaps "far behind"
+    // the current SN into retransmit_count ("assume filled, we missed the
+    // resend") — but at high rates the SN window slides past that threshold in
+    // well under the 5s loss timeout, so every REAL loss was laundered into a
+    // fake retransmission before it could ever be classified. An unfilled gap
+    // now always ages into lost_count via the timeout branch below, which also
+    // bounds pending_gaps memory to a 5s window on its own.
     auto it = ep.pending_gaps.begin();
     while (it != ep.pending_gaps.end()) {
         uint64_t gap_sn = it->first;
         uint64_t gap_time = it->second;
 
-        // If gap is older than timeout, count as confirmed loss
+        // Gap older than LOSS_TIMEOUT_US (5 seconds) is confirmed loss
         if ((int64_t)(timestamp_us - gap_time) > (int64_t)LOSS_TIMEOUT_US) {
             ep.lost_count++;
             ep.nacked_requests.erase(gap_sn);  // Clean up NACK tracking
             it = ep.pending_gaps.erase(it);
         } else {
-            // Remove if gap is too far behind current SN (likely filled by retransmission)
-            // Use a larger threshold to give retransmissions time to arrive
-            if (gap_sn < stale_before) {
-                // Gap is too old and far behind current SN, assume it was filled
-                // Count as retransmission (we missed the retransmitted packet)
-                ep.retransmit_count++;
-                ep.nacked_requests.erase(gap_sn);  // Clean up NACK tracking
-                it = ep.pending_gaps.erase(it);
-            } else {
-                ++it;
-            }
-        }
-    }
-
-    // Clean up old NACK requests that are far behind current SN
-    auto nack_it = ep.nacked_requests.begin();
-    while (nack_it != ep.nacked_requests.end()) {
-        if (nack_it->first < stale_before) {
-            nack_it = ep.nacked_requests.erase(nack_it);
-        } else {
-            ++nack_it;
+            ++it;
         }
     }
 
@@ -882,11 +968,15 @@ void MetricsEngine::TrackRetransmitAndGaps(EndpointInfo& ep, const SequenceNumbe
     }
 
     if (last_sn > 0 && sn > last_sn + 1) {
-        // SN jumped: mark missing SNs as pending gaps
-        for (uint64_t missing_sn = last_sn + 1; missing_sn < sn; ++missing_sn) {
-            // Only add if not already received (could happen with out-of-order)
-            if (ep.pending_gaps.find(missing_sn) == ep.pending_gaps.end()) {
-                ep.pending_gaps[missing_sn] = timestamp_us;
+        // SN jumped: mark missing SNs as pending gaps — but only for plausible
+        // jumps (see kMaxGapJump). Beyond the bound this is a stream
+        // discontinuity, not a burst of losses.
+        if (sn - last_sn <= kMaxGapJump) {
+            for (uint64_t missing_sn = last_sn + 1; missing_sn < sn; ++missing_sn) {
+                // Only add if not already received (could happen with out-of-order)
+                if (ep.pending_gaps.find(missing_sn) == ep.pending_gaps.end()) {
+                    ep.pending_gaps[missing_sn] = timestamp_us;
+                }
             }
         }
     }
@@ -908,11 +998,50 @@ void MetricsEngine::OnFragment(const FragSubmessage& frag, uint64_t timestamp_us
         latest_timestamp_us_ = timestamp_us;
     }
 
+    // Business-only view: builtin discovery traffic must not create endpoints
+    // here either — OnData/OnHeartbeat/OnAcknack all exclude these entities,
+    // this path silently did not. Covers both the SEDP-style and the SPDP
+    // EntityId patterns (there is no earlier SPDP branch on this path).
+    if (IsBuiltinDiscoveryEntity(frag.writer_guid) || IsSpdpEntity(frag.writer_guid)) {
+        return;
+    }
+
     UpdateEndpoint(frag.writer_guid, true, timestamp_us);
     auto& endpoint = endpoints_[frag.writer_guid];
 
+    // Name fragment-only endpoints immediately from EntityId conventions. A
+    // large tableDefine travels exclusively as DATA_FRAG (>UDP payload limit);
+    // without this it stayed unnamed until an unrelated DATA submessage arrived.
+    if (endpoint.topic_name.empty()) {
+        std::string inferred = InferBusinessTopicName(frag.writer_guid);
+        if (!inferred.empty()) {
+            endpoint.topic_name = inferred;
+            endpoint.type_name =
+                inferred.find("bucket_") != std::string::npos ? "TableDataTransfer" : "";
+        }
+    }
+
     endpoint.frag_count += frag.frag_count;
     endpoint.bytes_sent += frag.payload_size;
+
+    uint64_t sn_u64 = frag.seq_num.to_u64();
+
+    // Same-sample continuation: consecutive fragments share writerSN and
+    // advance fragmentStartingNum. Refreshing that SN's burst baseline keeps
+    // the repeat-burst heuristic (which fires after kDupGuardUs) from charging
+    // a slow multi-fragment transmission as a retransmission. See
+    // kFragContinuationUs for the trade-off.
+    if (sn_u64 == endpoint.last_frag_sn &&
+        frag.frag_start > endpoint.last_frag_start &&
+        (int64_t)(timestamp_us - endpoint.last_frag_us) < kFragContinuationUs) {
+        auto seen_it = endpoint.recent_sn_times.find(sn_u64);
+        if (seen_it != endpoint.recent_sn_times.end()) {
+            seen_it->second = timestamp_us;
+        }
+    }
+    endpoint.last_frag_sn = sn_u64;
+    endpoint.last_frag_start = frag.frag_start;
+    endpoint.last_frag_us = timestamp_us;
 
     // Fragments share writerSN across submessages of the same sample, so the
     // same gap/retransmit logic applies unchanged (duplicate SNs of consecutive
@@ -930,11 +1059,23 @@ std::vector<ParticipantInfo> MetricsEngine::GetParticipants() {
     std::unique_lock lock(mutex_);
     std::vector<ParticipantInfo> result;
 
-    // Use wall clock for activity check (latest_timestamp_us_ stops updating when demo stops)
-    uint64_t now = std::chrono::duration_cast<std::chrono::microseconds>(
-        std::chrono::system_clock::now().time_since_epoch()).count();
+    // Reference "now" for activity/cleanup, per mode:
+    // - Live: wall clock (latest_timestamp_us_ freezes when traffic stops, so
+    //   participants must age out against real time).
+    // - Offline replay: the packet-time domain. File timestamps are compared
+    //   against each other; comparing them to the wall clock would instantly
+    //   evict every participant when replaying a capture older than 10s.
+    uint64_t now = offline_mode_.load()
+        ? latest_timestamp_us_
+        : std::chrono::duration_cast<std::chrono::microseconds>(
+              std::chrono::system_clock::now().time_since_epoch()).count();
 
-    // Cleanup: remove participants inactive for more than 10 seconds
+    // Cleanup: remove participants inactive for more than 10 seconds.
+    // Removals are collected first so auxiliary maps can be cascaded below
+    // only when something was actually removed (this getter runs at UI frame
+    // rate; steady state must stay cheap).
+    std::vector<GUID_t> removed_participants;
+    std::unordered_set<GUID_t, GUIDHash> removed_endpoints;
     auto it = participants_.begin();
     while (it != participants_.end()) {
         auto& [guid, info] = *it;
@@ -955,20 +1096,68 @@ std::vector<ParticipantInfo> MetricsEngine::GetParticipants() {
         }
 
         if (should_remove) {
+            removed_participants.push_back(guid);
             // Remove associated endpoints
             auto ep_it = endpoints_.begin();
             while (ep_it != endpoints_.end()) {
-                if (ep_it->second.participant_guid == guid) {
+                bool owned = (ep_it->second.participant_guid == guid);
+                // Virtual readers (entityId[3]==0x05) carry a zero
+                // participant_guid but belong to their writer's GUID prefix;
+                // tie their lifetime to the owning participant, otherwise they
+                // linger forever after the node disappears.
+                bool virtual_reader_of =
+                    ep_it->second.is_reader &&
+                    ep_it->second.participant_guid.prefix[0] == 0 &&
+                    ep_it->first.entityId[3] == 0x05 &&
+                    ep_it->first.prefix == guid.prefix;
+                if (owned || virtual_reader_of) {
+                    removed_endpoints.insert(ep_it->first);
                     ep_it = endpoints_.erase(ep_it);
                 } else {
                     ++ep_it;
                 }
             }
-            // Remove from discovered_pub_sub_
-            discovered_pub_sub_.erase(guid);
             it = participants_.erase(it);
         } else {
             ++it;
+        }
+    }
+
+    // Cascade cleanup: every auxiliary map keyed by participant or endpoint
+    // must drop entries whose owner is gone. Previously these survived forever,
+    // so each participant churn cycle leaked rows and left stale mappings that
+    // could resurrect wrong associations when GUID prefixes get reused.
+    for (const auto& guid : removed_participants) {
+        discovered_pub_sub_.erase(guid);
+        prefix_addresses_.erase(guid.prefix);
+        for (auto m = name_to_participant_.begin(); m != name_to_participant_.end();) {
+            m = (m->second == guid) ? name_to_participant_.erase(m) : std::next(m);
+        }
+        for (auto m = prefix_to_participant_.begin(); m != prefix_to_participant_.end();) {
+            m = (m->second == guid) ? prefix_to_participant_.erase(m) : std::next(m);
+        }
+        for (auto m = prefix_to_pub_sub_.begin(); m != prefix_to_pub_sub_.end();) {
+            m = (m->second == guid) ? prefix_to_pub_sub_.erase(m) : std::next(m);
+        }
+    }
+    if (!removed_endpoints.empty() || !removed_participants.empty()) {
+        for (auto m = endpoint_to_participant_.begin();
+             m != endpoint_to_participant_.end();) {
+            bool dead_key = removed_endpoints.count(m->first) > 0;
+            bool dead_val = std::find(removed_participants.begin(),
+                                      removed_participants.end(), m->second) !=
+                            removed_participants.end();
+            m = (dead_key || dead_val) ? endpoint_to_participant_.erase(m) : std::next(m);
+        }
+        for (auto m = sedp_endpoint_name_.begin(); m != sedp_endpoint_name_.end();) {
+            m = (removed_endpoints.count(m->first) > 0)
+                    ? sedp_endpoint_name_.erase(m)
+                    : std::next(m);
+        }
+        for (auto m = transfers_.begin(); m != transfers_.end();) {
+            bool dead = removed_endpoints.count(m->first.writer) > 0 ||
+                        removed_endpoints.count(m->first.reader) > 0;
+            m = dead ? transfers_.erase(m) : std::next(m);
         }
     }
 
@@ -1066,13 +1255,19 @@ std::vector<MetricsEngine::TopicInfo> MetricsEngine::GetParticipantTopics(const 
             topic.retransmit_count += ep.retransmit_count;
             topic.heartbeat_count += ep.heartbeat_count;
 
-            // Frequency source: writer endpoints only (readers never transmit)
-            if (ep.is_writer && ep.send_bursts > 0) {
+            // Frequency source: the deduplicated burst counter (immune to
+            // `-i any` multi-interface copies). Both writers and readers
+            // accumulate send_bursts via TrackRetransmitAndGaps; writer data
+            // wins when both exist on the same topic (it's the authoritative
+            // transmit rate).
+            if (ep.send_bursts > 0) {
                 auto& agg = topic_bursts[ep.topic_name];
-                if (ep.send_bursts > agg.bursts) {
-                    agg.bursts = ep.send_bursts;
-                    agg.first_us = ep.first_burst_us;
-                    agg.last_us = ep.last_burst_us;
+                if (ep.is_writer || agg.bursts == 0) {
+                    if (ep.send_bursts > agg.bursts) {
+                        agg.bursts = ep.send_bursts;
+                        agg.first_us = ep.first_burst_us;
+                        agg.last_us = ep.last_burst_us;
+                    }
                 }
             }
         }
