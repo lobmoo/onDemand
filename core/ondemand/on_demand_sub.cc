@@ -263,49 +263,48 @@ namespace ondemand
     /**
      * @brief 处理接收到的数据传输消息
      *
-     * mask 编码: Roaring64Map 序列化字节流
-     *   - 反序列化后按升序迭代, 第 i 个 varHash 对应 varData[i]
-     *   - 通过 varHash 查找本地 varId, 写入 varStore_
+     * mask 编码: Roaring 序列化字节流 (uint16 maskId)
+     *   - 反序列化后按升序迭代, 第 i 个 maskId 对应 varData[i]
+     *   - 通过 maskIdToVarHash_ 反查 varHash, 再从 varIndex_ 取 varId, 写入 varStore_
      */
     void OnDemandSub::processDataTransfer()
     {
         pthread_setname_np(pthread_self(), "proc_data_tx");
 
         while (running_.load(std::memory_order_acquire)) {
-            std::shared_ptr<DSF::Var::TableDataTransfer> dataTransfer;
-            if (!dataTransferQueue_.try_dequeue(dataTransfer)) {
+            std::shared_ptr<DSF::Var::TableDataTransfer> data;
+            if (!dataTransferQueue_.try_dequeue(data)) {
                 std::this_thread::sleep_for(std::chrono::milliseconds(10));
                 continue;
             }
-            if (!dataTransfer) {
+            if (!data) {
                 continue;
             }
 
-            const auto &maskBytes = dataTransfer->mask();
-            const auto &varDataList = dataTransfer->varData();
-            const auto &timeStamp = dataTransfer->timestamp();
-            const auto blobType = dataTransfer->blobType();
+            const auto &maskBytes = data->mask();
+            const auto &varDataList = data->varData();
+            const auto &timeStamp = data->timestamp();
+            const auto blobType = data->blobType();
+            const uint32_t bucketIdx = static_cast<uint32_t>(data->tableId());
 
             if (maskBytes.empty() || varDataList.empty()) {
                 ONDEMANDLOG(warning) << "Received empty mask or varData, skipping.";
                 continue;
             }
 
-            /*1. 反序列化 Roaring64Map*/
-            roaring::Roaring64Map roar;
+            /*1. 反序列化 Roaring (uint16 maskId)*/
+            roaring::Roaring roar;
             try {
-                roar =
-                    roaring::Roaring64Map::read(reinterpret_cast<const char *>(maskBytes.data()));
+                roar = roaring::Roaring::read(reinterpret_cast<const char *>(maskBytes.data()));
             } catch (const std::exception &e) {
                 ONDEMANDLOG(error) << "Failed to deserialize mask: " << e.what();
                 continue;
             }
 
-            // 2. 迭代 Roaring64Map (升序), varData[i] 与第 i 个 hash 一一对应
-            //    同一消息内所有变量属于同一 bucket，取第一个即可
+            // 2. 迭代 Roaring (升序), varData[i] 与第 i 个 maskId 一一对应
+            //    通过 maskIdToVarHash_ 反查 varHash，再从 varIndex_ 取 varId
             size_t idx = 0;
             size_t written = 0;
-            uint32_t bucketIdx = ONDEMAND_BUCKET_SIZE;
             std::vector<uint32_t> writeIds;
             std::vector<const void *> writeDatas;
             std::vector<uint32_t> writeSizes;
@@ -313,14 +312,29 @@ namespace ondemand
                 std::shared_lock lock(varIndexMutex_);
                 for (auto it = roar.begin(); it != roar.end() && idx < varDataList.size();
                      ++it, ++idx) {
-                    uint64_t varHash = *it;
+                    uint16_t maskId = *it;
                     const auto &blob = varDataList[idx];
                     if (blob.empty()) {
                         ONDEMANDLOG_TIME(warning, 3000)
-                            << "Received empty data blob for varHash: " << varHash << ", skipping.";
+                            << "Received empty data blob for maskId: " << maskId << ", skipping.";
                         continue;
                     }
 
+                    // 反查：maskId -> varHash -> varIndex_ (per-bucket)
+                    auto bucketIt = maskIdToVarHash_.find(bucketIdx);
+                    if (bucketIt == maskIdToVarHash_.end()) {
+                        ONDEMANDLOG_TIME(warning, 3000)
+                            << "Received data for unknown bucket: " << bucketIdx << ", skipping.";
+                        continue;
+                    }
+                    auto revIt = bucketIt->second.find(maskId);
+                    if (revIt == bucketIt->second.end()) {
+                        ONDEMANDLOG_TIME(warning, 3000)
+                            << "Received data for unknown maskId: " << maskId << " in bucket=" << bucketIdx
+                            << ", bucket has " << bucketIt->second.size() << " entries, skipping.";
+                        continue;
+                    }
+                    uint64_t varHash = revIt->second;
                     auto vit = varIndex_.find(varHash);
                     if (vit == varIndex_.end()) {
                         ONDEMANDLOG_TIME(warning, 3000)
@@ -331,10 +345,6 @@ namespace ondemand
                     uint32_t varId = vit->second.varId;
                     if (varId == VarStore::kInvalidId)
                         continue;
-
-                    if (bucketIdx == ONDEMAND_BUCKET_SIZE) {
-                        bucketIdx = vit->second.bucketIndex;
-                    }
 
                     writeIds.push_back(varId);
                     writeDatas.push_back(blob.data());
@@ -389,16 +399,19 @@ namespace ondemand
                         }
                     }
 
-                    /*收集本次 TableDefine 中所有变量的 hash，用于差分删除*/
+                    const std::string &pubNodeName = tableDefine->nodeName();
+
+                    /*收集本次 TableDefine 中所有变量的 varHash，用于差分删除*/
                     std::unordered_set<uint64_t> incomingHashes;
                     incomingHashes.reserve(tableDefine->varDefines().size());
                     for (const auto &varDef : tableDefine->varDefines()) {
-                        incomingHashes.insert(varDef.id());
+                        const auto &varDefine = varDef.var().varDefine();
+                        std::string metaVarName = make_meta_varname(pubNodeName, varDefine.name());
+                        incomingHashes.insert(fast_hash(metaVarName));
                     }
 
                     /*差分删除：varIndex_ 中属于该 bucket 且属于同一 pub 节点但本次 TableDefine 里没有的变量*/
                     if (thisBucketId != UINT32_MAX) {
-                        const std::string &pubNodeName = tableDefine->nodeName();
                         std::vector<uint64_t> toRemove;
                         for (auto it = varIndex_.begin(); it != varIndex_.end();) {
                             auto defIt = varDefineIndex_.find(it->first);
@@ -410,6 +423,17 @@ namespace ondemand
                                     << "Removing deleted var: " << it->second.realVarName;
                                 toRemove.push_back(it->first);
                                 varStore_.unregister_var(it->first);
+                                // 清理反查索引 (per-bucket)：遍历找到对应的 maskId 并删除
+                                auto bucketMaskIt = maskIdToVarHash_.find(thisBucketId);
+                                if (bucketMaskIt != maskIdToVarHash_.end()) {
+                                    for (auto maskIt = bucketMaskIt->second.begin();
+                                         maskIt != bucketMaskIt->second.end(); ++maskIt) {
+                                        if (maskIt->second == it->first) {
+                                            bucketMaskIt->second.erase(maskIt);
+                                            break;
+                                        }
+                                    }
+                                }
                                 varDefineIndex_.erase(defIt);
                                 totalReceived_.fetch_sub(1);
                                 it = varIndex_.erase(it);
@@ -430,51 +454,57 @@ namespace ondemand
                     const auto &varDefines = tableDefine->varDefines();
                     const size_t n = varDefines.size();
 
-                    // 用单个 vector 收集，减少碎片：{hash, size, bucketIdx, define索引}
+                    // 用单个 vector 收集，减少碎片：{hash, maskId, size, define索引}
                     std::vector<uint64_t> hashes;
+                    std::vector<uint16_t> maskIds;
                     std::vector<uint32_t> sizes;
-                    std::vector<uint32_t> bucketIdxs;
                     std::vector<uint32_t> defineIdxs; // 指向 varDefines 的下标
                     hashes.reserve(n);
+                    maskIds.reserve(n);
                     sizes.reserve(n);
-                    bucketIdxs.reserve(n);
                     defineIdxs.reserve(n);
 
                     for (size_t i = 0; i < n; ++i) {
-                        uint64_t varHash = varDefines[i].id();
+                        uint16_t maskId = static_cast<uint16_t>(varDefines[i].id());
                         const auto &varDefine = varDefines[i].var().varDefine();
+                        std::string metaVarName = make_meta_varname(pubNodeName, varDefine.name());
+                        uint64_t varHash = fast_hash(metaVarName);
 
                         if (varIndex_.find(varHash) != varIndex_.end())
                             continue;
 
                         hashes.push_back(varHash);
+                        maskIds.push_back(maskId);
                         sizes.push_back(static_cast<uint32_t>(varDefine.size() ? varDefine.size() : 2));
-                        bucketIdxs.push_back(static_cast<uint32_t>(
-                            BucketManager::CalculateBucketIndexFromHash(varHash)));
                         defineIdxs.push_back(static_cast<uint32_t>(i));
                     }
 
-                    // 批量注册（一次 ConfigGuard）
+                    // 批量注册 VarStore（用 varHash 作为内部 key）
                     std::vector<uint32_t> ids(hashes.size());
                     if (!hashes.empty())
                         varStore_.register_var_batch(hashes.data(), sizes.data(), ids.data(),
                                                      hashes.size());
 
-                    // 批量填充 varIndex_ / varDefineIndex_
+                    // 批量填充 varIndex_ / varDefineIndex_ / maskIdToVarHash_
                     std::unordered_set<uint32_t> newBucketIds;
                     for (size_t k = 0; k < hashes.size(); ++k) {
                         const auto &varDefine = varDefines[defineIdxs[k]].var().varDefine();
                         VarMetadata meta;
                         meta.currentFreq = 0xFFFFFFFF;
                         meta.activeFreqCount = 0;
-                        meta.bucketIndex = bucketIdxs[k];
+                        meta.bucketIndex = thisBucketId;  // 使用 TableDefine 消息中的实际 bucket ID
                         meta.realVarName = varDefine.name();
                         meta.varId = ids[k];
 
                         varDefineIndex_.emplace(hashes[k],
                                                 std::make_shared<DSF::Var::Define>(varDefine));
-                        varIndex_.emplace(hashes[k], std::move(meta));
-                        newBucketIds.insert(bucketIdxs[k]);
+                        varIndex_.emplace(hashes[k], meta);
+                        // 反查索引：per-bucket, maskId -> varHash，供 processDataTransfer 使用
+                        // 使用 thisBucketId 而不是计算出的 bucketIdxs[k]，确保与 pub 端一致
+                        maskIdToVarHash_[thisBucketId][maskIds[k]] = hashes[k];
+                        ONDEMANDLOG(info) << "Stored maskId=" << maskIds[k] << " in bucket=" << thisBucketId
+                                          << " for varHash=" << hashes[k];
+                        newBucketIds.insert(thisBucketId);
                         totalReceived_.fetch_add(1);
                     }
                     if (!hashes.empty())
@@ -1234,7 +1264,18 @@ namespace ondemand
                 auto defIt = varDefineIndex_.find(it->first);
                 if (defIt != varDefineIndex_.end() && defIt->second->nodeName() == pubNodeName) {
                     toRemove.push_back(it->first);
-                    varStore_.unregister_var(it->first);
+                    varStore_.unregister_var(it->first);  // 用 varHash 注销
+                    // 清理反查索引 (per-bucket)：遍历找到对应的 maskId 并删除
+                    auto bucketMaskIt = maskIdToVarHash_.find(meta.bucketIndex);
+                    if (bucketMaskIt != maskIdToVarHash_.end()) {
+                        for (auto maskIt = bucketMaskIt->second.begin();
+                             maskIt != bucketMaskIt->second.end(); ++maskIt) {
+                            if (maskIt->second == it->first) {
+                                bucketMaskIt->second.erase(maskIt);
+                                break;
+                            }
+                        }
+                    }
                     varDefineIndex_.erase(defIt);
                     totalReceived_.fetch_sub(1, std::memory_order_relaxed);
                     it = varIndex_.erase(it);
@@ -1412,6 +1453,7 @@ namespace ondemand
             std::unique_lock lock(varIndexMutex_);
             varIndex_.clear();
             varDefineIndex_.clear();
+            maskIdToVarHash_.clear();
         }
 
         /*重置 varStore_，清空 table/metas/arena，避免重新 start 时 id 冲突*/

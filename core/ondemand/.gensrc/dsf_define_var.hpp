@@ -2328,7 +2328,7 @@ public:
      * @param _id New value for member id
      */
     eProsima_user_DllExport void id(
-            uint64_t _id)
+            uint16_t _id)
     {
         m_id = _id;
     }
@@ -2337,7 +2337,7 @@ public:
      * @brief This function returns the value of member id
      * @return Value of member id
      */
-    eProsima_user_DllExport uint64_t id() const
+    eProsima_user_DllExport uint16_t id() const
     {
         return m_id;
     }
@@ -2346,7 +2346,7 @@ public:
      * @brief This function returns a reference to member id
      * @return Reference to member id
      */
-    eProsima_user_DllExport uint64_t& id()
+    eProsima_user_DllExport uint16_t& id()
     {
         return m_id;
     }
@@ -2394,7 +2394,7 @@ public:
 
 private:
 
-    uint64_t m_id{0};
+    uint16_t m_id{0};
     VarRequest m_var;
 
 };
@@ -2701,6 +2701,8 @@ public:
     eProsima_user_DllExport TableDataTransfer(
             const TableDataTransfer& x)
     {
+                    m_tableId = x.m_tableId;
+
                     m_mask = x.m_mask;
 
                     m_timestamp = x.m_timestamp;
@@ -2718,6 +2720,7 @@ public:
     eProsima_user_DllExport TableDataTransfer(
             TableDataTransfer&& x) noexcept
     {
+        m_tableId = x.m_tableId;
         m_mask = std::move(x.m_mask);
         m_timestamp = std::move(x.m_timestamp);
         m_varData = std::move(x.m_varData);
@@ -2731,6 +2734,8 @@ public:
     eProsima_user_DllExport TableDataTransfer& operator =(
             const TableDataTransfer& x)
     {
+
+                    m_tableId = x.m_tableId;
 
                     m_mask = x.m_mask;
 
@@ -2751,6 +2756,7 @@ public:
             TableDataTransfer&& x) noexcept
     {
 
+        m_tableId = x.m_tableId;
         m_mask = std::move(x.m_mask);
         m_timestamp = std::move(x.m_timestamp);
         m_varData = std::move(x.m_varData);
@@ -2765,7 +2771,8 @@ public:
     eProsima_user_DllExport bool operator ==(
             const TableDataTransfer& x) const
     {
-        return (m_mask == x.m_mask &&
+        return (m_tableId == x.m_tableId &&
+           m_mask == x.m_mask &&
            m_timestamp == x.m_timestamp &&
            m_varData == x.m_varData &&
            m_blobType == x.m_blobType);
@@ -2780,6 +2787,35 @@ public:
     {
         return !(*this == x);
     }
+
+    /*!
+     * @brief This function sets a value in member tableId
+     * @param _tableId New value for member tableId
+     */
+    eProsima_user_DllExport void tableId(
+            uint16_t _tableId)
+    {
+        m_tableId = _tableId;
+    }
+
+    /*!
+     * @brief This function returns the value of member tableId
+     * @return Value of member tableId
+     */
+    eProsima_user_DllExport uint16_t tableId() const
+    {
+        return m_tableId;
+    }
+
+    /*!
+     * @brief This function returns a reference to member tableId
+     * @return Reference to member tableId
+     */
+    eProsima_user_DllExport uint16_t& tableId()
+    {
+        return m_tableId;
+    }
+
 
     /*!
      * @brief This function copies the value in member mask
@@ -2930,6 +2966,7 @@ public:
 
 private:
 
+    uint16_t m_tableId{0};
     DSF::DT_BLOB m_mask;
     DSF::Timespec m_timestamp;
     std::vector<DSF::DT_BLOB> m_varData;

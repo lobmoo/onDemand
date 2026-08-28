@@ -319,19 +319,21 @@ namespace ondemand
 
         /*变量定义队列*/
         moodycamel::ConcurrentQueue<std::shared_ptr<DSF::Var::PubTableDefine>> pubTableDefineQueue_;
-        moodycamel::ConcurrentQueue<std::shared_ptr<DSF::Var::TableDataTransfer>>
-            dataTransferQueue_;
+        /*数据传输队列*/
+        moodycamel::ConcurrentQueue<std::shared_ptr<DSF::Var::TableDataTransfer>> dataTransferQueue_;
 
         /*处理线程*/
         std::thread processTableDefineThread_;
         std::vector<std::thread> processDataTransferThreads_;
          mutable std::shared_mutex varIndexMutex_;
-        /*变量索引: hash -> 元数据（热路径）*/
+        /*变量索引: varHash(fast_hash) -> 元数据（热路径）*/
         std::unordered_map<uint64_t, VarMetadata> varIndex_;
-        /*变量定义冷路径索引: hash -> IDL Define（仅广播/查询时访问）
+        /*变量定义冷路径索引: varHash -> IDL Define（仅广播/查询时访问）
          * 与 varIndex_ 共享 varIndexMutex_，生命周期与 varIndex_ 条目一致 */
         std::unordered_map<uint64_t, std::shared_ptr<DSF::Var::Define>> varDefineIndex_;
-       
+        /*反查索引: per-bucket, maskId -> varHash，供 processDataTransfer 从 Roaring maskId 回查 varIndex_*/
+        std::unordered_map<uint32_t, std::unordered_map<uint16_t, uint64_t>> maskIdToVarHash_;
+
         VarStore varStore_; // 变量值存储
 
         /*写入时间戳/计数，按 bucket 粒度跟踪 (lock-free, 单写多读)*/

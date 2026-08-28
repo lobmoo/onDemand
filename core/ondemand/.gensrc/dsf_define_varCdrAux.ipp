@@ -1223,15 +1223,18 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0),
-                data.mask(), current_alignment);
+                data.tableId(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
-                data.timestamp(), current_alignment);
+                data.mask(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
-                data.varData(), current_alignment);
+                data.timestamp(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(3),
+                data.varData(), current_alignment);
+
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(4),
                 data.blobType(), current_alignment);
 
 
@@ -1254,10 +1257,11 @@ eProsima_user_DllExport void serialize(
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
-        << eprosima::fastcdr::MemberId(0) << data.mask()
-        << eprosima::fastcdr::MemberId(1) << data.timestamp()
-        << eprosima::fastcdr::MemberId(2) << data.varData()
-        << eprosima::fastcdr::MemberId(3) << data.blobType()
+        << eprosima::fastcdr::MemberId(0) << data.tableId()
+        << eprosima::fastcdr::MemberId(1) << data.mask()
+        << eprosima::fastcdr::MemberId(2) << data.timestamp()
+        << eprosima::fastcdr::MemberId(3) << data.varData()
+        << eprosima::fastcdr::MemberId(4) << data.blobType()
 ;
     scdr.end_serialize_type(current_state);
 }
@@ -1278,18 +1282,22 @@ eProsima_user_DllExport void deserialize(
                 switch (mid.id)
                 {
                                         case 0:
-                                                dcdr >> data.mask();
+                                                dcdr >> data.tableId();
                                             break;
 
                                         case 1:
-                                                dcdr >> data.timestamp();
+                                                dcdr >> data.mask();
                                             break;
 
                                         case 2:
-                                                dcdr >> data.varData();
+                                                dcdr >> data.timestamp();
                                             break;
 
                                         case 3:
+                                                dcdr >> data.varData();
+                                            break;
+
+                                        case 4:
                                                 dcdr >> data.blobType();
                                             break;
 
@@ -1315,6 +1323,8 @@ void serialize_key(
 
     static_cast<void>(scdr);
     static_cast<void>(data);
+                        scdr << data.tableId();
+
                         scdr << data.mask();
 
                         serialize_key(scdr, data.timestamp());
@@ -1431,18 +1441,21 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0),
-                data.mask(), current_alignment);
+                data.tableId(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
-                data.timestamp(), current_alignment);
+                data.mask(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
-                data.varData(), current_alignment);
+                data.timestamp(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(3),
-                data.blobType(), current_alignment);
+                data.varData(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(4),
+                data.blobType(), current_alignment);
+
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(5),
                 data.properties(), current_alignment);
 
 
@@ -1465,11 +1478,12 @@ eProsima_user_DllExport void serialize(
             eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
 
     scdr
-        << eprosima::fastcdr::MemberId(0) << data.mask()
-        << eprosima::fastcdr::MemberId(1) << data.timestamp()
-        << eprosima::fastcdr::MemberId(2) << data.varData()
-        << eprosima::fastcdr::MemberId(3) << data.blobType()
-        << eprosima::fastcdr::MemberId(4) << data.properties()
+        << eprosima::fastcdr::MemberId(0) << data.tableId()
+        << eprosima::fastcdr::MemberId(1) << data.mask()
+        << eprosima::fastcdr::MemberId(2) << data.timestamp()
+        << eprosima::fastcdr::MemberId(3) << data.varData()
+        << eprosima::fastcdr::MemberId(4) << data.blobType()
+        << eprosima::fastcdr::MemberId(5) << data.properties()
 ;
     scdr.end_serialize_type(current_state);
 }
@@ -1490,22 +1504,26 @@ eProsima_user_DllExport void deserialize(
                 switch (mid.id)
                 {
                                         case 0:
-                                                dcdr >> data.mask();
+                                                dcdr >> data.tableId();
                                             break;
 
                                         case 1:
-                                                dcdr >> data.timestamp();
+                                                dcdr >> data.mask();
                                             break;
 
                                         case 2:
-                                                dcdr >> data.varData();
+                                                dcdr >> data.timestamp();
                                             break;
 
                                         case 3:
-                                                dcdr >> data.blobType();
+                                                dcdr >> data.varData();
                                             break;
 
                                         case 4:
+                                                dcdr >> data.blobType();
+                                            break;
+
+                                        case 5:
                                                 dcdr >> data.properties();
                                             break;
 

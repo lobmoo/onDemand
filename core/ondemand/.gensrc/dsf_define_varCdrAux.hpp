@@ -42,7 +42,7 @@ constexpr uint32_t DSF_Var_DataTransfer_max_key_cdr_typesize {0UL};
 
 
 
-constexpr uint32_t DSF_Var_PubTableVarDefine_max_cdr_typesize {1340UL};
+constexpr uint32_t DSF_Var_PubTableVarDefine_max_cdr_typesize {1332UL};
 constexpr uint32_t DSF_Var_PubTableVarDefine_max_key_cdr_typesize {0UL};
 
 
@@ -52,7 +52,7 @@ constexpr uint32_t DSF_Var_Define_max_key_cdr_typesize {0UL};
 
 
 
-constexpr uint32_t DSF_Var_TableDataTransferEx_max_cdr_typesize {2096UL};
+constexpr uint32_t DSF_Var_TableDataTransferEx_max_cdr_typesize {2100UL};
 constexpr uint32_t DSF_Var_TableDataTransferEx_max_key_cdr_typesize {0UL};
 
 
@@ -85,7 +85,7 @@ constexpr uint32_t DSF_Var_AccessControl_max_key_cdr_typesize {0UL};
 
 
 
-constexpr uint32_t DSF_Var_TableDataTransfer_max_cdr_typesize {2076UL};
+constexpr uint32_t DSF_Var_TableDataTransfer_max_cdr_typesize {2080UL};
 constexpr uint32_t DSF_Var_TableDataTransfer_max_key_cdr_typesize {0UL};
 
 

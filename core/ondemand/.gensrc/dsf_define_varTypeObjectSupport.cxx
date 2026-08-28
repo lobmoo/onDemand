@@ -1582,7 +1582,7 @@ void register_PubTableVarDefine_type_identifier(
             ReturnCode_t return_code_id {eprosima::fastdds::dds::RETCODE_OK};
             return_code_id =
                 eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
-                "_uint64_t", type_ids_id);
+                "_uint16_t", type_ids_id);
 
             if (eprosima::fastdds::dds::RETCODE_OK != return_code_id)
             {
@@ -1894,6 +1894,36 @@ void register_TableDataTransfer_type_identifier(
         header_TableDataTransfer = TypeObjectUtils::build_complete_struct_header(TypeIdentifier(), detail_TableDataTransfer);
         CompleteStructMemberSeq member_seq_TableDataTransfer;
         {
+            TypeIdentifierPair type_ids_tableId;
+            ReturnCode_t return_code_tableId {eprosima::fastdds::dds::RETCODE_OK};
+            return_code_tableId =
+                eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->type_object_registry().get_type_identifiers(
+                "_uint16_t", type_ids_tableId);
+
+            if (eprosima::fastdds::dds::RETCODE_OK != return_code_tableId)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION,
+                        "tableId Structure member TypeIdentifier unknown to TypeObjectRegistry.");
+                return;
+            }
+            StructMemberFlag member_flags_tableId = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
+                    false, false, false, false);
+            MemberId member_id_tableId = 0x00000000;
+            bool common_tableId_ec {false};
+            CommonStructMember common_tableId {TypeObjectUtils::build_common_struct_member(member_id_tableId, member_flags_tableId, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_tableId, common_tableId_ec))};
+            if (!common_tableId_ec)
+            {
+                EPROSIMA_LOG_ERROR(XTYPES_TYPE_REPRESENTATION, "Structure tableId member TypeIdentifier inconsistent.");
+                return;
+            }
+            MemberName name_tableId = "tableId";
+            eprosima::fastcdr::optional<AppliedBuiltinMemberAnnotations> member_ann_builtin_tableId;
+            ann_custom_TableDataTransfer.reset();
+            CompleteMemberDetail detail_tableId = TypeObjectUtils::build_complete_member_detail(name_tableId, member_ann_builtin_tableId, ann_custom_TableDataTransfer);
+            CompleteStructMember member_tableId = TypeObjectUtils::build_complete_struct_member(common_tableId, detail_tableId);
+            TypeObjectUtils::add_complete_struct_member(member_seq_TableDataTransfer, member_tableId);
+        }
+        {
             TypeIdentifierPair type_ids_mask;
             ReturnCode_t return_code_mask {eprosima::fastdds::dds::RETCODE_OK};
             return_code_mask =
@@ -1906,7 +1936,7 @@ void register_TableDataTransfer_type_identifier(
             }
             StructMemberFlag member_flags_mask = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            MemberId member_id_mask = 0x00000000;
+            MemberId member_id_mask = 0x00000001;
             bool common_mask_ec {false};
             CommonStructMember common_mask {TypeObjectUtils::build_common_struct_member(member_id_mask, member_flags_mask, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_mask, common_mask_ec))};
             if (!common_mask_ec)
@@ -1934,7 +1964,7 @@ void register_TableDataTransfer_type_identifier(
             }
             StructMemberFlag member_flags_timestamp = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            MemberId member_id_timestamp = 0x00000001;
+            MemberId member_id_timestamp = 0x00000002;
             bool common_timestamp_ec {false};
             CommonStructMember common_timestamp {TypeObjectUtils::build_common_struct_member(member_id_timestamp, member_flags_timestamp, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_timestamp, common_timestamp_ec))};
             if (!common_timestamp_ec)
@@ -1994,7 +2024,7 @@ void register_TableDataTransfer_type_identifier(
             }
             StructMemberFlag member_flags_varData = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            MemberId member_id_varData = 0x00000002;
+            MemberId member_id_varData = 0x00000003;
             bool common_varData_ec {false};
             CommonStructMember common_varData {TypeObjectUtils::build_common_struct_member(member_id_varData, member_flags_varData, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_varData, common_varData_ec))};
             if (!common_varData_ec)
@@ -2022,7 +2052,7 @@ void register_TableDataTransfer_type_identifier(
             }
             StructMemberFlag member_flags_blobType = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     false, false, false, false);
-            MemberId member_id_blobType = 0x00000003;
+            MemberId member_id_blobType = 0x00000004;
             bool common_blobType_ec {false};
             CommonStructMember common_blobType {TypeObjectUtils::build_common_struct_member(member_id_blobType, member_flags_blobType, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_blobType, common_blobType_ec))};
             if (!common_blobType_ec)
@@ -2221,7 +2251,7 @@ void register_TableDataTransferEx_type_identifier(
             }
             StructMemberFlag member_flags_properties = TypeObjectUtils::build_struct_member_flag(eprosima::fastdds::dds::xtypes::TryConstructFailAction::DISCARD,
                     true, false, false, false);
-            MemberId member_id_properties = 0x00000004;
+            MemberId member_id_properties = 0x00000005;
             bool common_properties_ec {false};
             CommonStructMember common_properties {TypeObjectUtils::build_common_struct_member(member_id_properties, member_flags_properties, TypeObjectUtils::retrieve_complete_type_identifier(type_ids_properties, common_properties_ec))};
             if (!common_properties_ec)

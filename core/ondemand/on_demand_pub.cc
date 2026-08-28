@@ -18,7 +18,7 @@
 #include <algorithm>
 #include <charconv>
 
-#include "roaring/roaring64map.hh"
+#include "roaring/roaring.hh"
 
 namespace dsf
 {
@@ -432,16 +432,33 @@ namespace ondemand
                     if (runtimeSize == 0) {
                         continue;
                     }
-                    vec->push_back(GroupVarInfo{varHash, meta.varId, runtimeSize});
+                    // 从 liteBucketMembers_ 获取 maskId
+                    uint16_t maskId = MaskIdAllocator::kInvalidId;
+                    {
+                        std::shared_lock liteLock(liteVarIndexMutex_);
+                        uint32_t bucketIdx = static_cast<uint32_t>(meta.bucketIndex);
+                        if (bucketIdx < liteBucketMembers_.size()) {
+                            for (const auto &entry : liteBucketMembers_[bucketIdx].entries) {
+                                if (entry.hash == varHash) {
+                                    maskId = entry.maskId;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (maskId == MaskIdAllocator::kInvalidId) {
+                        continue; // 没找到 maskId，跳过
+                    }
+                    vec->push_back(GroupVarInfo{varHash, maskId, meta.varId, runtimeSize});
                 }
             }
 
-            /*预排序: 按 varHash 升序, 与 Roaring64Map 迭代顺序一致*/
+            /*预排序: 按 maskId 升序, 与 Roaring 迭代顺序一致*/
             for (auto &[gkey, vec] : desired) {
                 if (vec) {
                     std::sort(vec->begin(), vec->end(),
                               [](const GroupVarInfo &a, const GroupVarInfo &b) {
-                                  return a.varHash < b.varHash;
+                                  return a.maskId < b.maskId;
                               });
                 }
             }
@@ -475,9 +492,9 @@ namespace ondemand
 
                     auto &entryMembers = groupMembers_[key].members;
                     if (entryMembers && !entryMembers->empty()) {
-                        roaring::Roaring64Map roar;
+                        roaring::Roaring roar;
                         for (const auto &info : *entryMembers) {
-                            roar.add(info.varHash);
+                            roar.add(info.maskId);
                         }
                         roar.runOptimize();
                         roar.shrinkToFit();
@@ -521,7 +538,7 @@ namespace ondemand
      * 性能优化:
      *  groupMembers_ 已按 varHash 预排序, 无需发送时再排序
      *  直接构建 msg, 省去中间 varDataList 容器分配
-     *  Roaring64Map 压缩 mask
+     *  Roaring 压缩 mask
      *
      * @param bucketIndex  桶索引 (映射到 DDS topic)
      * @param freqMs       频率 (ms), 用于定位分组
@@ -569,7 +586,7 @@ namespace ondemand
         msg.varData().reserve(members->size());
 
         /*用于记录实际发送的变量 hash（只包含有数据的变量）*/
-        roaring::Roaring64Map actualMask;
+        roaring::Roaring actualMask;
         size_t skippedCount = 0;
 
         /*批量读：一次 op_enter 覆盖所有变量，避免 N 次独立锁开销*/
@@ -586,7 +603,7 @@ namespace ondemand
             if (!ptr || sz == 0) {
                 if (skippedCount == 0) {
                     for (size_t j = 0; j < i; ++j)
-                        actualMask.add((*members)[j].varHash);
+                        actualMask.add((*members)[j].maskId);
                 }
                 ONDEMANDLOG_TIME(warning, 3000)
                     << "Variable has no data: varHash=" << (*members)[i].varHash
@@ -599,7 +616,7 @@ namespace ondemand
             dst.resize(sz);
             std::memcpy(dst.data(), ptr, sz);
             if (skippedCount > 0)
-                actualMask.add((*members)[i].varHash);
+                actualMask.add((*members)[i].maskId);
         });
 
         /*如果所有变量都没数据，跳过本次发送*/
@@ -617,7 +634,7 @@ namespace ondemand
                                             << " freq=" << freqMs << "ms";
         }
 
-        /*无跳过：直接用预计算 mask，避免重建 Roaring64Map（热路径优化）*/
+        /*无跳过：直接用预计算 mask，避免重建 Roaring（热路径优化）*/
         if (skippedCount == 0 && precomputedMask && !precomputedMask->empty()) {
             msg.mask() = *precomputedMask;
         } else {
@@ -632,6 +649,7 @@ namespace ondemand
         auto epoch = now.time_since_epoch();
         auto sec = std::chrono::duration_cast<std::chrono::seconds>(epoch);
         auto nsec = std::chrono::duration_cast<std::chrono::nanoseconds>(epoch) - sec;
+        msg.tableId(bucketIndex);
         msg.timestamp().tv_sec(static_cast<int32_t>(sec.count()));
         msg.timestamp().tv_nsec(static_cast<uint32_t>(nsec.count()));
         msg.blobType(static_cast<DSF::Var::BLOB_TYPE>(blobType_.load(std::memory_order_acquire)));
@@ -720,10 +738,11 @@ namespace ondemand
      */
     bool OnDemandPub::createVars(const std::vector<DSF::Var::Define> &VarDefines)
     {
-        // ── 第一步：预计算 hash + bucketIdx，一次性收集 ──
+        // ── 第一步：预计算 hash + bucketIdx + maskId，一次性收集 ──
         struct NewVar {
             std::string varName;
-            uint64_t varHash;
+            uint64_t varHash;    // 全局 hash，用于 varIndex_ 索引
+            uint16_t maskId;     // 桶内随机 ID，用于 Roaring 序列化
             uint32_t bucketIdx;
             const DSF::Var::Define *define; // 指向输入参数，不拷贝
         };
@@ -735,7 +754,34 @@ namespace ondemand
             uint64_t varHash = fast_hash(varName);
             uint32_t bucketIdx =
                 static_cast<uint32_t>(BucketManager::CalculateBucketIndexFromHash(varHash));
-            newVars.push_back({std::move(varName), varHash, bucketIdx, &VarDefine});
+
+            // 先检查 liteBucketMembers_ 是否已有该变量的 maskId（由 registerVars 分配）
+            uint16_t maskId = MaskIdAllocator::kInvalidId;
+            {
+                std::shared_lock liteLock(liteVarIndexMutex_);
+                if (bucketIdx < liteBucketMembers_.size()) {
+                    const auto &bucket = liteBucketMembers_[bucketIdx];
+                    if (bucket.hashToNameOffset.count(varHash)) {
+                        // 找到已有的 lite 变量，复用其 maskId
+                        for (const auto &entry : bucket.entries) {
+                            if (entry.hash == varHash) {
+                                maskId = entry.maskId;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // 如果 liteBucketMembers_ 中没有，则分配新的 maskId
+            if (maskId == MaskIdAllocator::kInvalidId) {
+                maskId = maskIdAllocators_[bucketIdx].allocate();
+                if (maskId == MaskIdAllocator::kInvalidId) {
+                    ONDEMANDLOG(error) << "Bucket " << bucketIdx << " maskId exhausted (65535 vars)";
+                    continue;
+                }
+            }
+            newVars.push_back({std::move(varName), varHash, maskId, bucketIdx, &VarDefine});
         }
 
         // ── 第二步：去重 + 批量注册 + 填充索引（一次写锁 + 一次 ConfigGuard）──
@@ -750,6 +796,7 @@ namespace ondemand
             for (size_t i = 0; i < newVars.size(); ++i) {
                 if (varIndex_.find(newVars[i].varHash) != varIndex_.end()) {
                     ONDEMANDLOG(warning) << "Variable already exists: " << newVars[i].varName;
+                    maskIdAllocators_[newVars[i].bucketIdx].release(newVars[i].maskId);
                     continue;
                 }
                 if (writeIdx != i)
@@ -761,14 +808,13 @@ namespace ondemand
             if (newVars.empty())
                 return true;
 
-            // 批量注册（一次 ConfigGuard）
-            std::vector<uint64_t> hashes(newVars.size());
-            std::vector<uint32_t> sizes(
-                newVars.size(), 0); //暂时不支持预设大小，统一传 0 由 VarStore 内部处理 优化内存
+            // 批量注册 VarStore（用 varHash 作为内部 key）
+            std::vector<uint64_t> varHashes(newVars.size());
+            std::vector<uint32_t> sizes(newVars.size(), 0);
             std::vector<uint32_t> ids(newVars.size());
             for (size_t i = 0; i < newVars.size(); ++i)
-                hashes[i] = newVars[i].varHash;
-            varStore_.register_var_batch(hashes.data(), sizes.data(), ids.data(), newVars.size());
+                varHashes[i] = newVars[i].varHash;
+            varStore_.register_var_batch(varHashes.data(), sizes.data(), ids.data(), newVars.size());
 
             // 批量填充
             for (size_t i = 0; i < newVars.size(); ++i) {
@@ -783,6 +829,21 @@ namespace ondemand
                 varIndex_.emplace(newVars[i].varHash, std::move(meta));
                 bucketManager_.AddMember(newVars[i].varHash);
                 affectedBuckets.insert(newVars[i].bucketIdx);
+
+                // 同时存入 liteBucketMembers_，确保广播 TableDefine 时能找到 maskId
+                {
+                    std::unique_lock liteLock(liteVarIndexMutex_);
+                    auto &bucket = liteBucketMembers_[newVars[i].bucketIdx];
+                    if (!bucket.hashToNameOffset.count(newVars[i].varHash)) {
+                        uint32_t nameOffset = static_cast<uint32_t>(namePool_.size());
+                        const std::string &name = newVars[i].define->name();
+                        namePool_.insert(namePool_.end(), name.begin(), name.end());
+                        namePool_.push_back('\0');
+                        bucket.entries.push_back(
+                            LiteVarEntry{newVars[i].varHash, newVars[i].maskId, nameOffset});
+                        bucket.hashToNameOffset[newVars[i].varHash] = nameOffset;
+                    }
+                }
             }
         } // 释放写锁，再 finalize
 
@@ -817,8 +878,24 @@ namespace ondemand
                     if (idxIt == defineLookup_.end())
                         continue;
 
+                    // 从 liteBucketMembers_ 获取 maskId
+                    uint16_t maskId = MaskIdAllocator::kInvalidId;
+                    {
+                        std::shared_lock liteLock(liteVarIndexMutex_);
+                        if (bucketId < liteBucketMembers_.size()) {
+                            for (const auto &entry : liteBucketMembers_[bucketId].entries) {
+                                if (entry.hash == varHash) {
+                                    maskId = entry.maskId;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (maskId == MaskIdAllocator::kInvalidId)
+                        continue; // 没找到 maskId，跳过
+
                     DSF::Var::PubTableVarDefine pubTableVarDefine;
-                    pubTableVarDefine.id(varHash);
+                    pubTableVarDefine.id(maskId);
                     DSF::Var::VarRequest varRequest;
                     varRequest.varDefine(defineCache_[idxIt->second]);
                     pubTableVarDefine.var(std::move(varRequest));
@@ -838,7 +915,7 @@ namespace ondemand
                         liteDefine.nodeName(nodeName_);
 
                         DSF::Var::PubTableVarDefine pubTableVarDefine;
-                        pubTableVarDefine.id(entry.hash);
+                        pubTableVarDefine.id(entry.maskId);
                         DSF::Var::VarRequest varRequest;
                         varRequest.varDefine(std::move(liteDefine));
                         pubTableVarDefine.var(std::move(varRequest));
@@ -876,12 +953,18 @@ namespace ondemand
                 if (bucket.hashToNameOffset.count(varHash))
                     continue;
 
+                uint16_t maskId = maskIdAllocators_[bucketIdx].allocate();
+                if (maskId == MaskIdAllocator::kInvalidId) {
+                    ONDEMANDLOG(error) << "Bucket " << bucketIdx << " maskId exhausted (65535 vars)";
+                    continue;
+                }
+
                 uint32_t nameOffset = static_cast<uint32_t>(namePool_.size());
                 const std::string &name = def.name();
                 namePool_.insert(namePool_.end(), name.begin(), name.end());
                 namePool_.push_back('\0');
 
-                bucket.entries.push_back(LiteVarEntry{varHash, nameOffset});
+                bucket.entries.push_back(LiteVarEntry{varHash, maskId, nameOffset});
                 bucket.hashToNameOffset[varHash] = nameOffset;
                 affectedBuckets.insert(bucketIdx);
             }
@@ -920,7 +1003,7 @@ namespace ondemand
                 define.nodeName(nodeName_);
 
                 DSF::Var::PubTableVarDefine pubTableVarDefine;
-                pubTableVarDefine.id(entry.hash);
+                pubTableVarDefine.id(entry.maskId);
                 DSF::Var::VarRequest varRequest;
                 varRequest.varDefine(std::move(define));
                 pubTableVarDefine.var(std::move(varRequest));
@@ -947,7 +1030,8 @@ namespace ondemand
         {
             std::unique_lock lock(varIndexMutex_);
             for (const auto &varName : varNames) {
-                uint64_t varHash = fast_hash(make_meta_varname(nodeName_, varName));
+                std::string metaName = make_meta_varname(nodeName_, varName);
+                uint64_t varHash = fast_hash(metaName);
                 auto it = varIndex_.find(varHash);
                 if (it == varIndex_.end()) {
                     ONDEMANDLOG(warning) << "Variable not found: " << varName;
@@ -973,6 +1057,8 @@ namespace ondemand
                 if (bucket.hashToNameOffset.erase(varHash) > 0) {
                     for (auto it = bucket.entries.begin(); it != bucket.entries.end(); ++it) {
                         if (it->hash == varHash) {
+                            // 释放 maskId 回 allocator，避免泄漏
+                            maskIdAllocators_[bucketIdx].release(it->maskId);
                             bucket.entries.erase(it);
                             break;
                         }
@@ -999,14 +1085,31 @@ namespace ondemand
             {
                 std::shared_lock lock(varIndexMutex_);
                 for (uint64_t varHash : members) {
-                    if (varIndex_.find(varHash) == varIndex_.end())
+                    auto varIt = varIndex_.find(varHash);
+                    if (varIt == varIndex_.end())
                         continue;
                     auto idxIt = defineLookup_.find(varHash);
                     if (idxIt == defineLookup_.end())
                         continue;
 
+                    // 从 liteBucketMembers_ 获取 maskId
+                    uint16_t maskId = MaskIdAllocator::kInvalidId;
+                    {
+                        std::shared_lock liteLock(liteVarIndexMutex_);
+                        if (i < liteBucketMembers_.size()) {
+                            for (const auto &entry : liteBucketMembers_[i].entries) {
+                                if (entry.hash == varHash) {
+                                    maskId = entry.maskId;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (maskId == MaskIdAllocator::kInvalidId)
+                        continue; // 没找到 maskId，跳过
+
                     DSF::Var::PubTableVarDefine pubTableVarDefine;
-                    pubTableVarDefine.id(varHash);
+                    pubTableVarDefine.id(maskId);
                     DSF::Var::VarRequest varRequest;
                     varRequest.varDefine(defineCache_[idxIt->second]);
                     pubTableVarDefine.var(std::move(varRequest));
@@ -1027,7 +1130,7 @@ namespace ondemand
                     liteDefine.nodeName(nodeName_);
 
                     DSF::Var::PubTableVarDefine pubTableVarDefine;
-                    pubTableVarDefine.id(entry.hash);
+                    pubTableVarDefine.id(entry.maskId);
                     DSF::Var::VarRequest varRequest;
                     varRequest.varDefine(std::move(liteDefine));
                     pubTableVarDefine.var(std::move(varRequest));
@@ -1686,6 +1789,9 @@ namespace ondemand
 
         /*重置 varStore_，清空 table/metas/arena，避免重新注册时 id 冲突*/
         varStore_.reset();
+
+        /*重置 maskId 分配器，避免重新注册时 id 冲突*/
+        for (auto &alloc : maskIdAllocators_) alloc.reset();
 
         /*清理发布分组相关数据*/
         {

@@ -115,7 +115,7 @@ module DSF {
         };
 
         struct PubTableVarDefine {
-            uint64 id; // 变量在表中的ID
+            uint16 id; // 变量在表中的ID
             VarRequest var; // 变量创建及删除请求
         };
 
@@ -129,6 +129,7 @@ module DSF {
 
         // 表数据传输类型定义
         struct TableDataTransfer {
+            uint16 tableId; // 表ID
             DSF::DT_BLOB mask; // 表中变量ID掩码
             DSF::Timespec timestamp; // 数据发布时间
             sequence<DSF::DT_BLOB> varData; // 变量数据数组，根据模型传输定义进行解析

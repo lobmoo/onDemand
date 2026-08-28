@@ -297,7 +297,8 @@ namespace ondemand
          * @brief 分组成员信息 (轻量，避免回调时查 varIndex_)
          */
         struct GroupVarInfo {
-            uint64_t varHash;
+            uint64_t varHash;   // 全局 hash，用于 varIndex_ 查找
+            uint16_t maskId;    // 桶内随机 ID，用于 Roaring 序列化
             uint32_t varId;
             uint32_t dataSize;
         };
@@ -326,25 +327,29 @@ namespace ondemand
 
     private:
         mutable std::shared_mutex varIndexMutex_;
-        /*变量索引: hash -> 元数据（热路径，调度/订阅处理均访问）*/
+        /*变量索引: uint64_t hash -> 元数据（热路径，调度/订阅处理均访问）*/
         std::unordered_map<uint64_t, VarMetadata> varIndex_;
         /*变量定义冷路径存储（仅 tableDefine 广播时访问）
          * 连续 vector 存储，避免 600K 次 make_shared 独立堆分配。
-         * defineLookup_: hash → defineCache_ 下标，与 varIndex_ 共享 varIndexMutex_ */
+         * defineLookup_: uint64_t hash → defineCache_ 下标，与 varIndex_ 共享 varIndexMutex_ */
         std::vector<DSF::Var::Define> defineCache_;
         std::unordered_map<uint64_t, uint32_t> defineLookup_;
         BucketManager bucketManager_;
 
         /*轻量变量索引（registerVars 使用）：按 bucket 预分组，O(1) 去重 + O(1) 查找*/
         struct LiteVarEntry {
-            uint64_t hash;
+            uint64_t hash;       // 全局 hash，用于 bucket 分发和去重
+            uint16_t maskId;     // 桶内随机 ID，用于序列化
             uint32_t nameOffset; // name 在 namePool_ 中的偏移
         };
         struct LiteBucket {
             std::vector<LiteVarEntry> entries;
-            std::unordered_map<uint64_t, uint32_t> hashToNameOffset;   
+            std::unordered_map<uint64_t, uint32_t> hashToNameOffset; // hash -> nameOffset
         };
         std::array<LiteBucket, ONDEMAND_BUCKET_SIZE> liteBucketMembers_;
+
+        /*per-bucket 桶内 ID 分配器*/
+        std::array<MaskIdAllocator, ONDEMAND_BUCKET_SIZE> maskIdAllocators_;
         std::vector<char> namePool_;
         mutable std::shared_mutex liteVarIndexMutex_;
 

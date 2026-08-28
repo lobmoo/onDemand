@@ -27,6 +27,10 @@
 #include <condition_variable>
 #include <sstream>
 #include <iomanip>
+#include <random>
+#include <array>
+#include <random>
+#include <array>
 
 #include "dds_wrapper/dds_abstraction.h"
 #include "dds_wrapper/dds_idl_wrapper.h"
@@ -64,7 +68,7 @@ namespace ondemand
     class BucketManager
     {
     public:
-        using Member = uint64_t;                           // 存 hash 而非 string
+        using Member = uint64_t;                           // 存完整 hash，用于 bucket 分发
         using BucketIndex = std::size_t;
         using BucketTable = std::vector<std::unordered_set<Member>>;
 
@@ -230,11 +234,84 @@ namespace ondemand
     }
 
     /**
-    * @brief 变量元数据 
+     * @brief 桶内 uint16_t ID 分配器，保证桶内不冲突
+     *
+     * 每个 bucket 独立维护一个分配器，用于为变量分配 uint16_t maskId。
+     * maskId 仅用于 Roaring bitmap 序列化和 sub 端还原，不参与变量索引。
+     * 最多支持 65535 个变量/bucket（0 保留为无效值）。
+     */
+    class MaskIdAllocator
+    {
+    public:
+        static constexpr uint16_t kInvalidId = 0;
+
+        MaskIdAllocator() : rng_(std::random_device{}()), dist_(1, 0xFFFE), usedCount_(0)
+        {
+            used_.fill(false);
+        }
+
+        /**
+         * @brief 分配一个未使用的 uint16_t ID
+         * @return 分配的 ID，若已满（65535个）返回 kInvalidId
+         */
+        uint16_t allocate()
+        {
+            if (usedCount_ >= 0xFFFE) {
+                return kInvalidId; // 已满
+            }
+            // 随机尝试，碰撞后线性探测
+            uint16_t candidate = dist_(rng_);
+            if (!used_[candidate]) {
+                used_[candidate] = true;
+                ++usedCount_;
+                return candidate;
+            }
+            // 线性探测找下一个空位
+            uint16_t start = candidate;
+            do {
+                candidate = static_cast<uint16_t>((candidate + 1) & 0xFFFF);
+                if (candidate == 0) continue; // 跳过0
+                if (!used_[candidate]) {
+                    used_[candidate] = true;
+                    ++usedCount_;
+                    return candidate;
+                }
+            } while (candidate != start);
+            return kInvalidId; // 理论上不会到这里
+        }
+
+        /**
+         * @brief 释放一个已分配的 ID
+         */
+        void release(uint16_t id)
+        {
+            if (id != kInvalidId && used_[id]) {
+                used_[id] = false;
+                --usedCount_;
+            }
+        }
+
+        void reset()
+        {
+            used_.fill(false);
+            usedCount_ = 0;
+        }
+
+        uint32_t count() const { return usedCount_; }
+
+    private:
+        std::mt19937 rng_;
+        std::uniform_int_distribution<uint16_t> dist_;
+        std::array<bool, 65536> used_; // 64KB，可接受
+        uint32_t usedCount_;
+    };
+
+    /**
+    * @brief 变量元数据
     */
     struct VarMetadata {
         BucketManager::BucketIndex bucketIndex; // 所属桶索引 (0-19)
-        uint32_t varId;                         // 变量ID (全局唯一，递增分配)
+        uint32_t varId;                         // VarStore 内部数组索引
         uint32_t currentFreq;                   // 当前发布频率 (ms)
         std::string realVarName;                // 变量名
         // 订阅频率信息 (紧凑存储)
