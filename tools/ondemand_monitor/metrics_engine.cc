@@ -86,7 +86,8 @@ static std::string InferBusinessTopicName(const GUID_t& g) {
 
 void MetricsEngine::OnPacketSource(const std::array<uint8_t, 12>& src_prefix,
                                    const uint8_t* src_ip_be4, const uint8_t* dst_ip_be4) {
-    std::unique_lock lock(mutex_);
+    std::unique_lock lock(mutex_, std::defer_lock);
+    if (!batch_mode_) lock.lock();
     auto& addrs = prefix_addresses_[src_prefix];
     if (src_ip_be4) {
         char buf[16];
@@ -166,7 +167,8 @@ void MetricsEngine::UpdateTransferPair(const GUID_t& writer, const GUID_t& reade
 }
 
 void MetricsEngine::OnData(const DataSubmessage& data, uint64_t timestamp_us) {
-    std::unique_lock lock(mutex_);
+    std::unique_lock lock(mutex_, std::defer_lock);
+    if (!batch_mode_) lock.lock();
 
     // Track latest timestamp for offline mode cleanup
     if (timestamp_us > latest_timestamp_us_) {
@@ -266,6 +268,8 @@ void MetricsEngine::OnData(const DataSubmessage& data, uint64_t timestamp_us) {
                         ep.type_name = "TableDataTransfer";
                         ep.participant_guid = participant_guid;
                         endpoint_to_participant_[reader_guid] = participant_guid;
+                        // Register in topic→reader index
+                        topic_readers_[ep.topic_name].push_back(reader_guid);
                     }
 
                     // Also fix any existing writer endpoints to pub participant
@@ -432,6 +436,7 @@ void MetricsEngine::OnData(const DataSubmessage& data, uint64_t timestamp_us) {
                         sedp_endpoint.is_reader = true;
                         sedp_endpoint.topic_name = "dsf/var/data/transfer/bucket_" + std::to_string(bucket_idx);
                         sedp_endpoint.type_name = "TableDataTransfer";
+                        topic_readers_[sedp_endpoint.topic_name].push_back(real_endpoint_guid);
                     } else if (real_endpoint_guid.entityId[3] == 0x03) {
                         sedp_endpoint.is_writer = true;
                         sedp_endpoint.topic_name = "dsf/var/data/transfer/bucket_" + std::to_string(bucket_idx);
@@ -446,6 +451,9 @@ void MetricsEngine::OnData(const DataSubmessage& data, uint64_t timestamp_us) {
                     sedp_endpoint.is_writer = true;
                 } else if (data.writer_guid.entityId[3] == 0x04) {
                     sedp_endpoint.is_reader = true;
+                    if (!sedp_endpoint.topic_name.empty()) {
+                        topic_readers_[sedp_endpoint.topic_name].push_back(real_endpoint_guid);
+                    }
                 } else {
                     // Default: if topic_name present and came from writer_guid path, it's a writer
                     sedp_endpoint.is_writer = true;
@@ -568,6 +576,13 @@ void MetricsEngine::OnData(const DataSubmessage& data, uint64_t timestamp_us) {
             // Infer reader/writer from entity ID
             if (real_ep_guid.entityId[3] == 0x04) {
                 sedp_endpoint.is_reader = true;
+                // Register in topic→reader index for O(1) lookup in OnData
+                if (!sedp_endpoint.topic_name.empty()) {
+                    auto& vec = topic_readers_[sedp_endpoint.topic_name];
+                    if (std::find(vec.begin(), vec.end(), real_ep_guid) == vec.end()) {
+                        vec.push_back(real_ep_guid);
+                    }
+                }
             } else if (real_ep_guid.entityId[3] == 0x03) {
                 sedp_endpoint.is_writer = true;
             }
@@ -614,23 +629,23 @@ void MetricsEngine::OnData(const DataSubmessage& data, uint64_t timestamp_us) {
             }
         }
 
-        // Track reader stats: match by topic name.
+        // Track reader stats: match by topic name via index (O(1) lookup).
         // OnDemand uses multicast (BEST_EFFORT), so DATA packets have
         // ENTITYID_UNKNOWN as reader_guid. We match by topic name instead.
         if (!endpoint.topic_name.empty()) {
             bool found_reader = false;
-            uint64_t sn_u64 = data.seq_num.to_u64();
-            for (auto& [ep_guid, ep] : endpoints_) {
-                if (ep.is_reader && ep.topic_name == endpoint.topic_name) {
-                    ep.data_count++;
-                    ep.bytes_sent += data.payload_size;
-                    ep.last_seen_us = timestamp_us;
-                    // Track receive bursts for frequency calculation on the
-                    // subscriber side. TrackRetransmitAndGaps maintains the
-                    // distinct-send bookkeeping (send_bursts / first_burst_us /
-                    // last_burst_us) which the frequency estimator reads.
-                    TrackRetransmitAndGaps(ep, data.seq_num, timestamp_us);
-                    found_reader = true;
+            auto reader_it = topic_readers_.find(endpoint.topic_name);
+            if (reader_it != topic_readers_.end()) {
+                for (const auto& rg : reader_it->second) {
+                    auto ep_it = endpoints_.find(rg);
+                    if (ep_it != endpoints_.end()) {
+                        auto& ep = ep_it->second;
+                        ep.data_count++;
+                        ep.bytes_sent += data.payload_size;
+                        ep.last_seen_us = timestamp_us;
+                        TrackRetransmitAndGaps(ep, data.seq_num, timestamp_us);
+                        found_reader = true;
+                    }
                 }
             }
             // If no reader endpoint exists for this topic, create a virtual one.
@@ -655,9 +670,23 @@ void MetricsEngine::OnData(const DataSubmessage& data, uint64_t timestamp_us) {
                     virtual_reader.topic_name = endpoint.topic_name;
                     virtual_reader.type_name = endpoint.type_name;
                     virtual_reader.first_seen_us = timestamp_us;
-                    // Don't assign to writer's participant - virtual readers
-                    // represent "all subscribers", not a specific sub node.
-                    // Leave participant_guid as default (zeros).
+                    // Register in topic→reader index for O(1) lookup
+                    topic_readers_[endpoint.topic_name].push_back(virtual_reader_guid);
+                    // Inherit participant from a real reader on the same topic
+                    // (if one exists). This allows GetAllTopicMatches to resolve
+                    // the virtual reader's participant name for matching.
+                    auto r_it = topic_readers_.find(endpoint.topic_name);
+                    if (r_it != topic_readers_.end()) {
+                        for (const auto& rg : r_it->second) {
+                            auto ep_it = endpoints_.find(rg);
+                            if (ep_it != endpoints_.end() &&
+                                ep_it->second.guid.entityId[3] != 0x05 &&
+                                ep_it->second.participant_guid.prefix[0] != 0) {
+                                virtual_reader.participant_guid = ep_it->second.participant_guid;
+                                break;
+                            }
+                        }
+                    }
                 }
                 virtual_reader.data_count++;
                 virtual_reader.bytes_sent += data.payload_size;
@@ -690,7 +719,8 @@ void MetricsEngine::OnData(const DataSubmessage& data, uint64_t timestamp_us) {
 }
 
 void MetricsEngine::OnHeartbeat(const HeartbeatSubmessage& hb, uint64_t timestamp_us) {
-    std::unique_lock lock(mutex_);
+    std::unique_lock lock(mutex_, std::defer_lock);
+    if (!batch_mode_) lock.lock();
 
     // Track latest timestamp for offline mode cleanup
     if (timestamp_us > latest_timestamp_us_) {
@@ -724,7 +754,8 @@ void MetricsEngine::OnHeartbeat(const HeartbeatSubmessage& hb, uint64_t timestam
 }
 
 void MetricsEngine::OnAcknack(const AcknackSubmessage& ack, uint64_t timestamp_us) {
-    std::unique_lock lock(mutex_);
+    std::unique_lock lock(mutex_, std::defer_lock);
+    if (!batch_mode_) lock.lock();
 
     // Track latest timestamp for offline mode cleanup
     if (timestamp_us > latest_timestamp_us_) {
@@ -968,7 +999,8 @@ void MetricsEngine::TrackRetransmitAndGaps(EndpointInfo& ep, const SequenceNumbe
 }
 
 void MetricsEngine::OnFragment(const FragSubmessage& frag, uint64_t timestamp_us) {
-    std::unique_lock lock(mutex_);
+    std::unique_lock lock(mutex_, std::defer_lock);
+    if (!batch_mode_) lock.lock();
 
     // Track latest timestamp for offline mode cleanup
     if (timestamp_us > latest_timestamp_us_) {
@@ -1320,6 +1352,7 @@ std::vector<MetricsEngine::TopicMatchInfo> MetricsEngine::GetAllTopicMatches() c
         if (!ep.type_name.empty()) {
             topic.type_name = ep.type_name;
         }
+        topic.data_count += ep.data_count;
 
         // Resolve participant name
         std::string participant_name;
@@ -1389,9 +1422,13 @@ std::vector<MetricsEngine::TopicMatchInfo> MetricsEngine::GetAllTopicMatches() c
         if (is_discovery_topic) {
             // Discovery topics are matched if they have a writer
             topic.is_matched = !topic.writer_participants.empty();
+        } else if (has_both) {
+            topic.is_matched = true;
         } else {
-            // Regular topics need both writer and reader
-            topic.is_matched = has_both;
+            // Fallback: if data is flowing (has writer + data_count > 0),
+            // treat as matched even if reader participant couldn't be resolved.
+            // This handles virtual readers that inherit participant info late.
+            topic.is_matched = !topic.writer_participants.empty() && topic.data_count > 0;
         }
     }
 

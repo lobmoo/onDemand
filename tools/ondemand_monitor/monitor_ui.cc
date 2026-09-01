@@ -708,69 +708,57 @@ void MonitorUi::Run() {
         std::vector<RawPacket> packets(64);
         while (running_.load()) {
             size_t count = worker_.PopPackets(packets.data(), packets.size());
-            for (size_t i = 0; i < count; ++i) {
-                RtpsMessage msg;
-                bool parsed = RtpsParser::ParseHeader(packets[i].data.data(),
-                                                      packets[i].len, msg);
-                if (parsed) {
-                    // Associate the sender's GUID prefix with its IP addresses
-                    engine_.OnPacketSource(msg.source_guid_prefix,
-                                           packets[i].src_ip, packets[i].dst_ip);
+            if (count > 0) {
+                // Batch mode: acquire lock once for the entire batch, reducing
+                // lock overhead from once-per-packet to once-per-batch.
+                engine_.BeginBatch();
+                for (size_t i = 0; i < count; ++i) {
+                    RtpsMessage msg;
+                    bool parsed = RtpsParser::ParseHeader(packets[i].data.data(),
+                                                          packets[i].len, msg);
+                    if (parsed) {
+                        engine_.OnPacketSource(msg.source_guid_prefix,
+                                               packets[i].src_ip, packets[i].dst_ip);
 
-                    struct Context {
-                        MetricsEngine* engine;
-                        uint64_t timestamp;
-                        uint16_t src_port;
-                        uint16_t dst_port;
-                    };
-                    Context ctx{&engine_, packets[i].timestamp_us,
-                                packets[i].src_port, packets[i].dst_port};
+                        struct Context {
+                            MetricsEngine* engine;
+                            uint64_t timestamp;
+                            uint16_t src_port;
+                            uint16_t dst_port;
+                        };
+                        Context ctx{&engine_, packets[i].timestamp_us,
+                                    packets[i].src_port, packets[i].dst_port};
 
-                    RtpsParser::ParseSubmessages(
-                        packets[i].data.data(), packets[i].len,
-                        msg.source_guid_prefix, &ctx,
-                        [](void* user, DataSubmessage& data) {
-                            auto* ctx = static_cast<Context*>(user);
-                            data.src_port = ctx->src_port;
-                            data.dst_port = ctx->dst_port;
-                            ctx->engine->OnData(data, ctx->timestamp);
-                        },
-                        [](void* user, const HeartbeatSubmessage& hb) {
-                            auto* ctx = static_cast<Context*>(user);
-                            ctx->engine->OnHeartbeat(hb, ctx->timestamp);
-                        },
-                        [](void* user, const AcknackSubmessage& ack) {
-                            auto* ctx = static_cast<Context*>(user);
-                            ctx->engine->OnAcknack(ack, ctx->timestamp);
-                        },
-                        [](void* user, FragSubmessage& frag) {
-                            auto* ctx = static_cast<Context*>(user);
-                            frag.src_port = ctx->src_port;
-                            frag.dst_port = ctx->dst_port;
-                            ctx->engine->OnFragment(frag, ctx->timestamp);
-                        }
-                    );
-
-                    // Debug: scan raw submessage IDs in this packet
-                    {
-                        const uint8_t* p = packets[i].data.data() + 20;
-                        const uint8_t* e = packets[i].data.data() + packets[i].len;
-                        while (p + 4 <= e) {
-                            uint8_t sm_id = p[0];
-                            uint8_t sm_flags = p[1];
-                            uint16_t otn = *reinterpret_cast<const uint16_t*>(p + 2);
-                            if (!(sm_flags & 0x01)) otn = ntohs(otn);
-                            engine_.CountSubmsgId(sm_id);
-                            if (otn == 0) break;
-                            p += 4 + otn;
-                        }
+                        RtpsParser::ParseSubmessages(
+                            packets[i].data.data(), packets[i].len,
+                            msg.source_guid_prefix, &ctx,
+                            [](void* user, DataSubmessage& data) {
+                                auto* ctx = static_cast<Context*>(user);
+                                data.src_port = ctx->src_port;
+                                data.dst_port = ctx->dst_port;
+                                ctx->engine->OnData(data, ctx->timestamp);
+                            },
+                            [](void* user, const HeartbeatSubmessage& hb) {
+                                auto* ctx = static_cast<Context*>(user);
+                                ctx->engine->OnHeartbeat(hb, ctx->timestamp);
+                            },
+                            [](void* user, const AcknackSubmessage& ack) {
+                                auto* ctx = static_cast<Context*>(user);
+                                ctx->engine->OnAcknack(ack, ctx->timestamp);
+                            },
+                            [](void* user, FragSubmessage& frag) {
+                                auto* ctx = static_cast<Context*>(user);
+                                frag.src_port = ctx->src_port;
+                                frag.dst_port = ctx->dst_port;
+                                ctx->engine->OnFragment(frag, ctx->timestamp);
+                            }
+                        );
                     }
                 }
-            }
-            if (count == 0) {
+                engine_.EndBatch();
+            } else {
                 // In offline mode, check if file is fully read
                 if (worker_.IsOffline() && worker_.IsFinished()) {
-                    // All packets processed, keep running for UI
                     std::this_thread::sleep_for(std::chrono::milliseconds(100));
                 } else {
                     std::this_thread::sleep_for(std::chrono::milliseconds(10));

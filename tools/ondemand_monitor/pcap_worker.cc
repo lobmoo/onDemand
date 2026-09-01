@@ -51,17 +51,10 @@ void PcapWorker::Start() {
         if (!handle_) {
             throw std::runtime_error(std::string("pcap_create failed: ") + errbuf);
         }
-        int set_err =
-            pcap_set_snaplen(handle_, 65536) |
-            pcap_set_promisc(handle_, 1) |
-            pcap_set_timeout(handle_, 100) |
-            pcap_set_buffer_size(handle_, kKernelRingBytes);
-        if (set_err != 0) {
-            std::string err = pcap_geterr(handle_);
-            pcap_close(handle_);
-            handle_ = nullptr;
-            throw std::runtime_error("pcap_set_* failed: " + err);
-        }
+        pcap_set_snaplen(handle_, 65536);
+        pcap_set_promisc(handle_, 1);
+        pcap_set_timeout(handle_, 100);
+        pcap_set_buffer_size(handle_, kKernelRingBytes);
         int ret = pcap_activate(handle_);
         if (ret < 0) {
             // <0: hard error; >0: warning (e.g. promisc already set) — tolerate

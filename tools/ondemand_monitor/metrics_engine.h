@@ -125,6 +125,11 @@ public:
     void OnAcknack(const AcknackSubmessage& ack, uint64_t timestamp_us);
     void OnFragment(const FragSubmessage& frag, uint64_t timestamp_us);
 
+    // Batch mode: acquire lock once for many On* calls, reducing lock overhead
+    // from once-per-packet to once-per-batch (critical at 10k+ variable scale).
+    void BeginBatch() { mutex_.lock(); batch_mode_ = true; }
+    void EndBatch() { batch_mode_ = false; mutex_.unlock(); }
+
     // Feed per-packet network addresses (called once per RTPS message, before
     // the submessage callbacks). Associates the sending participant prefix with
     // its source IP and, when present, the multicast group it addressed.
@@ -169,6 +174,7 @@ public:
         std::string type_name;
         std::vector<std::string> writer_participants;  // participant names that have writers
         std::vector<std::string> reader_participants;  // participant names that have readers
+        uint64_t data_count = 0;  // total data messages on this topic
         bool is_matched = false;  // true if has both writer and reader
     };
     std::vector<TopicMatchInfo> GetAllTopicMatches() const;
@@ -207,6 +213,10 @@ private:
 
     std::unordered_map<GUID_t, ParticipantInfo, GUIDHash> participants_;
     std::unordered_map<GUID_t, EndpointInfo, GUIDHash> endpoints_;
+
+    // Fast lookup: topic_name → reader endpoint GUIDs. Avoids O(N) scan of
+    // all endpoints on every DATA packet (critical at 10k+ variable scale).
+    std::unordered_map<std::string, std::vector<GUID_t>> topic_readers_;
 
     // Hash for GUID prefix (first 12 bytes)
     struct GUIDPrefixHash {
@@ -269,6 +279,9 @@ private:
 
     // See SetOfflineMode()
     std::atomic<bool> offline_mode_{false};
+
+    // Batch mode flag: when true, On* methods skip locking (lock held by caller)
+    bool batch_mode_ = false;
 
     // Loss detection timeout: 5 seconds in microseconds
     static constexpr uint64_t LOSS_TIMEOUT_US = 5000000;
