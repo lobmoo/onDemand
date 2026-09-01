@@ -741,8 +741,8 @@ namespace ondemand
         // ── 第一步：预计算 hash + bucketIdx + maskId，一次性收集 ──
         struct NewVar {
             std::string varName;
-            uint64_t varHash;    // 全局 hash，用于 varIndex_ 索引
-            uint16_t maskId;     // 桶内随机 ID，用于 Roaring 序列化
+            uint64_t varHash; // 全局 hash，用于 varIndex_ 索引
+            uint16_t maskId;  // 桶内随机 ID，用于 Roaring 序列化
             uint32_t bucketIdx;
             const DSF::Var::Define *define; // 指向输入参数，不拷贝
         };
@@ -777,7 +777,8 @@ namespace ondemand
             if (maskId == MaskIdAllocator::kInvalidId) {
                 maskId = maskIdAllocators_[bucketIdx].allocate();
                 if (maskId == MaskIdAllocator::kInvalidId) {
-                    ONDEMANDLOG(error) << "Bucket " << bucketIdx << " maskId exhausted (65535 vars)";
+                    ONDEMANDLOG(error)
+                        << "Bucket " << bucketIdx << " maskId exhausted (65535 vars)";
                     continue;
                 }
             }
@@ -814,7 +815,8 @@ namespace ondemand
             std::vector<uint32_t> ids(newVars.size());
             for (size_t i = 0; i < newVars.size(); ++i)
                 varHashes[i] = newVars[i].varHash;
-            varStore_.register_var_batch(varHashes.data(), sizes.data(), ids.data(), newVars.size());
+            varStore_.register_var_batch(varHashes.data(), sizes.data(), ids.data(),
+                                         newVars.size());
 
             // 批量填充
             for (size_t i = 0; i < newVars.size(); ++i) {
@@ -955,7 +957,8 @@ namespace ondemand
 
                 uint16_t maskId = maskIdAllocators_[bucketIdx].allocate();
                 if (maskId == MaskIdAllocator::kInvalidId) {
-                    ONDEMANDLOG(error) << "Bucket " << bucketIdx << " maskId exhausted (65535 vars)";
+                    ONDEMANDLOG(error)
+                        << "Bucket " << bucketIdx << " maskId exhausted (65535 vars)";
                     continue;
                 }
 
@@ -1791,7 +1794,16 @@ namespace ondemand
         varStore_.reset();
 
         /*重置 maskId 分配器，避免重新注册时 id 冲突*/
-        for (auto &alloc : maskIdAllocators_) alloc.reset();
+        for (auto &alloc : maskIdAllocators_)
+            alloc.reset();
+        {
+            std::unique_lock lock(liteVarIndexMutex_);
+            for (auto &bucket : liteBucketMembers_) {
+                bucket.entries.clear();
+                bucket.hashToNameOffset.clear();
+            }
+            namePool_.clear();
+        }
 
         /*清理发布分组相关数据*/
         {
