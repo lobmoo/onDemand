@@ -625,38 +625,11 @@ void MetricsEngine::OnData(const DataSubmessage& data, uint64_t timestamp_us) {
                     ep.data_count++;
                     ep.bytes_sent += data.payload_size;
                     ep.last_seen_us = timestamp_us;
-
-                    // Track distinct bursts on the reader side too, using the
-                    // same kDupGuardUs deduplication that writers use. Without
-                    // this, `-i any` multi-interface copies inflate data_count
-                    // and make the receive frequency appear N× too high.
-                    bool distinct = false;
-                    auto seen = ep.recent_sn_times.find(sn_u64);
-                    if (seen != ep.recent_sn_times.end()) {
-                        if ((int64_t)(timestamp_us - seen->second) > kDupGuardUs) {
-                            seen->second = timestamp_us;
-                            distinct = true;
-                        }
-                    } else {
-                        ep.recent_sn_times.emplace(sn_u64, timestamp_us);
-                        distinct = true;
-                    }
-                    if (distinct) {
-                        ep.send_bursts++;
-                        if (ep.first_burst_us == 0) ep.first_burst_us = timestamp_us;
-                        ep.last_burst_us = timestamp_us;
-                    }
-                    // Lazy prune (same bound as writer path)
-                    if (ep.recent_sn_times.size() > kRecentSnCapacity) {
-                        for (auto sit = ep.recent_sn_times.begin();
-                             sit != ep.recent_sn_times.end();) {
-                            if (sit->first + kRecentSnCapacity < sn_u64)
-                                sit = ep.recent_sn_times.erase(sit);
-                            else
-                                ++sit;
-                        }
-                    }
-
+                    // Track receive bursts for frequency calculation on the
+                    // subscriber side. TrackRetransmitAndGaps maintains the
+                    // distinct-send bookkeeping (send_bursts / first_burst_us /
+                    // last_burst_us) which the frequency estimator reads.
+                    TrackRetransmitAndGaps(ep, data.seq_num, timestamp_us);
                     found_reader = true;
                 }
             }
@@ -689,6 +662,7 @@ void MetricsEngine::OnData(const DataSubmessage& data, uint64_t timestamp_us) {
                 virtual_reader.data_count++;
                 virtual_reader.bytes_sent += data.payload_size;
                 virtual_reader.last_seen_us = timestamp_us;
+                TrackRetransmitAndGaps(virtual_reader, data.seq_num, timestamp_us);
             }
         }
 
@@ -722,6 +696,9 @@ void MetricsEngine::OnHeartbeat(const HeartbeatSubmessage& hb, uint64_t timestam
     if (timestamp_us > latest_timestamp_us_) {
         latest_timestamp_us_ = timestamp_us;
     }
+
+    // Count ALL heartbeats before filtering (for debugging)
+    total_heartbeats_raw_++;
 
     // Business-only view: discovery traffic (SEDP/SPDP entities) is not tracked
     if (IsBuiltinDiscoveryEntity(hb.writer_guid)) {
@@ -1214,6 +1191,7 @@ MetricsEngine::Summary MetricsEngine::GetSummary() const {
     s.total_data_messages = total_data_messages_;
     s.total_bytes = total_bytes_;
     s.total_heartbeats = total_heartbeats_;
+    s.total_heartbeats_raw = total_heartbeats_raw_;
     s.total_acknacks = total_acknacks_;
     s.total_nacks = total_nacks_;
     return s;
@@ -1255,11 +1233,11 @@ std::vector<MetricsEngine::TopicInfo> MetricsEngine::GetParticipantTopics(const 
             topic.retransmit_count += ep.retransmit_count;
             topic.heartbeat_count += ep.heartbeat_count;
 
-            // Frequency source: the deduplicated burst counter (immune to
-            // `-i any` multi-interface copies). Both writers and readers
-            // accumulate send_bursts via TrackRetransmitAndGaps; writer data
-            // wins when both exist on the same topic (it's the authoritative
-            // transmit rate).
+            // Frequency source: both writer and reader endpoints.
+            // Writers track their own send bursts; readers track distinct
+            // receive bursts via TrackRetransmitAndGaps (called from OnData).
+            // Using the max burst count from either side gives the true topic
+            // frequency — the subscriber receives at the same rate the publisher sends.
             if (ep.send_bursts > 0) {
                 auto& agg = topic_bursts[ep.topic_name];
                 if (ep.is_writer || agg.bursts == 0) {

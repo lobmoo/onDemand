@@ -43,10 +43,14 @@ struct pcap_stat {
 };
 
 // Callback type
-typedef void (*pcap_handler)(u_char *user, const struct pcap_pkthdr *h, const u_char *bytes);
+typedef void (*pcap_handler)(u_char *user, const struct pcap_pkthdr *h,
+                             const u_char *bytes);
 
-// Functions
-pcap_t *pcap_open_live(const char *device, int snaplen, int promisc, int to_ms, char *errbuf);
+// --- Functions ---
+
+// Legacy open (activates immediately, cannot change buffer size afterward)
+pcap_t *pcap_open_live(const char *device, int snaplen, int promisc, int to_ms,
+                       char *errbuf);
 pcap_t *pcap_open_offline(const char *fname, char *errbuf);
 
 // Configurable open path (libpcap >= 1.0): allows setting the kernel ring
@@ -58,13 +62,16 @@ int pcap_set_promisc(pcap_t *p, int promisc);
 int pcap_set_timeout(pcap_t *p, int to_ms);
 int pcap_set_buffer_size(pcap_t *p, int buffer_size);
 int pcap_activate(pcap_t *p);
-int pcap_stats(pcap_t *p, struct pcap_stat *ps);
-int pcap_compile(pcap_t *p, struct bpf_program *fp, const char *str, int optimize, uint32_t netmask);
+
+int pcap_compile(pcap_t *p, struct bpf_program *fp, const char *str,
+                 int optimize, uint32_t netmask);
 int pcap_setfilter(pcap_t *p, struct bpf_program *fp);
 int pcap_datalink(pcap_t *p);
+int pcap_stats(pcap_t *p, struct pcap_stat *ps);
 int pcap_loop(pcap_t *p, int cnt, pcap_handler callback, u_char *user);
 int pcap_dispatch(pcap_t *p, int cnt, pcap_handler callback, u_char *user);
-int pcap_next_ex(pcap_t *p, struct pcap_pkthdr **pkt_header, const u_char **pkt_data);
+int pcap_next_ex(pcap_t *p, struct pcap_pkthdr **pkt_header,
+                 const u_char **pkt_data);
 const u_char *pcap_next(pcap_t *p, struct pcap_pkthdr *h);
 void pcap_breakloop(pcap_t *p);
 void pcap_close(pcap_t *p);

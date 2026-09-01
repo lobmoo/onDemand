@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <algorithm>
 #include <cstdio>
+#include <arpa/inet.h>
 #include <ftxui/component/loop.hpp>
 
 namespace ondemand_monitor {
@@ -117,6 +118,7 @@ void MonitorUi::RefreshData() {
     participants_ = engine_.GetParticipants();
     transfers_ = engine_.GetTransferStats();
     topic_matches_ = engine_.GetAllTopicMatches();
+    submsg_counts_ = engine_.GetSubmsgIdCounts();
     UpdateTopicCache();
 }
 
@@ -308,10 +310,31 @@ ftxui::Component MonitorUi::BuildListView() {
             ftxui::hbox({
                 ftxui::text("Heartbeat: ") | ftxui::bold,
                 ftxui::text(FormatNumber(s.total_heartbeats)) | ftxui::color(ftxui::Color::Yellow),
-                ftxui::text("  ACKNACK: ") | ftxui::bold,
+                ftxui::text("(raw:") | ftxui::dim,
+                ftxui::text(FormatNumber(s.total_heartbeats_raw)) | ftxui::dim,
+                ftxui::text(")  ACKNACK: ") | ftxui::dim,
                 ftxui::text(FormatNumber(s.total_acknacks)) | ftxui::color(ftxui::Color::Yellow),
                 ftxui::text("  NACK: ") | ftxui::bold,
                 ftxui::text(FormatNumber(s.total_nacks)) | ftxui::color(ftxui::Color::Red),
+            }),
+            ftxui::hbox({
+                ftxui::text("SubmsgIDs: ") | ftxui::bold | ftxui::dim,
+                ftxui::text("DATA=") | ftxui::dim,
+                ftxui::text(FormatNumber(submsg_counts_[0x15])) | ftxui::color(ftxui::Color::Cyan),
+                ftxui::text(" HB=") | ftxui::dim,
+                ftxui::text(FormatNumber(submsg_counts_[0x07])) | ftxui::color(ftxui::Color::Yellow),
+                ftxui::text(" ACK=") | ftxui::dim,
+                ftxui::text(FormatNumber(submsg_counts_[0x06])) | ftxui::color(ftxui::Color::Yellow),
+                ftxui::text(" FRAG=") | ftxui::dim,
+                ftxui::text(FormatNumber(submsg_counts_[0x16])) | ftxui::color(ftxui::Color::Cyan),
+                ftxui::text(" GAP=") | ftxui::dim,
+                ftxui::text(FormatNumber(submsg_counts_[0x08])) | ftxui::dim,
+                ftxui::text(" INFO_TS=") | ftxui::dim,
+                ftxui::text(FormatNumber(submsg_counts_[0x09])) | ftxui::dim,
+                ftxui::text(" INFO_DST=") | ftxui::dim,
+                ftxui::text(FormatNumber(submsg_counts_[0x0E])) | ftxui::dim,
+                ftxui::text(" INFO_SRC=") | ftxui::dim,
+                ftxui::text(FormatNumber(submsg_counts_[0x0C])) | ftxui::dim,
             }),
         });
 
@@ -581,6 +604,7 @@ ftxui::Component MonitorUi::BuildDetailView() {
 ftxui::Component MonitorUi::BuildStatusBar() {
     return ftxui::Renderer([this] {
         auto dropped = worker_.GetDropped();
+        auto pcap_stats = worker_.GetPcapStats();
         auto s = summary_;  // Use cached data
 
         // Dynamic hint based on current view mode
@@ -591,13 +615,24 @@ ftxui::Component MonitorUi::BuildStatusBar() {
             mode_hint = "[ESC: Back] [q: Quit]";
         }
 
-        return ftxui::hbox({
-            ftxui::text(" " + mode_hint) | ftxui::dim,
-            ftxui::filler(),
-            ftxui::text("Packets: " + FormatNumber(s.total_data_messages) + "  "),
-            ftxui::text("Dropped: " + std::to_string(dropped) + "  ") |
-                (dropped > 0 ? ftxui::color(ftxui::Color::Red) : ftxui::color(ftxui::Color::Default)),
-        }) | ftxui::border;
+        ftxui::Elements status_elements;
+        status_elements.push_back(ftxui::text(" " + mode_hint) | ftxui::dim);
+        status_elements.push_back(ftxui::filler());
+        status_elements.push_back(ftxui::text("Packets: " + FormatNumber(s.total_data_messages) + "  "));
+        // Queue drops (user-space)
+        status_elements.push_back(ftxui::text("QDrop: " + std::to_string(dropped) + "  ") |
+            (dropped > 0 ? ftxui::color(ftxui::Color::Red) : ftxui::color(ftxui::Color::Default)));
+        // Kernel drops (most important for high-traffic scenarios)
+        if (pcap_stats.kernel_dropped > 0 || pcap_stats.iface_dropped > 0) {
+            status_elements.push_back(ftxui::text("KDrop: " + std::to_string(pcap_stats.kernel_dropped) + "  ") |
+                ftxui::color(ftxui::Color::Red));
+            if (pcap_stats.iface_dropped > 0) {
+                status_elements.push_back(ftxui::text("IFDrop: " + std::to_string(pcap_stats.iface_dropped) + "  ") |
+                    ftxui::color(ftxui::Color::Red));
+            }
+        }
+
+        return ftxui::hbox(std::move(status_elements)) | ftxui::border;
     });
 }
 
@@ -715,6 +750,21 @@ void MonitorUi::Run() {
                             ctx->engine->OnFragment(frag, ctx->timestamp);
                         }
                     );
+
+                    // Debug: scan raw submessage IDs in this packet
+                    {
+                        const uint8_t* p = packets[i].data.data() + 20;
+                        const uint8_t* e = packets[i].data.data() + packets[i].len;
+                        while (p + 4 <= e) {
+                            uint8_t sm_id = p[0];
+                            uint8_t sm_flags = p[1];
+                            uint16_t otn = *reinterpret_cast<const uint16_t*>(p + 2);
+                            if (!(sm_flags & 0x01)) otn = ntohs(otn);
+                            engine_.CountSubmsgId(sm_id);
+                            if (otn == 0) break;
+                            p += 4 + otn;
+                        }
+                    }
                 }
             }
             if (count == 0) {

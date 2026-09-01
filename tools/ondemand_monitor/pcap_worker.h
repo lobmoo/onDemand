@@ -64,6 +64,14 @@ public:
     bool IsOffline() const { return is_offline_; }
     bool IsFinished() const { return finished_.load(); }
 
+    // Kernel-level pcap stats (packets received, dropped by kernel, dropped by iface)
+    struct PcapStats {
+        uint32_t received = 0;
+        uint32_t kernel_dropped = 0;   // ps_drop: kernel buffer overflow
+        uint32_t iface_dropped = 0;    // ps_ifdrop: NIC ring buffer overflow
+    };
+    PcapStats GetPcapStats() const;
+
 private:
     void CaptureLoop();
     // Refresh captured/kernel_dropped from libpcap (live mode only)

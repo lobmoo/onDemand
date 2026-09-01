@@ -425,15 +425,18 @@ const uint8_t* RtpsParser::ParseHeartbeatSubmessage(const uint8_t* sm, uint32_t 
     bool little_endian = (flags & 0x01) != 0;
     const uint8_t* ptr = sm + 4;
 
-    // readerEntityId (4 bytes); HEARTBEAT flows writer->reader, so the reader
-    // is the peer and its prefix comes from INFO_DST.
-    std::memcpy(out.reader_guid.entityId.data(), ptr, 4);
-    std::memcpy(out.reader_guid.prefix.data(), peer_prefix.data(), 12);
-    ptr += 4;
-
-    // writerEntityId (4 bytes)
+    // RTPS spec §8.3.7.3 HEARTBEAT Submessage:
+    //   writerEntityId (EntityId_t) — comes FIRST on the wire
+    //   readerEntityId (EntityId_t) — comes SECOND
+    // HEARTBEAT flows writer→reader: the packet sender IS the writer
+    // (prefix = src_guid_prefix / INFO_SRC), the destination is the reader
+    // (prefix = INFO_DST).
     std::memcpy(out.writer_guid.entityId.data(), ptr, 4);
     std::memcpy(out.writer_guid.prefix.data(), src_prefix.data(), 12);
+    ptr += 4;
+
+    std::memcpy(out.reader_guid.entityId.data(), ptr, 4);
+    std::memcpy(out.reader_guid.prefix.data(), peer_prefix.data(), 12);
     ptr += 4;
 
     // firstSeqNumber (8 bytes)
@@ -464,16 +467,16 @@ const uint8_t* RtpsParser::ParseAcknackSubmessage(const uint8_t* sm, uint32_t le
     bool little_endian = (flags & 0x01) != 0;
     const uint8_t* ptr = sm + 4;
 
-    // ACKNACK flows reader->writer: the sender is the READER (prefix = packet
-    // source / INFO_SRC), the destination is the WRITER (prefix = INFO_DST).
-    // Using the source prefix for the writer here was the root cause of
-    // retransmit counts staying at 0 — NACKed SNs landed on a GUID that no
-    // DATA ever referenced.
+    // RTPS spec §8.3.8.2 ACKNACK Submessage wire layout:
+    //   readerEntityId (EntityId_t) — comes FIRST
+    //   writerEntityId (EntityId_t) — comes SECOND
+    // ACKNACK flows reader→writer: the packet sender IS the reader
+    // (prefix = src_guid_prefix / INFO_SRC), the destination is the writer
+    // (prefix = INFO_DST).  INFO_DST must be present for correct GUIDs.
     std::memcpy(out.reader_guid.entityId.data(), ptr, 4);
     std::memcpy(out.reader_guid.prefix.data(), src_prefix.data(), 12);
     ptr += 4;
 
-    // writerEntityId (4 bytes)
     std::memcpy(out.writer_guid.entityId.data(), ptr, 4);
     std::memcpy(out.writer_guid.prefix.data(), peer_prefix.data(), 12);
     ptr += 4;

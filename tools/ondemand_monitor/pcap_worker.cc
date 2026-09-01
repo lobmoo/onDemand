@@ -46,7 +46,7 @@ void PcapWorker::Start() {
     } else {
         // Configurable open path: unlike pcap_open_live, this lets us size the
         // kernel ring BEFORE activation so bursts absorb in the kernel instead
-        // of surfacing as invisible ps_drop. 128MB default.
+        // of surfacing as invisible ps_drop.
         handle_ = pcap_create(interface_.c_str(), errbuf);
         if (!handle_) {
             throw std::runtime_error(std::string("pcap_create failed: ") + errbuf);
@@ -69,6 +69,10 @@ void PcapWorker::Start() {
             pcap_close(handle_);
             handle_ = nullptr;
             throw std::runtime_error("pcap_activate failed: " + err);
+        }
+        if (ret > 0) {
+            fprintf(stderr, "pcap_activate warning: %s\n",
+                    pcap_geterr(handle_));
         }
     }
 
@@ -312,6 +316,19 @@ size_t PcapWorker::PopPackets(RawPacket* out, size_t max_count) {
         queued_bytes_.fetch_sub(bytes, std::memory_order_relaxed);
     }
     return n;
+}
+
+PcapWorker::PcapStats PcapWorker::GetPcapStats() const {
+    PcapStats stats;
+    if (handle_ && !is_offline_) {
+        struct pcap_stat ps;
+        if (pcap_stats(handle_, &ps) == 0) {
+            stats.received = ps.ps_recv;
+            stats.kernel_dropped = ps.ps_drop;
+            stats.iface_dropped = ps.ps_ifdrop;
+        }
+    }
+    return stats;
 }
 
 }  // namespace ondemand_monitor

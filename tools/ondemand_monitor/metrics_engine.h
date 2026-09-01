@@ -180,10 +180,18 @@ public:
         uint64_t total_data_messages = 0;
         uint64_t total_bytes = 0;
         uint64_t total_heartbeats = 0;
+        uint64_t total_heartbeats_raw = 0;  // Before filter (debug)
         uint64_t total_acknacks = 0;
         uint64_t total_nacks = 0;
     };
     Summary GetSummary() const;
+
+    // Debug: count submessage IDs seen in raw packets
+    void CountSubmsgId(uint8_t id) { submsg_id_counts_[id]++; }
+    std::unordered_map<uint8_t, uint64_t> GetSubmsgIdCounts() const {
+        std::shared_lock lock(mutex_);
+        return submsg_id_counts_;
+    }
 
 private:
     GUID_t GetParticipantGuid(const GUID_t& endpoint_guid) const;
@@ -251,8 +259,10 @@ private:
     uint64_t total_data_messages_ = 0;
     uint64_t total_bytes_ = 0;
     uint64_t total_heartbeats_ = 0;
+    uint64_t total_heartbeats_raw_ = 0;  // Before IsBuiltinDiscoveryEntity filter
     uint64_t total_acknacks_ = 0;
     uint64_t total_nacks_ = 0;
+    std::unordered_map<uint8_t, uint64_t> submsg_id_counts_;
 
     // Latest packet timestamp (for offline mode - use packet time, not wall clock)
     uint64_t latest_timestamp_us_ = 0;

@@ -68,6 +68,7 @@ private:
     std::vector<ParticipantInfo> participants_;
     std::vector<TransferStats> transfers_;
     std::vector<MetricsEngine::TopicMatchInfo> topic_matches_;
+    std::unordered_map<uint8_t, uint64_t> submsg_counts_;
     // Topics of the currently selected node, fetched ONCE per RefreshData tick.
     // Both the home-page preview and the detail view render from this cache —
     // querying the engine inside render lambdas caused visible ←→ lag.
