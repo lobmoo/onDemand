@@ -103,8 +103,8 @@ void MonitorUi::UpdateTopicCache() {
     cached_topics_.clear();
     std::vector<const ParticipantInfo*> filtered;
     for (const auto& p : participants_) {
-        if (p.domain_id == 0 && p.name.empty()) continue;
-        if (p.domain_id == 0 && p.endpoints_count == 0 && !p.is_active) continue;
+        // 只过滤完全无效的participant（无endpoints且不活跃）
+        if (p.endpoints_count == 0 && !p.is_active) continue;
         filtered.push_back(&p);
     }
     if (!filtered.empty() && selected_index_ >= 0 &&
@@ -182,16 +182,17 @@ ftxui::Component MonitorUi::BuildListView() {
         // Render from the per-tick cache (see RefreshData) — querying the
         // engine here ran a locked full-endpoint scan on every frame
         std::vector<MetricsEngine::TopicInfo> all_topics = cached_topics_;
-        // Home-page preview shows only the control/business topics; the 20
-        // bucket transfer topics flood the pane — those stay in the detail view.
+
+        // **FIX: Filter out bucket transfer topics on home page preview**
+        // Home-page preview shows only control/business topics (tableDefine, register).
+        // The 20 bucket transfer topics flood the pane — those stay in detail view only.
         all_topics.erase(
             std::remove_if(all_topics.begin(), all_topics.end(),
                            [](const MetricsEngine::TopicInfo& t) {
-                               return t.topic_name.find(
-                                          "dsf/var/data/transfer/bucket_") !=
-                                      std::string::npos;
+                               return t.topic_name.find("bucket_") != std::string::npos;
                            }),
             all_topics.end());
+
         if (all_topics.empty()) {
             out.push_back(ftxui::text("  No topics discovered yet...") | ftxui::dim);
             return;
@@ -702,13 +703,41 @@ void MonitorUi::Run() {
 
     // Data processing thread
     std::thread process_thread([this] {
-        // Heap batch buffer, allocated once: a raw array of 64 packets used to
-        // live on this thread's stack (~4MB with the old fixed-size layout,
-        // dangerously close to the default 8MB stack limit).
-        std::vector<RawPacket> packets(64);
+        // Dynamic batch buffer: starts at 256, grows up to 2048 based on queue depth.
+        // At 10k+ variables, packet rate can exceed 10k/s (20 buckets × 50Hz + discovery
+        // + heartbeats). The old fixed size of 64 capped throughput at ~6400 pps,
+        // causing queue buildup and packet drops under sustained load.
+        std::vector<RawPacket> packets(256);
+        size_t consecutive_full_batches = 0;
+
         while (running_.load()) {
+            // Adaptive batch sizing: grow buffer when consistently processing full batches
+            // (sign of sustained high load), shrink when idle to reduce memory footprint.
+            auto stats = worker_.GetCaptureStats();
+            uint64_t backlog = stats.queue_packets;
+
+            size_t target_batch = 256;  // baseline
+            if (backlog > 5000) {
+                target_batch = 2048;  // high load: drain faster
+            } else if (backlog > 1000) {
+                target_batch = 1024;  // moderate load
+            } else if (backlog > 100) {
+                target_batch = 512;
+            }
+
+            if (packets.size() != target_batch) {
+                packets.resize(target_batch);
+            }
+
             size_t count = worker_.PopPackets(packets.data(), packets.size());
             if (count > 0) {
+                // Track consecutive full batches to detect sustained load
+                if (count == packets.size()) {
+                    consecutive_full_batches++;
+                } else {
+                    consecutive_full_batches = 0;
+                }
+
                 // Batch mode: acquire lock once for the entire batch, reducing
                 // lock overhead from once-per-packet to once-per-batch.
                 engine_.BeginBatch();
@@ -736,32 +765,44 @@ void MonitorUi::Run() {
                                 auto* ctx = static_cast<Context*>(user);
                                 data.src_port = ctx->src_port;
                                 data.dst_port = ctx->dst_port;
+                                ctx->engine->CountSubmsgId(0x15);  // DATA
                                 ctx->engine->OnData(data, ctx->timestamp);
                             },
                             [](void* user, const HeartbeatSubmessage& hb) {
                                 auto* ctx = static_cast<Context*>(user);
+                                ctx->engine->CountSubmsgId(0x07);  // HEARTBEAT
                                 ctx->engine->OnHeartbeat(hb, ctx->timestamp);
                             },
                             [](void* user, const AcknackSubmessage& ack) {
                                 auto* ctx = static_cast<Context*>(user);
+                                ctx->engine->CountSubmsgId(0x06);  // ACKNACK
                                 ctx->engine->OnAcknack(ack, ctx->timestamp);
                             },
                             [](void* user, FragSubmessage& frag) {
                                 auto* ctx = static_cast<Context*>(user);
                                 frag.src_port = ctx->src_port;
                                 frag.dst_port = ctx->dst_port;
+                                ctx->engine->CountSubmsgId(0x16);  // DATAFRAG
                                 ctx->engine->OnFragment(frag, ctx->timestamp);
                             }
                         );
                     }
                 }
                 engine_.EndBatch();
+
+                // Under sustained high load (consecutive full batches), yield immediately
+                // to drain the queue faster instead of sleeping 10ms.
+                if (consecutive_full_batches < 3) {
+                    std::this_thread::sleep_for(std::chrono::milliseconds(1));
+                }
             } else {
                 // In offline mode, check if file is fully read
                 if (worker_.IsOffline() && worker_.IsFinished()) {
                     std::this_thread::sleep_for(std::chrono::milliseconds(100));
                 } else {
-                    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                    // Adaptive sleep: shorter when queue has backlog, longer when idle
+                    int sleep_ms = (backlog > 100) ? 1 : 10;
+                    std::this_thread::sleep_for(std::chrono::milliseconds(sleep_ms));
                 }
             }
         }

@@ -648,50 +648,49 @@ void MetricsEngine::OnData(const DataSubmessage& data, uint64_t timestamp_us) {
                     }
                 }
             }
-            // If no reader endpoint exists for this topic, create a virtual one.
-            // In OnDemand multicast, SEDP only creates writer endpoints.
-            // Reader endpoints are never announced via SEDP.
-            // We create a virtual reader per topic to represent "subscribers are receiving".
+            // **FIX: Create reader stats for ALL subscriber participants**
+            // When SEDP didn't register readers (late start / missed packets),
+            // fallback: iterate all known subscribers and update their reader stats.
             if (!found_reader) {
-                // Use a synthetic GUID: same prefix as writer, entity ID based on topic hash
-                GUID_t virtual_reader_guid;
-                virtual_reader_guid.prefix = data.writer_guid.prefix;
-                // Use a distinct entity ID pattern: 0000XX05 (virtual reader)
                 uint8_t entity_idx = data.writer_guid.entityId[2];
-                virtual_reader_guid.entityId[0] = 0x00;
-                virtual_reader_guid.entityId[1] = 0x00;
-                virtual_reader_guid.entityId[2] = entity_idx;
-                virtual_reader_guid.entityId[3] = 0x05;  // virtual reader marker
 
-                auto& virtual_reader = endpoints_[virtual_reader_guid];
-                if (virtual_reader.topic_name.empty()) {
-                    virtual_reader.guid = virtual_reader_guid;
-                    virtual_reader.is_reader = true;
-                    virtual_reader.topic_name = endpoint.topic_name;
-                    virtual_reader.type_name = endpoint.type_name;
-                    virtual_reader.first_seen_us = timestamp_us;
-                    // Register in topic→reader index for O(1) lookup
-                    topic_readers_[endpoint.topic_name].push_back(virtual_reader_guid);
-                    // Inherit participant from a real reader on the same topic
-                    // (if one exists). This allows GetAllTopicMatches to resolve
-                    // the virtual reader's participant name for matching.
-                    auto r_it = topic_readers_.find(endpoint.topic_name);
-                    if (r_it != topic_readers_.end()) {
-                        for (const auto& rg : r_it->second) {
-                            auto ep_it = endpoints_.find(rg);
-                            if (ep_it != endpoints_.end() &&
-                                ep_it->second.guid.entityId[3] != 0x05 &&
-                                ep_it->second.participant_guid.prefix[0] != 0) {
-                                virtual_reader.participant_guid = ep_it->second.participant_guid;
-                                break;
-                            }
+                // For each subscriber participant, update its corresponding reader endpoint
+                for (const auto& [p_guid, is_pub] : discovered_pub_sub_) {
+                    if (!is_pub) {  // is subscriber
+                        // Construct reader GUID: subscriber's prefix + matching bucket entity ID
+                        GUID_t reader_guid;
+                        std::memcpy(reader_guid.prefix.data(), p_guid.prefix.data(), 12);
+                        reader_guid.entityId[0] = 0x00;
+                        reader_guid.entityId[1] = 0x00;
+                        reader_guid.entityId[2] = entity_idx;
+                        reader_guid.entityId[3] = 0x04;  // Reader
+
+                        // Find or create reader endpoint
+                        auto ep_it = endpoints_.find(reader_guid);
+                        if (ep_it == endpoints_.end()) {
+                            // Create new reader endpoint (should have been created in SPDP, but handle late arrival)
+                            UpdateEndpoint(reader_guid, false, timestamp_us);
+                            auto& new_reader = endpoints_[reader_guid];
+                            new_reader.is_reader = true;
+                            new_reader.topic_name = endpoint.topic_name;
+                            new_reader.type_name = endpoint.type_name;
+                            new_reader.participant_guid = p_guid;
+                            new_reader.first_seen_us = timestamp_us;
+                            endpoint_to_participant_[reader_guid] = p_guid;
+                            // Register in topic→reader index
+                            topic_readers_[endpoint.topic_name].push_back(reader_guid);
+                            ep_it = endpoints_.find(reader_guid);
                         }
+
+                        // Update reader stats
+                        auto& reader_ep = ep_it->second;
+                        reader_ep.data_count++;
+                        reader_ep.bytes_sent += data.payload_size;
+                        reader_ep.last_seen_us = timestamp_us;
+                        TrackRetransmitAndGaps(reader_ep, data.seq_num, timestamp_us);
+                        found_reader = true;
                     }
                 }
-                virtual_reader.data_count++;
-                virtual_reader.bytes_sent += data.payload_size;
-                virtual_reader.last_seen_us = timestamp_us;
-                TrackRetransmitAndGaps(virtual_reader, data.seq_num, timestamp_us);
             }
         }
 
@@ -1015,18 +1014,88 @@ void MetricsEngine::OnFragment(const FragSubmessage& frag, uint64_t timestamp_us
         return;
     }
 
+    // Update WRITER endpoint
     UpdateEndpoint(frag.writer_guid, true, timestamp_us);
     auto& endpoint = endpoints_[frag.writer_guid];
 
     // Name fragment-only endpoints immediately from EntityId conventions. A
     // large tableDefine travels exclusively as DATA_FRAG (>UDP payload limit);
     // without this it stayed unnamed until an unrelated DATA submessage arrived.
+    std::string inferred_topic;
     if (endpoint.topic_name.empty()) {
-        std::string inferred = InferBusinessTopicName(frag.writer_guid);
-        if (!inferred.empty()) {
-            endpoint.topic_name = inferred;
+        inferred_topic = InferBusinessTopicName(frag.writer_guid);
+        if (!inferred_topic.empty()) {
+            endpoint.topic_name = inferred_topic;
             endpoint.type_name =
-                inferred.find("bucket_") != std::string::npos ? "TableDataTransfer" : "";
+                inferred_topic.find("bucket_") != std::string::npos ? "TableDataTransfer" : "";
+        }
+    } else {
+        inferred_topic = endpoint.topic_name;
+    }
+
+    // Update READER endpoint stats for ALL subscribers
+    // Multicast scenario: frag.reader_guid is often ENTITYID_UNKNOWN, so we iterate
+    // all known subscribers and update their corresponding reader endpoints.
+    bool has_valid_reader = (frag.reader_guid.entityId[0] != 0 || frag.reader_guid.entityId[1] != 0 ||
+                             frag.reader_guid.entityId[2] != 0 || frag.reader_guid.entityId[3] != 0);
+
+    // First: handle explicit reader_guid if present (unicast or known reader)
+    if (has_valid_reader && !IsBuiltinDiscoveryEntity(frag.reader_guid) && !IsSpdpEntity(frag.reader_guid)) {
+        UpdateEndpoint(frag.reader_guid, false, timestamp_us);
+        auto& reader_ep = endpoints_[frag.reader_guid];
+
+        auto pubsub_it = prefix_to_pub_sub_.find(frag.reader_guid.prefix);
+        if (pubsub_it != prefix_to_pub_sub_.end()) {
+            reader_ep.participant_guid = pubsub_it->second;
+        }
+
+        if (reader_ep.topic_name.empty() && !inferred_topic.empty()) {
+            reader_ep.topic_name = inferred_topic;
+            reader_ep.type_name =
+                inferred_topic.find("bucket_") != std::string::npos ? "TableDataTransfer" : "";
+        }
+
+        reader_ep.frag_count += frag.frag_count;
+        reader_ep.bytes_sent += frag.payload_size;
+        reader_ep.data_count++;
+        reader_ep.last_seen_us = timestamp_us;
+        TrackRetransmitAndGaps(reader_ep, frag.seq_num, timestamp_us);
+    }
+
+    // Second: update ALL subscriber readers (handles multicast + late-start scenarios)
+    if (!inferred_topic.empty()) {
+        uint8_t entity_idx = frag.writer_guid.entityId[2];
+
+        for (const auto& [p_guid, is_pub] : discovered_pub_sub_) {
+            if (!is_pub) {  // is subscriber
+                GUID_t reader_guid;
+                std::memcpy(reader_guid.prefix.data(), p_guid.prefix.data(), 12);
+                reader_guid.entityId[0] = 0x00;
+                reader_guid.entityId[1] = 0x00;
+                reader_guid.entityId[2] = entity_idx;
+                reader_guid.entityId[3] = 0x04;
+
+                auto ep_it = endpoints_.find(reader_guid);
+                if (ep_it == endpoints_.end()) {
+                    UpdateEndpoint(reader_guid, false, timestamp_us);
+                    auto& new_reader = endpoints_[reader_guid];
+                    new_reader.is_reader = true;
+                    new_reader.topic_name = inferred_topic;
+                    new_reader.type_name = inferred_topic.find("bucket_") != std::string::npos ? "TableDataTransfer" : "";
+                    new_reader.participant_guid = p_guid;
+                    new_reader.first_seen_us = timestamp_us;
+                    endpoint_to_participant_[reader_guid] = p_guid;
+                    topic_readers_[inferred_topic].push_back(reader_guid);
+                    ep_it = endpoints_.find(reader_guid);
+                }
+
+                auto& reader_ep = ep_it->second;
+                reader_ep.frag_count += frag.frag_count;
+                reader_ep.bytes_sent += frag.payload_size;
+                reader_ep.data_count++;
+                reader_ep.last_seen_us = timestamp_us;
+                TrackRetransmitAndGaps(reader_ep, frag.seq_num, timestamp_us);
+            }
         }
     }
 
@@ -1243,8 +1312,10 @@ std::vector<MetricsEngine::TopicInfo> MetricsEngine::GetParticipantTopics(const 
     };
     std::unordered_map<std::string, BurstAgg> topic_bursts;
 
+    int matched_endpoints = 0;
     for (const auto& [guid, ep] : endpoints_) {
         if (ep.participant_guid == participant_guid && !ep.topic_name.empty()) {
+            matched_endpoints++;
             auto& topic = topic_map[ep.topic_name];
             topic.topic_name = ep.topic_name;
             if (!ep.type_name.empty()) {

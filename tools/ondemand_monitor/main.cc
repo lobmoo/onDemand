@@ -22,7 +22,7 @@ static void signal_handler(int sig) {
 
 struct MonitorConfig {
     std::string interface = "any";
-    std::string filter = "udp portrange 7400-7500";  // Capture DDS traffic (SPDP/SEDP/data)
+    std::string filter = "udp";  // Capture all UDP (DDS uses ephemeral ports 46000-47000)
     std::string pcap_file;       // Offline pcap file (empty = live mode)
 };
 

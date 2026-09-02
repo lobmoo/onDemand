@@ -409,7 +409,6 @@ const uint8_t* RtpsParser::ParseDataSubmessage(const uint8_t* sm, uint32_t len,
         }
     }
 
-
     return ptr;
 }
 
@@ -515,7 +514,9 @@ const uint8_t* RtpsParser::ParseFragSubmessage(const uint8_t* sm, uint32_t len,
     // readerId(4) writerId(4) writerSN(8) fragmentStartingNum(4)
     // fragmentsInSubmessage(2) fragmentSize(2) fragmentPadding(2) = 26 fixed.
     constexpr uint32_t FIXED = 26;
-    if (len < 8 + FIXED) return nullptr;
+    if (len < 8 + FIXED) {
+        return nullptr;
+    }
 
     uint8_t flags = sm[1];
     bool little_endian = (flags & 0x01) != 0;
@@ -548,12 +549,17 @@ const uint8_t* RtpsParser::ParseFragSubmessage(const uint8_t* sm, uint32_t len,
     out.frag_size = ReadU16(ptr, little_endian);
     ptr += 2;
     ptr += 2;  // fragmentPadding
+    // Now ptr points right after fixed fields (sm + 8 + 26 = sm + 34)
 
     // Payload starts after inline QoS when the Q flag (0x02) is set;
-    // otherwise octetsToInlineQos already points at the payload.
-    const uint8_t* payload_start = sm + 4 + otiq;
-    if (payload_start > sm + len || payload_start < ptr) return nullptr;  // Malformed
+    // otherwise payload starts right after fixed fields.
+    const uint8_t* payload_start = ptr;  // Default: right after fixed fields
     if (flags & 0x02) {
+        // Q flag set: InlineQoS present, starting at sm + 4 + otiq
+        payload_start = sm + 4 + otiq;
+        if (payload_start > sm + len || payload_start < ptr) {
+            return nullptr;  // Malformed
+        }
         // Skip inline QoS parameter list up to PID_SENTINEL
         const uint8_t* p = payload_start;
         while (p + 4 <= sm + len) {
