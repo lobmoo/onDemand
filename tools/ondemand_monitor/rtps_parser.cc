@@ -558,16 +558,21 @@ const uint8_t* RtpsParser::ParseFragSubmessage(const uint8_t* sm, uint32_t len,
     // otherwise payload starts right after fixed fields.
     const uint8_t* payload_start = ptr;  // Default: right after fixed fields
     if (flags & 0x02) {
-        // Q flag set: InlineQoS present, starting at sm + 4 + otiq
-        payload_start = sm + 4 + otiq;
-        if (payload_start > sm + len || payload_start < ptr) {
-            return nullptr;  // Malformed
+        // Q flag set: InlineQoS present, starting at sm + 4 + otiq.
+        // Some DDS implementations use octetsToInlineQos that points before the
+        // end of fixed fields (e.g. 28 instead of 30 for DATA_FRAG). In that
+        // case, clamp to ptr (end of fixed fields) to avoid rejecting valid packets.
+        const uint8_t* qos_start = sm + 4 + otiq;
+        if (qos_start > sm + len) {
+            return nullptr;  // Malformed: QoS extends past submessage
         }
+        payload_start = (qos_start > ptr) ? qos_start : ptr;
         // Skip inline QoS parameter list up to PID_SENTINEL
         const uint8_t* p = payload_start;
         while (p + 4 <= sm + len) {
             uint16_t pid = ReadU16(p, little_endian);
             uint16_t plen = ReadU16(p + 2, little_endian);
+            if (plen == 0) break;  // Avoid infinite loop on malformed data
             p += 4 + ((plen + 3u) & ~3u);
             if (pid == 0x0001) break;  // PID_SENTINEL
         }

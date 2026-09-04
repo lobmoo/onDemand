@@ -108,33 +108,18 @@ GUID_t MetricsEngine::GetParticipantGuid(const GUID_t& endpoint_guid) const {
     // First check endpoint-specific mapping (from SEDP endpoint_guid + participant_name)
     auto ep_it = endpoint_to_participant_.find(endpoint_guid);
     if (ep_it != endpoint_to_participant_.end()) {
-        // DEBUG: Log for tableDefine
-        if (endpoint_guid.entityId[0] == 0x00 && endpoint_guid.entityId[1] == 0x00 &&
-            endpoint_guid.entityId[2] == 0x01 && endpoint_guid.entityId[3] == 0x02) {
-            }
-        }
         return ep_it->second;
     }
 
     // Check pub/sub specific mapping (more accurate for multi-node scenarios)
     auto pubsub_it = prefix_to_pub_sub_.find(endpoint_guid.prefix);
     if (pubsub_it != prefix_to_pub_sub_.end()) {
-        // DEBUG: Log for tableDefine
-        if (endpoint_guid.entityId[0] == 0x00 && endpoint_guid.entityId[1] == 0x00 &&
-            endpoint_guid.entityId[2] == 0x01 && endpoint_guid.entityId[3] == 0x02) {
-            }
-        }
         return pubsub_it->second;
     }
 
     // Then check general GUID prefix mapping (from SPDP)
     auto it = prefix_to_participant_.find(endpoint_guid.prefix);
     if (it != prefix_to_participant_.end()) {
-        // DEBUG: Log for tableDefine
-        if (endpoint_guid.entityId[0] == 0x00 && endpoint_guid.entityId[1] == 0x00 &&
-            endpoint_guid.entityId[2] == 0x01 && endpoint_guid.entityId[3] == 0x02) {
-            }
-        }
         return it->second;
     }
 
@@ -151,12 +136,6 @@ void MetricsEngine::UpdateEndpoint(const GUID_t& guid, bool is_writer, uint64_t 
         EndpointInfo info;
         info.guid = guid;
         info.participant_guid = GetParticipantGuid(guid);
-
-        // DEBUG: Log tableDefine endpoint creation
-        if (guid.entityId[0] == 0x00 && guid.entityId[1] == 0x00 &&
-            guid.entityId[2] == 0x01 && guid.entityId[3] == 0x02) {
-            }
-        }
         info.is_writer = is_writer;
         info.is_reader = !is_writer;
         info.first_seen_us = timestamp_us;
@@ -259,20 +238,15 @@ void MetricsEngine::OnData(const DataSubmessage& data, uint64_t timestamp_us) {
             name_to_participant_[data.participant_name] = participant_guid;
 
             // Cache pub/sub participant GUIDs for entity ID-based endpoint assignment
-            // Use case-insensitive match for "pub" and "sub"
-            std::string name_lower = data.participant_name;
-            std::transform(name_lower.begin(), name_lower.end(), name_lower.begin(),
-                          [](unsigned char c){ return std::tolower(c); });
-            bool is_pub = (name_lower.find("pub") != std::string::npos);
-            bool is_sub = (name_lower.find("sub") != std::string::npos);
+            bool is_pub = (data.participant_name.find("pub") != std::string::npos ||
+                           data.participant_name.find("Pub") != std::string::npos);
+            bool is_sub = (data.participant_name.find("sub") != std::string::npos ||
+                           data.participant_name.find("Sub") != std::string::npos);
 
             if (is_pub || is_sub) {
                 // Register this participant as pub/sub
                 bool is_new = (discovered_pub_sub_.find(participant_guid) == discovered_pub_sub_.end());
                 discovered_pub_sub_[participant_guid] = is_pub;
-
-                // DEBUG: Log all pub/sub registrations
-                }
 
                 // Only update prefix_to_pub_sub_ if this is a pub node,
                 // or if there's no existing mapping, or if the existing mapping
@@ -1032,11 +1006,6 @@ void MetricsEngine::TrackRetransmitAndGaps(EndpointInfo& ep, const SequenceNumbe
 }
 
 void MetricsEngine::OnFragment(const FragSubmessage& frag, uint64_t timestamp_us) {
-    // DEBUG: Log all fragments
-    if (++frag_count <= 5) {
-        }
-    }
-
     std::unique_lock lock(mutex_, std::defer_lock);
     if (!batch_mode_) lock.lock();
 
@@ -1056,11 +1025,6 @@ void MetricsEngine::OnFragment(const FragSubmessage& frag, uint64_t timestamp_us
     // Update WRITER endpoint
     UpdateEndpoint(frag.writer_guid, true, timestamp_us);
     auto& endpoint = endpoints_[frag.writer_guid];
-
-    // DEBUG: Verify endpoint address for tableDefine
-    if (endpoint.topic_name.find("tableDefine") != std::string::npos && ++ep_addr_log <= 3) {
-        }
-    }
 
     // Name fragment-only endpoints immediately from EntityId conventions. A
     // large tableDefine travels exclusively as DATA_FRAG (>UDP payload limit);
@@ -1145,12 +1109,6 @@ void MetricsEngine::OnFragment(const FragSubmessage& frag, uint64_t timestamp_us
 
     endpoint.frag_count += frag.frag_count;
     endpoint.bytes_sent += frag.payload_size;
-    endpoint.data_count++;  // Count fragmented samples same as regular DATA
-
-    // DEBUG: Log tableDefine fragments
-    if (endpoint.topic_name == "dsf/sys/var/tableDefine" && ++td_count <= 3) {
-        }
-    }
 
     uint64_t sn_u64 = frag.seq_num.to_u64();
 
@@ -1301,7 +1259,6 @@ std::vector<ParticipantInfo> MetricsEngine::GetParticipants() {
             copy.src_ip = addr_it->second.first;
             copy.multicast_ip = addr_it->second.second;
         }
-
         result.push_back(copy);
     }
     return result;
@@ -1364,25 +1321,7 @@ std::vector<MetricsEngine::TopicInfo> MetricsEngine::GetParticipantTopics(const 
     std::unordered_map<std::string, BurstAgg> topic_bursts;
 
     int matched_endpoints = 0;
-    bool debug_this = (++gpt_call % 50 == 1);
-    FILE* dbg_f = debug_this ? fopen("/tmp/gpt_debug.txt", "a") : nullptr;
-    if (dbg_f) fprintf(dbg_f, "\n=== GetParticipantTopics pguid=%02X%02X%02X%02X ===\n",
-        participant_guid.entityId[0], participant_guid.entityId[1],
-        participant_guid.entityId[2], participant_guid.entityId[3]);
-
     for (const auto& [guid, ep] : endpoints_) {
-        // DEBUG: Log tableDefine endpoint with full GUID and address
-        if (dbg_f && ep.topic_name.find("tableDefine") != std::string::npos) {
-            fprintf(dbg_f, "  TD ep: addr=%p eid=%02X%02X%02X%02X pref=%02X%02X%02X%02X pguid=%02X%02X%02X%02X writer=%d data=%lu bytes=%lu match=%d\n",
-                (void*)&ep,
-                guid.entityId[0], guid.entityId[1], guid.entityId[2], guid.entityId[3],
-                guid.prefix[0], guid.prefix[1], guid.prefix[2], guid.prefix[3],
-                ep.participant_guid.entityId[0], ep.participant_guid.entityId[1],
-                ep.participant_guid.entityId[2], ep.participant_guid.entityId[3],
-                ep.is_writer ? 1 : 0, ep.data_count, ep.bytes_sent,
-                (ep.participant_guid == participant_guid) ? 1 : 0);
-        }
-
         if (ep.participant_guid == participant_guid && !ep.topic_name.empty()) {
             matched_endpoints++;
             auto& topic = topic_map[ep.topic_name];
@@ -1422,7 +1361,6 @@ std::vector<MetricsEngine::TopicInfo> MetricsEngine::GetParticipantTopics(const 
             }
         }
     }
-    if (dbg_f) { fprintf(dbg_f, "matched_endpoints=%d\n", matched_endpoints); fclose(dbg_f); }
 
     // Calculate rates
     std::vector<TopicInfo> result;

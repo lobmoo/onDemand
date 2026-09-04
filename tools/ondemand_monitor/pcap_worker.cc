@@ -224,14 +224,119 @@ void PcapWorker::PacketHandler(u_char* user, const struct pcap_pkthdr* header, c
         return;  // Only IPv4
     }
 
-    // Skip fragmented datagrams entirely: only the first fragment carries a
-    // UDP header whose length describes the WHOLE reassembled datagram —
-    // trusting it made the old code memcpy far past the fragment buffer.
+    // IP fragmentation handling: large UDP datagrams (>MTU) are split into
+    // IP fragments. Only the first fragment (offset=0) carries the UDP header.
+    // We reassemble fragments by (src_ip, dst_ip, ip_id) and enqueue the
+    // complete datagram once all fragments arrive.
     uint16_t flags_frag;
     std::memcpy(&flags_frag, ip_header + 6, sizeof(flags_frag));
     flags_frag = ntohs(flags_frag);
-    if ((flags_frag & 0x3FFF) != 0) {  // MF flag or non-zero fragment offset
-        worker->stats_malformed_.fetch_add(1, std::memory_order_relaxed);
+    bool more_fragments = (flags_frag & 0x2000) != 0;
+    uint32_t frag_offset = (flags_frag & 0x1FFF) * 8;  // offset in bytes
+
+    // Extract IP total length and ID for fragment tracking
+    uint16_t ip_total_len;
+    std::memcpy(&ip_total_len, ip_header + 2, sizeof(ip_total_len));
+    ip_total_len = ntohs(ip_total_len);
+
+    uint16_t ip_id;
+    std::memcpy(&ip_id, ip_header + 4, sizeof(ip_id));
+    ip_id = ntohs(ip_id);
+
+    uint32_t src_ip_raw, dst_ip_raw;
+    std::memcpy(&src_ip_raw, ip_header + 12, 4);
+    std::memcpy(&dst_ip_raw, ip_header + 16, 4);
+
+    // Check if this is a fragment
+    if (more_fragments || frag_offset != 0) {
+        // This is a fragment - store it for reassembly
+        uint8_t ip_hdr_len = (ip_header[0] & 0x0F) * 4;
+        const u_char* ip_payload = ip_header + ip_hdr_len;
+        uint32_t ip_payload_len = ip_total_len - ip_hdr_len;
+
+        if ((uint32_t)(ip_payload - packet) + ip_payload_len > header->caplen) {
+            worker->stats_malformed_.fetch_add(1, std::memory_order_relaxed);
+            return;  // Truncated fragment
+        }
+
+        PcapWorker::FragmentKey key{src_ip_raw, dst_ip_raw, ip_id, ip_header[9]};
+        uint64_t now_us = header->ts.tv_sec * 1000000ULL + header->ts.tv_usec;
+
+        std::vector<uint8_t> reassembled;
+        bool is_complete = false;
+
+        {
+            std::lock_guard<std::mutex> lock(worker->fragment_mutex_);
+
+            // Cleanup stale fragments periodically
+            static std::atomic<uint64_t> cleanup_counter{0};
+            if (++cleanup_counter % 100 == 0) {
+                worker->CleanupStaleFragments(now_us);
+            }
+
+            auto& frag_state = worker->fragment_cache_[key];
+            if (frag_state.first_seen_us == 0) {
+                frag_state.first_seen_us = now_us;
+            }
+
+            // Store this fragment
+            PcapWorker::Fragment frag;
+            frag.offset = frag_offset;
+            frag.data.assign(ip_payload, ip_payload + ip_payload_len);
+            frag_state.fragments[frag_offset] = std::move(frag);
+
+            // Track last fragment (MF=0 and offset>0 means last fragment)
+            if (!more_fragments && frag_offset > 0) {
+                frag_state.has_last_fragment = true;
+                frag_state.expected_end = frag_offset + ip_payload_len;
+            }
+
+            // If first fragment (offset=0), store its total UDP length for validation
+            if (frag_offset == 0 && ip_payload_len >= 8) {
+                uint16_t udp_len;
+                std::memcpy(&udp_len, ip_payload + 4, sizeof(udp_len));
+                udp_len = ntohs(udp_len);
+                frag_state.total_length = udp_len;
+            }
+
+            // Try reassembly
+            is_complete = worker->TryReassemble(key, frag_state, reassembled);
+            if (is_complete) {
+                worker->fragment_cache_.erase(key);
+            }
+        }
+
+        // If reassembly complete, create the UDP datagram and enqueue it
+        if (is_complete && reassembled.size() >= 8) {
+            // Extract UDP ports from the reassembled data
+            uint16_t src_port_be, dst_port_be;
+            std::memcpy(&src_port_be, reassembled.data(), 2);
+            std::memcpy(&dst_port_be, reassembled.data() + 2, 2);
+
+            RawPacket pkt;
+            pkt.timestamp_us = header->ts.tv_sec * 1000000ULL + header->ts.tv_usec;
+            pkt.len = reassembled.size() - 8;  // UDP payload (skip UDP header)
+            pkt.src_port = ntohs(src_port_be);
+            pkt.dst_port = ntohs(dst_port_be);
+            std::memcpy(pkt.src_ip, ip_header + 12, 4);
+            std::memcpy(pkt.dst_ip, ip_header + 16, 4);
+            pkt.data.assign(reassembled.begin() + 8, reassembled.end());
+
+            // Backpressure check
+            if (worker->queued_packets_.load(std::memory_order_relaxed) >= kMaxQueuedPackets ||
+                worker->queued_bytes_.load(std::memory_order_relaxed) >= kMaxQueuedBytes) {
+                worker->stats_enqueue_dropped_.fetch_add(1, std::memory_order_relaxed);
+                return;
+            }
+
+            if (worker->queue_.enqueue(std::move(pkt))) {
+                worker->queued_packets_.fetch_add(1, std::memory_order_relaxed);
+                worker->queued_bytes_.fetch_add(pkt.len, std::memory_order_relaxed);
+                worker->stats_enqueued_.fetch_add(1, std::memory_order_relaxed);
+            } else {
+                worker->stats_enqueue_dropped_.fetch_add(1, std::memory_order_relaxed);
+            }
+        }
         return;
     }
 
@@ -323,6 +428,54 @@ PcapWorker::PcapStats PcapWorker::GetPcapStats() const {
         }
     }
     return stats;
+}
+
+void PcapWorker::CleanupStaleFragments(uint64_t now_us) {
+    auto it = fragment_cache_.begin();
+    while (it != fragment_cache_.end()) {
+        if (now_us - it->second.first_seen_us > kFragmentTimeoutUs) {
+            it = fragment_cache_.erase(it);
+        } else {
+            ++it;
+        }
+    }
+}
+
+bool PcapWorker::TryReassemble(const FragmentKey& key, FragmentedDatagram& frag_state,
+                               std::vector<uint8_t>& out_payload) {
+    // Need at least the first fragment (offset=0) with UDP header
+    auto first_it = frag_state.fragments.find(0);
+    if (first_it == frag_state.fragments.end()) {
+        return false;  // No first fragment yet
+    }
+
+    // Need to know the total size (from last fragment or total_length field)
+    if (!frag_state.has_last_fragment) {
+        return false;  // Don't know the end yet
+    }
+
+    // Check for contiguous fragments from 0 to expected_end
+    out_payload.clear();
+    out_payload.reserve(frag_state.expected_end);
+
+    uint32_t current_offset = 0;
+    for (const auto& [offset, frag] : frag_state.fragments) {
+        if (offset != current_offset) {
+            // Gap detected
+            out_payload.clear();
+            return false;
+        }
+        out_payload.insert(out_payload.end(), frag.data.begin(), frag.data.end());
+        current_offset += frag.data.size();
+    }
+
+    // Verify we got all the data
+    if (current_offset < frag_state.expected_end) {
+        out_payload.clear();
+        return false;
+    }
+
+    return true;
 }
 
 }  // namespace ondemand_monitor
