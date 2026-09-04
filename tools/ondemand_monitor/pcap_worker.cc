@@ -298,6 +298,7 @@ void PcapWorker::PacketHandler(u_char* user, const struct pcap_pkthdr* header, c
     worker->queued_packets_.fetch_add(1, std::memory_order_relaxed);
     worker->queued_bytes_.fetch_add(payload_len, std::memory_order_relaxed);
     worker->stats_enqueued_.fetch_add(1, std::memory_order_relaxed);
+    { static FILE* f = fopen("/tmp/all_enqueued.log", "a"); static int count = 0; if (f && ++count <= 200) { fprintf(f, "[Enqueue %d] src=%u dst=%u len=%u\n", count, src_port, dst_port, payload_len); fflush(f); } }
 }
 
 size_t PcapWorker::PopPackets(RawPacket* out, size_t max_count) {

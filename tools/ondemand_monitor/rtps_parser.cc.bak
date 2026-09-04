@@ -106,11 +106,9 @@ void RtpsParser::ParseSubmessages(
             case SubmessageId::DATA: {
                 if (on_data) {
                     DataSubmessage ds;
-                    { static FILE* f = fopen("/tmp/data_case.log", "a"); static int count = 0; if (f && ++count <= 30) { fprintf(f, "[DATA case %d] on_data=%p\n", count, (void*)on_data); fflush(f); } }
                     if (ParseDataSubmessage(ptr, submsg_end - ptr, src_guid_prefix,
                                             peer_prefix, ds)) {
                         on_data(user, ds);
-                        { static FILE* f = fopen("/tmp/ondata_call.log", "a"); static int count = 0; if (f && ++count <= 30) { fprintf(f, "[OnData call %d] entity=%02x.%02x.%02x.%02x\n", count, ds.writer_guid.entityId[0], ds.writer_guid.entityId[1], ds.writer_guid.entityId[2], ds.writer_guid.entityId[3]); fflush(f); } }
                     }
                 }
                 break;
@@ -162,7 +160,6 @@ const uint8_t* RtpsParser::ParseDataSubmessage(const uint8_t* sm, uint32_t len,
                                                  const std::array<uint8_t, 12>& peer_prefix,
                                                  DataSubmessage& out) {
     if (len < 24) return nullptr;
-    { static FILE* f = fopen("/tmp/parse_data_len.log", "a"); static int count = 0; if (f && ++count <= 50) { fprintf(f, "[ParseData %d] len=%u (need 24)\n", count, len); if (len < 24) fprintf(f, "  -> REJECT: too short\n"); fflush(f); } }
 
     uint8_t flags = sm[1];
     bool little_endian = (flags & 0x01) != 0;
@@ -411,6 +408,11 @@ const uint8_t* RtpsParser::ParseDataSubmessage(const uint8_t* sm, uint32_t len,
             }  // end if (is_pl_cdr)
         }
     }
+
+    fprintf(stderr, "[ParseDataSubmessage] writer=%02x.%02x.%02x.%02x reader=%02x.%02x.%02x.%02x has_domain=%d domain=%u\n",
+            out.writer_guid.entityId[0], out.writer_guid.entityId[1], out.writer_guid.entityId[2], out.writer_guid.entityId[3],
+            out.reader_guid.entityId[0], out.reader_guid.entityId[1], out.reader_guid.entityId[2], out.reader_guid.entityId[3],
+            out.has_domain_id, out.domain_id);
 
     return ptr;
 }

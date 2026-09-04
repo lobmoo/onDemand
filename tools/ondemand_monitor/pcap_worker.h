@@ -4,6 +4,8 @@
 #include <vector>
 #include <atomic>
 #include <thread>
+#include <map>
+#include <mutex>
 #include <pcap.h>
 #include "concurrentqueue.h"
 
@@ -77,6 +79,42 @@ private:
     // Refresh captured/kernel_dropped from libpcap (live mode only)
     void SampleKernelStats();
     static void PacketHandler(u_char* user, const struct pcap_pkthdr* header, const u_char* packet);
+
+    // IP fragment reassembly support
+    struct FragmentKey {
+        uint32_t src_ip;
+        uint32_t dst_ip;
+        uint16_t ip_id;
+        uint8_t protocol;
+
+        bool operator<(const FragmentKey& other) const {
+            if (src_ip != other.src_ip) return src_ip < other.src_ip;
+            if (dst_ip != other.dst_ip) return dst_ip < other.dst_ip;
+            if (ip_id != other.ip_id) return ip_id < other.ip_id;
+            return protocol < other.protocol;
+        }
+    };
+
+    struct Fragment {
+        uint32_t offset;  // in bytes (already converted from fragment offset field * 8)
+        std::vector<uint8_t> data;
+    };
+
+    struct FragmentedDatagram {
+        uint64_t first_seen_us;
+        uint32_t total_length;  // from IP header
+        bool has_last_fragment;
+        uint32_t expected_end;  // offset + length of the last fragment
+        std::map<uint32_t, Fragment> fragments;  // offset -> fragment
+    };
+
+    void CleanupStaleFragments(uint64_t now_us);
+    bool TryReassemble(const FragmentKey& key, FragmentedDatagram& frag_state,
+                       std::vector<uint8_t>& out_payload);
+
+    std::map<FragmentKey, FragmentedDatagram> fragment_cache_;
+    std::mutex fragment_mutex_;
+    static constexpr uint64_t kFragmentTimeoutUs = 5000000;  // 5 seconds
 
     std::string interface_;
     std::string filter_;

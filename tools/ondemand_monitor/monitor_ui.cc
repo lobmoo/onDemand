@@ -103,13 +103,38 @@ void MonitorUi::UpdateTopicCache() {
     cached_topics_.clear();
     std::vector<const ParticipantInfo*> filtered;
     for (const auto& p : participants_) {
-        // 只过滤完全无效的participant（无endpoints且不活跃）
-        if (p.endpoints_count == 0 && !p.is_active) continue;
+        // 使用与menu_entries_相同的过滤条件，保证索引一致
+        if (p.domain_id == 0 && p.name.empty()) continue;
+        if (p.domain_id == 0 && p.endpoints_count == 0 && !p.is_active) continue;
         filtered.push_back(&p);
     }
-    if (!filtered.empty() && selected_index_ >= 0 &&
-        selected_index_ < static_cast<int>(filtered.size())) {
-        cached_topics_ = engine_.GetParticipantTopics(filtered[selected_index_]->guid);
+
+    // Home page shows aggregated topics from ALL participants
+    std::unordered_map<std::string, MetricsEngine::TopicInfo> topic_map;
+    for (const auto* p : filtered) {
+        auto topics = engine_.GetParticipantTopics(p->guid);
+        for (const auto& t : topics) {
+            auto& merged = topic_map[t.topic_name];
+            if (merged.topic_name.empty()) {
+                merged = t;  // First occurrence
+            } else {
+                // Merge stats from multiple participants
+                merged.data_count += t.data_count;
+                merged.bytes_sent += t.bytes_sent;
+                merged.frag_count += t.frag_count;
+                merged.ack_count += t.ack_count;
+                merged.nack_count += t.nack_count;
+                merged.lost_count += t.lost_count;
+                merged.retransmit_count += t.retransmit_count;
+                merged.heartbeat_count += t.heartbeat_count;
+                merged.has_writer = merged.has_writer || t.has_writer;
+                merged.has_reader = merged.has_reader || t.has_reader;
+            }
+        }
+    }
+
+    for (const auto& [name, info] : topic_map) {
+        cached_topics_.push_back(info);
     }
 }
 
@@ -745,6 +770,7 @@ void MonitorUi::Run() {
                     RtpsMessage msg;
                     bool parsed = RtpsParser::ParseHeader(packets[i].data.data(),
                                                           packets[i].len, msg);
+                    { static FILE* f = fopen("/tmp/parse_header.log", "a"); static int count = 0; if (f && ++count <= 50) { fprintf(f, "[ParseHeader %d] parsed=%d src_port=%u dst_port=%u len=%u\n", count, parsed, packets[i].src_port, packets[i].dst_port, packets[i].len); fflush(f); } }
                     if (parsed) {
                         engine_.OnPacketSource(msg.source_guid_prefix,
                                                packets[i].src_ip, packets[i].dst_ip);

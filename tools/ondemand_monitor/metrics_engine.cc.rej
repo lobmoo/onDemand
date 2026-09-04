@@ -1,0 +1,17 @@
+--- metrics_engine.cc
++++ metrics_engine.cc
+@@ -1100,6 +1100,14 @@
+         auto& ti = topic_map[ep.topic_name];
+         ti.topic_name = ep.topic_name;
+         ti.type_name = ep.type_name;
++        
++        // Debug: print endpoint details
++        fprintf(stderr, "[EP] %s %s topic=%s data=%lu bytes=%lu nack=%lu retrans=%lu\n",
++                ep.is_writer ? "W" : "R",
++                GuidToString(ep.guid).c_str(),
++                ep.topic_name.c_str(),
++                ep.data_count, ep.bytes_sent, ep.nack_count, ep.retransmit_count);
++        
+         if (ep.is_writer) {
+             ti.has_writer = true;
+         }

@@ -22,8 +22,8 @@ static void signal_handler(int sig) {
 
 struct MonitorConfig {
     std::string interface = "any";
-    std::string filter = "udp";  // Capture all UDP (DDS uses ephemeral ports 46000-47000)
-    std::string pcap_file;       // Offline pcap file (empty = live mode)
+    std::string filter = "ip proto 17";  // Capture all UDP including fragments (DDS uses ephemeral ports 46000-47000)
+    std::string pcap_file;               // Offline pcap file (empty = live mode)
 };
 
 void print_usage(const char* prog) {
