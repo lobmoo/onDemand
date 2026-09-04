@@ -1109,6 +1109,7 @@ void MetricsEngine::OnFragment(const FragSubmessage& frag, uint64_t timestamp_us
 
     endpoint.frag_count += frag.frag_count;
     endpoint.bytes_sent += frag.payload_size;
+    endpoint.data_count++;  // Count fragmented samples same as regular DATA
 
     uint64_t sn_u64 = frag.seq_num.to_u64();
 
