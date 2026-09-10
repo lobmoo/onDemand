@@ -122,7 +122,7 @@ void PcapWorker::Stop() {
                 (unsigned long long)stats_enqueued_.load(),
                 (unsigned long long)stats_enqueue_dropped_.load(),
                 (unsigned long long)stats_malformed_.load(),
-                (unsigned long long)queued_packets_.load());
+                (unsigned long long)queue_.size_approx());
         pcap_close(handle_);
         handle_ = nullptr;
     }
@@ -177,8 +177,10 @@ CaptureStats PcapWorker::GetCaptureStats() const {
     s.enqueued = stats_enqueued_.load(std::memory_order_relaxed);
     s.enqueue_dropped = stats_enqueue_dropped_.load(std::memory_order_relaxed);
     s.malformed = stats_malformed_.load(std::memory_order_relaxed);
+    // Packet depth straight from the lock-free queue; byte backlog is the only
+    // gauge with no native equivalent.
     s.queue_bytes = queued_bytes_.load(std::memory_order_relaxed);
-    s.queue_packets = queued_packets_.load(std::memory_order_relaxed);
+    s.queue_packets = queue_.size_approx();
     return s;
 }
 
@@ -323,14 +325,13 @@ void PcapWorker::PacketHandler(u_char* user, const struct pcap_pkthdr* header, c
             pkt.data.assign(reassembled.begin() + 8, reassembled.end());
 
             // Backpressure check
-            if (worker->queued_packets_.load(std::memory_order_relaxed) >= kMaxQueuedPackets ||
+            if (worker->queue_.size_approx() >= kMaxQueuedPackets ||
                 worker->queued_bytes_.load(std::memory_order_relaxed) >= kMaxQueuedBytes) {
                 worker->stats_enqueue_dropped_.fetch_add(1, std::memory_order_relaxed);
                 return;
             }
 
             if (worker->queue_.enqueue(std::move(pkt))) {
-                worker->queued_packets_.fetch_add(1, std::memory_order_relaxed);
                 worker->queued_bytes_.fetch_add(pkt.len, std::memory_order_relaxed);
                 worker->stats_enqueued_.fetch_add(1, std::memory_order_relaxed);
             } else {
@@ -387,7 +388,7 @@ void PcapWorker::PacketHandler(u_char* user, const struct pcap_pkthdr* header, c
 
     // Backpressure: refuse new packets once either watermark is exceeded
     // (drop-newest). Counted and visible — never silent heap growth.
-    if (worker->queued_packets_.load(std::memory_order_relaxed) >= kMaxQueuedPackets ||
+    if (worker->queue_.size_approx() >= kMaxQueuedPackets ||
         worker->queued_bytes_.load(std::memory_order_relaxed) >= kMaxQueuedBytes) {
         worker->stats_enqueue_dropped_.fetch_add(1, std::memory_order_relaxed);
         return;
@@ -398,12 +399,8 @@ void PcapWorker::PacketHandler(u_char* user, const struct pcap_pkthdr* header, c
         worker->stats_enqueue_dropped_.fetch_add(1, std::memory_order_relaxed);
         return;
     }
-    // Backlog gauges: approximate under concurrency by design (producer and
-    // consumer update independently); monotonic counters above stay exact.
-    worker->queued_packets_.fetch_add(1, std::memory_order_relaxed);
     worker->queued_bytes_.fetch_add(payload_len, std::memory_order_relaxed);
     worker->stats_enqueued_.fetch_add(1, std::memory_order_relaxed);
-    { static FILE* f = fopen("/tmp/all_enqueued.log", "a"); static int count = 0; if (f && ++count <= 200) { fprintf(f, "[Enqueue %d] src=%u dst=%u len=%u\n", count, src_port, dst_port, payload_len); fflush(f); } }
 }
 
 size_t PcapWorker::PopPackets(RawPacket* out, size_t max_count) {
@@ -411,7 +408,6 @@ size_t PcapWorker::PopPackets(RawPacket* out, size_t max_count) {
     if (n > 0) {
         uint64_t bytes = 0;
         for (size_t i = 0; i < n; ++i) bytes += out[i].len;
-        queued_packets_.fetch_sub(n, std::memory_order_relaxed);
         queued_bytes_.fetch_sub(bytes, std::memory_order_relaxed);
     }
     return n;

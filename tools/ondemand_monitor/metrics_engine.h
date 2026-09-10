@@ -55,6 +55,15 @@ struct EndpointInfo {
     uint64_t acknack_count = 0;
     uint64_t nack_count = 0;  // Number of NACKed sequences (retransmit requests)
 
+    // NACK/retransmit reconciliation counters. A NACK is per (writer, reader,
+    // SN); a retransmission is per (writer, SN) — one multicast resend can
+    // satisfy every reader that asked. The gap between nack_count and
+    // fulfilled_nack_count is the share of requests the monitor never saw
+    // honored (unfulfilled or duplicated demand).
+    uint64_t unique_nacked_sn = 0;     // distinct SNs ever requested
+    uint64_t fulfilled_nack_sn = 0;    // distinct requested SNs later seen resent
+    uint64_t unfulfilled_nack_sn = 0;  // requested SNs never observed resent
+
     // SN gap tracking for timeout-based loss detection
     // Key: missing SN, Value: timestamp when gap was first detected (microseconds)
     std::unordered_map<uint64_t, uint64_t> pending_gaps;
@@ -99,6 +108,14 @@ struct EndpointInfo {
     // side, e.g. a reliable writer pushing its history to a freshly matched
     // reader. Pruned lazily; bounded by kRecentSnCapacity entries.
     std::unordered_map<uint64_t, uint64_t> recent_sn_times;
+
+    // writerSN values already counted as a logical sample (DATA_FRAG). A single
+    // DDS sample is split across many DATA_FRAG submessages that all share one
+    // writerSN; data_count must advance once per sample, not per fragment. This
+    // set records which writerSNs already contributed a sample so repeated or
+    // continued fragments do not double count. Pruned lazily with the writerSN
+    // watermark (see OnFragment).
+    std::unordered_set<uint64_t> seen_frag_sample_sn;
 };
 
 // Endpoint pair transfer stats
@@ -158,7 +175,10 @@ public:
         uint64_t bytes_sent = 0;
         uint64_t frag_count = 0;      // Fragment packets (DATA_FRAG submessages)
         uint64_t ack_count = 0;       // ACK count (acknowledgments)
-        uint64_t nack_count = 0;      // NACK count (retransmit requests)
+        uint64_t nack_count = 0;      // NACK count
+        uint64_t unique_nacked_sn = 0;
+        uint64_t fulfilled_nack_sn = 0;
+        uint64_t unfulfilled_nack_sn = 0; // NACKed SNs not yet observed resent
         uint64_t lost_count = 0;      // Confirmed lost packets (timeout-based)
         uint64_t retransmit_count = 0; // Actual retransmitted packets (gap filled)
         uint64_t heartbeat_count = 0; // Heartbeat count for frequency calc
@@ -207,7 +227,15 @@ private:
     // Shared SN tracking: retransmit detection (pending_gaps + nacked_requests),
     // gap creation and timeout-based loss confirmation. Used by OnData,
     // OnFragment and the SEDP path so fragmented/discovery traffic is tracked too.
-    void TrackRetransmitAndGaps(EndpointInfo& ep, const SequenceNumber_t& seq, uint64_t timestamp_us);
+    // Returns true when this SN is a FIRST arrival (a brand-new logical sample),
+    // which is the gate for data_count — retransmissions and interface copies
+    // of an already-seen SN must not inflate the message count.
+    bool TrackRetransmitAndGaps(EndpointInfo& ep, const SequenceNumber_t& seq,
+                                uint64_t timestamp_us);
+    // Count a DATA_FRAG as one logical sample if this writerSN has not yet been
+    // counted; leaves data_count unchanged for continuations/repeats of the same
+    // sample. Keeps frag_count (per-submessage) distinct from data_count.
+    bool CountFragmentSample(EndpointInfo& ep, uint64_t sn_u64, uint64_t timestamp_us);
 
     mutable std::shared_mutex mutex_;
 

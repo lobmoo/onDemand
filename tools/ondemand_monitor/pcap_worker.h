@@ -136,7 +136,8 @@ private:
     std::atomic<uint64_t> stats_enqueued_{0};
     std::atomic<uint64_t> stats_enqueue_dropped_{0};
     std::atomic<uint64_t> stats_malformed_{0};
-    std::atomic<uint64_t> queued_packets_{0};
+    // Current byte backlog (no native size-in-bytes on ConcurrentQueue).
+    // Packet depth is read directly via queue_.size_approx().
     std::atomic<uint64_t> queued_bytes_{0};
 
     // Backpressure watermarks. Byte budget is the binding one (~256MB); the

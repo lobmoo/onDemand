@@ -1,5 +1,6 @@
 #include "rtps_parser.h"
 #include <cstring>
+#include <algorithm>
 #include <arpa/inet.h>
 #include <unordered_set>
 
@@ -106,11 +107,9 @@ void RtpsParser::ParseSubmessages(
             case SubmessageId::DATA: {
                 if (on_data) {
                     DataSubmessage ds;
-                    { static FILE* f = fopen("/tmp/data_case.log", "a"); static int count = 0; if (f && ++count <= 30) { fprintf(f, "[DATA case %d] on_data=%p\n", count, (void*)on_data); fflush(f); } }
                     if (ParseDataSubmessage(ptr, submsg_end - ptr, src_guid_prefix,
                                             peer_prefix, ds)) {
                         on_data(user, ds);
-                        { static FILE* f = fopen("/tmp/ondata_call.log", "a"); static int count = 0; if (f && ++count <= 30) { fprintf(f, "[OnData call %d] entity=%02x.%02x.%02x.%02x\n", count, ds.writer_guid.entityId[0], ds.writer_guid.entityId[1], ds.writer_guid.entityId[2], ds.writer_guid.entityId[3]); fflush(f); } }
                     }
                 }
                 break;
@@ -162,7 +161,6 @@ const uint8_t* RtpsParser::ParseDataSubmessage(const uint8_t* sm, uint32_t len,
                                                  const std::array<uint8_t, 12>& peer_prefix,
                                                  DataSubmessage& out) {
     if (len < 24) return nullptr;
-    { static FILE* f = fopen("/tmp/parse_data_len.log", "a"); static int count = 0; if (f && ++count <= 50) { fprintf(f, "[ParseData %d] len=%u (need 24)\n", count, len); if (len < 24) fprintf(f, "  -> REJECT: too short\n"); fflush(f); } }
 
     uint8_t flags = sm[1];
     bool little_endian = (flags & 0x01) != 0;
@@ -219,9 +217,11 @@ const uint8_t* RtpsParser::ParseDataSubmessage(const uint8_t* sm, uint32_t len,
             // PID_PARTICIPANT_NAME = 0x0029 (string: 4 bytes length + data)
             else if (param_id == 0x0029 && param_len >= 4) {
                 uint32_t str_len = ReadU32(param_data, little_endian);
-                if (str_len > 0 && str_len <= static_cast<uint32_t>(param_len - 4)) {
+                if (str_len > 0 && str_len <= static_cast<uint32_t>(param_len - 3)) {
+                    const uint32_t copy_len = std::min(str_len,
+                                                       static_cast<uint32_t>(param_len - 4));
                     out.participant_name = std::string(
-                        reinterpret_cast<const char*>(param_data + 4), str_len);
+                        reinterpret_cast<const char*>(param_data + 4), copy_len);
                     // Remove null terminator if present
                     if (!out.participant_name.empty() && out.participant_name.back() == '\0') {
                         out.participant_name.pop_back();
@@ -232,9 +232,10 @@ const uint8_t* RtpsParser::ParseDataSubmessage(const uint8_t* sm, uint32_t len,
             // PID_TOPIC_NAME = 0x0005 (string: 4 bytes length + data)
             else if (param_id == 0x0005 && param_len >= 4) {
                 uint32_t str_len = ReadU32(param_data, little_endian);
-                if (str_len > 0 && str_len <= static_cast<uint32_t>(param_len - 4)) {
+                if (str_len > 0 && str_len <= static_cast<uint32_t>(param_len - 3)) {
                     out.topic_name = std::string(
-                        reinterpret_cast<const char*>(param_data + 4), str_len);
+                        reinterpret_cast<const char*>(param_data + 4),
+                        std::min(str_len, static_cast<uint32_t>(param_len - 4)));
                     // Remove null terminator if present
                     if (!out.topic_name.empty() && out.topic_name.back() == '\0') {
                         out.topic_name.pop_back();
@@ -245,9 +246,10 @@ const uint8_t* RtpsParser::ParseDataSubmessage(const uint8_t* sm, uint32_t len,
             // PID_TYPE_NAME = 0x0007 (string: 4 bytes length + data)
             else if (param_id == 0x0007 && param_len >= 4) {
                 uint32_t str_len = ReadU32(param_data, little_endian);
-                if (str_len > 0 && str_len <= static_cast<uint32_t>(param_len - 4)) {
+                if (str_len > 0 && str_len <= static_cast<uint32_t>(param_len - 3)) {
                     out.type_name = std::string(
-                        reinterpret_cast<const char*>(param_data + 4), str_len);
+                        reinterpret_cast<const char*>(param_data + 4),
+                        std::min(str_len, static_cast<uint32_t>(param_len - 4)));
                     // Remove null terminator if present
                     if (!out.type_name.empty() && out.type_name.back() == '\0') {
                         out.type_name.pop_back();
@@ -338,9 +340,10 @@ const uint8_t* RtpsParser::ParseDataSubmessage(const uint8_t* sm, uint32_t len,
                 // PID_PARTICIPANT_NAME = 0x0029 (string: 4 bytes length + data)
                 else if (param_id == 0x0029 && param_len >= 4 && !out.has_participant_name) {
                     uint32_t str_len = ReadU32(param_data, payload_little_endian);
-                    if (str_len > 0 && str_len <= static_cast<uint32_t>(param_len - 4)) {
+                    if (str_len > 0 && str_len <= static_cast<uint32_t>(param_len - 3)) {
                         out.participant_name = std::string(
-                            reinterpret_cast<const char*>(param_data + 4), str_len);
+                            reinterpret_cast<const char*>(param_data + 4),
+                        std::min(str_len, static_cast<uint32_t>(param_len - 4)));
                         // Remove null terminator if present
                         if (!out.participant_name.empty() && out.participant_name.back() == '\0') {
                             out.participant_name.pop_back();
@@ -352,9 +355,10 @@ const uint8_t* RtpsParser::ParseDataSubmessage(const uint8_t* sm, uint32_t len,
                 // Format: 4 bytes string length + string data
                 else if (param_id == 0x0062 && param_len >= 4 && !out.has_participant_name) {
                     uint32_t str_len = ReadU32(param_data, payload_little_endian);
-                    if (str_len > 0 && str_len <= static_cast<uint32_t>(param_len - 4)) {
+                    if (str_len > 0 && str_len <= static_cast<uint32_t>(param_len - 3)) {
                         out.participant_name = std::string(
-                            reinterpret_cast<const char*>(param_data + 4), str_len);
+                            reinterpret_cast<const char*>(param_data + 4),
+                        std::min(str_len, static_cast<uint32_t>(param_len - 4)));
                         // Remove null terminator if present
                         if (!out.participant_name.empty() && out.participant_name.back() == '\0') {
                             out.participant_name.pop_back();
@@ -365,9 +369,10 @@ const uint8_t* RtpsParser::ParseDataSubmessage(const uint8_t* sm, uint32_t len,
                 // PID_TOPIC_NAME = 0x0005 (string: 4 bytes length + data)
                 else if (param_id == 0x0005 && param_len >= 4 && !out.has_topic_name) {
                     uint32_t str_len = ReadU32(param_data, payload_little_endian);
-                    if (str_len > 0 && str_len <= static_cast<uint32_t>(param_len - 4)) {
+                    if (str_len > 0 && str_len <= static_cast<uint32_t>(param_len - 3)) {
                         out.topic_name = std::string(
-                            reinterpret_cast<const char*>(param_data + 4), str_len);
+                            reinterpret_cast<const char*>(param_data + 4),
+                        std::min(str_len, static_cast<uint32_t>(param_len - 4)));
                         // Remove null terminator if present
                         if (!out.topic_name.empty() && out.topic_name.back() == '\0') {
                             out.topic_name.pop_back();
@@ -378,9 +383,10 @@ const uint8_t* RtpsParser::ParseDataSubmessage(const uint8_t* sm, uint32_t len,
                 // PID_TYPE_NAME = 0x0007 (string: 4 bytes length + data)
                 else if (param_id == 0x0007 && param_len >= 4 && !out.has_type_name) {
                     uint32_t str_len = ReadU32(param_data, payload_little_endian);
-                    if (str_len > 0 && str_len <= static_cast<uint32_t>(param_len - 4)) {
+                    if (str_len > 0 && str_len <= static_cast<uint32_t>(param_len - 3)) {
                         out.type_name = std::string(
-                            reinterpret_cast<const char*>(param_data + 4), str_len);
+                            reinterpret_cast<const char*>(param_data + 4),
+                        std::min(str_len, static_cast<uint32_t>(param_len - 4)));
                         // Remove null terminator if present
                         if (!out.type_name.empty() && out.type_name.back() == '\0') {
                             out.type_name.pop_back();

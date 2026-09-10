@@ -4,11 +4,22 @@
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
+#include <cctype>
 #include <cstdio>
 #include <arpa/inet.h>
 #include <ftxui/component/loop.hpp>
 
 namespace ondemand_monitor {
+
+namespace {
+int TransferCategory(const std::string& topic) {
+    if (topic.compare(0, 12, "<unresolved:") == 0) return -1;
+    // Transfer is a display category only; parsing and matching do not depend
+    // on this product-specific UI grouping.
+    if (topic.find("transfer") != std::string::npos) return 2;
+    return -1;
+}
+}  // namespace
 
 MonitorUi::MonitorUi(PcapWorker& worker, MetricsEngine& engine)
     : worker_(worker), engine_(engine),
@@ -133,7 +144,16 @@ void MonitorUi::UpdateTopicCache() {
         }
     }
 
-    for (const auto& [name, info] : topic_map) {
+    for (auto& [name, info] : topic_map) {
+        // Recalculate rates from merged totals (the per-participant rates
+        // that came with the first occurrence are stale after aggregation).
+        uint64_t total_packets = info.data_count + info.lost_count;
+        info.loss_rate = total_packets > 0
+            ? static_cast<double>(info.lost_count) / static_cast<double>(total_packets)
+            : 0.0;
+        info.retransmit_rate = info.data_count > 0
+            ? static_cast<double>(info.retransmit_count) / static_cast<double>(info.data_count)
+            : 0.0;
         cached_topics_.push_back(info);
     }
 }
@@ -190,7 +210,7 @@ ftxui::Component MonitorUi::BuildListView() {
         constexpr int COL_COUNT = 8;
         constexpr int COL_BYTES = 9;
         constexpr int COL_LOSS = 7;
-        constexpr int COL_NACK = 6;
+        constexpr int COL_NACK = 8;
         constexpr int COL_RET = 7;
         constexpr int COL_RETCNT = 6;
 
@@ -214,7 +234,8 @@ ftxui::Component MonitorUi::BuildListView() {
         all_topics.erase(
             std::remove_if(all_topics.begin(), all_topics.end(),
                            [](const MetricsEngine::TopicInfo& t) {
-                               return t.topic_name.find("bucket_") != std::string::npos;
+                               return t.topic_name.compare(0, 12, "<unresolved:") == 0 ||
+                                      t.topic_name.find("bucket_") != std::string::npos;
                            }),
             all_topics.end());
 
@@ -223,14 +244,19 @@ ftxui::Component MonitorUi::BuildListView() {
             return;
         }
 
-        // Business-first ordering: TableDefine -> Registration
+        // Business-first ordering: TableDefine -> Registration -> Other
         std::sort(all_topics.begin(), all_topics.end(),
                   [](const MetricsEngine::TopicInfo& a,
                      const MetricsEngine::TopicInfo& b) {
-                      int ca = a.topic_name.find("tableDefine") != std::string::npos ? 0 :
-                               a.topic_name.find("subTableRegister") != std::string::npos ? 1 : 2;
-                      int cb = b.topic_name.find("tableDefine") != std::string::npos ? 0 :
-                               b.topic_name.find("subTableRegister") != std::string::npos ? 1 : 2;
+                      auto cat = [](const std::string& n) -> int {
+                          if (n.find("tableDefine") != std::string::npos) return 0;
+                          if (n.find("subTableRegister") != std::string::npos ||
+                              n.find("subTableUnregister") != std::string::npos) return 1;
+                          int transfer = TransferCategory(n);
+                          return transfer >= 0 ? 2 : 3;
+                      };
+                      int ca = cat(a.topic_name);
+                      int cb = cat(b.topic_name);
                       if (ca != cb) return ca < cb;
                       return a.topic_name < b.topic_name;
                   });
@@ -273,7 +299,7 @@ ftxui::Component MonitorUi::BuildListView() {
 
             std::string topic_cut = topic.topic_name.substr(0, COL_TOPIC - 2);
             char prefix[128], status_str[16], count_str[16], bytes_str[16],
-                 loss_str[16], nack_str[16], ret_str[16], retrans_cnt_str[16];
+                 loss_str[16], nack_str[24], ret_str[16], retrans_cnt_str[16];
             snprintf(prefix, sizeof(prefix), "  %-*s %-*s %-*s ",
                      COL_TOPIC - 2, topic_cut.c_str(),
                      COL_ROLE, role.c_str(),
@@ -286,7 +312,15 @@ ftxui::Component MonitorUi::BuildListView() {
                 snprintf(loss_str, sizeof(loss_str), " %*.1f%%", COL_LOSS - 1, topic.loss_rate * 100.0);
             else
                 snprintf(loss_str, sizeof(loss_str), " %*s", COL_LOSS - 1, "0.0%");
-            snprintf(nack_str, sizeof(nack_str), " %*llu", COL_NACK, (unsigned long long)topic.nack_count);
+            // NACK shows total requests with distinct SN count: "88(40)".
+            if (topic.nack_count > 0) {
+                snprintf(nack_str, sizeof(nack_str), " %*llu(%llu)", COL_NACK,
+                         (unsigned long long)topic.nack_count,
+                         (unsigned long long)topic.unique_nacked_sn);
+            } else {
+                snprintf(nack_str, sizeof(nack_str), " %*llu", COL_NACK,
+                         (unsigned long long)topic.nack_count);
+            }
             if (topic.retransmit_count > 0)
                 snprintf(ret_str, sizeof(ret_str), " %*.1f%%", COL_RET - 1, topic.retransmit_rate * 100.0);
             else
@@ -406,14 +440,23 @@ ftxui::Component MonitorUi::BuildListView() {
 
 ftxui::Component MonitorUi::BuildDetailView() {
     // Helper: categorize topic by name
+    // dsfconnector v1: tableDefine (no /v2), DSF::Var::Data::Transfer*::bucket_
+    // dsfconnector v2: tableDefine/v2, dsf/var/data/transfer/v2/bucket_
     auto categorize_topic = [](const std::string& topic_name) -> int {
-        if (topic_name.find("dsf/sys/var/tableDefine") != std::string::npos)
-            return 0;  // TableDefine
-        if (topic_name.find("dsf/message/commandRequest/subTableRegister") != std::string::npos)
-            return 1;  // Registration
-        if (topic_name.find("dsf/var/data/transfer/bucket_") != std::string::npos)
-            return 2;  // DataTransfer
-        return 2;  // Default to DataTransfer for unknown topics
+        // TableDefine: both v1 and v2
+        if (topic_name.find("tableDefine") != std::string::npos)
+            return 0;
+        // Registration
+        if (topic_name.find("subTableRegister") != std::string::npos ||
+            topic_name.find("subTableUnregister") != std::string::npos)
+            return 1;
+        int transfer = TransferCategory(topic_name);
+        if (transfer >= 0) return 2;
+        // Endpoints whose SEDP record was missed are shown in their own Unknown
+        // tab, clearly labeled — never merged into Other as if they were real
+        // named topics.
+        if (topic_name.compare(0, 12, "<unresolved:") == 0) return 4;  // Unknown
+        return 3;  // Other
     };
 
     auto component = ftxui::Renderer([this, categorize_topic] {
@@ -459,7 +502,9 @@ ftxui::Component MonitorUi::BuildDetailView() {
             }),
         });
 
-        // Get topics for this participant and filter by tab (from per-tick cache)
+        // Get topics for this participant and filter by tab (from per-tick
+        // cache). The cache is globally refreshed every tick, so ALL topics stay
+        // visible with live counts regardless of participant attribution.
         std::vector<MetricsEngine::TopicInfo> topics;
         for (const auto& t : cached_topics_) {
             if (categorize_topic(t.topic_name) == topic_tab_index_) {
@@ -468,9 +513,9 @@ ftxui::Component MonitorUi::BuildDetailView() {
         }
 
         // Tab header
-        const char* tab_names[] = {"TableDefine", "Registration", "DataTransfer"};
+        const char* tab_names[] = {"TableDefine", "Registration", "DataTransfer", "Other", "Unknown"};
         ftxui::Elements tab_elements;
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 5; i++) {
             if (i > 0) tab_elements.push_back(ftxui::text(" | "));
             auto tab_text = ftxui::text(tab_names[i]);
             if (i == topic_tab_index_) {
@@ -497,7 +542,7 @@ ftxui::Component MonitorUi::BuildDetailView() {
             constexpr int COL_COUNT = 8;
             constexpr int COL_BYTES = 9;
             constexpr int COL_LOSS = 7;
-            constexpr int COL_NACK = 6;
+            constexpr int COL_NACK = 8;
             constexpr int COL_RET = 7;
             constexpr int COL_RETCNT = 6;
             constexpr int COL_FRAGS = 5;
@@ -577,7 +622,15 @@ ftxui::Component MonitorUi::BuildDetailView() {
                     snprintf(loss_str, sizeof(loss_str), " %*.1f%%", COL_LOSS - 1, topic.loss_rate * 100.0);
                 else
                     snprintf(loss_str, sizeof(loss_str), " %*s", COL_LOSS - 1, "0.0%");
-                snprintf(nack_str, sizeof(nack_str), " %*llu", COL_NACK, (unsigned long long)topic.nack_count);
+                // NACK shows total requests with distinct SN count: "88(40)".
+            if (topic.nack_count > 0) {
+                snprintf(nack_str, sizeof(nack_str), " %*llu(%llu)", COL_NACK,
+                         (unsigned long long)topic.nack_count,
+                         (unsigned long long)topic.unique_nacked_sn);
+            } else {
+                snprintf(nack_str, sizeof(nack_str), " %*llu", COL_NACK,
+                         (unsigned long long)topic.nack_count);
+            }
                 if (topic.retransmit_count > 0)
                     snprintf(ret_str, sizeof(ret_str), " %*.1f%%", COL_RET - 1, topic.retransmit_rate * 100.0);
                 else
@@ -645,6 +698,15 @@ ftxui::Component MonitorUi::BuildStatusBar() {
         status_elements.push_back(ftxui::text(" " + mode_hint) | ftxui::dim);
         status_elements.push_back(ftxui::filler());
         status_elements.push_back(ftxui::text("Packets: " + FormatNumber(s.total_data_messages) + "  "));
+        // Live capture-queue pressure: how many packets are backlogged in the
+        // producer→consumer queue right now (monitor's own stall indicator).
+        auto cap = worker_.GetCaptureStats();
+        {
+            auto q = cap.queue_packets;
+            status_elements.push_back(ftxui::text("Queue: " + FormatNumber(q) + "(" +
+                FormatSize(cap.queue_bytes) + ")  ") |
+                (q > 0 ? ftxui::color(ftxui::Color::Yellow) : ftxui::color(ftxui::Color::Default)));
+        }
         // Queue drops (user-space)
         status_elements.push_back(ftxui::text("QDrop: " + std::to_string(dropped) + "  ") |
             (dropped > 0 ? ftxui::color(ftxui::Color::Red) : ftxui::color(ftxui::Color::Default)));
@@ -713,12 +775,12 @@ void MonitorUi::Run() {
         // tick's cache — every tab switch felt one full frame late.
         if (view_mode_ == ViewMode::DETAIL_VIEW) {
             if (event == ftxui::Event::ArrowLeft) {
-                topic_tab_index_ = (topic_tab_index_ + 2) % 3;  // Wrap around
+                topic_tab_index_ = (topic_tab_index_ + 4) % 5;  // Wrap around
                 UpdateTopicCache();
                 return true;
             }
             if (event == ftxui::Event::ArrowRight) {
-                topic_tab_index_ = (topic_tab_index_ + 1) % 3;  // Wrap around
+                topic_tab_index_ = (topic_tab_index_ + 1) % 5;  // Wrap around
                 UpdateTopicCache();
                 return true;
             }
@@ -770,7 +832,6 @@ void MonitorUi::Run() {
                     RtpsMessage msg;
                     bool parsed = RtpsParser::ParseHeader(packets[i].data.data(),
                                                           packets[i].len, msg);
-                    { static FILE* f = fopen("/tmp/parse_header.log", "a"); static int count = 0; if (f && ++count <= 50) { fprintf(f, "[ParseHeader %d] parsed=%d src_port=%u dst_port=%u len=%u\n", count, parsed, packets[i].src_port, packets[i].dst_port, packets[i].len); fflush(f); } }
                     if (parsed) {
                         engine_.OnPacketSource(msg.source_guid_prefix,
                                                packets[i].src_ip, packets[i].dst_ip);

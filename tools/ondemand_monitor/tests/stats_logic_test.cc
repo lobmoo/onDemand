@@ -215,6 +215,7 @@ void TestFragmentContinuation() {
     assert(found);
     CHECK_EQ(ret, 0u);
     CHECK_EQ(frags, 3u);
+    // FastDDS onDemand bucket writer EntityId recovers the topic without SEDP.
     CHECK_EQ(static_cast<int>(topic == "dsf/var/data/transfer/bucket_2"), 1);
 
     // Boundary: a fragment arriving AFTER the continuation window still counts
@@ -344,6 +345,92 @@ void TestSnJumpBound() {
     CHECK_EQ(lost, 8u);
 }
 
+// --- Case 10: GENERIC FastDDS contract — topic name comes ONLY from SEDP ---
+// A data topic announced by SEDP must be attributed by its real name, not by
+// any EntityId↔bucket convention. This is the portability guarantee: the
+// monitor must scan ANY DDS network and report each topic under its SEDP name.
+void TestGenericSedpTopicName() {
+    printf("[10] generic FastDDS: SEDP topic name is authoritative\n");
+    MetricsEngine e;
+    e.SetOfflineMode(true);
+
+    auto prefix = NodePrefix(20);
+    auto sedp_writer = MakeGuid(prefix, {0x00, 0x00, 0x03, 0xC2});
+    auto user_writer = MakeGuid(prefix, {0x00, 0x00, 0x63, 0x03});  // arbitrary id
+
+    const uint64_t t0 = 90'000'000'000ull;
+    DataSubmessage sedp;
+    sedp.writer_guid = sedp_writer;
+    sedp.has_endpoint_guid = true;
+    sedp.endpoint_guid = user_writer;
+    sedp.has_topic_name = true;
+    sedp.topic_name = "SensorData";          // arbitrary real topic, not bucket_*
+    sedp.has_type_name = true;
+    sedp.type_name = "SensorDataType";
+    e.OnData(sedp, t0);
+
+    // DATA for that writer must be attributed to "SensorData"
+    e.OnData(MakeUserData(user_writer, 1, 512), t0 + 1000);
+    e.OnData(MakeUserData(user_writer, 2, 512), t0 + 2000);
+
+    auto parts = e.GetParticipants();
+    bool found_sensor = false;
+    bool found_bucket = false;
+    uint64_t data = 0;
+    for (auto& p : parts) {
+        for (auto& t : e.GetParticipantTopics(p.guid)) {
+            if (t.topic_name == "SensorData") {
+                found_sensor = true;
+                data = t.data_count;
+            }
+            if (t.topic_name.find("bucket_") != std::string::npos ||
+                t.topic_name.find("dsf/var/data/transfer") != std::string::npos) {
+                found_bucket = true;
+            }
+        }
+    }
+    CHECK_EQ(static_cast<int>(found_sensor), 1);
+    CHECK_EQ(data, 2u);
+    // No dsfconnector/bucket fabrication for an arbitrary topic
+    CHECK_EQ(static_cast<int>(found_bucket), 0);
+}
+
+// --- Case 11: GENERIC FastDDS — SEDP arrives AFTER data; endpoint resolves late ---
+// DATA seen before SEDP must not be mislabeled as a guessed bucket; once SEDP
+// provides the real name, that endpoint is attributed under the real topic.
+void TestSedpAfterDataGeneric() {
+    printf("[11] generic FastDDS: SEDP-after-DATA resolves the topic\n");
+    MetricsEngine e;
+    e.SetOfflineMode(true);
+
+    auto prefix = NodePrefix(21);
+    auto sedp_writer = MakeGuid(prefix, {0x00, 0x00, 0x04, 0xC2});
+    auto user_reader = MakeGuid(prefix, {0x00, 0x00, 0x55, 0x04});
+
+    const uint64_t t0 = 100'000'000'000ull;
+    // data flows first
+    e.OnData(MakeUserData(MakeGuid(prefix, {0x00, 0x00, 0x66, 0x03}), 1), t0);
+    // SEDP then announces the writer+reader pair on a real topic
+    DataSubmessage sedp;
+    sedp.writer_guid = sedp_writer;
+    sedp.has_endpoint_guid = true;
+    sedp.endpoint_guid = user_reader;
+    sedp.has_topic_name = true;
+    sedp.topic_name = "telemetry";
+    sedp.has_type_name = true;
+    sedp.type_name = "TelemetryType";
+    e.OnData(sedp, t0 + 1000);
+
+    auto parts = e.GetParticipants();
+    bool found = false;
+    for (auto& p : parts) {
+        for (auto& t : e.GetParticipantTopics(p.guid)) {
+            if (t.topic_name == "telemetry") found = true;
+        }
+    }
+    CHECK_EQ(static_cast<int>(found), 1);
+}
+
 }  // namespace
 
 int main() {
@@ -356,6 +443,8 @@ int main() {
     TestOfflineClockDomain();
     TestNeutralNameAdoption();
     TestSnJumpBound();
+    TestGenericSedpTopicName();
+    TestSedpAfterDataGeneric();
 
     if (g_failures == 0) {
         printf("ALL PASS\n");

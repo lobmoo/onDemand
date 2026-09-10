@@ -19,12 +19,14 @@ enum Pid : uint16_t {
 };
 
 const uint8_t* MatchAnalyzer::FindParameter(const uint8_t* params, uint16_t len, uint16_t pid) {
-    const uint8_t* ptr = params;
-    const uint8_t* end = params + len;
+    if (!params) return nullptr;
 
-    while (ptr + 4 <= end) {
-        uint16_t current_pid = *reinterpret_cast<const uint16_t*>(ptr);
-        uint16_t param_len = *reinterpret_cast<const uint16_t*>(ptr + 2);
+    size_t offset = 0;
+    while (offset + 4 <= len) {
+        const uint8_t* ptr = params + offset;
+        uint16_t current_pid, param_len;
+        std::memcpy(&current_pid, ptr, sizeof(current_pid));
+        std::memcpy(&param_len, ptr + 2, sizeof(param_len));
 
         if (current_pid == Pid::PID_SENTINEL) {
             break;
@@ -34,12 +36,11 @@ const uint8_t* MatchAnalyzer::FindParameter(const uint8_t* params, uint16_t len,
             return ptr + 4;  // Return data pointer
         }
 
-        ptr += 4 + param_len;
-        // Align to 4 bytes
-        uint16_t remainder = param_len % 4;
-        if (remainder > 0) {
-            ptr += 4 - remainder;
-        }
+        const size_t payload_end = offset + 4 + param_len;
+        if (payload_end > len) break;
+        const size_t aligned_end = (payload_end + 3u) & ~size_t(3u);
+        if (aligned_end > len) break;
+        offset = aligned_end;
     }
 
     return nullptr;
@@ -51,9 +52,15 @@ bool MatchAnalyzer::ExtractTopicName(const uint8_t* inline_qos, uint16_t len, st
         return false;
     }
 
-    // TopicName is a string (uint32_t length + chars)
-    uint32_t str_len = *reinterpret_cast<const uint32_t*>(param);
-    if (str_len == 0 || str_len > static_cast<uint32_t>(len) - 4) {
+    // param points into [inline_qos, inline_qos+len); validate with sizes
+    // before forming pointers from the untrusted uint32 length.
+    const size_t param_offset = static_cast<size_t>(param - inline_qos);
+    if (param_offset > len || len - param_offset < 4) return false;
+
+    uint32_t str_len;
+    std::memcpy(&str_len, param, sizeof(str_len));
+    const size_t available = len - param_offset - 4;
+    if (str_len == 0 || static_cast<size_t>(str_len) > available) {
         return false;
     }
 
@@ -67,9 +74,13 @@ bool MatchAnalyzer::ExtractTypeName(const uint8_t* inline_qos, uint16_t len, std
         return false;
     }
 
-    // TypeName is a string (uint32_t length + chars)
-    uint32_t str_len = *reinterpret_cast<const uint32_t*>(param);
-    if (str_len == 0 || str_len > static_cast<uint32_t>(len) - 4) {
+    const size_t param_offset = static_cast<size_t>(param - inline_qos);
+    if (param_offset > len || len - param_offset < 4) return false;
+
+    uint32_t str_len;
+    std::memcpy(&str_len, param, sizeof(str_len));
+    const size_t available = len - param_offset - 4;
+    if (str_len == 0 || static_cast<size_t>(str_len) > available) {
         return false;
     }
 
