@@ -23,7 +23,7 @@
 
 namespace
 {
-constexpr uint32_t kDefaultCount = 100000U;
+constexpr uint32_t kDefaultCount = 10000U;
 
 uint32_t getConfiguredCount()
 {
@@ -205,9 +205,9 @@ void dataCallback(const std::vector<dsf::ondemand::VarCallbackData> &vars)
         dst.data_size = static_cast<uint32_t>(src.size);
         dst.timestamp_ms = src.timestampNs / 1000000ULL;
         dst.blobType = static_cast<int32_t>(src.blobType);
-        LOG(info) << "Callback: var=" << dst.var_name << " type=" << dst.type_name
-                  << " version=" << dst.type_version << " size=" << dst.data_size
-                  << " ts_ms=" << dst.timestamp_ms;
+        // LOG(info) << "Callback: var=" << dst.var_name << " type=" << dst.type_name
+        //           << " version=" << dst.type_version << " size=" << dst.data_size
+        //           << " ts_ms=" << dst.timestamp_ms;
         batch.items.push_back(std::move(dst));
     }
 
@@ -296,7 +296,7 @@ void subscribe()
     std::vector<std::string> unitems;
     for (int i = 0; i < count; ++i) {
         std::string varName = "var" + std::to_string(i);
-        items.push_back({varName, 1000});
+        items.push_back({varName, 500});
         unitems.push_back(varName);
     }
     LOG(info) << "Subscribing representative vars for packet-loss stats, count=" << items.size();
