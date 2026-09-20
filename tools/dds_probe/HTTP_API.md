@@ -12,13 +12,13 @@
 
 ```bash
 # 在线抓包 + 开启 HTTP，监听 8080
-sudo ./ondemand_monitor -i eth0 -p 8080
+sudo ./dds_probe -i eth0 -p 8080
 
 # 离线回放 pcap + 开启 HTTP
-./ondemand_monitor -r capture.pcap -p 8080
+./dds_probe -r capture.pcap -p 8080
 
 # 仅离线诊断（headless dump 模式下不开启 HTTP）
-./ondemand_monitor -r capture.pcap -p 8080   # dump 模式不会启 HTTP
+./dds_probe -r capture.pcap -p 8080   # dump 模式不会启 HTTP
 ```
 
 启动成功的标志：

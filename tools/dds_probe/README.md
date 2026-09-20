@@ -38,7 +38,7 @@ sudo apt install libpcap-dev libncurses-dev
 ## 编译
 
 ```bash
-cd tools/ondemand_monitor
+cd tools/dds_probe
 mkdir build && cd build
 cmake ..
 make -j$(nproc)
@@ -48,13 +48,13 @@ make -j$(nproc)
 
 ```bash
 # 需要 root 权限（抓包）
-sudo ./ondemand_monitor -i lo
+sudo ./dds_probe -i lo
 
 # 指定网络接口
-sudo ./ondemand_monitor -i eth0
+sudo ./dds_probe -i eth0
 
 # 自定义过滤器
-sudo ./ondemand_monitor -i lo -f 'udp port 7410'
+sudo ./dds_probe -i lo -f 'udp port 7410'
 ```
 
 ### 命令行参数
@@ -150,7 +150,7 @@ cd build && ./demo_exec
 
 2. 启动监控：
 ```bash
-sudo ./ondemand_monitor -i lo
+sudo ./dds_probe -i lo
 ```
 
 3. 观察 TUI 显示：

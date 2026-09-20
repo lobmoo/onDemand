@@ -9,7 +9,7 @@
 #include <pcap.h>
 #include "concurrentqueue.h"
 
-namespace ondemand_monitor {
+namespace dds_probe {
 
 // Wire packet handed from the capture thread to the processing thread.
 // The payload is stored variable-length: the old inline data[65536] made every
@@ -151,4 +151,4 @@ private:
     static constexpr int kKernelRingBytes = 128 << 20;
 };
 
-}  // namespace ondemand_monitor
+}  // namespace dds_probe

@@ -46,5 +46,5 @@ endif()
 
 option(BUILD_MONITOR "Build OnDemand monitor tool" ON)
 if(BUILD_MONITOR)
-    add_subdirectory(tools/ondemand_monitor)
+    add_subdirectory(tools/dds_probe)
 endif()

@@ -2,7 +2,7 @@
 
 #include "metrics_engine.h"
 
-namespace ondemand_monitor {
+namespace dds_probe {
 
 // Analyze topic and QoS matching between endpoints
 class MatchAnalyzer {
@@ -22,4 +22,4 @@ private:
     static const uint8_t* FindParameter(const uint8_t* params, uint16_t len, uint16_t pid);
 };
 
-}  // namespace ondemand_monitor
+}  // namespace dds_probe

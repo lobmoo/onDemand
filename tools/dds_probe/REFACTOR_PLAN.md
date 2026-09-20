@@ -53,7 +53,7 @@ Endpoint抽样:
 
 Docker内已编译：
 ```bash
-docker exec dsfc /home/workspaces/onDemand/build/tools/ondemand_monitor/ondemand_monitor
+docker exec dsfc /home/workspaces/onDemand/build/tools/dds_probe/dds_probe
 ```
 
 宿主机编译（需要修复build目录权限）：
@@ -61,7 +61,7 @@ docker exec dsfc /home/workspaces/onDemand/build/tools/ondemand_monitor/ondemand
 sudo rm -rf /home/wwk/workspace/onDemand/build
 cd /home/wwk/workspace/onDemand && mkdir build && cd build
 cmake .. -DUSE_TXDDS=ON
-make ondemand_monitor -j$(nproc)
+make dds_probe -j$(nproc)
 ```
 
 ## 相关文档

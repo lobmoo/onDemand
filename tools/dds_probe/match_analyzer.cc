@@ -2,7 +2,7 @@
 #include <cstring>
 #include <arpa/inet.h>
 
-namespace ondemand_monitor {
+namespace dds_probe {
 
 // RTPS PID definitions
 enum Pid : uint16_t {
@@ -112,4 +112,4 @@ bool MatchAnalyzer::CanMatch(const EndpointInfo& writer, const EndpointInfo& rea
     return true;
 }
 
-}  // namespace ondemand_monitor
+}  // namespace dds_probe

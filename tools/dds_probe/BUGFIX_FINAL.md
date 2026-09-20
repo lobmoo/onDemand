@@ -173,7 +173,7 @@ docker exec dsfc /home/workspaces/onDemand/build/demo_exec sub 100 &
 docker exec dsfc /home/workspaces/onDemand/build/demo_exec sub 100 &
 
 # Monitor（后启动，测试鲁棒性）
-docker exec dsfc /home/workspaces/onDemand/build/tools/ondemand_monitor/ondemand_monitor
+docker exec dsfc /home/workspaces/onDemand/build/tools/dds_probe/dds_probe
 ```
 
 ### 运行结果（10秒采样）
@@ -233,20 +233,20 @@ TrackRetransmitAndGaps（901-920行）的匹配逻辑已验证正确：
 
 ```bash
 cd /home/wwk/workspace/onDemand/build
-make ondemand_monitor -j$(nproc)
+make dds_probe -j$(nproc)
 
 # 部署到docker（如需要）
-docker cp build/tools/ondemand_monitor/ondemand_monitor dsfc:/home/workspaces/onDemand/build/tools/ondemand_monitor/
+docker cp build/tools/dds_probe/dds_probe dsfc:/home/workspaces/onDemand/build/tools/dds_probe/
 ```
 
 ---
 
 ## 相关文件
 
-- **tools/ondemand_monitor/metrics_engine.cc** — 核心修复（240-246, 651-696, 1036-1102行）
-- **tools/ondemand_monitor/BUGFIX_SUMMARY.md** — 之前的NACK/Reader修复分析
-- **tools/ondemand_monitor/BUGFIX_NACK_READER.md** — 详细技术分析
-- **tools/ondemand_monitor/BUGFIX_PORT_FILTER.md** — BPF过滤器修复
+- **tools/dds_probe/metrics_engine.cc** — 核心修复（240-246, 651-696, 1036-1102行）
+- **tools/dds_probe/BUGFIX_SUMMARY.md** — 之前的NACK/Reader修复分析
+- **tools/dds_probe/BUGFIX_NACK_READER.md** — 详细技术分析
+- **tools/dds_probe/BUGFIX_PORT_FILTER.md** — BPF过滤器修复
 
 ---
 

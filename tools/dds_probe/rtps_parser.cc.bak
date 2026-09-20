@@ -3,7 +3,7 @@
 #include <arpa/inet.h>
 #include <unordered_set>
 
-namespace ondemand_monitor {
+namespace dds_probe {
 
 // RTPS magic: "RTPS"
 static const uint8_t RTPS_MAGIC[4] = {'R', 'T', 'P', 'S'};
@@ -582,4 +582,4 @@ const uint8_t* RtpsParser::ParseFragSubmessage(const uint8_t* sm, uint32_t len,
     return sm + len;
 }
 
-}  // namespace ondemand_monitor
+}  // namespace dds_probe

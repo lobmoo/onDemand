@@ -9,7 +9,7 @@
 #include "pcap_worker.h"
 #include "rtps_parser.h"
 
-namespace ondemand_monitor {
+namespace dds_probe {
 
 class MonitorUi {
 public:
@@ -81,4 +81,4 @@ private:
     std::atomic<bool> running_{false};
 };
 
-}  // namespace ondemand_monitor
+}  // namespace dds_probe

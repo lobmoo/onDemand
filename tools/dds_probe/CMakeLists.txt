@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(ondemand_monitor)
+project(dds_probe)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -76,10 +76,10 @@ set(MONITOR_SOURCES
 )
 
 # Executable
-add_executable(ondemand_monitor ${MONITOR_SOURCES})
+add_executable(dds_probe ${MONITOR_SOURCES})
 
 # Link libraries
-target_link_libraries(ondemand_monitor
+target_link_libraries(dds_probe
   ftxui::component
   ftxui::dom
   ftxui::screen
@@ -100,4 +100,4 @@ foreach(monitor_test engine_repro_test stats_logic_test)
 endforeach()
 
 # Installation
-install(TARGETS ondemand_monitor DESTINATION bin)
+install(TARGETS dds_probe DESTINATION bin)

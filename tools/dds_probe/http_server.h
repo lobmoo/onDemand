@@ -8,7 +8,7 @@
 #include "pcap_worker.h"
 #include "httplib.h"
 
-namespace ondemand_monitor {
+namespace dds_probe {
 
 // Small embedded HTTP/JSON front-end on top of cpp-httplib + nlohmann-json.
 // Exposes the same live snapshot the TUI shows, as JSON, so an external client
@@ -41,5 +41,5 @@ private:
     std::atomic<bool> started_{false};
 };
 
-}  // namespace ondemand_monitor
+}  // namespace dds_probe
 

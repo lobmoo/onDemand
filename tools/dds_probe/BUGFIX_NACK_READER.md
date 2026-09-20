@@ -174,7 +174,7 @@ if (!found_reader) {
 ./demo_exec sub 100
 
 # Monitor
-./ondemand_monitor
+./dds_probe
 ```
 
 **期望结果：**

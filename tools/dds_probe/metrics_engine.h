@@ -9,7 +9,7 @@
 #include <shared_mutex>
 #include "rtps_parser.h"
 
-namespace ondemand_monitor {
+namespace dds_probe {
 
 // Participant (DomainParticipant)
 struct ParticipantInfo {
@@ -315,4 +315,4 @@ private:
     static constexpr uint64_t LOSS_TIMEOUT_US = 5000000;
 };
 
-}  // namespace ondemand_monitor
+}  // namespace dds_probe

@@ -5,7 +5,7 @@
 #include <vector>
 #include <string>
 
-namespace ondemand_monitor {
+namespace dds_probe {
 
 // RTPS Protocol Version
 struct ProtocolVersion {
@@ -191,4 +191,4 @@ private:
                                                    AcknackSubmessage& out);
 };
 
-}  // namespace ondemand_monitor
+}  // namespace dds_probe

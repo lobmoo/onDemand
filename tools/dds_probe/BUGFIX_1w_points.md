@@ -1,7 +1,7 @@
 # Bug修复：1w+点数时Monitor无法接收Topic数据
 
 ## 问题症状
-在变量点数达到10,000+时，ondemand_monitor无法监视到DDS topic数据。
+在变量点数达到10,000+时，dds_probe无法监视到DDS topic数据。
 
 ## 根本原因分析
 
@@ -111,7 +111,7 @@ Monitor看不到数据
 ```bash
 source .env
 cd build
-make ondemand_monitor -j$(nproc)
+make dds_probe -j$(nproc)
 ```
 
 ### 2. 运行测试（1w+点场景）
@@ -123,7 +123,7 @@ make ondemand_monitor -j$(nproc)
 ./demo_exec --sub --var-count 10000
 
 # 终端3: 启动monitor
-sudo ./tools/ondemand_monitor/ondemand_monitor -i lo
+sudo ./tools/dds_probe/dds_probe -i lo
 ```
 
 ### 3. 验证指标
@@ -148,7 +148,7 @@ sudo ./tools/ondemand_monitor/ondemand_monitor -i lo
 ## 相关代码
 
 ### 修改文件
-- `tools/ondemand_monitor/monitor_ui.cc` (704-808行)
+- `tools/dds_probe/monitor_ui.cc` (704-808行)
 
 ### 关键数据结构
 - `PcapWorker::queue_` - 256MB bounded queue (pcap_worker.h:92)

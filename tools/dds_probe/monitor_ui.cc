@@ -9,7 +9,7 @@
 #include <arpa/inet.h>
 #include <ftxui/component/loop.hpp>
 
-namespace ondemand_monitor {
+namespace dds_probe {
 
 namespace {
 int TransferCategory(const std::string& topic) {
@@ -919,4 +919,4 @@ void MonitorUi::Run() {
     }
 }
 
-}  // namespace ondemand_monitor
+}  // namespace dds_probe

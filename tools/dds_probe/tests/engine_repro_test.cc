@@ -19,7 +19,7 @@
 
 #include "metrics_engine.h"
 
-using namespace ondemand_monitor;
+using namespace dds_probe;
 
 namespace {
 

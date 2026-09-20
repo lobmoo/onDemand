@@ -111,7 +111,7 @@ if (is_sub_participant) {
 ./build/demo_exec 10000 100
 
 # 启动monitor
-./build/tools/ondemand_monitor/ondemand_monitor
+./build/tools/dds_probe/dds_probe
 
 # 进入Sub节点 → 查看bucket_X topic
 # 应该看到：
@@ -147,5 +147,5 @@ if (is_sub_participant) {
 ```bash
 cd build
 make -j$(nproc)
-./tools/ondemand_monitor/ondemand_monitor
+./tools/dds_probe/dds_probe
 ```

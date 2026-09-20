@@ -26,8 +26,8 @@ std::atomic<bool> g_running{true};
 // (fragment reassembly -> RTPS parse -> MetricsEngine) and print how each topic
 // is attributed. Lets us see which bucket a non-standard writer EntityId maps
 // to without running the TUI.
-void DumpResult(const ondemand_monitor::MetricsEngine& engine,
-                const std::vector<ondemand_monitor::ParticipantInfo>& parts) {
+void DumpResult(const dds_probe::MetricsEngine& engine,
+                const std::vector<dds_probe::ParticipantInfo>& parts) {
     std::printf("\n=== PARTICPANTS ===\n");
     for (const auto& p : parts) {
         std::printf("participant name=['%s'] prefix=%02x%02x%02x%02x%02x%02x eps=%u\n",
@@ -58,9 +58,9 @@ void DumpResult(const ondemand_monitor::MetricsEngine& engine,
     }
 }
 
-void DrainAndDump(ondemand_monitor::PcapWorker& worker,
-                  ondemand_monitor::MetricsEngine& engine) {
-    std::vector<ondemand_monitor::RawPacket> packets(1024);
+void DrainAndDump(dds_probe::PcapWorker& worker,
+                  dds_probe::MetricsEngine& engine) {
+    std::vector<dds_probe::RawPacket> packets(1024);
     size_t guard = 0;
     while (guard++ < 1000000) {
         size_t count = worker.PopPackets(packets.data(), packets.size());
@@ -73,29 +73,29 @@ void DrainAndDump(ondemand_monitor::PcapWorker& worker,
         }
         engine.BeginBatch();
         for (size_t i = 0; i < count; ++i) {
-            ondemand_monitor::RtpsMessage msg;
-            bool parsed = ondemand_monitor::RtpsParser::ParseHeader(
+            dds_probe::RtpsMessage msg;
+            bool parsed = dds_probe::RtpsParser::ParseHeader(
                 packets[i].data.data(), packets[i].len, msg);
             if (!parsed) continue;
             engine.OnPacketSource(msg.source_guid_prefix,
                                   packets[i].src_ip, packets[i].dst_ip);
-            struct Ctx { ondemand_monitor::MetricsEngine* e; uint64_t ts; uint16_t sp; uint16_t dp; };
+            struct Ctx { dds_probe::MetricsEngine* e; uint64_t ts; uint16_t sp; uint16_t dp; };
             Ctx ctx{&engine, packets[i].timestamp_us, packets[i].src_port, packets[i].dst_port};
-            ondemand_monitor::RtpsParser::ParseSubmessages(
+            dds_probe::RtpsParser::ParseSubmessages(
                 packets[i].data.data(), packets[i].len, msg.source_guid_prefix, &ctx,
-                [](void* u, ondemand_monitor::DataSubmessage& d) {
+                [](void* u, dds_probe::DataSubmessage& d) {
                     auto* c = static_cast<Ctx*>(u);
                     c->e->OnData(d, c->ts);
                 },
-                [](void* u, const ondemand_monitor::HeartbeatSubmessage& hb) {
+                [](void* u, const dds_probe::HeartbeatSubmessage& hb) {
                     auto* c = static_cast<Ctx*>(u);
                     c->e->OnHeartbeat(hb, c->ts);
                 },
-                [](void* u, const ondemand_monitor::AcknackSubmessage& ack) {
+                [](void* u, const dds_probe::AcknackSubmessage& ack) {
                     auto* c = static_cast<Ctx*>(u);
                     c->e->OnAcknack(ack, c->ts);
                 },
-                [](void* u, ondemand_monitor::FragSubmessage& f) {
+                [](void* u, dds_probe::FragSubmessage& f) {
                     auto* c = static_cast<Ctx*>(u);
                     c->e->OnFragment(f, c->ts);
                 });
@@ -212,22 +212,22 @@ int main(int argc, char* argv[]) {
 
     try {
         // Create components based on mode
-        ondemand_monitor::PcapWorker pcap_worker = is_offline ?
-            ondemand_monitor::PcapWorker(config.pcap_file) :
-            ondemand_monitor::PcapWorker(config.interface, config.filter);
-        ondemand_monitor::MetricsEngine metrics_engine;
+        dds_probe::PcapWorker pcap_worker = is_offline ?
+            dds_probe::PcapWorker(config.pcap_file) :
+            dds_probe::PcapWorker(config.interface, config.filter);
+        dds_probe::MetricsEngine metrics_engine;
         // Offline replay must age participants out in the packet-time domain,
         // not against the wall clock (see MetricsEngine::SetOfflineMode).
         metrics_engine.SetOfflineMode(is_offline);
-        ondemand_monitor::MonitorUi ui(pcap_worker, metrics_engine);
+        dds_probe::MonitorUi ui(pcap_worker, metrics_engine);
 
         // Start capture
         pcap_worker.Start();
 
         // Optional HTTP JSON endpoint
-        std::unique_ptr<ondemand_monitor::HttpServer> http;
+        std::unique_ptr<dds_probe::HttpServer> http;
         if (config.http_port > 0 && !config.dump) {
-            http = std::make_unique<ondemand_monitor::HttpServer>(
+            http = std::make_unique<dds_probe::HttpServer>(
                 metrics_engine, pcap_worker);
             if (http->Start(config.http_port)) {
                 std::cout << "HTTP JSON endpoint on :" << config.http_port << "\n";

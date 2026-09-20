@@ -8,7 +8,7 @@
 #include "httplib.h"
 #include "nlohmann/json.hpp"
 
-namespace ondemand_monitor {
+namespace dds_probe {
 namespace {
 
 std::string FormatGuid(const GUID_t& g) {
@@ -280,4 +280,4 @@ void HttpServer::Stop() {
     started_.store(false);
 }
 
-}  // namespace ondemand_monitor
+}  // namespace dds_probe

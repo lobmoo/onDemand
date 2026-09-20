@@ -84,7 +84,7 @@ for (const auto& [p_guid, is_pub] : discovered_pub_sub_) {
 ./build/demo_exec sub 100
 
 # Terminal 4: Monitor
-./build/tools/ondemand_monitor/ondemand_monitor
+./build/tools/dds_probe/dds_probe
 ```
 
 **期望UI输出：**
@@ -156,16 +156,16 @@ Participant: demo_sub_2 (09.0A.0B.0C)
 
 ```bash
 cd /home/wwk/workspace/onDemand/build
-make ondemand_monitor -j$(nproc)
+make dds_probe -j$(nproc)
 
 # 部署到docker（如需要）
-docker cp build/tools/ondemand_monitor/ondemand_monitor <container>:/workspace/onDemand/build/tools/ondemand_monitor/
+docker cp build/tools/dds_probe/dds_probe <container>:/workspace/onDemand/build/tools/dds_probe/
 ```
 
 ---
 
 ## 相关文件
 
-- `tools/ondemand_monitor/metrics_engine.cc` — 核心修复
-- `tools/ondemand_monitor/BUGFIX_NACK_READER.md` — 详细分析文档
-- `tools/ondemand_monitor/BUGFIX_PORT_FILTER.md` — 之前修复的BPF过滤器问题
+- `tools/dds_probe/metrics_engine.cc` — 核心修复
+- `tools/dds_probe/BUGFIX_NACK_READER.md` — 详细分析文档
+- `tools/dds_probe/BUGFIX_PORT_FILTER.md` — 之前修复的BPF过滤器问题

@@ -11,7 +11,7 @@ monitor在大量点数（1w+）时，无法监视到topic数据，UI显示：
 **BPF过滤器端口范围过窄**
 
 ```cpp
-// 旧代码：tools/ondemand_monitor/main.cc:25
+// 旧代码：tools/dds_probe/main.cc:25
 std::string filter = "udp portrange 7400-7500";
 ```
 
@@ -36,7 +36,7 @@ std::string filter = "udp portrange 7400-7500";
 **移除端口限制，捕获所有UDP流量**
 
 ```cpp
-// 新代码：tools/ondemand_monitor/main.cc:25
+// 新代码：tools/dds_probe/main.cc:25
 std::string filter = "udp";  // Capture all UDP, rely on RTPS header validation
 ```
 
@@ -76,7 +76,7 @@ Heartbeat: 568  ACKNACK: 0    Packets: 80  QDrop: 0
 ./demo_exec sub &
 
 # 2. 启动monitor
-sudo ./tools/ondemand_monitor/ondemand_monitor -i lo
+sudo ./tools/dds_probe/dds_probe -i lo
 
 # 3. 验证UI显示：
 #    - Participant = 4
@@ -86,8 +86,8 @@ sudo ./tools/ondemand_monitor/ondemand_monitor -i lo
 ```
 
 ## 相关文件
-- `tools/ondemand_monitor/main.cc:25` - BPF过滤器定义
-- `tools/ondemand_monitor/monitor_ui.cc:704-808` - 数据处理循环（动态批大小优化）
+- `tools/dds_probe/main.cc:25` - BPF过滤器定义
+- `tools/dds_probe/monitor_ui.cc:704-808` - 数据处理循环（动态批大小优化）
 
 ## 性能影响
 - **CPU开销**: 可忽略（RTPS header验证成本 < 1% CPU）

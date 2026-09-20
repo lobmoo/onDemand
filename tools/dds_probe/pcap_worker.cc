@@ -7,7 +7,7 @@
 #include <netinet/udp.h>
 #include <arpa/inet.h>
 
-namespace ondemand_monitor {
+namespace dds_probe {
 
 namespace {
 // memcpy-based port readers: UDP header fields are only 2-byte aligned at best
@@ -474,4 +474,4 @@ bool PcapWorker::TryReassemble(const FragmentKey& key, FragmentedDatagram& frag_
     return true;
 }
 
-}  // namespace ondemand_monitor
+}  // namespace dds_probe

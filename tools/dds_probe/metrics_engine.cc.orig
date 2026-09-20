@@ -3,7 +3,7 @@
 #include <chrono>
 #include <cstring>
 
-namespace ondemand_monitor {
+namespace dds_probe {
 
 // Activity threshold: 5 seconds (PDP-based)
 static constexpr uint64_t ACTIVITY_THRESHOLD_US = 5 * 1000000ULL;
@@ -1514,4 +1514,4 @@ std::vector<MetricsEngine::TopicMatchInfo> MetricsEngine::GetAllTopicMatches() c
     return result;
 }
 
-}  // namespace ondemand_monitor
+}  // namespace dds_probe
