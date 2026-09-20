@@ -10,9 +10,12 @@
 #include "metrics_engine.h"
 #include "match_analyzer.h"
 #include "monitor_ui.h"
+#include "http_server.h"
 
 #include <algorithm>
 #include <cstdio>
+#include <cstdlib>
+#include <memory>
 #include <thread>
 #include <chrono>
 
@@ -113,6 +116,7 @@ struct MonitorConfig {
     std::string filter = "ip proto 17";  // Capture all UDP including fragments (DDS uses ephemeral ports 46000-47000)
     std::string pcap_file;               // Offline pcap file (empty = live mode)
     bool dump = false;                   // Headless offline diagnostics
+    int http_port = 0;                   // HTTP JSON endpoint port (0 = disabled)
 };
 
 void print_usage(const char* prog) {
@@ -122,6 +126,7 @@ void print_usage(const char* prog) {
               << "  -i, --interface <name>    Network interface (default: any)\n"
               << "  -r, --read <file>         Read from pcap file (offline mode)\n"
               << "  -f, --filter <expr>       BPF filter (default: udp)\n"
+              << "  -p, --http-port <port>    Serve JSON over HTTP on this port (default: off)\n"
               << "  -h, --help                Show this help\n\n"
               << "Examples:\n"
               << "  sudo " << prog << " -i eth0\n"
@@ -141,12 +146,13 @@ bool parse_args(int argc, char* argv[], MonitorConfig& config) {
         {"read", required_argument, 0, 'r'},
         {"filter", required_argument, 0, 'f'},
         {"dump", no_argument, 0, 'd'},
+        {"http-port", required_argument, 0, 'p'},
         {"help", no_argument, 0, 'h'},
         {0, 0, 0, 0}
     };
 
     int opt;
-    while ((opt = getopt_long(argc, argv, "i:r:f:dh", long_options, nullptr)) != -1) {
+    while ((opt = getopt_long(argc, argv, "i:r:f:dp:h", long_options, nullptr)) != -1) {
         switch (opt) {
             case 'i':
                 config.interface = optarg;
@@ -159,6 +165,9 @@ bool parse_args(int argc, char* argv[], MonitorConfig& config) {
                 break;
             case 'd':
                 config.dump = true;
+                break;
+            case 'p':
+                config.http_port = std::atoi(optarg);
                 break;
             case 'h':
                 print_usage(argv[0]);
@@ -215,6 +224,18 @@ int main(int argc, char* argv[]) {
         // Start capture
         pcap_worker.Start();
 
+        // Optional HTTP JSON endpoint
+        std::unique_ptr<ondemand_monitor::HttpServer> http;
+        if (config.http_port > 0 && !config.dump) {
+            http = std::make_unique<ondemand_monitor::HttpServer>(
+                metrics_engine, pcap_worker);
+            if (http->Start(config.http_port)) {
+                std::cout << "HTTP JSON endpoint on :" << config.http_port << "\n";
+            } else {
+                std::cerr << "Warning: failed to bind HTTP port " << config.http_port << "\n";
+            }
+        }
+
         if (config.dump) {
             if (!is_offline) {
                 std::cerr << "--dump requires --read <pcap>\n";
@@ -229,7 +250,8 @@ int main(int argc, char* argv[]) {
         // Run UI (blocks until quit)
         ui.Run();
 
-        // Stop capture
+        // Stop HTTP server (if running) then capture
+        if (http) http->Stop();
         pcap_worker.Stop();
 
         std::cout << "Monitor stopped.\n";

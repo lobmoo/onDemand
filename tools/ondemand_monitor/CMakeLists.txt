@@ -55,6 +55,8 @@ set(MONITOR_INCLUDE_DIRS
   ${CMAKE_SOURCE_DIR}/common
   ${CMAKE_SOURCE_DIR}/common/log
   ${CMAKE_SOURCE_DIR}/core/ondemand  # for concurrentqueue.h
+  ${CMAKE_SOURCE_DIR}/thirdparty
+  ${CMAKE_SOURCE_DIR}/thirdparty/nlohmann/include
 )
 
 # Add pcap include if using local header
@@ -70,6 +72,7 @@ set(MONITOR_SOURCES
   metrics_engine.cc
   match_analyzer.cc
   monitor_ui.cc
+  http_server.cc
 )
 
 # Executable
