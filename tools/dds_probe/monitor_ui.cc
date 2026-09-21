@@ -6,6 +6,8 @@
 #include <algorithm>
 #include <cctype>
 #include <cstdio>
+#include <filesystem>
+#include <fstream>
 #include <arpa/inet.h>
 #include <ftxui/component/loop.hpp>
 
@@ -18,6 +20,28 @@ int TransferCategory(const std::string& topic) {
     // on this product-specific UI grouping.
     if (topic.find("transfer") != std::string::npos) return 2;
     return -1;
+}
+
+// Read one counter file under /sys/class/net/<iface>/statistics/<name>.
+// Returns false when the read fails (iface missing / permission denied), so
+// callers can distinguish "no such interface" from a legitimate 0 counter.
+bool ReadNetCounter(const std::string& iface, const char* name, uint64_t& out) {
+    std::ifstream f("/sys/class/net/" + iface + "/statistics/" + name);
+    uint64_t v = 0;
+    if (!(f >> v)) return false;
+    out = v;
+    return true;
+}
+
+// pcap's interface argument treats "any" case-insensitively; /sys/class/net
+// has no interface literally named that, so normalize before deciding.
+bool IsAnyInterface(const std::string& iface) {
+    if (iface.size() != 3) return false;
+    for (size_t i = 0; i < 3; ++i) {
+        if (std::tolower(static_cast<unsigned char>(iface[i])) != "any"[i])
+            return false;
+    }
+    return true;
 }
 }  // namespace
 
@@ -108,6 +132,92 @@ std::string MonitorUi::FormatNumber(uint64_t num) {
         oss << std::fixed << std::setprecision(1) << (num / 1000000.0) << "M";
     }
     return oss.str();
+}
+
+namespace {
+// Format a bytes/sec rate the same way FormatSize formats bytes.
+std::string FormatRate(double bps) {
+    std::ostringstream oss;
+    if (bps < 1024.0) {
+        oss << std::fixed << std::setprecision(0) << bps << "B/s";
+    } else if (bps < 1024.0 * 1024.0) {
+        oss << std::fixed << std::setprecision(1) << (bps / 1024.0) << "KB/s";
+    } else if (bps < 1024.0 * 1024.0 * 1024.0) {
+        oss << std::fixed << std::setprecision(1)
+            << (bps / (1024.0 * 1024.0)) << "MB/s";
+    } else {
+        oss << std::fixed << std::setprecision(1)
+            << (bps / (1024.0 * 1024.0 * 1024.0)) << "GB/s";
+    }
+    return oss.str();
+}
+}  // namespace
+
+bool MonitorUi::SampleNicBandwidth(NicBandwidth& out) {
+    out.valid = false;
+    if (worker_.IsOffline()) {
+        // Offline replay has no live NIC; rates are meaningless.
+        return false;
+    }
+
+    // Throttle: sample at most once per second (render runs at frame rate).
+    // Before the baseline exists we don't throttle, so a failed first attempt
+    // (e.g. bad interface name) is retried on the next frame.
+    auto now = std::chrono::steady_clock::now();
+    if (bw_baseline_valid_ &&
+        now - last_bw_sample_ < std::chrono::seconds(1)) {
+        return false;  // caller keeps its cached values
+    }
+    auto prev_time = last_bw_sample_;
+    last_bw_sample_ = now;
+
+    // Enumerate interfaces. Specific iface: read only that one; a failed read
+    // (name not in /sys/class/net) keeps the display at "--" instead of a
+    // misleading 0B/s. "any": sum all interfaces except lo (loopback skews
+    // "total NIC load"); an iface vanishing mid-iteration reads as 0.
+    uint64_t rx = 0, tx = 0;
+    const std::string& iface = worker_.GetInterface();
+    std::error_code ec;
+    if (!IsAnyInterface(iface)) {
+        uint64_t r = 0, t = 0;
+        if (!ReadNetCounter(iface, "rx_bytes", r) ||
+            !ReadNetCounter(iface, "tx_bytes", t)) {
+            return false;  // interface doesn't exist: show "--"
+        }
+        rx += r;
+        tx += t;
+    } else {
+        for (const auto& entry :
+             std::filesystem::directory_iterator("/sys/class/net", ec)) {
+            std::string name = entry.path().filename().string();
+            if (name == "lo") continue;
+            uint64_t r = 0, t = 0;
+            if (ReadNetCounter(name, "rx_bytes", r)) rx += r;
+            if (ReadNetCounter(name, "tx_bytes", t)) tx += t;
+        }
+        if (ec) return false;
+    }
+
+    if (!bw_baseline_valid_) {
+        // First sample only establishes the baseline; rate needs two.
+        bw_baseline_valid_ = true;
+        last_rx_bytes_ = rx;
+        last_tx_bytes_ = tx;
+        return false;
+    }
+
+    double dt = std::chrono::duration<double>(now - prev_time).count();
+    if (dt <= 0.0) return false;
+    out.rx_bps = (rx >= last_rx_bytes_)
+                     ? static_cast<double>(rx - last_rx_bytes_) / dt
+                     : 0.0;  // counter reset (iface bounce): no rate this tick
+    out.tx_bps = (tx >= last_tx_bytes_)
+                     ? static_cast<double>(tx - last_tx_bytes_) / dt
+                     : 0.0;
+    out.valid = true;
+    last_rx_bytes_ = rx;
+    last_tx_bytes_ = tx;
+    return true;
 }
 
 void MonitorUi::UpdateTopicCache() {
@@ -354,6 +464,19 @@ ftxui::Component MonitorUi::BuildListView() {
         // Update entries each frame
         update_entries();
 
+        // NIC-wide bandwidth (throttled inside; cached between samples).
+        // Offline mode / pre-baseline / invalid sampling leaves the cached
+        // values untouched, so the line stays "--" until a real rate exists.
+        {
+            NicBandwidth bw;
+            if (SampleNicBandwidth(bw)) cached_bw_ = bw;
+        }
+        std::string bw_rx = cached_bw_.valid ? FormatRate(cached_bw_.rx_bps) : "--";
+        std::string bw_tx = cached_bw_.valid ? FormatRate(cached_bw_.tx_bps) : "--";
+        std::string bw_total = cached_bw_.valid
+                                   ? FormatRate(cached_bw_.rx_bps + cached_bw_.tx_bps)
+                                   : "--";
+
         // Stats summary
         auto s = summary_;
         auto stats = ftxui::vbox({
@@ -395,6 +518,17 @@ ftxui::Component MonitorUi::BuildListView() {
                 ftxui::text(FormatNumber(submsg_counts_[0x0E])) | ftxui::dim,
                 ftxui::text(" INFO_SRC=") | ftxui::dim,
                 ftxui::text(FormatNumber(submsg_counts_[0x0C])) | ftxui::dim,
+            }),
+            // NIC-wide load: all traffic on the capture interface(s), not just
+            // DDS — reads /sys/class/net/*/statistics (see SampleNicBandwidth).
+            ftxui::hbox({
+                ftxui::text("Net BW: ") | ftxui::bold,
+                ftxui::text("↓") | ftxui::color(ftxui::Color::Green),
+                ftxui::text(bw_rx) | ftxui::color(ftxui::Color::Green),
+                ftxui::text("  ↑") | ftxui::color(ftxui::Color::Cyan),
+                ftxui::text(bw_tx) | ftxui::color(ftxui::Color::Cyan),
+                ftxui::text("  = ") | ftxui::dim,
+                ftxui::text(bw_total) | ftxui::color(ftxui::Color::Yellow) | ftxui::bold,
             }),
         });
 

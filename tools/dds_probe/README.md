@@ -1,178 +1,105 @@
-# OnDemand DDS Monitor
+# dds_probe — RTPS 流量监控工具
 
-实时 RTPS 流量分析和监控工具，用于 OnDemand 发布订阅系统。
+基于 libpcap 的实时抓包分析工具，分析 OnDemand 发布/订阅系统的 RTPS 流量，自带 TUI 界面和可选 HTTP JSON 接口。
 
-## 功能特性
+---
 
-- **实时抓包**：基于 libpcap 的 UDP 流量捕获
-- **RTPS 协议解析**：解析 DATA、HEARTBEAT、ACKNACK 子消息
-- **指标统计**：
-  - 参与者发现（Participant Discovery）
-  - 端点信息（DataWriter/DataReader）
-  - 传输统计（数据包、字节、NACK 率）
-- **可视化 TUI**：基于 FTXUI 的终端界面
-  - Overview 页面：总览统计
-  - Participants 页面：参与者列表
-  - Endpoints 页面：端点详情
-  - Transfer 页面：传输统计
+## 1. 前置条件
 
-## 环境要求
-
-- Ubuntu 20.04+
-- g++ 9.4+ (C++17)
-- CMake 3.14+
-- libpcap-dev
-- FastDDS (fastcdr)
-- FTXUI (自动下载)
-
-## 安装依赖
+| 依赖 | 说明 |
+|------|------|
+| g++ 9.4+（C++17） | 编译需要 |
+| CMake 3.14+ | 构建 |
+| libpcap | 抓包库，**必须装** |
 
 ```bash
-# Ubuntu/Debian
-sudo apt install libpcap-dev libncurses-dev
-
-# 如果使用 FastDDS (已包含 fastcdr)
-# 无需额外安装
+sudo apt-get install libpcap-dev
 ```
 
-## 编译
+> 自查：`ldconfig -p | grep libpcap`，能查到 `libpcap.so.0.8` 即运行不缺库。
+
+---
+
+## 2. 编译
+
+在**项目根目录**顶层构建（`tools/dds_probe` 是顶层 CMake 子目录，BUILD_MONITOR 默认 ON）：
 
 ```bash
-cd tools/dds_probe
-mkdir build && cd build
-cmake ..
+cd /home/wwk/workspace/onDemand
+cd build
+cmake .. -DUSE_FASTDDS=ON        # FASTDDS / TXDDS 二选一
 make -j$(nproc)
 ```
 
-## 使用
+产物：`build/tools/dds_probe/dds_probe`
+
+---
+
+## 3. 运行
+
+### 在线抓包（需 root）
 
 ```bash
-# 需要 root 权限（抓包）
-sudo ./dds_probe -i lo
+# demo 流量走 lo 回环
+sudo ./build/tools/dds_probe/dds_probe -i lo
 
-# 指定网络接口
-sudo ./dds_probe -i eth0
+# 抓指定网卡
+sudo ./build/tools/dds_probe/dds_probe -i eth0
 
-# 自定义过滤器
-sudo ./dds_probe -i lo -f 'udp port 7410'
+# 自定义 BPF 过滤
+sudo ./build/tools/dds_probe/dds_probe -i lo -f 'udp port 7410'
 ```
 
-### 命令行参数
+### 离线回放 pcap（无需 root）
+
+```bash
+./build/tools/dds_probe/dds_probe -r capture.pcap
+./build/tools/dds_probe/dds_probe -r capture.pcap -f 'udp port 7410'
+```
+
+### 同时开 HTTP JSON 接口
+
+```bash
+sudo ./build/tools/dds_probe/dds_probe -i lo -p 8080
+```
+
+启动成功打印 `HTTP JSON endpoint on :8080`，接口对接见 [HTTP_API.md](HTTP_API.md)。
+
+---
+
+## 4. 命令行参数
 
 ```
--i, --interface <name>    网络接口 (默认: any)
--f, --filter <expr>       BPF 过滤器 (默认: udp port 7410 or udp port 7411)
+-i, --interface <name>    网络接口（默认 any）
+-r, --read <file>         离线读取 pcap 文件（非空 = 离线模式）
+-f, --filter <expr>       BPF 过滤表达式（默认 udp）
+-p, --http-port <port>    HTTP JSON 接口端口（默认关闭）
+-d, --dump                headless 离线诊断（此时不开 HTTP）
 -h, --help                显示帮助
 ```
 
 ### 快捷键
 
-- `Tab` / `1-4`：切换页面
-- `↑/↓`：导航列表
-- `q` / `ESC`：退出
+- `↑/↓` / `j/k`：导航参与者列表
+- `Enter`：查看参与者详情
+- `ESC`：返回列表
+- `q`：退出
 
-## 页面说明
+---
 
-### 1. Overview（总览）
+## 5. 常见问题
 
-显示系统整体统计：
-- 参与者数量
-- 端点数量
-- 数据消息总数
-- 总字节数
-- Heartbeat/ACKNACK/NACK 计数
+| 现象 | 解决 |
+|------|------|
+| `sudo: 找不到命令` | 用完整路径：`sudo ./build/tools/dds_probe/dds_probe` |
+| 编译报 `libpcap not found` | `sudo apt-get install libpcap-dev` |
+| 界面空白没数据 | 先启动核心 demo 产生流量；接口选错时用 `-i lo` |
+| `-p` 端口被占用 | 换端口，或 `sudo lsof -i :8080` 查占用 |
 
-### 2. Participants（参与者）
+---
 
-显示发现的 DomainParticipant 列表：
-- GUID
-- 端点数量
-- 首次/最后发现时间
+## 6. 输出
 
-### 3. Endpoints（端点）
-
-显示选中参与者的所有 DataWriter/DataReader：
-- GUID
-- Topic 名称
-- 类型名称
-- 方向（Writer/Reader）
-- 统计数据
-
-### 4. Transfer（传输）
-
-显示端点对之间的传输统计：
-- Writer/Reader GUID
-- 数据包数量
-- 字节数
-- NACK 率
-- 最后传输时间
-
-## 架构
-
-```
-┌─────────────────────────────────────────────────────────┐
-│ MonitorUi (FTXUI TUI)                                    │
-└────────────┬────────────────────────────────────────────┘
-             │ 100ms 刷新
-┌────────────▼────────────────────────────────────────────┐
-│ MetricsEngine: 核心数据模型                               │
-│  - Participants / Endpoints / TransferStats              │
-└────────────┬────────────────────────────────────────────┘
-             │ RtpsMessage
-┌────────────▼────────────────────────────────────────────┐
-│ RtpsParser: RTPS 报文解析器                               │
-│  - ParseHeader / ParseSubmessages                        │
-└────────────┬────────────────────────────────────────────┘
-             │ UdpPacket
-┌────────────▼────────────────────────────────────────────┐
-│ PcapWorker: libpcap 抓包线程                              │
-│  - 单独线程 + 无锁队列                                    │
-└─────────────────────────────────────────────────────────┘
-```
-
-## 线程模型
-
-1. **PcapWorker 线程**：抓包并推入队列
-2. **主线程**：
-   - 处理键盘输入
-   - 从队列 pop 包并解析
-   - 更新 MetricsEngine
-   - 刷新 UI
-
-## 测试
-
-### 启动测试
-
-1. 启动 OnDemand 发布端：
-```bash
-cd build && ./demo_exec
-```
-
-2. 启动监控：
-```bash
-sudo ./dds_probe -i lo
-```
-
-3. 观察 TUI 显示：
-   - Overview 页面应显示参与者和端点
-   - Participants 页面应列出发现的参与者
-   - Endpoints 页面应显示 topic 信息
-
-### 单元测试
-
-```bash
-cd build
-make test
-```
-
-## 后续扩展
-
-1. **JSON 导出**：支持文件/HTTP/WebSocket 输出
-2. **离线分析**：支持读取 pcap 文件
-3. **告警系统**：丢包率超阈值告警
-4. **QoS 兼容性检查**：完整实现 Reliability/Durability/Ownership 检查
-5. **Topic 数据解析**：解析 TableDataTransfer payload
-
-## License
-
-Internal tool - see project root for license.
+TUI 页面：Overview（总览）/ Participants（参与者）/ Endpoints（端点）/ Transfer（传输）。
+首页顶部显示 **Net BW**（网卡总带宽）：↓ 入向 / ↑ 出向 / = 合计，采样 `/sys/class/net` 计数器，默认 `-i any` 时汇总所有非 lo 网卡；离线回放（`-r`）时显示 `--`。
+HTTP 接口：见 [HTTP_API.md](HTTP_API.md)。

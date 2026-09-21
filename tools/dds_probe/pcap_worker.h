@@ -65,6 +65,9 @@ public:
     CaptureStats GetCaptureStats() const;
     bool IsOffline() const { return is_offline_; }
     bool IsFinished() const { return finished_.load(); }
+    // Capture interface as passed at construction ("any" when unspecified).
+    // Read-only; used by the UI to sample NIC-wide traffic rates.
+    const std::string& GetInterface() const { return interface_; }
 
     // Kernel-level pcap stats (packets received, dropped by kernel, dropped by iface)
     struct PcapStats {

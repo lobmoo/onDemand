@@ -4,6 +4,7 @@
 #include <ftxui/component/screen_interactive.hpp>
 #include <ftxui/dom/elements.hpp>
 #include <atomic>
+#include <chrono>
 
 #include "metrics_engine.h"
 #include "pcap_worker.h"
@@ -43,6 +44,17 @@ private:
     // fresh data on the very next frame instead of waiting a full tick.
     void UpdateTopicCache();
 
+    // NIC-wide bandwidth sampling. Reads /sys/class/net/*/statistics
+    // (rx_bytes/tx_bytes) at most once per second, computes rates in the UI
+    // thread (no extra threads; UI-thread-write / UI-thread-read only).
+    // Offline mode returns false (no live NIC to sample).
+    struct NicBandwidth {
+        double rx_bps = 0.0;  // bytes/sec, all interfaces (lo excluded)
+        double tx_bps = 0.0;
+        bool valid = false;   // false until the second sample, or offline
+    };
+    bool SampleNicBandwidth(NicBandwidth& out);
+
     // Format helpers
     ftxui::Element FormatHeader(const std::string& title);
     ftxui::Element FormatRow(const std::vector<std::string>& cells, bool selected = false);
@@ -76,6 +88,13 @@ private:
 
     // Node list entries for the home page
     std::vector<std::string> menu_entries_;
+
+    // NIC bandwidth sampling state (UI thread only)
+    std::chrono::steady_clock::time_point last_bw_sample_;
+    uint64_t last_rx_bytes_ = 0;
+    uint64_t last_tx_bytes_ = 0;
+    bool bw_baseline_valid_ = false;  // true after first sample taken
+    NicBandwidth cached_bw_;          // last computed rate, rendered each frame
 
     // Running state
     std::atomic<bool> running_{false};
